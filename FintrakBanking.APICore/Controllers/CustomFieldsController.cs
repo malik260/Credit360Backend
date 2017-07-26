@@ -1,0 +1,424 @@
+using System.Collections.Generic;
+using System.Threading.Tasks; 
+using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.Credit; 
+using System;
+using FintrakBanking.APICore.core;
+using System.Web.Http;
+using System.Net.Http;
+using System.Web;
+using System.Net;
+
+namespace FintrakBanking.APICore.Controllers
+{
+    //[EnableCors("AllDomain")]
+    [RoutePrefix("api/v1/setups")]
+    public class CustomFieldController : ApiControllerBase
+    {
+        TokenDecryptionHelper token = null;
+        private ICustomFieldsRepository repo;
+        IErrorLogRepository errorLogger;
+        public CustomFieldController(ICustomFieldsRepository _repo, IErrorLogRepository _errorLogger)
+        {
+            this.repo = _repo;
+            errorLogger = _errorLogger;
+        }
+
+        #region   Custom Fields
+
+        // ossy
+
+        [HttpPost] [Route("custom-field")]
+        public HttpResponseMessage AddCustomField(HttpRequestMessage request, [FromBody] AddCustomFieldViewModel model)
+        {
+            HttpResponseMessage response = null;
+            return   GetHttpResponse(request, () =>
+           {
+               try
+               {
+                   token = new TokenDecryptionHelper();
+                   model.userBranchId = (short)token.GetBranchId;
+                   model.companyId = token.GetCompanyId;
+                   model.createdBy = token.GetStaffId;
+                   // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                   model.applicationUrl = HttpContext.Current.Request.Path;
+                   var data = repo.AddCustomField(model).IsCompleted;
+                   if (data)
+                   {
+                       response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = model, message = "The record has been created successfully" }));
+                   }
+
+                   response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error creating this record" }));
+               }
+               catch (Exception ex)
+               {
+                   this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                   response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error creating this record {ex.Message}" }));
+               }
+               return response;
+           });
+        }
+
+        [HttpPut]
+        [Route("custom-field")]
+        public HttpResponseMessage UpdateCustomField(HttpRequestMessage request, [FromBody] AddCustomFieldViewModel model, int id)
+        {
+            HttpResponseMessage response = null;
+            return GetHttpResponse(request, () =>
+          {
+              try
+              {
+                  token = new TokenDecryptionHelper();
+
+                  model.userBranchId = (short)token.GetBranchId;
+                  model.companyId = token.GetCompanyId;
+                  model.lastUpdatedBy = token.GetStaffId;
+                  model.applicationUrl = HttpContext.Current.Request.Path;
+                   // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                   var data = repo.UpdateCustomField(model, id).IsCompleted;
+
+                  if (data)
+                  {
+                      response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = model, message = "The record has been Update successfully" }));
+                  }
+
+                  response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error Update this record" }));
+              }
+              catch (Exception ex)
+              {
+                  this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                  response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error Update this record {ex.Message}" }));
+              }
+              return response;
+          });
+        }
+
+            //ossy
+
+
+        [HttpPost][Route("custom-field-multiple")]
+        public HttpResponseMessage AddCustomFields(HttpRequestMessage request, [FromBody] List<CustomFieldViewModel> listEntity)
+        {
+            HttpResponseMessage response = null;
+            return  GetHttpResponse(request, () =>
+            {
+                try
+                {
+                    token = new TokenDecryptionHelper();
+                    foreach (var entity in listEntity)
+                    {
+                        entity.userBranchId = (short)token.GetBranchId;
+                        entity.companyId = token.GetCompanyId;
+                        entity.createdBy = token.GetStaffId;
+                        ///entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                        entity.applicationUrl = HttpContext.Current.Request.Path;
+                    }
+                    var data = repo.AddCustomFields(listEntity).IsCompleted;
+                    if (data)
+                    {
+                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = listEntity, message = "The record has been created successfully" }));
+                    }
+
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error creating this record" }));
+                }
+                catch (Exception ex)
+                {
+                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error creating this record {ex.Message}" }));
+                }
+                return response;
+            });
+        }
+
+        [HttpDelete][Route("custom-field")]
+        public HttpResponseMessage DeleteCustomFields(HttpRequestMessage request, [FromBody] List<CustomFieldViewModel> customFields)
+        {
+            HttpResponseMessage response = null;
+            return GetHttpResponse(request, () =>
+            {
+
+                try
+                {
+                    token = new TokenDecryptionHelper();
+
+                    UserInfo user = new UserInfo()
+                    {
+                        BranchId = token.GetBranchId,
+                        companyId = token.GetCompanyId,
+                        staffId = token.GetStaffId,
+                        applicationUrl = HttpContext.Current.Request.Path
+                        // userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                    };
+
+                    var data = repo.DeleteCustomFields(customFields, user).IsCompleted;
+                    if (data)
+                    {
+                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = response, message = "Deleted successfully" }));
+                    }
+
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "An unknown error has occured" }));
+                }
+                catch (Exception ex)
+                {
+                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                }
+                return response;
+            });
+        }
+
+        [HttpPut] [Route("custom-field-multiple")]
+        public HttpResponseMessage UpdateCustomFields(HttpRequestMessage request, [FromBody] List<CustomFieldViewModel> listEntity)
+        {
+            HttpResponseMessage response = null;
+            return GetHttpResponse(request, () =>
+            {
+                try
+                {
+                    token = new TokenDecryptionHelper();
+                    foreach (var entity in listEntity)
+                    {
+
+                        entity.userBranchId = (short)token.GetBranchId;
+                        entity.companyId = token.GetCompanyId;
+                        entity.lastUpdatedBy = token.GetStaffId;
+                       // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                        entity.applicationUrl = HttpContext.Current.Request.Path;
+                    }
+                    var data =   repo.UpdateCustomFields(listEntity).IsCompleted;
+
+                    if (data)
+                    {
+                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = listEntity, message = "The record has been Update successfully" }));
+                    }
+
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error Update this record" }));
+                }
+                catch (Exception ex)
+                {
+                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error Update this record {ex.Message}" }));
+                }
+                return response;  });
+        }
+
+        [HttpGet] [Route("custom-field/hostPage/{id}")]
+        public HttpResponseMessage GetCustomFieldsByHostPageId(HttpRequestMessage request, int id)
+        {
+            HttpResponseMessage response = null;
+            return GetHttpResponse(request, () =>
+            {
+                try
+                {
+                    token = new TokenDecryptionHelper();
+
+                    var data = repo.CustomFieldsByHostPageId(id, token.GetCompanyId);
+                    if (data == null)
+                    {
+                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                    }
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = response }));
+                }
+                catch (System.Exception ex)
+                {
+                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                }
+                return response;
+            });
+            }
+
+        #endregion   Custom Fields
+        #region   Custom Fields Data
+        [HttpPost]
+        [Route("custom-field-data")]
+        public HttpResponseMessage AddCustomFieldsData(HttpRequestMessage request, [FromBody] List<CustomFieldsDataViewModel> listEntity)
+        {
+            HttpResponseMessage response = null;
+            return GetHttpResponse(request, () =>
+            {
+                try
+                {
+                    token = new TokenDecryptionHelper();
+                    foreach (var entity in listEntity)
+                    {
+                        entity.userBranchId = (short)token.GetBranchId;
+                        entity.companyId = token.GetCompanyId;
+                        entity.createdBy = token.GetStaffId;
+                        /// entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                        entity.applicationUrl = HttpContext.Current.Request.Path;
+                    }
+                    var data = repo.AddCustomFieldsData(listEntity).IsCompleted;
+                    if (data)
+                    {
+                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = listEntity, message = "The record has been created successfully" }));
+                    }
+
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error creating this record" }));
+                }
+                catch (Exception ex)
+                {
+                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error creating this record {ex.Message}" }));
+                }
+                return response;
+            });
+        }
+
+        [HttpDelete] [Route("custom-field-data")]
+        public HttpResponseMessage DeleteCustomFieldsData(HttpRequestMessage request, [FromBody] List<CustomFieldsDataViewModel> listEntity)
+        {
+            HttpResponseMessage response = null;
+            return GetHttpResponse(request, () =>
+            {
+                try
+                {
+                    token = new TokenDecryptionHelper();
+
+                    UserInfo user = new UserInfo()
+                    {
+                        BranchId = token.GetBranchId,
+                        companyId = token.GetCompanyId,
+                        staffId = token.GetStaffId,
+                        applicationUrl = HttpContext.Current.Request.Path ,
+                      //  userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                    };
+
+                    var data =   repo.DeleteCustomFieldsData(listEntity, user).IsCompleted;
+                    if (data)
+                    {
+                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = response, message = "Deleted successfully" }));
+                    }
+
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "An unknown error has occured" }));
+                }
+                catch (Exception ex)
+                {
+                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                }
+                return response;
+            });
+            }
+
+        [HttpGet]
+        [Route("custom-field-data/hostpage/{id}/{customerId}")]
+        public HttpResponseMessage GetCustomFieldsDataByCustomField(HttpRequestMessage request, int id, int customerId)
+        {
+            HttpResponseMessage response = null;
+            return GetHttpResponse(request, () =>
+            {
+
+                try
+                {
+                    token = new TokenDecryptionHelper();
+
+                    var data = repo.GetCustomFieldsDataByHostPage(id, customerId, token.GetCompanyId);
+                    if (data == null)
+                    {
+                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                    }
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = response }));
+                }
+                catch (System.Exception ex)
+                {
+                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                }
+                return response;
+            });
+        }
+
+        [HttpPut] [Route("custom-field-data")]
+        public HttpResponseMessage UpdateCustomFieldsData(HttpRequestMessage request, [FromBody] List<CustomFieldsDataViewModel> listEntity)
+        {
+            HttpResponseMessage response = null;
+            return GetHttpResponse(request, () =>
+            {
+                try
+                {
+                    token = new TokenDecryptionHelper( );
+                    foreach (var entity in listEntity)
+                    {
+                        entity.userBranchId = (short)token.GetBranchId;
+                        entity.companyId = token.GetCompanyId;
+                        entity.lastUpdatedBy = token.GetStaffId;
+                       // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                        entity.applicationUrl = HttpContext.Current.Request.Path;
+                    }
+                    var data =  repo.UpdateCustomFieldsData(listEntity).IsCompleted;
+                    if (data)
+                    {
+                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = listEntity, message = "The record has been Update successfully" }));
+                    }
+
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error Update this record" }));
+                }
+                catch (Exception ex)
+                {
+                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error Update this record {ex.Message}" }));
+                }
+                return response;    });
+            }
+        #endregion   Custom Fields Data
+
+        #region   host page 
+
+        [HttpGet] [Route("hostPage/hostpage/{id}")]
+        public HttpResponseMessage GetHostPagesChildrenOnly(HttpRequestMessage request, int id)
+        {
+            HttpResponseMessage response = null;
+            return GetHttpResponse(request, () =>
+            {
+                try
+                {
+                    token = new TokenDecryptionHelper();
+
+                    var data = repo.GetHostPagesChildrenOnly(id);
+                    if (response == null)
+                    {
+                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                    }
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = response }));
+                }
+                catch (System.Exception ex)
+                {
+                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                }
+                return response;
+            });
+
+            }
+
+        [HttpGet][Route("hostPage")]
+        public HttpResponseMessage GetHostPagesParentOnly(HttpRequestMessage request)
+        { HttpResponseMessage response = null;
+            return GetHttpResponse(request, () =>
+            {
+                try
+                {
+                    token = new TokenDecryptionHelper();
+
+                    var data = repo.GetHostPagesParentOnly();
+                    if (data == null)
+                    {
+                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                    }
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = response }));
+                }
+                catch (System.Exception ex)
+                {
+                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                }
+                return response;
+                });
+        }
+        #endregion   host page 
+    }
+}
