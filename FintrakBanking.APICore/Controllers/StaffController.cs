@@ -14,7 +14,9 @@ using System.Web.Http.Cors;
 
 namespace FintrakBanking.APICore.Controllers
 {
+
     [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
+
     [RoutePrefix("api/v1/setup")]
     public class StaffController : ApiControllerBase
     {
@@ -30,170 +32,148 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("staff")]
-        public HttpResponseMessage GetStaffInfo(HttpRequestMessage request)
+        public HttpResponseMessage GetStaffInfo()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+
+            try
             {
-                try
+
+                var token = new TokenDecryptionHelper();
+                var staffinfo = repo.GetAllStaff().Where(x => x.companyId == token.GetCompanyId).ToList();
+
+                if (staffinfo == null)
                 {
-
-                    var token = new TokenDecryptionHelper();
-                    var staffinfo = repo.GetAllStaff().Where(x => x.companyId == token.GetCompanyId).ToList();
-
-                    if (staffinfo == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = staffinfo }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo });
+            }
+            catch (System.Exception ex)
+            {
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
 
-                return response;
-            });
+
         }
 
         [HttpGet]
         [Route("staff/approvals/temp")]
         public HttpResponseMessage GetStaffAwaitingApproval()
         {
-            
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-                    var staffinfo = repo.GetStaffAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
 
-                    if (staffinfo == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                    }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
-                }
-                catch (System.Exception ex)
+
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var staffinfo = repo.GetStaffAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
+
+                if (staffinfo == null)
                 {
-                    errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
         [HttpGet]
         [Route("staff/approvals/temp/{staffId}")]
-        public HttpResponseMessage GetTempStaffDetailsById(HttpRequestMessage request, int staffId)
+        public HttpResponseMessage GetTempStaffDetailsById(int staffId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-                    var staffinfo = repo.GetTempStaffDetail(staffId);
+                var token = new TokenDecryptionHelper();
+                var staffinfo = repo.GetTempStaffDetail(staffId);
 
-                    if (staffinfo == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = staffinfo }));
-                }
-                catch (System.Exception ex)
+                if (staffinfo == null)
                 {
-                    errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
 
-                return response;
-            });
         }
 
         [HttpGet]
         [Route("staff/approvals/{staffCode}")]
-        public HttpResponseMessage GetStaffDetailsById(HttpRequestMessage request, string staffCode)
+        public HttpResponseMessage GetStaffDetailsById(string staffCode)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+
+
+            try
             {
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-                    var staffinfo = repo.GetStaffDetail(staffCode, token.GetCompanyId);
+                var token = new TokenDecryptionHelper();
+                var staffinfo = repo.GetStaffDetail(staffCode, token.GetCompanyId);
 
-                    if (staffinfo == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = staffinfo }));
-                }
-                catch (System.Exception ex)
+                if (staffinfo == null)
                 {
-                    errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
 
-                return response;
-            });
         }
 
         [HttpGet]
         [Route("staff/approvals")]
-        public HttpResponseMessage GetStaffDetails(HttpRequestMessage request)
+        public HttpResponseMessage GetStaffDetails()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-                    var staffinfo = repo.GetStaffDetails(token.GetCompanyId);
+                var token = new TokenDecryptionHelper();
+                var staffinfo = repo.GetStaffDetails(token.GetCompanyId);
 
-                    if (staffinfo.ToList() == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = staffinfo }));
-                }
-                catch (System.Exception ex)
+                if (staffinfo.ToList() == null)
                 {
-                    errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("staff/names")]
-        public HttpResponseMessage GetStaff(HttpRequestMessage request)
+        public HttpResponseMessage GetStaff()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-                    var staffinfo = repo.GetStaffNames();
+                var token = new TokenDecryptionHelper();
+                var staffinfo = repo.GetStaffNames();
 
-                    if (staffinfo == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = staffinfo }));
-                }
-                catch (System.Exception ex)
+                if (staffinfo == null)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
@@ -201,285 +181,240 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetApprovalStatus()
         {
 
-            //return GetHttpResponse(request, () =>
-            //{
             try
             {
                 var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetApprovalStatus();
 
+
                 if (staffinfo != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = staffinfo.ToList() });
-                    
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
+
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                            new { success = false, message = "No record found" });
             }
             catch (System.Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
 
-            //return response;
-            // });
+
         }
 
         [HttpGet]
         [Route("staff/{staffId}")]
-        public HttpResponseMessage GetStaffInfoById(HttpRequestMessage request, int staffId)
+        public HttpResponseMessage GetStaffInfoById(int staffId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-                    var staffInfo = repo.GetStaffById(staffId);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = staffInfo }));
-                }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { error = true, message = ex.Message }));
-                }
-
-                return response;
-            });
+                var token = new TokenDecryptionHelper();
+                var staffInfo = repo.GetStaffById(staffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { error = true, message = ex.Message });
+            }
         }
 
         [HttpPost]
         [Route("staff")]
-        public HttpResponseMessage AddTempStaff(HttpRequestMessage request, [FromBody] StaffInfoViewModel model)
+        public HttpResponseMessage AddTempStaff([FromBody] StaffInfoViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+
+                if (repo.IsStaffCodeAlreadyExist(model.StaffCode))
                 {
-
-                    if (repo.IsStaffCodeAlreadyExist(model.StaffCode))
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = $"A staff with {model.StaffCode} already exist" }));
-                    }
-                    if (repo.IsStaffExist(model.StaffCode))
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = $"A staff with {model.StaffCode} already exist waiting for approval" }));
-                    }
-
-
-                    TokenDecryptionHelper token = new TokenDecryptionHelper();
-
-                    model.userBranchId = (short)token.GetBranchId;
-                    model.userIPAddress = Request.RequestUri.Host;
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-
-
-                    var username = token.GetUsername;
-                    var staffId = token.GetStaffId;
-                    var companyId = token.GetCompanyId; //etc
-
-                    //We can now use staffId extracted from the token as the created by
-                    //We ca also get companyId too
-
-                    model.createdBy = staffId; ///This staff Id was gotten from the token
-
-
-                    var staff = repo.AddTempStaff(model);
-
-                    if (staff)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = staff, message = "Staff has been created successfully, now waiting for approval" }));
-                    }
-                    else
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "staff not created" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"A staff with {model.StaffCode} already exist" });
                 }
-                catch (System.Exception ex)
+                if (repo.IsStaffExist(model.StaffCode))
                 {
-                    errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"A staff with {model.StaffCode} already exist waiting for approval" });
                 }
 
-                return response;
-            });
+
+
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+
+                var username = token.GetUsername;
+                var staffId = token.GetStaffId;
+                var companyId = token.GetCompanyId; //etc
+
+                //We can now use staffId extracted from the token as the created by
+                //We ca also get companyId too
+
+                model.createdBy = staffId; ///This staff Id was gotten from the token
+
+
+                var staff = repo.AddTempStaff(model);
+
+                if (staff)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = staff, message = "Staff has been created successfully, now waiting for approval" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "staff not created" });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPut]
         [Route("staff/{staffid}")]
-        public HttpResponseMessage UpdateStaffInfo(HttpRequestMessage request, int staffid, [FromBody] StaffInfoViewModel model)
+        public HttpResponseMessage UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+
+
+                var staff = repo.UpdateStaff(staffid, model);
+                if (staff)
                 {
-
-                    var token = new TokenDecryptionHelper();
-                    model.userBranchId = (short)token.GetBranchId;
-                    model.userIPAddress = Request.RequestUri.Host;
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
-
-
-                    var staff = repo.UpdateStaff(staffid, model);
-                    if (staff)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = staff, message = "Staff has been updated successfully, now waiting for approval" }));
-                    }
-                    else
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "staff not created" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = staff, message = "Staff has been updated successfully, now waiting for approval" });
                 }
-                catch (System.Exception ex)
-                {
-                    errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-
-                return response;
-            });
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "staff not created" });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpDelete]
         [Route("staff/{staffId}")]
-        public HttpResponseMessage DeleteStaffInfo(HttpRequestMessage request, int staffId)
+        public HttpResponseMessage DeleteStaffInfo(int staffId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-
-                try
+                var token = new TokenDecryptionHelper();
+                UserInfo user = new UserInfo()
                 {
-                    var token = new TokenDecryptionHelper();
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        applicationUrl = HttpContext.Current.Request.Path,
-                        userIPAddress = Request.RequestUri.Host
-                    };
-                    var staff = repo.DeleteStaff(staffId, user);
-                    if (staff)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = staff, message = "staff has been created successfully" }));
-                    }
-                    else
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "staff not created" }));
-                }
-                catch (System.Exception ex)
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host
+                };
+                var staff = repo.DeleteStaff(staffId, user);
+                if (staff)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = staff, message = "staff has been created successfully" });
                 }
-
-                return response;
-            });
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "staff not created" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("staffbybranch/{branchId}")]
-        public HttpResponseMessage GetStaffInfoByBranchId(HttpRequestMessage request, int branchId)
+        public HttpResponseMessage GetStaffInfoByBranchId(int branchId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+
+                var staffInfo = repo.GetAllStaff().SingleOrDefault(c => c.BranchId == branchId);
+
+                if (staffInfo == null)
                 {
-
-                    var staffInfo = repo.GetAllStaff().SingleOrDefault(c => c.BranchId == branchId);
-
-                    if (staffInfo == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = staffInfo }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = ex.Message }));
-                }
-
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = staffInfo });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]
         [Route("staff/approval")]
-        public HttpResponseMessage GoForApproval(HttpRequestMessage request, [FromBody]ApprovalViewModel entity)
+        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var token = new TokenDecryptionHelper();
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.GoForApproval(entity);
+
+                if (data)
                 {
-                    var token = new TokenDecryptionHelper();
-                    entity.BranchId = token.GetBranchId;
-                    entity.companyId = token.GetCompanyId;
-                    entity.staffId = token.GetStaffId;
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    entity.userIPAddress = Request.RequestUri.Host;
-
-                    var data = repo.GoForApproval(entity);
-
-                    if (data)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, message = "Staff record has been approved successfully" }));
-                    }
-                    else
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, message = "Operation successful, request has been routed to the next approving office" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Staff record has been approved successfully" });
                 }
-                catch (System.Exception ex)
-                {
-                    errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-
-                return response;
-            });
-
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("staff/search/{queryString}")]
-        public HttpResponseMessage SearchStaff(HttpRequestMessage request, string queryString)
+        public HttpResponseMessage SearchStaff(string queryString)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-                    var data = repo.SearchStaff(queryString, token.GetCompanyId);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = data.ToList() }));
-                }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = ex.Message }));
-                }
+                var token = new TokenDecryptionHelper();
+                var data = repo.SearchStaff(queryString, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                     new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new
+                    {
+                        success = false,
+                        message = ex.Message
+                    });
+            }
 
-                return response;
-            });
         }
-
-
     }
-
-
-
 }

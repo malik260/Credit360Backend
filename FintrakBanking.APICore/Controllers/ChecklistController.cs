@@ -11,6 +11,7 @@ using System.Web.Http;
 using System.Net.Http;
 using System.Net;
 using FintrakBanking.APICore.core;
+using System.Web;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -25,566 +26,505 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Checklist Definition
-        [HttpPost] [Route("checklist-definition")]
-        public HttpResponseMessage AddChecklistDefinition(HttpRequestMessage request, [FromBody] ChecklistDefinitionViewModel model)
+        [HttpPost]
+        [Route("checklist-definition")]
+        public HttpResponseMessage AddChecklistDefinition([FromBody] ChecklistDefinitionViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                TokenDecryptionHelper token = null; // new TokenDecryptionHelper(this.HttpContext);
+
+                model.userBranchId = (short)token.GetBranchId;
+                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                //model.applicationUrl = Request.Path.Value;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.AddChecklistDefinition(model);
+                if (data)
                 {
-                    TokenDecryptionHelper token = null; // new TokenDecryptionHelper(this.HttpContext);
-
-                    model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //model.applicationUrl = Request.Path.Value;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-
-                    var data = repo.AddChecklistDefinition(model);
-                    if (data)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                  Created("", new { success = true, result = data, message = "The record has been created successfully" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                  Ok(new { success = false, message = "There was an error creating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, message = "The record has been created successfully" });
                 }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                  Ok(new { success = false, message = $"There was an error creating this record {e.Message}" }));
-                }
-                return response;
-            });
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+
         }
 
-        [HttpPost] [Route("checklist-definition/multiple")]
-        public HttpResponseMessage AddMultipleChecklistDefinition(HttpRequestMessage request, [FromBody] List<ChecklistDefinitionViewModel> model)
+        [HttpPost]
+        [Route("checklist-definition/multiple")]
+        public HttpResponseMessage AddMultipleChecklistDefinition([FromBody] List<ChecklistDefinitionViewModel> model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                // new TokenDecryptionHelper(this.HttpContext);
+                var recordId = repo.AddMultipleChecklistDefinition(model);
+                if (recordId)
                 {
-                    // new TokenDecryptionHelper(this.HttpContext);
-                    var recordId = repo.AddMultipleChecklistDefinition(model);
-                    if (recordId)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-           Ok(new { success = true, result = recordId, message = "Checklist Definitions has been created successfully" }));
-                    }
-                    else
-                        response = request.CreateResponse(HttpStatusCode.OK,
-           Ok(new { success = false, message = "Checklist Definition not created" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+      new { success = true, result = recordId, message = "Checklist Definitions has been created successfully" });
                 }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+      new { success = false, message = "Checklist Definition not created" });
+            }
 
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-           Ok(new { success = false, message = $"There was an error creating these records {e.Message}" }));
-                }
-                return response;
-            });
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+      new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+
         }
 
-        [HttpPost] [Route("checklist-definition/multiple-items")]
-        public HttpResponseMessage AddMultipleChecklistDefinitionWithMultipleItems(HttpRequestMessage request, [FromBody] ChecklistDefinitionViewModel model)
+        [HttpPost]
+        [Route("checklist-definition/multiple-items")]
+        public HttpResponseMessage AddMultipleChecklistDefinitionWithMultipleItems([FromBody] ChecklistDefinitionViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var token = new TokenDecryptionHelper();
+                var recordId = repo.AddMultipleChecklistDefinitionWithMultipleItems(model);
+                if (recordId)
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-                    var recordId = repo.AddMultipleChecklistDefinitionWithMultipleItems(model);
-                    if (recordId)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = true, result = recordId, message = "Checklist Definitions have been created successfully" }));
-                    }
-                    else
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = false, message = "Checklist Definitions not created" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = recordId, message = "Checklist Definitions have been created successfully" });
                 }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "Checklist Definitions not created" });
+            }
 
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = false, message = $"There was an error creating these records {e.Message}" }));
-                }
-                return response;
-            });
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+
         }
 
-        [HttpGet] [Route("checklist-definition")]
-        public HttpResponseMessage GetAllChecklistDefinition(HttpRequestMessage request)
+        [HttpGet]
+        [Route("checklist-definition")]
+        public HttpResponseMessage GetAllChecklistDefinition()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                var token = new TokenDecryptionHelper();
 
-                    var data = repo.GetAllChecklistDefinition();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = false, message = "No record found" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = true, result = data, count = data.Count() }));
-                }
-                catch (Exception e)
+                var data = repo.GetAllChecklistDefinition();
+                if (data == null)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = false, message = $"Error: {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
         }
 
-        [HttpGet] [Route("checklist-definition/{CheckListDefinitionId}")]
-        public HttpResponseMessage GetAllChecklistDefinitionById(HttpRequestMessage request, short CheckListDefinitionId)
+        [HttpGet]
+        [Route("checklist-definition/{CheckListDefinitionId}")]
+        public HttpResponseMessage GetAllChecklistDefinitionById(short CheckListDefinitionId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var data = repo.GetAllChecklistDefinitionById(CheckListDefinitionId);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                Ok(new { success = true, result = data, count = 1 }));
-                }
-                catch (System.Exception ex)
-                {
+                var data = repo.GetAllChecklistDefinitionById(CheckListDefinitionId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+           new { success = true, result = data, count = 1 });
+            }
+            catch (System.Exception ex)
+            {
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                Ok(new { success = false, message = $"There was an error updating this record {ex.Message}" }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+           new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
 
         }
 
         [HttpPut]
         [Route("checklist-definition/{CheckListDefinitionId}")]
-        public HttpResponseMessage UpdateChecklistDefinition(HttpRequestMessage request, short CheckListDefinitionId, [FromBody] ChecklistDefinitionViewModel model)
+        public HttpResponseMessage UpdateChecklistDefinition(short CheckListDefinitionId, [FromBody] ChecklistDefinitionViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+
+            try
             {
-                try
+                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                model.userBranchId = (short)token.GetBranchId;
+                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                //model.applicationUrl = Request.Path.Value;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.UpdateChecklistDefinition(CheckListDefinitionId, model);
+
+                if (data)
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-                    model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //model.applicationUrl = Request.Path.Value;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, message = "The record has been updated successfully" });
 
-                    var data = repo.UpdateChecklistDefinition(CheckListDefinitionId, model);
-
-                    if (data)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                        Created("", new { success = true, result = data, message = "The record has been updated successfully" }));
-
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = false, message = "There was an error updating this record" }));
                 }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                      Ok(new { success = false, message = $"There was an error updating this record {e.Message}" }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+
         }
 
-        [HttpDelete] [Route("checklist-definition/{CheckListDefinitionId}")]
-        public HttpResponseMessage DeleteChecklistDefinition(HttpRequestMessage request, short CheckListDefinitionId)
+        [HttpDelete]
+        [Route("checklist-definition/{CheckListDefinitionId}")]
+        public HttpResponseMessage DeleteChecklistDefinition(short CheckListDefinitionId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+
+            try
             {
-                try
+                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+
+                UserInfo user = new UserInfo()
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    // applicationUrl = Request.Path.Value,
+                    // userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
 
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        // applicationUrl = Request.Path.Value,
-                        // userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
-                    };
+                repo.DeleteChecklistDefinition(CheckListDefinitionId, user);
 
-                    repo.DeleteChecklistDefinition(CheckListDefinitionId, user);
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = true, result = CheckListDefinitionId, message = "record has been deleted successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false, message = ex.Message });
+            }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                  Ok(new { success = true, result = CheckListDefinitionId, message = "record has been deleted successfully" }));
-                }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                  Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
         }
         #endregion
 
         #region Checklist Detail
-        [HttpPost] [Route("checklist-detail")]
-        public HttpResponseMessage AddChecklistDetail(HttpRequestMessage request, [FromBody] ChecklistDetailViewModel model)
+        [HttpPost]
+        [Route("checklist-detail")]
+        public HttpResponseMessage AddChecklistDetail([FromBody] ChecklistDetailViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+
+                model.userBranchId = (short)token.GetBranchId;
+                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                //model.applicationUrl = Request.Path.Value;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.AddChecklistDetail(model);
+                if (data)
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-
-                    model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //model.applicationUrl = Request.Path.Value;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-
-                    var data = repo.AddChecklistDetail(model);
-                    if (data)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                    Created("", new { success = true, result = data, message = "The record has been created successfully" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                 Ok(new { success = false, message = "There was an error creating this record" }));
-                }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                 Ok(new { success = false, message = $"There was an error creating this record {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = true, result = data, message = "The record has been created successfully" });
                 }
 
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+
         }
 
-        [HttpGet] [Route("checklist-detail")]
-        public HttpResponseMessage GetAllChecklistDetail(HttpRequestMessage request)
+        [HttpGet]
+        [Route("checklist-detail")]
+        public HttpResponseMessage GetAllChecklistDetail()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
+                var token = new TokenDecryptionHelper();
 
-                try
+                var data = repo.GetAllChecklistDetail();
+                if (!data.Any())
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-
-                    var data = repo.GetAllChecklistDetail();
-                    if (!data.Any())
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = false, message = "No record found" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = true, result = data, count = data.Count() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
                 }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = false, message = $"Error: {e.Message}" }));
-                }
-                return response;
-            });
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
         }
 
-        [HttpGet] [Route("checklist-detail/{ChecklistId}")]
-        public HttpResponseMessage GetAllChecklistById(HttpRequestMessage request, int ChecklistId)
+        [HttpGet]
+        [Route("checklist-detail/{ChecklistId}")]
+        public HttpResponseMessage GetAllChecklistById(int ChecklistId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var data = repo.GetAllChecklistDetailById(ChecklistId);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = true, result = data, count = 1 }));
-                }
-                catch (System.Exception ex)
-                {
+                var data = repo.GetAllChecklistDetailById(ChecklistId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = 1 });
+            }
+            catch (System.Exception ex)
+            {
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                    Ok(new { success = false, message = $"There was an error updating this record {ex.Message}" }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
 
-        [HttpPut] [Route("checklist-detail/{ChecklistId}")]
-        public HttpResponseMessage UpdateChecklistDetail(HttpRequestMessage request, int ChecklistId, [FromBody] ChecklistDetailViewModel model)
+        [HttpPut]
+        [Route("checklist-detail/{ChecklistId}")]
+        public HttpResponseMessage UpdateChecklistDetail(int ChecklistId, [FromBody] ChecklistDetailViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.UpdateChecklistDetail(ChecklistId, model);
+
+                if (data)
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-                    model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //model.applicationUrl = Request.Path.Value;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
 
-                    var data = repo.UpdateChecklistDetail(ChecklistId, model);
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, message = "The record has been updated successfully" });
 
-                    if (data)
-                    {
-
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                        Created("", new { success = true, result = data, message = "The record has been updated successfully" }));
-
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error updating this record" }));
                 }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = $"There was an error updating this record {e.Message}" }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
         }
 
-        [HttpDelete] [Route("checklist-detail/{ChecklistId}")]
-        public HttpResponseMessage DeleteLoanChecklist(HttpRequestMessage request, int ChecklistId)
+        [HttpDelete]
+        [Route("checklist-detail/{ChecklistId}")]
+        public HttpResponseMessage DeleteLoanChecklist(int ChecklistId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+
+                UserInfo user = new UserInfo()
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
 
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        //applicationUrl = Request.Path.Value,
-                        //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
-                    };
+                repo.DeleteChecklistDetail(ChecklistId, user);
 
-                    repo.DeleteChecklistDetail(ChecklistId, user);
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = true, result = ChecklistId, message = "record has been deleted successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false, message = ex.Message });
+            }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                  Ok(new { success = true, result = ChecklistId, message = "record has been deleted successfully" }));
-                }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                  Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
         }
         #endregion
 
         #region CheckList Items
-        [HttpPost] [Route("checklist-item")]
-        public HttpResponseMessage AddChecklistItem(HttpRequestMessage request, [FromBody] ChecklistItemViewModel model)
+        [HttpPost]
+        [Route("checklist-item")]
+        public HttpResponseMessage AddChecklistItem([FromBody] ChecklistItemViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+
+                model.userBranchId = (short)token.GetBranchId;
+                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.AddChecklistItem(model);
+                if (data)
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-
-                    model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //model.applicationUrl = Request.Path.Value;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-
-                    var data = repo.AddChecklistItem(model);
-                    if (data)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                 Created("", new { success = true, result = data, message = "The record has been created successfully" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                 Ok(new { success = false, message = "There was an error creating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = true, result = data, message = "The record has been created successfully" });
                 }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                 Ok(new { success = false, message = $"There was an error creating this record {e.Message}" }));
-                }
-                return response;
-            });
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
         }
 
-        [HttpPost] [Route("checklist-item/multiple")]
-        public HttpResponseMessage AddMultipleChecklistItem(HttpRequestMessage request, [FromBody] List<ChecklistItemViewModel> model)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
-                {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
 
-                    var recordId = repo.AddMultipleChecklistItem(model);
-                    if (recordId)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                   Ok(new { success = true, result = recordId, message = "Checklist items has been created successfully" }));
-                    }
-                    else
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                   Ok(new { success = false, message = "Checklist items not created" }));
-                }
-                catch (System.Exception ex)
+
+        [HttpPost]
+        [Route("checklist-item/multiple")]
+        public HttpResponseMessage AddMultipleChecklistItem([FromBody] List<ChecklistItemViewModel> model)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+
+                var recordId = repo.AddMultipleChecklistItem(model);
+                if (recordId)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                   Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = true, result = recordId, message = "Checklist items has been created successfully" });
                 }
-                return response;
-            });
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = "Checklist items not created" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = ex.Message });
+            }
         }
 
 
         [HttpGet]
         [Route("checklist-item")]
-        public HttpResponseMessage GetAllChecklistItem(HttpRequestMessage request)
+        public HttpResponseMessage GetAllChecklistItem()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                var token = new TokenDecryptionHelper();
 
-                    var data = repo.GetAllChecklistItem();
-                    if (!data.Any())
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = "No record found" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = true, result = data, count = data.Count() }));
-                }
-                catch (Exception e)
+                var data = repo.GetAllChecklistItem();
+                if (!data.Any())
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = $"Error: {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No record found" });
                 }
-                return response;
-        });
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"Error: {e.Message}" });
+            }
+
         }
 
-        [HttpGet][Route("checklist-item/{ChecklistId}")]
-        public HttpResponseMessage GetAllChecklistItemById(HttpRequestMessage request,int CheckListItemId)
+        [HttpGet]
+        [Route("checklist-item/{ChecklistId}")]
+        public HttpResponseMessage GetAllChecklistItemById(int CheckListItemId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var data = repo.GetAllChecklistItemById(CheckListItemId);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                   Ok(new { success = true, result = data, count = 1 }));
-                }
-                catch (System.Exception ex)
-                {
+                var data = repo.GetAllChecklistItemById(CheckListItemId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = true, result = data, count = 1 });
+            }
+            catch (System.Exception ex)
+            {
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                   Ok(new { success = false, message = $"There was an error updating this record {ex.Message}" }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+
         }
 
-        [HttpPut][Route("checklist-item/{CheckListItemId}")]
-        public HttpResponseMessage UpdateChecklistItem(HttpRequestMessage request,int CheckListItemId, [FromBody] ChecklistItemViewModel model)
+        [HttpPut]
+        [Route("checklist-item/{CheckListItemId}")]
+        public HttpResponseMessage UpdateChecklistItem(int CheckListItemId, [FromBody] ChecklistItemViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
+                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                model.userBranchId = (short)token.GetBranchId;
+                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
-                try
+                var data = repo.UpdateChecklistItem(CheckListItemId, model);
+
+                if (data)
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-                    model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //model.applicationUrl = Request.Path.Value;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
 
-                    var data = repo.UpdateChecklistItem(CheckListItemId, model);
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, message = "The record has been updated successfully" });
 
-                    if (data)
-                    {
-
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                      Created("", new { success = true, result = data, message = "The record has been updated successfully" }));
-
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                      Ok(new { success = false, message = "There was an error updating this record" }));
                 }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                      Ok(new { success = false, message = $"There was an error updating this record {e.Message}" }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+
         }
 
-        [HttpDelete] [Route("checklist-item/{CheckListItemId}")]
-        public HttpResponseMessage DeleteChecklistItem(HttpRequestMessage request, int CheckListItemId)
+        [HttpDelete]
+        [Route("checklist-item/{CheckListItemId}")]
+        public HttpResponseMessage DeleteChecklistItem(int CheckListItemId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+
+                UserInfo user = new UserInfo()
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
 
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        //applicationUrl = Request.Path.Value,
-                        //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
-                    };
+                repo.DeleteChecklistItem(CheckListItemId, user);
 
-                    repo.DeleteChecklistItem(CheckListItemId, user);
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = true, result = CheckListItemId, message = "record has been deleted successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = ex.Message });
+            }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                   Ok(new { success = true, result = CheckListItemId, message = "record has been deleted successfully" }));
-                }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                   Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
 
         }
         #endregion
@@ -592,60 +532,53 @@ namespace FintrakBanking.APICore.Controllers
         #region CheckList Select List
         [HttpGet]
         [Route("checklist-status")]
-        public HttpResponseMessage GetAllChecklistStatus(HttpRequestMessage request)
+        public HttpResponseMessage GetAllChecklistStatus()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                var token = new TokenDecryptionHelper();
 
-                    var data = repo.GetAllChecklistStatus();
-                    if (!data.Any())
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = false, message = "No record found" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = true, result = data, count = data.Count() }));
-                }
-                catch (Exception e)
+                var data = repo.GetAllChecklistStatus();
+                if (!data.Any())
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = false, message = $"Error: {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = $"Error: {e.Message}" });
+            }
         }
 
-        [HttpGet] [Route("checklist-target-type")]
-        public HttpResponseMessage GetAllChecklistTargetType(HttpRequestMessage request)
-        { HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+        [HttpGet]
+        [Route("checklist-target-type")]
+        public HttpResponseMessage GetAllChecklistTargetType()
+        {
+            try
             {
-                try
-                {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
 
-                    var data = repo.GetAllChecklistTargetType();
-                    if (!data.Any())
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = false, message = "No record found" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = true, result = data, count = data.Count() }));
-                }
-                catch (Exception e)
+                var data = repo.GetAllChecklistTargetType();
+                if (!data.Any())
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = false, message = $"Error: {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = "No record found" });
                 }
-                return response;
-            }); }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         #endregion
     }
 }

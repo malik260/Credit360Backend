@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Net.Http;
 using System.Net;
 using FintrakBanking.APICore.core;
+using System.Web;
 
 namespace FintrakBanking.APICore.Controllers
 { 
@@ -26,105 +27,91 @@ namespace FintrakBanking.APICore.Controllers
         #region Approval Level Staff
         [HttpPost][Route("approval-level-staff")]
         public HttpResponseMessage AddApprovalLevelStaff(HttpRequestMessage request, [FromBody] ApprovalLevelStaffViewModel model)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        {   try
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                    var token =  new TokenDecryptionHelper();
 
                     model.userBranchId = (short)token.GetBranchId;
                     //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //model.applicationUrl = Request.Path.Value;
-                    model.createdBy = token.GetStaffId;
+                    model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
                     var data = repo.AddApprovalLevelStaff(model);
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                             Created("", new { success = true, result = data, message = "The record has been created successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                             new { success = true, result = data, message = "The record has been created successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                             Ok(new { success = false, message = "There was an error creating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                             new { success = false, message = "There was an error creating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                             Ok(new { success = false, message = $"There was an error creating this record {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                             new { success = false, message = $"There was an error creating this record {e.Message}" });
                 }
-                return response;
-            });
+                
             }
 
         [HttpGet][Route("approval-level-staff/operations/{operationMappingId}")]
         public HttpResponseMessage GetAllApprovalLevelStaff(HttpRequestMessage request, int operationMappingId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+               try
                 {
                     TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
 
                     var data = repo.GetAllApprovalLevelStaffByOperationId(operationMappingId, token.GetCompanyId);
                     if (!data.Any())
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                                 Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                 new { success = false, message = "No record found" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                                 Ok(new { success = true, result = data, count = data.Count() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                 new { success = true, result = data, count = data.Count() });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                                 Ok(new { success = false, message = $"Error: {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                 new { success = false, message = $"Error: {e.Message}" });
                 }
-                return response;
-            });
+                  
         }
 
         [HttpGet][Route("approval-level-staff/staff-level/{id}")]
         public HttpResponseMessage GetApprovalLevelStaffById(HttpRequestMessage request, int id)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        { 
                 try
                 {
                     TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
 
                     var data = repo.GetApprovalLevelStaffById(id, token.GetCompanyId);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                                Ok(new { success = true, result = data, count = 1 }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                new { success = true, result = data, count = 1 });
                 }
                 catch (System.Exception ex)
                 {
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                                Ok(new { success = false, message = $"There was an error updating this record {ex.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                new { success = false, message = $"There was an error updating this record {ex.Message}" });
                 }
-            return    response;
-            });
+            
+         
         }
 
         [HttpPut][Route("approval-level-staff/{id}")]
         public HttpResponseMessage UpdateApprovalLevelStaff(HttpRequestMessage request, [FromBody] ApprovalLevelStaffViewModel model, int id)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+              
                 try
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                    var token =  new TokenDecryptionHelper();
                     model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //model.applicationUrl = Request.Path.Value;
-                    model.createdBy = token.GetStaffId;
+                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
                     var data = repo.UpdateApprovalLevelStaff(id, model);
@@ -132,31 +119,28 @@ namespace FintrakBanking.APICore.Controllers
                     if (data)
                     {
 
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                           Created("", new { success = true, result = data, message = "The record has been updated successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been updated successfully" });
 
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                           Ok(new { success = false, message = "There was an error updating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "There was an error updating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                           Ok(new { success = false, message = $"There was an error updating this record {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = $"There was an error updating this record {e.Message}" });
                 }
-                return response;
-            });
+                 
+            
         }
 
         [HttpDelete][Route("approval-level-staff/{StaffLevelId}")]
         public HttpResponseMessage DeleteApprovalLevelStaff(HttpRequestMessage request, int StaffLevelId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+               try
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                    var token =   new TokenDecryptionHelper();
 
                     UserInfo user = new UserInfo()
                     {
@@ -169,16 +153,15 @@ namespace FintrakBanking.APICore.Controllers
 
                     repo.DeleteApprovalLevelStaff(StaffLevelId, user);
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                             Ok(new { success = true, result = StaffLevelId, message = "record has been deleted successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                             new { success = true, result = StaffLevelId, message = "record has been deleted successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                             Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                             new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+                  
         }
         #endregion
     }

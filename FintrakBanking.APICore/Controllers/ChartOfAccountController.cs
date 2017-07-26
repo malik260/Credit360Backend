@@ -22,90 +22,76 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet] [Route("")]
-        public HttpResponseMessage GetAllAccounts(HttpRequestMessage request)
+        public HttpResponseMessage GetAllAccounts( )
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+             
+              
                 try
                 {
                     var accounts = repo.GetAllAccounts();
                     if (accounts == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = true, result = accounts.ToList() }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = accounts.ToList() });  //Ok(accounts);
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+                  
         }
 
         [HttpGet] [Route("category/{accountCategoryId}")]
-        public HttpResponseMessage GetAccountsByCategory(HttpRequestMessage request, short accountCategoryId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage GetAccountsByCategory(   short accountCategoryId)
+        { 
                 try
                 {
                     var accounts = repo.GetAccountsByCategory(accountCategoryId);
                     if (accounts == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                  Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                  Ok(new { success = true, result = accounts.ToList() }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = true, result = accounts.ToList() });  //Ok(accounts);
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                  Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+                  
         }
 
         [HttpGet]
         [Route("fs-captions")]
-        public HttpResponseMessage GetFinancialSatementCaptionLookup(HttpRequestMessage request)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+        public HttpResponseMessage GetFinancialSatementCaptionLookup()
+        { try
             {
-                try
+                var accounts = repo.GetFinancialSatementCaptionLookup();
+                if (accounts == null)
                 {
-                    var accounts = repo.GetFinancialSatementCaptionLookup();
-                    if (accounts == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                           Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                           Ok(new { success = true, result = accounts.ToList() }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                           Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = true, result = accounts.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet] [Route("{accountId}")]
-        public HttpResponseMessage Get(HttpRequestMessage request, short accountId)
+        public HttpResponseMessage Get(   short accountId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+              
                 try
                 {
                     //var accounts = repo.GetAccountViewModel(accountId);
@@ -114,29 +100,23 @@ namespace FintrakBanking.APICore.Controllers
                     var account = repo.GetAccountViewModel(accountId);
                     if (account == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                 Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                 Ok(new { success = true, result = account }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, result = account });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                 Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = ex.Message });
+                } 
         }
 
         // POST api/values
         [HttpPost]
-        public HttpResponseMessage AddChartOfAccount(HttpRequestMessage request, [FromBody]ChartOfAccountViewModel model)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage AddChartOfAccount(  [FromBody]ChartOfAccountViewModel model)
+        {   try
                 {
                     TokenDecryptionHelper token =  new TokenDecryptionHelper();
 
@@ -150,35 +130,32 @@ namespace FintrakBanking.APICore.Controllers
 
                     if (accountId >= 1)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = model, message = "account has been created successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = model, message = "account has been created successfully" });
                     }
                     else
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                         Ok(new { success = false, message = "account not created" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "account not created" });
                     }
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+         
         }
 
         [HttpPut] [Route("{accountId}")]
-        public HttpResponseMessage UpdateChartOfAccount(HttpRequestMessage request, int accountId, [FromBody] ChartOfAccountViewModel model)
+        public HttpResponseMessage UpdateChartOfAccount(   int accountId, [FromBody] ChartOfAccountViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+              
                 if (model == null)
                 {
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = "No record found" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = "No record found" });
                 }
                 try
                 {
@@ -191,25 +168,21 @@ namespace FintrakBanking.APICore.Controllers
                     //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                     repo.UpdateAccount((short)accountId, model);
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = true, result = model.accountId, message = "account has been updated successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = true, result = model.accountId, message = "account has been updated successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+                  
         }
 
         // DELETE api/values/5
         [HttpDelete] [Route("{accountId}")]
-        public HttpResponseMessage DeleteAccount(HttpRequestMessage request, int accountId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage DeleteAccount(   int accountId)
+        { 
                 try
                 {
                     TokenDecryptionHelper token =   new TokenDecryptionHelper();
@@ -223,16 +196,15 @@ namespace FintrakBanking.APICore.Controllers
                     };
                     repo.DeleteAccount((short)accountId, user);
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = true, result = accountId, message = "account has been deleted successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = true, result = accountId, message = "account has been deleted successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+                  
         }
     }
 }

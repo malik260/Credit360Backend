@@ -27,61 +27,50 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("{accountId}")]
-        public HttpResponseMessage GetAccount(HttpRequestMessage request, int accountId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage GetAccount(  int accountId)
+        { 
                 try
                 {
                     CasaViewModel data = repo.GetAccount(accountId);
-                    response = request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, data);
                 }
                 catch (Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
                 }
-
-                return response;
-            });
+             
         }
 
         [HttpGet]
         [Route("customer/{customerId}")]
-        public HttpResponseMessage GetAccountByCustomerId(HttpRequestMessage request, int customerId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage GetAccountByCustomerId(  int customerId)
+        { 
                 try
                 {
                     var data = repo.GetAccountByCustomerId(customerId);
                     if (data != null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, data);
+                        return Request.CreateResponse(HttpStatusCode.OK, data);
                     }
                     else
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = true, message = "No record found" });
                     }
                 }
                 catch (Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+                  
         }
 
         [HttpGet]
         [Route("account-number-name/{accountNumberOrName}")]
-        public HttpResponseMessage FindAccount(HttpRequestMessage request, string accountNumberOrName)
+        public HttpResponseMessage FindAccount(  string accountNumberOrName)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+              
                 try
                 {
                     //var token = new TokenDecryptionHelper(this.HttpContext);                
@@ -89,28 +78,24 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.FindAccount(accountNumberOrName, 1);// token.GetCompanyId);
                     if (data == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = true, result = data });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                           Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                          new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+                  
         }
 
         [HttpGet]
         [Route("customer/search")]
-        public HttpResponseMessage SearchCustomer(HttpRequestMessage request, string q, string t)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage SearchCustomer(  string q, string t)
+        { 
                 try
                 {
                     // var token = new TokenDecryptionHelper(this.HttpContext);
@@ -118,16 +103,14 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.SearchCustomer(int.Parse(t), 1, q).ToList();// token.GetCompanyId,q);
                     if (data == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
+                } 
 
         }
     }

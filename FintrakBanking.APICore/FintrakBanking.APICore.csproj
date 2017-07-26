@@ -268,11 +268,14 @@
     <Compile Include="Controllers\CollateralController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
+    <Compile Include="Controllers\CreditAssessmentMemoController.cs" />
     <Compile Include="Controllers\CurrencyRateController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\CustomerFSController.cs" />
+    <Compile Include="Controllers\CustomFieldsController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\FeeController.cs" />
+    <Compile Include="Controllers\GeneralSetupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JobTitleController.cs" />
     <Compile Include="Controllers\LimitController.cs" />

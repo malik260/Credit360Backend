@@ -36,11 +36,8 @@ namespace FintrakBanking.APICore.Controllers
         #region Customer FS Caption Group
         [HttpPost]
         [Route("customer-fs-caption-group")]
-        public HttpResponseMessage AddCustomerFSCaptionGroup(HttpRequestMessage request, [FromBody] CustomerFSCaptionGroupViewModel entity)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage AddCustomerFSCaptionGroup(  [FromBody] CustomerFSCaptionGroupViewModel entity)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -54,30 +51,25 @@ namespace FintrakBanking.APICore.Controllers
                     var data = fsGroupRepo.AddCustomerFSCaptionGroup(entity);
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record has been created successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been created successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error creating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error creating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error creating this record {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating this record {e.Message}" });
                 }
-
-                return response;
-            });
+             
         }
 
         [HttpGet]
         [Route("customer-fs-caption-group")]
-        public HttpResponseMessage GetCustomerFSCaptionGroup(HttpRequestMessage request)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage GetCustomerFSCaptionGroup( )
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -85,55 +77,45 @@ namespace FintrakBanking.APICore.Controllers
                     var data = fsGroupRepo.GetCustomerFSCaptionGroup(token.GetCompanyId);
                     if (!data.Any())
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = "No record found" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = data, count = data.Count() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, count = data.Count() });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"Error: {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"Error: {e.Message}" });
                 }
-
-                return response;
-            });
+             
         }
 
         [HttpGet]
         [Route("customer-fs-caption-group/{fsCaptionGroupId}")]
-        public HttpResponseMessage GetCustomerFSCaptionGroupById(HttpRequestMessage request, short fsCaptionGroupId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage GetCustomerFSCaptionGroupById(  short fsCaptionGroupId)
+        { 
                 try
                 {
                     var data = fsGroupRepo.GetCustomerFSCaptionGroupById(fsCaptionGroupId);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = data, count = 1 }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, count = 1 });
                 }
                 catch (System.Exception ex)
                 {
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error updating this record {ex.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this record {ex.Message}" });
                 }
-
-                return response;
-            });
+             
         }
 
 
         [HttpPut]
         [Route("customer-fs-caption-group/{fsCaptionGroupId}")]
-        public HttpResponseMessage UpdateCustomerFSCaptionGroup(HttpRequestMessage request, short fsCaptionGroupId, [FromBody] CustomerFSCaptionGroupViewModel entity)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage UpdateCustomerFSCaptionGroup(  short fsCaptionGroupId, [FromBody] CustomerFSCaptionGroupViewModel entity)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -149,32 +131,27 @@ namespace FintrakBanking.APICore.Controllers
                     if (data)
                     {
 
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record has been updated successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been updated successfully" });
 
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error updating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error updating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error updating this record {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this record {e.Message}" });
                 }
-
-                return response;
-            });
+             
         }
         #endregion
 
         #region Customer FS Caption
         [HttpPost]
         [Route("customer-fs-caption")]
-        public HttpResponseMessage AddCustomerFSCaption(HttpRequestMessage request, [FromBody] CustomerFSCaptionViewModel entity)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage AddCustomerFSCaption(  [FromBody] CustomerFSCaptionViewModel entity)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -188,119 +165,92 @@ namespace FintrakBanking.APICore.Controllers
                     var data = fsCaptionRepo.AddCustomerFSCaption(entity);
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record has been created successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been created successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error creating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error creating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error creating this record {e.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating this record {e.Message}" });
+                } 
         }
 
         [HttpGet]
         [Route("customer-fs-caption/group/{fsCaptionGroupId}")]
-        public HttpResponseMessage GetCustomerFSCaption(HttpRequestMessage request, short fsCaptionGroupId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage GetCustomerFSCaption(  short fsCaptionGroupId)
+        {  try
                 {
                     var token = new TokenDecryptionHelper();
 
                     var data = fsCaptionRepo.GetCustomerFSCaption(fsCaptionGroupId);
                     if (!data.Any())
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = "No record found" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = data, count = data.Count() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, count = data.Count() });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"Error: {e.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"Error: {e.Message}" });
+                } 
         }
 
         [HttpGet]
         [Route("customer-fs-caption/{fsCaptionId}")]
-        public HttpResponseMessage GetCustomerFSCaptionById(HttpRequestMessage request, short fsCaptionId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage GetCustomerFSCaptionById(  short fsCaptionId)
+        {  try
                 {
                     var data = fsCaptionRepo.GetCustomerFSCaptionById(fsCaptionId);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = data, count = 1 }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, count = 1 });
                 }
                 catch (System.Exception ex)
                 {
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error updating this record {ex.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this record {ex.Message}" });
                 }
-
-                return response;
-            });
+                 
         }
 
 
         //[HttpGet("customer-fs-caption/unmapped/{fsCaptionGroupId}/customer/{customerId}/date/{fsDate}")]
         [HttpGet]
         [Route("customer-fs-caption/unmapped")]
-        public HttpResponseMessage GetUnmappedCustomerFSCaption(HttpRequestMessage request, short fsCaptionGroupId, int customerId, DateTime fsDate)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage GetUnmappedCustomerFSCaption(  short fsCaptionGroupId, int customerId, DateTime fsDate)
+        {   try
                 {
                     var token = new TokenDecryptionHelper();
 
                     var data = fsCaptionRepo.GetUnmappedCustomerFSCaption(fsCaptionGroupId, customerId, fsDate);
                     if (!data.Any())
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = "No record found" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = data, count = data.Count() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, count = data.Count() });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"Error: {e.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"Error: {e.Message}" });
+                } 
         }
 
         [HttpPut]
         [Route("customer-fs-caption/{fsCaptionId}")]
-        public HttpResponseMessage UpdateCustomerFSCaption(HttpRequestMessage request, int fsCaptionId, [FromBody] CustomerFSCaptionViewModel entity)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage UpdateCustomerFSCaption(  int fsCaptionId, [FromBody] CustomerFSCaptionViewModel entity)
+        {  try
                 {
                     var token = new TokenDecryptionHelper();
 
@@ -314,31 +264,25 @@ namespace FintrakBanking.APICore.Controllers
 
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record has been updated successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been updated successfully" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error updating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error updating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error updating this record {e.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this record {e.Message}" });
+                } 
         }
         #endregion
 
         #region Customer FS Caption Detail
         [HttpPost]
         [Route("customer-fs-caption-detail")]
-        public HttpResponseMessage AddCustomerFSCaptionDetail(HttpRequestMessage request, [FromBody] CustomerFSCaptionDetailViewModel entity)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage AddCustomerFSCaptionDetail(  [FromBody] CustomerFSCaptionDetailViewModel entity)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -352,30 +296,24 @@ namespace FintrakBanking.APICore.Controllers
                     var data = fsDetailRepo.AddCustomerFSCaptionDetail(entity);
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record has been created successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been created successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error creating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error creating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error creating this record {e.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating this record {e.Message}" });
+                } 
         }
 
         [HttpPost]
         [Route("customer-fs-caption-detail/multiple")]
-        public HttpResponseMessage AddMultipleCustomerFSCaptionDetail(HttpRequestMessage request, [FromBody] List<CustomerFSCaptionDetailViewModel> entities)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage AddMultipleCustomerFSCaptionDetail(  [FromBody] List<CustomerFSCaptionDetailViewModel> entities)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -396,86 +334,67 @@ namespace FintrakBanking.APICore.Controllers
                     var data = fsDetailRepo.AddMultipleCustomerFSCaptionDetail(entities);
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record(s) has been created successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record(s) has been created successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error creating these record(s)" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error creating these record(s)" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error creating these record(s) {e.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating these record(s) {e.Message}" });
+                } 
         }
 
         [HttpGet]
         [Route("customer-fs-caption-detail/customer/{customerId}")]
-        public HttpResponseMessage GetCustomerFSCaptionDetail(HttpRequestMessage request, int customerId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage GetCustomerFSCaptionDetail(  int customerId)
+        { try
                 {
                     var token = new TokenDecryptionHelper();
 
                     var data = fsDetailRepo.GetCustomerFSCaptionDetail(customerId);
                     if (!data.Any())
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = "No record found" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = data, count = data.Count() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, count = data.Count() });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"Error: {e.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"Error: {e.Message}" });
+                } 
         }
 
         [HttpGet]
         [Route("customer-fs-caption-detail/{fsDetailId}")]
-        public HttpResponseMessage GetCustomerFSCaptionById(HttpRequestMessage request, int fsDetailId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage GetCustomerFSCaptionById(  int fsDetailId)
+        { 
                 try
                 {
                     var data = fsDetailRepo.GetCustomerFSCaptionDetailById(fsDetailId);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = data, count = 1 }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, count = 1 });
                 }
                 catch (System.Exception ex)
                 {
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error updating this record {ex.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this record {ex.Message}" });
+                } 
         }
 
 
         [HttpPut]
         [Route("customer-fs-caption-detail/{fsDetailId}")]
-        public HttpResponseMessage UpdateCustomerFSCaptionDetail(HttpRequestMessage request, int fsDetailId, [FromBody] CustomerFSCaptionDetailViewModel entity)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage UpdateCustomerFSCaptionDetail(  int fsDetailId, [FromBody] CustomerFSCaptionDetailViewModel entity)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -490,28 +409,23 @@ namespace FintrakBanking.APICore.Controllers
 
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record has been updated successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been updated successfully" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error updating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error updating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error updating this record {e.Message}" }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this record {e.Message}" });
+                } 
         }
 
         [HttpDelete]
         [Route("customer-fs-caption-detail/{fsdetailId}")]
-        public HttpResponseMessage DeleteCustomerFSCaptionDetail(HttpRequestMessage request, int fsdetailId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage DeleteCustomerFSCaptionDetail(  int fsdetailId)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -527,25 +441,19 @@ namespace FintrakBanking.APICore.Controllers
 
                     fsDetailRepo.DeleteCustomerFSCaptionDetail(fsdetailId, user);
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = fsdetailId, message = "record has been deleted successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = fsdetailId, message = "record has been deleted successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                } 
         }
 
         [HttpDelete]
         [Route("customer-fs-caption-detail/multiple/{fsdetailIds}")]
-        public HttpResponseMessage DeleteMultileCustomerFSCaptionDetail(HttpRequestMessage request, List<int> fsdetailIds)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage DeleteMultileCustomerFSCaptionDetail(  List<int> fsdetailIds)
+        { try
                 {
                     var token = new TokenDecryptionHelper();
 
@@ -560,15 +468,13 @@ namespace FintrakBanking.APICore.Controllers
 
                     fsDetailRepo.DeleteMultileCustomerFSCaptionDetail(fsdetailIds, user);
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = 1, message = "record(s) has been deleted successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = 1, message = "record(s) has been deleted successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                } 
         }
 
         #endregion
@@ -576,11 +482,8 @@ namespace FintrakBanking.APICore.Controllers
         #region Customer FS Ratio Caption
         [HttpPost]
         [Route("customer-fs-ratio-caption")]
-        public HttpResponseMessage AddFSRatioCaption(HttpRequestMessage request, [FromBody] CustomerFSRatioCaptionViewModel model)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage AddFSRatioCaption(  [FromBody] CustomerFSRatioCaptionViewModel model)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -594,81 +497,65 @@ namespace FintrakBanking.APICore.Controllers
                     var data = fsRepo.AddFSRatioCaption(model);
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record has been created successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been created successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error creating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error creating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error creating this record {e.Message}" }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating this record {e.Message}" });
+                } 
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-caption")]
-        public HttpResponseMessage GetFSRatioCaption(HttpRequestMessage request)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage GetFSRatioCaption( )
+        {  try
                 {
                     var token = new TokenDecryptionHelper();
 
                     var data = fsRepo.GetFSRatioCaption(token.GetCompanyId);
                     if (!data.Any())
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = "No record found" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = data, count = data.Count() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, count = data.Count() });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"Error: {e.Message}" }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"Error: {e.Message}" });
+                } 
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
-        public HttpResponseMessage GetFSRatioCaptionById(HttpRequestMessage request, short ratioCaptionId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage GetFSRatioCaptionById(  short ratioCaptionId)
+        { 
                 try
                 {
                     var data = fsRepo.GetFSRatioCaptionById(ratioCaptionId);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data, count = 1 }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
                 }
                 catch (System.Exception ex)
                 {
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error updating this record {ex.Message}" }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this record {ex.Message}" });
+                } 
         }
 
         [HttpPut]
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
-        public HttpResponseMessage UpdateFSRatioCaption(HttpRequestMessage request, short ratioCaptionId, [FromBody] CustomerFSRatioCaptionViewModel model)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage UpdateFSRatioCaption(  short ratioCaptionId, [FromBody] CustomerFSRatioCaptionViewModel model)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -683,29 +570,24 @@ namespace FintrakBanking.APICore.Controllers
 
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record has been updated successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been updated successfully" });
 
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error updating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error updating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error updating this record {e.Message}" }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this record {e.Message}" });
+                } 
         }
 
         [HttpDelete]
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
-        public HttpResponseMessage DeleteFSRatioCaption(HttpRequestMessage request, short ratioCaptionId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage DeleteFSRatioCaption(  short ratioCaptionId)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -721,16 +603,14 @@ namespace FintrakBanking.APICore.Controllers
 
                     fsRepo.DeleteFSRatioCaption(ratioCaptionId, user);
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = ratioCaptionId, message = "record has been deleted successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = ratioCaptionId, message = "record has been deleted successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = ex.Message });
+                } 
         }
 
         #endregion
@@ -738,11 +618,8 @@ namespace FintrakBanking.APICore.Controllers
         #region FS Ratio Detail
         [HttpPost]
         [Route("customer-fs-ratio-detail")]
-        public HttpResponseMessage AddFSRatioDetail(HttpRequestMessage request, [FromBody] CustomerFSRatioDetailViewModel model)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage AddFSRatioDetail(  [FromBody] CustomerFSRatioDetailViewModel model)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -756,30 +633,24 @@ namespace FintrakBanking.APICore.Controllers
                     var data = fsRepo.AddFSRatioDetail(model);
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record has been created successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been created successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error creating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error creating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error creating this record {e.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating this record {e.Message}" });
+                } 
         }
 
         [HttpPost]
         [Route("customer-fs-ratio-detail/multiple")]
-        public HttpResponseMessage AddMultipleFSRatioDetail(HttpRequestMessage request, [FromBody] List<CustomerFSRatioDetailViewModel> models)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage AddMultipleFSRatioDetail(  [FromBody] List<CustomerFSRatioDetailViewModel> models)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -801,31 +672,24 @@ namespace FintrakBanking.APICore.Controllers
                     var data = fsRepo.AddMultipleFSRatioDetail(models);
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record(s) has been created successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record(s) has been created successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error creating these record(s)" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error creating these record(s)" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error creating these record(s) {e.Message}" }));
-                }
-
-                return response;
-
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating these record(s) {e.Message}" });
+                } 
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-detail/ratio-caption/{ratioCaptionId}/caption-group/{fsCaptionGroupId}")]
-        public HttpResponseMessage GetFSRatioDetail(HttpRequestMessage request, short ratioCaptionId, short fsCaptionGroupId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage GetFSRatioDetail(  short ratioCaptionId, short fsCaptionGroupId)
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -833,52 +697,40 @@ namespace FintrakBanking.APICore.Controllers
                     var data = fsRepo.GetFSRatioDetail(ratioCaptionId, fsCaptionGroupId, token.GetCompanyId);
                     if (!data.Any())
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = response, count = data.Count() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data , count = data.Count() });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"Error: {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
                 }
-
-                return response;
-            });
+             
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-detail/{ratioDetailId}")]
-        public HttpResponseMessage GetFSRatioDetailById(HttpRequestMessage request, int ratioDetailId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage GetFSRatioDetailById(  int ratioDetailId)
+        { 
                 try
                 {
                     var data = fsRepo.GetFSRatioDetailById(ratioDetailId);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data, count = 1 }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
                 }
                 catch (System.Exception ex)
                 {
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error updating this record {ex.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this record {ex.Message}" });
+                } 
         }
 
         [HttpPut]
         [Route("customer-fs-ratio-detail/{ratioDetailId}")]
-        public HttpResponseMessage UpdateFSRatioDetail(HttpRequestMessage request, int ratioDetailId, [FromBody] CustomerFSRatioDetailViewModel model)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage UpdateFSRatioDetail(  int ratioDetailId, [FromBody] CustomerFSRatioDetailViewModel model)
+        {  try
                 {
                     var token = new TokenDecryptionHelper();
 
@@ -892,31 +744,23 @@ namespace FintrakBanking.APICore.Controllers
 
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data, message = "The record has been updated successfully" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = true, result = data, message = "The record has been updated successfully" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error updating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "There was an error updating this record" });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"There was an error updating this record {e.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this record {e.Message}" });
+                } 
         }
 
         [HttpDelete]
         [Route("customer-fs-ratio-detail/{ratioDetailId}")]
-        public HttpResponseMessage DeleteFSRatioDetail(HttpRequestMessage request, int ratioDetailId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-
-                try
+        public HttpResponseMessage DeleteFSRatioDetail(  int ratioDetailId)
+        {   try
                 {
                     var token = new TokenDecryptionHelper();
 
@@ -931,28 +775,20 @@ namespace FintrakBanking.APICore.Controllers
 
                     fsRepo.DeleteFSRatioDetail(ratioDetailId, user);
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = ratioDetailId, message = "record has been deleted successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = ratioDetailId, message = "record has been deleted successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = ex.Message }));
-                }
-
-                return response;
-
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = ex.Message });
+                } 
         }
 
         [HttpDelete]
         [Route("customer-fs-ratio-detail/multiple/{ratioDetailId}")]
-        public HttpResponseMessage DeleteMultileFSRatioDetail(HttpRequestMessage request, List<int> ratioDetailIds)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage DeleteMultileFSRatioDetail(  List<int> ratioDetailIds)
+        { try
                 {
                     var token = new TokenDecryptionHelper();
 
@@ -967,79 +803,63 @@ namespace FintrakBanking.APICore.Controllers
 
                     fsRepo.DeleteMultipleFSRatioDetail(ratioDetailIds, user);
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = 1, message = "record(s) has been deleted successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = 1, message = "record(s) has been deleted successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = ex.Message }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = ex.Message });
+                } 
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-detail/divisor-type")]
-        public HttpResponseMessage GetAllDivisorType(HttpRequestMessage request)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage GetAllDivisorType( )
+        {   try
                 {
                     var token = new TokenDecryptionHelper();
 
                     var data = fsRepo.GetAllDivisorType();
                     if (!data.Any())
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = "No record found" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = response, count = data.Count() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, count = data.Count() });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"Error: {e.Message}" }));
-                }
-
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"Error: {e.Message}" });
+                } 
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-detail/value-type")]
-        public HttpResponseMessage GetAllValueType(HttpRequestMessage request)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+        public HttpResponseMessage GetAllValueType( )
+        {  try
                 {
                     var token = new TokenDecryptionHelper();
 
                     var data = fsRepo.GetAllValueType();
                     if (!data.Any())
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = "No record found" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = response, count = data.Count() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, count = data.Count() });
                 }
                 catch (Exception e)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"Error: {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"Error: {e.Message}" });
                 }
-
-                return response;
-            });
+             
         }
         #endregion
     }
