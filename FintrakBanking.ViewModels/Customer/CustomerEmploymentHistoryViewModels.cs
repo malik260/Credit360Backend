@@ -1,0 +1,21 @@
+﻿using System;
+
+namespace FintrakBanking.ViewModels.Customer
+{
+    public class CustomerEmploymentHistoryViewModels : GenaralEntity
+    {
+        public int placeOfWorkId { get; set; }
+        public string employerName { get; set; }
+        public string employerAddress { get; set; }
+        public int employerStateId { get; set; }
+        public int employerCountryId { get; set; }
+        public string officePhone { get; set; }
+        public DateTime employDate { get; set; }
+        public string previousEmployer { get; set; }
+        public int customerId { get; set; }
+        public bool active { get; set; }
+
+    }
+
+
+}

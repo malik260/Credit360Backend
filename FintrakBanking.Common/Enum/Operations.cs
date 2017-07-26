@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace FintrakBanking.Common.Enum
+{
+    public enum Operations
+    {
+        LoanApplication  = 1,
+        LoanBooking = 2,
+        StaffCreation = 3,
+        UserCreation = 4,
+        ProductsCreation = 5,
+        ProductsUpdate = 6
+    }
+}

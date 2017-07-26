@@ -1,0 +1,79 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{FFFC697E-F2BE-4D13-BA78-96985F3549EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{608FB296-B427-4919-B318-15B55AE7053A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.Common", "FintrakBanking.Common\FintrakBanking.Common.csproj", "{18CEFC20-2662-4757-94DE-23D623FFC98D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entities", "Entities", "{F1F704A2-83B8-4FC2-887D-80DA761B1F10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.Entities", "FintrakBanking.Entities\FintrakBanking.Entities.csproj", "{FB338A9B-9C63-46ED-A8C3-D75A08DAD6F0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{72D01754-2DEA-41A0-BC15-ACC77AFBF53B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.Interfaces", "FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj", "{6A7C3564-00B2-45D4-A40C-4B52A06C296A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{D07C7CF8-D25B-4D24-980D-57D67F88DFC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.Repositories", "FintrakBanking.Repositories\FintrakBanking.Repositories.csproj", "{2853B1D8-AF5F-4691-A513-9EB63A45DD4D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ViewModels", "ViewModels", "{03397FE3-2F2B-4A23-9D58-449BF254C9A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.ViewModels", "FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj", "{53A300F2-B78D-4708-BFB4-2B86DE64EC7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Business.Bootstrapper", "D:\Projects\Project\RenokSolutions\Business.Bootstrapper\Business.Bootstrapper.csproj", "{074E3B46-288C-4D11-B413-8275FAF667D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.APICore", "FintrakBanking.APICore\FintrakBanking.APICore.csproj", "{515D8B0B-9686-4662-9FA1-BF67415F9B7B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18CEFC20-2662-4757-94DE-23D623FFC98D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18CEFC20-2662-4757-94DE-23D623FFC98D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18CEFC20-2662-4757-94DE-23D623FFC98D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18CEFC20-2662-4757-94DE-23D623FFC98D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB338A9B-9C63-46ED-A8C3-D75A08DAD6F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB338A9B-9C63-46ED-A8C3-D75A08DAD6F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB338A9B-9C63-46ED-A8C3-D75A08DAD6F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB338A9B-9C63-46ED-A8C3-D75A08DAD6F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A7C3564-00B2-45D4-A40C-4B52A06C296A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A7C3564-00B2-45D4-A40C-4B52A06C296A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A7C3564-00B2-45D4-A40C-4B52A06C296A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A7C3564-00B2-45D4-A40C-4B52A06C296A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2853B1D8-AF5F-4691-A513-9EB63A45DD4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2853B1D8-AF5F-4691-A513-9EB63A45DD4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2853B1D8-AF5F-4691-A513-9EB63A45DD4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2853B1D8-AF5F-4691-A513-9EB63A45DD4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53A300F2-B78D-4708-BFB4-2B86DE64EC7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53A300F2-B78D-4708-BFB4-2B86DE64EC7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53A300F2-B78D-4708-BFB4-2B86DE64EC7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53A300F2-B78D-4708-BFB4-2B86DE64EC7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{074E3B46-288C-4D11-B413-8275FAF667D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{074E3B46-288C-4D11-B413-8275FAF667D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{074E3B46-288C-4D11-B413-8275FAF667D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{074E3B46-288C-4D11-B413-8275FAF667D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{515D8B0B-9686-4662-9FA1-BF67415F9B7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{515D8B0B-9686-4662-9FA1-BF67415F9B7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{515D8B0B-9686-4662-9FA1-BF67415F9B7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{515D8B0B-9686-4662-9FA1-BF67415F9B7B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{18CEFC20-2662-4757-94DE-23D623FFC98D} = {608FB296-B427-4919-B318-15B55AE7053A}
+		{FB338A9B-9C63-46ED-A8C3-D75A08DAD6F0} = {F1F704A2-83B8-4FC2-887D-80DA761B1F10}
+		{6A7C3564-00B2-45D4-A40C-4B52A06C296A} = {72D01754-2DEA-41A0-BC15-ACC77AFBF53B}
+		{2853B1D8-AF5F-4691-A513-9EB63A45DD4D} = {D07C7CF8-D25B-4D24-980D-57D67F88DFC3}
+		{53A300F2-B78D-4708-BFB4-2B86DE64EC7D} = {03397FE3-2F2B-4A23-9D58-449BF254C9A6}
+		{074E3B46-288C-4D11-B413-8275FAF667D3} = {F1F704A2-83B8-4FC2-887D-80DA761B1F10}
+		{515D8B0B-9686-4662-9FA1-BF67415F9B7B} = {FFFC697E-F2BE-4D13-BA78-96985F3549EB}
+	EndGlobalSection
+EndGlobal

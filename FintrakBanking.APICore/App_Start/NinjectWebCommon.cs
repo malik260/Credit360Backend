@@ -1,0 +1,148 @@
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(FintrakBanking.APICore.App_Start.NinjectWebCommon), "Start")]
+[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(FintrakBanking.APICore.App_Start.NinjectWebCommon), "Stop")]
+
+namespace FintrakBanking.APICore.App_Start
+{
+    using System;
+    using System.Web;
+
+    using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+
+    using Ninject;
+    using Ninject.Web.Common;
+    using System.Web.Http;
+    using WebApiContrib.IoC.Ninject;
+    using FintrakBanking.Entities.Models;
+    using FintrakBanking.Interfaces.Admin;
+    using FintrakBanking.Interfaces.AppEmail;
+    using FintrakBanking.Interfaces.CASA;
+    using FintrakBanking.Interfaces.Credit;
+    using FintrakBanking.Interfaces.Customer;
+    using FintrakBanking.Interfaces.ErrorLogger;
+    using FintrakBanking.Interfaces.Helper;
+    using FintrakBanking.Interfaces.Setups;
+    using FintrakBanking.Interfaces.Setups.Approval;
+    using FintrakBanking.Interfaces.Setups.Credit;
+    using FintrakBanking.Interfaces.Setups.Finance;
+    using FintrakBanking.Interfaces.Setups.General;
+    using FintrakBanking.Interfaces.Setups.Risk;
+    using FintrakBanking.Interfaces.WorkFlow;
+    using FintrakBanking.Repositories.Admin;
+    using FintrakBanking.Repositories.AppEmail;
+    using FintrakBanking.Repositories.CASA;
+    using FintrakBanking.Repositories.Credit;
+    using FintrakBanking.Repositories.Customer;
+    using FintrakBanking.Repositories.ErrorLogger;
+    using FintrakBanking.Repositories.Helper;
+    using FintrakBanking.Repositories.Setups.Approval;
+    using FintrakBanking.Repositories.Setups.Finance;
+    using FintrakBanking.Repositories.Setups.General;
+    using FintrakBanking.Repositories.Setups.Risk;
+    using FintrakBanking.Repositories.WorkFlow;
+
+    public static class NinjectWebCommon 
+    {
+        private static readonly Bootstrapper bootstrapper = new Bootstrapper();
+
+        /// <summary>
+        /// Starts the application
+        /// </summary>
+        public static void Start() 
+        {
+            DynamicModuleUtility.RegisterModule(typeof(OnePerRequestHttpModule));
+            DynamicModuleUtility.RegisterModule(typeof(NinjectHttpModule));
+            bootstrapper.Initialize(CreateKernel);
+        }
+        
+        /// <summary>
+        /// Stops the application.
+        /// </summary>
+        public static void Stop()
+        {
+            bootstrapper.ShutDown();
+        }
+        
+        /// <summary>
+        /// Creates the kernel that will manage your application.
+        /// </summary>
+        /// <returns>The created kernel.</returns>
+        private static IKernel CreateKernel()
+        {
+            var kernel = new StandardKernel();
+            try
+            {
+                kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
+                kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
+                // Support Ninject for dependency injection in WebAPI
+                GlobalConfiguration.Configuration.DependencyResolver =
+                  new NinjectResolver(kernel);
+                RegisterServices(kernel);
+                return kernel;
+            }
+            catch
+            {
+                kernel.Dispose();
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Load your modules or register your services here!
+        /// </summary>
+        /// <param name="kernel">The kernel.</param>
+        private static void RegisterServices(IKernel kernel)
+        {
+            kernel.Bind<FinTrakBankingContext>().To<FinTrakBankingContext>();
+
+            kernel.Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
+            kernel.Bind<IAuthenticationRepository>().To<AuthenticationRepository>();
+            kernel.Bind<IAuthorizationRepository>().To<AuthorizationRepository>();
+            kernel.Bind<IChartOfAccountRepository>().To<ChartOfAccountRepository>();
+            kernel.Bind<IAccountCategoryRepository>().To<AccountCategoryRepository>();
+            kernel.Bind<IAccountTypeRepository>().To<AccountTypeRepository>();
+            kernel.Bind<ICompanyRepository>().To<CompanyRepository>();
+            kernel.Bind<IBranchRepository>().To<BranchRepository>();
+            kernel.Bind<IRiskSetupRepository>().To<RiskSetupRepository>();
+            kernel.Bind<IStaffRepository>().To<StaffRepository>();
+            kernel.Bind<IDepartmentRepository>().To<DepartmentRepository>();
+            kernel.Bind<IMisInfoRepository>().To<MisInfoRepository>();
+            kernel.Bind<ICollateralTypeRepository>().To<CollateralTypeRepository>();
+            kernel.Bind<IAccountSensitivityRepository>().To<AccountSensitivityRepository>();
+            kernel.Bind<IProductRepository>().To<ProductRepository>();
+            kernel.Bind<IJobTitleRepository>().To<JobTitleRepository>();
+            kernel.Bind<IRankRepository>().To<RankRepository>();
+            kernel.Bind<IFeeRepository>().To<FeeRepository>();
+            kernel.Bind<IProductCollateralTypeRepository>().To<ProductCollateralTypeRepository>();
+            kernel.Bind<IProductFeeRepository>().To<ProductFeeRepository>();
+            kernel.Bind<ICustomerRepository>().To<CustomerRepository>();
+            kernel.Bind<ICustomerGroupRepository>().To<CustomerGroupRepository>();
+            kernel.Bind<IAuditTrailRepository>().To<AuditTrailRepository>();
+            kernel.Bind<ICultureHelper>().To<CultureHelper>();
+            kernel.Bind<ICasaRepository>().To<CasaRepository>();
+            kernel.Bind<IErrorLogRepository>().To<ErrorLogRepository>();
+           // kernel.Bind<ICollateralRepository>().To<CollateralRepository>();
+            kernel.Bind<IEmailRepository>().To<EmailRepository>();
+            kernel.Bind<IAdminRepository>().To<AdminRepository>();
+            kernel.Bind<ILoanCovenantRepository>().To<LoanCovenantRepository>();
+            kernel.Bind<ICountryRepository>().To<CountryRepository>();
+            kernel.Bind<ICustomerFSCaptionGroupRepository>().To<CustomerFSCaptionGroupRepository>();
+            kernel.Bind<ICustomerFSCaptionRepository>().To<CustomerFSCaptionRepository>();
+            kernel.Bind<ICustomerFSCaptionDetailRepository>().To<CustomerFSCaptionDetailRepository>();
+            kernel.Bind<ICustomFieldsRepository>().To<CustomFieldsRepository>();
+            kernel.Bind<ICustomerFSRatioRepository>().To<CustomerFSRatioRepository>();
+            kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
+            kernel.Bind<IChecklistRepository>().To<ChecklistRepository>();
+            kernel.Bind<ILoanRepository>().To<LoanRepository>();
+            kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
+            kernel.Bind<ILimitRepository>().To<LimitRepository>();
+            kernel.Bind<IApprovalGroupMappingRepository>().To<ApprovalGroupMappingRepository>();
+            kernel.Bind<IWorkFlowRepository>().To<WorkFlowRepository>();
+            kernel.Bind<ILimitRepository>().To<LimitRepository>();
+            kernel.Bind<IApprovalGroupRepository>().To<ApprovalGroupRepository>();
+            kernel.Bind<IApprovalLevelRepository>().To<ApprovalLevelRepository>();
+            kernel.Bind<IApprovalLevelStaffRepository>().To<ApprovalLevelStaffRepository>();
+            kernel.Bind<ILoanApplicationRepository>().To<LoanApplicationRepository>();
+            kernel.Bind<ICanAuthorizationRepository>().To<CanAuthorizationRepository>();
+        }        
+    }
+}

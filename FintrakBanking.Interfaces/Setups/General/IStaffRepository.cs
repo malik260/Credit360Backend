@@ -1,0 +1,48 @@
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace FintrakBanking.Interfaces.Setups.General
+{
+    public interface IStaffRepository
+    {
+        bool UpdateStaff(int staffid, StaffInfoViewModel staffModel);
+
+        //bool AddStaff(StaffInfoViewModel staffModel);
+
+        bool AddTempStaff(StaffInfoViewModel staffModel);
+
+        bool GoForApproval(ApprovalViewModel entity);
+
+        IEnumerable<StaffInfoViewModel> GetAllStaff();
+
+        IEnumerable<StaffInfoViewModel> GetStaffAwaitingApprovals(int staffId, int companyId);
+
+        IEnumerable<StaffViewModel> GetStaffName();
+
+        bool DeleteStaff(int staffId, UserInfo user);
+
+        bool IsStaffCodeAlreadyExist(string staffCode);
+
+        bool IsStaffExist(string staffCode);
+
+        StaffInfoViewModel GetStaffById(int staffId);
+
+        StaffDetailsModel GetTempStaffDetail(int staffId);
+        IEnumerable<StaffDetailsModel> GetStaffDetails(int companyId);
+        StaffDetailsModel GetStaffDetail(string staffCode, int companyId);
+
+        //IEnumerable<StaffDetailsModel> GetTempStaffDetails();
+        
+
+        IEnumerable<simpleStaffModel> GetStaffNames(); 
+        IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
+
+        IQueryable<simpleStaffModel> SearchStaff(string searchString, int companyId);
+
+    }
+}

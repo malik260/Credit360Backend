@@ -1,0 +1,26 @@
+﻿using System;
+
+namespace FintrakBanking.ViewModels.Setups.Finance
+{
+    public class ChartOfAccountViewModel : GenaralEntity
+    {
+        public int accountId { get; set; }
+        public string accountCode { get; set; }
+        public string accountName { get; set; }
+        public int accountTypeId { get; set; }
+        public string accountTypeName { get; set; }
+        public short accountCategoryId { get; set; }
+        public string accountCategoryName { get; set; }
+        
+        public short branchId { get; set; }  
+        public string currencyName { get; set; }
+        public bool systemUse { get; set; }
+        public int accountStatusId { get; set; }
+        public bool branchSpecific { get; set; }
+        public string oldAccountId { get; set; }
+        public short fsCaptionId { get; set; }
+         
+
+        public string accountDetail { get { return this.accountCode + " -- " + this.accountName + " -- " + accountCategoryName; } }
+    }
+}

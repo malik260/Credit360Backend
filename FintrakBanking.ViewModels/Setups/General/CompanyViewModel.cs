@@ -1,0 +1,44 @@
+﻿using System;
+
+namespace FintrakBanking.ViewModels.Setups.General
+{
+    public class CompanyViewModel
+    {
+        public int companyId { get; set; }
+        public string companyName { get; set; }
+        public string address { get; set; }
+        public string telephone { get; set; }
+        public string email { get; set; }
+        public DateTime? dateOfIncorporation { get; set; }
+        public short? natureOfBusinessId { get; set; }
+        public string nameOfScheme { get; set; }
+        public string functionsRegistered { get; set; }
+        public decimal? authorisedShareCapital { get; set; }
+        public string nameOfRegistrar { get; set; }
+        public string nameOfTrustees { get; set; }
+        public string formerManagersTrustees { get; set; }
+        public DateTime? dateOfRenewalOfRegistration { get; set; }
+        public DateTime? dateOfCommencement { get; set; }
+        public int? initialFloatation { get; set; }
+        public int? initialSubscription { get; set; }
+        public string registeredBy { get; set; }
+        public string trusteesAddress { get; set; }
+        public string investmentObjective { get; set; }
+        public string website { get; set; }
+        public string ebusinessCode { get; set; }
+        public string eoyprofitAndLossGl { get; set; }
+        public int countryId { get; set; }
+        public string country { get; set; }
+        public short currencyId { get; set; }
+        public short companyClassId { get; set; }
+        public short companyTypeId { get; set; }
+        public short accountingStandardId { get; set; }
+        public short managementTypeId { get; set; }
+        public int parentId { get; set; }
+        public byte[] CompanyLogo { get; set; }
+        public int createdBy { get; set; }
+        public int? lastUpdatedBy { get; set; }
+        public DateTime? dateTimeCreated { get; set; }
+        public DateTime? dateTimeUpdated { get; set; }
+    }
+}

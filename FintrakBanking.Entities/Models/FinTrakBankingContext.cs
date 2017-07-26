@@ -1,0 +1,1567 @@
+namespace FintrakBanking.Entities.Models
+{
+    using System;
+    using System.Data.Entity;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Linq;
+
+    public partial class FinTrakBankingContext : DbContext
+    {
+        public FinTrakBankingContext()
+            : base("name=FinTrakBankingContext")
+        {
+        }
+
+        public virtual DbSet<tbl_Accounting_Standard> tbl_Accounting_Standard { get; set; }
+        public virtual DbSet<tbl_Activity_Parent> tbl_Activity_Parent { get; set; }
+        public virtual DbSet<tbl_Application_Setup> tbl_Application_Setup { get; set; }
+        public virtual DbSet<tbl_Approval_Group> tbl_Approval_Group { get; set; }
+        public virtual DbSet<tbl_Approval_Group_Mapping> tbl_Approval_Group_Mapping { get; set; }
+        public virtual DbSet<tbl_Approval_Level> tbl_Approval_Level { get; set; }
+        public virtual DbSet<tbl_Approval_Level_Staff> tbl_Approval_Level_Staff { get; set; }
+        public virtual DbSet<tbl_Approval_State> tbl_Approval_State { get; set; }
+        public virtual DbSet<tbl_Approval_Status> tbl_Approval_Status { get; set; }
+        public virtual DbSet<tbl_Approval_Trail> tbl_Approval_Trail { get; set; }
+        public virtual DbSet<tbl_Audit> tbl_Audit { get; set; }
+        public virtual DbSet<tbl_Audit_Type> tbl_Audit_Type { get; set; }
+        public virtual DbSet<tbl_Branch> tbl_Branch { get; set; }
+        public virtual DbSet<tbl_CASA> tbl_CASA { get; set; }
+        public virtual DbSet<tbl_CASA_AccountStatus> tbl_CASA_AccountStatus { get; set; }
+        public virtual DbSet<tbl_CASA_PostNoStatus> tbl_CASA_PostNoStatus { get; set; }
+        public virtual DbSet<tbl_Checklist_Definition> tbl_Checklist_Definition { get; set; }
+        public virtual DbSet<tbl_Checklist_Detail> tbl_Checklist_Detail { get; set; }
+        public virtual DbSet<tbl_CheckList_Item> tbl_CheckList_Item { get; set; }
+        public virtual DbSet<tbl_Checklist_Status> tbl_Checklist_Status { get; set; }
+        public virtual DbSet<tbl_Checklist_TargetType> tbl_Checklist_TargetType { get; set; }
+        public virtual DbSet<tbl_City> tbl_City { get; set; }
+        public virtual DbSet<tbl_City_Class> tbl_City_Class { get; set; }
+        public virtual DbSet<tbl_Company> tbl_Company { get; set; }
+        public virtual DbSet<tbl_Company_Class> tbl_Company_Class { get; set; }
+        public virtual DbSet<tbl_Company_Type> tbl_Company_Type { get; set; }
+        public virtual DbSet<tbl_Country> tbl_Country { get; set; }
+        public virtual DbSet<tbl_Currency> tbl_Currency { get; set; }
+        public virtual DbSet<tbl_Currency_Rate> tbl_Currency_Rate { get; set; }
+        public virtual DbSet<tbl_Custom_Field_Data_Upload> tbl_Custom_Field_Data_Upload { get; set; }
+        public virtual DbSet<tbl_Custom_Field_Option> tbl_Custom_Field_Option { get; set; }
+        public virtual DbSet<tbl_Custom_Fields> tbl_Custom_Fields { get; set; }
+        public virtual DbSet<tbl_Custom_Fields_Data> tbl_Custom_Fields_Data { get; set; }
+        public virtual DbSet<tbl_Custom_HostPage> tbl_Custom_HostPage { get; set; }
+        public virtual DbSet<tbl_Customer> tbl_Customer { get; set; }
+        public virtual DbSet<tbl_Customer_Account_KYC_Item> tbl_Customer_Account_KYC_Item { get; set; }
+        public virtual DbSet<tbl_Customer_Address> tbl_Customer_Address { get; set; }
+        public virtual DbSet<tbl_Customer_BVN> tbl_Customer_BVN { get; set; }
+        public virtual DbSet<tbl_Customer_CompanyInfomation> tbl_Customer_CompanyInfomation { get; set; }
+        public virtual DbSet<tbl_Customer_Custom_Field> tbl_Customer_Custom_Field { get; set; }
+        public virtual DbSet<tbl_Customer_Edit_History> tbl_Customer_Edit_History { get; set; }
+        public virtual DbSet<tbl_Customer_EducationLevelType> tbl_Customer_EducationLevelType { get; set; }
+        public virtual DbSet<tbl_Customer_EmploymentHistory> tbl_Customer_EmploymentHistory { get; set; }
+        public virtual DbSet<tbl_Customer_FS_Caption> tbl_Customer_FS_Caption { get; set; }
+        public virtual DbSet<tbl_Customer_FS_Caption_Detail> tbl_Customer_FS_Caption_Detail { get; set; }
+        public virtual DbSet<tbl_Customer_FS_Caption_Group> tbl_Customer_FS_Caption_Group { get; set; }
+        public virtual DbSet<tbl_Customer_FS_Ratio_Caption> tbl_Customer_FS_Ratio_Caption { get; set; }
+        public virtual DbSet<tbl_Customer_FS_Ratio_Detail> tbl_Customer_FS_Ratio_Detail { get; set; }
+        public virtual DbSet<tbl_Customer_FS_Ratio_DivisorType> tbl_Customer_FS_Ratio_DivisorType { get; set; }
+        public virtual DbSet<tbl_Customer_FS_Ratio_ValueType> tbl_Customer_FS_Ratio_ValueType { get; set; }
+        public virtual DbSet<tbl_Customer_Group> tbl_Customer_Group { get; set; }
+        public virtual DbSet<tbl_Customer_Group_Mapping> tbl_Customer_Group_Mapping { get; set; }
+        public virtual DbSet<tbl_Customer_Group_RelationshipType> tbl_Customer_Group_RelationshipType { get; set; }
+        public virtual DbSet<tbl_Customer_Guardian> tbl_Customer_Guardian { get; set; }
+        public virtual DbSet<tbl_Customer_Identification> tbl_Customer_Identification { get; set; }
+        public virtual DbSet<tbl_Customer_IdentificationModeType> tbl_Customer_IdentificationModeType { get; set; }
+        public virtual DbSet<tbl_Customer_NextOfKin> tbl_Customer_NextOfKin { get; set; }
+        public virtual DbSet<tbl_Customer_PhoneContact> tbl_Customer_PhoneContact { get; set; }
+        public virtual DbSet<tbl_Customer_Sensitivity_Level> tbl_Customer_Sensitivity_Level { get; set; }
+        public virtual DbSet<tbl_Customer_Type> tbl_Customer_Type { get; set; }
+        public virtual DbSet<tbl_Day_Count> tbl_Day_Count { get; set; }
+        public virtual DbSet<tbl_Department> tbl_Department { get; set; }
+        public virtual DbSet<tbl_ErrorLog> tbl_ErrorLog { get; set; }
+        public virtual DbSet<tbl_Fee> tbl_Fee { get; set; }
+        public virtual DbSet<tbl_Fee_Amortisation_Type> tbl_Fee_Amortisation_Type { get; set; }
+        public virtual DbSet<tbl_Fee_Interval> tbl_Fee_Interval { get; set; }
+        public virtual DbSet<tbl_Fee_Target> tbl_Fee_Target { get; set; }
+        public virtual DbSet<tbl_Fee_Type> tbl_Fee_Type { get; set; }
+        public virtual DbSet<tbl_FinanceCurrentDate> tbl_FinanceCurrentDate { get; set; }
+        public virtual DbSet<tbl_Frequency_Type> tbl_Frequency_Type { get; set; }
+        public virtual DbSet<tbl_KYC_Item> tbl_KYC_Item { get; set; }
+        public virtual DbSet<tbl_Management_Type> tbl_Management_Type { get; set; }
+        public virtual DbSet<tbl_MIS_Info> tbl_MIS_Info { get; set; }
+        public virtual DbSet<tbl_MIS_Type> tbl_MIS_Type { get; set; }
+        public virtual DbSet<tbl_Nature_Of_Business> tbl_Nature_Of_Business { get; set; }
+        public virtual DbSet<tbl_Operations> tbl_Operations { get; set; }
+        public virtual DbSet<tbl_Operations_Type> tbl_Operations_Type { get; set; }
+        public virtual DbSet<tbl_Product> tbl_Product { get; set; }
+        public virtual DbSet<tbl_Product_Category> tbl_Product_Category { get; set; }
+        public virtual DbSet<tbl_Product_Class> tbl_Product_Class { get; set; }
+        public virtual DbSet<tbl_Product_Class_Type> tbl_Product_Class_Type { get; set; }
+        public virtual DbSet<tbl_Product_Currency> tbl_Product_Currency { get; set; }
+        public virtual DbSet<tbl_Product_Fee> tbl_Product_Fee { get; set; }
+        public virtual DbSet<tbl_Product_Group> tbl_Product_Group { get; set; }
+        public virtual DbSet<tbl_Product_Price_Index> tbl_Product_Price_Index { get; set; }
+        public virtual DbSet<tbl_Product_Type> tbl_Product_Type { get; set; }
+        public virtual DbSet<tbl_Profile_Activity> tbl_Profile_Activity { get; set; }
+        public virtual DbSet<tbl_Profile_AdditionalActivity> tbl_Profile_AdditionalActivity { get; set; }
+        public virtual DbSet<tbl_Profile_Group> tbl_Profile_Group { get; set; }
+        public virtual DbSet<tbl_Profile_Group_Activity> tbl_Profile_Group_Activity { get; set; }
+        public virtual DbSet<tbl_Profile_Priviledge> tbl_Profile_Priviledge { get; set; }
+        public virtual DbSet<tbl_Profile_Priviledge_Activity> tbl_Profile_Priviledge_Activity { get; set; }
+        public virtual DbSet<tbl_Profile_User> tbl_Profile_User { get; set; }
+        public virtual DbSet<tbl_Profile_UserGroup> tbl_Profile_UserGroup { get; set; }
+        public virtual DbSet<tbl_Sector> tbl_Sector { get; set; }
+        public virtual DbSet<tbl_Staff> tbl_Staff { get; set; }
+        public virtual DbSet<tbl_Staff_JobTitle> tbl_Staff_JobTitle { get; set; }
+        public virtual DbSet<tbl_Staff_Organogram> tbl_Staff_Organogram { get; set; }
+        public virtual DbSet<tbl_Staff_Rank> tbl_Staff_Rank { get; set; }
+        public virtual DbSet<tbl_State> tbl_State { get; set; }
+        public virtual DbSet<tbl_Sub_Sector> tbl_Sub_Sector { get; set; }
+        public virtual DbSet<tbl_Tenor_Mode> tbl_Tenor_Mode { get; set; }
+        public virtual DbSet<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
+        public virtual DbSet<tbl_Collateral_Deposit> tbl_Collateral_Deposit { get; set; }
+        public virtual DbSet<tbl_Collateral_Documents> tbl_Collateral_Documents { get; set; }
+        public virtual DbSet<tbl_Collateral_Gaurantee> tbl_Collateral_Gaurantee { get; set; }
+        public virtual DbSet<tbl_Collateral_InsurancePolicy> tbl_Collateral_InsurancePolicy { get; set; }
+        public virtual DbSet<tbl_Collateral_Machine_Detail> tbl_Collateral_Machine_Detail { get; set; }
+        public virtual DbSet<tbl_Collateral_Marketable_Security> tbl_Collateral_Marketable_Security { get; set; }
+        public virtual DbSet<tbl_Collateral_Miscellaneous> tbl_Collateral_Miscellaneous { get; set; }
+        public virtual DbSet<tbl_Collateral_Miscellaneous_Notes> tbl_Collateral_Miscellaneous_Notes { get; set; }
+        public virtual DbSet<tbl_Collateral_PreciousMetal> tbl_Collateral_PreciousMetal { get; set; }
+        public virtual DbSet<tbl_Collateral_Property> tbl_Collateral_Property { get; set; }
+        public virtual DbSet<tbl_Collateral_SeniorityOfClaims> tbl_Collateral_SeniorityOfClaims { get; set; }
+        public virtual DbSet<tbl_Collateral_Type> tbl_Collateral_Type { get; set; }
+        public virtual DbSet<tbl_Collateral_Type_Sub> tbl_Collateral_Type_Sub { get; set; }
+        public virtual DbSet<tbl_Collateral_ValueBase_Type> tbl_Collateral_ValueBase_Type { get; set; }
+        public virtual DbSet<tbl_Collateral_Valuers> tbl_Collateral_Valuers { get; set; }
+        public virtual DbSet<tbl_Collateral_ValuerType> tbl_Collateral_ValuerType { get; set; }
+        public virtual DbSet<tbl_Collateral_Vehicle> tbl_Collateral_Vehicle { get; set; }
+        public virtual DbSet<tbl_CollateralType_Policy> tbl_CollateralType_Policy { get; set; }
+        public virtual DbSet<tbl_Credit_Assessment_Memorandum> tbl_Credit_Assessment_Memorandum { get; set; }
+        public virtual DbSet<tbl_Credit_Assessment_Supporting_Document> tbl_Credit_Assessment_Supporting_Document { get; set; }
+        public virtual DbSet<tbl_Credit_Template> tbl_Credit_Template { get; set; }
+        public virtual DbSet<tbl_Guarantor_Document> tbl_Guarantor_Document { get; set; }
+        public virtual DbSet<tbl_Limit> tbl_Limit { get; set; }
+        public virtual DbSet<tbl_Limit_Detail> tbl_Limit_Detail { get; set; }
+        public virtual DbSet<tbl_Limit_Metric> tbl_Limit_Metric { get; set; }
+        public virtual DbSet<tbl_Limit_Type> tbl_Limit_Type { get; set; }
+        public virtual DbSet<tbl_Limit_Value_Type> tbl_Limit_Value_Type { get; set; }
+        public virtual DbSet<tbl_Loan> tbl_Loan { get; set; }
+        public virtual DbSet<tbl_Loan_Amortization_Schedule> tbl_Loan_Amortization_Schedule { get; set; }
+        public virtual DbSet<tbl_Loan_Application> tbl_Loan_Application { get; set; }
+        public virtual DbSet<tbl_Loan_Comment> tbl_Loan_Comment { get; set; }
+        public virtual DbSet<tbl_Loan_Covenant_Detail> tbl_Loan_Covenant_Detail { get; set; }
+        public virtual DbSet<tbl_Loan_Covenant_Type> tbl_Loan_Covenant_Type { get; set; }
+        public virtual DbSet<tbl_Loan_Guarantor> tbl_Loan_Guarantor { get; set; }
+        public virtual DbSet<tbl_Loan_Operation> tbl_Loan_Operation { get; set; }
+        public virtual DbSet<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
+        public virtual DbSet<tbl_Loan_Schedule_Category> tbl_Loan_Schedule_Category { get; set; }
+        public virtual DbSet<tbl_Loan_Schedule_Type> tbl_Loan_Schedule_Type { get; set; }
+        public virtual DbSet<tbl_Loan_Status> tbl_Loan_Status { get; set; }
+        public virtual DbSet<tbl_Loan_Type> tbl_Loan_Type { get; set; }
+        public virtual DbSet<tbl_Loan_Type_Batch> tbl_Loan_Type_Batch { get; set; }
+        public virtual DbSet<tbl_MachineValue_Base> tbl_MachineValue_Base { get; set; }
+        public virtual DbSet<tbl_Product_CollateralType> tbl_Product_CollateralType { get; set; }
+        public virtual DbSet<tbl_Risk_Assessment_Index> tbl_Risk_Assessment_Index { get; set; }
+        public virtual DbSet<tbl_Risk_Assessment_Result> tbl_Risk_Assessment_Result { get; set; }
+        public virtual DbSet<tbl_Risk_Assessment_Title> tbl_Risk_Assessment_Title { get; set; }
+        public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
+        public virtual DbSet<tbl_Risk_RiskAssessment_Result> tbl_Risk_RiskAssessment_Result { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
+        public virtual DbSet<tbl_COT> tbl_COT { get; set; }
+        public virtual DbSet<tbl_LoanDetails> tbl_LoanDetails { get; set; }
+        public virtual DbSet<tbl_Account_Category> tbl_Account_Category { get; set; }
+        public virtual DbSet<tbl_Account_Type> tbl_Account_Type { get; set; }
+        public virtual DbSet<tbl_Chart_Of_Account> tbl_Chart_Of_Account { get; set; }
+        public virtual DbSet<tbl_Chart_Of_Account_Currency> tbl_Chart_Of_Account_Currency { get; set; }
+        public virtual DbSet<tbl_Financial_Statement_Caption> tbl_Financial_Statement_Caption { get; set; }
+        public virtual DbSet<tbl_Financial_Statement_Type> tbl_Financial_Statement_Type { get; set; }
+        public virtual DbSet<tbl_Temp_Staff> tbl_Temp_Staff { get; set; }
+        public virtual DbSet<tbl_Deal_Classification> tbl_Deal_Classification { get; set; }
+        public virtual DbSet<tbl_Deal_Type> tbl_Deal_Type { get; set; }
+        public virtual DbSet<tbl_Stock> tbl_Stock { get; set; }
+        public virtual DbSet<CollateralDeposit_CashType> CollateralDeposit_CashType { get; set; }
+        public object TblApprovalLevel { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<tbl_Activity_Parent>()
+                .HasMany(e => e.tbl_Profile_Activity)
+                .WithRequired(e => e.tbl_Activity_Parent)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Group>()
+                .HasMany(e => e.tbl_Approval_Group_Mapping)
+                .WithRequired(e => e.tbl_Approval_Group)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Group_Mapping>()
+                .HasMany(e => e.tbl_Approval_Level)
+                .WithRequired(e => e.tbl_Approval_Group_Mapping)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Level>()
+                .Property(e => e.MinimumAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Approval_Level>()
+                .HasMany(e => e.tbl_Approval_Level_Staff)
+                .WithRequired(e => e.tbl_Approval_Level)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Level>()
+                .HasMany(e => e.tbl_Approval_Trail)
+                .WithOptional(e => e.tbl_Approval_Level)
+                .HasForeignKey(e => e.FromApprovalLevelId);
+
+            modelBuilder.Entity<tbl_Approval_Level>()
+                .HasMany(e => e.tbl_Approval_Trail1)
+                .WithRequired(e => e.tbl_Approval_Level1)
+                .HasForeignKey(e => e.ToApprovalLevelId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Level>()
+                .HasMany(e => e.tbl_Credit_Template)
+                .WithRequired(e => e.tbl_Approval_Level)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Level_Staff>()
+                .Property(e => e.MaximumAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Approval_State>()
+                .HasMany(e => e.tbl_Approval_Trail)
+                .WithRequired(e => e.tbl_Approval_State)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Status>()
+                .HasMany(e => e.tbl_Approval_Trail)
+                .WithRequired(e => e.tbl_Approval_Status)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Status>()
+                .HasMany(e => e.tbl_Temp_Staff)
+                .WithRequired(e => e.tbl_Approval_Status)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Branch>()
+                .HasMany(e => e.tbl_Audit)
+                .WithRequired(e => e.tbl_Branch)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Branch>()
+                .HasMany(e => e.tbl_Chart_Of_Account)
+                .WithRequired(e => e.tbl_Branch)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Branch>()
+                .HasMany(e => e.tbl_Customer)
+                .WithRequired(e => e.tbl_Branch)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Branch>()
+                .HasMany(e => e.tbl_CASA)
+                .WithRequired(e => e.tbl_Branch)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Branch>()
+                .HasMany(e => e.tbl_Loan_Application)
+                .WithRequired(e => e.tbl_Branch)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Branch>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Branch)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_CASA>()
+                .Property(e => e.AvailableBalance)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_CASA>()
+                .Property(e => e.LedgerBalance)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_CASA>()
+                .Property(e => e.TeamMISCode)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_CASA>()
+                .Property(e => e.OverdraftAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_CASA>()
+                .Property(e => e.OverdraftInterestRate)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_CASA>()
+                .Property(e => e.LienAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_CASA>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_CASA)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_CASA_AccountStatus>()
+                .HasMany(e => e.tbl_CASA)
+                .WithRequired(e => e.tbl_CASA_AccountStatus)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_CASA_PostNoStatus>()
+                .HasMany(e => e.tbl_CASA)
+                .WithRequired(e => e.tbl_CASA_PostNoStatus)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Checklist_Definition>()
+                .HasMany(e => e.tbl_Checklist_Detail)
+                .WithRequired(e => e.tbl_Checklist_Definition)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_CheckList_Item>()
+                .HasMany(e => e.tbl_Checklist_Definition)
+                .WithRequired(e => e.tbl_CheckList_Item)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Checklist_Status>()
+                .HasMany(e => e.tbl_Checklist_Detail)
+                .WithRequired(e => e.tbl_Checklist_Status)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Checklist_TargetType>()
+                .HasMany(e => e.tbl_Checklist_Detail)
+                .WithRequired(e => e.tbl_Checklist_TargetType)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_City>()
+                .HasMany(e => e.tbl_Collateral_Property)
+                .WithRequired(e => e.tbl_City)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_City_Class>()
+                .HasMany(e => e.tbl_City)
+                .WithRequired(e => e.tbl_City_Class)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .Property(e => e.AuthorisedShareCapital)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Approval_Group)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Approval_Trail)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Branch)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_CASA)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Checklist_Definition)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Product)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Chart_Of_Account)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Collateral_Customer)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Company1)
+                .WithOptional(e => e.tbl_Company2)
+                .HasForeignKey(e => e.ParentId);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Customer_FS_Caption_Group)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Customer_FS_Ratio_Caption)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Customer)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Limit)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Loan_Application)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Product_CollateralType)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Fee)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Product_Fee)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Product_Price_Index)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Staff)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Stock)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Temp_Staff)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Country>()
+                .HasMany(e => e.tbl_Company)
+                .WithRequired(e => e.tbl_Country)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Country>()
+                .HasMany(e => e.tbl_State)
+                .WithRequired(e => e.tbl_Country)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Currency>()
+                .HasMany(e => e.tbl_Application_Setup)
+                .WithRequired(e => e.tbl_Currency)
+                .HasForeignKey(e => e.ReportingCurrencyId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Currency>()
+                .HasMany(e => e.tbl_CASA)
+                .WithRequired(e => e.tbl_Currency)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Currency>()
+                .HasMany(e => e.tbl_Company)
+                .WithRequired(e => e.tbl_Currency)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Currency>()
+                .HasMany(e => e.tbl_Chart_Of_Account_Currency)
+                .WithRequired(e => e.tbl_Currency)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Currency>()
+                .HasMany(e => e.tbl_Currency_Rate)
+                .WithRequired(e => e.tbl_Currency)
+                .HasForeignKey(e => e.CurrencyId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Currency>()
+                .HasMany(e => e.tbl_Currency_Rate1)
+                .WithRequired(e => e.tbl_Currency1)
+                .HasForeignKey(e => e.BaseCurrencyId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Currency>()
+                .HasMany(e => e.tbl_Loan_Application)
+                .WithRequired(e => e.tbl_Currency)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Currency>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Currency)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Currency>()
+                .HasMany(e => e.tbl_Product_Currency)
+                .WithRequired(e => e.tbl_Currency)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Custom_Fields>()
+                .HasMany(e => e.tbl_Custom_Fields_Data)
+                .WithRequired(e => e.tbl_Custom_Fields)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Custom_Fields_Data>()
+                .HasMany(e => e.tbl_Custom_Field_Data_Upload)
+                .WithRequired(e => e.tbl_Custom_Fields_Data)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Custom_HostPage>()
+                .HasOptional(e => e.tbl_Custom_HostPage1)
+                .WithRequired(e => e.tbl_Custom_HostPage2);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_CASA)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Custom_Fields)
+                .WithOptional(e => e.tbl_Customer)
+                .HasForeignKey(e => e.ActedOnBy);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Custom_Fields_Data)
+                .WithOptional(e => e.tbl_Customer)
+                .HasForeignKey(e => e.ActedOnBy);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Custom_Fields_Data1)
+                .WithRequired(e => e.tbl_Customer1)
+                .HasForeignKey(e => e.OwnerId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_Group_Mapping)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_Account_KYC_Item)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Collateral_Customer)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_BVN)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_CompanyInfomation)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_EmploymentHistory)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_FS_Caption_Detail)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_Guardian)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_Identification)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_NextOfKin)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_PhoneContact)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Customer_Address)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_FS_Caption>()
+                .HasMany(e => e.tbl_Customer_FS_Caption_Detail)
+                .WithRequired(e => e.tbl_Customer_FS_Caption)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_FS_Caption>()
+                .HasMany(e => e.tbl_Customer_FS_Ratio_Detail)
+                .WithRequired(e => e.tbl_Customer_FS_Caption)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_FS_Caption>()
+                .HasMany(e => e.tbl_Customer_FS_Caption1)
+                .WithOptional(e => e.tbl_Customer_FS_Caption2)
+                .HasForeignKey(e => e.ParentIdFSCaptionId);
+
+            modelBuilder.Entity<tbl_Customer_FS_Caption_Detail>()
+                .Property(e => e.Amount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Customer_FS_Caption_Group>()
+                .HasMany(e => e.tbl_Customer_FS_Caption)
+                .WithRequired(e => e.tbl_Customer_FS_Caption_Group)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_FS_Ratio_Caption>()
+                .HasMany(e => e.tbl_Customer_FS_Ratio_Detail)
+                .WithRequired(e => e.tbl_Customer_FS_Ratio_Caption)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_FS_Ratio_Detail>()
+                .Property(e => e.Description)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Customer_FS_Ratio_DivisorType>()
+                .HasMany(e => e.tbl_Customer_FS_Ratio_Detail)
+                .WithRequired(e => e.tbl_Customer_FS_Ratio_DivisorType)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_FS_Ratio_ValueType>()
+                .HasMany(e => e.tbl_Customer_FS_Ratio_Detail)
+                .WithRequired(e => e.tbl_Customer_FS_Ratio_ValueType)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_Group>()
+                .HasMany(e => e.tbl_Customer_Group_Mapping)
+                .WithRequired(e => e.tbl_Customer_Group)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_Group_RelationshipType>()
+                .HasMany(e => e.tbl_Customer_Group_Mapping)
+                .WithRequired(e => e.tbl_Customer_Group_RelationshipType)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_Group_RelationshipType>()
+                .HasOptional(e => e.tbl_Customer_Group_RelationshipType1)
+                .WithRequired(e => e.tbl_Customer_Group_RelationshipType2);
+
+            modelBuilder.Entity<tbl_Customer_IdentificationModeType>()
+                .Property(e => e.IdentificationMode)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Customer_PhoneContact>()
+                .Property(e => e.Phone)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Customer_Sensitivity_Level>()
+                .HasMany(e => e.tbl_CASA)
+                .WithRequired(e => e.tbl_Customer_Sensitivity_Level)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_Sensitivity_Level>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Customer_Sensitivity_Level)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Fee>()
+                .HasMany(e => e.tbl_Product_Fee)
+                .WithRequired(e => e.tbl_Fee)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Fee_Interval>()
+                .HasMany(e => e.tbl_Fee)
+                .WithRequired(e => e.tbl_Fee_Interval)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Fee_Target>()
+                .HasMany(e => e.tbl_Fee)
+                .WithRequired(e => e.tbl_Fee_Target)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Fee_Type>()
+                .HasMany(e => e.tbl_Fee)
+                .WithRequired(e => e.tbl_Fee_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Frequency_Type>()
+                .Property(e => e.Description)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Frequency_Type>()
+                .HasMany(e => e.tbl_Collateral_InsurancePolicy)
+                .WithOptional(e => e.tbl_Frequency_Type)
+                .HasForeignKey(e => e.RenewalFrequencyTypeId);
+
+            modelBuilder.Entity<tbl_Frequency_Type>()
+                .HasMany(e => e.tbl_Limit_Detail)
+                .WithRequired(e => e.tbl_Frequency_Type)
+                .HasForeignKey(e => e.LimitFrequencyTypeId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Frequency_Type>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Frequency_Type)
+                .HasForeignKey(e => e.InterestFrequencyTypeId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Frequency_Type>()
+                .HasMany(e => e.tbl_Loan1)
+                .WithRequired(e => e.tbl_Frequency_Type1)
+                .HasForeignKey(e => e.FeeFrequencyTypeId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Frequency_Type>()
+                .HasMany(e => e.tbl_Loan2)
+                .WithRequired(e => e.tbl_Frequency_Type2)
+                .HasForeignKey(e => e.PrincipalFrequencyTypeId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Frequency_Type>()
+                .HasMany(e => e.tbl_Loan3)
+                .WithOptional(e => e.tbl_Frequency_Type3)
+                .HasForeignKey(e => e.ScheduledPrepaymentFrequencyTypeId);
+
+            modelBuilder.Entity<tbl_MIS_Info>()
+                .HasMany(e => e.tbl_MIS_Info1)
+                .WithOptional(e => e.tbl_MIS_Info2)
+                .HasForeignKey(e => e.ParentMISInfoId);
+
+            modelBuilder.Entity<tbl_Operations>()
+                .HasMany(e => e.tbl_Approval_Group_Mapping)
+                .WithRequired(e => e.tbl_Operations)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Operations>()
+                .HasMany(e => e.tbl_Approval_Trail)
+                .WithRequired(e => e.tbl_Operations)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Operations_Type>()
+                .HasMany(e => e.tbl_Operations)
+                .WithRequired(e => e.tbl_Operations_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product>()
+                .HasMany(e => e.tbl_CASA)
+                .WithRequired(e => e.tbl_Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product>()
+                .HasMany(e => e.tbl_Product_CollateralType)
+                .WithRequired(e => e.tbl_Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product>()
+                .HasMany(e => e.tbl_Product_Currency)
+                .WithRequired(e => e.tbl_Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product>()
+                .HasMany(e => e.tbl_Product_Fee)
+                .WithRequired(e => e.tbl_Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product>()
+                .HasMany(e => e.tbl_Risk_Rating)
+                .WithRequired(e => e.tbl_Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Category>()
+                .HasMany(e => e.tbl_Product)
+                .WithRequired(e => e.tbl_Product_Category)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Class>()
+                .HasMany(e => e.tbl_Product)
+                .WithRequired(e => e.tbl_Product_Class)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Class>()
+                .HasMany(e => e.tbl_Credit_Template)
+                .WithRequired(e => e.tbl_Product_Class)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Class>()
+                .HasMany(e => e.tbl_Loan_Application)
+                .WithRequired(e => e.tbl_Product_Class)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Class_Type>()
+                .HasMany(e => e.tbl_Product_Class)
+                .WithRequired(e => e.tbl_Product_Class_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Fee>()
+                .Property(e => e.RateValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Product_Fee>()
+                .Property(e => e.DependentAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Product_Group>()
+                .HasMany(e => e.tbl_Product_Type)
+                .WithRequired(e => e.tbl_Product_Group)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Fee)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Product)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Profile_Activity>()
+                .HasMany(e => e.tbl_Profile_AdditionalActivity)
+                .WithRequired(e => e.tbl_Profile_Activity)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Profile_Activity>()
+                .HasMany(e => e.tbl_Profile_Group_Activity)
+                .WithRequired(e => e.tbl_Profile_Activity)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Profile_Activity>()
+                .HasMany(e => e.tbl_Profile_Priviledge_Activity)
+                .WithRequired(e => e.tbl_Profile_Activity)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Profile_Group>()
+                .HasMany(e => e.tbl_Profile_Group_Activity)
+                .WithRequired(e => e.tbl_Profile_Group)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Profile_Group>()
+                .HasMany(e => e.tbl_Profile_UserGroup)
+                .WithRequired(e => e.tbl_Profile_Group)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Profile_Priviledge>()
+                .HasMany(e => e.tbl_Profile_Priviledge_Activity)
+                .WithRequired(e => e.tbl_Profile_Priviledge)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Profile_User>()
+                .HasMany(e => e.tbl_Profile_AdditionalActivity)
+                .WithRequired(e => e.tbl_Profile_User)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Profile_User>()
+                .HasMany(e => e.tbl_Profile_Priviledge_Activity)
+                .WithRequired(e => e.tbl_Profile_User)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Profile_User>()
+                .HasMany(e => e.tbl_Profile_UserGroup)
+                .WithRequired(e => e.tbl_Profile_User)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .Property(e => e.Gender)
+                .IsFixedLength();
+
+            modelBuilder.Entity<tbl_Staff>()
+                .Property(e => e.GenderOfNOK)
+                .IsFixedLength();
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Approval_Level_Staff)
+                .WithRequired(e => e.tbl_Staff)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Approval_Trail)
+                .WithRequired(e => e.tbl_Staff)
+                .HasForeignKey(e => e.RequestStaffId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Approval_Trail1)
+                .WithOptional(e => e.tbl_Staff1)
+                .HasForeignKey(e => e.ResponseStaffId);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Audit)
+                .WithRequired(e => e.tbl_Staff)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_CASA)
+                .WithOptional(e => e.tbl_Staff)
+                .HasForeignKey(e => e.RelationshipOfficerId);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_CASA1)
+                .WithOptional(e => e.tbl_Staff1)
+                .HasForeignKey(e => e.RelationshipManagerId);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Customer)
+                .WithOptional(e => e.tbl_Staff)
+                .HasForeignKey(e => e.RelationshipOfficerId);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Profile_User)
+                .WithRequired(e => e.tbl_Staff)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Loan_Application)
+                .WithRequired(e => e.tbl_Staff)
+                .HasForeignKey(e => e.RelationshipOfficerId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Loan_Application1)
+                .WithRequired(e => e.tbl_Staff1)
+                .HasForeignKey(e => e.RelationshipManagerId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Staff)
+                .HasForeignKey(e => e.RelationshipOfficerId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Loan1)
+                .WithRequired(e => e.tbl_Staff1)
+                .HasForeignKey(e => e.RelationshipManagerId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Loan_Relationship_Officer_History)
+                .WithRequired(e => e.tbl_Staff)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff_JobTitle>()
+                .HasMany(e => e.tbl_Staff)
+                .WithRequired(e => e.tbl_Staff_JobTitle)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff_JobTitle>()
+                .HasMany(e => e.tbl_Temp_Staff)
+                .WithRequired(e => e.tbl_Staff_JobTitle)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff_Rank>()
+                .HasMany(e => e.tbl_Staff)
+                .WithRequired(e => e.tbl_Staff_Rank)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff_Rank>()
+                .HasMany(e => e.tbl_Temp_Staff)
+                .WithRequired(e => e.tbl_Staff_Rank)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_State>()
+                .HasMany(e => e.tbl_City)
+                .WithRequired(e => e.tbl_State)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Sub_Sector>()
+                .HasMany(e => e.tbl_Customer)
+                .WithRequired(e => e.tbl_Sub_Sector)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Tenor_Mode>()
+                .HasMany(e => e.tbl_Loan_Application)
+                .WithRequired(e => e.tbl_Tenor_Mode)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Tenor_Mode>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Tenor_Mode)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .Property(e => e.CollateralValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .Property(e => e.LimitContribution)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .Property(e => e.CamRefNumber)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .Property(e => e.ValuationSource)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .Property(e => e.ValuationAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Collateral_Documents)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .HasForeignKey(e => e.ColleralCustomerId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Collateral_Deposit)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Collateral_Gaurantee)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Collateral_InsurancePolicy)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Collateral_Machine_Detail)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Collateral_Marketable_Security)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Collateral_Miscellaneous)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Collateral_PreciousMetal)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Collateral_Property)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Collateral_Vehicle)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Deposit>()
+                .Property(e => e.AccountBalance)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Deposit>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Documents>()
+                .Property(e => e.Documentcategory)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Documents>()
+                .Property(e => e.DocumentType)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Documents>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Gaurantee>()
+                .Property(e => e.GuaranteeAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Gaurantee>()
+                .Property(e => e.GuarantorName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Gaurantee>()
+                .Property(e => e.GuarantorAddress)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Gaurantee>()
+                .Property(e => e.ContinuingGuarantee)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Gaurantee>()
+                .Property(e => e.GuarantorOwnExposure)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Gaurantee>()
+                .Property(e => e.TotalGuaranteeAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Gaurantee>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_InsurancePolicy>()
+                .Property(e => e.InsuranceAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_InsurancePolicy>()
+                .Property(e => e.PremiumAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_InsurancePolicy>()
+                .Property(e => e.InsurerAddress)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_InsurancePolicy>()
+                .Property(e => e.InsurerDetails)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_InsurancePolicy>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Machine_Detail>()
+                .Property(e => e.MachineName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Machine_Detail>()
+                .Property(e => e.ManufacturedYear)
+                .IsFixedLength();
+
+            modelBuilder.Entity<tbl_Collateral_Machine_Detail>()
+                .Property(e => e.PurchasedYear)
+                .IsFixedLength();
+
+            modelBuilder.Entity<tbl_Collateral_Machine_Detail>()
+                .Property(e => e.ReplacementValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Machine_Detail>()
+                .Property(e => e.ThirdPartyChargeAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Machine_Detail>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Marketable_Security>()
+                .Property(e => e.Description)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Marketable_Security>()
+                .Property(e => e.IssuerName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Marketable_Security>()
+                .Property(e => e.IssuerReferenceNumber)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Marketable_Security>()
+                .Property(e => e.UnitValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Marketable_Security>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Miscellaneous>()
+                .Property(e => e.CollateralDescription)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Miscellaneous>()
+                .Property(e => e.UnitValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Miscellaneous>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Miscellaneous>()
+                .HasMany(e => e.tbl_Collateral_Miscellaneous_Notes)
+                .WithOptional(e => e.tbl_Collateral_Miscellaneous)
+                .HasForeignKey(e => e.MiscellaneousId);
+
+            modelBuilder.Entity<tbl_Collateral_PreciousMetal>()
+                .Property(e => e.PreciousMetal)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_PreciousMetal>()
+                .Property(e => e.MetalType)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_PreciousMetal>()
+                .Property(e => e.ValuationAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_PreciousMetal>()
+                .Property(e => e.PreciousMetalForm)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_PreciousMetal>()
+                .Property(e => e.Notes)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_PreciousMetal>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Property>()
+                .Property(e => e.PropertyAddress)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Property>()
+                .Property(e => e.ValuationAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Property>()
+                .Property(e => e.OtherLendersChargeAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Property>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Property>()
+                .HasOptional(e => e.tbl_Collateral_Property1)
+                .WithRequired(e => e.tbl_Collateral_Property2);
+
+            modelBuilder.Entity<tbl_Collateral_SeniorityOfClaims>()
+                .Property(e => e.SeniorityOfClaims)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_SeniorityOfClaims>()
+                .Property(e => e.Description)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Type>()
+                .HasMany(e => e.tbl_Collateral_Customer)
+                .WithRequired(e => e.tbl_Collateral_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Type>()
+                .HasMany(e => e.tbl_Collateral_Type_Sub)
+                .WithRequired(e => e.tbl_Collateral_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Type>()
+                .HasMany(e => e.tbl_Collateral_ValueBase_Type)
+                .WithRequired(e => e.tbl_Collateral_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Type>()
+                .HasMany(e => e.tbl_Product_CollateralType)
+                .WithRequired(e => e.tbl_Collateral_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_ValueBase_Type>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_ValueBase_Type>()
+                .HasMany(e => e.tbl_Collateral_Machine_Detail)
+                .WithRequired(e => e.tbl_Collateral_ValueBase_Type)
+                .HasForeignKey(e => e.MachineValueBaseTypeId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Valuers>()
+                .HasMany(e => e.tbl_Collateral_Customer)
+                .WithOptional(e => e.tbl_Collateral_Valuers)
+                .HasForeignKey(e => e.ValuerId);
+
+            modelBuilder.Entity<tbl_Collateral_ValuerType>()
+                .HasMany(e => e.tbl_Collateral_Valuers)
+                .WithOptional(e => e.tbl_Collateral_ValuerType)
+                .HasForeignKey(e => e.ValuerTypeId);
+
+            modelBuilder.Entity<tbl_Collateral_Vehicle>()
+                .Property(e => e.ResaleValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Vehicle>()
+                .Property(e => e.ValuationAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Vehicle>()
+                .Property(e => e.InvoiceValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Vehicle>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_CollateralType_Policy>()
+                .HasMany(e => e.tbl_Collateral_Property)
+                .WithOptional(e => e.tbl_CollateralType_Policy)
+                .HasForeignKey(e => e.PolicyId);
+
+            modelBuilder.Entity<tbl_Credit_Assessment_Supporting_Document>()
+                .Property(e => e.DocumentTitle)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Credit_Assessment_Supporting_Document>()
+                .Property(e => e.FileName)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Credit_Assessment_Supporting_Document>()
+                .Property(e => e.ContentType)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Limit>()
+                .HasMany(e => e.tbl_Limit_Detail)
+                .WithRequired(e => e.tbl_Limit)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Limit_Detail>()
+                .Property(e => e.MinimumValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Limit_Detail>()
+                .Property(e => e.MaximumValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Limit_Metric>()
+                .HasMany(e => e.tbl_Limit)
+                .WithRequired(e => e.tbl_Limit_Metric)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Limit_Type>()
+                .HasMany(e => e.tbl_Limit_Detail)
+                .WithRequired(e => e.tbl_Limit_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Limit_Value_Type>()
+                .HasMany(e => e.tbl_Limit)
+                .WithRequired(e => e.tbl_Limit_Value_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .Property(e => e.TeamMISCode)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .Property(e => e.PrincipalAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .Property(e => e.ApprovedAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .Property(e => e.EquityContribution)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .Property(e => e.OutstandingPrincipal)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .Property(e => e.ScheduledPrepaymentAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .HasMany(e => e.tbl_Loan_Covenant_Detail)
+                .WithRequired(e => e.tbl_Loan)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .Property(e => e.PrincipalAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Loan_Application)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Covenant_Detail>()
+                .Property(e => e.CovenantAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Covenant_Type>()
+                .HasMany(e => e.tbl_Loan_Covenant_Detail)
+                .WithRequired(e => e.tbl_Loan_Covenant_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Schedule_Category>()
+                .HasMany(e => e.tbl_Loan_Schedule_Type)
+                .WithRequired(e => e.tbl_Loan_Schedule_Category)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Schedule_Type>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Loan_Schedule_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Status>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Loan_Status)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Type>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Loan_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Type>()
+                .HasMany(e => e.tbl_Loan_Application)
+                .WithRequired(e => e.tbl_Loan_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Type>()
+                .HasMany(e => e.tbl_Loan_Type_Batch)
+                .WithRequired(e => e.tbl_Loan_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Type_Batch>()
+                .Property(e => e.GroupAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_MachineValue_Base>()
+                .Property(e => e.Remark)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Risk_Assessment_Index>()
+                .Property(e => e.Weight)
+                .HasPrecision(18, 4);
+
+            modelBuilder.Entity<tbl_Risk_Assessment_Title>()
+                .HasMany(e => e.tbl_Risk_Assessment_Index)
+                .WithRequired(e => e.tbl_Risk_Assessment_Title)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Risk_Rating>()
+                .Property(e => e.RatesDescription)
+                .IsFixedLength();
+
+            modelBuilder.Entity<tbl_Approval>()
+                .Property(e => e.Amount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_COT>()
+                .Property(e => e.COTAccountAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_COT>()
+                .Property(e => e.COTCreatedBy)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_LoanDetails>()
+                .Property(e => e.PrincipalAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_LoanDetails>()
+                .Property(e => e.EquityContribution)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_LoanDetails>()
+                .Property(e => e.OutstandingPrincipal)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_LoanDetails>()
+                .Property(e => e.ScheduledPrepaymentAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Account_Category>()
+                .HasMany(e => e.tbl_Fee)
+                .WithRequired(e => e.tbl_Account_Category)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Account_Category>()
+                .HasMany(e => e.tbl_Account_Type)
+                .WithRequired(e => e.tbl_Account_Category)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Account_Type>()
+                .HasMany(e => e.tbl_Chart_Of_Account)
+                .WithRequired(e => e.tbl_Account_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_Fee)
+                .WithRequired(e => e.tbl_Chart_Of_Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_Product)
+                .WithOptional(e => e.tbl_Chart_Of_Account)
+                .HasForeignKey(e => e.PrincipalBalanceGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_Product1)
+                .WithOptional(e => e.tbl_Chart_Of_Account1)
+                .HasForeignKey(e => e.InterestReceivablePayableGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_Product2)
+                .WithOptional(e => e.tbl_Chart_Of_Account2)
+                .HasForeignKey(e => e.InterestIncomeExpenseGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_Product3)
+                .WithOptional(e => e.tbl_Chart_Of_Account3)
+                .HasForeignKey(e => e.PremiumDiscountGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_Product4)
+                .WithOptional(e => e.tbl_Chart_Of_Account4)
+                .HasForeignKey(e => e.DormantGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_Product5)
+                .WithOptional(e => e.tbl_Chart_Of_Account5)
+                .HasForeignKey(e => e.OverdrawnGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_Chart_Of_Account_Currency)
+                .WithRequired(e => e.tbl_Chart_Of_Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Financial_Statement_Caption>()
+                .HasMany(e => e.tbl_Chart_Of_Account)
+                .WithRequired(e => e.tbl_Financial_Statement_Caption)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Financial_Statement_Type>()
+                .HasMany(e => e.tbl_Customer_FS_Caption)
+                .WithRequired(e => e.tbl_Financial_Statement_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Temp_Staff>()
+                .Property(e => e.Gender)
+                .IsFixedLength();
+
+            modelBuilder.Entity<tbl_Temp_Staff>()
+                .Property(e => e.GenderOfNOK)
+                .IsFixedLength();
+
+            modelBuilder.Entity<tbl_Deal_Classification>()
+                .HasMany(e => e.tbl_Product_Type)
+                .WithRequired(e => e.tbl_Deal_Classification)
+                .WillCascadeOnDelete(false);
+        }
+    }
+}

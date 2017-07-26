@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace FintrakBanking.ViewModels.Customer
+{
+    public class CustomerFSCaptionGroupViewModel : GenaralEntity
+    {
+        public short fsCaptionGroupId { get; set; }
+        public string fsCaptionGroupName { get; set; }
+        public string companyName { get; set; }
+        //public int companyId { get; set; }
+    }
+}

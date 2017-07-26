@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{53A300F2-B78D-4708-BFB4-2B86DE64EC7D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FintrakBanking.ViewModels</RootNamespace>
+    <AssemblyName>FintrakBanking.ViewModels</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Admin\AppGroupViewModel.cs" />
+    <Compile Include="Admin\AppUserViewModel.cs" />
+    <Compile Include="Admin\AuditViewModel.cs" />
+    <Compile Include="Admin\CanGroupViewModel.cs" />
+    <Compile Include="Admin\CurrencyRateViewModel.cs" />
+    <Compile Include="Admin\UserActions.cs" />
+    <Compile Include="CASA\CasaViewModel.cs" />
+    <Compile Include="CASA\CustomerSearchVM.cs" />
+    <Compile Include="Credit\ApprovalStatusViewModel.cs" />
+    <Compile Include="Credit\CollateralViewModel.cs" />
+    <Compile Include="Credit\ColleralCustomFieldsDataViewModel.cs" />
+    <Compile Include="Credit\CreditAssessmentMemoViewModel.cs" />
+    <Compile Include="Credit\LimitViewModel.cs" />
+    <Compile Include="Credit\LoanApplicationViewModel.cs" />
+    <Compile Include="Credit\LoanCovenantDetailViewModel.cs" />
+    <Compile Include="Credit\LoanPaymentScheduleInput.cs" />
+    <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
+    <Compile Include="Credit\LoanViewModel.cs" />
+    <Compile Include="Credit\TemplatesMemoViewModel.cs" />
+    <Compile Include="Customer\CustomerAddressViewModels.cs" />
+    <Compile Include="Customer\CustomerBvnViewModels.cs" />
+    <Compile Include="Customer\CustomerCompanyInfomationViewModels.cs" />
+    <Compile Include="Customer\CustomerEditHistoryViewModels.cs" />
+    <Compile Include="Customer\CustomerEmploymentHistoryViewModels.cs" />
+    <Compile Include="Customer\CustomerFSCaptionDetailViewModel.cs" />
+    <Compile Include="Customer\CustomerFSCaptionGroupViewModel.cs" />
+    <Compile Include="Customer\CustomerFSCaptionViewModel.cs" />
+    <Compile Include="Customer\CustomerFSRatioCaptionViewModel.cs" />
+    <Compile Include="Customer\CustomerGroupMapppingViewModel.cs" />
+    <Compile Include="Customer\CustomerGroupViewModel.cs" />
+    <Compile Include="Customer\CustomerIdentificationViewModels.cs" />
+    <Compile Include="Customer\CustomerPhoneContactViewModels.cs" />
+    <Compile Include="Customer\CustomerTypeViewModels.cs" />
+    <Compile Include="Customer\CustomerViewModels.cs" />
+    <Compile Include="Customer\LoanCovenantDetailViewModel.cs" />
+    <Compile Include="ErrorLogger\ErrorViewModel.cs" />
+    <Compile Include="GenaralEntity.cs" />
+    <Compile Include="LookupViewModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Risk\RiskLoanApplicationViewModel.cs" />
+    <Compile Include="Risk\TreeNode.cs" />
+    <Compile Include="Setups\Approval\ApprovalGroupMappingViewModel.cs" />
+    <Compile Include="Setups\Approval\ApprovalGroupViewModel.cs" />
+    <Compile Include="Setups\Approval\ApprovalLevelStaffViewModel.cs" />
+    <Compile Include="Setups\Approval\ApprovalLevelViewModel.cs" />
+    <Compile Include="Setups\Credit\ChecklistViewModel.cs" />
+    <Compile Include="Setups\Credit\CollateralLocationsViewModel.cs" />
+    <Compile Include="Setups\Credit\CollateralTypeViewModel.cs" />
+    <Compile Include="Setups\Credit\CustomFieldsViewModel.cs" />
+    <Compile Include="Setups\Credit\LoanCovenantTypeViewModel.cs" />
+    <Compile Include="Setups\Finance\AccountCategoryViewModel.cs" />
+    <Compile Include="Setups\Finance\AccountTypeViewModel.cs" />
+    <Compile Include="Setups\Finance\ChartOfAccountViewModel.cs" />
+    <Compile Include="Setups\General\AccountSensitivityViewModel.cs" />
+    <Compile Include="Setups\General\ActivityViewModel.cs" />
+    <Compile Include="Setups\General\BranchLimitViewModel.cs" />
+    <Compile Include="Setups\General\BranchViewModel.cs" />
+    <Compile Include="Setups\General\CityViewModel.cs" />
+    <Compile Include="Setups\General\CompanyViewModel.cs" />
+    <Compile Include="Setups\General\CountryViewModel.cs" />
+    <Compile Include="Setups\General\CustomFieldsDataViewModel.cs" />
+    <Compile Include="Setups\General\CustomFieldsViewModel.cs" />
+    <Compile Include="Setups\General\DepartmentViewModel.cs" />
+    <Compile Include="Setups\General\FeeViewModel.cs" />
+    <Compile Include="Setups\General\GroupActivityViewModel.cs" />
+    <Compile Include="Setups\General\GroupViewModel.cs" />
+    <Compile Include="Setups\General\JobTitleViewModel.cs" />
+    <Compile Include="Setups\General\MisInfoViewModel.cs" />
+    <Compile Include="Setups\General\MisTypeViewModel.cs" />
+    <Compile Include="Setups\General\ProductCategoryViewModel.cs" />
+    <Compile Include="Setups\General\ProductCollateralTypeViewModel.cs" />
+    <Compile Include="Setups\General\ProductFeeViewModel.cs" />
+    <Compile Include="Setups\General\ProductGroupViewModel.cs" />
+    <Compile Include="Setups\General\ProductTypeViewModel.cs" />
+    <Compile Include="Setups\General\ProductViewModel.cs" />
+    <Compile Include="Setups\General\RankViewModel.cs" />
+    <Compile Include="Setups\General\StaffViewModel.cs" />
+    <Compile Include="Setups\General\StateViewModel.cs" />
+    <Compile Include="Setups\General\UserViewModel.cs" />
+    <Compile Include="Setups\Risk\RiskAssessmentIndexViewModels.cs" />
+    <Compile Include="Setups\Risk\RiskRatingViewModel.cs" />
+    <Compile Include="UserInfo.cs" />
+    <Compile Include="WorkFlow\ApprovalViewModel.cs" />
+    <Compile Include="WorkFlow\WorkflowTrackerViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

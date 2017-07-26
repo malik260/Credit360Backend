@@ -1,0 +1,17 @@
+﻿using System.Collections.Generic;
+using System.Text;
+
+namespace FintrakBanking.ViewModels.Setups.Credit
+{
+    public class CollateralLocationsViewModel : GenaralEntity
+    {
+        public int collateralLocationId { get; set; }
+        public int collateralTypeId { get; set; }
+        public int cityId { get; set; }
+        public int countryId { get; set; }
+        public string country { get; set; }
+        public string city { get; set; }
+        public string collateralTypeName { get; set; }
+        
+    }
+}

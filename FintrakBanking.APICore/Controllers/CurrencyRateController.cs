@@ -1,0 +1,122 @@
+using System;
+using System.Linq;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.APICore.JWTAuth;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using FintrakBanking.APICore.core;
+using System.Web;
+
+namespace FintrakBanking.APICore.Controllers
+{
+
+    [RoutePrefix("api/v1/admin")]
+    public class CurrencyRateController : ApiControllerBase
+    {
+        private ICurrencyRateRepository repo;
+
+        public CurrencyRateController(ICurrencyRateRepository _repo)
+        {
+            this.repo = _repo;
+        }
+
+
+        [HttpGet][Route("currency")]
+        public HttpResponseMessage GetCurrency()
+        {
+            try
+            {
+                var data = repo.GetCurrency();
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet][Route("currency-rate")]
+        public HttpResponseMessage GetCurrencyRate()
+        {
+            try
+            {
+                var data = repo.GetCurrencyRate();
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet][Route("currency-rate/{currencyId}")]
+        public HttpResponseMessage GetCurrencyRateById(short currencyId)
+        {
+            try
+            {
+                var data = repo.GetCurrencyRateById(currencyId);
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost][Route("currency-rate")]
+        public HttpResponseMessage AddFSRatioCaption( [FromBody] CurrencyRateViewModel model)
+        {
+            try
+            {
+                    TokenDecryptionHelper token = new TokenDecryptionHelper();
+                    model.createdBy = token.GetStaffId;
+                    model.userBranchId = (short)token.GetBranchId;
+                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                    model.applicationUrl = HttpContext.Current.Request.Path;
+                    model.createdBy = token.GetStaffId;
+                    model.companyId = token.GetCompanyId;
+
+                var data = repo.AddCurrencyRate(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+
+        }
+
+        [HttpPut][Route("currency-rate/{currencyId}")]
+        public HttpResponseMessage UpdateFSRatioCaption(short currencyId, [FromBody] CurrencyRateViewModel model)
+        {
+            try
+            {
+                    TokenDecryptionHelper token = new TokenDecryptionHelper();
+                    model.userBranchId = (short)token.GetBranchId;
+                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                    model.applicationUrl = HttpContext.Current.Request.Path;
+                    model.createdBy = token.GetStaffId;
+
+                var data = repo.UpdateCurrencyRate(currencyId, model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data, data = "The record has been updated successfully" });
+
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+        }
+    }
+}
