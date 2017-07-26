@@ -13,7 +13,7 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    //[EnableCors("AllDomain")]
+    
     [RoutePrefix("api/v1/setup")]
     public class StaffController : ApiControllerBase
     {
