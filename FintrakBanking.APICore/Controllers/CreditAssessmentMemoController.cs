@@ -30,91 +30,79 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost] [Route("loan-application/operation/{id}")]
-        public HttpResponseMessage AddCreditAssessmentMemo(HttpRequestMessage request, int id, [FromBody] CreditAssessmentMemoViewModel entity)
+        [HttpPost]
+        [Route("loan-application/operation/{id}")]
+        public HttpResponseMessage AddCreditAssessmentMemo(int id, [FromBody] CreditAssessmentMemoViewModel entity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                token = new TokenDecryptionHelper();
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                var data = repo.AddCreditAssessmentMemo(id, entity);
+                if (data == null)
                 {
-                    token = new TokenDecryptionHelper();
-                    entity.userBranchId = (short)token.GetBranchId;
-                    entity.companyId = token.GetCompanyId;
-                    entity.createdBy = token.GetStaffId;
-                    // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    var data = repo.AddCreditAssessmentMemo(id, entity);
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = entity, message = "The record has been created successfully" }));
-                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
+                }
 
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error creating this record" }));
-                }
-                catch (Exception ex)
-                {
-                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error creating this record {ex.Message}" }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
         }
 
-        [HttpPost] [Route("loan-application/operation/{id}")]
-        public HttpResponseMessage GetRequestOnCreditAssessmentMemo(HttpRequestMessage request, int id, [FromUri] int page, [FromUri] int itemsPerPage)
+        [HttpPost]
+        [Route("loan-application/operation/{id}")]
+        public HttpResponseMessage GetRequestOnCreditAssessmentMemo(int id, [FromUri] int page, [FromUri] int itemsPerPage)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                token = new TokenDecryptionHelper();
+
+                var data = repo.GetRequestOnCreditAssessmentMemo(token.GetCountryId, token.GetBranchId, token.GetStaffId, id)
+                    .Skip(page).Take(itemsPerPage);
+
+                if (data.Any())
                 {
-                    token = new TokenDecryptionHelper();
-
-                    var data = repo.GetRequestOnCreditAssessmentMemo(token.GetCountryId, token.GetBranchId, token.GetStaffId, id)
-                        .Skip(page).Take(itemsPerPage);
-
-                    if (data.Any())
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
-
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
-        [HttpGet] [Route("loan-application/operation/{id}")]
-        public HttpResponseMessage GetRequestForCreditAssessmentMemo(HttpRequestMessage request, int id)
+        [HttpGet]
+        [Route("loan-application/operation/{id}")]
+        public HttpResponseMessage GetRequestForCreditAssessmentMemo(int id)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    token = new TokenDecryptionHelper();
+                token = new TokenDecryptionHelper();
 
-                    var data = repo.GetRequestOnCreditAssessmentMemo(token.GetCompanyId, token.GetBranchId, token.GetStaffId, id);
+                var data = repo.GetRequestOnCreditAssessmentMemo(token.GetCompanyId, token.GetBranchId, token.GetStaffId, id);
 
-                    if (response == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data }));
-                }
-                catch (System.Exception ex)
+                if (data == null)
                 {
-                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
         //[HttpPost("assessment-template/template")]
@@ -132,133 +120,118 @@ namespace FintrakBanking.APICore.Controllers
         //        var response = repo.SubmitRequestForProcessing(entity);                 
         //        if (response)
         //        {
-        //            response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = entity, message = "The record has been created successfully" }));
+        //            return Request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = entity, message = "The record has been created successfully" });
         //        }
 
-        //        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error creating this record" }));
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         //    }
         //    catch (Exception ex)
         //    {
         //        this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-        //        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error creating this record {ex.Message}" }));
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
         //    }
         //}
-        [HttpPost] [Route("assessment-template/template")]
-        public HttpResponseMessage GetAssessmentTempates(HttpRequestMessage request, [FromBody]CreditTemplateViewModel entity)
+        [HttpPost]
+        [Route("assessment-template/template")]
+        public HttpResponseMessage GetAssessmentTempates([FromBody]CreditTemplateViewModel entity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    token = new TokenDecryptionHelper();
+                token = new TokenDecryptionHelper();
 
-                    var data = repo.GetAssessmentTempates(entity.approvalLevelId, entity.productClassId, token.GetCompanyId);// repo.GetRequestForCreditAssessmentMemo(token.GetCountryId, token.GetBranchId);
+                var data = repo.GetAssessmentTempates(entity.approvalLevelId, entity.productClassId, token.GetCompanyId);// repo.GetRequestForCreditAssessmentMemo(token.GetCountryId, token.GetBranchId);
 
-                    if (data != null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = response }));
-                }
-                catch (System.Exception ex)
+                if (data != null)
                 {
-                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
-        [HttpPost] [Route("assessment-template/template/customer")]
-        public HttpResponseMessage GetAssessmentTempates(HttpRequestMessage request, [FromBody] AssessmentTemplatesViewModel entity)
+        [HttpPost]
+        [Route("assessment-template/template/customer")]
+        public HttpResponseMessage GetAssessmentTempates([FromBody] AssessmentTemplatesViewModel entity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    token = new TokenDecryptionHelper();
-                    entity.companyId = token.GetCompanyId;
-                    var data = repo.GetAssessmentTempates(token.GetStaffId, entity.productClassId, token.GetCompanyId);// repo.GetRequestForCreditAssessmentMemo(token.GetCountryId, token.GetBranchId);
+                token = new TokenDecryptionHelper();
+                entity.companyId = token.GetCompanyId;
+                var data = repo.GetAssessmentTempates(token.GetStaffId, entity.productClassId, token.GetCompanyId);// repo.GetRequestForCreditAssessmentMemo(token.GetCountryId, token.GetBranchId);
 
-                    if (data != null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = response }));
-                }
-                catch (System.Exception ex)
+                if (data != null)
                 {
-                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
-        [HttpPut] [Route("assessment-template")]
-        public HttpResponseMessage UpdateAssessmentTempates(HttpRequestMessage request, [FromBody]AssessmentTemplatesViewModel entity)
+        [HttpPut]
+        [Route("assessment-template")]
+        public HttpResponseMessage UpdateAssessmentTempates([FromBody]AssessmentTemplatesViewModel entity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                // entity.userIPAddress =  //Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                var data = repo.UpdateAssessmentTempates(entity);
+
+                if (data != null)
                 {
-                    token = new TokenDecryptionHelper();
-
-                    entity.userBranchId = (short)token.GetBranchId;
-                    entity.companyId = token.GetCompanyId;
-                    entity.lastUpdatedBy = token.GetStaffId;
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    // entity.userIPAddress =  //Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    var data = repo.UpdateAssessmentTempates(entity);
-
-                    if (data != null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = entity, message = "The record has been Update successfully" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error Update this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been Update successfully" });
                 }
-                catch (Exception ex)
-                {
-                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error Update this record {ex.Message}" }));
-                }
-                return response;
-            });
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
+            }
         }
 
-        [HttpPost] [Route("assessment-template")]
-        public HttpResponseMessage AddAssessmentTempates(HttpRequestMessage request, [FromBody] AssessmentTemplatesViewModel entity)
+        [HttpPost]
+        [Route("assessment-template")]
+        public HttpResponseMessage AddAssessmentTempates([FromBody] AssessmentTemplatesViewModel entity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                token = new TokenDecryptionHelper();
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                var data = repo.AddAssessmentTempates(entity).IsCompleted;
+                if (data)
                 {
-                    token = new TokenDecryptionHelper();
-                    entity.userBranchId = (short)token.GetBranchId;
-                    entity.companyId = token.GetCompanyId;
-                    entity.createdBy = token.GetStaffId;
-                    // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    var data = repo.AddAssessmentTempates(entity).IsCompleted;
-                    if (data)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = entity, message = "The record has been created successfully" }));
-                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
+                }
 
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error creating this record" }));
-                }
-                catch (Exception ex)
-                {
-                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error creating this record {ex.Message}" }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
+
         }
     }
 }

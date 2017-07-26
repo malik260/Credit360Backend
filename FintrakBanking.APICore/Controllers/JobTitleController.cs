@@ -21,37 +21,29 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [Route("jobtitle/{jobtitleid}")]
         public HttpResponseMessage GetJobTitle(HttpRequestMessage request, int jobTitleId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        { 
                 try
                 {
                     var jobtitle = repo.GetJobTitle(jobTitleId);
 
                     if (jobtitle == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = jobtitle }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = jobtitle });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                } 
         }
 
         [HttpGet]
         [Route("jobtitle/company")]
         public HttpResponseMessage GetJobTitleByCompanyId(HttpRequestMessage request)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -59,43 +51,37 @@ namespace FintrakBanking.APICore.Controllers
 
                     if (jobtitle == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                                Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = jobtitle }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = jobtitle });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+                  
         }
 
         [HttpGet]
         [Route("jobtitle")]
         public HttpResponseMessage JobTitle(HttpRequestMessage request)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        { 
                 try
                 {
                     var jobtitle = repo.JobTitle();
 
                     if (jobtitle == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                                    Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                    new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = jobtitle }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = jobtitle });
                 }
                 catch (System.Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                } 
         }
     }
 }

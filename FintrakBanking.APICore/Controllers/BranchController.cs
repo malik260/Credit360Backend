@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
@@ -16,7 +17,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
     [RoutePrefix("api/v1/admin")]
-    public class BranchController : ApiControllerBase 
+    public class BranchController : ApiControllerBase
     {
         private IGeneralSetupRepository repo;
         private IBranchRepository branchRepo;
@@ -32,188 +33,155 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("branch")]
-        public HttpResponseMessage GetBranch(HttpRequestMessage request)
+        public HttpResponseMessage GetBranch()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var branch = branchRepo.GetAllBranch();
-                    response = request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
-                }
-                catch (Exception ex)
-                {
+                var branch = branchRepo.GetAllBranch();
+                return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
+            }
+            catch (Exception ex)
+            {
 
-                     response = request.CreateResponse(HttpStatusCode.OK,
-                         Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-
-            });
-
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
         }
-            
 
-        [HttpGet][Route("branch/{id}")]
-        public HttpResponseMessage GetBranch(HttpRequestMessage request,short id)
+
+        [HttpGet]
+        [Route("branch/{id}")]
+        public HttpResponseMessage GetBranch(short id)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var branch = branchRepo.GetBranch(id);
-                    response = request.CreateResponse<BranchViewModel>(HttpStatusCode.OK, branch);                    
-                }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse (HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-
-                return response;
-            });
+                var branch = branchRepo.GetBranch(id);
+                return Request.CreateResponse<BranchViewModel>(HttpStatusCode.OK, branch);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("branch-by-company/{companyid}")]
-        public HttpResponseMessage GetAllBranchByCompany(HttpRequestMessage request, int companyid)
+        public HttpResponseMessage GetAllBranchByCompany(int companyid)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var branch = branchRepo.GetAllBranchByCompanyId(companyid);
-                    response = request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
-                }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
+                var branch = branchRepo.GetAllBranchByCompanyId(companyid);
+                return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
-                return response;
-            });
+        [HttpGet]
+        [Route("branch/company")]
+        public HttpResponseMessage GetBranchByCompany()
+        {
+            token = new TokenDecryptionHelper();
+
+            try
+            {
+                var branch = branchRepo.GetAllBranchByCompanyId(token.GetCompanyId);
+                return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
 
         }
 
-        [HttpGet][Route("branch/company")]
-        public HttpResponseMessage GetBranchByCompany(HttpRequestMessage request)
+        [HttpPost]
+        [Route("branch")]
+        public HttpResponseMessage AddBranch([FromBody]AddBranchViewModel model)
         {
-           // token = new TokenDecryptionHelper(this.HttpContext);
-           
 
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+
+
+            try
             {
-                try
+                var token = new TokenDecryptionHelper();
+                model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+                // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = token.GetCompanyId;
+                var result = branchRepo.AddBranch(model).IsCompleted;
+                if (result)
                 {
-                    var branch = branchRepo.GetAllBranchByCompanyId(token.GetCompanyId);
-                    response = request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = result, message = "Branch has been created successfully" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = "There was an error saving this record" });
 
-                return response;
-            });
-        }
-
-        [HttpPost][Route("branch")]
-        public  HttpResponseMessage  AddBranch(HttpRequestMessage request,[FromBody]AddBranchViewModel model)
-        {
-            HttpResponseMessage response = null;
-            //  token = new TokenDecryptionHelper(this.HttpContext);
-            // model.createdBy = token.GetStaffId;
-            // model.userBranchId = (short)token.GetBranchId;
-            // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            //  model.applicationUrl = Request.Path.Value;
-            // model.companyId = token.GetCompanyId;
-            return    GetHttpResponse(request, () =>
+            }
+            catch (System.Exception ex)
             {
-                try
-                {
-
-                    var result =   branchRepo.AddBranch(model).IsCompleted;
-                    if (result)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                         Ok(new { success = true, result = response, message = "Branch has been created successfully" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                   Ok(new { success = false, message = "There was an error saving this record" }));
-
-                }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
-            
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPut]
         [Route("branch/{id}")]
-        public HttpResponseMessage UpdateBranch(HttpRequestMessage request, [FromBody] BranchViewModel model, short id)
+        public HttpResponseMessage UpdateBranch([FromBody] BranchViewModel model, short id)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+
+            try
             {
-                try
+               var token = new TokenDecryptionHelper();
+                model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+               // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = token.GetCompanyId;
+                var result = branchRepo.UpdateBranch(model, id).IsCompleted;
+                if (result)
                 {
-                    //    token = new TokenDecryptionHelper(this.HttpContext);
-                    //model.createdBy = token.GetStaffId;
-                    //model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //model.applicationUrl = Request.Path.Value;
-                    //model.companyId = token.GetCompanyId;
-                    var result = branchRepo.UpdateBranch(model, id).IsCompleted;
-                    if (result)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                               Ok(new { success = true, result = result, message = "Branch has been created successfully" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "There was an error updating this record" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                          new { success = true, result = result, message = "Branch has been created successfully" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error updating this record" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
-        [HttpDelete][Route("branch/{id}")]
-        public HttpResponseMessage DeleteBranch(HttpRequestMessage request, [FromBody] short id)
-        { HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+        [HttpDelete]
+        [Route("branch/{id}")]
+        public HttpResponseMessage DeleteBranch([FromBody] short id)
+        {
+            try
             {
-                try
+                UserInfo user = new UserInfo()
                 {
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        //applicationUrl = Request.Path.Value,
-                        //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
-                    };
-                    var branch = branchRepo.DeleteBranch(id, user).IsCompleted;
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(branch));
-                }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
+                var branch = branchRepo.DeleteBranch(id, user).IsCompleted;
+                return Request.CreateResponse(HttpStatusCode.OK, Ok(branch));
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
         #endregion Branch Setup
-
-       
     }
 }

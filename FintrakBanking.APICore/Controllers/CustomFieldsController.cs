@@ -32,11 +32,9 @@ namespace FintrakBanking.APICore.Controllers
         // ossy
 
         [HttpPost] [Route("custom-field")]
-        public HttpResponseMessage AddCustomField(HttpRequestMessage request, [FromBody] AddCustomFieldViewModel model)
+        public HttpResponseMessage AddCustomField([FromBody] AddCustomFieldViewModel model)
         {
-            HttpResponseMessage response = null;
-            return   GetHttpResponse(request, () =>
-           {
+            
                try
                {
                    token = new TokenDecryptionHelper();
@@ -48,27 +46,24 @@ namespace FintrakBanking.APICore.Controllers
                    var data = repo.AddCustomField(model).IsCompleted;
                    if (data)
                    {
-                       response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = model, message = "The record has been created successfully" }));
+                    return   Request.CreateResponse(HttpStatusCode.OK,  new { success = true, result = model, message = "The record has been created successfully" });
                    }
 
-                   response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error creating this record" }));
+                  return   Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                }
                catch (Exception ex)
                {
                    this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                   response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error creating this record {ex.Message}" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
                }
-               return response;
-           });
+               
         }
 
         [HttpPut]
         [Route("custom-field")]
-        public HttpResponseMessage UpdateCustomField(HttpRequestMessage request, [FromBody] AddCustomFieldViewModel model, int id)
+        public HttpResponseMessage UpdateCustomField([FromBody] AddCustomFieldViewModel model, int id)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-          {
+           
               try
               {
                   token = new TokenDecryptionHelper();
@@ -82,29 +77,26 @@ namespace FintrakBanking.APICore.Controllers
 
                   if (data)
                   {
-                      response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = model, message = "The record has been Update successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,   new { success = true, result = model, message = "The record has been Update successfully" });
                   }
 
-                  response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error Update this record" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
               }
               catch (Exception ex)
               {
                   this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                  response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error Update this record {ex.Message}" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
               }
-              return response;
-          });
+          
         }
 
             //ossy
 
 
         [HttpPost][Route("custom-field-multiple")]
-        public HttpResponseMessage AddCustomFields(HttpRequestMessage request, [FromBody] List<CustomFieldViewModel> listEntity)
+        public HttpResponseMessage AddCustomFields([FromBody] List<CustomFieldViewModel> listEntity)
         {
-            HttpResponseMessage response = null;
-            return  GetHttpResponse(request, () =>
-            {
+            
                 try
                 {
                     token = new TokenDecryptionHelper();
@@ -119,27 +111,23 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.AddCustomFields(listEntity).IsCompleted;
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = listEntity, message = "The record has been created successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,  new { success = true, result = listEntity, message = "The record has been created successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error creating this record" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }
                 catch (Exception ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error creating this record {ex.Message}" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
                 }
-                return response;
-            });
+              
         }
 
         [HttpDelete][Route("custom-field")]
-        public HttpResponseMessage DeleteCustomFields(HttpRequestMessage request, [FromBody] List<CustomFieldViewModel> customFields)
+        public HttpResponseMessage DeleteCustomFields([FromBody] List<CustomFieldViewModel> customFields)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-
+             
                 try
                 {
                     token = new TokenDecryptionHelper();
@@ -156,26 +144,23 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.DeleteCustomFields(customFields, user).IsCompleted;
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = response, message = "Deleted successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,   new { success = true, result = data, message = "Deleted successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "An unknown error has occured" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
                 }
                 catch (Exception ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+                
         }
 
         [HttpPut] [Route("custom-field-multiple")]
-        public HttpResponseMessage UpdateCustomFields(HttpRequestMessage request, [FromBody] List<CustomFieldViewModel> listEntity)
+        public HttpResponseMessage UpdateCustomFields([FromBody] List<CustomFieldViewModel> listEntity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+           
                 try
                 {
                     token = new TokenDecryptionHelper();
@@ -192,25 +177,23 @@ namespace FintrakBanking.APICore.Controllers
 
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = listEntity, message = "The record has been Update successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,  new { success = true, result = listEntity, message = "The record has been Update successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error Update this record" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
                 }
                 catch (Exception ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error Update this record {ex.Message}" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
                 }
-                return response;  });
+              
         }
 
         [HttpGet] [Route("custom-field/hostPage/{id}")]
-        public HttpResponseMessage GetCustomFieldsByHostPageId(HttpRequestMessage request, int id)
+        public HttpResponseMessage GetCustomFieldsByHostPageId(int id)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+            
                 try
                 {
                     token = new TokenDecryptionHelper();
@@ -218,28 +201,27 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.CustomFieldsByHostPageId(id, token.GetCompanyId);
                     if (data == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = response }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (System.Exception ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+              
             }
 
         #endregion   Custom Fields
         #region   Custom Fields Data
         [HttpPost]
         [Route("custom-field-data")]
-        public HttpResponseMessage AddCustomFieldsData(HttpRequestMessage request, [FromBody] List<CustomFieldsDataViewModel> listEntity)
+        public HttpResponseMessage AddCustomFieldsData([FromBody] List<CustomFieldsDataViewModel> listEntity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+           
+            
+            
                 try
                 {
                     token = new TokenDecryptionHelper();
@@ -254,26 +236,24 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.AddCustomFieldsData(listEntity).IsCompleted;
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = listEntity, message = "The record has been created successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,   new { success = true, result = listEntity, message = "The record has been created successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error creating this record" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }
                 catch (Exception ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error creating this record {ex.Message}" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
                 }
-                return response;
-            });
+          
         }
 
         [HttpDelete] [Route("custom-field-data")]
-        public HttpResponseMessage DeleteCustomFieldsData(HttpRequestMessage request, [FromBody] List<CustomFieldsDataViewModel> listEntity)
+        public HttpResponseMessage DeleteCustomFieldsData([FromBody] List<CustomFieldsDataViewModel> listEntity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+           
+             
                 try
                 {
                     token = new TokenDecryptionHelper();
@@ -290,28 +270,25 @@ namespace FintrakBanking.APICore.Controllers
                     var data =   repo.DeleteCustomFieldsData(listEntity, user).IsCompleted;
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = response, message = "Deleted successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,   new { success = true, result = data, message = "Deleted successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "An unknown error has occured" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
                 }
                 catch (Exception ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+           
             }
 
         [HttpGet]
         [Route("custom-field-data/hostpage/{id}/{customerId}")]
-        public HttpResponseMessage GetCustomFieldsDataByCustomField(HttpRequestMessage request, int id, int customerId)
+        public HttpResponseMessage GetCustomFieldsDataByCustomField(int id, int customerId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-
+           
+            
                 try
                 {
                     token = new TokenDecryptionHelper();
@@ -319,26 +296,23 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.GetCustomFieldsDataByHostPage(id, customerId, token.GetCompanyId);
                     if (data == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = response }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (System.Exception ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+             
         }
 
         [HttpPut] [Route("custom-field-data")]
-        public HttpResponseMessage UpdateCustomFieldsData(HttpRequestMessage request, [FromBody] List<CustomFieldsDataViewModel> listEntity)
+        public HttpResponseMessage UpdateCustomFieldsData([FromBody] List<CustomFieldsDataViewModel> listEntity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
+           
+               try
                 {
                     token = new TokenDecryptionHelper( );
                     foreach (var entity in listEntity)
@@ -352,54 +326,51 @@ namespace FintrakBanking.APICore.Controllers
                     var data =  repo.UpdateCustomFieldsData(listEntity).IsCompleted;
                     if (data)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = listEntity, message = "The record has been Update successfully" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,   new { success = true, result = listEntity, message = "The record has been Update successfully" });
                     }
 
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "There was an error Update this record" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
                 }
                 catch (Exception ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"There was an error Update this record {ex.Message}" }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
                 }
-                return response;    });
+            
             }
         #endregion   Custom Fields Data
 
         #region   host page 
 
         [HttpGet] [Route("hostPage/hostpage/{id}")]
-        public HttpResponseMessage GetHostPagesChildrenOnly(HttpRequestMessage request, int id)
+        public HttpResponseMessage GetHostPagesChildrenOnly(int id)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+           
+           
                 try
                 {
                     token = new TokenDecryptionHelper();
 
                     var data = repo.GetHostPagesChildrenOnly(id);
-                    if (response == null)
+                    if (data == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = response }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (System.Exception ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+            
 
             }
 
         [HttpGet][Route("hostPage")]
-        public HttpResponseMessage GetHostPagesParentOnly(HttpRequestMessage request)
-        { HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        public HttpResponseMessage GetHostPagesParentOnly( )
+        {
+            
                 try
                 {
                     token = new TokenDecryptionHelper();
@@ -407,17 +378,16 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.GetHostPagesParentOnly();
                     if (data == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = response }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (System.Exception ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 }
-                return response;
-                });
+               
         }
         #endregion   host page 
     }

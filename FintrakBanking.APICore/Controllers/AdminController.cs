@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
         private readonly IErrorLogRepository errorLogger;
         private readonly ICanAuthorizationRepository I;
         private readonly IAuditTrailRepository audit;
-    
+
         public AdminController(IAdminRepository _repo,
                                 IErrorLogRepository _errorLogger,
                                 ICanAuthorizationRepository _I,
@@ -39,6 +39,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("users")]
+       
         public IHttpActionResult GetAllUsers()
         {
             var users = repo.GetAllUsers().ToList();
@@ -47,88 +48,72 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("user")]
-        public    HttpResponseMessage  AddUser(HttpRequestMessage request, [FromBody]AppUserViewModel user)
+        public HttpResponseMessage AddUser(  [FromBody]AppUserViewModel user)
         {
             TokenDecryptionHelper token = null;
-            HttpResponseMessage response = null;
 
-            return   GetHttpResponse(request, () =>
+            token = new TokenDecryptionHelper();
+            if (I.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
             {
-                token = new TokenDecryptionHelper();
-                if (I.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
+                if (repo.iSUserExit(user.username))
                 {
-                    if (repo.iSUserExit(user.username))
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { suucess = false, message = "A user with this username already exit" }));
-                    }
-
-                    user.createdBy = token.GetStaffId;
-                    user.userBranchId = (short)token.GetBranchId;
-                    //user.userIPAddress =  Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                   user.applicationUrl = HttpContext.Current.Request.Path;
-                    user.companyId = token.GetCompanyId;
-                    var result = repo.CreateUser(user).IsCompleted;
-                    if (result)
-                    {
-                        repo.CreateUser(user);
-
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Created("", new { success = true, result = user, message = "User has been created successfully" }));
-                    }
-                }
-                else
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "You do not have enough right to add user" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { suucess = false, message = "A user with this username already exit" });
                 }
 
-                response = request.CreateResponse(HttpStatusCode.OK,
-                      Ok(new { success = false, message = "An unknown error has occured" }));
+                user.createdBy = token.GetStaffId;
+                user.userBranchId = (short)token.GetBranchId;
+                //user.userIPAddress =  Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                user.applicationUrl = HttpContext.Current.Request.Path;
+                user.companyId = token.GetCompanyId;
+                var result = repo.CreateUser(user).IsCompleted;
+                if (result)
+                {
+                    repo.CreateUser(user);
 
-                return response;
-            });
-        }
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = user, message = "User has been created successfully" });
+                }
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "You do not have enough right to add user" });
+            }
 
+            return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "An unknown error has occured" });
 
-
+        } 
         [HttpPut]
         [Route("user/{id}")]
-        public HttpResponseMessage UpdateUser(HttpRequestMessage request,int id, [FromBody]AppUserViewModel user)
+        public HttpResponseMessage UpdateUser(int id, [FromBody]AppUserViewModel user)
         {
-            HttpResponseMessage response = null;
-
-            return GetHttpResponse(request, () =>
+            var token = new TokenDecryptionHelper();
+            try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-                try
-                {
-                    //   token = new TokenDecryptionHelper(this.HttpContext);
-                    //   user.createdBy = token.GetStaffId;
-                    //user.userBranchId = (short)token.GetBranchId;
-                    //user.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //user.applicationUrl = Request.Path.Value;
-                    //user.companyId = token.GetCompanyId;
-                    var data =   repo.UpdateUser(id, user);
-                    if (data!= null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Created("", new { success = true, result = user, message = "User has been created successfully" }));
-                    }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "An unknown error has occured" }));
-                }
-                catch (Exception ex)
+                user.createdBy = token.GetStaffId;
+                user.userBranchId = (short)token.GetBranchId;
+                // user.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                user.applicationUrl = HttpContext.Current.Request.Path;
+                user.companyId = token.GetCompanyId;
+                var data = repo.UpdateUser(id, user);
+                if (data != null)
                 {
-                    // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"An unhandled error occured {ex.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                         new { success = true, result = user, message = "User has been created successfully" });
                 }
 
-                return response;
-
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"An unhandled error occured {ex.Message}" });
+            } 
         }
 
         #endregion
@@ -138,247 +123,226 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("group/add")]
-        public HttpResponseMessage AddGroup(HttpRequestMessage request, [FromBody] AppGroupViewModel group)
+        public HttpResponseMessage AddGroup(  [FromBody] AppGroupViewModel group)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+
+
+                if (repo.iSGroupExist(group.groupName))
                 {
-
-                    TokenDecryptionHelper token = null;
-                    if (repo.iSGroupExist(group.groupName))
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { suucess = false, message = $"{group.groupName} already exit" }));
-                    }
-
-                    // token = new TokenDecryptionHelper(this.HttpContext);
-                    group.createdBy = token.GetStaffId;
-                    group.userBranchId = (short)token.GetBranchId;
-                    //group.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //group.applicationUrl = Request.Path.Value;
-                    group.companyId = token.GetCompanyId;
-
-                    var data = repo.AddGroup(group);
-                    if (data.IsCompleted)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Created("", new { success = true, result = group, message = "Group has been created successfully" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "An unknown error has occured" }));
-
-                }
-                catch (Exception ex)
-                {
-                    //  this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"An unhandled error occured {ex.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { suucess = false, message = $"{group.groupName} already exit" });
                 }
 
-                return response;
-            });
+                var token = new TokenDecryptionHelper();
+                group.createdBy = token.GetStaffId;
+                group.userBranchId = (short)token.GetBranchId;
+                //group.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                group.applicationUrl = HttpContext.Current.Request.Path;
+                group.companyId = token.GetCompanyId;
+
+                var data = repo.AddGroup(group);
+                if (data.IsCompleted)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = group, message = "Group has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "An unknown error has occured" });
+
+            }
+            catch (Exception ex)
+            {
+                //  this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"An unhandled error occured {ex.Message}" });
+            }
+
+
         }
 
 
-        [HttpPut][Route("group/{id}")]
-        public HttpResponseMessage UpdateGroup(HttpRequestMessage request, [FromBody] AppGroupViewModel group, short id)
-        { 
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+        [HttpPut]
+        [Route("group/{id}")]
+        public HttpResponseMessage UpdateGroup(  [FromBody] AppGroupViewModel group, short id)
+        {
+            //[FromBody]
+            var req = this.Request;
+            TokenDecryptionHelper token = null;
+            try
             {
-                //[FromBody]
-                var req = this.Request;
-                TokenDecryptionHelper token = null;
-                try
+
+                //   token = new TokenDecryptionHelper(this.HttpContext);
+                group.createdBy = token.GetStaffId;
+                group.userBranchId = (short)token.GetBranchId;
+                //group.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                //group.applicationUrl = Request.Path.Value;
+                group.companyId = token.GetCompanyId;
+
+                var data = repo.UpdateGroup(id, group);
+                if (data.IsCompleted)
                 {
-
-                    //   token = new TokenDecryptionHelper(this.HttpContext);
-                    group.createdBy = token.GetStaffId;
-                    group.userBranchId = (short)token.GetBranchId;
-                    //group.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //group.applicationUrl = Request.Path.Value;
-                    group.companyId = token.GetCompanyId;
-
-                   var   data =   repo.UpdateGroup(id, group);
-                    if (data.IsCompleted)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Created("", new { success = true, result = group, message = "Group has been updated successfully" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = "An unknown error has occured" }));
-
-                }
-                catch (Exception ex)
-                {
-                 //   this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"An unhandled error occured {ex.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = group, message = "Group has been updated successfully" });
                 }
 
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "An unknown error has occured" });
+
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"An unhandled error occured {ex.Message}" });
+            }
+
+
         }
 
 
 
-        [HttpGet][Route("groups")]
-        public HttpResponseMessage GetAllGroups(HttpRequestMessage request)
+        [HttpGet]
+        [Route("groups")]
+        public HttpResponseMessage GetAllGroups( )
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            TokenDecryptionHelper token = null;
+            try
             {
-                TokenDecryptionHelper token = null;
-                try
-                {
-                    // token = new TokenDecryptionHelper(this.HttpContext);
-                    var groups = repo.GetAllGroups().ToList();
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = groups }));
-                }
-                catch (Exception ex)
-                {
-                    // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" }));
-                }
-              return   response;
-            });
+                token = new TokenDecryptionHelper();
+                var groups = repo.GetAllGroups().ToList();
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = groups });
+            }
+            catch (Exception ex)
+            {
+                // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
+            }
+
+
         }
 
-        [HttpGet][Route("group/{id}")]
-        public HttpResponseMessage GetGroupById(HttpRequestMessage request,int id)
+        [HttpGet]
+        [Route("group/{id}")]
+        public HttpResponseMessage GetGroupById(  int id)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            TokenDecryptionHelper token = null;
+            try
             {
-                TokenDecryptionHelper token = null;
-                try
-                {
-                    // token = new TokenDecryptionHelper(this.HttpContext);
-                    var group = repo.GetSingleGroup(id);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = group }));
-                }
-                catch (Exception ex)
-                {
-                    // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" }));
-                }
-                return response;
-            });
+                token = new TokenDecryptionHelper();
+                var group = repo.GetSingleGroup(id);
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = group });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
+            }
+
         }
 
         #endregion
 
         #region Activities
-        [HttpGet] [Route("activities/parents")]
-        public HttpResponseMessage GetAllActivities(HttpRequestMessage request)
+        [HttpGet]
+        [Route("activities/parents")]
+        public HttpResponseMessage GetAllActivities( )
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                TokenDecryptionHelper token = null;
+            TokenDecryptionHelper token = null;
             try
             {
-                // token = new TokenDecryptionHelper(this.HttpContext);
+                token = new TokenDecryptionHelper();
                 var groups = repo.GetActivities().ToList();
-                response = request.CreateResponse(HttpStatusCode.OK,
-                   Ok(new { success = true, result = groups }));
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = groups });
             }
             catch (Exception ex)
             {
-                // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                response = request.CreateResponse(HttpStatusCode.OK,
-                   Ok(new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" }));
-                }
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
+            }
 
-                return response;
-            });
 
         }
 
 
-        [HttpGet][Route("group/activities/mapped")]
-        public HttpResponseMessage GetGroupActivities(HttpRequestMessage request)
-        { HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-
-                TokenDecryptionHelper token = null;
-                try
-                {
-                   // token = new TokenDecryptionHelper(this.HttpContext);
-                    var groups = repo.GetGroupActivities().ToList();
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = true, result = groups }));
-                }
-                catch (Exception ex)
-                {
-                  //  this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" }));
-                }
-
-                return response;
-            });
-        }
-
-
-
-        [HttpPut] [Route("group/activity/access/{id}")]
-        public HttpResponseMessage AddAccessToActivity(HttpRequestMessage request, int id, [FromBody] ActivitiesUpdateVm model)
+        [HttpGet]
+        [Route("group/activities/mapped")]
+        public HttpResponseMessage GetGroupActivities( )
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+
+            TokenDecryptionHelper token = null;
+            try
             {
-                //[FromBody]
-                var req = this.Request;
-                TokenDecryptionHelper token = null;
-                try
-                {
-                    //   token = new TokenDecryptionHelper(this.HttpContext);
-                    var data = repo.AddAccessToActivity(id, model);
-                    if (data)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                     Created("", new { success = true, message = "Access right has been updated successfully" }));
-                    }
+                token = new TokenDecryptionHelper();
+                var groups = repo.GetGroupActivities().ToList();
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, result = groups });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
+            }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = false, message = "An unknown error has occured" }));
+        }
 
-                }
-                catch (Exception ex)
+
+
+        [HttpPut]
+        [Route("group/activity/access/{id}")]
+        public HttpResponseMessage AddAccessToActivity(  int id, [FromBody] ActivitiesUpdateVm model)
+        {
+
+            //[FromBody]
+            var req = this.Request;
+            TokenDecryptionHelper token = null;
+            try
+            {
+                token = new TokenDecryptionHelper();
+                var data = repo.AddAccessToActivity(id, model);
+                if (data)
                 {
-                    //   this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                     Ok(new { success = false, message = $"An unhandled error occured {ex.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, message = "Access right has been updated successfully" });
                 }
-                return response;
-            });
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = "An unknown error has occured" });
+
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = $"An unhandled error occured {ex.Message}" });
+            }
+
         }
 
         #endregion
 
-       // [HttpGet][Route("audit/log")]
+        // [HttpGet][Route("audit/log")]
         //public IHttpActionResult GetAuditLog([FromQuery] int page,[FromQuery] int itemsPerPage)
         //{
         //     TokenDecryptionHelper token = null;
-                        
+
         //    //token = new TokenDecryptionHelper(this.HttpContext);
         //    var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId);
         //    int totalItems = allAuditLog.Count();
- 
+
         //    allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage);
 
         //    var result = allAuditLog.ToList();
 
-          
-        //    return Ok(new { result = result, itemsPerPage = itemsPerPage, totalItems = totalItems });
+
+        //    returnnew { result = result, itemsPerPage = itemsPerPage, totalItems = totalItems });
         //}
     }
 }

@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
@@ -26,101 +27,86 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet][Route("account-type", Name = "GetAccountType")]
         public HttpResponseMessage GetAllAccountType(HttpRequestMessage request)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        { 
                 try
                 {
                     var data = repo.GetAllAccountType();
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
                 }
                 catch (Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+             
         }
 
         [HttpGet][Route("account-type/{accountTypId}", Name = "GetAccountTypeById")]
         public HttpResponseMessage GetAllAccountTypeById(HttpRequestMessage request,int accountTypId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+        { 
                 try
                 {
                     var data = repo.GetAllAccountTypeById(accountTypId);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data }));
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data });
                 }
                 catch (Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+                  
         }
 
         [HttpPost]
         [Route("account-type")]
-        public HttpResponseMessage AddAccountType(HttpRequestMessage request, [FromBody] AddAccountTypeViewModel model)
+        public HttpResponseMessage AddAccountType([FromBody] AddAccountTypeViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var isCreated = repo.AddAccountType(model);
+                if (isCreated == true)
                 {
-                    TokenDecryptionHelper token = null;///new TokenDecryptionHelper(this.HttpContext);
-                    model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    // model.applicationUrl = Request.Path.Value;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-                    var isCreated = repo.AddAccountType(model);
-                    if (isCreated == true)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = isCreated, message = "account type has been created successfully" }));
-                    }
-                    else
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "account type not created" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = isCreated, message = "account type has been created successfully" });
                 }
-                catch (Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "account type not created" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
         }
 
         [HttpPut][Route("account-type/{accountTypeId}")]
-        public HttpResponseMessage UpdateAccountType(HttpRequestMessage request, int accountTypeId, [FromBody]AccountTypeViewModel model)
+        public HttpResponseMessage UpdateAccountType(  int accountTypeId, [FromBody]AccountTypeViewModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+            HttpResponseMessage result = null;
                 try
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                    var token =   new TokenDecryptionHelper( );
                     model.userBranchId = (short)token.GetBranchId;
                     //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    // model.applicationUrl = Request.Path.Value;
+                     model.applicationUrl = HttpContext.Current. Request.Path;
                     model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
                     if (repo.UpdateAccountType(accountTypeId, model))
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(model));
+                    result= Request.CreateResponse(HttpStatusCode.OK, Ok(model));
                     }
                 }
                 catch (Exception ex)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                result= Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
                 }
-                return response;
-            });
+            return result;
         }
 
         #endregion Account Type Actions

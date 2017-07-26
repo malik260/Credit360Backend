@@ -23,215 +23,179 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("city")]
-        public HttpResponseMessage AddCity(HttpRequestMessage request, [FromBody] CityViewModel entity)
+        public HttpResponseMessage AddCity([FromBody] CityViewModel entity)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.AddCity(entity).IsCompleted;
+                if (data)
                 {
-                    var data = repo.AddCity(entity).IsCompleted;
-                    if (data)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, 
-                            Ok(new { success = true, result = response, message = "Created successfully" }));
-                    }
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Created successfully" });
+                }
 
-                    response = request.CreateResponse(HttpStatusCode.OK, 
-                        Ok(new { success = false, message = "An unknown error has occured" }));
-                }
-                catch (Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("city-class")]
-        public HttpResponseMessage GetAllCityClass(HttpRequestMessage request)
+        public HttpResponseMessage GetAllCityClass()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var rank = repo.GetAllCityClass();
+                var rank = repo.GetAllCityClass();
 
-                    if (rank == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, 
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = rank }));
-                }
-                catch (System.Exception ex)
+                if (rank == null)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = rank });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
         [HttpGet]
         [Route("city")]
-        public HttpResponseMessage GetCity(HttpRequestMessage request)
+        public HttpResponseMessage GetCity()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var rank = repo.GetCity();//repo.GetCities();
+                var rank = repo.GetCity();//repo.GetCities();
 
-                    if (rank == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, 
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = rank }));
-                }
-                catch (System.Exception ex)
+                if (rank == null)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = rank });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
 
 
         [HttpGet]
         [Route("city/state/{Id}")]
-        public HttpResponseMessage GetCityByStateId(HttpRequestMessage request, int Id)
+        public HttpResponseMessage GetCityByStateId(int Id)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var rank = repo.GetCityByStateId(Id).ToList();
+                var rank = repo.GetCityByStateId(Id).ToList();
 
-                    if (rank == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, 
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = rank }));
-                }
-                catch (System.Exception ex)
+                if (rank == null)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = rank });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
         [HttpGet]
         [Route("country")]
-        public HttpResponseMessage GetCountry(HttpRequestMessage request)
+        public HttpResponseMessage GetCountry()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var token = new TokenDecryptionHelper();
+                var rank = repo.GetCountry();
+                if (rank == null)
                 {
-                    var token = new TokenDecryptionHelper();
-                    var rank = repo.GetCountry();
-                    if (rank == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, 
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = rank }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = rank });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("state")]
-        public HttpResponseMessage GetState(HttpRequestMessage request)
+        public HttpResponseMessage GetState()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    var rank = repo.GetState();
+                var rank = repo.GetState();
 
-                    if (rank == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, 
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = rank }));
-                }
-                catch (System.Exception ex)
+                if (rank == null)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = rank });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("state/country")]
-        public HttpResponseMessage GetStateByCountryId(HttpRequestMessage request)
+        public HttpResponseMessage GetStateByCountryId()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            var token = new TokenDecryptionHelper();
+            try
             {
-                var token = new TokenDecryptionHelper();
-                try
-                {
-                    var state = repo.GetStateByCountryId(token.GetCountryId).OrderBy(x => x.StateName).ToList();
+                var state = repo.GetStateByCountryId(token.GetCountryId).OrderBy(x => x.StateName).ToList();
 
-                    if (state == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = state }));
-                }
-                catch (System.Exception ex)
+                if (state == null)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = state });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("city/country")]
-        public HttpResponseMessage GetAllCityByCountryId(HttpRequestMessage request)
+        public HttpResponseMessage GetAllCityByCountryId()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            var token = new TokenDecryptionHelper();
+            try
             {
-                var token = new TokenDecryptionHelper();
-                try
-                {
-                    var cities = repo.GetAllCitiesByContryId(token.GetCountryId).ToList();
+                var cities = repo.GetAllCitiesByContryId(token.GetCountryId).ToList();
 
-                    if (cities == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = cities }));
-                }
-                catch (System.Exception ex)
+                if (cities == null)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = cities });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
     }
 }

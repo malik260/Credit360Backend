@@ -25,32 +25,5 @@ namespace FintrakBanking.APICore.core
                 throw new SecurityException("Attempting to access data for another user.");
         }
 
-        protected HttpResponseMessage GetHttpResponse(HttpRequestMessage request, Func<HttpResponseMessage> codeToExecute)
-        {
-            HttpResponseMessage response = null;
-
-            try
-            {
-                response = codeToExecute.Invoke();
-            }
-            catch (SecurityException ex)
-            {
-                response = request.CreateResponse(HttpStatusCode.Unauthorized, ex.Message);
-            }
-            //catch (FaultException<AuthorizationValidationException> ex)
-            //{
-            //    response = request.CreateResponse(HttpStatusCode.Unauthorized, ex.Message);
-            //}
-            //catch (FaultException ex)
-            //{
-            //    response = request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
-            //}
-            catch (Exception ex)
-            {
-                response = request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
-            }
-
-            return response;
-        }
-    }
+      }
 }

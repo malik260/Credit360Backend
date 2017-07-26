@@ -25,93 +25,74 @@ namespace FintrakBanking.APICore.Controllers
         [Route("calculate-maturity-date/effective-date/{effectiveDate}/tenor-mode/{tenorModeId}/tenor/{tenor}")]
         public HttpResponseMessage GetMaturityDate(HttpRequestMessage request, DateTime effectiveDate, short tenorModeId, int tenor)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
-                {
-                    //var token = new TokenDecryptionHelper(this.HttpContext);
-                    var data = repo.CalculateMaturityDate(effectiveDate, (TenorModeEnum)tenorModeId, tenor);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data, count = 1 }));
-                }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = $"Error: {e.Message}" }));
-                }
-                return response;
-            });
+                //var token = new TokenDecryptionHelper(this.HttpContext);
+                var data = repo.CalculateMaturityDate(effectiveDate, (TenorModeEnum)tenorModeId, tenor);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+
         }
 
         [HttpGet]
         [Route("tenor-mode")]
         public HttpResponseMessage GetAllTenorMode(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetAllTenorMode();
+                if (data == null)
                 {
-                    var data = repo.GetAllTenorMode();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("currency")]
         public HttpResponseMessage GetAllCurrency(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetAllCurrency();
+                if (data == null)
                 {
-                    var data = repo.GetAllCurrency();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("customer-type")]
         public HttpResponseMessage GetAllCustomerType(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetAllCustomerType();
+                if (data == null)
                 {
-                    var data = repo.GetAllCustomerType();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
 
@@ -119,264 +100,215 @@ namespace FintrakBanking.APICore.Controllers
         [Route("deal-classification-type")]
         public HttpResponseMessage GetAllDealClassificationType(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetAllDealClassificationType();
+                if (data == null)
                 {
-                    var data = repo.GetAllDealClassificationType();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("application-date")]
         public HttpResponseMessage GetApplicaionDate(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetApplicaionDate();
+                if (data == null)
                 {
-                    var data = repo.GetApplicaionDate();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("day-count")]
         public HttpResponseMessage GetAllDayCount(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetAllDayCount();
+                if (data == null)
                 {
-                    var data = repo.GetAllDayCount();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));//Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });//Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("fee-amortisation-type")]
         public HttpResponseMessage GetAllFeeAmortisationType(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetAllFeeAmortisationType();
+                if (data == null)
                 {
-                    var data = repo.GetAllFeeAmortisationType();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("deal-types")]
         public HttpResponseMessage GetAllDealTypes(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
+                var data = repo.GetAllDealTypes();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
 
-                try
-                {
-                    var data = repo.GetAllDealTypes();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
-                }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
         }
 
         [HttpGet]
         [Route("fs-types")]
         public HttpResponseMessage GetAllFSTypes(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetAllFSTypes();
+                if (data == null)
                 {
-                    var data = repo.GetAllFSTypes();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
         [HttpGet]
         [Route("frequency-types")]
         public HttpResponseMessage GetAllFrequencyTypes(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetAllFrequencyTypes();
+                if (data == null)
                 {
-                    var data = repo.GetAllFrequencyTypes();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("operation-types")]
         public HttpResponseMessage GetAllOperationTypes(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetAllOperationTypes();
+                if (data == null)
                 {
-                    var data = repo.GetAllOperationTypes();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
-                    }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("operation")]
         public HttpResponseMessage GetAllOperations(HttpRequestMessage request)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetAllOperations();
+                if (data == null)
                 {
-                    var data = repo.GetAllOperations();
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() })); //Ok(accounts);
-                        }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() }); //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("operation/{operationTypeId}")]
         public HttpResponseMessage GetOperations(HttpRequestMessage request, short operationTypeId)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.GetOperations(operationTypeId);
+                if (data == null)
                 {
-                    var data = repo.GetOperations(operationTypeId);
-                    if (data == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
-                            }
-                catch (System.Exception ex)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         //[HttpGet]
         //[Route("casa/account-status")]
         //public HttpResponseMessage GetCasaAccountStatus(HttpRequestMessage request)
         //{
-        //    HttpResponseMessage response = null;
-        //    return GetHttpResponse(request, () =>
+        //     
+        //     
         //    {
         //        try
         //        {
         //            var data = repo.GetCasaAccountStatus();
         //            if (data == null)
         //            {
-        //                response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+        //                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
         //            }
-        //            response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data.ToList() }));
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
         //        }
         //        catch (System.Exception ex)
         //        {
-        //            response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
         //        }
-        //        return response;
+        //         
         //    });
         //}
 

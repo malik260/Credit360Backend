@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
@@ -25,68 +26,60 @@ namespace FintrakBanking.APICore.Controllers
             this.errorLogger = _errorLogger;
         }
 
-        [HttpGet] [Route("setup/groups")]
-        public HttpResponseMessage GetGroups(HttpRequestMessage request)
+        [HttpGet]
+        [Route("setup/groups")]
+        public HttpResponseMessage GetGroups()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            string returnMessage = string.Empty;
+            try
             {
-                string returnMessage = string.Empty;
-                try
+                var groups = repo.GetGroups().ToList();
+                if (groups.Any())
                 {
-                    var groups = repo.GetGroups().ToList();
-                    if (groups.Any())
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = true, result = groups, count = groups.Count }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = "No group found" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = groups, count = groups.Count });
                 }
-                catch (Exception e)
-                {
-                    returnMessage = e.Message;
-                }
-                response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = $"There was error from the endpoint {returnMessage}" }));
-                return response;
-            });
 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No group found" });
+            }
+            catch (Exception e)
+            {
+                returnMessage = e.Message;
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"There was error from the endpoint {returnMessage}" });
         }
 
 
-        [HttpPost] [Route("setup/group/add")]
-        public HttpResponseMessage AddGroup(HttpRequestMessage request, [FromBody] GroupModel model)
+        [HttpPost]
+        [Route("setup/group/add")]
+        public HttpResponseMessage AddGroup([FromBody] GroupModel model)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            TokenDecryptionHelper token = null;
+            try
             {
-                TokenDecryptionHelper token = null;
-                try
+                token = new TokenDecryptionHelper();
+                model.createdBy = token.GetStaffId;
+
+                var data = repo.AddGroup(model);
+                if (data != null)
                 {
-                    // token = new TokenDecryptionHelper(this.HttpContext);
-                    model.createdBy = token.GetStaffId;
-
-                    var data = repo.AddGroup(model);
-                    if (data != null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                       Created("", new { success = true, result = model, message = "Group has been created successfully" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = "There was an error creating this group" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = model, message = "Group has been created successfully" });
                 }
-                catch (Exception e)
-                {
 
-                    //  this.errorLogger.LogError(e, Request.Path.Value, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = $"There was an error creating this group {e.Message}" }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "There was an error creating this group" });
+            }
+            catch (Exception e)
+            {
+
+                this.errorLogger.LogError(e, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"There was an error creating this group {e.Message}" });
+            }
+
         }
 
         //[HttpPost("setup/group")]
@@ -102,121 +95,110 @@ namespace FintrakBanking.APICore.Controllers
         //            return Created("", new { success = true, result = grpModel, message = "Group has been created successfully" });
         //        }
 
-        //        return Ok(new { success = false, message = "There was an error creating this group" });
+        //        returnnew { success = false, message = "There was an error creating this group" });
         //    }
         //    catch (Exception e)
         //    {
 
         //        this.errorLogger.LogError(e, Request.Path.Value, token.GetUsername);
-        //        return Ok(new { success = false, message = $"There was an error creating this group {e.Message}" });
+        //        returnnew { success = false, message = $"There was an error creating this group {e.Message}" });
         //    }
         //}
 
-        [HttpPut] [Route("setup/group/{groupId}")]
-        public HttpResponseMessage AddGroup(HttpRequestMessage request, short groupId, [FromBody] GroupViewModel grpModel)
+        [HttpPut]
+        [Route("setup/group/{groupId}")]
+        public HttpResponseMessage AddGroup(short groupId, [FromBody] GroupViewModel grpModel)
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var data = repo.UpdateGroup(groupId, grpModel);
+                if (data.IsCompleted)
                 {
-                    var data =   repo.UpdateGroup(groupId, grpModel);
-                    if (data.IsCompleted)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                       Created("", new { success = true, result = grpModel }));
-                    }
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = grpModel });
+                }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = $"There was an error updating this group {grpModel}" }));
-                }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = $"There was an error updating this group {e.Message}" }));
-                }
-                return response;
-            });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"There was an error updating this group {grpModel}" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"There was an error updating this group {e.Message}" });
             }
 
-        [HttpGet] [Route("setup/activities")]
-        public HttpResponseMessage GetActivities(HttpRequestMessage request)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
-                {
-                    var activity = repo.GetActivities().ToList();
-                    if (!activity.Any())
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = "No activity found" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = true, result = activity, count = activity.Count }));
-                }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = $"Error: {e.Message}" }));
-                }
-                return response;
-            });
-            }
-        [HttpGet][Route("setup/activities/group/{grpId}")]
-        public HttpResponseMessage GetActivitiesByGroupId(HttpRequestMessage request,int grpId)
-        {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
-                try
-                {
-                    var activities = repo.GetActivitiesByGroupId(grpId);
-                    if (!activities.Any())
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = "No activity found" }));
-                    }
-
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = true, result = activities }));
-                }
-                catch (Exception e)
-                {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = $"Error: {e.Message}" }));
-                }
-                return response;
-            });
         }
 
-        [HttpPost][Route("setup/group/activities")]
-        public HttpResponseMessage AddActivitiesGroup(HttpRequestMessage request, [FromBody]GroupViewModel grpModel)
+        [HttpGet]
+        [Route("setup/activities")]
+        public HttpResponseMessage GetActivities()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+            try
             {
-                try
+                var activity = repo.GetActivities().ToList();
+                if (!activity.Any())
                 {
-                    var data = repo.AddActivitiesToGroup(grpModel);
-                    if (data.IsCompleted)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                       Created("", new { success = true, result = grpModel, message = "Group has been created successfully" }));
-                    }
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No activity found" });
+                }
 
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = "There was an error creating this group" }));
-                }
-                catch (Exception e)
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = activity, count = activity.Count });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
+        [HttpGet]
+        [Route("setup/activities/group/{grpId}")]
+        public HttpResponseMessage GetActivitiesByGroupId(int grpId)
+        {
+            try
+            {
+                var activities = repo.GetActivitiesByGroupId(grpId);
+                if (!activities.Any())
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK,
-                       Ok(new { success = false, message = $"There was an error creating this group {e.Message}" }));
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No activity found" });
                 }
-                return response;
-            });
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = activities });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
+
+        [HttpPost]
+        [Route("setup/group/activities")]
+        public HttpResponseMessage AddActivitiesGroup([FromBody]GroupViewModel grpModel)
+        {
+
+            try
+            {
+                var data = repo.AddActivitiesToGroup(grpModel);
+                if (data.IsCompleted)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = grpModel, message = "Group has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "There was an error creating this group" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"There was an error creating this group {e.Message}" });
+            }
+
         }
     }
 }
