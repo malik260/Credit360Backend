@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Web.Http;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
+using System.Web.Http.Cors;
 
 namespace FintrakBanking.APICore
 {
@@ -23,8 +24,8 @@ namespace FintrakBanking.APICore
                 new CamelCasePropertyNamesContractResolver();
 
             //Enable cors
-            //var cors = new EnableCorsAttribute("*", "*", "*");
-            config.EnableCors();
+            var cors = new EnableCorsAttribute("*", "*", "*");
+            config.EnableCors(cors);
 
             // Web API routes
             config.MapHttpAttributeRoutes();

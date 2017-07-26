@@ -37,6 +37,14 @@ namespace FintrakBanking.APICore.Providers
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
+            var origin = context.OwinContext.Request.Headers["Origin"];
+            //if (origin == null)
+            //{
+            //   // context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+            //    //HttpContext.Current.Response.AddHeader("Access-Control-Allow-Origin", origin);
+            //    //HttpContext.Current.Response.AddHeader("Access-Control-Allow-Methods", "GET,POST");
+            //}
+            //context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
             var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
             var userVM = new UserViewModel();
 

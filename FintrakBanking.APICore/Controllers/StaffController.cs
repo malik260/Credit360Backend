@@ -10,10 +10,11 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    
+    [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
     [RoutePrefix("api/v1/setup")]
     public class StaffController : ApiControllerBase
     {
@@ -58,11 +59,9 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("staff/approvals/temp")]
-        public HttpResponseMessage GetStaffAwaitingApproval(HttpRequestMessage request)
+        public HttpResponseMessage GetStaffAwaitingApproval()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
-            {
+            
                 try
                 {
                     var token = new TokenDecryptionHelper();
@@ -70,18 +69,16 @@ namespace FintrakBanking.APICore.Controllers
 
                     if (staffinfo == null)
                     {
-                        response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = "No record found" }));
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                     }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = staffinfo }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
                 }
                 catch (System.Exception ex)
                 {
                     errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 }
-
-                return response;
-            });
+                
         }
 
         [HttpGet]
@@ -201,30 +198,31 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("approval-status")]
-        public HttpResponseMessage GetApprovalStatus(HttpRequestMessage request)
+        public HttpResponseMessage GetApprovalStatus()
         {
-            HttpResponseMessage response = null;
-            return GetHttpResponse(request, () =>
+
+            //return GetHttpResponse(request, () =>
+            //{
+            try
             {
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-                    var staffinfo = repo.GetApprovalStatus();
+                var token = new TokenDecryptionHelper();
+                var staffinfo = repo.GetApprovalStatus();
 
-                    if (staffinfo == null)
-                    {
-                        response = request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
-                    }
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = staffinfo }));
-                }
-                catch (System.Exception ex)
+                if (staffinfo != null)
                 {
-                    response = request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = staffinfo.ToList() });
+                    
                 }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "No record found" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
+            }
 
-                return response;
-            });
+            //return response;
+            // });
         }
 
         [HttpGet]
@@ -271,7 +269,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
 
 
-                    TokenDecryptionHelper token =new TokenDecryptionHelper();
+                    TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                     model.userBranchId = (short)token.GetBranchId;
                     model.userIPAddress = Request.RequestUri.Host;
@@ -465,7 +463,7 @@ namespace FintrakBanking.APICore.Controllers
                 try
                 {
                     var token = new TokenDecryptionHelper();
-                        var data = repo.SearchStaff(queryString, token.GetCompanyId);
+                    var data = repo.SearchStaff(queryString, token.GetCompanyId);
                     response = request.CreateResponse(HttpStatusCode.OK,
                         Ok(new { success = true, result = data.ToList() }));
                 }

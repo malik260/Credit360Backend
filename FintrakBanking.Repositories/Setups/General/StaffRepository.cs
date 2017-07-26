@@ -579,7 +579,7 @@ on c.DepartmentId equals dept.DepartmentId
                              BranchName = br.BranchName,
                              DepartmentName = dept.DepartmentName,
                              ApprovalStatusId = c.ApprovalStatusId,
-                        SensitivityLevel = context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description
+                        SensitivityLevel = "1"// context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description
 
                          });
         }

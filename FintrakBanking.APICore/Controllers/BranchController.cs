@@ -14,7 +14,7 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
 
-
+    //[EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
     [RoutePrefix("api/v1/admin")]
     public class BranchController : ApiControllerBase 
     {
