@@ -36,7 +36,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 model.userBranchId = (short)token.GetBranchId;
                 // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                // model.applicationUrl = Request.Path.Value;
+                model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
@@ -157,7 +157,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                var token =   new TokenDecryptionHelper( );
                 model.userBranchId = (short)token.GetBranchId;
                 //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 model.applicationUrl = HttpContext.Current.Request.Path;
@@ -190,7 +190,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                TokenDecryptionHelper token = new TokenDecryptionHelper( );
 
                 UserInfo user = new UserInfo()
                 {
