@@ -199,7 +199,7 @@ namespace FintrakBanking.APICore.Controllers
                     };
                     repo.DeleteProductFee(productFeeId, user);
 
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new
+                    return Request.CreateResponse(HttpStatusCode.OK, new
                     {
                         success = true,
                         result = productFeeId,

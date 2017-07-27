@@ -26,18 +26,20 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-category")]
-        public HttpResponseMessage GetAllProductCategory(HttpRequestMessage request)
+        public HttpResponseMessage GetAllProductCategory()
         {
             try
             {
-                var data = repo.GetAllProductCategory();
+                var data = repo.GetAllProductCategory().ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data.ToList() });  //Ok(accounts);
+
+                    new { success = true, result = data });  //Ok(accounts);
+
             }
             catch (System.Exception ex)
             {
@@ -47,19 +49,19 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-class")]
-        public HttpResponseMessage GetAllProductClass(HttpRequestMessage request)
+        public HttpResponseMessage GetAllProductClass()
         {
             try
             {
-                var data = repo.GetAllProductClass();
+                var data = repo.GetAllProductClass().ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data.ToList() });  //Ok(accounts);
-            }
+         new { success = true, result = data });  //Ok(accounts);
+       }
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -70,18 +72,20 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-group")]
-        public HttpResponseMessage GetAllProductGroup(HttpRequestMessage request)
+        public HttpResponseMessage GetAllProductGroup()
         {
             try
             {
-                var data = repo.GetAllProductGroup();
+                var data = repo.GetAllProductGroup().ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data.ToList() });  //Ok(accounts);
+
+                    new { success = true, result = data });  //Ok(accounts);
+
             }
             catch (System.Exception ex)
             {
@@ -153,7 +157,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-type")]
-        public HttpResponseMessage GetAllProductType(HttpRequestMessage request)
+        public HttpResponseMessage GetAllProductType()
         {
             try
             {
@@ -288,18 +292,21 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product")]
-        public HttpResponseMessage GetAllProduct(HttpRequestMessage request)
+        public HttpResponseMessage GetAllProduct()
         {
             try
             {
-                var data = repo.GetAllProduct();
+                var data = repo.GetAllProduct().ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
+
                     new { success = true, result = data.ToList() });  //Ok(accounts);
+
+
             }
             catch (System.Exception ex)
             {
@@ -385,7 +392,9 @@ namespace FintrakBanking.APICore.Controllers
                 var record = repo.AddProduct(model);
                 if (record != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
+
+                    return Request.CreateResponse(HttpStatusCode.Created,
+
                         new { success = true, result = record, message = "product has been created successfully" });
                 }
                 else
@@ -441,19 +450,20 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-price-index")]
-        public HttpResponseMessage GetAllProductPriceIndex(HttpRequestMessage request)
+        public HttpResponseMessage GetAllProductPriceIndex()
         {
             try
             {
                 var token = new TokenDecryptionHelper();
-                var data = repo.GetProductPriceIndex(token.GetCompanyId);
+                var data = repo.GetProductPriceIndex(token.GetCompanyId).ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data.ToList() });
+
+                    new { success = true, result = data });
             }
             catch (System.Exception ex)
             {
