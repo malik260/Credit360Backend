@@ -9,7 +9,7 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    [Route("api/v1/setups")]
+    [RoutePrefix("api/v1/setups")]
     public class GeneralSetupController : ApiControllerBase
     {
         private IGeneralSetupRepository repo;
@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("calculate-maturity-date/effective-date/{effectiveDate}/tenor-mode/{tenorModeId}/tenor/{tenor}")]
-        public HttpResponseMessage GetMaturityDate(HttpRequestMessage request, DateTime effectiveDate, short tenorModeId, int tenor)
+        public HttpResponseMessage GetMaturityDate(DateTime effectiveDate, short tenorModeId, int tenor)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("tenor-mode")]
-        public HttpResponseMessage GetAllTenorMode(HttpRequestMessage request)
+        public HttpResponseMessage GetAllTenorMode()
         {
             try
             {
@@ -59,7 +59,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("currency")]
-        public HttpResponseMessage GetAllCurrency(HttpRequestMessage request)
+        public HttpResponseMessage GetAllCurrency()
         {
             try
             {
@@ -78,7 +78,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-type")]
-        public HttpResponseMessage GetAllCustomerType(HttpRequestMessage request)
+        public HttpResponseMessage GetAllCustomerType()
         {
             try
             {
@@ -98,7 +98,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("deal-classification-type")]
-        public HttpResponseMessage GetAllDealClassificationType(HttpRequestMessage request)
+        public HttpResponseMessage GetAllDealClassificationType()
         {
             try
             {
@@ -117,7 +117,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("application-date")]
-        public HttpResponseMessage GetApplicaionDate(HttpRequestMessage request)
+        public HttpResponseMessage GetApplicaionDate()
         {
             try
             {
@@ -136,7 +136,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("day-count")]
-        public HttpResponseMessage GetAllDayCount(HttpRequestMessage request)
+        public HttpResponseMessage GetAllDayCount()
         {
             try
             {
@@ -155,7 +155,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("fee-amortisation-type")]
-        public HttpResponseMessage GetAllFeeAmortisationType(HttpRequestMessage request)
+        public HttpResponseMessage GetAllFeeAmortisationType()
         {
             try
             {
@@ -174,7 +174,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("deal-types")]
-        public HttpResponseMessage GetAllDealTypes(HttpRequestMessage request)
+        public HttpResponseMessage GetAllDealTypes()
         {
             try
             {
@@ -194,7 +194,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("fs-types")]
-        public HttpResponseMessage GetAllFSTypes(HttpRequestMessage request)
+        public HttpResponseMessage GetAllFSTypes()
         {
             try
             {
@@ -214,7 +214,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("frequency-types")]
-        public HttpResponseMessage GetAllFrequencyTypes(HttpRequestMessage request)
+        public HttpResponseMessage GetAllFrequencyTypes()
         {
             try
             {
@@ -233,7 +233,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("operation-types")]
-        public HttpResponseMessage GetAllOperationTypes(HttpRequestMessage request)
+        public HttpResponseMessage GetAllOperationTypes()
         {
             try
             {
@@ -252,7 +252,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("operation")]
-        public HttpResponseMessage GetAllOperations(HttpRequestMessage request)
+        public HttpResponseMessage GetAllOperations()
         {
             try
             {
@@ -271,7 +271,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("operation/{operationTypeId}")]
-        public HttpResponseMessage GetOperations(HttpRequestMessage request, short operationTypeId)
+        public HttpResponseMessage GetOperations(short operationTypeId)
         {
             try
             {
@@ -290,7 +290,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //[HttpGet]
         //[Route("casa/account-status")]
-        //public HttpResponseMessage GetCasaAccountStatus(HttpRequestMessage request)
+        //public HttpResponseMessage GetCasaAccountStatus()
         //{
         //     
         //     
