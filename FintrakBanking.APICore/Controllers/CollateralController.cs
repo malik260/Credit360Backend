@@ -228,14 +228,14 @@ namespace FintrakBanking.APICore.Controllers
         //        var response = repo.GetCollateralCustomerPolicyByCollateralCustomerId(collateralCustomerId);
         //        if (response == null)
         //        {
-        //            return Ok(new { success = false, message = "No record found" });
+        //            return new { success = false, message = "No record found" });
         //        }
-        //        return Ok(new { success = true, result = response });
+        //        return new { success = true, result = response });
         //    }
         //    catch (System.Exception ex)
         //    {
         //        this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
-        //        return Ok(new { success = false, message = ex.Message });
+        //        return new { success = false, message = ex.Message });
         //    }
         //}
 

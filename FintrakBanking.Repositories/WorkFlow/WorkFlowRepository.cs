@@ -65,6 +65,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 fromApprovalLevelId = currentStaffLevel.approvalLevelId;
                 var nextLevel = GetNextApprovalLevel(entity.operationId, currentStaffLevel.approvalLevelId, entity.companyId); //get next level
             }
+
             trail = new tbl_Approval_Trail
             {
                 ArrivalDate = genSetup.GetApplicaionDate(),
@@ -95,6 +96,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             return Tuple.Create(false, entity);
+
 
         }
         

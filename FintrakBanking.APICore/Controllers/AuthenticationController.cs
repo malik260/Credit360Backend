@@ -55,7 +55,7 @@ namespace FintrakBanking.APICore.Controllers
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No user found" });
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = users });
-                    //return Ok(new { success = true, result = users });
+                    //return new { success = true, result = users });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"No user found" });
 
@@ -222,7 +222,7 @@ namespace FintrakBanking.APICore.Controllers
                 this.errorLogger.LogError(ex, this.Request.RequestUri.Host, "");// token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
-                //return Ok(new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
+                //return new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
             }
         }
     }

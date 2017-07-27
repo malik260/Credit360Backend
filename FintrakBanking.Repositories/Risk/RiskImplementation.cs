@@ -34,13 +34,17 @@ namespace FintrakBanking.Repositories.Risk
                 // countParent = Parents.Count();
                 foreach (var parent in Parents)
                 {
+                    node.indexTypeId = parent.IndexTypeId;
                     node.riskId = parent.RiskId;
                     node.description = parent.Description;
                     node.parentId = (int)parent.ParentId;
                     node.name = parent.Name;
-                    node.titleId = parent.RiskAssessmentTitleId;
+                    node.riskAssessmentTitleId = parent.RiskAssessmentTitleId;
                     //node.titleName = context.TblRiskAssessmentTitle.FirstOrDefault(c => c.RiskTypeId == parent.RiskAssessmentTitleId).RiskTitle; 
                     node.weight = parent.Weight;
+
+                    node.riskAssessmentTitleId = parent.RiskAssessmentTitleId;
+                   
                     nodeList.Add(node);
                     AllNodes(allIndexes, parent);
                 }
@@ -58,10 +62,12 @@ namespace FintrakBanking.Repositories.Risk
             {
                 TreeNode node2 = new TreeNode();
                 node2.riskId = child.RiskId;
+
+                node2.indexTypeId = child.IndexTypeId;
                 node2.description = child.Description;
                 node2.parentId = (int)child.ParentId;
                 node2.name = child.Name;
-                node2.titleId = child.RiskAssessmentTitleId;
+                node2.riskAssessmentTitleId = child.RiskAssessmentTitleId;
                // node2.titleName = context.TblRiskAssessmentTitle.FirstOrDefault(c => c.RiskTypeId == child.RiskAssessmentTitleId).RiskTitle;
                 node2.weight = child.Weight;
                 nodeList.Add(node2);
@@ -81,11 +87,12 @@ namespace FintrakBanking.Repositories.Risk
                     {
                         if (!nodeList.Any(c => c.riskId == newChild.RiskId))
                         {
+                            node3.indexTypeId = newChild.IndexTypeId;
                             node3.riskId = newChild.RiskId;
                             node3.description = newChild.Description;
                             node3.parentId = (int)newChild.ParentId;
                             node3.name = newChild.Name;
-                            node3.titleId = newChild.RiskAssessmentTitleId;
+                            node3.riskAssessmentTitleId = newChild.RiskAssessmentTitleId;
                          //  node3.titleName = context.TblRiskAssessmentTitle.FirstOrDefault(c => c.RiskTypeId == newChild.RiskAssessmentTitleId).RiskTitle;
                             node3.weight = newChild.Weight;
                             nodeList.Add(node3);
@@ -97,11 +104,12 @@ namespace FintrakBanking.Repositories.Risk
                                 TreeNode node4 = new TreeNode();                             
                                 if (!nodeList.Any(c => c.riskId == newGrandChild.RiskId))
                                 {
+                                    node4.indexTypeId = newGrandChild.IndexTypeId;
                                     node4.riskId = newGrandChild.RiskId;
                                     node4.description = newGrandChild.Description;
                                     node4.parentId = (int)newGrandChild.ParentId;
                                     node4.name = newGrandChild.Name;
-                                    node4.titleId = newGrandChild.RiskAssessmentTitleId;
+                                    node4.riskAssessmentTitleId = newGrandChild.RiskAssessmentTitleId;
                                  //    node4.titleName = context.TblRiskAssessmentTitle.FirstOrDefault(c => c.RiskTypeId == newGrandChild.RiskAssessmentTitleId).RiskTitle; 
                                     nodeList.Add(node4);
                                 }

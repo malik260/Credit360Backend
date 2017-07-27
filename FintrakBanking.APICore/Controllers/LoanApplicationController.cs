@@ -126,11 +126,11 @@ namespace FintrakBanking.APICore.Controllers
 
         //        repoApply.UpdateApprovalStatus(aid,id, user);
 
-        //        return Ok(new { success = true, result = id, message = "record has been deleted successfully" });
+        //        return new { success = true, result = id, message = "record has been deleted successfully" });
         //    }
         //    catch (System.Exception ex)
         //    {
-        //        return Ok(new { success = false, message = ex.Message });
+        //        return new { success = false, message = ex.Message });
         //    }
         //}
 

@@ -12,6 +12,8 @@ namespace FintrakBanking.ViewModels.Business
         public short approvalStatusId { get; set; }
         public string comment { get; set; }
         public int myLevelId { get; set; }
+        public int nextLevelId { get; set; }
         public int amount { get; set; }
+       
     }
 }

@@ -8,8 +8,10 @@
         public decimal weight { get; set; }
         public int? parentId { get; set; }
         public int? itemLevel { get; set; }
+        public short indexTypeId { get; set; }
         public int riskAssessmentTitleId { get; set; }
         public string riskAssessmentTitle { get; set; }
+        public bool selected { get; set; }
     }
 
     public class RiskAssessmentTitleViewModels : GenaralEntity
