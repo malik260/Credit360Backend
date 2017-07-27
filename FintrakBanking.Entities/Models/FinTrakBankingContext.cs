@@ -4,6 +4,7 @@ namespace FintrakBanking.Entities.Models
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
+    using System.Data.Common;
 
     public partial class FinTrakBankingContext : DbContext
     {
@@ -1562,5 +1563,7 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Deal_Classification)
                 .WillCascadeOnDelete(false);
         }
+
+       
     }
 }

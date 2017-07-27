@@ -17,7 +17,9 @@ namespace FintrakBanking.APICore.Controllers
     public class CollateralController : ApiControllerBase
     {
         TokenDecryptionHelper token = null;
+
         private ICollateralCustomerRepository repo;
+
         IErrorLogRepository errorLogger;
         public CollateralController(ICollateralCustomerRepository _repo, IErrorLogRepository _errorLogger)
         {
@@ -49,7 +51,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
+               this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -75,7 +77,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -106,7 +108,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -127,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -150,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -174,7 +176,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
+                 this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -216,7 +218,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -231,14 +233,16 @@ namespace FintrakBanking.APICore.Controllers
         //        var response = repo.GetCollateralCustomerPolicyByCollateralCustomerId(collateralCustomerId);
         //        if (response == null)
         //        {
-        //            return NotFound(new { success = false, message = "No record found" });
+
+        //            return new { success = false, message = "No record found" });
+
         //        }
-        //        return Ok(new { success = true, result = response });
+        //        return new { success = true, result = response });
         //    }
         //    catch (System.Exception ex)
         //    {
         //        this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
-        //        return Ok(new { success = false, message = ex.Message });
+        //        return new { success = false, message = ex.Message });
         //    }
         //}
 
@@ -258,7 +262,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -280,7 +284,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }

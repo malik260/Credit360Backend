@@ -37,7 +37,9 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
+
                     new { success = true, result = data });  //Ok(accounts);
+
             }
             catch (System.Exception ex)
             {
@@ -58,8 +60,8 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data });  //Ok(accounts);
-            }
+         new { success = true, result = data });  //Ok(accounts);
+       }
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -81,7 +83,9 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
+
                     new { success = true, result = data });  //Ok(accounts);
+
             }
             catch (System.Exception ex)
             {
@@ -299,7 +303,10 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data });  //Ok(accounts);
+
+                    new { success = true, result = data.ToList() });  //Ok(accounts);
+
+
             }
             catch (System.Exception ex)
             {
@@ -385,7 +392,9 @@ namespace FintrakBanking.APICore.Controllers
                 var record = repo.AddProduct(model);
                 if (record != null)
                 {
+
                     return Request.CreateResponse(HttpStatusCode.Created,
+
                         new { success = true, result = record, message = "product has been created successfully" });
                 }
                 else
@@ -453,6 +462,7 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
+
                     new { success = true, result = data });
             }
             catch (System.Exception ex)
