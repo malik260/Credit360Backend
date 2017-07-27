@@ -6,14 +6,15 @@ namespace FintrakBanking.Common.Enum
 {
     public enum CollateralTypeEnum
     {
-        MarketableSecurities = 2,
-        Property = 4,
-        PlantAndMachinery = 5,
-        Policy = 6,
-        Vehicle = 7,
-        PreciousMetal = 15,
-        TermDeposit = 22,
-        Miscellaneous = 8,
-        Gaurantee = 23
+        MarketableSecurities = 1,
+        Property = 2,
+        PlantAndMachinery = 3,
+        InsurancePolicy = 4,
+        Vehicle = 5,
+        PreciousMetal = 6,
+        TermDeposit = 7,
+        CASA = 8,
+        Gaurantee = 9,
+        Miscellaneous = 10,
     }
 }
