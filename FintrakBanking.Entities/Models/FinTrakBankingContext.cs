@@ -177,7 +177,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Deal_Classification> tbl_Deal_Classification { get; set; }
         public virtual DbSet<tbl_Deal_Type> tbl_Deal_Type { get; set; }
         public virtual DbSet<tbl_Stock> tbl_Stock { get; set; }
-        public virtual DbSet<CollateralDeposit_CashType> CollateralDeposit_CashType { get; set; }
         public object TblApprovalLevel { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
