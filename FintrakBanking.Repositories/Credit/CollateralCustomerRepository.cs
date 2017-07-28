@@ -1152,7 +1152,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralCustomerId = m.CollateralCustomerId,
                         documentCategory = m.DocumentCategory,
                         documentRef = m.DocumentRef,
-                 //       documentCode = m.FileLocationId,
+                      //  documentCode = m.DocumentCode,
                         documentType = m.DocumentType,
                         isMandatory = m.IsMandatory,
                         remark = m.Remark
