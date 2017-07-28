@@ -33,7 +33,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 entity.createdBy = token.GetStaffId;
                 entity.userBranchId = (short)token.GetBranchId;
