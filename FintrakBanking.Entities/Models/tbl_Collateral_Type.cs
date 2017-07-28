@@ -13,9 +13,9 @@ namespace FintrakBanking.Entities.Models
         public tbl_Collateral_Type()
         {
             tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
-            tbl_Collateral_Type_Sub = new HashSet<tbl_Collateral_Type_Sub>();
-            tbl_Collateral_ValueBase_Type = new HashSet<tbl_Collateral_ValueBase_Type>();
+            tbl_Collateral_Locations = new HashSet<tbl_Collateral_Locations>();
             tbl_Product_CollateralType = new HashSet<tbl_Product_CollateralType>();
+            tbl_Collateral_Type_Sub = new HashSet<tbl_Collateral_Type_Sub>();
         }
 
         [Key]
@@ -48,12 +48,12 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Type_Sub> tbl_Collateral_Type_Sub { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_ValueBase_Type> tbl_Collateral_ValueBase_Type { get; set; }
+        public virtual ICollection<tbl_Collateral_Locations> tbl_Collateral_Locations { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product_CollateralType> tbl_Product_CollateralType { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Collateral_Type_Sub> tbl_Collateral_Type_Sub { get; set; }
     }
 }

@@ -10,13 +10,13 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_InsurancePolicy
     {
         [Key]
-        public int CollateralInsurancePolicyId { get; set; }
+        public int InsurancePolicyId { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int ColleralCustomerId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string PolicyNumber { get; set; }
+        public string PolicyNo { get; set; }
 
         [Column(TypeName = "money")]
         public decimal InsuranceAmount { get; set; }
@@ -34,7 +34,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string InsurerDetails { get; set; }
 
-        public short? RenewalFrequencyTypeId { get; set; }
+        [StringLength(20)]
+        public string RenewalFrequency { get; set; }
 
         public DateTime? NextRenewalDate { get; set; }
 
@@ -54,9 +55,5 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        public virtual tbl_Frequency_Type tbl_Frequency_Type { get; set; }
-
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
     }
 }

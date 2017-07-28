@@ -10,20 +10,18 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_Deposit
     {
         [Key]
-        public int CollateralDepositId { get; set; }
+        public int TermDepositTranAccId { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int ColleralCustomerId { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string AccountType { get; set; }
 
-        [Required]
         [StringLength(50)]
-        public string AccountNumber { get; set; }
+        public string AccountNo { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AccountBalance { get; set; }
+        public decimal? AccountBalance { get; set; }
 
         [StringLength(5)]
         public string Contribution { get; set; }
@@ -46,7 +44,5 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
     }
 }

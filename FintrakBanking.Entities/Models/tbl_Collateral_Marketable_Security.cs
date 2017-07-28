@@ -10,9 +10,9 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_Marketable_Security
     {
         [Key]
-        public int CollateralMarketableSecurityId { get; set; }
+        public int SecurityTypeID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int ColleralCustomerId { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -29,12 +29,12 @@ namespace FintrakBanking.Entities.Models
         public string IssuerName { get; set; }
 
         [StringLength(50)]
-        public string IssuerReferenceNumber { get; set; }
+        public string IssuerRefNo { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? UnitValue { get; set; }
 
-        public int? NumberOfUnits { get; set; }
+        public int? NoofUnits { get; set; }
 
         [StringLength(500)]
         public string Remark { get; set; }
@@ -52,7 +52,5 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
     }
 }

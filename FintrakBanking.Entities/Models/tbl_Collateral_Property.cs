@@ -10,15 +10,13 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_Property
     {
         [Key]
-        public int CollateralPropertyId { get; set; }
+        public int PropertyTypeId { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int ColleralCustomerId { get; set; }
 
         [Required]
         [StringLength(50)]
         public string PropertyType { get; set; }
-
-        public short? PolicyId { get; set; }
 
         public int CityId { get; set; }
 
@@ -35,9 +33,18 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string ZoneClassification { get; set; }
 
-        public short? PropertyValueBaseTypeId { get; set; }
+        public byte? propertyValueBaseTypeId { get; set; }
 
-        public double Haircut { get; set; }
+        [Column(TypeName = "money")]
+        public decimal? MarketValue { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? GovtValue { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? PropertyIndexValue { get; set; }
+
+        public double? Haircut { get; set; }
 
         public DateTime? LastValuationDate { get; set; }
 
@@ -71,10 +78,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
 
-        public virtual tbl_Collateral_Property tbl_Collateral_Property1 { get; set; }
-
-        public virtual tbl_Collateral_Property tbl_Collateral_Property2 { get; set; }
-
-        public virtual tbl_CollateralType_Policy tbl_CollateralType_Policy { get; set; }
+        public virtual tbl_PropertyValue_Basetype tbl_PropertyValue_Basetype { get; set; }
     }
 }

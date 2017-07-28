@@ -10,9 +10,9 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_Gaurantee
     {
         [Key]
-        public int CollateralGauranteeId { get; set; }
+        public int GauranteeId { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int ColleralCustomerId { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.Models
         public decimal GuaranteeAmount { get; set; }
 
         [StringLength(20)]
-        public string GuarantorCIFNumber { get; set; }
+        public string GuarantorCIFNo { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -65,7 +65,5 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
     }
 }

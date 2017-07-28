@@ -10,9 +10,9 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_PreciousMetal
     {
         [Key]
-        public int CollateralPreciousMetalId { get; set; }
+        public int PreciousMetalId { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int ColleralCustomerId { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(10)]
-        public string WeightInGrammes { get; set; }
+        public string WeighInGms { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? ValuationAmount { get; set; }
@@ -53,7 +53,5 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
     }
 }

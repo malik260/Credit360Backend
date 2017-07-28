@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public tbl_City()
         {
             tbl_Branch = new HashSet<tbl_Branch>();
+            tbl_Collateral_Locations = new HashSet<tbl_Collateral_Locations>();
             tbl_Collateral_Property = new HashSet<tbl_Collateral_Property>();
             tbl_Staff = new HashSet<tbl_Staff>();
             tbl_Temp_Staff = new HashSet<tbl_Temp_Staff>();
@@ -37,6 +38,9 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_State tbl_State { get; set; }
 
         public virtual tbl_City_Class tbl_City_Class { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Collateral_Locations> tbl_Collateral_Locations { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Collateral_Property> tbl_Collateral_Property { get; set; }

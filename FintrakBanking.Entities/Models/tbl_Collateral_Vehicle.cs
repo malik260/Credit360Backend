@@ -10,16 +10,17 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_Vehicle
     {
         [Key]
-        public int CollateralVehicleId { get; set; }
+        public int VehicleTypeID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int ColleralCustomerId { get; set; }
 
         [Required]
         [StringLength(100)]
         public string VehicleType { get; set; }
 
+        [Required]
         [StringLength(10)]
-        public string NewOrUsed { get; set; }
+        public string NewORUsed { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -35,15 +36,15 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(50)]
-        public string RegistrationNumber { get; set; }
+        public string RegnNo { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ChasisNumber { get; set; }
+        public string ChasisNo { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string EngineNumber { get; set; }
+        public string EngineNo { get; set; }
 
         [Required]
         [StringLength(250)]
@@ -80,7 +81,5 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
     }
 }

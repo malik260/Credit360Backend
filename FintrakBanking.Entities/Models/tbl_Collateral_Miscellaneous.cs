@@ -12,17 +12,17 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Collateral_Miscellaneous()
         {
-            tbl_Collateral_Miscellaneous_Notes = new HashSet<tbl_Collateral_Miscellaneous_Notes>();
+            tbl_Collateral_Misc_Notes = new HashSet<tbl_Collateral_Misc_Notes>();
         }
 
         [Key]
-        public int CollateralMiscellaneousId { get; set; }
+        public int MiscellaneousId { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int ColleralCustomerId { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string CollateralDescription { get; set; }
+        public string CollateralDesc { get; set; }
 
         public int Units { get; set; }
 
@@ -30,7 +30,7 @@ namespace FintrakBanking.Entities.Models
         public decimal UnitValue { get; set; }
 
         [StringLength(500)]
-        public string Remark { get; set; }
+        public string Remarks { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -49,6 +49,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Miscellaneous_Notes> tbl_Collateral_Miscellaneous_Notes { get; set; }
+        public virtual ICollection<tbl_Collateral_Misc_Notes> tbl_Collateral_Misc_Notes { get; set; }
     }
 }

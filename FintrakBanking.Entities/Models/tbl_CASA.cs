@@ -34,8 +34,6 @@ namespace FintrakBanking.Entities.Models
 
         public short BranchId { get; set; }
 
-        public short CurrencyId { get; set; }
-
         public bool IsCurrentAccount { get; set; }
 
         public int? Tenor { get; set; }
@@ -54,7 +52,7 @@ namespace FintrakBanking.Entities.Models
 
         public short AccountStatusId { get; set; }
 
-        public int? OperationId { get; set; }
+        public int? OperationID { get; set; }
 
         [Column(TypeName = "money")]
         public decimal AvailableBalance { get; set; }
@@ -129,8 +127,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_CASA_PostNoStatus tbl_CASA_PostNoStatus { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
-
-        public virtual tbl_Currency tbl_Currency { get; set; }
 
         public virtual tbl_Customer tbl_Customer { get; set; }
 

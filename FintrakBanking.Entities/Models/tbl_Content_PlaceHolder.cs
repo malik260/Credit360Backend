@@ -6,17 +6,14 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_SeniorityOfClaims")]
-    public partial class tbl_Collateral_SeniorityOfClaims
+    [Table("core.tbl_Content_PlaceHolder")]
+    public partial class tbl_Content_PlaceHolder
     {
         [Key]
-        public short SeniorityOfClaimId { get; set; }
+        public int ContentPlaceHolderId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string SeniorityOfClaims { get; set; }
-
-        [StringLength(250)]
-        public string Description { get; set; }
+        public string ContentPlaceHolder { get; set; }
     }
 }

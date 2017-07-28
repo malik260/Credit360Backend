@@ -6,31 +6,26 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Valuers")]
-    public partial class tbl_Collateral_Valuers
+    [Table("credit.tbl_Collateral_Category")]
+    public partial class tbl_Collateral_Category
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Collateral_Valuers()
+        public tbl_Collateral_Category()
         {
             tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
         }
 
         [Key]
-        public short CollateralValuerId { get; set; }
+        public short CollateralCategoryId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ValuerLicenceNumber { get; set; }
+        public string CollateralCategoryName { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string Name { get; set; }
+        [StringLength(150)]
+        public string Description { get; set; }
 
-        public short? ValuerTypeId { get; set; }
-
-        public short? CityId { get; set; }
-
-        public short? CountryId { get; set; }
+        public bool IsTangible { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -48,7 +43,5 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
-
-        public virtual tbl_Collateral_ValuerType tbl_Collateral_ValuerType { get; set; }
     }
 }

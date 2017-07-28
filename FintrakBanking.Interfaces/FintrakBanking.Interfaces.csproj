@@ -60,6 +60,7 @@
     <Compile Include="Customer\ILoanCovenantRepository.cs" />
     <Compile Include="ErrorLogger\IErrorLogRepository.cs" />
     <Compile Include="Helper\ICultureHelper.cs" />
+    <Compile Include="Notification\INotificationRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Risk\IRiskImplementation.cs" />
     <Compile Include="Setups\Approval\IApprovalGroupMappingRepository.cs" />

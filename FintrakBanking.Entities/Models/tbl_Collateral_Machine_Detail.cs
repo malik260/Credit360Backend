@@ -10,13 +10,13 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_Machine_Detail
     {
         [Key]
-        public int CollateralMachineDetailId { get; set; }
+        public int MachineDetailId { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int ColleralCustomerId { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string MachineName { get; set; }
+        public string MachineDetails { get; set; }
 
         [StringLength(50)]
         public string Manufacturer { get; set; }
@@ -29,7 +29,16 @@ namespace FintrakBanking.Entities.Models
         [StringLength(5)]
         public string PurchasedYear { get; set; }
 
-        public short MachineValueBaseTypeId { get; set; }
+        public byte MachineValueBaseId { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? InvoiceValue { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? WrittenDownValue { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? AssessedValue { get; set; }
 
         [Required]
         [StringLength(200)]
@@ -64,8 +73,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
-
-        public virtual tbl_Collateral_ValueBase_Type tbl_Collateral_ValueBase_Type { get; set; }
+        public virtual tbl_MachineValue_Base tbl_MachineValue_Base { get; set; }
     }
 }

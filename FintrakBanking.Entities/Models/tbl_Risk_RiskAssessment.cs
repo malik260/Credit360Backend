@@ -6,20 +6,22 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Miscellaneous_Notes")]
-    public partial class tbl_Collateral_Miscellaneous_Notes
+    [Table("credit.tbl_Risk_RiskAssessment")]
+    public partial class tbl_Risk_RiskAssessment
     {
         [Key]
-        public int MiscellaneousNoteId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int RiskAssessmentId { get; set; }
 
-        public int? MiscellaneousId { get; set; }
+        public int RatingIndexId { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string ColumnName { get; set; }
+        public int LoanId { get; set; }
 
-        [StringLength(250)]
-        public string ColumnValue { get; set; }
+        public decimal IndexScore { get; set; }
+
+        public int CompanyId { get; set; }
+
+        public DateTime? DateTimeDeleted { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -32,9 +34,5 @@ namespace FintrakBanking.Entities.Models
         public bool Deleted { get; set; }
 
         public int? DeletedBy { get; set; }
-
-        public DateTime? DateTimeDeleted { get; set; }
-
-        public virtual tbl_Collateral_Miscellaneous tbl_Collateral_Miscellaneous { get; set; }
     }
 }

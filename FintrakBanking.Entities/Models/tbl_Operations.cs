@@ -28,6 +28,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool TerminateIfDisapproved { get; set; }
 
+        [Required]
+        [StringLength(300)]
+        public string OperationURL { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Approval_Group_Mapping> tbl_Approval_Group_Mapping { get; set; }
 

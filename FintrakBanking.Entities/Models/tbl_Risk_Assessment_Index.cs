@@ -24,8 +24,6 @@ namespace FintrakBanking.Entities.Models
 
         public int? ItemLevel { get; set; }
 
-        public short IndexTypeId { get; set; }
-
         public int RiskAssessmentTitleId { get; set; }
 
         public int? ParentId { get; set; }

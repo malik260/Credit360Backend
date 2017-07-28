@@ -23,8 +23,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string ApprovalStatusName { get; set; }
 
-        public bool? ForDisplay { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Approval_Trail> tbl_Approval_Trail { get; set; }
 
