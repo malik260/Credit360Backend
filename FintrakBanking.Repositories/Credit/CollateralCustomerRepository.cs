@@ -13,14 +13,14 @@ using FintrakBanking.Interfaces.media;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    public class CustomerCollateralRepository : ICollateralCustomerRepository
+    public class CollateralCustomerRepository : ICollateralCustomerRepository
     {
         private FinTrakBankingContext context;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
         private IProductRepository product;
         private IMediaRepository media;
-        public CustomerCollateralRepository(FinTrakBankingContext _context,
+        public CollateralCustomerRepository(FinTrakBankingContext _context,
                                         IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail,
                                         IProductRepository _product,

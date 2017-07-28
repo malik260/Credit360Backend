@@ -14,11 +14,11 @@ using System.Net;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/credit")]
-    public class CollateralController : ApiControllerBase
+    public class CollateralCustomerController : ApiControllerBase
     {
         private ICollateralCustomerRepository repo;
 
-        public CollateralController(ICollateralCustomerRepository _repo )
+        public CollateralCustomerController(ICollateralCustomerRepository _repo )
         {
             this.repo = _repo;
         }
