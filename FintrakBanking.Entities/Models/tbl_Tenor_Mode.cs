@@ -13,7 +13,6 @@ namespace FintrakBanking.Entities.Models
         public tbl_Tenor_Mode()
         {
             tbl_Approval_Level = new HashSet<tbl_Approval_Level>();
-            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan = new HashSet<tbl_Loan>();
         }
 
@@ -27,9 +26,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Approval_Level> tbl_Approval_Level { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }

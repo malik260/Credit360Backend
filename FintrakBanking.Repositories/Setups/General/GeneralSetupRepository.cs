@@ -83,7 +83,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return (from data in context.tbl_Deal_Classification
                     select new LookupViewModel()
                     {
-                        lookupId = data.DealClassificationId,
+                        lookupId = data.DealClassificationID,
                         lookupName = data.Classification
                     });
         }

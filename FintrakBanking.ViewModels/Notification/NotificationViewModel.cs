@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FintrakBanking.Repositories.Notification
+namespace FintrakBanking.ViewModels.Notification
 {
    public  class NotificationViewModel
     {

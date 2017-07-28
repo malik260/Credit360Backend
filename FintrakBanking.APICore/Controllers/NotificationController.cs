@@ -1,6 +1,6 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.Repositories.Notification;
+using FintrakBanking.Interfaces.Notification;
 using System;
 using System.Collections.Generic;
 using System.Linq;

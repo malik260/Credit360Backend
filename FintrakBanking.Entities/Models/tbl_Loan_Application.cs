@@ -52,8 +52,6 @@ namespace FintrakBanking.Entities.Models
 
         public int Tenor { get; set; }
 
-        public short TenorModeId { get; set; }
-
         [Required]
         public string LoanInformation { get; set; }
 
@@ -106,8 +104,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Staff tbl_Staff { get; set; }
 
         public virtual tbl_Staff tbl_Staff1 { get; set; }
-
-        public virtual tbl_Tenor_Mode tbl_Tenor_Mode { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }

@@ -20,7 +20,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         #region Miscellaneous Notes
         Task<bool> DeleteCollateralMiscellaneousNotes(int miscNoteId, UserInfo user);
-        Task<bool> UpdateCollateralMiscellaneousNotes(int miscNoteId, collateralMiscellaneousNotesViewModel entity);
+        Task<bool> UpdateCollateralMiscellaneousNotes(int miscNoteId, CollateralMiscellaneousNotesViewModel entity);
         #endregion Miscellaneous Notes
 
         #region Seniority Of Claims

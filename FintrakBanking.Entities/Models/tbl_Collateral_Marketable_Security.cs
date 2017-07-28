@@ -14,43 +14,64 @@ namespace FintrakBanking.Entities.Models
 
         public int ColleralCustomerId { get; set; }
 
+        public short CollateralSubTypeId { get; set; }
+
         [Required]
         [StringLength(100)]
         public string SecurityType { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string SecurityCode { get; set; }
+        public string DealReferenceNumber { get; set; }
 
-        [StringLength(500)]
-        public string Description { get; set; }
+        public DateTime EffectiveDate { get; set; }
 
+        public DateTime MaturityDate { get; set; }
+
+<<<<<<< HEAD
+        [StringLength(50)]
+        public string IssuerRefNo { get; set; }
+=======
+        [Column(TypeName = "money")]
+        public decimal DealAmount { get; set; }
+>>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
+
+        [Column(TypeName = "money")]
+        public decimal SecurityValue { get; set; }
+
+<<<<<<< HEAD
+        public int? NoofUnits { get; set; }
+=======
+        [Column(TypeName = "money")]
+        public decimal LienUsableAmount { get; set; }
+>>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
+
+        [Required]
         [StringLength(150)]
         public string IssuerName { get; set; }
 
+        [Required]
         [StringLength(50)]
-        public string IssuerRefNo { get; set; }
+        public string IssuerReferenceNumber { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? UnitValue { get; set; }
+        public decimal UnitValue { get; set; }
 
-        public int? NoofUnits { get; set; }
+        public int NumberOfUnits { get; set; }
 
+        public short Rating { get; set; }
+
+        public short PercentageInterest { get; set; }
+
+        public short? InterestPaymentFrequency { get; set; }
+
+<<<<<<< HEAD
+        public DateTime? DateTimeDeleted { get; set; }
+=======
         [StringLength(500)]
         public string Remark { get; set; }
 
-        public int CreatedBy { get; set; }
-
-        public int? LastUpdatedBy { get; set; }
-
-        public DateTime DateTimeCreated { get; set; }
-
-        public DateTime? DateTimeUpdated { get; set; }
-
-        public bool Deleted { get; set; }
-
-        public int? DeletedBy { get; set; }
-
-        public DateTime? DateTimeDeleted { get; set; }
+        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+>>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
     }
 }

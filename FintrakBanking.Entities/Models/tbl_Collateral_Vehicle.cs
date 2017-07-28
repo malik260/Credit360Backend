@@ -18,25 +18,35 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string VehicleType { get; set; }
 
+<<<<<<< HEAD
         [Required]
         [StringLength(10)]
         public string NewORUsed { get; set; }
+=======
+        public short CollateralSubTypeId { get; set; }
+
+        [StringLength(10)]
+        public string VehicleStatus { get; set; }
+>>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
 
         [Required]
         [StringLength(50)]
-        public string Make { get; set; }
+        public string VehicleMake { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Model { get; set; }
+        public string ModelName { get; set; }
 
         [Required]
         [StringLength(5)]
-        public string Year { get; set; }
+        public string ManufacturedDate { get; set; }
 
         [Required]
         [StringLength(50)]
         public string RegnNo { get; set; }
+
+        [StringLength(50)]
+        public string SerialNumber { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -48,11 +58,11 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(250)]
-        public string Owner { get; set; }
+        public string NameOfOwner { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string RegAuthority { get; set; }
+        public string RegistrationCompany { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? ResaleValue { get; set; }
@@ -60,7 +70,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? ValuationDate { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ValuationAmount { get; set; }
+        public decimal? LastValuationAmount { get; set; }
 
         [Column(TypeName = "money")]
         public decimal InvoiceValue { get; set; }
@@ -68,6 +78,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string Remark { get; set; }
 
+<<<<<<< HEAD
         public int CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
@@ -81,5 +92,8 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
+=======
+        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+>>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
     }
 }

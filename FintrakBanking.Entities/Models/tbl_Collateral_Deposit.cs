@@ -14,6 +14,15 @@ namespace FintrakBanking.Entities.Models
 
         public int ColleralCustomerId { get; set; }
 
+<<<<<<< HEAD
+=======
+        public short? CollateralSubTypeId { get; set; }
+
+        [StringLength(50)]
+        public string DealReferenceNumber { get; set; }
+
+        [Required]
+>>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
         [StringLength(50)]
         public string AccountType { get; set; }
 
@@ -21,6 +30,7 @@ namespace FintrakBanking.Entities.Models
         public string AccountNo { get; set; }
 
         [Column(TypeName = "money")]
+<<<<<<< HEAD
         public decimal? AccountBalance { get; set; }
 
         [StringLength(5)]
@@ -30,19 +40,33 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(500)]
         public string Remark { get; set; }
+=======
+        public decimal ExistingLienAmount { get; set; }
+>>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
 
-        public int CreatedBy { get; set; }
+        [Column(TypeName = "money")]
+        public decimal LienAmount { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        [Column(TypeName = "money")]
+        public decimal AvailableBalance { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        [Column(TypeName = "money")]
+        public decimal SecurityValue { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime MaturityDate { get; set; }
 
-        public bool Deleted { get; set; }
+        [Column(TypeName = "money")]
+        public decimal MaturityAmount { get; set; }
 
-        public int? DeletedBy { get; set; }
-
+<<<<<<< HEAD
         public DateTime? DateTimeDeleted { get; set; }
+=======
+        [StringLength(500)]
+        public string Remark { get; set; }
+
+        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+
+        public virtual tbl_Collateral_Type_Sub tbl_Collateral_Type_Sub { get; set; }
+>>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
     }
 }
