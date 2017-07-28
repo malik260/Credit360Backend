@@ -54,7 +54,7 @@ namespace FintrakBanking.Entities.Models
 
         public short AccountStatusId { get; set; }
 
-        public int? OperationId { get; set; }
+        public int? OperationID { get; set; }
 
         [Column(TypeName = "money")]
         public decimal AvailableBalance { get; set; }

@@ -24,13 +24,13 @@ namespace FintrakBanking.Entities.Models
 
         public int? ItemLevel { get; set; }
 
-        public short IndexTypeId { get; set; }
-
         public int RiskAssessmentTitleId { get; set; }
 
         public int? ParentId { get; set; }
 
         public int CompanyId { get; set; }
+
+        public short IndexTypeId { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -45,6 +45,8 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
+
+        public virtual tbl_Risk_Assessment_Index_Type tbl_Risk_Assessment_Index_Type { get; set; }
 
         public virtual tbl_Risk_Assessment_Title tbl_Risk_Assessment_Title { get; set; }
     }

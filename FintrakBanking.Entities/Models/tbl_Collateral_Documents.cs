@@ -12,15 +12,17 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public long DocumentId { get; set; }
 
-        public int ColleralCustomerId { get; set; }
+        public int CollateralCustomerId { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string Documentcategory { get; set; }
+        public string DocumentCategory { get; set; }
 
         [Required]
         [StringLength(500)]
         public string DocumentRef { get; set; }
+
+        public int FileLocationId { get; set; }
 
         [StringLength(100)]
         public string DocumentType { get; set; }

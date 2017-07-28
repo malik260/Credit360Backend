@@ -6,13 +6,13 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_ValueBase_Type")]
-    public partial class tbl_Collateral_ValueBase_Type
+    [Table("credit.tbl_Collateral_Valuebase_Type")]
+    public partial class tbl_Collateral_Valuebase_Type
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Collateral_ValueBase_Type()
+        public tbl_Collateral_Valuebase_Type()
         {
-            tbl_Collateral_Machine_Detail = new HashSet<tbl_Collateral_Machine_Detail>();
+            tbl_Collateral_Plant_And_Equipment = new HashSet<tbl_Collateral_Plant_And_Equipment>();
         }
 
         [Key]
@@ -42,7 +42,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateTimeDeleted { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Machine_Detail> tbl_Collateral_Machine_Detail { get; set; }
+        public virtual ICollection<tbl_Collateral_Plant_And_Equipment> tbl_Collateral_Plant_And_Equipment { get; set; }
 
         public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
     }

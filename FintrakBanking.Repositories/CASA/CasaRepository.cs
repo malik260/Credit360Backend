@@ -54,7 +54,7 @@ namespace FintrakBanking.Repositories.CASA
                         actionBy = data.ActionBy ?? 0,
                         actionDate = data.ActionDate ?? General.DefaultDate,
                         accountStatusId = data.AccountStatusId,
-                        operationId = data.OperationId ?? 0,
+                        operationId = data.OperationID ?? 0,
                         availableBalance = data.AvailableBalance,
                         ledgerBalance = data.LedgerBalance,
                         relationshipOfficerId = data.RelationshipOfficerId ?? 0,
@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.CASA
                         actionBy = data.ActionBy ?? 0,
                         actionDate = data.ActionDate ?? General.DefaultDate,
                         accountStatusId = data.AccountStatusId,
-                        operationId = data.OperationId ?? 0,
+                        operationId = data.OperationID ?? 0,
                         availableBalance = data.AvailableBalance,
                         ledgerBalance = data.LedgerBalance,
 
@@ -161,7 +161,7 @@ namespace FintrakBanking.Repositories.CASA
                         actionBy = data.ActionBy ?? 0,
                         actionDate = data.ActionDate ?? General.DefaultDate,
                         accountStatusId = data.AccountStatusId,
-                        operationId = data.OperationId ?? 0,
+                        operationId = data.OperationID ?? 0,
                         availableBalance = data.AvailableBalance,
                         ledgerBalance = data.LedgerBalance,
 

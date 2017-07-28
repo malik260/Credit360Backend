@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Product3 = new HashSet<tbl_Product>();
             tbl_Product4 = new HashSet<tbl_Product>();
             tbl_Product5 = new HashSet<tbl_Product>();
+            tbl_Collateral_Type = new HashSet<tbl_Collateral_Type>();
             tbl_Chart_Of_Account_Currency = new HashSet<tbl_Chart_Of_Account_Currency>();
         }
 
@@ -88,6 +89,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product> tbl_Product5 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Collateral_Type> tbl_Collateral_Type { get; set; }
 
         public virtual tbl_Account_Type tbl_Account_Type { get; set; }
 
