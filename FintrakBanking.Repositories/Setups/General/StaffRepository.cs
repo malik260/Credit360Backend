@@ -506,30 +506,34 @@ on c.DepartmentId equals dept.DepartmentId
                 SystemDateTime = DateTime.Now
             };
 
-            using (var trans = context.Database.BeginTransaction())
+            if (workFlow.CheckRouteForOperation((int)Operations.StaffCreation, staffModel.companyId))
             {
-                try
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    auditTrail.AddAuditTrail(audit);
-                    this.context.tbl_Temp_Staff.Add(staff);
-                    output = this.SaveAll();
-
-                    var entity = new ApprovalViewModel
+                    try
                     {
-                        staffId = staffModel.createdBy,
-                        companyId = staffModel.companyId,
-                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = staff.StaffId,
-                        operationId = (int)Operations.StaffCreation,
-                        BranchId = staffModel.userBranchId
-                    };
-                    var response = workFlow.LogForApproval(entity);
-                    return output;
+                        auditTrail.AddAuditTrail(audit);
+                        this.context.tbl_Temp_Staff.Add(staff);
+                        output = this.SaveAll();
+
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = staffModel.createdBy,
+                            companyId = staffModel.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = staff.StaffId,
+                            operationId = (int)Operations.StaffCreation,
+                            BranchId = staffModel.userBranchId
+                        };
+                        var response = workFlow.LogForApproval(entity);
+                        return output;
+                    }
+                    catch (Exception)
+                    {
+                        trans.Rollback();
+                    }
                 }
-                catch (Exception)
-                {
-                    trans.Rollback();
-                }
+                throw new Exception("Approval route have not been defined for this operation");
             }
             return output;
         }

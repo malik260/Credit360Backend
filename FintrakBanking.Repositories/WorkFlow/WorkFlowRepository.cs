@@ -1,6 +1,8 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models; 
-using FintrakBanking.Interfaces.Admin; 
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
@@ -26,10 +28,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;      
         private FinTrakBankingContext context;
+        private ICustomerRepository customerRepo;
 
         public WorkFlowRepository(IApprovalLevelRepository _approvel, IApprovalGroupRepository _groupRepo,
         FinTrakBankingContext _context, IAuditTrailRepository _auditTrail,
-            IApprovalLevelStaffRepository _level,
+            IApprovalLevelStaffRepository _level, ICustomerRepository _customerRepo,
             IGeneralSetupRepository _genSetup, IApprovalGroupMappingRepository _groupMappingRepo)
         {
             approvelRepo = _approvel;
@@ -37,6 +40,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             genSetup = _genSetup;
             auditTrail = _auditTrail;
             groupRepo = _groupRepo;
+              customerRepo = _customerRepo;
             context = _context;
             groupMappingRepo = _groupMappingRepo;
         }
@@ -58,25 +62,27 @@ namespace FintrakBanking.Repositories.WorkFlow
         /// <returns></returns>
         public Tuple<bool, ApprovalViewModel> LogForApproval(ApprovalViewModel entity)
         {
+
             int? fromApprovalLevelId = null;
             var currentStaffLevel = GetStaffLevel(entity.staffId, entity.companyId, entity.operationId);
             if (currentStaffLevel != null)
             {
                 fromApprovalLevelId = currentStaffLevel.approvalLevelId;
-                var nextLevel = GetNextApprovalLevel(entity.operationId, currentStaffLevel.approvalLevelId, entity.companyId); //get next level
+                // var nextLevel = GetNextApprovalLevel(entity.operationId, currentStaffLevel.approvalLevelId, entity.companyId); //get next level
             }
 
             trail = new tbl_Approval_Trail
             {
                 ArrivalDate = genSetup.GetApplicaionDate(),
-                ToApprovalLevelId = GetStatingApprovalLevel(entity.operationId, entity.companyId),// nextLevel?.approvalLevelId,  //nextLevel == null ? null : nextLevel.approvalLevelId
+                ToApprovalLevelId = entity.nextLevelId == 0 ? GetStatingApprovalLevel(entity.operationId, entity.companyId) : entity.nextLevelId,
                 TargetId = entity.targetId,
                 ApprovalStatusId = entity.approvalStatusId,
                 CompanyId = entity.companyId,
                 RequestStaffId = entity.staffId,
                 Comment = entity.comment,
                 ApprovalStateId = (int)ApprovalState.Initiation,
-                OperationId = entity.operationId
+                OperationId = entity.operationId,
+                FromApprovalLevelId = fromApprovalLevelId
             };
 
             if (fromApprovalLevelId.HasValue)
@@ -89,17 +95,26 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             approvelRepo.AddApprovalTrail(trail);
-            decimal amount = GetAmount(entity.targetId, entity.operationId, entity.companyId);
+            decimal amount = GetAmount(entity);
             if (IsWithinMyLimit(entity, currentStaffLevel))
             {
                 return ApproveOperation(entity);
             }
 
             return Tuple.Create(false, entity);
-
-
         }
+           
         
+
+        public bool CheckRouteForOperation(int operationId, int companyId)
+        {
+
+          var data =  approvelRepo.GetAllApprovalLevel(companyId).Where(c => c.operationId == operationId).ToList();
+            if (!data.Any()) {
+                return false;
+            }  return true;         
+        }
+
         /// <summary>
         /// Call this function for approval routing.
         /// </summary>
@@ -112,15 +127,16 @@ namespace FintrakBanking.Repositories.WorkFlow
             bool terminate = false;
             // get all approval level for the operation
             // check for approval limit and approve if it is within limit
-            decimal amount = GetAmount(entity.targetId, entity.operationId, entity.companyId);
-            if (amount > 0)
+            decimal amount = GetAmount(entity );
+          //  decimal tenor = GetAmount(entity);
+        
+            if (amount > 0 ) //    || tenor > 0)
             {
                 decimal totalLimit = currentStaffLevel.minimumAmount + currentStaffLevel.maximumAmount;
                 ApprovalGroupViewModel[] allGroups = groupRepo.GetAllApprovalGroup(entity.companyId).ToArray();
 
                 if (allGroups.FirstOrDefault(c => c.groupId == currentStaffLevel.groupId).isCommittee)
                 {
-
                     if (IsCommitteeGroup(currentStaffLevel))
                     {
                         if (totalLimit >= amount)
@@ -146,9 +162,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         RequestStaffId = entity.staffId,
                                         OperationId = entity.operationId
                                     };
-
-                                   approvelRepo.AddApprovalTrail(trail);
-
+                                    approvelRepo.AddApprovalTrail(trail);
                                 }
                             }
                         }
@@ -214,26 +228,48 @@ namespace FintrakBanking.Repositories.WorkFlow
             return Tuple.Create(false, entity);
         }
 
-        private decimal GetAmount(int targetId, int operationId, int companyId)
+        private decimal GetAmount(ApprovalViewModel entity)
         {
             decimal amount = 0;
-            if (operationId == (int)Operations.LoanBooking)
+            if (entity.operationId == (int)Operations.LoanApplication)
             {
-                var loan = context.tbl_Loan_Application.Where(c => c.CompanyId == companyId && c.LoanApplicationId == targetId);
+                var loan = context.tbl_Loan_Application.Where(c => c.CompanyId == entity.companyId && c.LoanApplicationId == entity.targetId);
                 if (loan.Any())
                 {
                     amount = loan.SingleOrDefault().PrincipalAmount;
                 }
             }
-            if (operationId == (int)Operations.LoanBooking)
-            {
-                var loan = context.tbl_Loan.Where(c => c.CompanyId == companyId && c.LoanId == targetId);
+            if (entity.operationId == (int)Operations.LoanBooking)
+            { 
+                var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.LoanId == entity.targetId);
                 if (loan.Any())
                 {
                     amount = loan.SingleOrDefault().PrincipalAmount;
                 }
             }
             return amount;
+        }
+
+        private decimal GetTenor(ApprovalViewModel entity)
+        {
+            decimal tenor = 0;
+            if (entity.operationId == (int)Operations.LoanApplication)
+            {
+                var loan = context.tbl_Loan_Application.Where(c => c.CompanyId == entity.companyId && c.LoanApplicationId == entity.targetId);
+                if (loan.Any())
+                {
+                    tenor = loan.SingleOrDefault().Tenor;
+                }
+            }
+            if (entity.operationId == (int)Operations.LoanBooking)
+            {
+                var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.LoanId == entity.targetId);
+                if (loan.Any())
+                {
+                    tenor = loan.SingleOrDefault().Tenor ;
+                }
+            }
+            return tenor;
         }
 
         private IQueryable<tbl_Approval_Trail> GetApprovalTrail(int approvalLevelId, ApprovalViewModel entity)
@@ -365,7 +401,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 treminate = true;
                 return UpdateCurrentTransitionState(approval);
-
             }
 
             var levelStaff = levelStaffRepo.GetAllApprovalLevelStaff(approval.companyId).FirstOrDefault(c => c.approvalLevelId == entity.approvalLevelId);
@@ -405,16 +440,29 @@ namespace FintrakBanking.Repositories.WorkFlow
     
         private bool IsWithinMyLimit(ApprovalViewModel approval, ApprovalLevelStaffViewModel entity)
         {
+            bool terminate = false;
             bool result = false;
             if (approval.amount > 0)
             {
-                if ((entity.minimumAmount + entity.maximumAmount) >= approval.amount)
+                if (!approval.isPoliticalyExposed)
                 {
-                    result = UpdateCurrentTransitionState(approval);
+                    if ((entity.minimumAmount + entity.maximumAmount) >= approval.amount)
+                    {
+                        result = UpdateCurrentTransitionState(approval);
+                    }
                 }
+                else
+                {
+                    var levelentity = GetAllLevels(approval.operationId , approval.companyId).Where(c=> c.approvalLevelId == approval.myLevelId ).FirstOrDefault();
+                    result = NextApprovingLine(approval, levelentity, out terminate);
+                    
+                }
+               
             }
             return result;
         }
+
+      
 
         private Tuple<bool, ApprovalViewModel> ApproveOperation(ApprovalViewModel entity)
         {
@@ -450,3 +498,6 @@ namespace FintrakBanking.Repositories.WorkFlow
     }
 
 }
+
+
+ 

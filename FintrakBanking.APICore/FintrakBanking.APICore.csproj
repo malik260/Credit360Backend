@@ -272,6 +272,7 @@
     <Compile Include="Controllers\CurrencyRateController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\CustomerFSController.cs" />
+    <Compile Include="Controllers\CustomerGroupController.cs" />
     <Compile Include="Controllers\CustomFieldsController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\FeeController.cs" />
