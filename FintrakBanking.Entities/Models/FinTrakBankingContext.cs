@@ -170,10 +170,13 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_RiskAssessment_Result> tbl_Risk_RiskAssessment_Result { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
+        public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
         public virtual DbSet<tbl_COT> tbl_COT { get; set; }
         public virtual DbSet<tbl_LoanDetails> tbl_LoanDetails { get; set; }
         public virtual DbSet<tbl_Account_Category> tbl_Account_Category { get; set; }
         public virtual DbSet<tbl_Account_Type> tbl_Account_Type { get; set; }
+        public virtual DbSet<tbl_Charge_Range> tbl_Charge_Range { get; set; }
+        public virtual DbSet<tbl_Charges> tbl_Charges { get; set; }
         public virtual DbSet<tbl_Chart_Of_Account> tbl_Chart_Of_Account { get; set; }
         public virtual DbSet<tbl_Chart_Of_Account_Currency> tbl_Chart_Of_Account_Currency { get; set; }
         public virtual DbSet<tbl_Financial_Statement_Caption> tbl_Financial_Statement_Caption { get; set; }

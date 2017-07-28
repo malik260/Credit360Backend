@@ -69,6 +69,7 @@
     <Compile Include="ErrorLogger\ErrorLogRepository.cs" />
     <Compile Include="GenericSaveChanges.cs" />
     <Compile Include="Helper\CultureHelper.cs" />
+    <Compile Include="Notification\NotificationRepository.cs" />
     <Compile Include="Media\MediaRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Risk\RiskImplementation.cs" />

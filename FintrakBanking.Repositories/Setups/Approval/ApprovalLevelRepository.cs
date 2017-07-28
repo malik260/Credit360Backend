@@ -296,7 +296,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         }
         public IQueryable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
         {
-            return GetApprovalTrail(operationId,  companyId).Where(c => c.TargetId == targetId);
+            return GetApprovalTrail(operationId,  companyId).Where(c => c.targetId == targetId);
         }
         
 

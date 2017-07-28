@@ -71,6 +71,9 @@
     <Compile Include="Models\tbl_CASA.cs" />
     <Compile Include="Models\tbl_CASA_AccountStatus.cs" />
     <Compile Include="Models\tbl_CASA_PostNoStatus.cs" />
+    <Compile Include="Models\tbl_Charges.cs" />
+    <Compile Include="Models\tbl_Charges_ValueSource.cs" />
+    <Compile Include="Models\tbl_Charge_Range.cs" />
     <Compile Include="Models\tbl_Chart_Of_Account.cs" />
     <Compile Include="Models\tbl_Chart_Of_Account_Currency.cs" />
     <Compile Include="Models\tbl_Checklist_Definition.cs" />

@@ -1130,7 +1130,7 @@ namespace FintrakBanking.Repositories.Credit
                 CollateralCustomerId = entity.collateralCustomerId,
                 DocumentCategory = entity.documentCategory,
                 DocumentRef = entity.documentRef,
-                FileLocationId = entity.documentCode,
+              //  FileLocationId = entity.documentCode,
                 DocumentType = entity.documentType,
                 IsMandatory = entity.isMandatory,
                 Remark = entity.remark,
@@ -1152,7 +1152,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralCustomerId = m.CollateralCustomerId,
                         documentCategory = m.DocumentCategory,
                         documentRef = m.DocumentRef,
-                        documentCode = m.FileLocationId,
+                      //  documentCode = m.DocumentCode,
                         documentType = m.DocumentType,
                         isMandatory = m.IsMandatory,
                         remark = m.Remark
