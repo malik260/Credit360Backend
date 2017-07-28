@@ -15,11 +15,8 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string ContentPlaceHolder { get; set; }
-<<<<<<< HEAD
-=======
 
         [StringLength(50)]
         public string CollumnName { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
     }
 }

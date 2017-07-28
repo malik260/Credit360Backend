@@ -6,26 +6,26 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Category")]
-    public partial class tbl_Collateral_Category
+    [Table("credit.tbl_Collateral_Valuebase_Type")]
+    public partial class tbl_Collateral_Valuebase_Type
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Collateral_Category()
+        public tbl_Collateral_Valuebase_Type()
         {
-            tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
+            tbl_Collateral_Plant_And_Equipment = new HashSet<tbl_Collateral_Plant_And_Equipment>();
         }
 
         [Key]
-        public short CollateralCategoryId { get; set; }
+        public short CollateralValueBaseTypeId { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string CollateralCategoryName { get; set; }
+        [StringLength(100)]
+        public string ValueBaseTypeName { get; set; }
 
-        [StringLength(150)]
-        public string Description { get; set; }
+        public int CollateralTypeId { get; set; }
 
-        public bool IsTangible { get; set; }
+        [StringLength(500)]
+        public string Remark { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -42,6 +42,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateTimeDeleted { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
+        public virtual ICollection<tbl_Collateral_Plant_And_Equipment> tbl_Collateral_Plant_And_Equipment { get; set; }
+
+        public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
     }
 }

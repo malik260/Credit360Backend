@@ -17,6 +17,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Guarantor = new HashSet<tbl_Loan_Guarantor>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Product_CollateralType = new HashSet<tbl_Product_CollateralType>();
+            tbl_Product_Currency = new HashSet<tbl_Product_Currency>();
             tbl_Product_Fee = new HashSet<tbl_Product_Fee>();
             tbl_Risk_Rating = new HashSet<tbl_Risk_Rating>();
         }
@@ -30,7 +31,7 @@ namespace FintrakBanking.Entities.Models
 
         public short ProductCategoryId { get; set; }
 
-        public short CurrencyId { get; set; }
+        public bool IsMultipleCurency { get; set; }
 
         public short ProductClassId { get; set; }
 
@@ -112,8 +113,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Company tbl_Company { get; set; }
 
-        public virtual tbl_Currency tbl_Currency { get; set; }
-
         public virtual tbl_Day_Count tbl_Day_Count { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -133,6 +132,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product_CollateralType> tbl_Product_CollateralType { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Product_Currency> tbl_Product_Currency { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product_Fee> tbl_Product_Fee { get; set; }

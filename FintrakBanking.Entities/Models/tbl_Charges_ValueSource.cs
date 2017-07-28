@@ -6,15 +6,18 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Profile_UserGroup")]
-    public partial class tbl_Profile_UserGroup
+    public partial class tbl_Charges_ValueSource
     {
         [Key]
-        public int UserGroupId { get; set; }
+        public int ValueSourceId { get; set; }
 
-        public int UserId { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string ValueSourceName { get; set; }
 
-        public short GroupId { get; set; }
+        public bool IsFixed { get; set; }
+
+        public int CompanyId { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -24,8 +27,10 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeUpdated { get; set; }
 
-        public virtual tbl_Profile_Group tbl_Profile_Group { get; set; }
+        public bool Deleted { get; set; }
 
-        public virtual tbl_Profile_User tbl_Profile_User { get; set; }
+        public int? DeletedBy { get; set; }
+
+        public DateTime? DateTimeDeleted { get; set; }
     }
 }

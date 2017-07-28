@@ -6,25 +6,19 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Risk_Rating")]
-    public partial class tbl_Risk_Rating
+    [Table("finance.tbl_Charge_Range")]
+    public partial class tbl_Charge_Range
     {
         [Key]
-        public int RiskRatingId { get; set; }
+        public int RangeId { get; set; }
 
-        [StringLength(10)]
-        public string Rates { get; set; }
+        public double? Rate { get; set; }
 
-        public decimal? MaxRange { get; set; }
+        public decimal? MinimumAmount { get; set; }
 
-        public decimal? MinRange { get; set; }
+        public decimal? MaximumAmount { get; set; }
 
-        public decimal? AdvicedRate { get; set; }
-
-        [StringLength(10)]
-        public string RatesDescription { get; set; }
-
-        public short ProductId { get; set; }
+        public int ChargeId { get; set; }
 
         public int CompanyId { get; set; }
 
@@ -41,7 +35,5 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        public virtual tbl_Product tbl_Product { get; set; }
     }
 }

@@ -10,39 +10,25 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_Deposit
     {
         [Key]
-        public int TermDepositTranAccId { get; set; }
+        public int CollateralDepositId { get; set; }
 
-        public int ColleralCustomerId { get; set; }
+        public int CollateralCustomerId { get; set; }
 
-<<<<<<< HEAD
-=======
         public short? CollateralSubTypeId { get; set; }
 
         [StringLength(50)]
         public string DealReferenceNumber { get; set; }
 
         [Required]
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
         [StringLength(50)]
         public string AccountType { get; set; }
 
+        [Required]
         [StringLength(50)]
-        public string AccountNo { get; set; }
+        public string AccountNumber { get; set; }
 
         [Column(TypeName = "money")]
-<<<<<<< HEAD
-        public decimal? AccountBalance { get; set; }
-
-        [StringLength(5)]
-        public string Contribution { get; set; }
-
-        public DateTime? MaturityDate { get; set; }
-
-        [StringLength(500)]
-        public string Remark { get; set; }
-=======
         public decimal ExistingLienAmount { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
 
         [Column(TypeName = "money")]
         public decimal LienAmount { get; set; }
@@ -58,15 +44,11 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal MaturityAmount { get; set; }
 
-<<<<<<< HEAD
-        public DateTime? DateTimeDeleted { get; set; }
-=======
         [StringLength(500)]
         public string Remark { get; set; }
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
 
         public virtual tbl_Collateral_Type_Sub tbl_Collateral_Type_Sub { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
     }
 }

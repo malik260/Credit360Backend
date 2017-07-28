@@ -23,6 +23,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string DayCountName { get; set; }
 
+        public int DaysInAYear { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product> tbl_Product { get; set; }
     }

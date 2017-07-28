@@ -6,29 +6,26 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Risk_Assessment_Index")]
-    public partial class tbl_Risk_Assessment_Index
+    [Table("finance.tbl_Charges")]
+    public partial class tbl_Charges
     {
         [Key]
-        public int RiskId { get; set; }
+        public int ChargeId { get; set; }
 
-        [Required]
-        [StringLength(250)]
-        public string Name { get; set; }
+        [StringLength(50)]
+        public string ChargeName { get; set; }
 
-        [Required]
-        [StringLength(250)]
-        public string Description { get; set; }
+        public int? OperationId { get; set; }
 
-        public decimal Weight { get; set; }
+        public decimal? SetValue { get; set; }
 
-        public int? ItemLevel { get; set; }
+        public int? GLAccountId { get; set; }
 
-        public short IndexTypeId { get; set; }
+        public int? Frequency { get; set; }
 
-        public int RiskAssessmentTitleId { get; set; }
+        public bool? ApplyVAT { get; set; }
 
-        public int? ParentId { get; set; }
+        public bool? ApplyWHT { get; set; }
 
         public int CompanyId { get; set; }
 
@@ -46,6 +43,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public virtual tbl_Risk_Assessment_Title tbl_Risk_Assessment_Title { get; set; }
+        public virtual tbl_Operations tbl_Operations { get; set; }
+
+        public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
     }
 }

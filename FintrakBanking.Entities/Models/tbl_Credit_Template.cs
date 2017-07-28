@@ -22,7 +22,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(250)]
         public string TemplateTitle { get; set; }
 
-        public int ProductId { get; set; }
+        public short ProductClassId { get; set; }
 
         public int? LastUpdatedBy { get; set; }
 
@@ -39,5 +39,9 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateTimeDeleted { get; set; }
 
         public int CreatedBy { get; set; }
+
+        public virtual tbl_Approval_Level tbl_Approval_Level { get; set; }
+
+        public virtual tbl_Product_Class tbl_Product_Class { get; set; }
     }
 }

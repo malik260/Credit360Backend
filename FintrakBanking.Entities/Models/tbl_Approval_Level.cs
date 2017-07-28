@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Approval_Level_Staff = new HashSet<tbl_Approval_Level_Staff>();
             tbl_Approval_Trail = new HashSet<tbl_Approval_Trail>();
             tbl_Approval_Trail1 = new HashSet<tbl_Approval_Trail>();
+            tbl_Credit_Template = new HashSet<tbl_Credit_Template>();
             tbl_Checklist_Definition = new HashSet<tbl_Checklist_Definition>();
         }
 
@@ -92,6 +93,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Approval_Trail> tbl_Approval_Trail1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Credit_Template> tbl_Credit_Template { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Checklist_Definition> tbl_Checklist_Definition { get; set; }

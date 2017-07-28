@@ -9,12 +9,6 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.tbl_MachineValue_Base")]
     public partial class tbl_MachineValue_Base
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_MachineValue_Base()
-        {
-            tbl_Collateral_Machine_Detail = new HashSet<tbl_Collateral_Machine_Detail>();
-        }
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public byte MachineValueBaseId { get; set; }
@@ -39,8 +33,5 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Machine_Detail> tbl_Collateral_Machine_Detail { get; set; }
     }
 }

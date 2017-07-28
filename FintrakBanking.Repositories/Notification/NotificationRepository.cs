@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.ViewModels.Notification;
 using System;
 using System.Collections.Generic;
 using System.Linq;

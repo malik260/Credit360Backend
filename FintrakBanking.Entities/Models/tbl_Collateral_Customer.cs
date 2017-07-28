@@ -14,10 +14,6 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Collateral_Casa = new HashSet<tbl_Collateral_Casa>();
             tbl_Collateral_Documents = new HashSet<tbl_Collateral_Documents>();
-<<<<<<< HEAD
-            tbl_Collateral_Miscellaneous = new HashSet<tbl_Collateral_Miscellaneous>();
-            tbl_Collateral_Property = new HashSet<tbl_Collateral_Property>();
-=======
             tbl_Collateral_Customer_Policy = new HashSet<tbl_Collateral_Customer_Policy>();
             tbl_Collateral_Deposit = new HashSet<tbl_Collateral_Deposit>();
             tbl_Collateral_Gaurantee = new HashSet<tbl_Collateral_Gaurantee>();
@@ -29,7 +25,6 @@ namespace FintrakBanking.Entities.Models
             tbl_Collateral_Immovable_Property = new HashSet<tbl_Collateral_Immovable_Property>();
             tbl_Collateral_Stock = new HashSet<tbl_Collateral_Stock>();
             tbl_Collateral_Vehicle = new HashSet<tbl_Collateral_Vehicle>();
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
         }
 
         [Key]
@@ -37,40 +32,26 @@ namespace FintrakBanking.Entities.Models
 
         public int CollateralTypeId { get; set; }
 
+        [Required]
         [StringLength(50)]
         public string CollateralCode { get; set; }
 
-<<<<<<< HEAD
-        [Column(TypeName = "money")]
-        public decimal CollateralValue { get; set; }
-
-        public short? CollateralCategoryId { get; set; }
-=======
         public short CurrencyId { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
 
-        public short? CurrencyId { get; set; }
+        public int CompanyId { get; set; }
 
         public bool AllowSharing { get; set; }
 
-<<<<<<< HEAD
-        public short? ChargeTypeId { get; set; }
-=======
         public bool IsLocationBased { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
 
         public int? ValuationCycle { get; set; }
 
-<<<<<<< HEAD
-        public decimal? LendableMargin { get; set; }
-=======
         public double HairCut { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
 
         public int CustomerId { get; set; }
 
         [StringLength(50)]
-        public string CAMRefNo { get; set; }
+        public string CamRefNumber { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -92,11 +73,10 @@ namespace FintrakBanking.Entities.Models
 
         public int? ActedOnBy { get; set; }
 
+        public virtual tbl_Company tbl_Company { get; set; }
+
         public virtual tbl_Customer tbl_Customer { get; set; }
 
-<<<<<<< HEAD
-        public virtual tbl_Collateral_Category tbl_Collateral_Category { get; set; }
-=======
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Collateral_Casa> tbl_Collateral_Casa { get; set; }
 
@@ -119,18 +99,14 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Collateral_Plant_And_Equipment> tbl_Collateral_Plant_And_Equipment { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Documents> tbl_Collateral_Documents { get; set; }
+        public virtual ICollection<tbl_Collateral_Marketable_Security> tbl_Collateral_Marketable_Security { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Collateral_Miscellaneous> tbl_Collateral_Miscellaneous { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-<<<<<<< HEAD
-        public virtual ICollection<tbl_Collateral_Property> tbl_Collateral_Property { get; set; }
-=======
         public virtual ICollection<tbl_Collateral_PreciousMetal> tbl_Collateral_PreciousMetal { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -138,8 +114,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Collateral_Stock> tbl_Collateral_Stock { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
 
-        public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Collateral_Vehicle> tbl_Collateral_Vehicle { get; set; }
     }
 }

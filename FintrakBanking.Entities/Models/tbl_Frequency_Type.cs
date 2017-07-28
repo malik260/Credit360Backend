@@ -12,10 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Frequency_Type()
         {
-<<<<<<< HEAD
-=======
             tbl_Collateral_Policy = new HashSet<tbl_Collateral_Policy>();
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
             tbl_Limit_Detail = new HashSet<tbl_Limit_Detail>();
             tbl_Loan_Covenant_Detail = new HashSet<tbl_Loan_Covenant_Detail>();
             tbl_Loan = new HashSet<tbl_Loan>();
@@ -39,12 +36,9 @@ namespace FintrakBanking.Entities.Models
         public bool? IsVisible { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-<<<<<<< HEAD
-=======
         public virtual ICollection<tbl_Collateral_Policy> tbl_Collateral_Policy { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
         public virtual ICollection<tbl_Limit_Detail> tbl_Limit_Detail { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

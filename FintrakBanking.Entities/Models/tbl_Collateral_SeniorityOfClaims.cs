@@ -10,7 +10,7 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_SeniorityOfClaims
     {
         [Key]
-        public short SeniorityOfClaimId { get; set; }
+        public short CollateralSeniorityOfClaimId { get; set; }
 
         [Required]
         [StringLength(50)]

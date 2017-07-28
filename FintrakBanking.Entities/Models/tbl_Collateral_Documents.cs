@@ -22,7 +22,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string DocumentRef { get; set; }
 
-        public int FileLocationId { get; set; }
+        [Required]
+        [StringLength(100)]
+        public string DocumentCode { get; set; }
 
         [StringLength(100)]
         public string DocumentType { get; set; }

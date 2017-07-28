@@ -14,23 +14,25 @@ namespace FintrakBanking.Entities.Models
 
         public int TargetId { get; set; }
 
-        public DateTime ArrivalDateTime { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime ArrivalDate { get; set; }
 
         public DateTime SystemArrivalDateTime { get; set; }
 
-        public DateTime? ResponseDateTime { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime? ResponseDate { get; set; }
 
         public DateTime? SystemResponseDateTime { get; set; }
 
-        public int? ResponseByStaffId { get; set; }
+        public int? ResponseStaffId { get; set; }
 
         public int CompanyId { get; set; }
 
-        public int StaffId { get; set; }
+        public int RequestStaffId { get; set; }
 
-        public int FromApprovalLevelId { get; set; }
+        public int? FromApprovalLevelId { get; set; }
 
-        public int? ToApprovalLevelId { get; set; }
+        public int ToApprovalLevelId { get; set; }
 
         public short ApprovalStateId { get; set; }
 
@@ -38,7 +40,7 @@ namespace FintrakBanking.Entities.Models
 
         public int OperationId { get; set; }
 
-        [StringLength(500)]
+        [StringLength(700)]
         public string Comment { get; set; }
 
         public virtual tbl_Approval_Level tbl_Approval_Level { get; set; }

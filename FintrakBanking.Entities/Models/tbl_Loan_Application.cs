@@ -28,6 +28,8 @@ namespace FintrakBanking.Entities.Models
 
         public short BranchId { get; set; }
 
+        public short CurrencyId { get; set; }
+
         public short ProductClassId { get; set; }
 
         public int? CustomerGroupId { get; set; }
@@ -42,8 +44,6 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "date")]
         public DateTime ApplicationDate { get; set; }
-
-        public short CurrencyId { get; set; }
 
         [Column(TypeName = "money")]
         public decimal PrincipalAmount { get; set; }

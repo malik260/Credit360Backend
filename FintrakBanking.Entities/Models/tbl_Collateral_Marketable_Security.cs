@@ -10,9 +10,9 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Collateral_Marketable_Security
     {
         [Key]
-        public int SecurityTypeID { get; set; }
+        public int CollateralMarketableSecurityId { get; set; }
 
-        public int ColleralCustomerId { get; set; }
+        public int CollateralCustomerId { get; set; }
 
         public short CollateralSubTypeId { get; set; }
 
@@ -28,23 +28,14 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime MaturityDate { get; set; }
 
-<<<<<<< HEAD
-        [StringLength(50)]
-        public string IssuerRefNo { get; set; }
-=======
         [Column(TypeName = "money")]
         public decimal DealAmount { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
 
         [Column(TypeName = "money")]
         public decimal SecurityValue { get; set; }
 
-<<<<<<< HEAD
-        public int? NoofUnits { get; set; }
-=======
         [Column(TypeName = "money")]
         public decimal LienUsableAmount { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
 
         [Required]
         [StringLength(150)]
@@ -65,13 +56,9 @@ namespace FintrakBanking.Entities.Models
 
         public short? InterestPaymentFrequency { get; set; }
 
-<<<<<<< HEAD
-        public DateTime? DateTimeDeleted { get; set; }
-=======
         [StringLength(500)]
         public string Remark { get; set; }
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
->>>>>>> 1234ffcc6749be1304beaae4f63e4587aa7a4aba
     }
 }

@@ -17,7 +17,9 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime Date { get; set; }
 
-        public double ExchangeRate { get; set; }
+        public double BuyingRate { get; set; }
+
+        public double SellingRate { get; set; }
 
         public short BaseCurrencyId { get; set; }
 
