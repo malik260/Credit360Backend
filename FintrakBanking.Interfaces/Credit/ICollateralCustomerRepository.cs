@@ -12,10 +12,10 @@ namespace FintrakBanking.Interfaces.Credit
     {
         #region Collateral
         bool IsCollateralDocExists(string docName);
-        Task<bool> AddCollateralCustomer(CollateralViewModel entity);
+        Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity);
         Task<bool> DeleteCollateralCustomer(int collateralCustomerId, UserInfo user);
-        Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralViewModel entity);
-        IEnumerable<CollateralViewModel> GetCollateralCustomer(int customerId, int companyId);
+        Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity);
+        IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId);
         #endregion Collateral
 
         #region Miscellaneous Notes

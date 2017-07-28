@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Collateral 
         [HttpPost][Route("collateral-customer")]
-        public async Task<HttpResponseMessage> AddCollateral([FromBody] CollateralViewModel entity)
+        public async Task<HttpResponseMessage> AddCollateral([FromBody] CollateralCustomerViewModel entity)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut][Route("collateral-customer/{collateralCustomerId}")]
-        public async Task<HttpResponseMessage> UpdateCustomCollateral(int collateralCustomerId, [FromBody] CollateralViewModel entity)
+        public async Task<HttpResponseMessage> UpdateCustomCollateral(int collateralCustomerId, [FromBody] CollateralCustomerViewModel entity)
         {
 
             try

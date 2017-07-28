@@ -5,7 +5,7 @@ using System.Text;
 namespace FintrakBanking.ViewModels.Credit
 {
 
-    public class CollateralViewModel : GenaralEntity
+    public class CollateralCustomerViewModel : GenaralEntity
     {
         public int collateralCustomerId { get; set; }
         public int collateralTypeId { get; set; }
