@@ -52,6 +52,9 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? approvedBy { get; set; }
         public bool? completed { get; set; }
         public bool? approved { get; set; }
+
+        public int approvalStatusId { get; set; }
+        public string productCurrencies { get; set; }
   
     }
 
