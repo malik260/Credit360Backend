@@ -33,5 +33,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LookupViewModel> GetLoanScheduleTypeByCategory(short categoryId);
         IQueryable<LoanPaymentScheduleViewModel> GenerateLoanSchedule(LoanPaymentScheduleInput input);
+
+        IEnumerable<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanSchedule(LoanPaymentScheduleInputViewModel loanInput);
     }
 }
