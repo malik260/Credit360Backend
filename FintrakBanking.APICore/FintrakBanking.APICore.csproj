@@ -266,7 +266,7 @@
     <Compile Include="Controllers\ChargesController.cs" />
     <Compile Include="Controllers\ChartOfAccountController.cs" />
     <Compile Include="Controllers\ChecklistController.cs" />
-    <Compile Include="Controllers\CollateralController.cs" />
+    <Compile Include="Controllers\CollateralCustomerController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CreditAssessmentMemoController.cs" />

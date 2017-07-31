@@ -11,6 +11,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string MiddleName { get; set; }
         public int JobTitleId { get; set; }
         public int RankId { get; set; }
+        public string RankName { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
         public string Address { get; set; }
@@ -32,12 +33,14 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string DepartmentName { get; set; }
         public int? StateId { get; set; }
         public int CityId { get; set; }
+        public string CityName { get; set; }
         public string StateName { get; set; }
         public short CustomerSensitivityLevel { get; set; }
         public string SensitivityLevel { get; set; }
         public string CreatedByStaffName { get; set; }
         public bool IsUpdate { get; set; }
         public short ApprovalStatusId { get; set; }
+        public int OperationId { get; set; }
 
         public string StaffFullName { get { return this.FirstName + " " + this.MiddleName.Trim() + " " + this.LastName; } }
     }

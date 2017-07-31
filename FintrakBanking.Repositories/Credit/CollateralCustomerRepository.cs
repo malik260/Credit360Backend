@@ -13,14 +13,14 @@ using FintrakBanking.Interfaces.media;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    public class CustomerCollateralRepository : ICollateralCustomerRepository
+    public class CollateralCustomerRepository : ICollateralCustomerRepository
     {
         private FinTrakBankingContext context;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
         private IProductRepository product;
         private IMediaRepository media;
-        public CustomerCollateralRepository(FinTrakBankingContext _context,
+        public CollateralCustomerRepository(FinTrakBankingContext _context,
                                         IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail,
                                         IProductRepository _product,
@@ -35,7 +35,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
         #region Collateral Customer 
-        public IEnumerable<CollateralViewModel> GetCollateralCustomer(int customerId, int companyId)
+        public IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId)
         {
 
             var collateral = GetCollateralCustomerByCustomerId(customerId, companyId).Where(x => x.deleted == false);
@@ -56,7 +56,7 @@ namespace FintrakBanking.Repositories.Credit
             return collateral;
         }
 
-        public async Task<bool> AddCollateralCustomer(CollateralViewModel entity)
+        public async Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity)
         {
 
             var collateral = new tbl_Collateral_Customer
@@ -103,13 +103,13 @@ namespace FintrakBanking.Repositories.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-        private List<CollateralViewModel> CollateralCustomer(int customerId, int companyId)
+        private List<CollateralCustomerViewModel> CollateralCustomer(int customerId, int companyId)
         {
             tbl_Collateral_Type_Sub sub = new tbl_Collateral_Type_Sub();
             return (from c in context.tbl_Collateral_Customer
                     join t in context.tbl_Collateral_Type on c.CollateralTypeId equals t.CollateralTypeId
                     where c.Deleted == false && c.CompanyId == companyId && c.CustomerId == customerId
-                    select new CollateralViewModel
+                    select new CollateralCustomerViewModel
                     {
                         collateralTypeId = c.CollateralTypeId,
                         collateralCustomerId = c.CollateralCustomerId,
@@ -129,12 +129,12 @@ namespace FintrakBanking.Repositories.Credit
                     }).ToList();
         }
 
-        private List<CollateralViewModel> GetCollateralCustomerByCustomerId(int customerId, int companyId)
+        private List<CollateralCustomerViewModel> GetCollateralCustomerByCustomerId(int customerId, int companyId)
         {
             return CollateralCustomer(customerId, companyId);
         }
 
-        public async Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralViewModel entity)
+        public async Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity)
         {
             var collateral = context.tbl_Collateral_Customer.Find(collateralCustomerId);
             collateral.CollateralCode = entity.collateralCode;
@@ -1130,7 +1130,7 @@ namespace FintrakBanking.Repositories.Credit
                 CollateralCustomerId = entity.collateralCustomerId,
                 DocumentCategory = entity.documentCategory,
                 DocumentRef = entity.documentRef,
-              //  FileLocationId = entity.documentCode,
+                DocumentCode = entity.documentCode,
                 DocumentType = entity.documentType,
                 IsMandatory = entity.isMandatory,
                 Remark = entity.remark,
@@ -1152,7 +1152,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralCustomerId = m.CollateralCustomerId,
                         documentCategory = m.DocumentCategory,
                         documentRef = m.DocumentRef,
-                      //  documentCode = m.DocumentCode,
+                        documentCode = m.DocumentCode,
                         documentType = m.DocumentType,
                         isMandatory = m.IsMandatory,
                         remark = m.Remark

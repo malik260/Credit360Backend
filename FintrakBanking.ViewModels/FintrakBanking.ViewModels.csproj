@@ -50,7 +50,7 @@
     <Compile Include="CASA\CasaViewModel.cs" />
     <Compile Include="CASA\CustomerSearchVM.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
-    <Compile Include="Credit\CollateralViewModel.cs" />
+    <Compile Include="Credit\CollateralCustomerViewModel.cs" />
     <Compile Include="Credit\ColleralCustomFieldsDataViewModel.cs" />
     <Compile Include="Credit\CreditAssessmentMemoViewModel.cs" />
     <Compile Include="Credit\LimitViewModel.cs" />
