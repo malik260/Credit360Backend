@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Checklist_Definition = new HashSet<tbl_Checklist_Definition>();
             tbl_MIS_Info = new HashSet<tbl_MIS_Info>();
             tbl_Product = new HashSet<tbl_Product>();
+            tbl_temp_Product = new HashSet<tbl_temp_Product>();
             tbl_Chart_Of_Account = new HashSet<tbl_Chart_Of_Account>();
             tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
             tbl_Company1 = new HashSet<tbl_Company>();
@@ -31,6 +32,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Product_CollateralType = new HashSet<tbl_Product_CollateralType>();
             tbl_Fee = new HashSet<tbl_Fee>();
             tbl_Product_Fee = new HashSet<tbl_Product_Fee>();
+            tbl_Temp_Product_Fee = new HashSet<tbl_Temp_Product_Fee>();
             tbl_Product_Price_Index = new HashSet<tbl_Product_Price_Index>();
             tbl_Staff_Organogram = new HashSet<tbl_Staff_Organogram>();
             tbl_Staff = new HashSet<tbl_Staff>();
@@ -163,6 +165,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Product> tbl_Product { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_temp_Product> tbl_temp_Product { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Chart_Of_Account> tbl_Chart_Of_Account { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -201,6 +206,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product_Fee> tbl_Product_Fee { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_Fee> tbl_Temp_Product_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product_Price_Index> tbl_Product_Price_Index { get; set; }

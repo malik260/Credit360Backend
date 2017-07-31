@@ -21,6 +21,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Product_Currency = new HashSet<tbl_Product_Currency>();
+            tbl_Temp_Product_Currency = new HashSet<tbl_Temp_Product_Currency>();
         }
 
         [Key]
@@ -68,5 +69,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product_Currency> tbl_Product_Currency { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_Currency> tbl_Temp_Product_Currency { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
 
@@ -11,6 +12,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetAllProductClass();
 
         #region product
+        IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
+        ProductViewModel GetProductDetail(string productCode, int companyId);
         IEnumerable<ProductViewModel> GetAllProduct();
 
         ProductViewModel GetProductById(int productId);
@@ -18,8 +21,9 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductViewModel> GetProductByGroupAndCategory(short productGroupId, short productCategoryId);
 
         IEnumerable<ProductViewModel> GetProductByTypeAndCategory(short productTypeId, short productCategoryId);
-
-        ProductViewModel AddProduct(ProductViewModel product);
+        bool IsProductCodeAlreadyExist(string productCode);
+        bool IsProductExist(string productCode);
+        bool AddTempProduct(ProductViewModel product);
 
         bool UpdateProduct(int productId, ProductViewModel product);
 

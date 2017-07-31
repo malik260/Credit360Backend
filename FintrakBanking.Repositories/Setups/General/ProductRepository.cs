@@ -8,6 +8,10 @@ using System.Linq;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -18,14 +22,20 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingContext context;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
+        private IWorkFlowRepository workFlow;
+        private IApprovalLevelStaffRepository level;
 
         public ProductRepository(FinTrakBankingContext _context,
                                 IGeneralSetupRepository _genSetup,
-                                IAuditTrailRepository _auditTrail)
+                                IAuditTrailRepository _auditTrail,
+                                IWorkFlowRepository _workFlow,
+                                IApprovalLevelStaffRepository _level)
         {
             this.context = _context;
             this.genSetup =_genSetup;
             this.auditTrail = _auditTrail;
+            this.workFlow = _workFlow;
+            level = _level;
 
         }
 
@@ -116,8 +126,6 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.SaveAll();
         }
 
-
-
         public IQueryable<ProductTypeViewModel> AllProductType()
         {
             return (from p in context.tbl_Product_Type
@@ -139,7 +147,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         requireScheduleType = p.RequireScheduleType
                     });
         }
-
 
         public IEnumerable<ProductTypeViewModel> GetAllProductType()
         {
@@ -264,6 +271,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
         #region tbl_Product Region
 
+        public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
+        {
+            return from ap in context.tbl_Approval_Status
+                   select new ApprovalStatusViewModel
+                   {
+                       approvalStatusId = ap.ApprovalStatusId,
+                       approvalStatusName = ap.ApprovalStatusName,
+                       forDisplay = ap.ForDisplay,
+                   };
+        }
         public IEnumerable<ProductViewModel> AllProduct()
         {
             return (from data in context.tbl_Product
@@ -346,131 +363,561 @@ namespace FintrakBanking.Repositories.Setups.General
  
         }
 
-        public ProductViewModel AddProduct(ProductViewModel product)
+        public IEnumerable<ProductViewModel> GetProductAwaitingApprovals(int staffId, int companyId)
         {
-            var data = new tbl_Product()
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.ProductsCreation);
+            int staffApprovalLevelId = 0;
+
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            return (from c in context.tbl_temp_Product
+                    join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
+                    join atrail in context.tbl_Approval_Trail on c.ProductId equals atrail.TargetId
+                    where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
+                          && atrail.OperationId == (int)Operations.ProductsCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                    select new ProductViewModel()
+                    {
+                        productId = c.ProductId,
+                        companyId = c.CompanyId,
+                        productTypeId = c.ProductTypeId,
+                        productTypeName = c.tbl_Product_Type.ProductTypeName,
+                        productGroupName = c.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
+                        productCategoryId = c.ProductCategoryId,
+                        productCategoryName = c.tbl_Product_Category.ProductCategoryName,
+                        productClassId = c.ProductClassId,
+                        productClassName = c.tbl_Product_Class.ProductClassName,
+
+                        productPriceIndexId = c.ProductPriceIndexId,
+                        productPriceIndexName = c.tbl_Product_Price_Index.PriceIndexName,
+                        productPriceIndexSpread = c.ProductPriceIndexSpread,
+
+                        productCode = c.ProductCode,
+                        productName = c.ProductName,
+                        productDescription = c.ProductDescription,
+
+                        productGroupId = c.tbl_Product_Type.ProductGroupId,
+
+                        principalBalanceGl = c.PrincipalBalanceGL,
+                        principalBalanceGlCode = (c.PrincipalBalanceGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
+
+                        interestIncomeExpenseGl = c.InterestIncomeExpenseGL,
+                        interestIncomeExpenseGlCode = (c.InterestIncomeExpenseGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
+
+                        interestReceivablePayableGl = c.InterestReceivablePayableGL,
+                        interestReceivablePayableGlCode = (c.InterestReceivablePayableGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
+
+                        dormantGl = c.DormantGL,
+                        premiumDiscountGl = c.PremiumDiscountGL,
+
+                        dealTypeId = c.DealTypeId,
+                        dealClassificationId = c.DealClassificationId,
+                        dayCountId = c.DayCountId,
+
+                        maximumTenor = c.MaximumTenor,
+                        minimumTenor = c.MinimumTenor,
+                        maximumRate = c.MaximumRate,
+                        minimumRate = c.MinimumRate,
+                        minimumBalance = c.MinimumBalance,
+                        approvedBy = c.ApprovedBy,
+                        completed = c.Completed,
+                        approved = c.Approved,
+
+                        dateTimeUpdated = c.DateTimeUpdated,
+                        deleted = c.Deleted,
+                        deletedBy = c.DeletedBy,
+                        dateTimeDeleted = c.DateTimeDeleted
+
+                    });
+        }
+
+        public ProductViewModel GetTempProductDetail(int productId)
+        {
+            //return GetTempStaffDetails().Where(x => x.StaffId == staffId).Single();
+
+            return (from c in context.tbl_temp_Product
+                    join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
+                    where c.ProductId == productId 
+                    select new ProductViewModel()
+                    {
+                        productId = c.ProductId,
+                        companyId = c.CompanyId,
+                        productTypeId = c.ProductTypeId,
+                        productTypeName = c.tbl_Product_Type.ProductTypeName,
+                        productGroupName = c.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
+                        productCategoryId = c.ProductCategoryId,
+                        productCategoryName = c.tbl_Product_Category.ProductCategoryName,
+                        productClassId = c.ProductClassId,
+                        productClassName = c.tbl_Product_Class.ProductClassName,
+
+                        productPriceIndexId = c.ProductPriceIndexId,
+                        productPriceIndexName = c.tbl_Product_Price_Index.PriceIndexName,
+                        productPriceIndexSpread = c.ProductPriceIndexSpread,
+
+                        productCode = c.ProductCode,
+                        productName = c.ProductName,
+                        productDescription = c.ProductDescription,
+
+                        productGroupId = c.tbl_Product_Type.ProductGroupId,
+
+                        principalBalanceGl = c.PrincipalBalanceGL,
+                        principalBalanceGlCode = (c.PrincipalBalanceGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
+
+                        interestIncomeExpenseGl = c.InterestIncomeExpenseGL,
+                        interestIncomeExpenseGlCode = (c.InterestIncomeExpenseGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
+
+                        interestReceivablePayableGl = c.InterestReceivablePayableGL,
+                        interestReceivablePayableGlCode = (c.InterestReceivablePayableGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
+
+                        dormantGl = c.DormantGL,
+                        premiumDiscountGl = c.PremiumDiscountGL,
+
+                        dealTypeId = c.DealTypeId,
+                        dealClassificationId = c.DealClassificationId,
+                        dayCountId = c.DayCountId,
+
+                        maximumTenor = c.MaximumTenor,
+                        minimumTenor = c.MinimumTenor,
+                        maximumRate = c.MaximumRate,
+                        minimumRate = c.MinimumRate,
+                        minimumBalance = c.MinimumBalance,
+                        approvedBy = c.ApprovedBy,
+                        completed = c.Completed,
+                        approved = c.Approved,
+
+                        dateTimeUpdated = c.DateTimeUpdated,
+                        deleted = c.Deleted,
+                        deletedBy = c.DeletedBy,
+                        dateTimeDeleted = c.DateTimeDeleted
+
+                    }).FirstOrDefault();
+
+        }
+
+        public ProductViewModel GetProductDetail(string productCode, int companyId)
+        {
+            return AllProduct().Where(p => p.productCode == productCode && p.companyId == companyId).SingleOrDefault();
+        }
+
+        public bool GoForApproval(ApprovalViewModel entity)
+        {
+            entity.operationId = (int)Operations.ProductsCreation;
+
+            var response = workFlow.GoForApproval(entity);
+
+            if (response.Result.Item1)
             {
-                CompanyId = product.companyId,
-                ProductTypeId = product.productTypeId,
-                ProductCategoryId = product.productCategoryId,
-                ProductClassId = product.productClassId,
-                ProductCode = GenerateProductCode(product.companyId),
-                ProductName = product.productName,
-                ProductDescription = product.productDescription, 
-
-
-                PrincipalBalanceGL = product.principalBalanceGl,
-                InterestIncomeExpenseGL = product.interestIncomeExpenseGl,
-                InterestReceivablePayableGL = product.interestReceivablePayableGl,
-                DormantGL = product.dormantGl,
-                PremiumDiscountGL = product.premiumDiscountGl,
-                OverdrawnGL = product.overdrawnGl,
-
-                ProductPriceIndexId = product.productPriceIndexId,
-                ProductPriceIndexSpread = product.productPriceIndexSpread,
-
-                DealTypeId = product.dealTypeId,
-                DealClassificationId = product.dealClassificationId,
-                DayCountId = product.dayCountId,
-
-                MaximumTenor = product.maximumTenor,
-                MinimumTenor = product.minimumTenor,
-                MaximumRate = product.maximumRate,
-                MinimumRate = product.minimumRate,
-                MinimumBalance = product.minimumBalance,
-
-                AllowRate = product.allowRate,
-                AllowTenor = product.allowTenor,
-                AllowOverdrawn = product.allowOverdrawn,
-                //ApprovedBy = product.approvedBy,
-                //Completed = product.completed,
-                //Approved = product.approved,
-
-                CreatedBy = product.createdBy,
-                DateTimeCreated = DateTime.Now,
-            };
-
-            this.context.tbl_Product.Add(data);
-            
-            // Audit Section ---------------------------
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.ProductAdded,
-                StaffId =(int) product.createdBy,
-                BranchId = (short)product.userBranchId,
-                Detail = $"Added tbl_Product: '{product.productTypeName}' ",
-                IPAddress = product.userIPAddress,
-                Url = product.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
-                SystemDateTime = DateTime.Now
-            };
-
-            this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section ------------------------------- 
-
-            var status = this.SaveAll();
-
-            if (status)
-            {
-                product.productCode = data.ProductCode;
-                product.productId = data.ProductId;
-                return product;
+                return ApproveProduct(entity.targetId, response.Result.Item2.approvalStatusId, entity);
             }
             else
-                return null;
+            {
+                return false;
+            }
+
         }
 
-        public bool UpdateProduct(int productId, ProductViewModel product)
+        private bool ApproveProduct(int productId, short approvalStatusId, UserInfo user)
         {
-            var data = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productId);
 
-            if (data == null)
-                return false;
+            var productModel = context.tbl_temp_Product.Find(productId);
+            var productToUpdate = context.tbl_Product.Where(x => x.ProductCode == productModel.ProductCode);
 
-            //data.CompanyId = product.companyId;
-            //data.ProductTypeId = product.productTypeId;
-            //data.ProductCategoryId = product.productCategoryId;
-            //data.ProductCode = product.productCode;
-            data.ProductName = product.productName;
-            //data.ProductPriceIndexId = product.productPriceIndexId;
-            //data.ProductDescription = product.productDescription;
-            //data.PrincipalBalanceGl = product.principalBalanceGl;
-            //data.InterestIncomeExpenseGl = product.interestIncomeExpenseGl;
-            //data.InterestReceivablePayableGl = product.interestReceivablePayableGl;
-            //data.DormantGl = product.dormantGl;
-            //data.PremiumDiscountGl = product.premiumDiscountGl;
-            //data.DealType = product.dealType;
-            //data.DealClassificationId = product.dealClassificationId;
-            //data.MaximumTenor = product.maximumTenor;
-            //data.MinimumTenor = product.minimumTenor;
-            //data.MaximumRate = product.maximumRate;
-            //data.MinimumRate = product.minimumRate;
-            //data.MinimumBalance = product.minimumBalance;
 
-            //data.ApprovedBy = product.approvedBy;
-            //data.Completed = product.completed;
-            //data.Approved = product.approved;
+            if (productToUpdate.Any()) //Update existing staff with tempStaff record
+            {
+                var existingProduct = productToUpdate.First();
+                existingProduct.PrincipalBalanceGL = productModel.PrincipalBalanceGL;
+                existingProduct.InterestIncomeExpenseGL = productModel.InterestIncomeExpenseGL;
+                existingProduct.InterestReceivablePayableGL = productModel.InterestReceivablePayableGL;
+                existingProduct.DormantGL = productModel.DormantGL;
+                existingProduct.PremiumDiscountGL = productModel.PremiumDiscountGL;
+                existingProduct.OverdrawnGL = productModel.OverdrawnGL;
 
-            data.LastUpdatedBy = product.lastUpdatedBy;
-            data.DateTimeUpdated = DateTime.Now;
+                existingProduct.ProductPriceIndexId = productModel.ProductPriceIndexId;
+                existingProduct.ProductPriceIndexSpread = productModel.ProductPriceIndexSpread;
+
+                existingProduct.DealTypeId = productModel.DealTypeId;
+                existingProduct.DealClassificationId = productModel.DealClassificationId;
+                existingProduct.DayCountId = productModel.DayCountId;
+
+                existingProduct.MaximumTenor = productModel.MaximumTenor;
+                existingProduct.MinimumTenor = productModel.MinimumTenor;
+                existingProduct.MaximumRate = productModel.MaximumRate;
+                existingProduct.MinimumRate = productModel.MinimumRate;
+                existingProduct.MinimumBalance = productModel.MinimumBalance;
+
+                existingProduct.AllowRate = productModel.AllowRate;
+                existingProduct.AllowTenor = productModel.AllowTenor;
+                existingProduct.AllowOverdrawn = productModel.AllowOverdrawn;
+
+            }
+            else //Insert a new staff record into the real staff table
+            {
+                var product = new tbl_Product()
+                {
+                    CompanyId = productModel.CompanyId,
+                    ProductTypeId = productModel.ProductTypeId,
+                    ProductCategoryId = productModel.ProductCategoryId,
+                    ProductClassId = productModel.ProductClassId,
+                    ProductCode = GenerateProductCode(productModel.CompanyId),
+                    ProductName = productModel.ProductName,
+                    ProductDescription = productModel.ProductDescription,
+
+
+                    PrincipalBalanceGL = productModel.PrincipalBalanceGL,
+                    InterestIncomeExpenseGL = productModel.InterestIncomeExpenseGL,
+                    InterestReceivablePayableGL = productModel.InterestReceivablePayableGL,
+                    DormantGL = productModel.DormantGL,
+                    PremiumDiscountGL = productModel.PremiumDiscountGL,
+                    OverdrawnGL = productModel.OverdrawnGL,
+
+                    ProductPriceIndexId = productModel.ProductPriceIndexId,
+                    ProductPriceIndexSpread = productModel.ProductPriceIndexSpread,
+
+                    DealTypeId = productModel.DealTypeId,
+                    DealClassificationId = productModel.DealClassificationId,
+                    DayCountId = productModel.DayCountId,
+
+                    MaximumTenor = productModel.MaximumTenor,
+                    MinimumTenor = productModel.MinimumTenor,
+                    MaximumRate = productModel.MaximumRate,
+                    MinimumRate = productModel.MinimumRate,
+                    MinimumBalance = productModel.MinimumBalance,
+
+                    AllowRate = productModel.AllowRate,
+                    AllowTenor = productModel.AllowTenor,
+                    AllowOverdrawn = productModel.AllowOverdrawn,
+
+                    CreatedBy = productModel.CreatedBy,
+                    DateTimeCreated = DateTime.Now,
+                };
+                context.tbl_Product.Add(product);
+            }
+
+            productModel.IsCurrent = false;
+            productModel.ApprovalStatusId = approvalStatusId;
+            productModel.DateTimeUpdated = DateTime.Now;
+
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductUpdated,
-                StaffId = (int)product.createdBy,
-                BranchId = (short)product.userBranchId,
-                Detail = $"Updated tbl_Product: '{product.productTypeName}' ",
-                IPAddress = product.userIPAddress,
-                Url = product.applicationUrl,
+                AuditTypeId = (short)AuditTypeEnum.StaffApproved,
+                StaffId = user.staffId,
+                BranchId = (short)user.BranchId,
+                Detail = $"Approved Product '{productModel.ProductName}' with product code'{productModel.ProductCode}'",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
                 ApplicationDate = genSetup.GetApplicaionDate(),
                 SystemDateTime = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------
+            // Audit Section ---------------------------
+
             return this.SaveAll();
         }
+
+        public bool AddTempProduct(ProductViewModel productModel)
+        {
+            bool output = false;
+            var existStingTempProduct = context.tbl_temp_Product.Where(x => x.ProductCode.ToLower() == productModel.productCode.ToLower()
+                                                                  && x.IsCurrent == true && x.CompanyId == productModel.companyId
+                                                                  && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
+
+            if (existStingTempProduct.Any())
+            {
+                throw new Exception("Product Information already exist and is undergoing approval");
+            }
+
+            var product = new tbl_temp_Product()
+            {
+                CompanyId = productModel.companyId,
+                ProductTypeId = productModel.productTypeId,
+                ProductCategoryId = productModel.productCategoryId,
+                ProductClassId = productModel.productClassId,
+                ProductCode = GenerateProductCode(productModel.companyId),
+                ProductName = productModel.productName,
+                ProductDescription = productModel.productDescription,
+
+
+                PrincipalBalanceGL = productModel.principalBalanceGl,
+                InterestIncomeExpenseGL = productModel.interestIncomeExpenseGl,
+                InterestReceivablePayableGL = productModel.interestReceivablePayableGl,
+                DormantGL = productModel.dormantGl,
+                PremiumDiscountGL = productModel.premiumDiscountGl,
+                OverdrawnGL = productModel.overdrawnGl,
+
+                ProductPriceIndexId = productModel.productPriceIndexId,
+                ProductPriceIndexSpread = productModel.productPriceIndexSpread,
+
+                DealTypeId = productModel.dealTypeId,
+                DealClassificationId = productModel.dealClassificationId,
+                DayCountId = productModel.dayCountId,
+
+                MaximumTenor = productModel.maximumTenor,
+                MinimumTenor = productModel.minimumTenor,
+                MaximumRate = productModel.maximumRate,
+                MinimumRate = productModel.minimumRate,
+                MinimumBalance = productModel.minimumBalance,
+
+                AllowRate = productModel.allowRate,
+                AllowTenor = productModel.allowTenor,
+                AllowOverdrawn = productModel.allowOverdrawn,
+
+                CreatedBy = productModel.createdBy,
+                DateTimeCreated = DateTime.Now,
+                ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
+                IsCurrent = true
+
+            };
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CreateStaffInitiated,
+                StaffId = productModel.createdBy,
+                BranchId = (short)productModel.userBranchId,
+                Detail = $"Initiated Product Creation for '{productModel.productName}' with code'{productModel.productCode}'",
+                IPAddress = productModel.userIPAddress,
+                Url = productModel.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            if (workFlow.CheckRouteForOperation((int)Operations.ProductsCreation, productModel.companyId))
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        auditTrail.AddAuditTrail(audit);
+                        this.context.tbl_temp_Product.Add(product);
+                        output = this.SaveAll();
+
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = productModel.createdBy,
+                            companyId = productModel.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = product.ProductId,
+                            operationId = (int)Operations.ProductsCreation,
+                            BranchId = productModel.userBranchId
+                        };
+                        var response = workFlow.LogForApproval(entity);
+                        return output;
+                    }
+                    catch (Exception)
+                    {
+                        trans.Rollback();
+                    }
+                }
+                throw new Exception("Approval route have not been defined for this operation");
+            }
+            return output;
+        }
+
+        public bool IsProductCodeAlreadyExist(string productCode)
+        {
+            return context.tbl_Product.Any(x => x.ProductCode.ToLower() == productCode.ToLower());
+        }
+
+        public bool IsProductExist(string productCode)
+        {
+            return context.tbl_temp_Product.Any(x => x.ProductCode.ToLower() == productCode.ToLower() && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && x.IsCurrent == true);
+        }
+
+        //private ProductViewModel AddProduct2(ProductViewModel product)
+        //{
+        //    var data = new tbl_Product()
+        //    {
+        //        CompanyId = product.companyId,
+        //        ProductTypeId = product.productTypeId,
+        //        ProductCategoryId = product.productCategoryId,
+        //        ProductClassId = product.productClassId,
+        //        ProductCode = GenerateProductCode(product.companyId),
+        //        ProductName = product.productName,
+        //        ProductDescription = product.productDescription,
+
+
+        //        PrincipalBalanceGL = product.principalBalanceGl,
+        //        InterestIncomeExpenseGL = product.interestIncomeExpenseGl,
+        //        InterestReceivablePayableGL = product.interestReceivablePayableGl,
+        //        DormantGL = product.dormantGl,
+        //        PremiumDiscountGL = product.premiumDiscountGl,
+        //        OverdrawnGL = product.overdrawnGl,
+
+        //        ProductPriceIndexId = product.productPriceIndexId,
+        //        ProductPriceIndexSpread = product.productPriceIndexSpread,
+
+        //        DealTypeId = product.dealTypeId,
+        //        DealClassificationId = product.dealClassificationId,
+        //        DayCountId = product.dayCountId,
+
+        //        MaximumTenor = product.maximumTenor,
+        //        MinimumTenor = product.minimumTenor,
+        //        MaximumRate = product.maximumRate,
+        //        MinimumRate = product.minimumRate,
+        //        MinimumBalance = product.minimumBalance,
+
+        //        AllowRate = product.allowRate,
+        //        AllowTenor = product.allowTenor,
+        //        AllowOverdrawn = product.allowOverdrawn,
+        //        //ApprovedBy = product.approvedBy,
+        //        //Completed = product.completed,
+        //        //Approved = product.approved,
+
+        //        CreatedBy = product.createdBy,
+        //        DateTimeCreated = DateTime.Now,
+        //    };
+
+        //    this.context.tbl_Product.Add(data);
+
+        //    // Audit Section ---------------------------
+        //    var audit = new tbl_Audit
+        //    {
+        //        AuditTypeId = (short)AuditTypeEnum.ProductAdded,
+        //        StaffId = (int)product.createdBy,
+        //        BranchId = (short)product.userBranchId,
+        //        Detail = $"Added tbl_Product: '{product.productTypeName}' ",
+        //        IPAddress = product.userIPAddress,
+        //        Url = product.applicationUrl,
+        //        ApplicationDate = genSetup.GetApplicaionDate(),
+        //        SystemDateTime = DateTime.Now
+        //    };
+
+        //    this.auditTrail.AddAuditTrail(audit);
+        //    //end of Audit section ------------------------------- 
+
+        //    var status = this.SaveAll();
+
+        //    if (status)
+        //    {
+        //        product.productCode = data.ProductCode;
+        //        product.productId = data.ProductId;
+        //        return product;
+        //    }
+        //    else
+        //        return null;
+        //}
+        public bool UpdateProduct(int productId, ProductViewModel product)
+        {
+            var existStingTempProduct = context.tbl_temp_Product.Where(x => x.ProductCode.ToLower() == product.productCode.ToLower() && x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+
+            if (existStingTempProduct.Any())
+            {
+                foreach (var item in existStingTempProduct)
+                {
+                    item.IsCurrent = false;
+                    item.DateTimeUpdated = DateTime.Now;
+                }
+            }
+
+            var targetProduct = context.tbl_Product.Find(productId);
+
+            var unApprovedProductEdit = context.tbl_temp_Product.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
+
+            tbl_temp_Product tempProduct;
+
+            if (unApprovedProductEdit.Any())
+            {
+                throw new Exception("Product is already undergoing approval");
+            }
+            else
+            {
+                tempProduct = new tbl_temp_Product()
+                {
+                    ProductName = product.productName,
+                    ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
+                    IsCurrent = true
+                };
+
+                context.tbl_temp_Product.Add(tempProduct);
+
+            }
+
+
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.StaffUpdated,
+                StaffId = product.createdBy,
+                BranchId = (short)product.userBranchId,
+                Detail = $"Updated Product '{product.productName}' with code'{product.productCode}'",
+                IPAddress = product.userIPAddress,
+                Url = product.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now,
+                TargetId = productId
+
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------  
+
+            var output = this.SaveAll();
+
+            var entity = new ApprovalViewModel
+            {
+                staffId = product.createdBy,
+                companyId = product.companyId,
+                approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                targetId = tempProduct.ProductId,
+                operationId = (int)Operations.ProductsCreation,
+                BranchId = product.userBranchId
+            };
+            var response = workFlow.LogForApproval(entity);
+
+            return output;
+        }
+        //private bool UpdateProduct2(int productId, ProductViewModel product)
+        //{
+        //    var data = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productId);
+
+        //    if (data == null)
+        //        return false;
+
+        //    //data.CompanyId = product.companyId;
+        //    //data.ProductTypeId = product.productTypeId;
+        //    //data.ProductCategoryId = product.productCategoryId;
+        //    //data.ProductCode = product.productCode;
+        //    data.ProductName = product.productName;
+        //    //data.ProductPriceIndexId = product.productPriceIndexId;
+        //    //data.ProductDescription = product.productDescription;
+        //    //data.PrincipalBalanceGl = product.principalBalanceGl;
+        //    //data.InterestIncomeExpenseGl = product.interestIncomeExpenseGl;
+        //    //data.InterestReceivablePayableGl = product.interestReceivablePayableGl;
+        //    //data.DormantGl = product.dormantGl;
+        //    //data.PremiumDiscountGl = product.premiumDiscountGl;
+        //    //data.DealType = product.dealType;
+        //    //data.DealClassificationId = product.dealClassificationId;
+        //    //data.MaximumTenor = product.maximumTenor;
+        //    //data.MinimumTenor = product.minimumTenor;
+        //    //data.MaximumRate = product.maximumRate;
+        //    //data.MinimumRate = product.minimumRate;
+        //    //data.MinimumBalance = product.minimumBalance;
+
+        //    //data.ApprovedBy = product.approvedBy;
+        //    //data.Completed = product.completed;
+        //    //data.Approved = product.approved;
+
+        //    data.LastUpdatedBy = product.lastUpdatedBy;
+        //    data.DateTimeUpdated = DateTime.Now;
+
+        //    // Audit Section ---------------------------
+        //    var audit = new tbl_Audit
+        //    {
+        //        AuditTypeId = (short)AuditTypeEnum.ProductUpdated,
+        //        StaffId = (int)product.createdBy,
+        //        BranchId = (short)product.userBranchId,
+        //        Detail = $"Updated tbl_Product: '{product.productTypeName}' ",
+        //        IPAddress = product.userIPAddress,
+        //        Url = product.applicationUrl,
+        //        ApplicationDate = genSetup.GetApplicaionDate(),
+        //        SystemDateTime = DateTime.Now
+        //    };
+
+        //    this.auditTrail.AddAuditTrail(audit);
+        //    //end of Audit section -------------------------------
+        //    return this.SaveAll();
+        //}
 
 
         //public bool DeleteProduct(int productId)

@@ -181,6 +181,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Chart_Of_Account_Currency> tbl_Chart_Of_Account_Currency { get; set; }
         public virtual DbSet<tbl_Financial_Statement_Caption> tbl_Financial_Statement_Caption { get; set; }
         public virtual DbSet<tbl_Financial_Statement_Type> tbl_Financial_Statement_Type { get; set; }
+        public virtual DbSet<tbl_temp_Product> tbl_temp_Product { get; set; }
+        public virtual DbSet<tbl_Temp_Product_Currency> tbl_Temp_Product_Currency { get; set; }
+        public virtual DbSet<tbl_Temp_Product_Fee> tbl_Temp_Product_Fee { get; set; }
         public virtual DbSet<tbl_Temp_Staff> tbl_Temp_Staff { get; set; }
         public virtual DbSet<tbl_Deal_Classification> tbl_Deal_Classification { get; set; }
         public virtual DbSet<tbl_Deal_Type> tbl_Deal_Type { get; set; }
@@ -377,6 +380,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_temp_Product)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
                 .HasMany(e => e.tbl_Chart_Of_Account)
                 .WithRequired(e => e.tbl_Company)
                 .WillCascadeOnDelete(false);
@@ -433,6 +441,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Company>()
                 .HasMany(e => e.tbl_Product_Fee)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Temp_Product_Fee)
                 .WithRequired(e => e.tbl_Company)
                 .WillCascadeOnDelete(false);
 
@@ -519,6 +532,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Currency>()
                 .HasMany(e => e.tbl_Product_Currency)
+                .WithRequired(e => e.tbl_Currency)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Currency>()
+                .HasMany(e => e.tbl_Temp_Product_Currency)
                 .WithRequired(e => e.tbl_Currency)
                 .WillCascadeOnDelete(false);
 
@@ -702,6 +720,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Fee)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<tbl_Fee>()
+                .HasMany(e => e.tbl_Temp_Product_Fee)
+                .WithRequired(e => e.tbl_Fee)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<tbl_Fee_Interval>()
                 .HasMany(e => e.tbl_Fee)
                 .WithRequired(e => e.tbl_Fee_Interval)
@@ -796,7 +819,17 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Product>()
+                .HasMany(e => e.tbl_Temp_Product_Currency)
+                .WithRequired(e => e.tbl_Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product>()
                 .HasMany(e => e.tbl_Product_Fee)
+                .WithRequired(e => e.tbl_Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product>()
+                .HasMany(e => e.tbl_Temp_Product_Fee)
                 .WithRequired(e => e.tbl_Product)
                 .WillCascadeOnDelete(false);
 
@@ -807,6 +840,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Product_Category>()
                 .HasMany(e => e.tbl_Product)
+                .WithRequired(e => e.tbl_Product_Category)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Category>()
+                .HasMany(e => e.tbl_temp_Product)
                 .WithRequired(e => e.tbl_Product_Category)
                 .WillCascadeOnDelete(false);
 
@@ -822,6 +860,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Product_Class>()
                 .HasMany(e => e.tbl_Loan_Application)
+                .WithRequired(e => e.tbl_Product_Class)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Class>()
+                .HasMany(e => e.tbl_temp_Product)
                 .WithRequired(e => e.tbl_Product_Class)
                 .WillCascadeOnDelete(false);
 
@@ -850,6 +893,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Product_Type>()
                 .HasMany(e => e.tbl_Product)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_temp_Product)
                 .WithRequired(e => e.tbl_Product_Type)
                 .WillCascadeOnDelete(false);
 
@@ -1611,6 +1659,36 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Chart_Of_Account)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_temp_Product)
+                .WithOptional(e => e.tbl_Chart_Of_Account)
+                .HasForeignKey(e => e.PrincipalBalanceGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_temp_Product1)
+                .WithOptional(e => e.tbl_Chart_Of_Account1)
+                .HasForeignKey(e => e.InterestReceivablePayableGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_temp_Product2)
+                .WithOptional(e => e.tbl_Chart_Of_Account2)
+                .HasForeignKey(e => e.InterestIncomeExpenseGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_temp_Product3)
+                .WithOptional(e => e.tbl_Chart_Of_Account3)
+                .HasForeignKey(e => e.PremiumDiscountGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_temp_Product4)
+                .WithOptional(e => e.tbl_Chart_Of_Account4)
+                .HasForeignKey(e => e.DormantGL);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account>()
+                .HasMany(e => e.tbl_temp_Product5)
+                .WithOptional(e => e.tbl_Chart_Of_Account5)
+                .HasForeignKey(e => e.OverdrawnGL);
+
             modelBuilder.Entity<tbl_Financial_Statement_Caption>()
                 .HasMany(e => e.tbl_Chart_Of_Account)
                 .WithRequired(e => e.tbl_Financial_Statement_Caption)
@@ -1620,6 +1698,14 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Customer_FS_Caption)
                 .WithRequired(e => e.tbl_Financial_Statement_Type)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Temp_Product_Fee>()
+                .Property(e => e.RateValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Temp_Product_Fee>()
+                .Property(e => e.DependentAmount)
+                .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Temp_Staff>()
                 .Property(e => e.Gender)
