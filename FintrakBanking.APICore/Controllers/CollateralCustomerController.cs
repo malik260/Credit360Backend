@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
@@ -11,25 +10,22 @@ using System.Web;
 using FintrakBanking.APICore.core;
 using System.Net;
 
+
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/credit")]
-    public class CollateralController : ApiControllerBase
+    public class CollateralCustomerController : ApiControllerBase
     {
-        TokenDecryptionHelper token = null;
-
         private ICollateralCustomerRepository repo;
 
-        IErrorLogRepository errorLogger;
-        public CollateralController(ICollateralCustomerRepository _repo, IErrorLogRepository _errorLogger)
+        public CollateralCustomerController(ICollateralCustomerRepository _repo )
         {
             this.repo = _repo;
-            errorLogger = _errorLogger;
         }
 
         #region Collateral 
         [HttpPost][Route("collateral-customer")]
-        public async Task<HttpResponseMessage> AddCollateral([FromBody] CollateralViewModel entity)
+        public async Task<HttpResponseMessage> AddCollateral([FromBody] CollateralCustomerViewModel entity)
         {
             try
             {
@@ -51,13 +47,13 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-               this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+               //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
         [HttpPut][Route("collateral-customer/{collateralCustomerId}")]
-        public async Task<HttpResponseMessage> UpdateCustomCollateral(int collateralCustomerId, [FromBody] CollateralViewModel entity)
+        public async Task<HttpResponseMessage> UpdateCustomCollateral(int collateralCustomerId, [FromBody] CollateralCustomerViewModel entity)
         {
 
             try
@@ -77,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -108,7 +104,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -129,7 +125,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -152,7 +148,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+               // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -176,7 +172,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                 this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                 //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -218,7 +214,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -262,7 +258,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -284,7 +280,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }

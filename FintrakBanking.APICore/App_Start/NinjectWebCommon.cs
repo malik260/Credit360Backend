@@ -120,7 +120,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICultureHelper>().To<CultureHelper>();
             kernel.Bind<ICasaRepository>().To<CasaRepository>();
             kernel.Bind<IErrorLogRepository>().To<ErrorLogRepository>();
-           // kernel.Bind<ICollateralRepository>().To<CollateralRepository>();
+            kernel.Bind<ICollateralCustomerRepository>().To<CollateralCustomerRepository>();
             kernel.Bind<IEmailRepository>().To<EmailRepository>();
             kernel.Bind<IAdminRepository>().To<AdminRepository>();
             kernel.Bind<ILoanCovenantRepository>().To<LoanCovenantRepository>();

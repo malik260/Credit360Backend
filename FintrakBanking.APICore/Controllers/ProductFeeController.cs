@@ -104,7 +104,8 @@ namespace FintrakBanking.APICore.Controllers
                     if (recordId >= 1)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
-                                        new { success = true, result = recordId, message = "product fee has been created successfully" });
+                                        new { success = true, result = recordId,
+                                            message = "product fee has been created successfully" });
                     }
                     else
                         return Request.CreateResponse(HttpStatusCode.OK,

@@ -35,6 +35,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
         #region tbl_Product Fee
 
+  
+
+
         public int AddFee(FeeViewModel fee)
         {
             var data = new tbl_Fee()

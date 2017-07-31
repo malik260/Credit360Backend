@@ -265,7 +265,7 @@
     <Compile Include="Controllers\CasaController.cs" />
     <Compile Include="Controllers\ChartOfAccountController.cs" />
     <Compile Include="Controllers\ChecklistController.cs" />
-    <Compile Include="Controllers\CollateralController.cs" />
+    <Compile Include="Controllers\CollateralCustomerController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CreditAssessmentMemoController.cs" />
@@ -284,6 +284,7 @@
     <Compile Include="Controllers\LoanController.cs" />
     <Compile Include="Controllers\LoanCovenantController.cs" />
     <Compile Include="Controllers\MisInfoController.cs" />
+    <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\ProductCollateralTypeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductFeeController.cs" />

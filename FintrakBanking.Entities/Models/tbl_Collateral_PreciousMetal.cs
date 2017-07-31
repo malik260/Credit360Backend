@@ -14,9 +14,13 @@ namespace FintrakBanking.Entities.Models
 
         public int CollateralCustomerId { get; set; }
 
+        public short CollateralSubTypeId { get; set; }
+
+        public bool IsOwnedByCustomer { get; set; }
+
         [Required]
         [StringLength(100)]
-        public string PreciousMetal { get; set; }
+        public string PreciousMetalName { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -35,24 +39,7 @@ namespace FintrakBanking.Entities.Models
         public string PreciousMetalForm { get; set; }
 
         [StringLength(500)]
-        public string Notes { get; set; }
-
-        [StringLength(500)]
         public string Remark { get; set; }
-
-        public int CreatedBy { get; set; }
-
-        public int? LastUpdatedBy { get; set; }
-
-        public DateTime DateTimeCreated { get; set; }
-
-        public DateTime? DateTimeUpdated { get; set; }
-
-        public bool Deleted { get; set; }
-
-        public int? DeletedBy { get; set; }
-
-        public DateTime? DateTimeDeleted { get; set; }
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
     }

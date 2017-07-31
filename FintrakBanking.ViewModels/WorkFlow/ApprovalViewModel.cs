@@ -11,9 +11,11 @@ namespace FintrakBanking.ViewModels.Business
         public int targetId { get; set; }
         public short approvalStatusId { get; set; }
         public string comment { get; set; }
+        public string operationURL { get; set; }
         public int myLevelId { get; set; }
         public int nextLevelId { get; set; }
         public int amount { get; set; }
         public bool isPoliticalyExposed { get; set; }
+
     }
 }

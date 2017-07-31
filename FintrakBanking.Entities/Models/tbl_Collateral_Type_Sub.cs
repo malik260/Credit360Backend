@@ -9,6 +9,15 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.tbl_Collateral_Type_Sub")]
     public partial class tbl_Collateral_Type_Sub
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Collateral_Type_Sub()
+        {
+            tbl_Collateral_Casa = new HashSet<tbl_Collateral_Casa>();
+            tbl_Collateral_Deposit = new HashSet<tbl_Collateral_Deposit>();
+            tbl_Collateral_Immovable_Property = new HashSet<tbl_Collateral_Immovable_Property>();
+            tbl_Collateral_Plant_And_Equipment = new HashSet<tbl_Collateral_Plant_And_Equipment>();
+        }
+
         [Key]
         public short CollateralSubTypeId { get; set; }
 
@@ -21,6 +30,18 @@ namespace FintrakBanking.Entities.Models
         public double Haircut { get; set; }
 
         public int RevaluationDuration { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Collateral_Casa> tbl_Collateral_Casa { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Collateral_Deposit> tbl_Collateral_Deposit { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Collateral_Immovable_Property> tbl_Collateral_Immovable_Property { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Collateral_Plant_And_Equipment> tbl_Collateral_Plant_And_Equipment { get; set; }
 
         public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
     }
