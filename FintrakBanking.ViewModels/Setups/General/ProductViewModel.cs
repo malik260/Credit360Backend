@@ -32,8 +32,11 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? dormantGl { get; set; }
         public int? premiumDiscountGl { get; set; }
         public short? dealTypeId { get; set; }
+        public string dealTypeName { get; set; }
         public short? dealClassificationId { get; set; }
+        public string dealClassificationName { get; set; }
         public short? dayCountId { get; set; }
+        public string dayCountName { get; set; }
 
         public int maximumTenor { get; set; }
         public int minimumTenor { get; set; }

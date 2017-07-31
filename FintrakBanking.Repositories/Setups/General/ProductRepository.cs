@@ -302,8 +302,11 @@ namespace FintrakBanking.Repositories.Setups.General
                         premiumDiscountGl = data.PremiumDiscountGL,
 
                         dealTypeId = data.DealTypeId,
+                        dealTypeName = data.tbl_Deal_Type.DealTypeName,
                         dealClassificationId = data.DealClassificationId,
+                        dealClassificationName = data.tbl_Deal_Classification.Classification,
                         dayCountId = data.DayCountId,
+                        dayCountName = data.tbl_Day_Count.DayCountName,
 
                         maximumTenor = data.MaximumTenor,
                         minimumTenor = data.MinimumTenor,
