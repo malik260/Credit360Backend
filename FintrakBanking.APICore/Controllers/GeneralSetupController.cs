@@ -9,7 +9,7 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    [Route("api/v1/setups")]
+    [RoutePrefix("api/v1/setups")]
     public class GeneralSetupController : ApiControllerBase
     {
         private IGeneralSetupRepository repo;
@@ -136,7 +136,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("day-count")]
-        public HttpResponseMessage GetAllDayCount(HttpRequestMessage request)
+        public HttpResponseMessage GetAllDayCount()
         {
             try
             {
@@ -214,7 +214,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("frequency-types")]
-        public HttpResponseMessage GetAllFrequencyTypes(HttpRequestMessage request)
+        public HttpResponseMessage GetAllFrequencyTypes()
         {
             try
             {

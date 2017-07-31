@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [Route("loan-application/operation/{id}")]
+        [Route("loan-application/credit/operation/{id}")]
         public HttpResponseMessage AddCreditAssessmentMemo(int id, [FromBody] CreditAssessmentMemoViewModel entity)
         {
             try
@@ -57,7 +57,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("loan-application/operation/{id}")]
         public HttpResponseMessage GetRequestOnCreditAssessmentMemo(int id, [FromUri] int page, [FromUri] int itemsPerPage)
         {
@@ -82,7 +82,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-application/operation/{id}")]
+        [Route("loan-application/credit/request/{id}")]
         public HttpResponseMessage GetRequestForCreditAssessmentMemo(int id)
         {
             try
