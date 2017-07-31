@@ -413,8 +413,11 @@ namespace FintrakBanking.Repositories.Setups.General
                         premiumDiscountGl = c.PremiumDiscountGL,
 
                         dealTypeId = c.DealTypeId,
+                        dealTypeName = c.tbl_Deal_Type.DealTypeName,
                         dealClassificationId = c.DealClassificationId,
+                        dealClassificationName = c.tbl_Deal_Classification.Classification,
                         dayCountId = c.DayCountId,
+                        dayCountName = c.tbl_Day_Count.DayCountName,
 
                         maximumTenor = c.MaximumTenor,
                         minimumTenor = c.MinimumTenor,
@@ -525,7 +528,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var productToUpdate = context.tbl_Product.Where(x => x.ProductCode == productModel.ProductCode);
 
 
-            if (productToUpdate.Any()) //Update existing staff with tempStaff record
+            if (productToUpdate.Any()) //Update existing product with tempProduct record
             {
                 var existingProduct = productToUpdate.First();
                 existingProduct.PrincipalBalanceGL = productModel.PrincipalBalanceGL;
@@ -553,7 +556,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 existingProduct.AllowOverdrawn = productModel.AllowOverdrawn;
 
             }
-            else //Insert a new staff record into the real staff table
+            else //Insert a new product record into the real product table
             {
                 var product = new tbl_Product()
                 {
