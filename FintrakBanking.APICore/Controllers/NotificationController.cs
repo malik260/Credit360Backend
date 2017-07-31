@@ -24,6 +24,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                //
                 var token = new TokenDecryptionHelper();
                 var data = repo.GetNotification(token.GetStaffId, token.GetCompanyId);
                 if (data == null)

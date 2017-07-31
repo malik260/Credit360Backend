@@ -263,6 +263,7 @@
     <Compile Include="Controllers\AuthorizationController.cs" />
     <Compile Include="Controllers\BranchController.cs" />
     <Compile Include="Controllers\CasaController.cs" />
+    <Compile Include="Controllers\ChargesController.cs" />
     <Compile Include="Controllers\ChartOfAccountController.cs" />
     <Compile Include="Controllers\ChecklistController.cs" />
     <Compile Include="Controllers\CollateralCustomerController.cs" />

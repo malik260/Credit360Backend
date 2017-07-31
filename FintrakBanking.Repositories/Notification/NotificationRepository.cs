@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Notification;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.ViewModels.Notification;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Notification
 {
-    public class NotificationRepository 
+    public class NotificationRepository : INotificationRepository
     {
         private FinTrakBankingContext    context;
         private IApprovalLevelStaffRepository levelStaffRepo;
