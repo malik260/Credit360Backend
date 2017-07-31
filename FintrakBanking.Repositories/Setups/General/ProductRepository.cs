@@ -348,16 +348,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public ProductViewModel GetProductById(int productId)
         {
-            return AllProduct().Where(p => p.productId == productId).SingleOrDefault();
-             
+            return AllProduct().Where(p => p.productId == productId).SingleOrDefault(); 
         }
 
         public IEnumerable<ProductViewModel> GetProductByGroupAndCategory(short productGroupId, short productCategoryId)
         {
-
-            return AllProduct().Where(p => p.productGroupId  == productGroupId && p.productCategoryId == productCategoryId);
-
-             
+            return AllProduct().Where(p => p.productGroupId  == productGroupId && p.productCategoryId == productCategoryId);  
         }
 
         public IEnumerable<ProductViewModel> GetProductByTypeAndCategory(short productTypeId, short productCategoryId)
@@ -424,6 +420,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         approvedBy = c.ApprovedBy,
                         completed = c.Completed,
                         approved = c.Approved,
+                        approvalStatusId = c.ApprovalStatusId,
+                        operationId = atrail.OperationId,
+                        comment = atrail.Comment,
 
                         dateTimeUpdated = c.DateTimeUpdated,
                         deleted = c.Deleted,
@@ -486,6 +485,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         approvedBy = c.ApprovedBy,
                         completed = c.Completed,
                         approved = c.Approved,
+                        approvalStatusId = c.ApprovalStatusId,
+
 
                         dateTimeUpdated = c.DateTimeUpdated,
                         deleted = c.Deleted,
@@ -520,7 +521,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private bool ApproveProduct(int productId, short approvalStatusId, UserInfo user)
         {
-
             var productModel = context.tbl_temp_Product.Find(productId);
             var productToUpdate = context.tbl_Product.Where(x => x.ProductCode == productModel.ProductCode);
 
@@ -715,7 +715,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
                 throw new Exception("Approval route have not been defined for this operation");
             }
-            return output;
+             return output;
         }
 
         public bool IsProductCodeAlreadyExist(string productCode)

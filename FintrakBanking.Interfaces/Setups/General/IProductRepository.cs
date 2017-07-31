@@ -14,6 +14,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         #region product
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
         ProductViewModel GetProductDetail(string productCode, int companyId);
+        IEnumerable<ProductViewModel> GetProductAwaitingApprovals(int staffId, int companyId);
+        ProductViewModel GetTempProductDetail(int productId);
         IEnumerable<ProductViewModel> GetAllProduct();
 
         ProductViewModel GetProductById(int productId);
