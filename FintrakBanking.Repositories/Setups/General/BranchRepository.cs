@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 cityId = (int)x.CityId,
                 companyId = x.CompanyId,
                 stateName = x.tbl_State.StateName,
-                cityName = context.tbl_City .First(c => c.CityId == x.CityId).CityName,
+                cityName = context.tbl_City.FirstOrDefault(c => c.CityId == x.CityId).CityName ?? string.Empty,
                 branchName = x.BranchName,
                 branchCode = x.BranchCode,
                 addressLine1 = x.AddressLine1,
