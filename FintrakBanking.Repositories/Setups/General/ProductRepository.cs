@@ -623,7 +623,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.SaveAll();
         }
 
-        public bool AddTempProduct(ProductViewModel productModel)
+        public ProductViewModel AddTempProduct(ProductViewModel productModel)
         {
             bool output = false;
             var existStingTempProduct = context.tbl_temp_Product.Where(x => x.ProductCode.ToLower() == productModel.productCode.ToLower()
@@ -709,7 +709,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             BranchId = productModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
-                        return output;
+                        //return output;
                     }
                     catch (Exception)
                     {
@@ -718,7 +718,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
                 throw new Exception("Approval route have not been defined for this operation");
             }
-             return output;
+             //return output;
+
+            if (output)
+            {
+                return new ProductViewModel { productId = product.ProductId, productCode = product.ProductCode };
+            }
+            else
+                return null;
         }
 
         public bool IsProductCodeAlreadyExist(string productCode)

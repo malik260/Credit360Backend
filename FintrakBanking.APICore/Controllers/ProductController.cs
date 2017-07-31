@@ -550,7 +550,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var product = repo.AddTempProduct(model);
 
-                if (product)
+                if (product != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = product, message = "Product has been created successfully, now waiting for approval" });
