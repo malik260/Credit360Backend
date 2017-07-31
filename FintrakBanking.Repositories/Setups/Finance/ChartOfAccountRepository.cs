@@ -40,6 +40,25 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public int AddAccount(ChartOfAccountViewModel account)
         {
+            if (account.currencies.Count < 1)
+                throw new Exception("Chart of Account Currency must be specified");
+
+            List<tbl_Chart_Of_Account_Currency> currencies = new List<tbl_Chart_Of_Account_Currency>();
+
+            //Storing the chart of account currencies
+            foreach (var item in account.currencies)
+            {
+                var chartOfAccountCurrency = new tbl_Chart_Of_Account_Currency()
+                {
+                    CurrencyId = item.currencyId,
+                    //GlaccountId = chartOfAccount.GlaccountId,
+                    CreatedBy = item.createdBy,
+                    DateTimeCreated = _genSetup.GetApplicaionDate()
+                };
+
+                currencies.Add(chartOfAccountCurrency);
+            }
+            //End of storing the chart of account currencies
             var chartOfAccount = new tbl_Chart_Of_Account()
             {
                 AccountCode = account.accountCode,
@@ -80,59 +99,58 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 return -1;
         }
 
+        private IQueryable<ChartOfAccountViewModel> GetAllAccountsDetails()
+        {
+            var data = (from account in context.tbl_Chart_Of_Account
+                        where account.Deleted == false
+                        orderby account.tbl_Account_Type.tbl_Account_Category.AccountCategoryName ascending
+                        select new ChartOfAccountViewModel()
+                        {
+                            accountId = account.GLAccountId,
+                            accountCode = account.AccountCode,
+                            accountName = account.AccountName,
+                            accountTypeId = account.AccountTypeId,
+                            accountTypeName = account.tbl_Account_Type.AccountTypeName,
+                            accountCategoryId = account.tbl_Account_Type.AccountCategoryId,
+                            accountCategoryName = account.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
+                            accountStatusId = account.AccountStatusId,
+                            currencies = context.tbl_Chart_Of_Account_Currency.Where(curr => curr.GLAccountId == account.GLAccountId).Select(c => new ChartOfAccountCurrencyViewModel()
+                            {
+                                glaccountId = c.GLAccountId,
+                                glaccountCurrencyId = c.GLAccountCurrencyId,
+                                currencyId = c.CurrencyId,
+                                currencyName = c.tbl_Currency.CurrencyCode + " -- " + c.tbl_Currency.CurrencyName
+
+                            }).ToList(),
+                            companyId = account.CompanyId,
+                            branchId = account.BranchId,
+
+                            systemUse = account.SystemUse,
+                            branchSpecific = account.BranchSpecific,
+                            fsCaptionId = account.FSCaptionId,
+
+                            createdBy = account.CreatedBy,
+                            dateTimeCreated = account.DateTimeCreated,
+
+                            // lastUpdatedBy = account.LastUpdatedBy.Value ,
+                            // dateTimeUpdated = account.DateTimeUpdated
+                        });
+
+            return data;
+        }
+
         public IEnumerable<ChartOfAccountViewModel> GetAllAccounts()
         {
-            //return this.context.TblChartOfAccount;
-            return (from account in context.tbl_Chart_Of_Account
-                    where account.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
-                    select new ChartOfAccountViewModel()
-                    {
-                        accountId = account.GLAccountId,
-                        accountCode = account.AccountCode,
-                        accountName = account.AccountName,
-                        accountTypeId = account.AccountTypeId,
-                        accountTypeName = account.tbl_Account_Type.AccountTypeName,
-                        accountCategoryId = account.tbl_Account_Type.AccountCategoryId,
-                        accountCategoryName = account.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
-                        companyId = account.CompanyId,
-                        branchId = account.BranchId, 
-                        systemUse = account.SystemUse,
-                        branchSpecific = account.BranchSpecific,
-                        fsCaptionId = account.FSCaptionId,
+            var data = GetAllAccountsDetails();
 
-                        // createdBy = account.CreatedBy.Value ,
-                        // dateTimeCreated =  account.DateTimeCreated.Value ,
-
-                        // lastUpdatedBy = account.LastUpdatedBy.Value ,
-                        // dateTimeUpdated = account.DateTimeUpdated
-                    });
+            return data;
         }
 
         public IEnumerable<ChartOfAccountViewModel> GetAccountsByCategory(short accountCategoryId)
         {
-            //return this.context.TblChartOfAccount;
-            return (from account in context.tbl_Chart_Of_Account
-                    where account.tbl_Account_Type.AccountCategoryId == accountCategoryId && account.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
-                    select new ChartOfAccountViewModel()
-                    {
-                        accountId = account.GLAccountId,
-                        accountCode = account.AccountCode,
-                        accountName = account.AccountName,
-                        accountTypeId = account.AccountTypeId,
-                        accountTypeName = account.tbl_Account_Type.AccountTypeName,
-                        accountCategoryId = account.tbl_Account_Type.AccountCategoryId,
-                        accountCategoryName = account.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
-                        companyId = account.CompanyId,
-                        branchId = account.BranchId, 
-                        systemUse = account.SystemUse,
-                        branchSpecific = account.BranchSpecific,
-                        fsCaptionId = account.FSCaptionId,
-                        createdBy = account.CreatedBy,
-                        dateTimeCreated = account.DateTimeCreated ,
+            var data = GetAllAccountsDetails().Where(x => x.accountCategoryId == accountCategoryId).ToList();
 
-                        lastUpdatedBy = account.LastUpdatedBy.Value ,
-                        dateTimeUpdated = account.DateTimeUpdated
-                    });
+            return data;
         }
 
         public ChartOfAccountViewModel GetAccountViewModel(short accountId)
@@ -179,6 +197,16 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             accountModel.LastUpdatedBy = account.lastUpdatedBy;
             accountModel.DateTimeUpdated = _genSetup.GetApplicaionDate();
+
+            //Account Currencies Update
+            foreach (var currency in account.currencies)
+            {
+                var data = context.tbl_Chart_Of_Account_Currency.Where(c => c.CurrencyId == currency.currencyId).FirstOrDefault();
+                data.CurrencyId = currency.currencyId;
+                //data.GlaccountId = currency.glaccountId;
+            }
+            //End of account currencies update
+
             // Audit Section ---------------------------
             var audit = new tbl_Audit
             {
