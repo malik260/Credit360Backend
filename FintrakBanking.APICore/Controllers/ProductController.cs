@@ -92,7 +92,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
+        //
         [HttpGet]
         [Route("product-group/{productGroupId}")]
         public HttpResponseMessage GetProductGroupById(short productGroupId)
