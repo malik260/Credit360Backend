@@ -146,6 +146,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>..\..\..\..\..\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EntityFramework">
