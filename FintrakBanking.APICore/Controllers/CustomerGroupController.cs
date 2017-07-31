@@ -1,15 +1,15 @@
+using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Interfaces.Customer;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FintrakBanking.Interfaces.Customer;
-using FintrakBanking.ViewModels.Customer;
-using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.ViewModels;
-using System.Web.Http;
-using System.Net.Http;
 using System.Net;
-using FintrakBanking.APICore.core;
+using System.Net.Http;
 using System.Web;
+using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {

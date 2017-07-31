@@ -269,7 +269,7 @@ on c.DepartmentId equals dept.DepartmentId
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------  
-           
+
             var output = this.SaveAll();
 
             var entity = new ApprovalViewModel
@@ -331,7 +331,7 @@ on c.DepartmentId equals dept.DepartmentId
             return staff;
         }
 
-        public bool GoForApproval( ApprovalViewModel entity)
+        public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)Operations.StaffCreation;
 
@@ -345,88 +345,88 @@ on c.DepartmentId equals dept.DepartmentId
             {
                 return false;
             }
-            
+
         }
 
         private bool ApproveStaff(int staffid, short approvalStatusId, UserInfo user)
         {
-            
+
             var staffModel = context.tbl_Temp_Staff.Find(staffid);
             var staffToUpdate = context.tbl_Staff.Where(x => x.StaffCode == staffModel.StaffCode);
 
 
             if (staffToUpdate.Any()) //Update existing staff with tempStaff record
-                {
-                    var existingStaff = staffToUpdate.First();
-                    existingStaff.FirstName = staffModel.FirstName;
-                    existingStaff.CompanyId = staffModel.CompanyId;
-                    existingStaff.MiddleName = staffModel.MiddleName;
-                    existingStaff.LastName = staffModel.LastName;
-                    existingStaff.StaffCode = staffModel.StaffCode;
-                    existingStaff.JobTitleId = staffModel.JobTitleId;
-                    existingStaff.RankId = staffModel.RankId;
-                    existingStaff.Address = staffModel.Address;
-                    existingStaff.AddressOfNOK = staffModel.AddressOfNOK;
-                    existingStaff.BranchId = staffModel.BranchId;
-                    existingStaff.Comment = staffModel.Comment;
-                    existingStaff.CreatedBy = staffModel.CreatedBy;
-                    existingStaff.CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel;
-                    existingStaff.DateOfBirth = staffModel.DateOfBirth;
-                    existingStaff.DateTimeCreated = DateTime.Now;
-                    existingStaff.DepartmentId = staffModel.DepartmentId;
-                    existingStaff.Email = staffModel.Email;
-                    existingStaff.EmailOfNOK = staffModel.EmailOfNOK;
-                    existingStaff.Gender = staffModel.Gender;
-                    existingStaff.GenderOfNOK = staffModel.GenderOfNOK;
-                    existingStaff.MISInfoId = staffModel.MISInfoId;
-                    existingStaff.NameOfNOK = staffModel.NameOfNOK;
-                    existingStaff.NOKRelationShip = staffModel.NOKRelationShip;
-                    existingStaff.Phone = staffModel.Phone;
-                    existingStaff.PhoneOfNOK = staffModel.PhoneOfNOK;
-                    existingStaff.StateId = staffModel.StateId;
-                    existingStaff.CityId = staffModel.CityId;
-                    existingStaff.Staffsignature = staffModel.Staffsignature;
-                }
+            {
+                var existingStaff = staffToUpdate.First();
+                existingStaff.FirstName = staffModel.FirstName;
+                existingStaff.CompanyId = staffModel.CompanyId;
+                existingStaff.MiddleName = staffModel.MiddleName;
+                existingStaff.LastName = staffModel.LastName;
+                existingStaff.StaffCode = staffModel.StaffCode;
+                existingStaff.JobTitleId = staffModel.JobTitleId;
+                existingStaff.RankId = staffModel.RankId;
+                existingStaff.Address = staffModel.Address;
+                existingStaff.AddressOfNOK = staffModel.AddressOfNOK;
+                existingStaff.BranchId = staffModel.BranchId;
+                existingStaff.Comment = staffModel.Comment;
+                existingStaff.CreatedBy = staffModel.CreatedBy;
+                existingStaff.CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel;
+                existingStaff.DateOfBirth = staffModel.DateOfBirth;
+                existingStaff.DateTimeCreated = DateTime.Now;
+                existingStaff.DepartmentId = staffModel.DepartmentId;
+                existingStaff.Email = staffModel.Email;
+                existingStaff.EmailOfNOK = staffModel.EmailOfNOK;
+                existingStaff.Gender = staffModel.Gender;
+                existingStaff.GenderOfNOK = staffModel.GenderOfNOK;
+                existingStaff.MISInfoId = staffModel.MISInfoId;
+                existingStaff.NameOfNOK = staffModel.NameOfNOK;
+                existingStaff.NOKRelationShip = staffModel.NOKRelationShip;
+                existingStaff.Phone = staffModel.Phone;
+                existingStaff.PhoneOfNOK = staffModel.PhoneOfNOK;
+                existingStaff.StateId = staffModel.StateId;
+                existingStaff.CityId = staffModel.CityId;
+                existingStaff.Staffsignature = staffModel.Staffsignature;
+            }
             else //Insert a new staff record into the real staff table
+            {
+                var staff = new tbl_Staff()
                 {
-                    var staff = new tbl_Staff()
-                    {
-                        FirstName = staffModel.FirstName,
-                        MiddleName = staffModel.MiddleName,
-                        CompanyId = staffModel.CompanyId,
-                        LastName = staffModel.LastName,
-                        StaffCode = staffModel.StaffCode,
-                        JobTitleId = staffModel.JobTitleId,
-                        RankId = staffModel.RankId,
-                        Address = staffModel.Address,
-                        AddressOfNOK = staffModel.AddressOfNOK,
-                        BranchId = staffModel.BranchId,
-                        Comment = staffModel.Comment,
-                        CreatedBy = staffModel.CreatedBy,
-                        CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel,
-                        DateOfBirth = staffModel.DateOfBirth,
-                        DateTimeCreated = DateTime.Now,
-                        DepartmentId = staffModel.DepartmentId,
-                        Email = staffModel.Email,
-                        EmailOfNOK = staffModel.EmailOfNOK,
-                        Gender = staffModel.Gender,
-                        GenderOfNOK = staffModel.GenderOfNOK,
-                        MISInfoId = staffModel.MISInfoId,
-                        NameOfNOK = staffModel.NameOfNOK,
-                        NOKRelationShip = staffModel.NOKRelationShip,
-                        Phone = staffModel.Phone,
-                        PhoneOfNOK = staffModel.PhoneOfNOK ,
-                        StateId = staffModel.StateId,
-                        CityId = staffModel.CityId,
-                        Staffsignature = staffModel.Staffsignature,
-                    };
-                    context.tbl_Staff.Add(staff);
-                }
+                    FirstName = staffModel.FirstName,
+                    MiddleName = staffModel.MiddleName,
+                    CompanyId = staffModel.CompanyId,
+                    LastName = staffModel.LastName,
+                    StaffCode = staffModel.StaffCode,
+                    JobTitleId = staffModel.JobTitleId,
+                    RankId = staffModel.RankId,
+                    Address = staffModel.Address,
+                    AddressOfNOK = staffModel.AddressOfNOK,
+                    BranchId = staffModel.BranchId,
+                    Comment = staffModel.Comment,
+                    CreatedBy = staffModel.CreatedBy,
+                    CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel,
+                    DateOfBirth = staffModel.DateOfBirth,
+                    DateTimeCreated = DateTime.Now,
+                    DepartmentId = staffModel.DepartmentId,
+                    Email = staffModel.Email,
+                    EmailOfNOK = staffModel.EmailOfNOK,
+                    Gender = staffModel.Gender,
+                    GenderOfNOK = staffModel.GenderOfNOK,
+                    MISInfoId = staffModel.MISInfoId,
+                    NameOfNOK = staffModel.NameOfNOK,
+                    NOKRelationShip = staffModel.NOKRelationShip,
+                    Phone = staffModel.Phone,
+                    PhoneOfNOK = staffModel.PhoneOfNOK,
+                    StateId = staffModel.StateId,
+                    CityId = staffModel.CityId,
+                    Staffsignature = staffModel.Staffsignature,
+                };
+                context.tbl_Staff.Add(staff);
+            }
 
-                staffModel.IsCurrent = false;
-                staffModel.ApprovalStatusId = approvalStatusId;
-                staffModel.DateTimeUpdated = DateTime.Now;
-            
+            staffModel.IsCurrent = false;
+            staffModel.ApprovalStatusId = approvalStatusId;
+            staffModel.DateTimeUpdated = DateTime.Now;
+
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -506,30 +506,34 @@ on c.DepartmentId equals dept.DepartmentId
                 SystemDateTime = DateTime.Now
             };
 
-            using (var trans = context.Database.BeginTransaction())
+            if (workFlow.CheckRouteForOperation((int)Operations.StaffCreation, staffModel.companyId))
             {
-                try
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    auditTrail.AddAuditTrail(audit);
-                    this.context.tbl_Temp_Staff.Add(staff);
-                    output = this.SaveAll();
-
-                    var entity = new ApprovalViewModel
+                    try
                     {
-                        staffId = staffModel.createdBy,
-                        companyId = staffModel.companyId,
-                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = staff.StaffId,
-                        operationId = (int)Operations.StaffCreation,
-                        BranchId = staffModel.userBranchId
-                    };
-                    var response = workFlow.LogForApproval(entity);
-                    return output;
+                        auditTrail.AddAuditTrail(audit);
+                        this.context.tbl_Temp_Staff.Add(staff);
+                        output = this.SaveAll();
+
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = staffModel.createdBy,
+                            companyId = staffModel.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = staff.StaffId,
+                            operationId = (int)Operations.StaffCreation,
+                            BranchId = staffModel.userBranchId
+                        };
+                        var response = workFlow.LogForApproval(entity);
+                        return output;
+                    }
+                    catch (Exception)
+                    {
+                        trans.Rollback();
+                    }
                 }
-                catch (Exception)
-                {
-                    trans.Rollback();
-                }
+                throw new Exception("Approval route have not been defined for this operation");
             }
             return output;
         }
@@ -549,49 +553,53 @@ on c.DepartmentId equals dept.DepartmentId
             var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.StaffCreation);
             int staffApprovalLevelId = 0;
 
-            if (levelResult != null) staffApprovalLevelId= levelResult.approvalLevelId;
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             return (from c in context.tbl_Temp_Staff
                     join br in context.tbl_Branch on c.BranchId equals br.BranchId
                     join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
                     join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
                     join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
-                    where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true 
-                          && atrail.OperationId == (int) Operations.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                    where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
+                          && atrail.OperationId == (int)Operations.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new StaffInfoViewModel()
-                         {
-                             StaffId = c.StaffId,
-                             Address = c.Address,
-                             companyId = coy.CompanyId,
-                             AddressOfNok = c.AddressOfNOK,
-                             BranchId = br.BranchId,
-                             Comment = c.Comment,
-                             CustomerSensitivityLevel = c.CustomerSensitivityLevel,
-                             DateOfBirth = c.DateOfBirth ?? DateTime.Now,
-                             DepartmentId = c.DepartmentId,
-                             Email = c.Email,
-                             EmailOfNok = c.EmailOfNOK,
-                             Gender = c.Gender,
-                             GenderOfNok = c.GenderOfNOK,
-                             JobTitleId = c.JobTitleId,
-                             MisinfoId = c.MISInfoId,
-                             NameOfNok = c.NameOfNOK,
-                             NokrelationShip = c.NOKRelationShip,
-                             Phone = c.Phone,
-                             PhoneOfNok = c.PhoneOfNOK,
-                             StateId = c.StateId,
-                             StateName = c.tbl_City.tbl_State.StateName,
-                             FirstName = c.FirstName,
-                             MiddleName = c.MiddleName,
-                             LastName = c.LastName,
-                             StaffCode = c.StaffCode,
-                             RankId = c.RankId,
-                             BranchName = br.BranchName,
-                             DepartmentName = dept.DepartmentName,
-                             ApprovalStatusId = c.ApprovalStatusId,
-                        SensitivityLevel = "1"// context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description
+                    {
+                        StaffId = c.StaffId,
+                        Address = c.Address,
+                        companyId = coy.CompanyId,
+                        AddressOfNok = c.AddressOfNOK,
+                        BranchId = br.BranchId,
+                        Comment = c.Comment,
+                        CustomerSensitivityLevel = c.CustomerSensitivityLevel,
+                        DateOfBirth = c.DateOfBirth ?? DateTime.Now,
+                        DepartmentId = c.DepartmentId,
+                        Email = c.Email,
+                        EmailOfNok = c.EmailOfNOK,
+                        Gender = c.Gender,
+                        GenderOfNok = c.GenderOfNOK,
+                        JobTitleId = c.JobTitleId,
+                        MisinfoId = c.MISInfoId,
+                        NameOfNok = c.NameOfNOK,
+                        NokrelationShip = c.NOKRelationShip,
+                        Phone = c.Phone,
+                        PhoneOfNok = c.PhoneOfNOK,
+                        StateId = c.StateId,
+                        StateName = c.tbl_City.tbl_State.StateName,
+                        CityId = (int)c.CityId,
+                        CityName = c.tbl_City.CityName,
+                        FirstName = c.FirstName,
+                        MiddleName = c.MiddleName,
+                        LastName = c.LastName,
+                        StaffCode = c.StaffCode,
+                        RankId = c.RankId,
+                        RankName = c.tbl_Staff_Rank.RankName,
+                        BranchName = br.BranchName,
+                        DepartmentName = dept.DepartmentName,
+                        ApprovalStatusId = c.ApprovalStatusId,
+                        OperationId = atrail.OperationId,
+                        SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description
 
-                         });
+                    });
         }
 
         public StaffDetailsModel GetTempStaffDetail(int staffId)
@@ -640,7 +648,7 @@ on c.DepartmentId equals dept.DepartmentId
                         RankId = c.RankId,
                         Rank = c.tbl_Staff_Rank.RankName,
                         DepartmentName = dept.DepartmentName,
-                        ApprovalStatusId =  c.ApprovalStatusId,
+                        ApprovalStatusId = c.ApprovalStatusId,
                         SensitivityLevel = context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
 
                     }).FirstOrDefault();
@@ -697,56 +705,56 @@ on c.DepartmentId equals dept.DepartmentId
         //                Rank =c.Rank.RankName,
         //                DepartmentName = dept.DepartmentName,
         //                SensitivityLevel = context.TblCustomerSensitivityLevel.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
-                        
+
         //            });
         //}
 
         public IEnumerable<StaffDetailsModel> GetStaffDetails(int companyId)
         {
             var data = (from c in context.tbl_Staff
-                    join br in context.tbl_Branch on c.BranchId equals br.BranchId
-                    join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
-                    join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
-                    where c.CompanyId == companyId
-                    select new StaffDetailsModel()
-                    {
-                        StaffId = c.StaffId,
-                        Address = c.Address,
-                        companyId = coy.CompanyId,
-                        AddressOfNok = c.AddressOfNOK,
-                        BranchId = br.BranchId,
-                        BranchName = br.BranchName,
-                        Comment = c.Comment,
-                        CustomerSensitivityLevel = c.CustomerSensitivityLevel,
-                        DateOfBirth = c.DateOfBirth ?? DateTime.Now,
-                        DepartmentId = c.DepartmentId ?? 0,
-                        CityId = c.CityId ?? 0,
-                        City = c.tbl_City.CityName,
-                        company = coy.Name,
-                        JobTitle = c.tbl_Staff_JobTitle.JobTitleName,
-                        MisInfo = context.tbl_MIS_Info.Find(c.MISInfoId).MISName,
-                        Staffsignature = c.Staffsignature,
-                        Email = c.Email,
-                        EmailOfNok = c.EmailOfNOK,
-                        Gender = c.Gender,
-                        GenderOfNok = c.GenderOfNOK,
-                        JobTitleId = c.JobTitleId,
-                        MisinfoId = c.MISInfoId ?? 0,
-                        NameOfNok = c.NameOfNOK,
-                        NokrelationShip = c.NOKRelationShip,
-                        Phone = c.Phone,
-                        PhoneOfNok = c.PhoneOfNOK,
-                        StateId = c.StateId ?? 0,
-                        State = context.tbl_State.Find(c.StateId).StateName,
-                        FirstName = c.FirstName,
-                        MiddleName = c.MiddleName,
-                        LastName = c.LastName,
-                        StaffCode = c.StaffCode,
-                        RankId = c.RankId,
-                        Rank = c.tbl_Staff_Rank.RankName,
-                        DepartmentName = dept.DepartmentName,
-                        SensitivityLevel = context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
-                    });
+                        join br in context.tbl_Branch on c.BranchId equals br.BranchId
+                        join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
+                        join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
+                        where c.CompanyId == companyId
+                        select new StaffDetailsModel()
+                        {
+                            StaffId = c.StaffId,
+                            Address = c.Address,
+                            companyId = coy.CompanyId,
+                            AddressOfNok = c.AddressOfNOK,
+                            BranchId = br.BranchId,
+                            BranchName = br.BranchName,
+                            Comment = c.Comment,
+                            CustomerSensitivityLevel = c.CustomerSensitivityLevel,
+                            DateOfBirth = c.DateOfBirth ?? DateTime.Now,
+                            DepartmentId = c.DepartmentId ?? 0,
+                            CityId = c.CityId ?? 0,
+                            City = c.tbl_City.CityName,
+                            company = coy.Name,
+                            JobTitle = c.tbl_Staff_JobTitle.JobTitleName,
+                            MisInfo = context.tbl_MIS_Info.Find(c.MISInfoId).MISName,
+                            Staffsignature = c.Staffsignature,
+                            Email = c.Email,
+                            EmailOfNok = c.EmailOfNOK,
+                            Gender = c.Gender,
+                            GenderOfNok = c.GenderOfNOK,
+                            JobTitleId = c.JobTitleId,
+                            MisinfoId = c.MISInfoId ?? 0,
+                            NameOfNok = c.NameOfNOK,
+                            NokrelationShip = c.NOKRelationShip,
+                            Phone = c.Phone,
+                            PhoneOfNok = c.PhoneOfNOK,
+                            StateId = c.StateId ?? 0,
+                            State = context.tbl_State.Find(c.StateId).StateName,
+                            FirstName = c.FirstName,
+                            MiddleName = c.MiddleName,
+                            LastName = c.LastName,
+                            StaffCode = c.StaffCode,
+                            RankId = c.RankId,
+                            Rank = c.tbl_Staff_Rank.RankName,
+                            DepartmentName = dept.DepartmentName,
+                            SensitivityLevel = context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
+                        });
 
             return data;
         }
@@ -771,8 +779,8 @@ on c.DepartmentId equals dept.DepartmentId
                    {
                        approvalStatusId = ap.ApprovalStatusId,
                        approvalStatusName = ap.ApprovalStatusName,
-                      forDisplay = ap.ForDisplay ,
-    };
+                       forDisplay = ap.ForDisplay,
+                   };
         }
 
         public IQueryable<simpleStaffModel> SearchStaff(string searchQuery, int companyId)
@@ -807,5 +815,5 @@ on c.DepartmentId equals dept.DepartmentId
         }
     }
 
-   
+
 }

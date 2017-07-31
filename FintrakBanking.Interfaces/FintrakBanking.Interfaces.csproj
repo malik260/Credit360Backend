@@ -60,6 +60,8 @@
     <Compile Include="Customer\ILoanCovenantRepository.cs" />
     <Compile Include="ErrorLogger\IErrorLogRepository.cs" />
     <Compile Include="Helper\ICultureHelper.cs" />
+    <Compile Include="Notification\INotificationRepository.cs" />
+    <Compile Include="Media\IMediaRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Risk\IRiskImplementation.cs" />
     <Compile Include="Setups\Approval\IApprovalGroupMappingRepository.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Setups\Credit\ICollateralTypeRepository.cs" />
     <Compile Include="Setups\Finance\IAccountCategoryRepository.cs" />
     <Compile Include="Setups\Finance\IAccountTypeRepository.cs" />
+    <Compile Include="Setups\Finance\IChargeRepository.cs" />
     <Compile Include="Setups\Finance\IChartOfAccountRepository.cs" />
     <Compile Include="Setups\General\IAccountSensitivityRepository.cs" />
     <Compile Include="Setups\General\IAuthenticationRepository.cs" />
@@ -91,10 +94,9 @@
     <Compile Include="Setups\Risk\IRiskSetupRepository.cs" />
     <Compile Include="WorkFlow\IWorkFlowRepository.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">
-      <Project>{18CEFC20-2662-4757-94DE-23D623FFC98D}</Project>
+      <Project>{18cefc20-2662-4757-94de-23d623ffc98d}</Project>
       <Name>FintrakBanking.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">

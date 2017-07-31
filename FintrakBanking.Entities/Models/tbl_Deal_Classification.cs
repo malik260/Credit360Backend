@@ -14,10 +14,11 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Product_Type = new HashSet<tbl_Product_Type>();
+            tbl_temp_Product = new HashSet<tbl_temp_Product>();
         }
 
         [Key]
-        public short DealClassificationId { get; set; }
+        public short DealClassificationID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -32,5 +33,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product_Type> tbl_Product_Type { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_temp_Product> tbl_temp_Product { get; set; }
     }
 }

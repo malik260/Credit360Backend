@@ -246,7 +246,7 @@ namespace FintrakBanking.Repositories.Admin
 
         public IEnumerable<ActivityParent> GetActivities()
         {
-            return from p in context.tbl_Activity_Parent
+            return from p in context.tbl_Profile_Activity_Parent
                    select new ActivityParent
                    {
                        activityParentId = p.ActivityParentId,
@@ -260,6 +260,7 @@ namespace FintrakBanking.Repositories.Admin
                                           activityParentId = x.ActivityParentId
                                       }).ToList()
                    };
+
         }
 
         public IEnumerable<GroupVModel> GetGroupActivities()

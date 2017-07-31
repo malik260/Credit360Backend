@@ -263,15 +263,17 @@
     <Compile Include="Controllers\AuthorizationController.cs" />
     <Compile Include="Controllers\BranchController.cs" />
     <Compile Include="Controllers\CasaController.cs" />
+    <Compile Include="Controllers\ChargesController.cs" />
     <Compile Include="Controllers\ChartOfAccountController.cs" />
     <Compile Include="Controllers\ChecklistController.cs" />
-    <Compile Include="Controllers\CollateralController.cs" />
+    <Compile Include="Controllers\CollateralCustomerController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CreditAssessmentMemoController.cs" />
     <Compile Include="Controllers\CurrencyRateController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\CustomerFSController.cs" />
+    <Compile Include="Controllers\CustomerGroupController.cs" />
     <Compile Include="Controllers\CustomFieldsController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
     <Compile Include="Controllers\FeeController.cs" />
@@ -283,6 +285,7 @@
     <Compile Include="Controllers\LoanController.cs" />
     <Compile Include="Controllers\LoanCovenantController.cs" />
     <Compile Include="Controllers\MisInfoController.cs" />
+    <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\ProductCollateralTypeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductFeeController.cs" />

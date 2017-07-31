@@ -39,6 +39,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Setups.General;
     using FintrakBanking.Repositories.Setups.Risk;
     using FintrakBanking.Repositories.WorkFlow;
+    using FintrakBanking.Interfaces.Notification;
+    using FintrakBanking.Repositories.Notification;
 
     public static class NinjectWebCommon 
     {
@@ -120,7 +122,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICultureHelper>().To<CultureHelper>();
             kernel.Bind<ICasaRepository>().To<CasaRepository>();
             kernel.Bind<IErrorLogRepository>().To<ErrorLogRepository>();
-           // kernel.Bind<ICollateralRepository>().To<CollateralRepository>();
+            kernel.Bind<ICollateralCustomerRepository>().To<CollateralCustomerRepository>();
             kernel.Bind<IEmailRepository>().To<EmailRepository>();
             kernel.Bind<IAdminRepository>().To<AdminRepository>();
             kernel.Bind<ILoanCovenantRepository>().To<LoanCovenantRepository>();
@@ -143,6 +145,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IApprovalLevelStaffRepository>().To<ApprovalLevelStaffRepository>();
             kernel.Bind<ILoanApplicationRepository>().To<LoanApplicationRepository>();
             kernel.Bind<ICanAuthorizationRepository>().To<CanAuthorizationRepository>();
+            kernel.Bind<INotificationRepository>().To<NotificationRepository>();
         }        
     }
 }

@@ -213,7 +213,7 @@ namespace FintrakBanking.APICore.Controllers
                         branchName = currUser.branchName,
                         companyName = currUser.companyName,
                         UserName = currUser.username,
-                        roles = userActivities
+                        activities = userActivities
                     }
                 });
             }
@@ -232,7 +232,7 @@ namespace FintrakBanking.APICore.Controllers
         public string companyName { get; set; }
         public string branchName { get; set; }
         public string UserName { get; set; }
-        public List<string> roles { get; set; }
+        public List<string> activities { get; set; }
     }
 
     public class TokenVM
