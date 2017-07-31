@@ -43,6 +43,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 CreatedBy = entity.createdBy,
                 ParentId = entity.parentId,
                 ItemLevel =entity.itemLevel ,
+                 IndexTypeId = entity.indexTypeId ,
                 RiskAssessmentTitleId = entity.riskAssessmentTitleId
 
                   
@@ -105,6 +106,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 dateTimeCreated = a.DateTimeCreated,
                 description = a.Description,
                 name = a.Name,
+                 indexTypeId = a.IndexTypeId ,
                 riskAssessmentTitleId = a.RiskAssessmentTitleId,
                 itemLevel = a.ItemLevel,
                 weight = a.Weight,
@@ -146,6 +148,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
             index.Description = entity.description;
             index.ParentId = entity.parentId;
             index.ItemLevel = entity.itemLevel;
+            index.IndexTypeId = entity.indexTypeId;
             index.RiskAssessmentTitleId = entity.riskAssessmentTitleId;
             index.CompanyId = entity.companyId;
             index.Weight = entity.weight;

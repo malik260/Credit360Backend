@@ -18,24 +18,29 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string VehicleType { get; set; }
 
+        public short CollateralSubTypeId { get; set; }
+
         [StringLength(10)]
-        public string NewOrUsed { get; set; }
+        public string VehicleStatus { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Make { get; set; }
+        public string VehicleMake { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Model { get; set; }
+        public string ModelName { get; set; }
 
         [Required]
         [StringLength(5)]
-        public string Year { get; set; }
+        public string ManufacturedDate { get; set; }
 
         [Required]
         [StringLength(50)]
         public string RegistrationNumber { get; set; }
+
+        [StringLength(50)]
+        public string SerialNumber { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -47,11 +52,11 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(250)]
-        public string Owner { get; set; }
+        public string NameOfOwner { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string RegAuthority { get; set; }
+        public string RegistrationCompany { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? ResaleValue { get; set; }
@@ -59,27 +64,13 @@ namespace FintrakBanking.Entities.Models
         public DateTime? ValuationDate { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ValuationAmount { get; set; }
+        public decimal? LastValuationAmount { get; set; }
 
         [Column(TypeName = "money")]
         public decimal InvoiceValue { get; set; }
 
         [StringLength(500)]
         public string Remark { get; set; }
-
-        public int CreatedBy { get; set; }
-
-        public int? LastUpdatedBy { get; set; }
-
-        public DateTime DateTimeCreated { get; set; }
-
-        public DateTime? DateTimeUpdated { get; set; }
-
-        public bool Deleted { get; set; }
-
-        public int? DeletedBy { get; set; }
-
-        public DateTime? DateTimeDeleted { get; set; }
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
     }

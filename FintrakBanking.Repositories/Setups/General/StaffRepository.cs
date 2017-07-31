@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Data.Common;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Setups.General
@@ -448,13 +449,14 @@ on c.DepartmentId equals dept.DepartmentId
 
         public bool AddTempStaff(StaffInfoViewModel staffModel)
         {
-            var existStingTempStaff = context.tbl_Temp_Staff.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower() 
+            bool output = false;
+            var existStingTempStaff = context.tbl_Temp_Staff.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower()
                                                                   && x.IsCurrent == true && x.CompanyId == staffModel.companyId
                                                                   && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
 
             if (existStingTempStaff.Any())
             {
-                throw new Exception("Staff Information already exist and is undergoing approval");               
+                throw new Exception("Staff Information already exist and is undergoing approval");
             }
 
             var staff = new tbl_Temp_Staff()
@@ -491,8 +493,6 @@ on c.DepartmentId equals dept.DepartmentId
                 IsCurrent = true
 
             };
-            this.context.tbl_Temp_Staff.Add(staff);
-
             // Audit Section ---------------------------
             var audit = new tbl_Audit
             {
@@ -506,21 +506,35 @@ on c.DepartmentId equals dept.DepartmentId
                 SystemDateTime = DateTime.Now
             };
 
-            auditTrail.AddAuditTrail(audit);
-
-            var output = this.SaveAll();
-
-            var entity = new ApprovalViewModel
+            if (workFlow.CheckRouteForOperation((int)Operations.StaffCreation, staffModel.companyId))
             {
-                staffId = staffModel.createdBy,
-                companyId = staffModel.companyId,
-                approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                targetId = staff.StaffId,
-                operationId = (int)Operations.StaffCreation,
-                BranchId = staffModel.userBranchId
-            };
-            var response = workFlow.LogForApproval(entity);
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        auditTrail.AddAuditTrail(audit);
+                        this.context.tbl_Temp_Staff.Add(staff);
+                        output = this.SaveAll();
 
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = staffModel.createdBy,
+                            companyId = staffModel.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = staff.StaffId,
+                            operationId = (int)Operations.StaffCreation,
+                            BranchId = staffModel.userBranchId
+                        };
+                        var response = workFlow.LogForApproval(entity);
+                        return output;
+                    }
+                    catch (Exception)
+                    {
+                        trans.Rollback();
+                    }
+                }
+                throw new Exception("Approval route have not been defined for this operation");
+            }
             return output;
         }
 

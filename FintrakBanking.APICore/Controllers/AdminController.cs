@@ -43,7 +43,7 @@ namespace FintrakBanking.APICore.Controllers
         public IHttpActionResult GetAllUsers()
         {
             var users = repo.GetAllUsers().ToList();
-            return Ok(new { result = users });
+            return Ok( new { result = users });
         }
 
         [HttpPost]

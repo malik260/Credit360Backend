@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
         }
 
         [Key]
-        public short DealClassificationId { get; set; }
+        public short DealClassificationID { get; set; }
 
         [Required]
         [StringLength(50)]

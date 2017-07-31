@@ -26,7 +26,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string ActivityName { get; set; }
 
-        public virtual tbl_Activity_Parent tbl_Activity_Parent { get; set; }
+        public virtual tbl_Profile_Activity_Parent tbl_Profile_Activity_Parent { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Profile_AdditionalActivity> tbl_Profile_AdditionalActivity { get; set; }

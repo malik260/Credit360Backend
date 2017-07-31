@@ -35,14 +35,14 @@ namespace FintrakBanking.APICore.Controllers
                     if (data == null)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = false, message = "No record found" }));
+                            new { success = false, message = "No record found" });
                     }
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
+                        new { success = true, result = data.ToList() });  //Ok(accounts);
                 }
                 catch (System.Exception ex)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
 
@@ -56,14 +56,14 @@ namespace FintrakBanking.APICore.Controllers
                     if (data == null)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
-                                Ok(new { success = false, message = "No record found" }));
+                                new { success = false, message = "No record found" });
                     }
                     return Request.CreateResponse(HttpStatusCode.OK,
-                            Ok(new { success = true, result = data.ToList() }));  //Ok(accounts);
+                            new { success = true, result = data.ToList() });  //Ok(accounts);
                 }
                 catch (System.Exception ex)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
 
@@ -77,13 +77,13 @@ namespace FintrakBanking.APICore.Controllers
                     if (data == null)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
-                                    Ok(new { success = false, message = "No record found" }));
+                                    new { success = false, message = "No record found" });
                     }
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new { success = true, result = data }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (System.Exception ex)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
 
@@ -104,15 +104,16 @@ namespace FintrakBanking.APICore.Controllers
                     if (recordId >= 1)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
-                                        Ok(new { success = true, result = recordId, message = "product fee has been created successfully" }));
+                                        new { success = true, result = recordId,
+                                            message = "product fee has been created successfully" });
                     }
                     else
                         return Request.CreateResponse(HttpStatusCode.OK,
-                                        Ok(new { success = false, message = "product fee not created" }));
+                                        new { success = false, message = "product fee not created" });
                 }
                 catch (System.Exception ex)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
 
@@ -127,15 +128,15 @@ namespace FintrakBanking.APICore.Controllers
                     if (recordId >= 1)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
-                                            Ok(new { success = true, result = recordId, message = "product fee(s) has been created successfully" }));
+                                            new { success = true, result = recordId, message = "product fee(s) has been created successfully" });
                     }
                     else
                         return Request.CreateResponse(HttpStatusCode.OK,
-                                            Ok(new { success = false, message = "product fee not created" }));
+                                            new { success = false, message = "product fee not created" });
                 }
                 catch (System.Exception ex)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
 
@@ -145,14 +146,14 @@ namespace FintrakBanking.APICore.Controllers
         { if (model == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            Ok(new { success = false, message = "No record found" }));
+                                            new { success = false, message = "No record found" });
                 }
 
                 var data = repo.GetProductFeeViewModel(productFeeId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            Ok(new { success = false, message = "No record found" }));
+                                            new { success = false, message = "No record found" });
                 }
 
                 try
@@ -167,11 +168,11 @@ namespace FintrakBanking.APICore.Controllers
                     repo.UpdateProductFee(productFeeId, model);
 
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            Ok(new { success = true, result = productFeeId, message = "product fee has been updated successfully" }));
+                                            new { success = true, result = productFeeId, message = "product fee has been updated successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
 
@@ -182,7 +183,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (account == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                                Ok(new { success = false, message = "No record found" }));
+                                                new { success = false, message = "No record found" });
                 }
 
                 try
@@ -199,16 +200,16 @@ namespace FintrakBanking.APICore.Controllers
                     };
                     repo.DeleteProductFee(productFeeId, user);
 
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new
+                    return Request.CreateResponse(HttpStatusCode.OK, new
                     {
                         success = true,
                         result = productFeeId,
                         message = "product fee has been deleted successfully"
-                    }));
+                    });
                 }
                 catch (System.Exception ex)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
 
@@ -218,7 +219,7 @@ namespace FintrakBanking.APICore.Controllers
         {  if (productFeeIds.Count <= 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                                    Ok(new { success = false, message = "No record found" }));
+                                                    new { success = false, message = "No record found" });
                 }
 
                 try
@@ -226,11 +227,11 @@ namespace FintrakBanking.APICore.Controllers
                     repo.DeleteMultipleProductFee(productFeeIds);
 
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                                    Ok(new { success = true, result = 1, message = "product fee(s) has been deleted successfully" }));
+                                                    new { success = true, result = 1, message = "product fee(s) has been deleted successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(new { success = false, message = ex.Message }));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
     }

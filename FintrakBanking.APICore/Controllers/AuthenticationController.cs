@@ -55,7 +55,7 @@ namespace FintrakBanking.APICore.Controllers
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No user found" });
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = users });
-                    //return Ok(new { success = true, result = users });
+                    //return new { success = true, result = users });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"No user found" });
 
@@ -213,7 +213,7 @@ namespace FintrakBanking.APICore.Controllers
                         branchName = currUser.branchName,
                         companyName = currUser.companyName,
                         UserName = currUser.username,
-                        roles = userActivities
+                        activities = userActivities
                     }
                 });
             }
@@ -222,7 +222,7 @@ namespace FintrakBanking.APICore.Controllers
                 this.errorLogger.LogError(ex, this.Request.RequestUri.Host, "");// token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
-                //return Ok(new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
+                //return new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
             }
         }
     }
@@ -232,7 +232,7 @@ namespace FintrakBanking.APICore.Controllers
         public string companyName { get; set; }
         public string branchName { get; set; }
         public string UserName { get; set; }
-        public List<string> roles { get; set; }
+        public List<string> activities { get; set; }
     }
 
     public class TokenVM
