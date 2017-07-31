@@ -384,6 +384,55 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("product/approvals/temp")]
+        public HttpResponseMessage GetProductAwaitingApproval()
+        {
+
+
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var productinfo = repo.GetProductAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
+
+                if (productinfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = productinfo.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("product/approvals/temp/{productId}")]
+        public HttpResponseMessage GetTempProductDetailsById(int productId)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var productInfo = repo.GetTempProductDetail(productId);
+
+                if (productInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = productInfo });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
         [Route("product/{productId}")]
         public HttpResponseMessage GetProductById(int productId)
         {
