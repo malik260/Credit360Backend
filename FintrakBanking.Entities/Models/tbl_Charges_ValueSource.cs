@@ -17,6 +17,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsFixed { get; set; }
 
+        public bool IsAbsolute { get; set; }
+
         public int CompanyId { get; set; }
 
         public int CreatedBy { get; set; }

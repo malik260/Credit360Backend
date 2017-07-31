@@ -15,17 +15,17 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string ChargeName { get; set; }
 
-        public int? OperationId { get; set; }
+        public int OperationId { get; set; }
 
-        public decimal? SetValue { get; set; }
+        public decimal SetValue { get; set; }
 
-        public int? GLAccountId { get; set; }
+        public int GLAccountId { get; set; }
 
-        public int? Frequency { get; set; }
+        public int Frequency { get; set; }
 
-        public bool? ApplyVAT { get; set; }
+        public bool ApplyVAT { get; set; }
 
-        public bool? ApplyWHT { get; set; }
+        public bool ApplyWHT { get; set; }
 
         public int CompanyId { get; set; }
 
