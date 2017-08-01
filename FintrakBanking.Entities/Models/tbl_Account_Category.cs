@@ -16,6 +16,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Fee = new HashSet<tbl_Fee>();
             tbl_Account_Type = new HashSet<tbl_Account_Type>();
             tbl_Financial_Statement_Caption = new HashSet<tbl_Financial_Statement_Caption>();
+            tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
         }
 
         [Key]
@@ -36,5 +37,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Financial_Statement_Caption> tbl_Financial_Statement_Caption { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
     }
 }
