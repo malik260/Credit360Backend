@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace FintrakBanking.Common
 {
@@ -290,6 +292,16 @@ namespace FintrakBanking.Common
             }
         }
 
+
+        public static string GetUserIP()
+        {
+            var ip = (!String.IsNullOrWhiteSpace(HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"]))
+                     ? HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"]
+                     : HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
+            if (ip.Contains(","))
+                ip = ip.Split(',').First().Trim();
+            return ip;
+        }
 
     }
 }

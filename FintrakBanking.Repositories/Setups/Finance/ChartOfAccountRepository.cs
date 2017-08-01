@@ -331,7 +331,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             accountCategoryId = account.tbl_Account_Type.AccountCategoryId,
                             accountCategoryName = account.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
                             accountStatusId = account.AccountStatusId,
-                            currencies = context.tbl_Chart_Of_Account_Currency.Where(curr => curr.GLAccountId == account.GLAccountId && curr.Deleted != false).Select(c => new ChartOfAccountCurrencyViewModel()
+                            currencies = context.tbl_Chart_Of_Account_Currency.Where(curr => curr.GLAccountId == account.GLAccountId && curr.Deleted == false).Select(c => new ChartOfAccountCurrencyViewModel()
                             {
                                 glaccountId = c.GLAccountId,
                                 glaccountCurrencyId = c.GLAccountCurrencyId,
@@ -528,7 +528,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public IEnumerable<ChartOfAccountViewModel> GetAccountsAwaitingApprovals(int accountId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(accountId, companyId, (int)Operations.ChartofAccountCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(accountId, companyId, (int)Operations.ChartOfAccountCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -537,7 +537,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
                     join atrail in context.tbl_Approval_Trail on c.GLAccountId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)Operations.ChartofAccountCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                          && atrail.OperationId == (int)Operations.ChartOfAccountCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new ChartOfAccountViewModel()
                     {
                         accountId = c.GLAccountId,

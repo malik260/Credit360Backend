@@ -10,7 +10,7 @@ namespace FintrakBanking.Common.Enum
         LoanBooking = 2,
         StaffCreation = 3,
         UserCreation = 4,
-        ChartofAccountCreation = 5,
+        ProductCreation = 5,
         ProductsUpdate = 6,
         ChartOfAccountCreation = 7,
         ChartOfAccountUpdate = 8,
