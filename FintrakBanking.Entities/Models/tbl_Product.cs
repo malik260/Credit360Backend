@@ -18,9 +18,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Product_CollateralType = new HashSet<tbl_Product_CollateralType>();
             tbl_Product_Currency = new HashSet<tbl_Product_Currency>();
-            tbl_Temp_Product_Currency = new HashSet<tbl_Temp_Product_Currency>();
             tbl_Product_Fee = new HashSet<tbl_Product_Fee>();
-            tbl_Temp_Product_Fee = new HashSet<tbl_Temp_Product_Fee>();
             tbl_Risk_Rating = new HashSet<tbl_Risk_Rating>();
         }
 
@@ -139,13 +137,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Product_Currency> tbl_Product_Currency { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_Currency> tbl_Temp_Product_Currency { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product_Fee> tbl_Product_Fee { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_Fee> tbl_Temp_Product_Fee { get; set; }
 
         public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
 
