@@ -89,7 +89,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
         {
             var data = new tbl_Charges_ValueSource()
             {
-                IsAbsolute = entity.IsAbsolute,
+                //IsAbsolute = entity.IsAbsolute,
                 IsFixed = entity.isFixed,
                 ValueSourceName = entity.valueSourceName,
                 CompanyId = entity.companyId,
@@ -104,7 +104,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             var data = context.tbl_Charges_ValueSource.Find(entity.valueSourceId);
             if (data != null)
             {
-                    data.IsAbsolute = entity.IsAbsolute;
+                // data.IsAbsolute = entity.IsAbsolute; 
                 data.IsFixed = entity.isFixed;
                 data.ValueSourceName = entity.valueSourceName;
                 data.CompanyId = entity.companyId; 

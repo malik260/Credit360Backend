@@ -215,10 +215,10 @@ namespace FintrakBanking.APICore.Controllers
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.LoanSearch(token.GetCompanyId, searchModel);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
+                //if (!data.Any())
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                //}
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }

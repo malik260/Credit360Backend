@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
@@ -58,6 +59,16 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int operationId { get; set; }
         public string comment { get; set; }
 
+        public List<ProductCurrencyViewModel> currencies { get; set; }
+
+    }
+
+    public class ProductCurrencyViewModel : GenaralEntity
+    {
+        public int productId { get; set; }
+        public int productCurrencyId { get; set; }
+        public short currencyId { get; set; }
+        public string currencyName { get; set; }
     }
 
     public class ProductPriceIndexViewModel : GenaralEntity

@@ -12,6 +12,7 @@ using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using System.Data;
 
+
 namespace FintrakBanking.Repositories.Credit
 {
     using wct = XLeratorDLL_financial.XLeratorDLL_financial;

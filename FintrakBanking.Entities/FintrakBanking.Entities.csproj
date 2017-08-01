@@ -224,6 +224,8 @@
     <Compile Include="Models\tbl_State.cs" />
     <Compile Include="Models\tbl_Stock.cs" />
     <Compile Include="Models\tbl_Sub_Sector.cs" />
+    <Compile Include="Models\tbl_Temp_Chart_Of_Account.cs" />
+    <Compile Include="Models\tbl_Temp_Chart_Of_Account_Currency.cs" />
     <Compile Include="Models\tbl_temp_Product.cs" />
     <Compile Include="Models\tbl_Temp_Product_Currency.cs" />
     <Compile Include="Models\tbl_Temp_Product_Fee.cs" />

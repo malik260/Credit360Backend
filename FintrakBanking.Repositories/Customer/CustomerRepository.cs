@@ -359,7 +359,7 @@ namespace FintrakBanking.Repositories.Customer
                        maritalStatus = a.MaritalStatus.Value,
                        title = a.Title,
                        middleName = a.MiddleName,
-                       customerTypeName = context.tbl_Customer_Type.SingleOrDefault(c => c.CustomerTypeId == a.CustomerTypeId).Name,
+                       customerTypeName = context.tbl_Customer_Type.FirstOrDefault(c => c.CustomerTypeId == a.CustomerTypeId).Name,
                        misCode = a.MISCode,
                        misStaff = a.MISStaff,
                        nationality = a.Nationality,
@@ -418,7 +418,7 @@ namespace FintrakBanking.Repositories.Customer
                        {
                            identificationId = e.IdentificationId,
                            identificationModeId = e.IdentificationModeId.Value,
-                           identificationMode = context.tbl_Customer_IdentificationModeType.SingleOrDefault(r => r.IdentificationModeId == e.IdentificationModeId).IdentificationMode,
+                           identificationMode = context.tbl_Customer_IdentificationModeType.FirstOrDefault(r => r.IdentificationModeId == e.IdentificationModeId).IdentificationMode,
                            identificationNo = e.IdentificationNo,
                            issueAuthority = e.IssueAuthority,
                            issuePlace = e.IssuePlace
@@ -568,7 +568,7 @@ namespace FintrakBanking.Repositories.Customer
 
             if (!String.IsNullOrEmpty(search.customerName))
             {
-                customers = customers.Where(x =>                
+                customers = customers.Where(x =>
                 x.firstName.ToLower().Contains(search.customerName.ToLower())
                 || x.lastName.ToLower().Contains(search.customerName.ToLower())
                 || x.middleName.ToLower().Contains(search.customerName.ToLower())
