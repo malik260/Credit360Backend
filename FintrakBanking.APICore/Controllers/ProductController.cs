@@ -134,7 +134,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -228,7 +228,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -270,7 +270,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -402,7 +402,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                //errorLogger.LogError(ex, HttpContext.Current.Request.UserHostAddress, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
 
@@ -426,7 +426,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                //errorLogger.LogError(ex, HttpContext.Current.Request.UserHostAddress, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
 
@@ -470,7 +470,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                //errorLogger.LogError(ex, HttpContext.Current.Request.UserHostAddress, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
 
@@ -484,7 +484,7 @@ namespace FintrakBanking.APICore.Controllers
         //    {
         //        var token = new TokenDecryptionHelper();
         //        model.userBranchId = (short)token.GetBranchId;
-        //        model.userIPAddress = Request.RequestUri.Host;
+        //        model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
         //        model.applicationUrl = HttpContext.Current.Request.Path;
         //        model.createdBy = token.GetStaffId;
         //        model.companyId = token.GetCompanyId;
@@ -532,7 +532,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -586,7 +586,7 @@ namespace FintrakBanking.APICore.Controllers
         //    {
         //        var token = new TokenDecryptionHelper();
         //        model.userBranchId = (short)token.GetBranchId;
-        //        model.userIPAddress = Request.RequestUri.Host;
+        //        model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
         //        model.applicationUrl = HttpContext.Current.Request.Path;
         //        model.createdBy = token.GetStaffId;
         //        model.companyId = token.GetCompanyId;
@@ -611,7 +611,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
@@ -689,7 +689,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -723,7 +723,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -755,7 +755,7 @@ namespace FintrakBanking.APICore.Controllers
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
-                    userIPAddress = Request.RequestUri.Host
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
                 };
                 repo.DeleteProductPriceIndex(productPriceIndexId, user);
 
