@@ -11,7 +11,7 @@ using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using System.Data;
-using XLeratorDLL_financial;
+
 
 namespace FintrakBanking.Repositories.Credit
 {

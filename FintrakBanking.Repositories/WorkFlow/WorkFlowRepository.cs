@@ -475,7 +475,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return Tuple.Create(true, entity);
             }
-            if (entity.operationId == int.Parse(Operations.ProductsCreation.ToString()))
+            if (entity.operationId == int.Parse(Operations.ChartofAccountCreation.ToString()))
             {
                 return Tuple.Create(true, entity);
             }
