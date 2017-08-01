@@ -723,7 +723,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     try
                     {
-                        //Storing the chart of account currencies
+                        //Storing the product currencies
                         foreach (var item in productModel.currencies)
                         {
                             var productCurrency = new tbl_Temp_Product_Currency()
@@ -734,7 +734,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             };
                             currencies.Add(productCurrency);
                         }
-                        //End of storing the chart of account currencies
+                        //End of storing the product currencies
                         auditTrail.AddAuditTrail(audit);
                         this.context.tbl_Temp_Product.Add(product);
                         output = this.SaveAll();
