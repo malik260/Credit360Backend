@@ -242,7 +242,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.tbl_Product_Fee.Any(x => x.ProductFeeId == productFeeId);
         }
 
-        public ProductFeeViewModel GetProductFeeViewModel(int productFeeId)
+        public ProductFeeViewModel GetProductFee(int productFeeId)
         {
             return (from data in context.tbl_Product_Fee
                     where data.ProductFeeId == productFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
@@ -266,6 +266,33 @@ namespace FintrakBanking.Repositories.Setups.General
                        // deleted = data.Deleted.Value,
                        // deletedBy = data.DeletedBy,
                        // dateTimeDeleted = data.DateTimeDeleted
+                    }).FirstOrDefault();
+        }
+
+        public ProductFeeViewModel GetTempProductFee(int productFeeId)
+        {
+            return (from data in context.tbl_Temp_Product_Fee
+                    where data.ProductFeeId == productFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+                    select new ProductFeeViewModel()
+                    {
+                        productFeeId = data.ProductFeeId,
+                        productId = (short)data.ProductId,
+                        feeId = data.FeeId,
+                        feeName = data.tbl_Fee.FeeName,
+                        companyId = data.CompanyId,
+
+                        rateValue = data.RateValue,
+                        dependentAmount = data.DependentAmount,
+
+                        createdBy = data.CreatedBy,
+                        dateTimeCreated = data.DateTimeCreated,
+
+                        //lastUpdatedBy = data.LastUpdatedBy.Value,
+                        //dateTimeUpdated = data.DateTimeUpdated,
+
+                        // deleted = data.Deleted.Value,
+                        // deletedBy = data.DeletedBy,
+                        // dateTimeDeleted = data.DateTimeDeleted
                     }).FirstOrDefault();
         }
 
