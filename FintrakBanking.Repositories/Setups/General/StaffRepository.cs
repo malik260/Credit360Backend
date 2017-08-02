@@ -451,7 +451,8 @@ on c.DepartmentId equals dept.DepartmentId
         {
             bool output = false;
             var existStingTempStaff = context.tbl_Temp_Staff.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower()
-                                                                  && x.IsCurrent == true && x.CompanyId == staffModel.companyId
+                                                                  && x.IsCurrent == true 
+                                                                  && x.CompanyId == staffModel.companyId
                                                                   && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
 
             if (existStingTempStaff.Any())
@@ -533,6 +534,9 @@ on c.DepartmentId equals dept.DepartmentId
                         trans.Rollback();
                     }
                 }
+            }
+            else
+            {
                 throw new Exception("Approval route have not been defined for this operation");
             }
             return output;

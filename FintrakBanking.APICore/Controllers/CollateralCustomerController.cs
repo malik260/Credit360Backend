@@ -34,7 +34,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
-                //entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.companyId = token.GetCompanyId;
 
                 var response = await repo.AddCollateralCustomer(entity);
@@ -62,7 +62,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userBranchId = (short)token.GetBranchId;
-                //entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
 
                 var response = await repo.UpdateCollateralCustomer(collateralCustomerId, entity);
                 if (!response)

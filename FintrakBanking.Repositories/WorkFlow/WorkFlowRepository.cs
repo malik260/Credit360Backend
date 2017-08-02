@@ -76,6 +76,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 ArrivalDate = genSetup.GetApplicaionDate(),
                 ToApprovalLevelId = entity.nextLevelId == 0 ? GetStatingApprovalLevel(entity.operationId, entity.companyId) : entity.nextLevelId,
                 TargetId = entity.targetId,
+                 SystemArrivalDateTime =  DateTime.Now,
                 ApprovalStatusId = entity.approvalStatusId,
                 CompanyId = entity.companyId,
                 RequestStaffId = entity.staffId,
@@ -103,8 +104,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return Tuple.Create(false, entity);
         }
-           
-        
 
         public bool CheckRouteForOperation(int operationId, int companyId)
         {
@@ -118,8 +117,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         /// <summary>
         /// Call this function for approval routing.
         /// </summary>
-        /// <param name="Approval entity"></param>
-        /// <returns></returns>
+        /// <param name="entity"></param>
+        /// <returns>this returns a tuple of bool and ApprovalViewModel</returns>
         public async Task<Tuple<bool, ApprovalViewModel>> GoForApproval(ApprovalViewModel entity)
         {
             var currentStaffLevel = GetStaffLevel(entity.staffId, entity.companyId, entity.operationId); // get current users approval level
@@ -158,6 +157,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         ApprovalStatusId = entity.approvalStatusId,
                                         CompanyId = entity.companyId,
                                         Comment = entity.comment,
+                                        SystemArrivalDateTime = DateTime.Now,
                                         ApprovalStateId = (short)ApprovalState.Processing,
                                         RequestStaffId = entity.staffId,
                                         OperationId = entity.operationId
@@ -276,7 +276,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             ApprovalLevelViewModel[] allLevels = GetAllLevels(entity.operationId, entity.companyId).ToArray();
             var level = allLevels.FirstOrDefault(c => c.approvalLevelId == approvalLevelId);
-            var userCount = approvelRepo.GetApprovalTrail(entity.operationId, entity.targetId, entity.approvalStatusId, level.numberOfApprovals);
+            var userCount = approvelRepo.GetApprovalTrail(entity.operationId, entity.targetId,
+                entity.approvalStatusId, level.numberOfApprovals);
             return userCount;
         }
 
@@ -343,11 +344,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             int nextLevelId = 0;
 
             currentLevel = GetStaffLevel(staffId, companyId, entity.operationId).approvalLevelId;
+            
             // get currents staffs line manager from the organogram table
             var organogram = approvelRepo.GetStaffOrganogram(companyId).FirstOrDefault(c => c.StaffId == staffId);
+            
             // get the staff id of line manager
-            var lineManagerStaffId = context.tbl_Staff.Where(v => v.StaffCode == organogram.StaffCode).SingleOrDefault().StaffId;//  staffRepo.GetRealStaffDetails().FirstOrDefault(c => c.StaffCode == organogram.StaffCode).StaffId;
-
+            var lineManagerStaffId = context.tbl_Staff.Where(v => v.StaffCode == organogram.StaffCode).SingleOrDefault().StaffId;
+            
             //get line managers approval level
             var lineManagerLevel = GetStaffLevel(lineManagerStaffId, companyId, entity.operationId);
 
@@ -359,6 +362,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 FromApprovalLevelId = currentLevel,
                 ToApprovalLevelId = nextLevelId,
                 TargetId = targetId,
+                SystemArrivalDateTime = DateTime.Now,
                 ApprovalStateId = (short)ApprovalState.Processing,
                 ApprovalStatusId = approvalStatusId,
                 CompanyId = companyId,
@@ -377,7 +381,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 ArrivalDate = genSetup.GetApplicaionDate(),
                 ToApprovalLevelId = approval.myLevelId,
-                SystemResponseDateTime = DateTime.UtcNow.Date,
+                SystemResponseDateTime = DateTime.Now,
                 TargetId = approval.targetId,
                 ApprovalStatusId = approval.approvalStatusId,
                 CompanyId = approval.companyId,
@@ -417,7 +421,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         ArrivalDate = genSetup.GetApplicaionDate(),
                         FromApprovalLevelId = currentLevel,
-                        ToApprovalLevelId = nextLevelId,
+                        ToApprovalLevelId = nextLevelId,SystemArrivalDateTime = DateTime.Now ,
                         TargetId = approval.targetId,
                         ApprovalStateId = (short)ApprovalState.Processing,
                         ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
@@ -461,9 +465,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             return result;
         }
-
-      
-
+        
         private Tuple<bool, ApprovalViewModel> ApproveOperation(ApprovalViewModel entity)
         {
             if (entity.operationId == int.Parse(Operations.LoanApplication.ToString()))

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.Finance
 {
- public    interface IChargeRepository
+    public interface IChargeRepository
     {
         #region Charge
         Task<bool> AddCharge(ChargeVeiwModel entity);

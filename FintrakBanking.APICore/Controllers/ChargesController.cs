@@ -22,12 +22,12 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
             errorLogger = _errorLogger;
         }
-
+      
+        #region Charges
         [HttpPost]
         [Route("charges")]
         public HttpResponseMessage AddCharge([FromBody]ChargeVeiwModel entity)
         {
-
             try
             {
                 token = new TokenDecryptionHelper();
@@ -49,10 +49,8 @@ namespace FintrakBanking.APICore.Controllers
                 this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
             }
-
-
-           
         }
+
         [HttpDelete]
         [Route("charges")]
         public HttpResponseMessage DeleteCharge(ChargeVeiwModel entity)
@@ -83,84 +81,307 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("charges")]
-        public IEnumerable<ChargeVeiwModel> GetAllCharges()
+        public HttpResponseMessage GetAllCharges()
         {
-            token = new TokenDecryptionHelper();
-            return repo.GetAllCharges(token.GetCompanyId);
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetAllCharges(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("charges/{id}")]
-        public ChargeVeiwModel GetAllCharges(  int  id)
+        public HttpResponseMessage  GetAllCharges(  int  id)
+        { 
+            try
+            {
+                //
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetAllCharges(token.GetCompanyId, id);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("charges")]
+        public HttpResponseMessage UpdateCharge([FromBody]ChargeVeiwModel entity)
         {
-            token = new TokenDecryptionHelper();
-            return repo.GetAllCharges(token.GetCompanyId, id);
+            try
+            {
+                token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                // entity.userIPAddress =  //Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                var data = repo.UpdateCharge(entity);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been Update successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("charges/operation/{id}")]        
-        public IEnumerable<ChargeVeiwModel> GetAllChargeByOperation( int id)
+        public HttpResponseMessage  GetAllChargeByOperation( int id)
+        {            
+            try
+            {
+                //
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetAllChargeByOperation(token.GetCompanyId, id);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        #endregion Charge End
+
+        #region charge range
+        [HttpPost]
+        [Route("chargerange")]
+        public HttpResponseMessage AddChargeRange([FromBody]ChargeRangeVeiwModel entity)
         {
-            token = new TokenDecryptionHelper();
-            return repo.GetAllChargeByOperation(token.GetCompanyId,  id);
+            try
+            {
+                token = new TokenDecryptionHelper();
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
+                var data = repo.AddChargeRange(entity).IsCompleted;
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
         }
 
-        public Task<bool> AddChargeRange([FromBody]ChargeRangeVeiwModel entity)
-        {
-            return repo.AddChargeRange(entity);
-        }
-
+        [HttpDelete]
+        [Route("chargerange")]
         public Task<bool> DeleteChargeRange([FromBody]ChargeRangeVeiwModel entity)
         {
             return repo.DeleteChargeRange(entity);
         }
-        public ChargeRangeVeiwModel GetAllChargeRanges(int companyId, int rangeId)
-        {
-            token = new TokenDecryptionHelper();
-            return repo.GetAllChargeRanges(token.GetCompanyId , rangeId);
-        }
-        public IEnumerable<ChargeRangeVeiwModel> GetAllChargesRange( )
-        {
-            token = new TokenDecryptionHelper();
-            return repo.GetAllChargesRange(token.GetCompanyId);
-        }
 
-
-
-        public Task<bool> UpdateCharge([FromBody]ChargeVeiwModel entity)
+        [HttpGet]
+        [Route("chargerrange/range/{id}")]
+        public HttpResponseMessage GetAllChargeRanges( int id)
         {
-            return repo.UpdateCharge(entity);
-        }
-
-        public Task<bool> UpdateChargeRange([FromBody]ChargeRangeVeiwModel entity)
-        {
-            return repo.UpdateChargeRange(entity);
+            try
+            { 
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetAllChargeRanges(token.GetCompanyId, id);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
+        [HttpGet]
+        [Route("chargerrange")]
+        public HttpResponseMessage GetAllChargesRange( )
+        { 
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetAllChargesRange(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
-        public Task<bool> DeleteChargeValueSource([FromBody]ChargesValueSourceVeiwModel entity)
+        [HttpPut]
+        [Route("chargerange")]
+        public HttpResponseMessage UpdateChargeRange([FromBody]ChargeRangeVeiwModel entity)
+        {
+            try
+            {
+                token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                // entity.userIPAddress =  //Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                var data = repo.UpdateChargeRange(entity);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been Update successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
+            }
+        }
+        #endregion Charges Value Source
+        
+        #region charge value source
+        [HttpDelete]
+        [Route("chargevaluesource")]
+        public HttpResponseMessage DeleteChargeValueSource([FromBody]ChargesValueSourceVeiwModel entity)
         {
             return repo.DeleteChargeValueSource(entity);
         }
 
-        public IEnumerable<ChargesValueSourceVeiwModel> GetAllChargesValueSource()
+        [HttpGet]
+        [Route("chargevaluesource/all")]
+        public  HttpResponseMessage GetAllChargesValueSource()
         {
-            token = new TokenDecryptionHelper();
-            return repo.GetAllChargesValueSource(token.GetCompanyId);
+             
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetAllChargesValueSource(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
-        public ChargesValueSourceVeiwModel GetChargesValueSourceById( int valueSourceId)
+        [HttpGet]
+        [Route("chargevaluesource/{id}")]
+        public HttpResponseMessage  GetChargesValueSourceById( int valueSourceId)
         {
-            token = new TokenDecryptionHelper();
-            return repo.GetChargesValueSourceById(token.GetCompanyId, valueSourceId);
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetChargesValueSourceById(token.GetCompanyId, valueSourceId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
-        public Task<bool> UpdateChargeValueSource([FromBody]ChargesValueSourceVeiwModel entity)
+
+        [HttpPut]
+        [Route("chargevaluesource")]
+        public HttpResponseMessage UpdateChargeValueSource([FromBody]ChargesValueSourceVeiwModel entity)
+        { 
+            try
+            {
+                token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                // entity.userIPAddress =  //Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                var data = repo.UpdateChargeValueSource(entity);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been Update successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("chargevaluesource")]
+        public HttpResponseMessage AddChargeValueSource([FromBody]ChargesValueSourceVeiwModel entity)
         {
-            return repo.UpdateChargeValueSource(entity);
+            try
+            {
+                token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                // entity.userIPAddress =  //Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                var data = repo.AddChargeValueSource(entity);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been Update successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
+            }
         }
-        public Task<bool> AddChargeValueSource([FromBody]ChargesValueSourceVeiwModel entity)
-        {
-            return repo.AddChargeValueSource(entity);
-        }
+        #endregion Charge Range
     }
 }
