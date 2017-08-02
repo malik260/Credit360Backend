@@ -92,7 +92,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
+        //
         [HttpGet]
         [Route("product-group/{productGroupId}")]
         public HttpResponseMessage GetProductGroupById(short productGroupId)
@@ -357,6 +357,33 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("approval-status")]
+        public HttpResponseMessage GetApprovalStatus()
+        {
+
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var productinfo = repo.GetApprovalStatus();
+
+
+                if (productinfo != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = productinfo.ToList() });
+
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "No record found" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+
+        }
+
+        [HttpGet]
         [Route("product/{productId}")]
         public HttpResponseMessage GetProductById(int productId)
         {
@@ -376,53 +403,161 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("product")]
-        public HttpResponseMessage AddProduct([FromBody] ProductViewModel model)
+        [HttpGet]
+        [Route("product/approvals/{productCode}")]
+        public HttpResponseMessage GetProductDetailsProductCode(string productCode)
         {
             try
             {
                 var token = new TokenDecryptionHelper();
+                var productinfo = repo.GetProductDetail(productCode, token.GetCompanyId);
+
+                if (productinfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = productinfo });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        //[HttpPost]
+        //[Route("product")]
+        //public HttpResponseMessage AddProduct([FromBody] ProductViewModel model)
+        //{
+        //    try
+        //    {
+        //        var token = new TokenDecryptionHelper();
+        //        model.userBranchId = (short)token.GetBranchId;
+        //        model.userIPAddress = Request.RequestUri.Host;
+        //        model.applicationUrl = HttpContext.Current.Request.Path;
+        //        model.createdBy = token.GetStaffId;
+        //        model.companyId = token.GetCompanyId;
+
+        //        var record = repo.AddProduct(model);
+        //        if (record != null)
+        //        {
+
+        //            return Request.CreateResponse(HttpStatusCode.Created,
+
+        //                new { success = true, result = record, message = "product has been created successfully" });
+        //        }
+        //        else
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "product not created" });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+
+        [HttpPost]
+        [Route("product")]
+        public HttpResponseMessage AddTempProduct([FromBody] ProductViewModel model)
+        {
+            try
+            {
+
+                if (repo.IsProductCodeAlreadyExist(model.productCode))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"A product with {model.productCode} already exist" });
+                }
+                if (repo.IsProductExist(model.productCode))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"A product with {model.productCode} already exist waiting for approval" });
+                }
+
+
+
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = Request.RequestUri.Host;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                var record = repo.AddProduct(model);
-                if (record != null)
+
+                var username = token.GetUsername;
+                var staffId = token.GetStaffId;
+                var companyId = token.GetCompanyId; //etc
+
+                //We can now use staffId extracted from the token as the created by
+                //We ca also get companyId too
+
+                model.createdBy = staffId; ///This staff Id was gotten from the token
+
+
+                var product = repo.AddTempProduct(model);
+
+                if (product)
                 {
-
-                    return Request.CreateResponse(HttpStatusCode.Created,
-
-                        new { success = true, result = record, message = "product has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = product, message = "Product has been created successfully, now waiting for approval" });
                 }
                 else
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "product not created" });
+                        new { success = false, message = "Product not created" });
             }
             catch (System.Exception ex)
             {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        //[HttpPut]
+        //[Route("product/{productId}")]
+        //public HttpResponseMessage UpdateProduct(int productId, [FromBody] ProductViewModel model)
+        //{
+        //    if (model == null)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, Ok());
+        //    }
+
+        //    var account = repo.GetProductById(productId);
+        //    if (account == null)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = false, message = "No record found" });
+        //    }
+
+        //    try
+        //    {
+        //        var token = new TokenDecryptionHelper();
+        //        model.userBranchId = (short)token.GetBranchId;
+        //        model.userIPAddress = Request.RequestUri.Host;
+        //        model.applicationUrl = HttpContext.Current.Request.Path;
+        //        model.createdBy = token.GetStaffId;
+        //        model.companyId = token.GetCompanyId;
+
+        //        repo.UpdateProduct(productId, model);
+
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = productId, message = "product has been updated successfully" });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+
+        //}
 
         [HttpPut]
         [Route("product/{productId}")]
         public HttpResponseMessage UpdateProduct(int productId, [FromBody] ProductViewModel model)
         {
-            if (model == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, Ok());
-            }
-
-            var account = repo.GetProductById(productId);
-            if (account == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "No record found" });
-            }
-
             try
             {
                 var token = new TokenDecryptionHelper();
@@ -430,18 +565,23 @@ namespace FintrakBanking.APICore.Controllers
                 model.userIPAddress = Request.RequestUri.Host;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
-                model.companyId = token.GetCompanyId;
 
-                repo.UpdateProduct(productId, model);
 
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = productId, message = "product has been updated successfully" });
+                var staff = repo.UpdateProduct(productId, model);
+                if (staff)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = staff, message = "Product has been updated successfully, now waiting for approval" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Product not created" });
             }
             catch (System.Exception ex)
             {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
 
         #endregion Product Region

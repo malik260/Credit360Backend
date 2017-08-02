@@ -10,9 +10,13 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
+using System.Data;
 
 namespace FintrakBanking.Repositories.Credit
 {
+    using wct = XLeratorDLL_financial.XLeratorDLL_financial;
+    using FinancialTypes = XLeratorDLL_financial.FinancialTypes;
+
     [Export(typeof(ILoanRepository))]
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public class LoanRepository : ILoanRepository
@@ -168,7 +172,7 @@ namespace FintrakBanking.Repositories.Credit
             else if (tenorModeId == TenorModeEnum.Months)
                 totalTenor = tenor / 12; //12 = months in a year
             else if (tenorModeId == TenorModeEnum.Years)
-                totalTenor = tenor; 
+                totalTenor = tenor;
 
             if (frequencyTypeId == 10 || frequencyTypeId == 11) // 10 = end of period and 11 = now
                 return 1;
@@ -178,6 +182,24 @@ namespace FintrakBanking.Repositories.Credit
             var installments = totalTenor * frequencyValue;
 
             return (int)installments;
+        }
+
+        public int CalculateNumberOfInstallments(short frequencyTypeId, int tenor, int daysInAYear)
+        {
+            double totalTenor = 0;
+
+            //if (tenorModeId == TenorModeEnum.Days)
+            totalTenor = tenor / daysInAYear; //365 days in a year
+ 
+
+            if (frequencyTypeId == 10 || frequencyTypeId == 11) // 10 = end of period and 11 = now
+                return 1;
+
+            var frequencyValue = context.tbl_Frequency_Type.FirstOrDefault(x => x.FrequencyTypeId == frequencyTypeId).Value;
+
+            var installments = totalTenor * frequencyValue;
+
+            return Convert.ToInt32(installments);
         }
 
         public DateTime CalculateFirstPayDate(DateTime effectiveDate, short frequencyTypeId)
@@ -519,7 +541,136 @@ namespace FintrakBanking.Repositories.Credit
              
         }
 
-        
+        public IEnumerable<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanSchedule(LoanPaymentScheduleInputViewModel loanInput)
+        {
+            IEnumerable<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            if (loanInput.scheduleMethodId == 5) //irregular schedule
+                output = GenerateIrregularLoanPeriodicSchedule(loanInput, loanInput.irregularPaymentSchedule).ToList();
+
+            return output;
+        }
+
+        private int GetDaysInAYear(short dayCountId)
+        {
+            if (dayCountId == 1)
+            {
+                var currentDate = DateTime.Now;
+                var firstDate = new DateTime(currentDate.Year, 1, 1); //  DateTime.ParseExact(user, "MM-dd-yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                var lastdate = new DateTime(currentDate.Year, 12, 31);
+                var difference = (lastdate - firstDate).TotalDays;
+
+                return Convert.ToInt32(difference);
+            }
+
+            var value = context.tbl_Day_Count.FirstOrDefault(x => x.DayCountId == dayCountId).DaysInAYear;
+
+            return value;
+        }
+
+        /// <summary>
+        /// USE FOR NORMAL ANNUITY SCHEDULE AS SHOWN WHERE INTEREST AND PRINCIPAL DROPS THE SAME DAY
+        /// </summary>
+        /// <param name="loanInput"></param>
+        /// <returns></returns>         
+        private IEnumerable<LoanPaymentSchedulePeriodicViewModel> GenerateNormalAnnuityPeriodicLoanSchedule(LoanPaymentScheduleInputViewModel loanInput)
+        {
+            List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            int daysInAYear = GetDaysInAYear(loanInput.accurialBasis);
+            int numberOfPayments = CalculateNumberOfInstallments(loanInput.interestFrequency, loanInput.tenor, daysInAYear);
+            int numberOfPaymentsInAYear = (int)context.tbl_Frequency_Type.FirstOrDefault(x => x.FrequencyTypeId == loanInput.interestFrequency).Value; ;
+            
+            Double FV;
+            FinancialTypes.InterestRuleType IntRule;
+            FinancialTypes.AMORTSCHED_table result;
+            FinancialTypes.AMORTSCHED_table amortisedResult;
+
+            FV = wct.NULL_DOUBLE;
+            IntRule = FinancialTypes.InterestRuleType.Actuarial;
+
+            //result = wct.AMORTSCHED(PV, LoanDate, rate, FirstPayDate, NumPmts, Pmtpyr, DaysInYr, FV, IntRule);
+
+            result = wct.AMORTSCHED(loanInput.principalAmount, loanInput.effectiveDate, (loanInput.interestRate/100.0), loanInput.interestFirstpaymentDate, numberOfPayments, numberOfPaymentsInAYear, daysInAYear, FV, IntRule);
+
+            amortisedResult = wct.AMORTSCHED(loanInput.principalAmount - loanInput.integralFeeAmount, loanInput.effectiveDate, (loanInput.interestRate / 100.0), loanInput.interestFirstpaymentDate, numberOfPayments, numberOfPaymentsInAYear, daysInAYear, FV, IntRule);
+
+            //var schedule = from a in result.Rows.c join b in amortisedResult on a.num_pmt equals b.num_pmt
+
+            //public int num_pmt;
+            //public DateTime date_pmt;
+            //public double amt_prin_init;
+            //public double amt_pmt;
+            //public double amt_int_pay;
+            //public double amt_prin_pay;
+            //public double amt_int_def;
+            //public double amt_prin_end;
+
+            int counter = 1;
+            foreach (DataRow row in result.Rows)
+            {
+                LoanPaymentSchedulePeriodicViewModel payment = new LoanPaymentSchedulePeriodicViewModel();
+                payment.paymentNumber = Convert.ToInt32(row["num_pmt"]);
+                payment.amortisedPaymentNumber = Convert.ToInt32(amortisedResult.Rows[counter]["num_pmt"]);
+
+
+                output.Add(payment);
+
+                counter += 1;
+            }
+
+            return output;
+
+        }
+
+        private IEnumerable<LoanPaymentSchedulePeriodicViewModel> GenerateIrregularLoanPeriodicSchedule(LoanPaymentScheduleInputViewModel loanInput, IEnumerable<IrregularLoanScheduleInputViewModel> paymentSchedule)
+        {
+            if (paymentSchedule.Count() == 0)
+                throw new Exception("Specify a repayment schedule");
+
+            if (loanInput.principalAmount != (paymentSchedule.Sum(x => x.paymentAmount)))
+                throw new Exception("Payment Amount is not equal to the principal Amount");
+
+            var firstPaymentDate = paymentSchedule.Min(x => x.paymentDate);
+
+            if (loanInput.effectiveDate > (firstPaymentDate))
+                throw new Exception("Effective Date should be less than the payment date(s)");
+
+            List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            var data = paymentSchedule.OrderBy(x => x.paymentDate);
+
+            int paymentNumber = 1;
+            double previousPrincipalAmount = loanInput.principalAmount;
+            DateTime previousPaymentDate = loanInput.effectiveDate;
+            int daysInAYear = GetDaysInAYear(loanInput.accurialBasis);  
+
+
+            foreach (var item in data)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriod = new LoanPaymentSchedulePeriodicViewModel();
+                loanPeriod.paymentNumber = paymentNumber;
+                loanPeriod.paymentDate = item.paymentDate;
+                loanPeriod.startPrincipalAmount = previousPrincipalAmount;
+                loanPeriod.periodPrincipalAmount = item.paymentAmount;
+
+                var dateDifference = (item.paymentDate - previousPaymentDate).TotalDays;
+
+                loanPeriod.periodInterestAmount = (previousPrincipalAmount * (loanInput.interestRate / 100.0)) * (dateDifference / daysInAYear);
+                loanPeriod.periodicPaymentAmount = loanPeriod.periodPrincipalAmount + loanPeriod.periodInterestAmount;
+                loanPeriod.endPrincipalAmount = loanPeriod.startPrincipalAmount - loanPeriod.periodPrincipalAmount;
+
+                output.Add(loanPeriod);
+
+                previousPrincipalAmount = loanPeriod.endPrincipalAmount;
+                previousPaymentDate = loanPeriod.paymentDate;
+                paymentNumber += 1;
+
+            }
+
+            return output;
+
+        }
     }
 }
 

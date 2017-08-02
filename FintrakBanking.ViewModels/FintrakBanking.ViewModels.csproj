@@ -95,6 +95,7 @@
     <Compile Include="Setups\Credit\LoanCovenantTypeViewModel.cs" />
     <Compile Include="Setups\Finance\AccountCategoryViewModel.cs" />
     <Compile Include="Setups\Finance\AccountTypeViewModel.cs" />
+    <Compile Include="Setups\Finance\ChargeVeiwModel.cs" />
     <Compile Include="Setups\Finance\ChartOfAccountViewModel.cs" />
     <Compile Include="Setups\General\AccountSensitivityViewModel.cs" />
     <Compile Include="Setups\General\ActivityViewModel.cs" />

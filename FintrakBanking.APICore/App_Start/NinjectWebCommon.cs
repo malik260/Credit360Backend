@@ -145,7 +145,8 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IApprovalLevelStaffRepository>().To<ApprovalLevelStaffRepository>();
             kernel.Bind<ILoanApplicationRepository>().To<LoanApplicationRepository>();
             kernel.Bind<ICanAuthorizationRepository>().To<CanAuthorizationRepository>();
-            
+            kernel.Bind<INotificationRepository>().To<NotificationRepository>();
+
         }        
     }
 }

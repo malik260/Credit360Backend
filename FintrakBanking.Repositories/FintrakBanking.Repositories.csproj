@@ -46,6 +46,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\AdminRepository.cs" />
@@ -81,6 +84,7 @@
     <Compile Include="Setups\Credit\CollateralTypeRepository.cs" />
     <Compile Include="Setups\Finance\AccountCategoryRepository.cs" />
     <Compile Include="Setups\Finance\AccountTypeRepository.cs" />
+    <Compile Include="Setups\Finance\ChargeRepository.cs" />
     <Compile Include="Setups\Finance\ChartOfAccountRepository.cs" />
     <Compile Include="Setups\General\AccountSensitivityRepository.cs" />
     <Compile Include="Setups\General\AuthenticationRepository.cs" />
