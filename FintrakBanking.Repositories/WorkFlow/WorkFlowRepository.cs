@@ -76,6 +76,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 ArrivalDate = genSetup.GetApplicaionDate(),
                 ToApprovalLevelId = entity.nextLevelId == 0 ? GetStatingApprovalLevel(entity.operationId, entity.companyId) : entity.nextLevelId,
                 TargetId = entity.targetId,
+                SystemArrivalDateTime = DateTime.Now,
                 ApprovalStatusId = entity.approvalStatusId,
                 CompanyId = entity.companyId,
                 RequestStaffId = entity.staffId,
@@ -475,7 +476,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return Tuple.Create(true, entity);
             }
-            if (entity.operationId == int.Parse(Operations.ProductsCreation.ToString()))
+            if (entity.operationId == int.Parse(Operations.ProductCreation.ToString()))
             {
                 return Tuple.Create(true, entity);
             }

@@ -20,5 +20,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<Object> GetActivitiesByGroupId(int grpId);
 
         Task<bool> AddActivitiesToGroup(GroupViewModel model);
+
+        //bool AddActivitiesToGroup(GroupViewModel model);
     }
 }

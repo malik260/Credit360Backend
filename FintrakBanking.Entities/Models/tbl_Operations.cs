@@ -14,6 +14,7 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Approval_Group_Mapping = new HashSet<tbl_Approval_Group_Mapping>();
             tbl_Approval_Trail = new HashSet<tbl_Approval_Trail>();
+            tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
             tbl_Charges = new HashSet<tbl_Charges>();
         }
 
@@ -37,6 +38,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Approval_Trail> tbl_Approval_Trail { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Charges> tbl_Charges { get; set; }

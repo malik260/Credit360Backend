@@ -111,10 +111,46 @@ namespace FintrakBanking.Repositories.Setups.General
                     context.tbl_Profile_Group_Activity.Add(newActivity);
                 }
             }
-            var response = await context.SaveChangesAsync();
+            var response = context.SaveChanges() > 0;
 
-            return response > 0;
+            return response;
         }
+
+        //public bool AddActivitiesToGroup(GroupViewModel model)
+        //{
+        //    if (model.Activities.Any())
+        //    {
+        //        var existingActivities = context.tbl_Profile_Group_Activity.Where(x => x.GroupId == model.groupId).ToList();
+        //        bool isExist = existingActivities.Count() > 0;
+        //        if (existingActivities.Count > 0)
+        //        {
+        //            foreach (var item in existingActivities)
+        //            {
+        //                context.tbl_Profile_Group_Activity.Remove(item);
+        //            }
+        //        }
+
+        //        foreach (var activity in model.Activities)
+        //        {
+        //            var newActivity = new tbl_Profile_Group_Activity()
+        //            {
+        //                ActivityId = activity.activityId,
+        //                GroupId = model.groupId,
+        //                CreatedBy = model.createdBy,
+        //                DateTimeCreated = DateTime.UtcNow
+        //            };
+        //            if (isExist)
+        //            {
+        //                newActivity.DateTimeUpdated = DateTime.UtcNow;
+        //            }
+
+        //            context.tbl_Profile_Group_Activity.Add(newActivity);
+        //        }
+        //    }
+        //    var response = context.SaveChanges();
+
+        //    return response > 0;
+        //}
 
         public IEnumerable<Object> GetActivitiesByGroupId(int grpId)
         {

@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-collateral-type/all/{productId}")]
-        public HttpResponseMessage GetCollateralTypeByProduct(HttpRequestMessage request, int productId)
+        public HttpResponseMessage GetCollateralTypeByProduct(int productId)
         { 
                 try
                 {
@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-collateral-type/unmapped/{productId}")]
-        public HttpResponseMessage GetUnmappedCollateralToProduct(HttpRequestMessage request, int productId)
+        public HttpResponseMessage GetUnmappedCollateralToProduct(int productId)
         {
                 try
                 {
@@ -69,7 +69,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-collateral-type/{productCollateralTypeId}")]
-        public HttpResponseMessage GetProductCollateralTypeViewModel(HttpRequestMessage request, int productCollateralTypeId)
+        public HttpResponseMessage GetProductCollateralTypeViewModel(int productCollateralTypeId)
         {
                 try
                 {
@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
         // POST api/values
         [HttpPost]
         [Route("product-collateral-type")]
-        public HttpResponseMessage AddProductCollateralType(HttpRequestMessage request, [FromBody] ProductCollateralTypeViewModel model)
+        public HttpResponseMessage AddProductCollateralType([FromBody] ProductCollateralTypeViewModel model)
         {
                 try
                 {
@@ -124,7 +124,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("product-collateral-type/multiple")]
-        public HttpResponseMessage AddMultipleProductCollateralType(HttpRequestMessage request, [FromBody] List<ProductCollateralTypeViewModel> model)
+        public HttpResponseMessage AddMultipleProductCollateralType([FromBody] List<ProductCollateralTypeViewModel> model)
         { try
                 {
                     var token = new TokenDecryptionHelper();
@@ -152,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [Route("product-collateral-type/{productCollateralTypeId}")]
-        public HttpResponseMessage DeleteProductCollateralType(HttpRequestMessage request, int productCollateralTypeId)
+        public HttpResponseMessage DeleteProductCollateralType(int productCollateralTypeId)
         { //if (!repo.DoesProductCollateralExist(productCollateralTypeId))            
                 //{
                 //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -188,7 +188,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [Route("product-collateral-type/multiple/{productCollateralTypeIds}")]
-        public HttpResponseMessage DeleteMultipleProductCollateralType(HttpRequestMessage request, List<int> productCollateralTypeIds)
+        public HttpResponseMessage DeleteMultipleProductCollateralType(List<int> productCollateralTypeIds)
         { 
                 if (productCollateralTypeIds.Count <= 0)
                 {

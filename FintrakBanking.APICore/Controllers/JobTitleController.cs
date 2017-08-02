@@ -20,7 +20,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("jobtitle/{jobtitleid}")]
-        public HttpResponseMessage GetJobTitle(HttpRequestMessage request, int jobTitleId)
+        public HttpResponseMessage GetJobTitle(int jobTitleId)
         { 
                 try
                 {

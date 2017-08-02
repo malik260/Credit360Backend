@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_temp_Product")]
-    public partial class tbl_temp_Product
+    [Table("temp.tbl_Temp_Product")]
+    public partial class tbl_Temp_Product
     {
         [Key]
         public short ProductId { get; set; }
