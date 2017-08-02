@@ -128,5 +128,7 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Deal_Classification tbl_Deal_Classification { get; set; }
 
         public virtual tbl_Deal_Type tbl_Deal_Type { get; set; }
+
+        public virtual ICollection<tbl_Temp_Product_Currency> tbl_Temp_Product_Currency { get; set; }
     }
 }

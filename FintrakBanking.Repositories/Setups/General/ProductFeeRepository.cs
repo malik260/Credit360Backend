@@ -343,6 +343,47 @@ namespace FintrakBanking.Repositories.Setups.General
             return fee;
         }
 
+        //public IEnumerable<FeeViewModel> GetUnmappedFeesToTempProduct(int productId)
+        //{
+        //    var dataList = (from data in context.tbl_Temp_Product_Fee
+        //                    where data.ProductId == productId && data.Deleted == false
+        //                    select data.FeeId).ToList();
+
+        //    var fee = (from data in context.tbl_Temp_Fee
+        //               where data.Deleted == false // && !dataList.Contains(data.FeeId)
+        //               select new FeeViewModel
+        //               {
+        //                   feeId = data.FeeId,
+        //                   feeName = data.FeeName,
+        //                   accountCategoryId = data.AccountCategoryId,
+        //                   accountCategoryName = data.tbl_Account_Category.AccountCategoryName,
+        //                   feeTypeId = data.FeeTypeId,
+        //                   feeTypeName = data.tbl_Fee_Type.FeeTypeName,
+        //                   feeTypeByAmountRequired = data.tbl_Fee_Type.ByAmountRequired,
+        //                   byAmountRequired = data.tbl_Fee_Type.ByAmountRequired,
+        //                   feeIntervalId = data.FeeIntervalId,
+        //                   feeIntervalName = data.tbl_Fee_Interval.FeeIntervalName,
+        //                   productTypeId = data.ProductTypeId,
+        //                   productTypeName = data.tbl_Product_Type.ProductTypeName,
+        //                   feeTargetId = data.FeeTargetId,
+        //                   feeTargetName = data.tbl_Fee_Target.FeeTargetName,
+        //                   glAccountId = data.GLAccountId,
+        //                   glAccountCode = data.tbl_Chart_Of_Account.AccountCode,
+        //                   includeCutOffDay = data.IncludeCutOffDay,
+        //                   cutOffDay = data.CutOffDay,
+        //                   companyId = data.CompanyId,
+        //                   feeDate = data.FeeDate,
+        //                   createdBy = data.CreatedBy,
+        //               });
+
+        //    if (dataList.Any())
+        //    {
+        //        fee = fee.Where(x => !dataList.Contains(x.feeId));
+        //    }
+
+        //    return fee;
+        //}
+
         public bool UpdateProductFee(int productFeeId, ProductFeeViewModel productFee)
         {
             var productFeeEntity = this.context.tbl_Product_Fee.Find(productFeeId);

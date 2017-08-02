@@ -208,12 +208,10 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.branchId = (short)token.GetBranchId;
                 model.companyId = (short)token.GetCompanyId;
                 model.userIPAddress = Request.RequestUri.Host;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
-
 
                 var account = repo.UpdateAccount(accountId, model);
                 if (account)

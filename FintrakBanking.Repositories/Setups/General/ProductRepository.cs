@@ -284,7 +284,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        forDisplay = ap.ForDisplay,
                    };
         }
-        public IEnumerable<ProductViewModel> AllProduct()
+        private IQueryable<ProductViewModel> AllProduct()
         {
             return (from data in context.tbl_Product
                     select new ProductViewModel()
@@ -666,6 +666,23 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 throw new Exception("Product Information already exist and is undergoing approval");
             }
+
+            List<tbl_Temp_Product_Currency> currencies = new List<tbl_Temp_Product_Currency>();
+
+            //Storing the product currencies
+            foreach (var item in productModel.currencies)
+            {
+                var productCurrency = new tbl_Temp_Product_Currency()
+                {
+                    //ProductId = (short)item.productId,
+                    CurrencyId = item.currencyId,
+                    CreatedBy = item.createdBy,
+                    DateTimeCreated = genSetup.GetApplicaionDate()
+                };
+                currencies.Add(productCurrency);
+            }
+
+            //End of storing the product currencies
             var product = new tbl_Temp_Product()
             {
                 CompanyId = productModel.companyId,
@@ -704,10 +721,11 @@ namespace FintrakBanking.Repositories.Setups.General
                 CreatedBy = productModel.createdBy,
                 DateTimeCreated = DateTime.Now,
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-                IsCurrent = true
+                IsCurrent = true,
+
+                tbl_Temp_Product_Currency = currencies
 
             };
-            List<tbl_Temp_Product_Currency> currencies = new List<tbl_Temp_Product_Currency>();
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -728,19 +746,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     try
                     {
-                        //Storing the product currencies
-                        foreach (var item in productModel.currencies)
-                        {
-                            var productCurrency = new tbl_Temp_Product_Currency()
-                            {
-                                ProductId = (short)item.productId,
-                                CurrencyId = item.currencyId,
-                                CreatedBy = item.createdBy,
-                                DateTimeCreated = genSetup.GetApplicaionDate()
-                            };
-                            currencies.Add(productCurrency);
-                        }
-                        //End of storing the product currencies
                         auditTrail.AddAuditTrail(audit);
                         this.context.tbl_Temp_Product.Add(product);
                         output = this.SaveAll();

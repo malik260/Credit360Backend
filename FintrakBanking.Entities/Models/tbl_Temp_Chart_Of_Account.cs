@@ -62,5 +62,7 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Account_Type tbl_Account_Type { get; set; }
 
         public virtual tbl_Financial_Statement_Caption tbl_Financial_Statement_Caption { get; set; }
+
+        public virtual ICollection<tbl_Temp_Chart_Of_Account_Currency> tbl_Temp_Chart_Of_Account_Currency { get; set; }
     }
 }

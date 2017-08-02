@@ -46,6 +46,12 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
+        public bool IsCurrent { get; set; }
+
+        public short ApprovalStatusId { get; set; }
+
+        public short RecordStateId { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Customer_Group_Mapping> tbl_Customer_Group_Mapping { get; set; }
 

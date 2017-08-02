@@ -75,6 +75,12 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeUpdated { get; set; }
 
+        public bool IsCurrent { get; set; }
+
+        public short ApprovalStatusId { get; set; }
+
+        public short RecordStateId { get; set; }
+
         public virtual tbl_Branch tbl_Branch { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

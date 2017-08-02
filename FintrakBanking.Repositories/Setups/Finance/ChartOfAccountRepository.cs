@@ -188,8 +188,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 AccountStatusId = account.accountStatusId,
 
                 CreatedBy = account.createdBy,
-                DateTimeCreated = _genSetup.GetApplicaionDate()
-                //OldAccountId
+                DateTimeCreated = _genSetup.GetApplicaionDate(),
+                tbl_Chart_Of_Account_Currency = currencies
             };
 
             this.context.tbl_Chart_Of_Account.Add(chartOfAccount);
@@ -231,6 +231,21 @@ namespace FintrakBanking.Repositories.Setups.Finance
             {
                 throw new Exception("Account Information already exist and is undergoing approval");
             }
+
+            //Storing the chart of account currencies
+            foreach (var item in accountModel.currencies)
+            {
+                var chartOfAccountCurrency = new tbl_Temp_Chart_Of_Account_Currency()
+                {
+                    //GLAccountId = item.glaccountId,
+                    CurrencyId = item.currencyId,
+                    CreatedBy = item.createdBy,
+                    DateTimeCreated = _genSetup.GetApplicaionDate()
+                };
+                currencies.Add(chartOfAccountCurrency);
+            }
+            //End of storing the chart of account currencies
+
             var account = new tbl_Temp_Chart_Of_Account()
             {
                 AccountCode = accountModel.accountCode,
@@ -242,11 +257,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 BranchSpecific = accountModel.branchSpecific,
                 FSCaptionId = accountModel.fsCaptionId,
                 AccountStatusId = accountModel.accountStatusId,
-
                 CreatedBy = accountModel.createdBy,
                 DateTimeCreated = _genSetup.GetApplicaionDate(),
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-                IsCurrent = true
+                IsCurrent = true,
+                tbl_Temp_Chart_Of_Account_Currency = currencies,
             };
             
             // Audit Section ---------------------------
@@ -268,19 +283,6 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 {
                     try
                     {
-                        //Storing the chart of account currencies
-                        foreach (var item in accountModel.currencies)
-                        {
-                            var chartOfAccountCurrency = new tbl_Temp_Chart_Of_Account_Currency()
-                            {
-                                GLAccountId = item.glaccountId,
-                                CurrencyId = item.currencyId,
-                                CreatedBy = item.createdBy,
-                                DateTimeCreated = _genSetup.GetApplicaionDate()
-                            };
-                            currencies.Add(chartOfAccountCurrency);
-                        }
-                        //End of storing the chart of account currencies
                         auditTrail.AddAuditTrail(audit);
                         this.context.tbl_Temp_Chart_Of_Account.Add(account);
                         output = this.SaveAll();
@@ -460,9 +462,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             if (existingTempCurrencies.Count > 0)
             {
-                foreach (var item in existingTempCurrencies)
+                foreach (var curr in existingTempCurrencies)
                 {
-                    context.tbl_Temp_Chart_Of_Account_Currency.Remove(item);
+                    context.tbl_Temp_Chart_Of_Account_Currency.Remove(curr);
                 }
             }
 
@@ -495,6 +497,20 @@ namespace FintrakBanking.Repositories.Setups.Finance
             }
             else
             {
+                //Storing the updated chart of account currencies
+                foreach (var item in accountModel.currencies)
+                {
+                    var chartOfAccountCurrency = new tbl_Temp_Chart_Of_Account_Currency()
+                    {
+                        //GLAccountId = item.glaccountId,
+                        CurrencyId = item.currencyId,
+                        CreatedBy = accountModel.createdBy,
+                        DateTimeCreated = _genSetup.GetApplicaionDate()
+                    };
+                    tempCurrencies.Add(chartOfAccountCurrency);
+                }
+                //End of storing the updated chart of account currencies
+
                 tempAccount = new tbl_Temp_Chart_Of_Account()
                 {
                     AccountCode = targetAccount.AccountCode,
@@ -510,24 +526,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     CreatedBy = accountModel.createdBy,
                     DateTimeCreated = _genSetup.GetApplicaionDate(),
                     ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-                    IsCurrent = true
+                    IsCurrent = true,
+
+                    tbl_Temp_Chart_Of_Account_Currency = tempCurrencies,
                 };
 
                 context.tbl_Temp_Chart_Of_Account.Add(tempAccount);
-
-                //Storing the updated chart of account currencies
-                foreach (var item in accountModel.currencies)
-                {
-                    var chartOfAccountCurrency = new tbl_Temp_Chart_Of_Account_Currency()
-                    {
-                        //GLAccountId = item.glaccountId,
-                        CurrencyId = item.currencyId,
-                        CreatedBy = item.createdBy,
-                        DateTimeCreated = _genSetup.GetApplicaionDate()
-                    };
-                    tempCurrencies.Add(chartOfAccountCurrency);
-                }
-                //End of storing the updated chart of account currencies
 
             }
             var audit = new tbl_Audit
