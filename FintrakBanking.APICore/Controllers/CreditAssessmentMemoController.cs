@@ -9,6 +9,7 @@ using System.Web.Http;
 using System.Net;
 using System.Web;
 using FintrakBanking.APICore.core;
+using FintrakBanking.ViewModels.Business;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -29,7 +30,6 @@ namespace FintrakBanking.APICore.Controllers
             errorLogger = _errorLogger;
         }
 
-
         [HttpPost]
         [Route("loan-application/operation/{id}")]
         public HttpResponseMessage AddCreditAssessmentMemo(int id, [FromBody] CreditAssessmentMemoViewModel entity)
@@ -40,8 +40,9 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
-                // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
+
                 var data = repo.AddCreditAssessmentMemo(id, entity);
                 if (data == null)
                 {
@@ -102,35 +103,35 @@ namespace FintrakBanking.APICore.Controllers
                 this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
 
-        //[HttpPost("assessment-template/template")]
-        //public IActionResult SubmitRequestForProcessing([FromBody]ApprovalViewModel entity)
-        //{
-        //  try
-        //    {
-        //        token = new TokenDecryptionHelper(HttpContext);
-        //        entity.BranchId = (short)token.GetBranchId;
-        //        entity.companyId = token.GetCompanyId;
-        //        entity.createdBy = token.GetStaffId;
-        //        entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-        //        entity.applicationUrl = Request.Path.Value;
+        [HttpPost]
+        [Route("assessment/submit")]
+        public HttpResponseMessage SubmitRequestForProcessing([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                token = new TokenDecryptionHelper();
+                entity.BranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
 
-        //        var response = repo.SubmitRequestForProcessing(entity);                 
-        //        if (response)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, Created("", new { success = true, result = entity, message = "The record has been created successfully" });
-        //        }
+                var response = repo.SubmitRequestForProcessing(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
+                }
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
+        }
         [HttpPost]
         [Route("assessment-template/template")]
         public HttpResponseMessage GetAssessmentTempates([FromBody]CreditTemplateViewModel entity)
@@ -155,7 +156,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("assessment-template/template/customer")]
+        [Route("assessment-template/staffproductclass")]
         public HttpResponseMessage GetAssessmentTempates([FromBody] AssessmentTemplatesViewModel entity)
         {
             try
@@ -189,7 +190,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
-                // entity.userIPAddress =  //Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 var data = repo.UpdateAssessmentTempates(entity);
 
                 if (data != null)
@@ -216,7 +217,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
-                // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 var data = repo.AddAssessmentTempates(entity).IsCompleted;
                 if (data)

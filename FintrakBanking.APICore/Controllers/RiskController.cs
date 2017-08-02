@@ -37,7 +37,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
-                //entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 //entity.applicationUrl = Request.Path.Value;
 
                 var data = repo.AddRiskAssessmentIndexs(entity).IsCompleted;
@@ -97,7 +97,7 @@ namespace FintrakBanking.APICore.Controllers
                 // entity.userBranchId = (short)token.GetBranchId;
                 // entity.companyId = token.GetCompanyId;
                 // entity.lastUpdatedBy = token.GetStaffId;
-                // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
                 var data = repo.UpdateRiskAssessmentIndex(id, entity).IsCompleted;
@@ -323,7 +323,7 @@ namespace FintrakBanking.APICore.Controllers
                 // entity.userBranchId = (short)token.GetBranchId;
                 // entity.companyId = token.GetCompanyId;
                 // entity.createdBy = token.GetStaffId;
-                // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
                 var data = repo.AddRiskAssessmentTitle(entity).IsCompleted;
@@ -352,7 +352,7 @@ namespace FintrakBanking.APICore.Controllers
                 // entity.userBranchId = (short)token.GetBranchId;
                 // entity.companyId = token.GetCompanyId;
                 // entity.lastUpdatedBy = token.GetStaffId;
-                // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
                 var data = repo.UpdateRiskAssessmentTitle(id, entity).IsCompleted;
