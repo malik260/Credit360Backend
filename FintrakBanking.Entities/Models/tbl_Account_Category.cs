@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Account_Category()
         {
+            tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
             tbl_Customer_FS_Caption = new HashSet<tbl_Customer_FS_Caption>();
             tbl_Fee = new HashSet<tbl_Fee>();
             tbl_Account_Type = new HashSet<tbl_Account_Type>();
@@ -24,6 +25,9 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string AccountCategoryName { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Customer_FS_Caption> tbl_Customer_FS_Caption { get; set; }

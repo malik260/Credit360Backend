@@ -36,6 +36,15 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="NodaTime, Version=2.2.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NodaTime.2.2.0\lib\net45\NodaTime.dll</HintPath>
+    </Reference>
+    <Reference Include="NodaTime.Serialization.ServiceStackText, Version=2.0.2.38544, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NodaTime.Serialization.ServiceStackText.2.0.2.38544\lib\net45\NodaTime.Serialization.ServiceStackText.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text, Version=3.9.44.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceStack.Text.3.9.44\lib\net35\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -84,7 +93,6 @@
     <Compile Include="Setups\Credit\CollateralTypeRepository.cs" />
     <Compile Include="Setups\Finance\AccountCategoryRepository.cs" />
     <Compile Include="Setups\Finance\AccountTypeRepository.cs" />
-    <Compile Include="Setups\Finance\ChargeRepository.cs" />
     <Compile Include="Setups\Finance\ChartOfAccountRepository.cs" />
     <Compile Include="Setups\General\AccountSensitivityRepository.cs" />
     <Compile Include="Setups\General\AuthenticationRepository.cs" />
