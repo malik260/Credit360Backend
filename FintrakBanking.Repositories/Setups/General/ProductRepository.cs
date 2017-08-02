@@ -24,18 +24,21 @@ namespace FintrakBanking.Repositories.Setups.General
         private IAuditTrailRepository auditTrail;
         private IWorkFlowRepository workFlow;
         private IApprovalLevelStaffRepository level;
+        private IProductFeeRepository proFee;
 
         public ProductRepository(FinTrakBankingContext _context,
                                 IGeneralSetupRepository _genSetup,
                                 IAuditTrailRepository _auditTrail,
                                 IWorkFlowRepository _workFlow,
-                                IApprovalLevelStaffRepository _level)
+                                IApprovalLevelStaffRepository _level,
+                                IProductFeeRepository _proFee)
         {
             this.context = _context;
             this.genSetup = _genSetup;
             this.auditTrail = _auditTrail;
             this.workFlow = _workFlow;
             level = _level;
+            proFee = _proFee;
 
         }
 
@@ -643,6 +646,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
             this.auditTrail.AddAuditTrail(audit);
             // Audit Section ---------------------------
+
+            //Moving temp product fee to product fee table
+            proFee.ApproveProductFee(productId, user);
 
             return this.SaveAll();
         }
