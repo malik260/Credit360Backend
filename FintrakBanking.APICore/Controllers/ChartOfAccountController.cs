@@ -149,7 +149,7 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
         [HttpPost]
-        [Route("chart-of-account")]
+        [Route("")]
         public HttpResponseMessage AddTempAccount([FromBody] ChartOfAccountViewModel model)
         {
             try
@@ -171,16 +171,17 @@ namespace FintrakBanking.APICore.Controllers
                 model.userIPAddress = Request.RequestUri.Host;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
+                model.branchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
 
-                var username = token.GetUsername;
-                var staffId = token.GetStaffId;
-                var companyId = token.GetCompanyId; //etc
+                //var username = token.GetUsername;
+                //var staffId = token.GetStaffId;
+                //var companyId = token.GetCompanyId; //etc
 
                 //We can now use staffId extracted from the token as the created by
                 //We ca also get companyId too
 
-                model.createdBy = staffId; ///This staff Id was gotten from the token
+                //model.createdBy = staffId; ///This staff Id was gotten from the token
 
                 var account = repo.AddTempAccount(model);
                 if (account)
@@ -200,13 +201,15 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("chart-of-account/{accountId}")]
+        [Route("{accountId}")]
         public HttpResponseMessage UpdateAccount(short accountId, [FromBody] ChartOfAccountViewModel model)
         {
             try
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
+                model.branchId = (short)token.GetBranchId;
+                model.companyId = (short)token.GetCompanyId;
                 model.userIPAddress = Request.RequestUri.Host;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
@@ -230,7 +233,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("chart-of-account/approval")]
+        [Route("approval")]
         public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
         {
             try
@@ -260,7 +263,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("chart-of-account/approvals/temp")]
+        [Route("approvals/temp")]
         public HttpResponseMessage GetAccountsAwaitingApproval()
         {
 
@@ -285,7 +288,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("chart-of-account/approvals/temp/{accountId}")]
+        [Route("approvals/temp/{accountId}")]
         public HttpResponseMessage GetTempProductDetailsById(int accountId)
         {
             try

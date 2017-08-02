@@ -273,6 +273,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         {
                             var chartOfAccountCurrency = new tbl_Temp_Chart_Of_Account_Currency()
                             {
+                                GLAccountId = item.glaccountId,
                                 CurrencyId = item.currencyId,
                                 CreatedBy = item.createdBy,
                                 DateTimeCreated = _genSetup.GetApplicaionDate()
@@ -455,10 +456,25 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 return false;
 
             var existStingTempAccount = context.tbl_Temp_Chart_Of_Account.Where(x => x.AccountCode.ToLower() == accountModel.accountCode.ToLower() && x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existingTempCurrencies = context.tbl_Temp_Chart_Of_Account_Currency.Where(x => x.GLAccountId == accountModel.accountId).ToList();
 
-            if (existStingTempAccount.Any())
+            if (existingTempCurrencies.Count > 0)
+            {
+                foreach (var item in existingTempCurrencies)
+                {
+                    context.tbl_Temp_Chart_Of_Account_Currency.Remove(item);
+                }
+            }
+
+            if (existStingTempAccount.Any() && existingTempCurrencies.Any())
             {
                 foreach (var item in existStingTempAccount)
+                {
+                    item.IsCurrent = false;
+                    item.DateTimeUpdated = DateTime.Now;
+                }
+
+                foreach (var item in existingTempCurrencies)
                 {
                     item.IsCurrent = false;
                     item.DateTimeUpdated = DateTime.Now;
@@ -468,10 +484,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
             var targetAccount = context.tbl_Chart_Of_Account.Find(accountId);
 
             var unApprovedAccountEdit = context.tbl_Temp_Chart_Of_Account.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
+            var unApprovedCurrencyAccountEdit = context.tbl_Temp_Chart_Of_Account_Currency.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
 
             tbl_Temp_Chart_Of_Account tempAccount;
+            List<tbl_Temp_Chart_Of_Account_Currency> tempCurrencies = new List<tbl_Temp_Chart_Of_Account_Currency>();
 
-            if (unApprovedAccountEdit.Any())
+            if (unApprovedAccountEdit.Any() && unApprovedCurrencyAccountEdit.Any())
             {
                 throw new Exception("Chart of Account is already undergoing approval");
             }
@@ -479,11 +497,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
             {
                 tempAccount = new tbl_Temp_Chart_Of_Account()
                 {
-                    AccountCode = accountModel.accountCode,
+                    AccountCode = targetAccount.AccountCode,
                     AccountName = accountModel.accountName,
                     AccountTypeId = accountModel.accountTypeId,
                     CompanyId = accountModel.companyId,
-                    BranchId = accountModel.branchId,
+                    BranchId = accountModel.userBranchId,
                     SystemUse = accountModel.systemUse,
                     BranchSpecific = accountModel.branchSpecific,
                     FSCaptionId = accountModel.fsCaptionId,
@@ -496,6 +514,20 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 };
 
                 context.tbl_Temp_Chart_Of_Account.Add(tempAccount);
+
+                //Storing the updated chart of account currencies
+                foreach (var item in accountModel.currencies)
+                {
+                    var chartOfAccountCurrency = new tbl_Temp_Chart_Of_Account_Currency()
+                    {
+                        //GLAccountId = item.glaccountId,
+                        CurrencyId = item.currencyId,
+                        CreatedBy = item.createdBy,
+                        DateTimeCreated = _genSetup.GetApplicaionDate()
+                    };
+                    tempCurrencies.Add(chartOfAccountCurrency);
+                }
+                //End of storing the updated chart of account currencies
 
             }
             var audit = new tbl_Audit

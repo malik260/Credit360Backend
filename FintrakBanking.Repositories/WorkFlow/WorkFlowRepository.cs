@@ -161,7 +161,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         Comment = entity.comment,
                                         ApprovalStateId = (short)ApprovalState.Processing,
                                         RequestStaffId = entity.staffId,
-                                        OperationId = entity.operationId
+                                        OperationId = entity.operationId,
+                                        SystemArrivalDateTime = DateTime.Now
+                                       
                                     };
                                     approvelRepo.AddApprovalTrail(trail);
                                 }
@@ -490,6 +492,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return Tuple.Create(true, entity);
             }
             if (entity.operationId == int.Parse(Operations.UserCreation.ToString()))
+            {
+                return Tuple.Create(true, entity);
+            }
+            if (entity.operationId == int.Parse(Operations.ChartOfAccountCreation.ToString()))
             {
                 return Tuple.Create(true, entity);
             }
