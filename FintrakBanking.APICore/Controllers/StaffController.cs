@@ -60,8 +60,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("staff/approvals/temp")]
         public HttpResponseMessage GetStaffAwaitingApproval()
         {
-
-
             try
             {
                 var token = new TokenDecryptionHelper();

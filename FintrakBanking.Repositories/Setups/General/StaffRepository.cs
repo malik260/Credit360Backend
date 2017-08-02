@@ -11,7 +11,6 @@ using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Data.Common;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Setups.General

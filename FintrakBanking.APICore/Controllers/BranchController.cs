@@ -16,7 +16,7 @@ namespace FintrakBanking.APICore.Controllers
 {
 
     //[EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
-    [RoutePrefix("api/v1/admin")]
+    [RoutePrefix("api/v1/setups")]
     public class BranchController : ApiControllerBase
     {
         private IGeneralSetupRepository repo;
@@ -37,14 +37,12 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var branch = branchRepo.GetAllBranch();
-                return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
+                var data = branchRepo.GetAllBranch();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
             catch (Exception ex)
             {
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 

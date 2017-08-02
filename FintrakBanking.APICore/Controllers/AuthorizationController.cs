@@ -183,6 +183,8 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
+                var token = new TokenDecryptionHelper();
+                grpModel.createdBy = token.GetStaffId;
                 var data = repo.AddActivitiesToGroup(grpModel);
                 if (data.IsCompleted)
                 {

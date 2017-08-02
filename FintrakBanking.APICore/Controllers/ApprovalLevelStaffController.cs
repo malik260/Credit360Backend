@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Approval Level Staff
         [HttpPost][Route("approval-level-staff")]
-        public HttpResponseMessage AddApprovalLevelStaff(HttpRequestMessage request, [FromBody] ApprovalLevelStaffViewModel model)
+        public HttpResponseMessage AddApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model)
         {   try
                 {
                     var token =  new TokenDecryptionHelper();
@@ -56,7 +56,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         [HttpGet][Route("approval-level-staff/operations/{operationMappingId}")]
-        public HttpResponseMessage GetAllApprovalLevelStaff(HttpRequestMessage request, int operationMappingId)
+        public HttpResponseMessage GetAllApprovalLevelStaff(int operationMappingId)
         {
                try
                 {
@@ -81,11 +81,11 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet][Route("approval-level-staff/staff-level/{id}")]
-        public HttpResponseMessage GetApprovalLevelStaffById(HttpRequestMessage request, int id)
+        public HttpResponseMessage GetApprovalLevelStaffById(int id)
         { 
                 try
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                    TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                     var data = repo.GetApprovalLevelStaffById(id, token.GetCompanyId);
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -102,7 +102,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut][Route("approval-level-staff/{id}")]
-        public HttpResponseMessage UpdateApprovalLevelStaff(HttpRequestMessage request, [FromBody] ApprovalLevelStaffViewModel model, int id)
+        public HttpResponseMessage UpdateApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model, int id)
         {
               
                 try
@@ -136,7 +136,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete][Route("approval-level-staff/{StaffLevelId}")]
-        public HttpResponseMessage DeleteApprovalLevelStaff(HttpRequestMessage request, int StaffLevelId)
+        public HttpResponseMessage DeleteApprovalLevelStaff(int StaffLevelId)
         {
                try
                 {
