@@ -526,27 +526,13 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = $"A product with {model.productCode} already exist waiting for approval" });
                 }
 
-
-
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-
 
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-
-
-                var username = token.GetUsername;
-                var staffId = token.GetStaffId;
-                var companyId = token.GetCompanyId; //etc
-
-                //We can now use staffId extracted from the token as the created by
-                //We ca also get companyId too
-
-                model.createdBy = staffId; ///This staff Id was gotten from the token
-
 
                 var product = repo.AddTempProduct(model);
 

@@ -19,12 +19,14 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public string accountCategoryName { get; set; }
         
         public short branchId { get; set; }  
+        public string branchName { get; set; }
         public string currencyName { get; set; }
         public bool systemUse { get; set; }
         public int? accountStatusId { get; set; }
         public bool branchSpecific { get; set; }
         public string oldAccountId { get; set; }
         public short fsCaptionId { get; set; }
+        public string fsCaptionName { get; set; }
         public List<ChartOfAccountCurrencyViewModel> currencies { get; set; }
 
         public string accountDetail { get { return this.accountCode + " -- " + this.accountName + " -- " + accountCategoryName; } }

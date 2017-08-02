@@ -525,16 +525,20 @@ on c.DepartmentId equals dept.DepartmentId
                             BranchId = staffModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
-                        return output;
+                        trans.Commit();
                     }
                     catch (Exception)
                     {
                         trans.Rollback();
                     }
                 }
+            }
+            else
+            {
                 throw new Exception("Approval route have not been defined for this operation");
             }
             return output;
+
         }
 
         public bool IsStaffCodeAlreadyExist(string staffCode)
