@@ -10,7 +10,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<FeeViewModel> GetUnmappedFeeToProduct(int productId);
 
-        ProductFeeViewModel GetProductFeeViewModel(int productFeeId);
+        ProductFeeViewModel GetProductFee(int productFeeId);
+        ProductFeeViewModel GetTempProductFee(int productFeeId);
 
         int AddTempProductFee(ProductFeeViewModel productFee);
 

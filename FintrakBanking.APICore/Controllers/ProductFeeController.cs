@@ -171,7 +171,7 @@ namespace FintrakBanking.APICore.Controllers
                                             new { success = false, message = "No record found" });
                 }
 
-                var data = repo.GetProductFeeViewModel(productFeeId);
+                var data = repo.GetProductFee(productFeeId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -201,7 +201,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpDelete]
         [Route("product-fee/{productFeeId}")]
         public HttpResponseMessage DeleteProductFee( int productFeeId)
-        {  var account = repo.GetProductFeeViewModel(productFeeId);
+        {  var account = repo.GetProductFee(productFeeId);
                 if (account == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
