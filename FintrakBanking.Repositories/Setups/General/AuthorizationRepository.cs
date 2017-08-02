@@ -100,6 +100,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         ActivityId = activity.activityId,
                         GroupId = model.groupId,
+                        CanAdd = false,
+                        CanApprove = false,
+                        CanEdit = false,
+                        CanDelete = false,
+                        CanView = false,
                         CreatedBy = model.createdBy,
                         DateTimeCreated = DateTime.UtcNow
                     };
@@ -111,7 +116,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     context.tbl_Profile_Group_Activity.Add(newActivity);
                 }
             }
-            var response = context.SaveChanges() > 0;
+            var response = await context.SaveChangesAsync() > 0;
 
             return response;
         }
