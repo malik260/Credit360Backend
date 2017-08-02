@@ -9,7 +9,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short scheduleMethodId { get; set; }
         public Double principalAmount { get; set; }
         public DateTime effectiveDate { get; set; }
-        public Double interestRate { get; set; }
+        public float interestRate { get; set; }
         public short principalFrequency { get; set; }
         public short interestFrequency { get; set; }
         public int tenor { get; set; }
@@ -28,6 +28,13 @@ namespace FintrakBanking.ViewModels.Credit
         //public int numberOfPaymentsInAYear { get; set; }
         //public int daysInAYear { get; set; }
         //public Double feeRate { get; set; }
+    }
+
+    public class LoanPaymentScheduleExtendedInputViewModel: LoanPaymentScheduleInputViewModel
+    {
+        public int numberOfPayments { get; set; }
+        public int numberOfPaymentsInAYear { get; set; }
+        public int daysInAYear { get; set; }        
     }
 
     public class IrregularLoanScheduleInputViewModel

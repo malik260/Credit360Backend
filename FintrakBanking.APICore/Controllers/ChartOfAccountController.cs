@@ -164,8 +164,6 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = $"An account with {model.accountCode} already exist waiting for approval" });
                 }
 
-
-
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 model.userBranchId = (short)token.GetBranchId;
