@@ -1751,9 +1751,9 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Chart_Of_Account)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<tbl_Chart_Of_Account>()
+            modelBuilder.Entity<tbl_Temp_Chart_Of_Account>()
                 .HasMany(e => e.tbl_Temp_Chart_Of_Account_Currency)
-                .WithRequired(e => e.tbl_Chart_Of_Account)
+                .WithRequired(e => e.tbl_Temp_Chart_Of_Account)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Chart_Of_Account>()
