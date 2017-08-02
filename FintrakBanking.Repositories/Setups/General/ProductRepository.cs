@@ -434,8 +434,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         approved = c.Approved,
                         approvalStatusId = c.ApprovalStatusId,
                         operationId = atrail.OperationId,
-                        comment = atrail.Comment,
-                        currencies = context.tbl_Temp_Product_Currency.Where(curr => curr.ProductId == c.ProductId && curr.Deleted != false).Select(c => new ProductCurrencyViewModel()
+                        currencies = context.tbl_Temp_Product_Currency.Where(curr => curr.ProductId == c.ProductId && curr.Deleted == false).Select(c => new ProductCurrencyViewModel()
                         {
                             productId = c.ProductId,
                             productCurrencyId = c.ProductCurrencyId,

@@ -553,7 +553,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         accountCategoryId = c.tbl_Account_Type.AccountCategoryId,
                         accountCategoryName = c.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
                         accountStatusId = c.AccountStatusId,
-                        currencies = context.tbl_Chart_Of_Account_Currency.Where(curr => curr.GLAccountId == c.GLAccountId && curr.Deleted != false).Select(c => new ChartOfAccountCurrencyViewModel()
+                        currencies = context.tbl_Chart_Of_Account_Currency.Where(curr => curr.GLAccountId == c.GLAccountId && curr.Deleted == false).Select(c => new ChartOfAccountCurrencyViewModel()
                         {
                             glaccountId = c.GLAccountId,
                             glaccountCurrencyId = c.GLAccountCurrencyId,
@@ -568,9 +568,10 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         branchSpecific = c.BranchSpecific,
                         fsCaptionId = c.FSCaptionId,
                         fsCaptionName = c.tbl_Financial_Statement_Caption.FSCaption,
+                        operationId = atrail.OperationId,
+                        approvalStatusId = c.ApprovalStatusId,
                         createdBy = c.CreatedBy,
                         dateTimeCreated = c.DateTimeCreated,
-
                     });
         }
 
