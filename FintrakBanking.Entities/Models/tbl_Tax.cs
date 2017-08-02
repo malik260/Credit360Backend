@@ -9,12 +9,17 @@ namespace FintrakBanking.Entities.Models
     [Table("core.tbl_Tax")]
     public partial class tbl_Tax
     {
-        [Key]
-        [Column(Order = 0)]
-        public int TaxId { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Tax()
+        {
+            tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
+            tbl_Charge_Fee1 = new HashSet<tbl_Charge_Fee>();
+        }
 
         [Key]
-        [Column(Order = 1)]
+        public int TaxId { get; set; }
+
+        [Required]
         [StringLength(150)]
         public string TaxName { get; set; }
 
@@ -23,38 +28,31 @@ namespace FintrakBanking.Entities.Models
 
         public double? Rate { get; set; }
 
-        [Key]
-        [Column(Order = 2)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int GLAccountId { get; set; }
 
         public bool? UseAmount { get; set; }
 
-        [Key]
-        [Column(Order = 3)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int CompanyId { get; set; }
 
-        [Key]
-        [Column(Order = 4)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
 
-        [Key]
-        [Column(Order = 5)]
         public DateTime DateTimeCreated { get; set; }
 
         public DateTime? DateTimeUpdated { get; set; }
 
-        [Key]
-        [Column(Order = 6)]
         public bool Deleted { get; set; }
 
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee1 { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
 

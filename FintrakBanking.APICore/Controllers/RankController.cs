@@ -8,7 +8,6 @@ using System.Web;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    // [EnableCors("AllDomain")]
     [RoutePrefix("api/v1/setup")]
     public class RankController : ApiControllerBase
     {
@@ -19,18 +18,12 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-        [HttpGet]
-        [Route("rank")]
+        [HttpGet][Route("rank")]
         public HttpResponseMessage GetRank()
         {
             try
             {
                 var data = repo.GetRank();
-
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -63,7 +56,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                // token = new TokenDecryptionHelper(this.HttpContext);
                 var data = repo.GetRankByCompanyId(token.GetCompanyId);
 
                 if (data == null)

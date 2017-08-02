@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public tbl_Product_Price_Index()
         {
             tbl_Product = new HashSet<tbl_Product>();
+            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
         }
 
         [Key]
@@ -48,5 +49,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product> tbl_Product { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
     }
 }
