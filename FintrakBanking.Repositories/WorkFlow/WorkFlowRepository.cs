@@ -160,7 +160,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         ApprovalStateId = (short)ApprovalState.Processing,
                                         RequestStaffId = entity.staffId,
                                         OperationId = entity.operationId,
-                                        SystemArrivalDateTime = DateTime.Now
                                        
                                     };
                                     approvelRepo.AddApprovalTrail(trail);
