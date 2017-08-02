@@ -13,7 +13,7 @@ using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 
 namespace FintrakBanking.Repositories.Admin
-{ 
+{
     public class AdminRepository : IAdminRepository
     {
         private FinTrakBankingContext context;
@@ -266,29 +266,30 @@ namespace FintrakBanking.Repositories.Admin
         public IEnumerable<GroupVModel> GetGroupActivities()
         {
             var grpIds = context.tbl_Profile_Group_Activity.Select(x => x.GroupId).Distinct().ToList();
-            return (from g in context.tbl_Profile_Group
-                    where grpIds.Contains(g.GroupId)
-                    select new GroupVModel
-                    {
-                        groupId = g.GroupId,
-                        name = g.GroupName,
-                        activities = (from ga in context.tbl_Profile_Group_Activity
-                                      join act in context.tbl_Profile_Activity
-                                      on ga.ActivityId equals act.ActivityId
-                                      where ga.GroupId == g.GroupId
-                                      select new GroupActivitiesModel
-                                      {
-                                          activityId = ga.ActivityId,
-                                          groupActivityId = ga.GroupActivityId,
-                                          activityName = act.ActivityName,
-                                          canAdd = ga.CanAdd.Value,
-                                          canApprove = ga.CanApprove.Value,
-                                          canDelete = ga.CanDelete.Value,
-                                          canEdit = ga.CanEdit.Value,
-                                          canView = ga.CanView.Value,
-                                      }).ToList()
+            var data = (from g in context.tbl_Profile_Group
+                        where grpIds.Contains(g.GroupId)
+                        select new GroupVModel
+                        {
+                            groupId = g.GroupId,
+                            name = g.GroupName,
+                            activities = (from ga in context.tbl_Profile_Group_Activity
+                                          join act in context.tbl_Profile_Activity
+                                          on ga.ActivityId equals act.ActivityId
+                                          where ga.GroupId == g.GroupId
+                                          select new GroupActivitiesModel
+                                          {
+                                              activityId = ga.ActivityId,
+                                              groupActivityId = ga.GroupActivityId,
+                                              activityName = act.ActivityName,
+                                              canAdd = ga.CanAdd.Value,
+                                              canApprove = ga.CanApprove.Value,
+                                              canDelete = ga.CanDelete.Value,
+                                              canEdit = ga.CanEdit.Value,
+                                              canView = ga.CanView.Value
+                                          }).ToList()
 
-                    });
+                        });
+            return data;
 
 
         }

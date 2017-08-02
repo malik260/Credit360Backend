@@ -2,6 +2,7 @@
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Linq;
 using System.Net;
@@ -134,7 +135,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -228,7 +229,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -270,7 +271,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -357,6 +358,82 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("approval-status")]
+        public HttpResponseMessage GetApprovalStatus()
+        {
+
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var productinfo = repo.GetApprovalStatus();
+
+
+                if (productinfo != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = productinfo.ToList() });
+
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "No record found" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+
+        }
+
+        [HttpGet]
+        [Route("product/approvals/temp")]
+        public HttpResponseMessage GetProductAwaitingApproval()
+        {
+
+
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var productinfo = repo.GetProductAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
+
+                if (productinfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = productinfo.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, HttpContext.Current.Request.UserHostAddress, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("product/approvals/temp/{productId}")]
+        public HttpResponseMessage GetTempProductDetailsById(int productId)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var productInfo = repo.GetTempProductDetail(productId);
+
+                if (productInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = productInfo });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, HttpContext.Current.Request.UserHostAddress, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
         [Route("product/{productId}")]
         public HttpResponseMessage GetProductById(int productId)
         {
@@ -376,72 +453,201 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("product")]
-        public HttpResponseMessage AddProduct([FromBody] ProductViewModel model)
+        [HttpGet]
+        [Route("product/approvals/{productCode}")]
+        public HttpResponseMessage GetProductDetailsProductCode(string productCode)
         {
             try
             {
                 var token = new TokenDecryptionHelper();
+                var productinfo = repo.GetProductDetail(productCode, token.GetCompanyId);
+
+                if (productinfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = productinfo });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, HttpContext.Current.Request.UserHostAddress, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        //[HttpPost]
+        //[Route("product")]
+        //public HttpResponseMessage AddProduct([FromBody] ProductViewModel model)
+        //{
+        //    try
+        //    {
+        //        var token = new TokenDecryptionHelper();
+        //        model.userBranchId = (short)token.GetBranchId;
+        //        model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+        //        model.applicationUrl = HttpContext.Current.Request.Path;
+        //        model.createdBy = token.GetStaffId;
+        //        model.companyId = token.GetCompanyId;
+
+        //        var record = repo.AddProduct(model);
+        //        if (record != null)
+        //        {
+
+        //            return Request.CreateResponse(HttpStatusCode.Created,
+
+        //                new { success = true, result = record, message = "product has been created successfully" });
+        //        }
+        //        else
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "product not created" });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+
+        [HttpPost]
+        [Route("product")]
+        public HttpResponseMessage AddTempProduct([FromBody] ProductViewModel model)
+        {
+            try
+            {
+
+                if (repo.IsProductCodeAlreadyExist(model.productCode))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"A product with {model.productCode} already exist" });
+                }
+                if (repo.IsProductExist(model.productCode))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"A product with {model.productCode} already exist waiting for approval" });
+                }
+
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = Common.CommonHelpers.GetUserIP();
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                var record = repo.AddProduct(model);
-                if (record != null)
+                var product = repo.AddTempProduct(model);
+
+                if (product != null)
                 {
-
-                    return Request.CreateResponse(HttpStatusCode.Created,
-
-                        new { success = true, result = record, message = "product has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = product, message = "Product has been created successfully, now waiting for approval" });
                 }
                 else
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "product not created" });
+                        new { success = false, message = "Product not created" });
             }
             catch (System.Exception ex)
             {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        //[HttpPut]
+        //[Route("product/{productId}")]
+        //public HttpResponseMessage UpdateProduct(int productId, [FromBody] ProductViewModel model)
+        //{
+        //    if (model == null)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, Ok());
+        //    }
+
+        //    var account = repo.GetProductById(productId);
+        //    if (account == null)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = false, message = "No record found" });
+        //    }
+
+        //    try
+        //    {
+        //        var token = new TokenDecryptionHelper();
+        //        model.userBranchId = (short)token.GetBranchId;
+        //        model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+        //        model.applicationUrl = HttpContext.Current.Request.Path;
+        //        model.createdBy = token.GetStaffId;
+        //        model.companyId = token.GetCompanyId;
+
+        //        repo.UpdateProduct(productId, model);
+
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = productId, message = "product has been updated successfully" });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+
+        //}
 
         [HttpPut]
         [Route("product/{productId}")]
         public HttpResponseMessage UpdateProduct(int productId, [FromBody] ProductViewModel model)
         {
-            if (model == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, Ok());
-            }
-
-            var account = repo.GetProductById(productId);
-            if (account == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "No record found" });
-            }
-
             try
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
-                model.companyId = token.GetCompanyId;
 
-                repo.UpdateProduct(productId, model);
 
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = productId, message = "product has been updated successfully" });
+                var staff = repo.UpdateProduct(productId, model);
+                if (staff)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = staff, message = "Product has been updated successfully, now waiting for approval" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Product not created" });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("product/approval")]
+        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.GoForApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Product record has been approved successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
             }
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
 
         #endregion Product Region
@@ -500,7 +706,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -534,7 +740,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = Request.RequestUri.Host;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -566,7 +772,7 @@ namespace FintrakBanking.APICore.Controllers
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
-                    userIPAddress = Request.RequestUri.Host
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
                 };
                 repo.DeleteProductPriceIndex(productPriceIndexId, user);
 

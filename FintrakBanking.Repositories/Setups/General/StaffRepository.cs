@@ -11,7 +11,6 @@ using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Data.Common;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Setups.General
@@ -527,7 +526,7 @@ on c.DepartmentId equals dept.DepartmentId
                             BranchId = staffModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
-                        return output;
+                        trans.Commit();
                     }
                     catch (Exception)
                     {
@@ -540,6 +539,7 @@ on c.DepartmentId equals dept.DepartmentId
                 throw new Exception("Approval route have not been defined for this operation");
             }
             return output;
+
         }
 
         public bool IsStaffCodeAlreadyExist(string staffCode)

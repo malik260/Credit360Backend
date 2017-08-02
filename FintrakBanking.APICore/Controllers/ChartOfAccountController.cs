@@ -2,6 +2,7 @@
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Setups.Finance; 
 using System.Linq;
 using System.Net;
@@ -114,70 +115,225 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         // POST api/values
+        //[HttpPost]
+        //public HttpResponseMessage AddChartOfAccount([FromBody]ChartOfAccountViewModel model)
+        //{   try
+        //        {
+        //            TokenDecryptionHelper token =  new TokenDecryptionHelper();
+
+        //            model.createdBy = token.GetStaffId;
+        //            model.companyId = token.GetCompanyId;
+        //            model.branchId = (short)token.GetBranchId;
+        //            model.applicationUrl = HttpContext.Current.Request.Url.AbsoluteUri;
+        //            //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+
+        //            var accountId = repo.AddTempAccount(model);
+
+        //            if (accountId >= 1)
+        //            {
+        //                return Request.CreateResponse(HttpStatusCode.OK,
+        //               new { success = true, result = model, message = "account has been created successfully" });
+        //            }
+        //            else
+        //            {
+        //                return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "account not created" });
+        //            }
+        //        }
+        //        catch (System.Exception ex)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = false, message = ex.Message });
+        //        }
+
+        //}
+
         [HttpPost]
-        public HttpResponseMessage AddChartOfAccount(  [FromBody]ChartOfAccountViewModel model)
-        {   try
-                {
-                    TokenDecryptionHelper token =  new TokenDecryptionHelper();
-
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-                    model.branchId = (short)token.GetBranchId;
-                    model.applicationUrl = HttpContext.Current.Request.Url.AbsoluteUri;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-
-                    var accountId = repo.AddAccount(model);
-
-                    if (accountId >= 1)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = model, message = "account has been created successfully" });
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "account not created" });
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = ex.Message });
-                }
-         
-        }
-
-        [HttpPut] [Route("{accountId}")]
-        public HttpResponseMessage UpdateChartOfAccount(   int accountId, [FromBody] ChartOfAccountViewModel model)
+        [Route("chart-of-account")]
+        public HttpResponseMessage AddTempAccount([FromBody] ChartOfAccountViewModel model)
         {
-              
-                if (model == null)
-                {
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = "No record found" });
-                }
-                try
-                {
-                    TokenDecryptionHelper token =  new TokenDecryptionHelper();
-
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-                    model.branchId = (short)token.GetBranchId;
-                    model.applicationUrl = HttpContext.Current.Request.ApplicationPath;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    repo.UpdateAccount((short)accountId, model);
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = true, result = model.accountId, message = "account has been updated successfully" });
-                }
-                catch (System.Exception ex)
+            try
+            {
+                if (repo.IsAccountCodeAlreadyExist(model.accountCode))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
+                        new { success = false, message = $"An Account with {model.accountCode} already exist" });
                 }
-                  
+                if (repo.IsAccountExist(model.accountCode))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"An account with {model.accountCode} already exist waiting for approval" });
+                }
+
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var username = token.GetUsername;
+                var staffId = token.GetStaffId;
+                var companyId = token.GetCompanyId; //etc
+
+                //We can now use staffId extracted from the token as the created by
+                //We ca also get companyId too
+
+                model.createdBy = staffId; ///This staff Id was gotten from the token
+
+                var account = repo.AddTempAccount(model);
+                if (account)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = account, message = "Account has been created successfully, now waiting for approval" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Account not created" });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
+
+        [HttpPut]
+        [Route("chart-of-account/{accountId}")]
+        public HttpResponseMessage UpdateAccount(short accountId, [FromBody] ChartOfAccountViewModel model)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+
+
+                var account = repo.UpdateAccount(accountId, model);
+                if (account)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = account, message = "Account has been updated successfully, now waiting for approval" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Account not created" });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("chart-of-account/approval")]
+        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.GoForApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Account record has been approved successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("chart-of-account/approvals/temp")]
+        public HttpResponseMessage GetAccountsAwaitingApproval()
+        {
+
+
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var accountInfo = repo.GetAccountsAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
+
+                if (accountInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = accountInfo.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("chart-of-account/approvals/temp/{accountId}")]
+        public HttpResponseMessage GetTempProductDetailsById(int accountId)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var accountInfo = repo.GetTempAccountDetail(accountId);
+
+                if (accountInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = accountInfo });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+        //[HttpPut] [Route("{accountId}")]
+        //public HttpResponseMessage UpdateChartOfAccount(   int accountId, [FromBody] ChartOfAccountViewModel model)
+        //{
+        //        if (model == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //              new { success = false, message = "No record found" });
+        //        }
+        //        try
+        //        {
+        //            TokenDecryptionHelper token =  new TokenDecryptionHelper();
+
+        //            model.createdBy = token.GetStaffId;
+        //            model.companyId = token.GetCompanyId;
+        //            model.branchId = (short)token.GetBranchId;
+        //            model.applicationUrl = HttpContext.Current.Request.ApplicationPath;
+        //            repo.UpdateAccount((short)accountId, model);
+
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //              new { success = true, result = model.accountId, message = "account has been updated successfully" });
+        //        }
+        //        catch (System.Exception ex)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //              new { success = false, message = ex.Message });
+        //        }   
+        //}
 
         // DELETE api/values/5
         [HttpDelete] [Route("{accountId}")]

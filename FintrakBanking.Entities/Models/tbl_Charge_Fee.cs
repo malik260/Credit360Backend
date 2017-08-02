@@ -6,22 +6,15 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Fee")]
-    public partial class tbl_Fee
+    [Table("core.tbl_Charge_Fee")]
+    public partial class tbl_Charge_Fee
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Fee()
-        {
-            tbl_Product_Fee = new HashSet<tbl_Product_Fee>();
-            tbl_Temp_Product_Fee = new HashSet<tbl_Temp_Product_Fee>();
-        }
-
         [Key]
-        public int FeeId { get; set; }
+        public int ChargeFeeId { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string FeeName { get; set; }
+        public string ChargeFeeName { get; set; }
 
         public short AccountCategoryId { get; set; }
 
@@ -43,10 +36,25 @@ namespace FintrakBanking.Entities.Models
 
         public short? CutOffDay { get; set; }
 
-        public int CompanyId { get; set; }
-
         [Column(TypeName = "date")]
         public DateTime FeeDate { get; set; }
+
+        public int OperationId { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? Amount { get; set; }
+
+        public double? Rate { get; set; }
+
+        public int? ValueSource { get; set; }
+
+        public bool? Recurring { get; set; }
+
+        public int? PrimaryTaxId { get; set; }
+
+        public int? SecondaryTaxId { get; set; }
+
+        public int CompanyId { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -62,19 +70,13 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
-
-        public virtual tbl_Fee_Amortisation_Type tbl_Fee_Amortisation_Type { get; set; }
-
         public virtual tbl_Account_Category tbl_Account_Category { get; set; }
 
         public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product_Fee> tbl_Product_Fee { get; set; }
+        public virtual tbl_Company tbl_Company { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_Fee> tbl_Temp_Product_Fee { get; set; }
+        public virtual tbl_Fee_Amortisation_Type tbl_Fee_Amortisation_Type { get; set; }
 
         public virtual tbl_Fee_Interval tbl_Fee_Interval { get; set; }
 
@@ -82,6 +84,12 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Fee_Type tbl_Fee_Type { get; set; }
 
+        public virtual tbl_Operations tbl_Operations { get; set; }
+
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
+
+        public virtual tbl_Tax tbl_Tax { get; set; }
+
+        public virtual tbl_Tax tbl_Tax1 { get; set; }
     }
 }

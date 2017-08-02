@@ -12,7 +12,6 @@ namespace FintrakBanking.APICore.Controllers
     public class JobTitleController : ApiControllerBase
     {
         private IJobTitleRepository repo;
-        TokenDecryptionHelper token = null;
         public JobTitleController(IJobTitleRepository _repo)
         {
             this.repo = _repo;
@@ -20,7 +19,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("jobtitle/{jobtitleid}")]
-        public HttpResponseMessage GetJobTitle(HttpRequestMessage request, int jobTitleId)
+        public HttpResponseMessage GetJobTitle(int jobTitleId)
         { 
                 try
                 {

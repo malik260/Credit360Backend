@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FintrakBanking.ViewModels.Setups.Finance
 {
     public class ChartOfAccountViewModel : GenaralEntity
     {
+
+        public ChartOfAccountViewModel()
+        {
+            currencies = new List<ChartOfAccountCurrencyViewModel>();
+        }
         public int accountId { get; set; }
         public string accountCode { get; set; }
         public string accountName { get; set; }
@@ -13,14 +19,27 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public string accountCategoryName { get; set; }
         
         public short branchId { get; set; }  
+        public string branchName { get; set; }
         public string currencyName { get; set; }
         public bool systemUse { get; set; }
-        public int accountStatusId { get; set; }
+        public int? accountStatusId { get; set; }
         public bool branchSpecific { get; set; }
         public string oldAccountId { get; set; }
         public short fsCaptionId { get; set; }
-         
+        public string fsCaptionName { get; set; }
+        public int approvalStatusId { get; set; }
+        public string comment { get; set; }
+        public int operationId { get; set; }
+        public List<ChartOfAccountCurrencyViewModel> currencies { get; set; }
 
         public string accountDetail { get { return this.accountCode + " -- " + this.accountName + " -- " + accountCategoryName; } }
+    }
+
+    public class ChartOfAccountCurrencyViewModel: GenaralEntity
+    {
+        public int glaccountId { get; set; }
+        public int glaccountCurrencyId { get; set; }
+        public short currencyId { get; set; }
+        public string currencyName { get; set; }
     }
 }

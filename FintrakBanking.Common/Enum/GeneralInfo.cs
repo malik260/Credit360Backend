@@ -17,7 +17,7 @@ namespace FintrakBanking.Common.Enum
 
         CustomerFSCaptionGroupAdded = 24, CustomerFSCaptionGroupUpdated = 25,
 
-        AccountCategoryAdded = 24, ChartOfAccountDeleted = 25, ChartOfAccountUpdated = 26, ChartOfAccountAdded = 27,
+        AccountCategoryAdded = 24, ChartOfAccountDeleted = 25, ChartOfAccountUpdated = 26, ChartOfAccountInitiated = 27,
         ProductTypeAdded = 28, ProductTypeDeleted = 29, ProductTypeUpdated = 30,
         ProductGroupAdded = 31, ProductGroupDeleted = 32, ProductGroupUpdated = 33,
         ProductAdded = 34, ProductUpdated =35,
@@ -49,7 +49,8 @@ namespace FintrakBanking.Common.Enum
         ApprovalLevelStaffAdded = 99, ApprovalLevelStaffUpdated = 100, ApprovalLevelStaffDeleted = 101,
         ApprovalStatusUpdated = 102,
         ProductPriceIndexAdded = 103, ProductPriceIndexUpdated = 104, ProductPriceIndexDeleted = 105,
-        CreateStaffInitiated = 107
+        CreateStaffInitiated = 107, AccountApproved = 108, ProductApproved = 109,
+        ProductFeeInitiated = 111, ProductFeeAdded = 112, ProductFeeUpdated = 113, ProductFeeDeleted = 114
 
 
     };

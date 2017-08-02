@@ -153,7 +153,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return (from data in context.tbl_Operations                    
                     select new LookupViewModel()
                     {
-                        lookupId = short.Parse(data.OperationId.ToString()),
+                        lookupId = (short)data.OperationId,
                         lookupName = data.OperationName,
                         lookupTypeId = data.OperationTypeId,
                         lookupTypeName = data.tbl_Operations_Type.OperationTypeName
@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     where data.OperationTypeId == operationTypeId
                     select new LookupViewModel()
                     {
-                        lookupId = short.Parse(data.OperationId.ToString()),
+                        lookupId = (short)data.OperationId,
                         lookupName = data.OperationName,
                         lookupTypeId = data.OperationTypeId,
                         lookupTypeName = data.tbl_Operations_Type.OperationTypeName

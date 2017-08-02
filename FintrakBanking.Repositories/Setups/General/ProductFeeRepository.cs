@@ -40,21 +40,22 @@ namespace FintrakBanking.Repositories.Setups.General
 
             foreach (ProductFeeViewModel item in productFees)
             {
-                AddProductFee(item);
+                AddTempProductFee(item);
             }
 
             return 1;
         }
 
-        public int AddProductFee(ProductFeeViewModel productFee)
-        {
-            var dataExist = this.context.tbl_Product_Fee.FirstOrDefault(x => x.ProductId == productFee.productId && x.FeeId == productFee.feeId && x.Deleted == true); // .Find(accountId);
 
-            var productFeeEntity = dataExist;
+        public int AddTempProductFee(ProductFeeViewModel productFee)
+        {
+            var dataExist = this.context.tbl_Temp_Product_Fee.FirstOrDefault(x => x.ProductId == productFee.productId && x.FeeId == productFee.feeId && x.Deleted == true); // .Find(accountId);
+
+            var tempPproductFeeEntity = dataExist;
 
             if (dataExist == null)
             {
-                productFeeEntity = new tbl_Product_Fee()
+                tempPproductFeeEntity = new tbl_Temp_Product_Fee()
                 {
                     ProductId = productFee.productId,
                     FeeId = productFee.feeId,
@@ -68,12 +69,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     Deleted = false
                 };
 
-                this.context.tbl_Product_Fee.Add(productFeeEntity);
+                this.context.tbl_Temp_Product_Fee.Add(tempPproductFeeEntity);
                 // Audit Section ---------------------------
                 var product = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
                 var audit = new tbl_Audit
                 {
-                    AuditTypeId = (short)AuditTypeEnum.CollateralCategoryAdded,
+                    AuditTypeId = (short)AuditTypeEnum.ProductFeeAdded,
                     StaffId = productFee.createdBy,
                     BranchId = (short)productFee.userBranchId,
                     Detail = $"Added tbl_Product Fee: { productFee.feeName } to product {product} with amount {productFee.rateValue} ",
@@ -89,18 +90,64 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             else
             {
-                productFeeEntity.RateValue = productFee.rateValue;
-                productFeeEntity.DependentAmount = productFee.dependentAmount;
+                tempPproductFeeEntity.RateValue = productFee.rateValue;
+                tempPproductFeeEntity.DependentAmount = productFee.dependentAmount;
 
-                productFeeEntity.Deleted = false;
+                tempPproductFeeEntity.Deleted = false;
             }
 
             var status = this.SaveAll();
 
             if (status)
-                return productFeeEntity.ProductFeeId;
+                return tempPproductFeeEntity.ProductFeeId;
             else
                 return -1;
+        }
+
+        public void ApproveProductFee(int productId, UserInfo user)
+        {
+            var productFeeModel = context.tbl_Temp_Product_Fee.Where(x => x.ProductId == productId 
+                                                                        && x.Deleted == false
+                                                                        && x.IsCurrent == true);
+            var productToUpdate = context.tbl_Product.Find(productId);
+
+            foreach( var p in productFeeModel)
+            {
+                var product = new tbl_Product_Fee()
+                {
+                    ProductId = p.ProductId,
+                    FeeId = p.FeeId,
+                    CompanyId = p.CompanyId,
+
+                    RateValue = p.RateValue,
+                    DependentAmount = p.DependentAmount,
+
+                    CreatedBy = p.CreatedBy,
+                    DateTimeCreated = genSetup.GetApplicaionDate(),
+                    Deleted = false
+                };
+                context.tbl_Product_Fee.Add(product);
+                p.IsCurrent = false;
+                p.Deleted = true;
+            }
+            
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.ProductFeeAdded,
+                StaffId = user.staffId,
+                BranchId = (short)user.BranchId,
+                Detail = $"Approved Fee for product '{productToUpdate.ProductName}' with product code'{productToUpdate.ProductCode}'",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            // Audit Section ---------------------------
+
+            //return this.SaveAll();
         }
 
         public bool DeleteMultipleProductFee(List<int> productFeeIds)
@@ -135,7 +182,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var productFee = this.context.tbl_Fee.FirstOrDefault(x => x.FeeId == data.FeeId);
             var audit = new tbl_Audit
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralCategoryAdded,
+                AuditTypeId = (short)AuditTypeEnum.ProductFeeDeleted,
                 StaffId = user.staffId,
                 BranchId = (short)user.BranchId,
                 Detail = $"Deleted tbl_Product Fee: {productFee.FeeName} to product {data.tbl_Product} ",
@@ -195,7 +242,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.tbl_Product_Fee.Any(x => x.ProductFeeId == productFeeId);
         }
 
-        public ProductFeeViewModel GetProductFeeViewModel(int productFeeId)
+        public ProductFeeViewModel GetProductFee(int productFeeId)
         {
             return (from data in context.tbl_Product_Fee
                     where data.ProductFeeId == productFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
@@ -219,6 +266,33 @@ namespace FintrakBanking.Repositories.Setups.General
                        // deleted = data.Deleted.Value,
                        // deletedBy = data.DeletedBy,
                        // dateTimeDeleted = data.DateTimeDeleted
+                    }).FirstOrDefault();
+        }
+
+        public ProductFeeViewModel GetTempProductFee(int productFeeId)
+        {
+            return (from data in context.tbl_Temp_Product_Fee
+                    where data.ProductFeeId == productFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+                    select new ProductFeeViewModel()
+                    {
+                        productFeeId = data.ProductFeeId,
+                        productId = (short)data.ProductId,
+                        feeId = data.FeeId,
+                        feeName = data.tbl_Fee.FeeName,
+                        companyId = data.CompanyId,
+
+                        rateValue = data.RateValue,
+                        dependentAmount = data.DependentAmount,
+
+                        createdBy = data.CreatedBy,
+                        dateTimeCreated = data.DateTimeCreated,
+
+                        //lastUpdatedBy = data.LastUpdatedBy.Value,
+                        //dateTimeUpdated = data.DateTimeUpdated,
+
+                        // deleted = data.Deleted.Value,
+                        // deletedBy = data.DeletedBy,
+                        // dateTimeDeleted = data.DateTimeDeleted
                     }).FirstOrDefault();
         }
 
@@ -286,7 +360,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var product = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
             var audit = new tbl_Audit
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralCategoryAdded,
+                AuditTypeId = (short)AuditTypeEnum.ProductFeeUpdated,
                 StaffId = productFee.createdBy,
                 BranchId = (short)productFee.userBranchId,
                 Detail = $"Updated tbl_Product Fee: { productFee.feeName } to product {product} with amount {productFee.rateValue} ",

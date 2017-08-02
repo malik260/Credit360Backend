@@ -134,7 +134,6 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-
         [HttpPost][Route("loan/application")]
         public async Task<HttpResponseMessage> LoanBooking([FromBody] LoanApplicationViewModel entity)
         {

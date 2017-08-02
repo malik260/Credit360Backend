@@ -6,18 +6,15 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class tbl_Charges_ValueSource
+    [Table("temp.tbl_Temp_Product_Currency")]
+    public partial class tbl_Temp_Product_Currency
     {
         [Key]
-        public int ValueSourceId { get; set; }
+        public int ProductCurrencyId { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string ValueSourceName { get; set; }
+        public short ProductId { get; set; }
 
-        public bool IsFixed { get; set; }
-
-        public int CompanyId { get; set; }
+        public short CurrencyId { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -32,5 +29,13 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
+
+        public bool IsCurrent { get; set; }
+
+        public short ApprovalStatusId { get; set; }
+
+        public virtual tbl_Currency tbl_Currency { get; set; }
+
+        public virtual tbl_Product tbl_Product { get; set; }
     }
 }
