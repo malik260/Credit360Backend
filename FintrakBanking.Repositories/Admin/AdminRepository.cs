@@ -36,7 +36,6 @@ namespace FintrakBanking.Repositories.Admin
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
         }
 
-
         public async Task<bool> CreateUser(AppUserViewModel user)
         {
             var _user = new tbl_Profile_User()
@@ -291,7 +290,6 @@ namespace FintrakBanking.Repositories.Admin
                         });
             return data;
 
-
         }
 
         public bool AddAccessToActivity(int id, ActivitiesUpdateVm model)
@@ -362,9 +360,6 @@ namespace FintrakBanking.Repositories.Admin
             var response = await context.SaveChangesAsync();
 
             return response != 0;
-
-
-
         }
 
         public List<string> GetUserActivities(int userId)
@@ -392,7 +387,6 @@ namespace FintrakBanking.Repositories.Admin
             {
                 return activities.Distinct().ToList();
             }
-
 
         }
 
