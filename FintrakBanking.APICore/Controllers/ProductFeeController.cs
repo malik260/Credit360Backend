@@ -46,6 +46,8 @@ namespace FintrakBanking.APICore.Controllers
                 } 
         }
 
+
+
         [HttpGet]
         [Route("product-fee/unmapped/{productId}")]
         public HttpResponseMessage GetUnmappedFeeToProduct( int productId)
@@ -69,11 +71,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-fee/{productFeeId}")]
-        public HttpResponseMessage GetProductFeeViewModel( int productFeeId)
+        public HttpResponseMessage GetProductFee( int productFeeId)
         { 
                 try
                 {
-                    var data = repo.GetProductFeeViewModel(productFeeId);
+                    var data = repo.GetProductFee(productFeeId);
                     if (data == null)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -85,6 +87,26 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
+        }
+
+        [HttpGet]
+        [Route("product-fee/temp/{productFeeId}")]
+        public HttpResponseMessage GetTempProductFee(int productFeeId)
+        {
+            try
+            {
+                var data = repo.GetTempProductFee(productFeeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         // POST api/values
