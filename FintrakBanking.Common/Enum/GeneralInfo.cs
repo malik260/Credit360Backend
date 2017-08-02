@@ -52,7 +52,6 @@ namespace FintrakBanking.Common.Enum
         CreateStaffInitiated = 107, AccountApproved = 108, ProductApproved = 109,
         ProductFeeInitiated = 111, ProductFeeAdded = 112, ProductFeeUpdated = 113, ProductFeeDeleted = 114
 
-
     };
 
 
