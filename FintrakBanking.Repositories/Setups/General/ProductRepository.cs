@@ -657,7 +657,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (productModel.currencies.Count < 1)
                 throw new Exception("Product Currency must be specified");
 
-            bool output = false, result = false;
+            bool output = false;
             var existStingTempProduct = context.tbl_Temp_Product.Where(x => x.ProductCode.ToLower() == productModel.productCode.ToLower()
                                                                   && x.IsCurrent == true && x.CompanyId == productModel.companyId
                                                                   && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
@@ -767,7 +767,6 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 throw new Exception("Approval route have not been defined for this operation");
             }
-             //return output;
 
             if (output)
             {
