@@ -6,17 +6,19 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Charge_Fee")]
-    public partial class tbl_Charge_Fee
+    [Table("temp.tbl_Temp_Fee")]
+    public partial class tbl_Temp_Fee
     {
         [Key]
-        public int ChargeFeeId { get; set; }
+        public int FeeId { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string ChargeFeeName { get; set; }
+        public string FeeName { get; set; }
 
         public short AccountCategoryId { get; set; }
+
+        public short FeeTypeId { get; set; }
 
         public short FeeIntervalId { get; set; }
 
@@ -34,22 +36,14 @@ namespace FintrakBanking.Entities.Models
 
         public short? CutOffDay { get; set; }
 
-        public int? OperationId { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? Amount { get; set; }
-
-        public double? Rate { get; set; }
-
-        public int ValueSource { get; set; }
-
-        public bool? Recurring { get; set; }
-
-        public int? PrimaryTaxId { get; set; }
-
-        public int? SecondaryTaxId { get; set; }
-
         public int CompanyId { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime FeeDate { get; set; }
+
+        public bool IsCurrent { get; set; }
+
+        public short ApprovalStatusId { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -65,9 +59,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public virtual tbl_Account_Category tbl_Account_Category { get; set; }
-
-        public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
+        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
 
@@ -77,12 +69,12 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Fee_Target tbl_Fee_Target { get; set; }
 
-        public virtual tbl_Operations tbl_Operations { get; set; }
+        public virtual tbl_Fee_Type tbl_Fee_Type { get; set; }
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
 
-        public virtual tbl_Tax tbl_Tax { get; set; }
+        public virtual tbl_Account_Category tbl_Account_Category { get; set; }
 
-        public virtual tbl_Tax tbl_Tax1 { get; set; }
+        public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
     }
 }

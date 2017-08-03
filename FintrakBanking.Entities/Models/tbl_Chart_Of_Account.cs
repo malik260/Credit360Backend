@@ -24,13 +24,13 @@ namespace FintrakBanking.Entities.Models
             tbl_Collateral_Type = new HashSet<tbl_Collateral_Type>();
             tbl_Charges = new HashSet<tbl_Charges>();
             tbl_Chart_Of_Account_Currency = new HashSet<tbl_Chart_Of_Account_Currency>();
-            tbl_Temp_Chart_Of_Account_Currency = new HashSet<tbl_Temp_Chart_Of_Account_Currency>();
             tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
             tbl_Temp_Product1 = new HashSet<tbl_Temp_Product>();
             tbl_Temp_Product2 = new HashSet<tbl_Temp_Product>();
             tbl_Temp_Product3 = new HashSet<tbl_Temp_Product>();
             tbl_Temp_Product4 = new HashSet<tbl_Temp_Product>();
             tbl_Temp_Product5 = new HashSet<tbl_Temp_Product>();
+            tbl_Temp_Fee = new HashSet<tbl_Temp_Fee>();
         }
 
         [Key]
@@ -75,12 +75,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeUpdated { get; set; }
 
-        public bool IsCurrent { get; set; }
-
-        public short ApprovalStatusId { get; set; }
-
-        public short RecordStateId { get; set; }
-
         public virtual tbl_Branch tbl_Branch { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -123,9 +117,6 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Chart_Of_Account_Currency> tbl_Chart_Of_Account_Currency { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Chart_Of_Account_Currency> tbl_Temp_Chart_Of_Account_Currency { get; set; }
-
         public virtual tbl_Financial_Statement_Caption tbl_Financial_Statement_Caption { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -145,5 +136,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product5 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Fee> tbl_Temp_Fee { get; set; }
     }
 }

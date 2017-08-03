@@ -6,15 +6,20 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Product_Currency")]
-    public partial class tbl_Temp_Product_Currency
+    [Table("temp.tbl_Temp_Collateral_Miscellaneous_Notes")]
+    public partial class tbl_Temp_Collateral_Miscellaneous_Notes
     {
         [Key]
-        public int ProductCurrencyId { get; set; }
+        public int MiscellaneousNoteId { get; set; }
 
-        public short ProductId { get; set; }
+        public int? MiscellaneousId { get; set; }
 
-        public short CurrencyId { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string ColumnName { get; set; }
+
+        [StringLength(250)]
+        public string ColumnValue { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -30,12 +35,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public bool IsCurrent { get; set; }
-
-        public short ApprovalStatusId { get; set; }
-
-        public virtual tbl_Currency tbl_Currency { get; set; }
-
-        public virtual tbl_Temp_Product tbl_Temp_Product { get; set; }
+        public virtual tbl_Temp_Collateral_Miscellaneous tbl_Temp_Collateral_Miscellaneous { get; set; }
     }
 }

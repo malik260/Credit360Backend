@@ -325,7 +325,7 @@ namespace FintrakBanking.Repositories.Customer
                 AuditTypeId = (short)AuditTypeEnum.CustomerGroupMappingUpdated,
                 StaffId = entity.createdBy,
                 BranchId = (short)entity.userBranchId,
-                Detail = $"Updated Customer Group Mapping for customer: { customer }  with code:  { groupMap.tbl_Customer.CustomerCode } to group ( {groupMap.tbl_Customer_Group.GroupName } ) ",
+                Detail = $"Updated Customer Group Mapping for customer: { customer }  with code:  { groupMap.tbl_Customer.CustomerCode } to group ( {groupName } ) ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
                 ApplicationDate = genSetup.GetApplicaionDate(),
