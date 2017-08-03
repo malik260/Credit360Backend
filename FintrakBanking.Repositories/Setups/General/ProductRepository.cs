@@ -453,7 +453,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             feeName = c.tbl_Fee.FeeName,
                             feeIntervalName = c.tbl_Fee.tbl_Fee_Interval.FeeIntervalName,
                             feeTargetName = c.tbl_Fee.tbl_Fee_Target.FeeTargetName,
-                           // feeTypeName = c.tbl_Fee.tbl_Fee_Type.FeeTypeName,
+                            feeTypeName = c.tbl_Fee.tbl_Fee_Type.FeeTypeName,
                             glAccountCode = c.tbl_Fee.tbl_Chart_Of_Account.AccountCode,
                             glAccountName = c.tbl_Fee.tbl_Chart_Of_Account.AccountName
 
@@ -540,7 +540,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             feeName = c.tbl_Fee.FeeName,
                             feeIntervalName = c.tbl_Fee.tbl_Fee_Interval.FeeIntervalName,
                             feeTargetName = c.tbl_Fee.tbl_Fee_Target.FeeTargetName,
-                            //feeTypeName = c.tbl_Fee.tbl_Fee_Type.FeeTypeName,
+                            feeTypeName = c.tbl_Fee.tbl_Fee_Type.FeeTypeName,
                             glAccountCode = c.tbl_Fee.tbl_Chart_Of_Account.AccountCode,
                             glAccountName = c.tbl_Fee.tbl_Chart_Of_Account.AccountName
 
