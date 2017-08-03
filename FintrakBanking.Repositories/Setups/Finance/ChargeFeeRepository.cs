@@ -136,7 +136,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 amount = x.Amount,
                 rate = x.Rate,
                 valueSource = x.ValueSource,
-                recurring = x.Recurring,
+                recurring = (bool)x.Recurring,
                 primaryTaxId = x.PrimaryTaxId,
                 secondaryTaxId = x.SecondaryTaxId,
             });
@@ -168,7 +168,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 amount = data.Amount,
                 rate = data.Rate,
                 valueSource = data.ValueSource,
-                recurring = data.Recurring,
+                recurring = (bool)data.Recurring,
                 primaryTaxId = data.PrimaryTaxId,
                 secondaryTaxId = data.SecondaryTaxId,
             };

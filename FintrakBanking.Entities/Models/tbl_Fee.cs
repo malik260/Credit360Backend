@@ -80,7 +80,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Fee_Target tbl_Fee_Target { get; set; }
 
-        //public virtual tbl_Fee_Type tbl_Fee_Type { get; set; }
+        public virtual tbl_Fee_Type tbl_Fee_Type { get; set; }
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
     }
