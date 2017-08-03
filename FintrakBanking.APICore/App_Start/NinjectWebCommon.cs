@@ -41,6 +41,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.WorkFlow;
     using FintrakBanking.Interfaces.Notification;
     using FintrakBanking.Repositories.Notification;
+    using FintrakBanking.Repositories.Finance;
 
     public static class NinjectWebCommon 
     {
@@ -146,6 +147,8 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILoanApplicationRepository>().To<LoanApplicationRepository>();
             kernel.Bind<ICanAuthorizationRepository>().To<CanAuthorizationRepository>();
             kernel.Bind<INotificationRepository>().To<NotificationRepository>();
+            kernel.Bind<ITaxRepository>().To<TaxRepository>();
+            kernel.Bind<IChargeFeeRepository>().To<ChargeFeeRepository>();
         }        
     }
 }

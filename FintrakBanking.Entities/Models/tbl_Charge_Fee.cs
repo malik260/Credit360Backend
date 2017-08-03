@@ -18,8 +18,6 @@ namespace FintrakBanking.Entities.Models
 
         public short AccountCategoryId { get; set; }
 
-        public short FeeTypeId { get; set; }
-
         public short FeeIntervalId { get; set; }
 
         public short ProductTypeId { get; set; }
@@ -36,19 +34,16 @@ namespace FintrakBanking.Entities.Models
 
         public short? CutOffDay { get; set; }
 
-        [Column(TypeName = "date")]
-        public DateTime FeeDate { get; set; }
-
-        public int OperationId { get; set; }
+        public int? OperationId { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? Amount { get; set; }
 
         public double? Rate { get; set; }
 
-        public int? ValueSource { get; set; }
+        public int ValueSource { get; set; }
 
-        public bool? Recurring { get; set; }
+        public bool Recurring { get; set; }
 
         public int? PrimaryTaxId { get; set; }
 
@@ -81,8 +76,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Fee_Interval tbl_Fee_Interval { get; set; }
 
         public virtual tbl_Fee_Target tbl_Fee_Target { get; set; }
-
-        public virtual tbl_Fee_Type tbl_Fee_Type { get; set; }
 
         public virtual tbl_Operations tbl_Operations { get; set; }
 

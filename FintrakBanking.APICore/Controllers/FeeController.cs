@@ -60,12 +60,11 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost][Route("fee")]
         public HttpResponseMessage AddFee([FromBody] FeeViewModel model)
         {
-                try
+            try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 model.userBranchId = (short)token.GetBranchId;
-                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
@@ -89,12 +88,11 @@ namespace FintrakBanking.APICore.Controllers
             if (model == null)
                 Request.CreateResponse(HttpStatusCode.OK, BadRequest());
 
-                try
+            try
             {
                     TokenDecryptionHelper token = null;
 
                     model.userBranchId = (short)token.GetBranchId;
-                    //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                     model.applicationUrl = HttpContext.Current.Request.Path;
                     model.createdBy = token.GetStaffId;
 
@@ -127,7 +125,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() }); 
             }
             catch (System.Exception ex)
             {
@@ -138,14 +136,14 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet][Route("fee/fee-type")]
         public HttpResponseMessage GetFeeType()
         {
-                try
+            try
             {
                 var data = repo.GetFeeType();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() }); 
             }
             catch (System.Exception ex)
             {
@@ -156,14 +154,14 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet][Route("fee/fee-interval")]
         public HttpResponseMessage GetFeeInterval()
         {
-                try
+            try
             {
                 var data = repo.GetFeeInterval();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
             catch (System.Exception ex)
             {
@@ -174,14 +172,14 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet][Route("fee/fee-target")]
         public HttpResponseMessage GetFeeTarget(HttpRequestMessage request)
         {
-                try
+            try
             {
                 var data = repo.GetFeeTarget();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() }); 
             }
             catch (System.Exception ex)
             {

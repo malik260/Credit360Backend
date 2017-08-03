@@ -72,7 +72,9 @@
     <Compile Include="Setups\Credit\ICollateralTypeRepository.cs" />
     <Compile Include="Setups\Finance\IAccountCategoryRepository.cs" />
     <Compile Include="Setups\Finance\IAccountTypeRepository.cs" />
+    <Compile Include="Setups\Finance\IChargeFeeRepository.cs" />
     <Compile Include="Setups\Finance\IChartOfAccountRepository.cs" />
+    <Compile Include="Setups\Finance\ITaxRepository.cs" />
     <Compile Include="Setups\General\IAccountSensitivityRepository.cs" />
     <Compile Include="Setups\General\IAuthenticationRepository.cs" />
     <Compile Include="Setups\General\IAuthorizationRepository.cs" />

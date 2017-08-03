@@ -182,7 +182,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
             var rating = new tbl_Risk_Rating
             {
                 AdvicedRate = entity.advicedRate,
-                DateTimeCreated = DateTime.UtcNow.Date,
+                DateTimeCreated = DateTime.Now.Date,
                 MaxRange = entity.maxRange,
                 MinRange = entity.minRange,
                 Rates = entity.rates,
@@ -196,7 +196,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
         public async Task<bool> DeleteRiskRating(int ratingId, RiskRatingViewModel entity)
         {
             var rating = (from a in context.tbl_Risk_Rating where a.RiskRatingId == ratingId select a).SingleOrDefault();
-            rating.DateTimeDeleted = DateTime.UtcNow.Date;
+            rating.DateTimeDeleted = DateTime.Now.Date;
             rating.DeletedBy = entity.deletedBy;
             rating.Deleted = true;
             return await context.SaveChangesAsync() != 0;
@@ -273,7 +273,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
             rating.ProductId = entity.productId;
             rating.Rates = entity.rates;
             rating.RatesDescription = entity.ratesDescription;
-            rating.DateTimeUpdated = DateTime.UtcNow.Date;
+            rating.DateTimeUpdated = DateTime.Now.Date;
             rating.LastUpdatedBy = entity.lastUpdatedBy;
             return await context.SaveChangesAsync() != 0;
         }

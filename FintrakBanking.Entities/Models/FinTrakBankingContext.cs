@@ -80,7 +80,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Fee_Amortisation_Type> tbl_Fee_Amortisation_Type { get; set; }
         public virtual DbSet<tbl_Fee_Interval> tbl_Fee_Interval { get; set; }
         public virtual DbSet<tbl_Fee_Target> tbl_Fee_Target { get; set; }
-        public virtual DbSet<tbl_Fee_Type> tbl_Fee_Type { get; set; }
+        //public virtual DbSet<tbl_Fee_Type> tbl_Fee_Type { get; set; }
         public virtual DbSet<tbl_FinanceCurrentDate> tbl_FinanceCurrentDate { get; set; }
         public virtual DbSet<tbl_Frequency_Type> tbl_Frequency_Type { get; set; }
         public virtual DbSet<tbl_KYC_Item> tbl_KYC_Item { get; set; }
@@ -778,15 +778,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Fee_Target)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<tbl_Fee_Type>()
-                .HasMany(e => e.tbl_Charge_Fee)
-                .WithRequired(e => e.tbl_Fee_Type)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Fee_Type>()
-                .HasMany(e => e.tbl_Fee)
-                .WithRequired(e => e.tbl_Fee_Type)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<tbl_Fee_Type>()
+            //    .HasMany(e => e.tbl_Fee)
+            //    .WithRequired(e => e.tbl_Fee_Type)
+            //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Frequency_Type>()
                 .Property(e => e.Description)

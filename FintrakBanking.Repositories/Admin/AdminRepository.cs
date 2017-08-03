@@ -78,7 +78,7 @@ namespace FintrakBanking.Repositories.Admin
                     {
                         GroupId = item.groupId,
                         UserId = _user.UserId,
-                        DateTimeCreated = DateTime.UtcNow,
+                        DateTimeCreated = DateTime.Now,
                         CreatedBy = user.createdBy
                     };
                     // Audit Section Contd.---------------------------
@@ -215,7 +215,7 @@ namespace FintrakBanking.Repositories.Admin
             var targetGroup = context.tbl_Profile_Group.Find(groupId);
 
             targetGroup.GroupName = groupModel.groupName;
-            targetGroup.DateTimeUpdated = DateTime.UtcNow;
+            targetGroup.DateTimeUpdated = DateTime.Now;
             targetGroup.LastUpdatedBy = groupModel.createdBy;
 
             var response = await context.SaveChangesAsync();
@@ -333,7 +333,7 @@ namespace FintrakBanking.Repositories.Admin
                     {
                         GroupId = item.groupId,
                         UserId = userId,
-                        DateTimeCreated = DateTime.UtcNow,
+                        DateTimeCreated = DateTime.Now,
                         CreatedBy = user.createdBy
                     };
 

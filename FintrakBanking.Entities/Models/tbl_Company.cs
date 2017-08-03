@@ -24,6 +24,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Chart_Of_Account = new HashSet<tbl_Chart_Of_Account>();
             tbl_Temp_Chart_Of_Account = new HashSet<tbl_Temp_Chart_Of_Account>();
             tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
+            tbl_Temp_Collateral_Customer = new HashSet<tbl_Temp_Collateral_Customer>();
             tbl_Company1 = new HashSet<tbl_Company>();
             tbl_Customer_FS_Caption_Group = new HashSet<tbl_Customer_FS_Caption_Group>();
             tbl_Customer_FS_Ratio_Caption = new HashSet<tbl_Customer_FS_Ratio_Caption>();
@@ -32,6 +33,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Product_CollateralType = new HashSet<tbl_Product_CollateralType>();
+            tbl_Temp_Product_CollateralType = new HashSet<tbl_Temp_Product_CollateralType>();
             tbl_Fee = new HashSet<tbl_Fee>();
             tbl_Product_Fee = new HashSet<tbl_Product_Fee>();
             tbl_Temp_Product_Fee = new HashSet<tbl_Temp_Product_Fee>();
@@ -40,6 +42,8 @@ namespace FintrakBanking.Entities.Models
             tbl_Staff = new HashSet<tbl_Staff>();
             tbl_Stock = new HashSet<tbl_Stock>();
             tbl_Tax = new HashSet<tbl_Tax>();
+            tbl_Temp_Product_CollateralType1 = new HashSet<tbl_Temp_Product_CollateralType>();
+            tbl_Temp_Fee = new HashSet<tbl_Temp_Fee>();
             tbl_Temp_Staff = new HashSet<tbl_Temp_Staff>();
         }
 
@@ -183,6 +187,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Collateral_Customer> tbl_Temp_Collateral_Customer { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Company> tbl_Company1 { get; set; }
 
         public virtual tbl_Company tbl_Company2 { get; set; }
@@ -211,6 +218,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Product_CollateralType> tbl_Product_CollateralType { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_CollateralType> tbl_Temp_Product_CollateralType { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Fee> tbl_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -233,6 +243,12 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Tax> tbl_Tax { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_CollateralType> tbl_Temp_Product_CollateralType1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Fee> tbl_Temp_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Staff> tbl_Temp_Staff { get; set; }

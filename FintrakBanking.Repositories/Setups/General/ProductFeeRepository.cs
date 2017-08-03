@@ -51,11 +51,11 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var dataExist = this.context.tbl_Temp_Product_Fee.FirstOrDefault(x => x.ProductId == productFee.productId && x.FeeId == productFee.feeId && x.Deleted == true); // .Find(accountId);
 
-            var tempPproductFeeEntity = dataExist;
+            var tempProductFeeEntity = dataExist;
 
             if (dataExist == null)
             {
-                tempPproductFeeEntity = new tbl_Temp_Product_Fee()
+                tempProductFeeEntity = new tbl_Temp_Product_Fee()
                 {
                     ProductId = productFee.productId,
                     FeeId = productFee.feeId,
@@ -69,15 +69,15 @@ namespace FintrakBanking.Repositories.Setups.General
                     Deleted = false
                 };
 
-                this.context.tbl_Temp_Product_Fee.Add(tempPproductFeeEntity);
+                this.context.tbl_Temp_Product_Fee.Add(tempProductFeeEntity);
                 // Audit Section ---------------------------
-                var product = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
+                var productName = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
                 var audit = new tbl_Audit
                 {
                     AuditTypeId = (short)AuditTypeEnum.ProductFeeAdded,
                     StaffId = productFee.createdBy,
                     BranchId = (short)productFee.userBranchId,
-                    Detail = $"Added tbl_Product Fee: { productFee.feeName } to product {product} with amount {productFee.rateValue} ",
+                    Detail = $"Initiated adding Fee: { productFee.feeName } for product {productName} with amount {productFee.rateValue} ",
                     IPAddress = productFee.userIPAddress,
                     Url = productFee.applicationUrl,
                     ApplicationDate = genSetup.GetApplicaionDate(),
@@ -90,16 +90,16 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             else
             {
-                tempPproductFeeEntity.RateValue = productFee.rateValue;
-                tempPproductFeeEntity.DependentAmount = productFee.dependentAmount;
+                tempProductFeeEntity.RateValue = productFee.rateValue;
+                tempProductFeeEntity.DependentAmount = productFee.dependentAmount;
 
-                tempPproductFeeEntity.Deleted = false;
+                tempProductFeeEntity.Deleted = false;
             }
 
             var status = this.SaveAll();
 
             if (status)
-                return tempPproductFeeEntity.ProductFeeId;
+                return tempProductFeeEntity.ProductFeeId;
             else
                 return -1;
         }
@@ -210,7 +210,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         feeName = data.tbl_Fee.FeeName,
                         feeIntervalName = data.tbl_Fee.tbl_Fee_Interval.FeeIntervalName,
                         feeTargetName = data.tbl_Fee.tbl_Fee_Target.FeeTargetName,
-                        feeTypeName = data.tbl_Fee.tbl_Fee_Type.FeeTypeName,
+                        feeTypeName = string.Empty,//data.tbl_Fee.tbl_Fee_Type.FeeTypeName,
                         glAccountCode = data.tbl_Fee.tbl_Chart_Of_Account.AccountCode,
                         glAccountName = data.tbl_Fee.tbl_Chart_Of_Account.AccountName,
                         companyId = data.CompanyId,
@@ -219,21 +219,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         dependentAmount = data.DependentAmount,
 
                         createdBy = data.CreatedBy,
-                        //dateTimeCreated = data.DateTimeCreated,
-
-
-                        //lastUpdatedBy = data.LastUpdatedBy.Value,
-                        //dateTimeUpdated = data.DateTimeUpdated,
-
-                        //deleted = data.Deleted.Value,
-
-                        //lastUpdatedBy =(int) data.LastUpdatedBy,
-                        //dateTimeUpdated = data.DateTimeUpdated,
-
-                        //deleted = data.Deleted ?? false,
-
-                        //deletedBy = data.DeletedBy,
-                        //dateTimeDeleted = data.DateTimeDeleted
+                        dateTimeCreated = data.DateTimeCreated,
                     });
         }
 
@@ -259,13 +245,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         createdBy = data.CreatedBy,
                         dateTimeCreated = data.DateTimeCreated,
-
-                        //lastUpdatedBy = data.LastUpdatedBy.Value,
-                        //dateTimeUpdated = data.DateTimeUpdated,
-
-                       // deleted = data.Deleted.Value,
-                       // deletedBy = data.DeletedBy,
-                       // dateTimeDeleted = data.DateTimeDeleted
                     }).FirstOrDefault();
         }
 
@@ -286,13 +265,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         createdBy = data.CreatedBy,
                         dateTimeCreated = data.DateTimeCreated,
-
-                        //lastUpdatedBy = data.LastUpdatedBy.Value,
-                        //dateTimeUpdated = data.DateTimeUpdated,
-
-                        // deleted = data.Deleted.Value,
-                        // deletedBy = data.DeletedBy,
-                        // dateTimeDeleted = data.DateTimeDeleted
                     }).FirstOrDefault();
         }
 
@@ -311,9 +283,9 @@ namespace FintrakBanking.Repositories.Setups.General
                            accountCategoryId = data.AccountCategoryId,
                            accountCategoryName = data.tbl_Account_Category.AccountCategoryName,
                            feeTypeId = data.FeeTypeId,
-                           feeTypeName = data.tbl_Fee_Type.FeeTypeName,
-                           feeTypeByAmountRequired = data.tbl_Fee_Type.ByAmountRequired,
-                           byAmountRequired = data.tbl_Fee_Type.ByAmountRequired,
+                           feeTypeName = string.Empty,//data.tbl_Fee_Type.FeeTypeName,
+                           feeTypeByAmountRequired = false,//data.tbl_Fee_Type.ByAmountRequired,
+                           byAmountRequired = false,//data.tbl_Fee_Type.ByAmountRequired,
                            feeIntervalId = data.FeeIntervalId,
                            feeIntervalName = data.tbl_Fee_Interval.FeeIntervalName,
                            productTypeId = data.ProductTypeId,
@@ -327,12 +299,6 @@ namespace FintrakBanking.Repositories.Setups.General
                            companyId = data.CompanyId,
                            feeDate = data.FeeDate,
                            createdBy = data.CreatedBy,
-                           //lastUpdatedBy = data.LastUpdatedBy,
-                           //dateTimeCreated = data.DateTimeCreated,
-                           //dateTimeUpdated = data.DateTimeUpdated,
-                           //deleted = data.Deleted,
-                           //deletedBy = data.DeletedBy,
-                           //dateTimeDeleted = data.DateTimeDeleted
                        });
 
             if (dataList.Any())

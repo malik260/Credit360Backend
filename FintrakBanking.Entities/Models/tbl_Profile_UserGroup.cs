@@ -24,6 +24,10 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeUpdated { get; set; }
 
+        public bool ApprovalStatus { get; set; }
+
+        public DateTime? DateApproved { get; set; }
+
         public virtual tbl_Profile_Group tbl_Profile_Group { get; set; }
 
         public virtual tbl_Profile_User tbl_Profile_User { get; set; }

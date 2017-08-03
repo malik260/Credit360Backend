@@ -51,7 +51,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         GroupId = grp.groupId,
                         UserId = _user.UserId,
-                        DateTimeCreated = DateTime.UtcNow,
+                        DateTimeCreated = DateTime.Now,
                         CreatedBy = _user.CreatedBy ?? 0
                     };
 
