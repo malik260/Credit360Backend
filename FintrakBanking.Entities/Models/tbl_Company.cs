@@ -21,6 +21,7 @@ namespace FintrakBanking.Entities.Models
             tbl_MIS_Info = new HashSet<tbl_MIS_Info>();
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
+            tbl_Charge_Range = new HashSet<tbl_Charge_Range>();
             tbl_Chart_Of_Account = new HashSet<tbl_Chart_Of_Account>();
             tbl_Temp_Chart_Of_Account = new HashSet<tbl_Temp_Chart_Of_Account>();
             tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
@@ -176,6 +177,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Charge_Range> tbl_Charge_Range { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Chart_Of_Account> tbl_Chart_Of_Account { get; set; }

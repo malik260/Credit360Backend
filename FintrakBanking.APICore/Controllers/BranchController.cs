@@ -19,14 +19,11 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/setups")]
     public class BranchController : ApiControllerBase
     {
-        private IGeneralSetupRepository repo;
-        private IBranchRepository branchRepo;
-        TokenDecryptionHelper token = null;
+        private IBranchRepository repo;
 
-        public BranchController(IGeneralSetupRepository _repo, IBranchRepository _branchRepo)
+        public BranchController(IBranchRepository repo)
         {
-            this.repo = _repo;
-            this.branchRepo = _branchRepo;
+            this.repo = repo;
         }
 
         #region Branch Setup
@@ -37,7 +34,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = branchRepo.GetAllBranch();
+                var data = repo.GetAllBranch();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
             catch (Exception ex)
@@ -53,7 +50,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var branch = branchRepo.GetBranch(id);
+                var branch = repo.GetBranch(id);
                 return Request.CreateResponse<BranchViewModel>(HttpStatusCode.OK, branch);
             }
             catch (System.Exception ex)
@@ -68,7 +65,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var branch = branchRepo.GetAllBranchByCompanyId(companyid);
+                var branch = repo.GetAllBranchByCompanyId(companyid);
                 return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
             }
             catch (System.Exception ex)
@@ -81,11 +78,11 @@ namespace FintrakBanking.APICore.Controllers
         [Route("branch/company")]
         public HttpResponseMessage GetBranchByCompany()
         {
-            token = new TokenDecryptionHelper();
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
 
             try
             {
-                var branch = branchRepo.GetAllBranchByCompanyId(token.GetCompanyId);
+                var branch = repo.GetAllBranchByCompanyId(token.GetCompanyId);
                 return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
             }
             catch (System.Exception ex)
@@ -100,18 +97,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("branch")]
         public HttpResponseMessage AddBranch([FromBody]AddBranchViewModel model)
         {
-
-
-
             try
             {
                 var token = new TokenDecryptionHelper();
                 model.createdBy = token.GetStaffId;
                 model.userBranchId = (short)token.GetBranchId;
-                // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.companyId = token.GetCompanyId;
-                var result = branchRepo.AddBranch(model).IsCompleted;
+                var result = repo.AddBranch(model).IsCompleted;
                 if (result)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -134,13 +127,13 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-               var token = new TokenDecryptionHelper();
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 model.createdBy = token.GetStaffId;
                 model.userBranchId = (short)token.GetBranchId;
                // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.companyId = token.GetCompanyId;
-                var result = branchRepo.UpdateBranch(model, id).IsCompleted;
+                var result = repo.UpdateBranch(model, id).IsCompleted;
                 if (result)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -160,17 +153,17 @@ namespace FintrakBanking.APICore.Controllers
         [Route("branch/{id}")]
         public HttpResponseMessage DeleteBranch([FromBody] short id)
         {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
                 UserInfo user = new UserInfo()
                 {
-                    BranchId = token.GetBranchId,
+                BranchId = token.GetBranchId,
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
-                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
                 };
-                var branch = branchRepo.DeleteBranch(id, user).IsCompleted;
+                var branch = repo.DeleteBranch(id, user).IsCompleted;
                 return Request.CreateResponse(HttpStatusCode.OK, Ok(branch));
             }
             catch (System.Exception ex)

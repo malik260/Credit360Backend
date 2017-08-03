@@ -96,6 +96,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             CurrencyId = c.CurrencyId,
                             DateTimeCreated = _genSetup.GetApplicaionDate(),
                             DateTimeUpdated = DateTime.Now,
+
                         };
                         context.tbl_Chart_Of_Account_Currency.Add(curr);
                     }

@@ -1,20 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels;
-using FintrakBanking.Repositories;
-using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.ViewModels.Credit;
+using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web.Http;
-using FintrakBanking.ViewModels.Business;
+using System.Threading.Tasks;
 using System.Web;
-using FintrakBanking.APICore.core;
+using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {

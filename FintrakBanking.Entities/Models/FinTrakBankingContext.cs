@@ -375,6 +375,11 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.Amount)
                 .HasPrecision(19, 4);
 
+            modelBuilder.Entity<tbl_Charge_Fee>()
+                .HasMany(e => e.tbl_Charge_Range)
+                .WithRequired(e => e.tbl_Charge_Fee)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<tbl_Checklist_Definition>()
                 .HasMany(e => e.tbl_Checklist_Detail)
                 .WithRequired(e => e.tbl_Checklist_Definition)
@@ -451,6 +456,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Company>()
                 .HasMany(e => e.tbl_Temp_Product)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Charge_Range)
                 .WithRequired(e => e.tbl_Company)
                 .WillCascadeOnDelete(false);
 
@@ -1841,6 +1851,18 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Temp_Chart_Of_Account)
                 .WithRequired(e => e.tbl_Account_Type)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Charge_Range>()
+                .Property(e => e.Minimum)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Charge_Range>()
+                .Property(e => e.Maximum)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Charge_Range>()
+                .Property(e => e.Amount)
+                .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Chart_Of_Account>()
                 .HasMany(e => e.tbl_Charge_Fee)

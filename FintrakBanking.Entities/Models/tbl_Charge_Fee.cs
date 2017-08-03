@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("core.tbl_Charge_Fee")]
     public partial class tbl_Charge_Fee
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Charge_Fee()
+        {
+            tbl_Charge_Range = new HashSet<tbl_Charge_Range>();
+        }
+
         [Key]
         public int ChargeFeeId { get; set; }
 
@@ -84,5 +90,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Tax tbl_Tax { get; set; }
 
         public virtual tbl_Tax tbl_Tax1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Charge_Range> tbl_Charge_Range { get; set; }
     }
 }

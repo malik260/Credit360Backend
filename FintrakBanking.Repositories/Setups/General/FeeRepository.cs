@@ -98,9 +98,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         accountCategoryId = data.AccountCategoryId,
                         accountCategoryName = data.tbl_Account_Category.AccountCategoryName,
                         feeTypeId = data.FeeTypeId,
-                        feeTypeName = data.tbl_Fee_Type.FeeTypeName,
-                        feeTypeByAmountRequired = data.tbl_Fee_Type.ByAmountRequired,
-                        byAmountRequired = data.tbl_Fee_Type.ByAmountRequired,
+                        feeTypeName = string.Empty,//data.tbl_Fee_Type.FeeTypeName,
+                        feeTypeByAmountRequired = false,//data.tbl_Fee_Type.ByAmountRequired,
+                        byAmountRequired = false,//data.tbl_Fee_Type.ByAmountRequired,
                         feeIntervalId = data.FeeIntervalId,
                         isIntegralFee = data.IsIntegralFee,
                         feeIntervalName = data.tbl_Fee_Interval.FeeIntervalName,
@@ -216,13 +216,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<LookupViewModel> GetFeeType()
         {
-            return (from data in context.tbl_Fee_Type
-                        //orderby data.FinType, data.Position
-                    select new LookupViewModel()
-                    {
-                        lookupId = data.FeeTypeId,
-                        lookupName = data.FeeTypeName
-                    });
+            //return (from data in context.tbl_Fee_Type
+            //            //orderby data.FinType, data.Position
+            //        select new LookupViewModel()
+            //        {
+            //            lookupId = data.FeeTypeId,
+            //            lookupName = data.FeeTypeName
+            //        });
+            return null;
         }
 
         public IEnumerable<LookupViewModel> GetFeeInterval()
