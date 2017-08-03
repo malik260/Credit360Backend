@@ -15,7 +15,6 @@ namespace FintrakBanking.APICore.Controllers
     public class CountryController : ApiControllerBase
     {
         private ICountryRepository repo;
-        TokenDecryptionHelper token = null;
         public CountryController(ICountryRepository _repo)
         {
             this.repo = _repo;
@@ -117,7 +116,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var rank = repo.GetCountry();
                 if (rank == null)
                 {

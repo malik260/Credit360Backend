@@ -129,7 +129,6 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-
         [HttpPost][Route("loan/application")]
         public async Task<HttpResponseMessage> LoanBooking([FromBody] LoanApplicationViewModel entity)
         {
@@ -138,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
                 TokenDecryptionHelper token = null;
 
                 entity.userBranchId = (short)token.GetBranchId;
-                //entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;

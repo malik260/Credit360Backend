@@ -24,18 +24,21 @@ namespace FintrakBanking.Repositories.Setups.General
         private IAuditTrailRepository auditTrail;
         private IWorkFlowRepository workFlow;
         private IApprovalLevelStaffRepository level;
+        private IProductFeeRepository proFee;
 
         public ProductRepository(FinTrakBankingContext _context,
                                 IGeneralSetupRepository _genSetup,
                                 IAuditTrailRepository _auditTrail,
                                 IWorkFlowRepository _workFlow,
-                                IApprovalLevelStaffRepository _level)
+                                IApprovalLevelStaffRepository _level,
+                                IProductFeeRepository _proFee)
         {
             this.context = _context;
             this.genSetup = _genSetup;
             this.auditTrail = _auditTrail;
             this.workFlow = _workFlow;
             level = _level;
+            proFee = _proFee;
 
         }
 
@@ -267,8 +270,6 @@ namespace FintrakBanking.Repositories.Setups.General
             //end of Audit section ------------------------------- 
             return this.SaveAll();
         }
-
-
         #region tbl_Product Region
 
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
@@ -281,7 +282,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        forDisplay = ap.ForDisplay,
                    };
         }
-        public IEnumerable<ProductViewModel> AllProduct()
+        private IQueryable<ProductViewModel> AllProduct()
         {
             return (from data in context.tbl_Product
                     select new ProductViewModel()
@@ -434,8 +435,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         approved = c.Approved,
                         approvalStatusId = c.ApprovalStatusId,
                         operationId = atrail.OperationId,
-                        comment = atrail.Comment,
-                        currencies = context.tbl_Temp_Product_Currency.Where(curr => curr.ProductId == c.ProductId && curr.Deleted != false).Select(c => new ProductCurrencyViewModel()
+                        currencies = context.tbl_Temp_Product_Currency.Where(curr => curr.ProductId == c.ProductId && curr.Deleted == false).Select(c => new ProductCurrencyViewModel()
                         {
                             productId = c.ProductId,
                             productCurrencyId = c.ProductCurrencyId,
@@ -551,6 +551,8 @@ namespace FintrakBanking.Repositories.Setups.General
             var productModel = context.tbl_Temp_Product.Find(productId);
             var productToUpdate = context.tbl_Product.Where(x => x.ProductCode == productModel.ProductCode);
 
+            var currModel = context.tbl_Temp_Product_Currency.Where(c => c.ProductId == productModel.ProductId && c.Deleted == false);
+            var currListToUpdate = context.tbl_Product_Currency.Where(x => x.ProductId == productModel.ProductId && x.Deleted == false);
 
             if (productToUpdate.Any()) //Update existing product with tempProduct record
             {
@@ -579,6 +581,16 @@ namespace FintrakBanking.Repositories.Setups.General
                 existingProduct.AllowTenor = productModel.AllowTenor;
                 existingProduct.AllowOverdrawn = productModel.AllowOverdrawn;
 
+                foreach (var c in currListToUpdate)
+                {
+                    var curr = new tbl_Product_Currency()
+                    {
+                        //ProductId = c.ProductId,
+                        CurrencyId = c.CurrencyId,
+                        DateTimeCreated = genSetup.GetApplicaionDate(),
+                    };
+                    context.tbl_Product_Currency.Add(curr);
+                }
             }
             else //Insert a new product record into the real product table
             {
@@ -621,6 +633,17 @@ namespace FintrakBanking.Repositories.Setups.General
                     DateTimeCreated = DateTime.Now,
                 };
                 context.tbl_Product.Add(product);
+
+                foreach (var c in currModel)
+                {
+                    var curr = new tbl_Product_Currency()
+                    {
+                       // ProductId = c.ProductId,
+                        CurrencyId = c.CurrencyId,
+                        DateTimeCreated = genSetup.GetApplicaionDate(),
+                    };
+                    context.tbl_Product_Currency.Add(curr);
+                }
             }
 
             productModel.IsCurrent = false;
@@ -644,6 +667,9 @@ namespace FintrakBanking.Repositories.Setups.General
             this.auditTrail.AddAuditTrail(audit);
             // Audit Section ---------------------------
 
+            //Moving temp product fee to product fee table
+            proFee.ApproveProductFee(productId, user);
+
             return this.SaveAll();
         }
 
@@ -652,7 +678,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (productModel.currencies.Count < 1)
                 throw new Exception("Product Currency must be specified");
 
-            bool output = false, result = false;
+            bool output = false;
             var existStingTempProduct = context.tbl_Temp_Product.Where(x => x.ProductCode.ToLower() == productModel.productCode.ToLower()
                                                                   && x.IsCurrent == true && x.CompanyId == productModel.companyId
                                                                   && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
@@ -661,6 +687,23 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 throw new Exception("Product Information already exist and is undergoing approval");
             }
+
+            List<tbl_Temp_Product_Currency> currencies = new List<tbl_Temp_Product_Currency>();
+
+            //Storing the product currencies
+            foreach (var item in productModel.currencies)
+            {
+                var productCurrency = new tbl_Temp_Product_Currency()
+                {
+                    //ProductId = (short)item.productId,
+                    CurrencyId = item.currencyId,
+                    CreatedBy = item.createdBy,
+                    DateTimeCreated = genSetup.GetApplicaionDate()
+                };
+                currencies.Add(productCurrency);
+            }
+
+            //End of storing the product currencies
             var product = new tbl_Temp_Product()
             {
                 CompanyId = productModel.companyId,
@@ -699,15 +742,16 @@ namespace FintrakBanking.Repositories.Setups.General
                 CreatedBy = productModel.createdBy,
                 DateTimeCreated = DateTime.Now,
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-                IsCurrent = true
+                IsCurrent = true,
+
+                tbl_Temp_Product_Currency = currencies
 
             };
-            List<tbl_Temp_Product_Currency> currencies = new List<tbl_Temp_Product_Currency>();
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
             {
-                AuditTypeId = (short)AuditTypeEnum.CreateStaffInitiated,
+                AuditTypeId = (short)AuditTypeEnum.ProductAdded,
                 StaffId = productModel.createdBy,
                 BranchId = (short)productModel.userBranchId,
                 Detail = $"Initiated Product Creation for '{productModel.productName}' with code'{productModel.productCode}'",
@@ -723,18 +767,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     try
                     {
-                        //Storing the product currencies
-                        foreach (var item in productModel.currencies)
-                        {
-                            var productCurrency = new tbl_Temp_Product_Currency()
-                            {
-                                CurrencyId = item.currencyId,
-                                CreatedBy = item.createdBy,
-                                DateTimeCreated = genSetup.GetApplicaionDate()
-                            };
-                            currencies.Add(productCurrency);
-                        }
-                        //End of storing the product currencies
                         auditTrail.AddAuditTrail(audit);
                         this.context.tbl_Temp_Product.Add(product);
                         output = this.SaveAll();
@@ -749,12 +781,10 @@ namespace FintrakBanking.Repositories.Setups.General
                             BranchId = productModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
-                        result = response.Item1;
-                        //return output;
+                        trans.Commit();
                     }
                     catch (Exception ex)
                     {
-                        //throw new Exception(ex.Message);
                         trans.Rollback();
                         throw new Exception(ex.Message);
                     }
@@ -764,9 +794,8 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 throw new Exception("Approval route have not been defined for this operation");
             }
-            //return output;
 
-            if (result)
+            if (output)
             {
                 return new ProductViewModel { productId = product.ProductId, productCode = product.ProductCode };
             }
@@ -857,13 +886,28 @@ namespace FintrakBanking.Repositories.Setups.General
         //    else
         //        return null;
         //}
-        public bool UpdateProduct(int productId, ProductViewModel product)
+        public bool UpdateProduct(int productId, ProductViewModel productModel)
         {
-            var existStingTempProduct = context.tbl_Temp_Product.Where(x => x.ProductCode.ToLower() == product.productCode.ToLower() && x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existStingTempProduct = context.tbl_Temp_Product.Where(x => x.ProductCode.ToLower() == productModel.productCode.ToLower() && x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existingTempCurrencies = context.tbl_Temp_Product_Currency.Where(x => x.ProductId == productId).ToList();
 
-            if (existStingTempProduct.Any())
+            if (existingTempCurrencies.Count > 0)
+            {
+                foreach (var curr in existingTempCurrencies)
+                {
+                    context.tbl_Temp_Product_Currency.Remove(curr);
+                }
+            }
+
+            if (existStingTempProduct.Any() && existingTempCurrencies.Any())
             {
                 foreach (var item in existStingTempProduct)
+                {
+                    item.IsCurrent = false;
+                    item.DateTimeUpdated = DateTime.Now;
+                }
+
+                foreach (var item in existingTempCurrencies)
                 {
                     item.IsCurrent = false;
                     item.DateTimeUpdated = DateTime.Now;
@@ -875,6 +919,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var unApprovedProductEdit = context.tbl_Temp_Product.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
 
             tbl_Temp_Product tempProduct;
+            List<tbl_Temp_Product_Currency> tempCurrencies = new List<tbl_Temp_Product_Currency>();
 
             if (unApprovedProductEdit.Any())
             {
@@ -882,30 +927,40 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             else
             {
+                //Storing the updated chart of account currencies
+                foreach (var item in productModel.currencies)
+                {
+                    var productCurrency = new tbl_Temp_Product_Currency()
+                    {
+                        //ProductId = item.productId,
+                        CurrencyId = item.currencyId,
+                        CreatedBy = productModel.createdBy,
+                        DateTimeCreated = genSetup.GetApplicaionDate()
+                    };
+                    tempCurrencies.Add(productCurrency);
+                }
+
+                //End of storing the updated chart of account currencies
                 tempProduct = new tbl_Temp_Product()
                 {
-                    ProductName = product.productName,
+                    ProductName = productModel.productName,
                     ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
                     IsCurrent = true
                 };
-
                 context.tbl_Temp_Product.Add(tempProduct);
-
             }
-
 
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.StaffUpdated,
-                StaffId = product.createdBy,
-                BranchId = (short)product.userBranchId,
-                Detail = $"Updated Product '{product.productName}' with code'{product.productCode}'",
-                IPAddress = product.userIPAddress,
-                Url = product.applicationUrl,
+                StaffId = productModel.createdBy,
+                BranchId = (short)productModel.userBranchId,
+                Detail = $"Updated Product '{productModel.productName}' with code'{productModel.productCode}'",
+                IPAddress = productModel.userIPAddress,
+                Url = productModel.applicationUrl,
                 ApplicationDate = genSetup.GetApplicaionDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = productId
-
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -915,12 +970,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var entity = new ApprovalViewModel
             {
-                staffId = product.createdBy,
-                companyId = product.companyId,
+                staffId = productModel.createdBy,
+                companyId = productModel.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempProduct.ProductId,
                 operationId = (int)Operations.ProductCreation,
-                BranchId = product.userBranchId
+                BranchId = productModel.userBranchId
             };
             var response = workFlow.LogForApproval(entity);
 

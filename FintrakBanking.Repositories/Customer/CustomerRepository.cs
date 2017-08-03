@@ -46,7 +46,7 @@ namespace FintrakBanking.Repositories.Customer
                 CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
                 CustomerTypeId = entity.customerTypeId,
                 DateOfBirth = entity.dateOfBirth,
-                DateTimeCreated = DateTime.UtcNow,
+                DateTimeCreated = DateTime.Now,
                 EmailAddress = entity.emailAddress,
                 FirstChildName = entity.firstChildName,
                 FirstName = entity.firstName,
@@ -305,7 +305,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             var customer = context.tbl_Customer.Find(customerId);
 
-            customer.DateTimeDeleted = DateTime.UtcNow;
+            customer.DateTimeDeleted = DateTime.Now;
             customer.Deleted = true;
             customer.DeletedBy = user.staffId;
 
@@ -508,7 +508,7 @@ namespace FintrakBanking.Repositories.Customer
             customer.Spouse = entity.spouse;
             customer.SubSectorId = entity.subSectorId;
             customer.TaxNumber = entity.taxNumber;
-            customer.DateTimeUpdated = DateTime.UtcNow;
+            customer.DateTimeUpdated = DateTime.Now;
             customer.LastUpdatedBy = entity.deletedBy;
 
 

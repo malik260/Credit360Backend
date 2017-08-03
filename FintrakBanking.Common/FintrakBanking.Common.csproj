@@ -52,10 +52,13 @@
     <Compile Include="Enum\ApprovalState.cs" />
     <Compile Include="Enum\ApprovalStatusEnum.cs" />
     <Compile Include="Enum\CollateralTypeEnum.cs" />
+    <Compile Include="Enum\DayCountConventionEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />
+    <Compile Include="Enum\LoanScheduleTypeEnum.cs" />
     <Compile Include="Enum\LoanStatusEnum.cs" />
     <Compile Include="Enum\LoanTypeEnum.cs" />
     <Compile Include="Enum\Operations.cs" />
+    <Compile Include="Enum\FrequencyTypeEnum.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />
     <Compile Include="Extensions\DataExtensions.cs" />
     <Compile Include="Extensions\MefExtensions.cs" />

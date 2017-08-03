@@ -34,28 +34,28 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost] [Route("custom-field")]
         public HttpResponseMessage AddCustomField([FromBody] AddCustomFieldViewModel model)
         {
-            
-               try
-               {
-                   token = new TokenDecryptionHelper();
-                   model.userBranchId = (short)token.GetBranchId;
-                   model.companyId = token.GetCompanyId;
-                   model.createdBy = token.GetStaffId;
-                   // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                   model.applicationUrl = HttpContext.Current.Request.Path;
-                   var data = repo.AddCustomField(model).IsCompleted;
-                   if (data)
-                   {
-                    return   Request.CreateResponse(HttpStatusCode.OK,  new { success = true, result = model, message = "The record has been created successfully" });
-                   }
 
-                  return   Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-               }
-               catch (Exception ex)
-               {
-                   this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+            try
+            {
+                token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                var data = repo.AddCustomField(model).IsCompleted;
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = model, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
-               }
+            }
                
         }
 
@@ -72,8 +72,8 @@ namespace FintrakBanking.APICore.Controllers
                   model.companyId = token.GetCompanyId;
                   model.lastUpdatedBy = token.GetStaffId;
                   model.applicationUrl = HttpContext.Current.Request.Path;
-                   // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                   var data = repo.UpdateCustomField(model, id).IsCompleted;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                var data = repo.UpdateCustomField(model, id).IsCompleted;
 
                   if (data)
                   {
@@ -105,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
                         entity.userBranchId = (short)token.GetBranchId;
                         entity.companyId = token.GetCompanyId;
                         entity.createdBy = token.GetStaffId;
-                        ///entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                        entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                         entity.applicationUrl = HttpContext.Current.Request.Path;
                     }
                     var data = repo.AddCustomFields(listEntity).IsCompleted;
@@ -137,9 +137,9 @@ namespace FintrakBanking.APICore.Controllers
                         BranchId = token.GetBranchId,
                         companyId = token.GetCompanyId,
                         staffId = token.GetStaffId,
-                        applicationUrl = HttpContext.Current.Request.Path
-                        // userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
-                    };
+                        applicationUrl = HttpContext.Current.Request.Path,
+                        userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
 
                     var data = repo.DeleteCustomFields(customFields, user).IsCompleted;
                     if (data)
@@ -170,7 +170,7 @@ namespace FintrakBanking.APICore.Controllers
                         entity.userBranchId = (short)token.GetBranchId;
                         entity.companyId = token.GetCompanyId;
                         entity.lastUpdatedBy = token.GetStaffId;
-                       // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                      entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                         entity.applicationUrl = HttpContext.Current.Request.Path;
                     }
                     var data =   repo.UpdateCustomFields(listEntity).IsCompleted;
@@ -192,8 +192,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet] [Route("custom-field/hostPage/{id}")]
         public HttpResponseMessage GetCustomFieldsByHostPageId(int id)
-        {
-            
+        {            
                 try
                 {
                     token = new TokenDecryptionHelper();
@@ -230,7 +229,7 @@ namespace FintrakBanking.APICore.Controllers
                         entity.userBranchId = (short)token.GetBranchId;
                         entity.companyId = token.GetCompanyId;
                         entity.createdBy = token.GetStaffId;
-                        /// entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                        entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                         entity.applicationUrl = HttpContext.Current.Request.Path;
                     }
                     var data = repo.AddCustomFieldsData(listEntity).IsCompleted;
@@ -264,8 +263,8 @@ namespace FintrakBanking.APICore.Controllers
                         companyId = token.GetCompanyId,
                         staffId = token.GetStaffId,
                         applicationUrl = HttpContext.Current.Request.Path ,
-                      //  userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
-                    };
+                         userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
 
                     var data =   repo.DeleteCustomFieldsData(listEntity, user).IsCompleted;
                     if (data)
@@ -320,7 +319,7 @@ namespace FintrakBanking.APICore.Controllers
                         entity.userBranchId = (short)token.GetBranchId;
                         entity.companyId = token.GetCompanyId;
                         entity.lastUpdatedBy = token.GetStaffId;
-                       // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                       entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                         entity.applicationUrl = HttpContext.Current.Request.Path;
                     }
                     var data =  repo.UpdateCustomFieldsData(listEntity).IsCompleted;

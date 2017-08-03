@@ -9,6 +9,13 @@ namespace FintrakBanking.Entities.Models
     [Table("temp.tbl_Temp_Product")]
     public partial class tbl_Temp_Product
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Temp_Product()
+        {
+            tbl_Temp_Product_CollateralType = new HashSet<tbl_Temp_Product_CollateralType>();
+            tbl_Temp_Product_Currency = new HashSet<tbl_Temp_Product_Currency>();
+        }
+
         [Key]
         public short ProductId { get; set; }
 
@@ -81,6 +88,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool? Approved { get; set; }
 
+        public bool IsCurrent { get; set; }
+
+        public short ApprovalStatusId { get; set; }
+
         public int? CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
@@ -95,9 +106,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public bool IsCurrent { get; set; }
-
-        public short ApprovalStatusId { get; set; }
+        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
 
@@ -126,6 +135,12 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account5 { get; set; }
 
         public virtual tbl_Deal_Classification tbl_Deal_Classification { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_CollateralType> tbl_Temp_Product_CollateralType { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_Currency> tbl_Temp_Product_Currency { get; set; }
 
         public virtual tbl_Deal_Type tbl_Deal_Type { get; set; }
     }

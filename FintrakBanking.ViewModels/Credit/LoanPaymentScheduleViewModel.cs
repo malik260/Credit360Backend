@@ -34,7 +34,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double amortisedPeriodInterestAmount { get; set; }
         public double amortisedPeriodPrincipalAmount { get; set; }
         public double amortisedEndPrincipalAmount { get; set; }
-        public float internalRateOfReturn { get; set; }
+        public double internalRateOfReturn { get; set; }
     }
 
     //Sequence int, RefNo varchar(50), [Date] datetime, PaymentDate datetime, OpeningBalance money, AmountPrincInit money, DailyPayment money, 

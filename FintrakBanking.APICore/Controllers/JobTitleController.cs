@@ -12,7 +12,6 @@ namespace FintrakBanking.APICore.Controllers
     public class JobTitleController : ApiControllerBase
     {
         private IJobTitleRepository repo;
-        TokenDecryptionHelper token = null;
         public JobTitleController(IJobTitleRepository _repo)
         {
             this.repo = _repo;

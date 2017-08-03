@@ -39,7 +39,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         //        CollateralCategoryName = entity.collateralCategoryName,
         //        CompanyId = entity.companyId,
         //        CreatedBy = (int)entity.createdBy,
-        //        DateTimeCreated = DateTime.UtcNow,
+        //        DateTimeCreated = DateTime.Now,
         //        IsProduct = entity.isProduct,
         //        ProductGroupId = entity.productGroupId
         //    };
@@ -71,7 +71,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         //    var category = context.TblCollateralCategory.SingleOrDefault(c => c.CollateralCategoryId == categoryId);
 
         //    category.CompanyId = entity.companyId;
-        //    category.DateTimeCreated = DateTime.UtcNow;
+        //    category.DateTimeCreated = DateTime.Now;
         //    category.IsProduct = entity.isProduct;
         //    category.DateTimeUpdated = entity.dateTimeUpdated;
         //    category.LastUpdatedBy = entity.lastUpdatedBy;
@@ -103,7 +103,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         //{
         //    var category = context.TblCollateralCategory.SingleOrDefault(c => c.CollateralCategoryId == categoryId);
 
-        //    category.DateTimeCreated = DateTime.UtcNow;
+        //    category.DateTimeCreated = DateTime.Now;
         //    category.DeletedBy = entity.deletedBy;
         //    category.Deleted = true;
 
@@ -136,7 +136,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         //                        collateralCategoryName = a.CollateralCategoryName,
         //                        companyId = (short)a.CompanyId,
         //                        createdBy = a.CreatedBy,
-        //                        dateTimeCreated = DateTime.UtcNow,
+        //                        dateTimeCreated = DateTime.Now,
         //                        isProduct = a.IsProduct,
         //                        productGroupId = (short)a.ProductGroupId
         //                    }).ToList();
@@ -218,7 +218,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                                 //lastUpdatedBy = a.LastUpdatedBy.Value,
                                 companyId = (short)a.CompanyId,
                                 createdBy = a.CreatedBy,
-                                dateTimeCreated = DateTime.UtcNow
+                                dateTimeCreated = DateTime.Now
                             }).SingleOrDefault();
             return category;
         }
@@ -251,7 +251,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             var type = context.tbl_Collateral_Type.SingleOrDefault(c => c.CollateralTypeId == typeId);
 
             type.CompanyId = entity.companyId;
-            type.DateTimeCreated = DateTime.UtcNow;
+            type.DateTimeCreated = DateTime.Now;
             type.DateTimeUpdated = entity.dateTimeUpdated;
             type.LastUpdatedBy = entity.lastUpdatedBy;
             type.CollateralTypeName = entity.collateralTypeName;
@@ -281,7 +281,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         {
             var type = context.tbl_Collateral_Type.SingleOrDefault(c => c.CollateralTypeId == typeId);
 
-            type.DateTimeCreated = DateTime.UtcNow;
+            type.DateTimeCreated = DateTime.Now;
             type.DeletedBy = entity.deletedBy;
             type.Deleted = true;
 
@@ -311,7 +311,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 CollateralTypeName = entity.collateralTypeName,
                 CompanyId = entity.companyId,
                 CreatedBy = (int)entity.createdBy,
-                DateTimeCreated = DateTime.UtcNow,
+                DateTimeCreated = DateTime.Now,
                // CollateralCategoryId = entity.collateralCategoryId,
                 Details = entity.details,
                // HairCut = entity.hairCut,
@@ -367,7 +367,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         //        Detail = $"Added collateral requirement: { entity.labelName  }  to Collateral ",
         //        IPAddress = entity.userIPAddress,
         //        ApplicationDate = genSetup.GetApplicaionDate().Date,
-        //        SystemDateTime = DateTime.UtcNow.Date,
+        //        SystemDateTime = DateTime.Now.Date,
         //        Url = entity.applicationUrl
         //    };
 
@@ -399,7 +399,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         //        Detail = $"Added collateral requirement: { entity.labelName  }  to Collateral ",
         //        IPAddress = entity.userIPAddress,
         //        ApplicationDate = genSetup.GetApplicaionDate().Date,
-        //        SystemDateTime = DateTime.UtcNow.Date,
+        //        SystemDateTime = DateTime.Now.Date,
         //        Url = entity.applicationUrl
         //    };
 
@@ -426,7 +426,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         //        Detail = $"Added collateral requirement: { fields.LabelName  }  to Collateral ",
         //        IPAddress = user.userIPAddress,
         //        ApplicationDate = genSetup.GetApplicaionDate().Date,
-        //        SystemDateTime = DateTime.UtcNow.Date,
+        //        SystemDateTime = DateTime.Now.Date,
         //        Url =  user.applicationUrl
         //    };
 

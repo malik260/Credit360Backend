@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public tbl_Collateral_Valuebase_Type()
         {
             tbl_Collateral_Plant_And_Equipment = new HashSet<tbl_Collateral_Plant_And_Equipment>();
+            tbl_Temp_Collateral_Plant_And_Equipment = new HashSet<tbl_Temp_Collateral_Plant_And_Equipment>();
         }
 
         [Key]
@@ -45,5 +46,8 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Collateral_Plant_And_Equipment> tbl_Collateral_Plant_And_Equipment { get; set; }
 
         public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Collateral_Plant_And_Equipment> tbl_Temp_Collateral_Plant_And_Equipment { get; set; }
     }
 }

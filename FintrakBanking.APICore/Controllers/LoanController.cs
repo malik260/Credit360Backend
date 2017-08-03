@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 entity.userBranchId = (short)token.GetBranchId;
-                // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
@@ -279,7 +279,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.Where(x => x.paymentNumber > 0).ToList() });
             }
             catch (Exception e)
             {
