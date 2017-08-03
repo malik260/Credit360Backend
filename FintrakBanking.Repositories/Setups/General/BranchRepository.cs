@@ -29,10 +29,10 @@ namespace FintrakBanking.Repositories.Setups.General
             this.genSetup = _genSetup;
         }
 
-        private bool SaveAll()
-        {
-            return this.context.SaveChanges() > 0;
-        }
+        //private bool SaveAll()
+        //{
+        //    return this.context.SaveChanges() > 0;
+        //}
 
         #region tbl_Branch Setup
 
@@ -52,10 +52,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     addressLine1 = branch.AddressLine1,
                     addressLine2 = branch.AddressLine2,
                     comment = branch.Comment,
-                    //lastUpdatedBy = branch.LastUpdatedBy,
-                    //dateTimeCreated = branch.DateTimeCreated,
-                    //dateTimeUpdated = branch.DateTimeUpdated,
-                    //deleted = branch.Deleted,
                 };
             }
 
@@ -77,7 +73,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 addressLine1 = x.AddressLine1,
                 addressLine2 = x.AddressLine2,
                 comment = x.Comment,
-                //dateTimeUpdated = x.DateTimeUpdated,
                 deleted = x.Deleted,
             }).ToList();
 
@@ -110,7 +105,6 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var branch = new tbl_Branch()
             {
-                //BranchId = model.branchId,
                 StateId = model.stateId,
                 CityId = model.cityId,
                 CompanyId = model.companyId,
@@ -120,9 +114,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 AddressLine2 = model.addressLine2,
                 Comment = model.comment,
                 CreatedBy = model.createdBy,
-                //LastUpdatedBy = model.lastUpdatedBy,
-                //DateTimeCreated = model.dateTimeCreated,
-                //DateTimeUpdated = model.dateTimeUpdated,
                 Deleted = model.deleted,
             };
 

@@ -49,9 +49,10 @@ namespace FintrakBanking.Common.Enum
         ApprovalLevelStaffAdded = 99, ApprovalLevelStaffUpdated = 100, ApprovalLevelStaffDeleted = 101,
         ApprovalStatusUpdated = 102,
         ProductPriceIndexAdded = 103, ProductPriceIndexUpdated = 104, ProductPriceIndexDeleted = 105,
-        CreateStaffInitiated = 107, AccountApproved = 108, ProductApproved = 109
+        CreateStaffInitiated = 107, AccountApproved = 108, ProductApproved = 109,
 
-
+        TaxAdded = 110, TaxUpdated = 111, TaxDeleted = 112,
+        ChargeFeeAdded = 110, ChargeFeeUpdated = 111, ChargeFeeDeleted = 112,
     };
 
 

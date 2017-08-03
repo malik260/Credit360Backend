@@ -21,13 +21,5 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public decimal maximumAmount { get; set; }
         public int chargeId { get; set; }
     }
-
-    public class TaxViewModel : GenaralEntity
-    {
-        public int rangeId { get; set; }
-        public double rate { get; set; }
-        public decimal minimumAmount { get; set; }
-        public decimal maximumAmount { get; set; }
-        public int chargeId { get; set; }
-    }
+    
 }
