@@ -35,9 +35,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
         #region tbl_Product Fee
 
-  
-
-
         public int AddFee(FeeViewModel fee)
         {
             var data = new tbl_Fee()
@@ -201,7 +198,6 @@ namespace FintrakBanking.Repositories.Setups.General
             //end of Audit section -------------------------------
             return this.SaveAll();
         }
-
         #endregion tbl_Product Fee
 
         #region Fee Related Lookups

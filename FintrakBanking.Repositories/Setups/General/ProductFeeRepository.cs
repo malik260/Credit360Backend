@@ -46,7 +46,6 @@ namespace FintrakBanking.Repositories.Setups.General
             return 1;
         }
 
-
         public int AddTempProductFee(ProductFeeViewModel productFee)
         {
             var dataExist = this.context.tbl_Temp_Product_Fee.FirstOrDefault(x => x.ProductId == productFee.productId && x.FeeId == productFee.feeId && x.Deleted == true); // .Find(accountId);
@@ -127,8 +126,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Deleted = false
                 };
                 context.tbl_Product_Fee.Add(product);
-                p.IsCurrent = false;
-                p.Deleted = true;
+                context.tbl_Temp_Product_Fee.Remove(p);
             }
             
             // Audit Section ---------------------------
@@ -137,7 +135,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 AuditTypeId = (short)AuditTypeEnum.ProductFeeAdded,
                 StaffId = user.staffId,
                 BranchId = (short)user.BranchId,
-                Detail = $"Approved Fee for product '{productToUpdate.ProductName}' with product code'{productToUpdate.ProductCode}'",
+                Detail = $"Added Fee for product '{productToUpdate.ProductName}' with product code'{productToUpdate.ProductCode}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
                 ApplicationDate = genSetup.GetApplicaionDate(),
@@ -248,7 +246,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     }).FirstOrDefault();
         }
 
-        public ProductFeeViewModel GetTempProductFee(int productFeeId)
+        public List<ProductFeeViewModel> GetTempProductFee(int productFeeId)
         {
             return (from data in context.tbl_Temp_Product_Fee
                     where data.ProductFeeId == productFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
@@ -265,7 +263,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         createdBy = data.CreatedBy,
                         dateTimeCreated = data.DateTimeCreated,
-                    }).FirstOrDefault();
+                    }).ToList();
         }
 
         public IEnumerable<FeeViewModel> GetUnmappedFeeToProduct(int productId)
@@ -364,13 +362,13 @@ namespace FintrakBanking.Repositories.Setups.General
             productFeeEntity.DateTimeUpdated = genSetup.GetApplicaionDate();
 
             // Audit Section ---------------------------
-            var product = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
+            var productName = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.ProductFeeUpdated,
                 StaffId = productFee.createdBy,
                 BranchId = (short)productFee.userBranchId,
-                Detail = $"Updated tbl_Product Fee: { productFee.feeName } to product {product} with amount {productFee.rateValue} ",
+                Detail = $"Updated tbl_Product Fee: { productFee.feeName } to product {productName} with amount {productFee.rateValue} ",
                 IPAddress = productFee.userIPAddress,
                 Url = productFee.applicationUrl,
                 ApplicationDate = genSetup.GetApplicaionDate(),

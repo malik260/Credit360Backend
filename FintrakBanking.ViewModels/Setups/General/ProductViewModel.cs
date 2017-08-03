@@ -61,6 +61,8 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public List<ProductCurrencyViewModel> currencies { get; set; }
 
+        public List<ProductFeeViewModel> fees { get; set; }
+
     }
 
     public class ProductCurrencyViewModel : GenaralEntity
