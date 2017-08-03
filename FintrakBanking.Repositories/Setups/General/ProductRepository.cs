@@ -943,7 +943,40 @@ namespace FintrakBanking.Repositories.Setups.General
                 //End of storing the updated chart of account currencies
                 tempProduct = new tbl_Temp_Product()
                 {
+                    CompanyId = productModel.companyId,
+                    ProductTypeId = productModel.productTypeId,
+                    ProductCategoryId = productModel.productCategoryId,
+                    ProductClassId = productModel.productClassId,
+                    ProductCode = GenerateProductCode(productModel.companyId),
                     ProductName = productModel.productName,
+                    ProductDescription = productModel.productDescription,
+
+
+                    PrincipalBalanceGL = productModel.principalBalanceGl,
+                    InterestIncomeExpenseGL = productModel.interestIncomeExpenseGl,
+                    InterestReceivablePayableGL = productModel.interestReceivablePayableGl,
+                    DormantGL = productModel.dormantGl,
+                    PremiumDiscountGL = productModel.premiumDiscountGl,
+                    OverdrawnGL = productModel.overdrawnGl,
+
+                    ProductPriceIndexId = productModel.productPriceIndexId,
+                    ProductPriceIndexSpread = productModel.productPriceIndexSpread,
+
+                    DealTypeId = productModel.dealTypeId,
+                    DealClassificationId = productModel.dealClassificationId,
+                    DayCountId = productModel.dayCountId,
+
+                    MaximumTenor = productModel.maximumTenor,
+                    MinimumTenor = productModel.minimumTenor,
+                    MaximumRate = productModel.maximumRate,
+                    MinimumRate = productModel.minimumRate,
+                    MinimumBalance = productModel.minimumBalance,
+
+                    AllowRate = productModel.allowRate,
+                    AllowTenor = productModel.allowTenor,
+                    AllowOverdrawn = productModel.allowOverdrawn,
+
+                    CreatedBy = productModel.createdBy,
                     ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
                     IsCurrent = true
                 };
