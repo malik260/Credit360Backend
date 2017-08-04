@@ -46,9 +46,69 @@ namespace FintrakBanking.Repositories.Setups.General
             return 1;
         }
 
+        public int AddProductFee(ProductFeeViewModel productFee)
+        {
+            var existingApprovedProduct = context.tbl_Product.Where(x => x.ProductId == productFee.productId);
+            var dataExist = this.context.tbl_Product_Fee.FirstOrDefault(x => x.ProductId == productFee.productId && x.FeeId == productFee.feeId && x.Deleted == true); // .Find(accountId);
+
+            var productFeeEntity = dataExist;
+
+            if (dataExist == null)
+            {
+                productFeeEntity = new tbl_Product_Fee()
+                {
+                    ProductId = productFee.productId,
+                    FeeId = productFee.feeId,
+                    CompanyId = productFee.companyId,
+
+                    RateValue = productFee.rateValue,
+                    DependentAmount = productFee.dependentAmount,
+
+                    CreatedBy = productFee.createdBy,
+                    DateTimeCreated = genSetup.GetApplicaionDate(),
+                    Deleted = false
+                };
+
+                this.context.tbl_Product_Fee.Add(productFeeEntity);
+                // Audit Section ---------------------------
+                var product = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
+                var audit = new tbl_Audit
+                {
+                    AuditTypeId = (short)AuditTypeEnum.CollateralCategoryAdded,
+                    StaffId = productFee.createdBy,
+                    BranchId = (short)productFee.userBranchId,
+                    Detail = $"Added Product Fee: { productFee.feeName } to product {product} with amount {productFee.rateValue} ",
+                    IPAddress = productFee.userIPAddress,
+                    Url = productFee.applicationUrl,
+                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    SystemDateTime = DateTime.Now
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+
+                //end of Audit section -------------------------------
+            }
+            else
+            {
+                productFeeEntity.RateValue = productFee.rateValue;
+                productFeeEntity.DependentAmount = productFee.dependentAmount;
+
+                productFeeEntity.Deleted = false;
+            }
+
+            var status = this.SaveAll();
+
+            if (status)
+                return productFeeEntity.ProductFeeId;
+            else
+                return -1;
+        }
+
         public int AddTempProductFee(ProductFeeViewModel productFee)
         {
-            var dataExist = this.context.tbl_Temp_Product_Fee.FirstOrDefault(x => x.ProductId == productFee.productId && x.FeeId == productFee.feeId && x.Deleted == true); // .Find(accountId);
+            var dataExist = this.context.tbl_Temp_Product_Fee.FirstOrDefault(x => x.ProductId == productFee.productId 
+                                                                && x.FeeId == productFee.feeId 
+                                                                && x.Deleted == true); // .Find(accountId);
 
             var tempProductFeeEntity = dataExist;
 
@@ -65,8 +125,17 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     CreatedBy = productFee.createdBy,
                     DateTimeCreated = genSetup.GetApplicaionDate(),
-                    Deleted = false
+                    Deleted = false,
+                    IsCurrent= true
                 };
+
+                var existingProductApprovalLog = context.tbl_Temp_Product.Find(productFee.productId);
+                var ProductData = context.tbl_Temp_Product.Find(productFee.productId);
+
+                if (existingProductApprovalLog != null)
+                {
+                    ProductData.IsCurrent = true;
+                }
 
                 this.context.tbl_Temp_Product_Fee.Add(tempProductFeeEntity);
                 // Audit Section ---------------------------
@@ -224,6 +293,28 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool DoesProductFeeExist(int productFeeId)
         {
             return context.tbl_Product_Fee.Any(x => x.ProductFeeId == productFeeId);
+        }
+
+        public List<ProductFeeViewModel> GetProductFeeAwaitingApprovals(int tempProductId)
+        {
+            return (from data in context.tbl_Temp_Product_Fee
+                    join p in context.tbl_Temp_Product on data.ProductId equals p.ProductId
+                    where data.ProductId == tempProductId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+                    select new ProductFeeViewModel()
+                    {
+                        productFeeId = data.ProductFeeId,
+                        productName = p.ProductName,
+                        productId = (short)data.ProductId,
+                        feeId = data.FeeId,
+                        feeName = data.tbl_Fee.FeeName,
+                        companyId = data.CompanyId,
+
+                        rateValue = data.RateValue,
+                        dependentAmount = data.DependentAmount,
+
+                        createdBy = data.CreatedBy,
+                        dateTimeCreated = data.DateTimeCreated,
+                    }).ToList();
         }
 
         public ProductFeeViewModel GetProductFee(int productFeeId)

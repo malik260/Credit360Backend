@@ -12,6 +12,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         ProductFeeViewModel GetProductFee(int productFeeId);
         List<ProductFeeViewModel> GetTempProductFee(int productFeeId);
+        List<ProductFeeViewModel> GetProductFeeAwaitingApprovals(int tempProductId);
 
         int AddTempProductFee(ProductFeeViewModel productFee);
 
