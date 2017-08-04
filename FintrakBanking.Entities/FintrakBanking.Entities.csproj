@@ -157,6 +157,7 @@
     <Compile Include="Models\tbl_Fee_Amortisation_Type.cs" />
     <Compile Include="Models\tbl_Fee_Interval.cs" />
     <Compile Include="Models\tbl_Fee_Target.cs" />
+    <Compile Include="Models\tbl_Fee_Type.cs" />
     <Compile Include="Models\tbl_FinanceCurrentDate.cs" />
     <Compile Include="Models\tbl_Financial_Statement_Caption.cs" />
     <Compile Include="Models\tbl_Financial_Statement_Type.cs" />

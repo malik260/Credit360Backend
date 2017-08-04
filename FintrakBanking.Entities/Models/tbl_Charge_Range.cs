@@ -10,23 +10,32 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Charge_Range
     {
         [Key]
-        public int RangeId { get; set; }
+        public int ChargeRangeId { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? Minimum { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? Maximum { get; set; }
+
+        public bool? MinimumAndAbove { get; set; }
+
+        public bool? MaximumAndBelow { get; set; }
 
         public double? Rate { get; set; }
 
-        public decimal? MinimumAmount { get; set; }
+        [Column(TypeName = "money")]
+        public decimal? Amount { get; set; }
 
-        public decimal? MaximumAmount { get; set; }
+        public int ChargeFeeId { get; set; }
 
-        public int ChargeId { get; set; }
+        //public int CompanyId { get; set; }
 
-        public int CompanyId { get; set; }
-
-        public int CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime? DateTimeCreated { get; set; }
 
         public DateTime? DateTimeUpdated { get; set; }
 
@@ -35,5 +44,9 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
+
+        public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
+
+        //public virtual tbl_Company tbl_Company { get; set; }
     }
 }

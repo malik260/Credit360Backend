@@ -47,7 +47,7 @@ namespace FintrakBanking.APICore.JWTAuth
                     return decryptedToken.First(st => st.Type == "staffId").Value.ToString();
             }
 
-            return null;
+            //return null;
         }
 
     }

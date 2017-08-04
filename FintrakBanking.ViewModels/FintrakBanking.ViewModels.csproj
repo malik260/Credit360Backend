@@ -96,7 +96,6 @@
     <Compile Include="Setups\Finance\AccountCategoryViewModel.cs" />
     <Compile Include="Setups\Finance\AccountTypeViewModel.cs" />
     <Compile Include="Setups\Finance\ChargeFeeViewModel.cs" />
-    <Compile Include="Setups\Finance\ChargeViewModel.cs" />
     <Compile Include="Setups\Finance\ChartOfAccountViewModel.cs" />
     <Compile Include="Setups\General\AccountSensitivityViewModel.cs" />
     <Compile Include="Setups\General\ActivityViewModel.cs" />
