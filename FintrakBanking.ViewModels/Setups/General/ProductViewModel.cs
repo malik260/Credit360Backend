@@ -55,13 +55,14 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool? approved { get; set; }
 
         public int approvalStatusId { get; set; }
-        public string productCurrencies { get; set; }
         public int operationId { get; set; }
         public string comment { get; set; }
 
         public List<ProductCurrencyViewModel> currencies { get; set; }
 
         public List<ProductFeeViewModel> fees { get; set; }
+
+        public List<ProductCollateralTypeViewModel> collateral { get; set; }
 
     }
 

@@ -29,13 +29,13 @@ namespace FintrakBanking.Entities.Models
 
         public int ChargeFeeId { get; set; }
 
-        public int CompanyId { get; set; }
+        //public int CompanyId { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime? DateTimeCreated { get; set; }
 
         public DateTime? DateTimeUpdated { get; set; }
 
@@ -47,6 +47,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        //public virtual tbl_Company tbl_Company { get; set; }
     }
 }

@@ -8,6 +8,10 @@ namespace FintrakBanking.ViewModels.Setups.Finance
 {
     public class ChargeFeeViewModel : GenaralEntity
     {
+        public ChargeFeeViewModel()
+        {
+            ranges = new List<ChargeRangeViewModel>();
+        }
         public int chargeFeeId { get; set; }
         public string chargeName { get; set; }
         public short productId { get; set; }
@@ -27,6 +31,18 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public short? cutOffDay { get; set; }
         public bool isIntegral { get; set; }
 
-        public short ranges { get; set; }
+        public List<ChargeRangeViewModel> ranges { get; set; }
+    }
+
+    public class ChargeRangeViewModel : GenaralEntity
+    {
+        public int chargeRangeId { get; set; }
+        public decimal? minimum { get; set; }
+        public decimal? maximum { get; set; }
+        public bool? minimumAndAbove { get; set; }
+        public bool? maximumAndBelow { get; set; }
+        public double? rate { get; set; }
+        public decimal? amount { get; set; }
+        public int chargeFeeId { get; set; }
     }
 }

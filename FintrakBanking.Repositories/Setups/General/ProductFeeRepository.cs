@@ -290,6 +290,31 @@ namespace FintrakBanking.Repositories.Setups.General
                     });
         }
 
+        public IEnumerable<ProductFeeViewModel> GetAllMappedFeeByProduct(int productId)
+        {
+            return (from data in context.tbl_Temp_Product_Fee
+                    where data.ProductId == productId && data.Deleted == false 
+                    select new ProductFeeViewModel()
+                    {
+                        productFeeId = data.ProductFeeId,
+                        productId = (short)data.ProductId,
+                        feeId = data.FeeId,
+                        feeName = data.tbl_Fee.FeeName,
+                        feeIntervalName = data.tbl_Fee.tbl_Fee_Interval.FeeIntervalName,
+                        feeTargetName = data.tbl_Fee.tbl_Fee_Target.FeeTargetName,
+                        feeTypeName = data.tbl_Fee.tbl_Fee_Type.FeeTypeName,
+                        glAccountCode = data.tbl_Fee.tbl_Chart_Of_Account.AccountCode,
+                        glAccountName = data.tbl_Fee.tbl_Chart_Of_Account.AccountName,
+                        companyId = data.CompanyId,
+
+                        rateValue = data.RateValue,
+                        dependentAmount = data.DependentAmount,
+
+                        createdBy = data.CreatedBy,
+                        dateTimeCreated = data.DateTimeCreated,
+                    });
+        }
+
         public bool DoesProductFeeExist(int productFeeId)
         {
             return context.tbl_Product_Fee.Any(x => x.ProductFeeId == productFeeId);
