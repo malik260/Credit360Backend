@@ -11,23 +11,27 @@ using System.Linq;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.Business;
 
 namespace FintrakBanking.Repositories.Admin
 {
     public class AdminRepository : IAdminRepository
     {
         private FinTrakBankingContext context;
-
+        private IWorkFlowRepository workFlow;
         private IAuditTrailRepository auditTrail;
         IGeneralSetupRepository genSetup;
 
         public AdminRepository(FinTrakBankingContext _context,
             IAuditTrailRepository _auditTrail,
-            IGeneralSetupRepository _genSetup)
+            IGeneralSetupRepository _genSetup,
+            IWorkFlowRepository _workFlow)
         {
             this.context = _context;
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
+            workFlow = _workFlow;
         }
 
         #region Users
@@ -52,69 +56,98 @@ namespace FintrakBanking.Repositories.Admin
                 NextPasswordChangeDate = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
                 CreatedBy = user.createdBy,
                 LastUpdatedBy = user.createdBy,
-                DateTimeCreated = DateTime.Now
+                DateTimeCreated = DateTime.Now,
+                ApprovalStatus = false
             };
-
-            context.tbl_Profile_User.Add(_user);
-            // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            int output;
+            if (workFlow.CheckRouteForOperation((int)Operations.UserCreation, user.companyId))
             {
-                AuditTypeId = (short)AuditTypeEnum.UserAdded,
-                StaffId = (int)user.createdBy,
-                BranchId = (short)user.userBranchId,
-                Detail = $"Added User with username: '{user.username}' ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
-                SystemDateTime = DateTime.Now
-            };
-            //end of Audit section -------------------------------
-
-            if (user.group.Count > 0)
-            {
-                foreach (var item in user.group)
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    var grpItem = new tbl_Profile_UserGroup()
+                    try
                     {
-                        GroupId = item.groupId,
-                        UserId = _user.UserId,
-                        DateTimeCreated = DateTime.Now,
-                        CreatedBy = user.createdBy
-                    };
-                    // Audit Section Contd.---------------------------
-                    audit.Detail = audit.Detail + " added to group: '{user.group}' ";
-                    //end of Audit section -------------------------------
-                    this.auditTrail.AddAuditTrail(audit);
-                    context.tbl_Profile_UserGroup.Add(grpItem);
+                        context.tbl_Profile_User.Add(_user);
+                        // Audit Section ---------------------------
+                        var audit = new tbl_Audit
+                        {
+                            AuditTypeId = (short)AuditTypeEnum.UserAdded,
+                            StaffId = (int)user.createdBy,
+                            BranchId = (short)user.userBranchId,
+                            Detail = $"Added User with username: '{user.username}' ",
+                            IPAddress = user.userIPAddress,
+                            Url = user.applicationUrl,
+                            ApplicationDate = genSetup.GetApplicaionDate(),
+                            SystemDateTime = DateTime.Now
+                        };
+                        //end of Audit section -------------------------------
+
+                        if (user.group.Count > 0)
+                        {
+                            foreach (var item in user.group)
+                            {
+                                var grpItem = new tbl_Profile_UserGroup()
+                                {
+                                    GroupId = item.groupId,
+                                    UserId = _user.UserId,
+                                    DateTimeCreated = DateTime.Now,
+                                    CreatedBy = user.createdBy
+                                };
+                                // Audit Section Contd.---------------------------
+                                audit.Detail = audit.Detail + " added to group: '{user.group}' ";
+                                //end of Audit section -------------------------------
+                                this.auditTrail.AddAuditTrail(audit);
+                                context.tbl_Profile_UserGroup.Add(grpItem);
+                            }
+                        }
+
+                        if (user.activities.Any())
+                        {
+                            foreach (var item in user.activities)
+                            {
+                                var userActivity = new tbl_Profile_AdditionalActivity()
+                                {
+                                    ActivityId = item.activityId,
+                                    UserId = _user.UserId,
+                                    CreatedBy = user.createdBy,
+                                    DateTimeCreated = DateTime.Now
+                                };
+
+                                context.tbl_Profile_AdditionalActivity.Add(userActivity);
+                            }
+                        }
+                        output = await context.SaveChangesAsync();
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = user.createdBy,
+                            companyId = user.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = _user.UserId,
+                            operationId = (int)Operations.UserCreation,
+                            BranchId = user.userBranchId
+                        };
+                        var response = workFlow.LogForApproval(entity);
+                        trans.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new Exception(ex.Message);
+                    }
                 }
             }
-
-            if (user.activities.Any())
+            else
             {
-                foreach (var item in user.activities)
-                {
-                    var userActivity = new tbl_Profile_AdditionalActivity()
-                    {
-                        ActivityId = item.activityId,
-                        UserId = _user.UserId,
-                        CreatedBy = user.createdBy,
-                        DateTimeCreated = DateTime.Now
-                    };
-
-                    context.tbl_Profile_AdditionalActivity.Add(userActivity);
-                }
+                throw new Exception("Approval route have not been defined for this operation");
             }
 
-            var response = await context.SaveChangesAsync();
-
-            return response != 0;
+            return output != 0;
         }
 
         public IEnumerable<UserViewModel> GetAllUsers()
         {
             return (from u in context.tbl_Profile_User
                     join st in context.tbl_Staff
-                    on u.StaffId equals st.StaffId
+                    on u.StaffId equals st.StaffId where u.ApprovalStatus == true
                     select new UserViewModel()
                     {
                         user_id = u.UserId,
@@ -171,7 +204,6 @@ namespace FintrakBanking.Repositories.Admin
                 groupName = x.GroupName
             }).First();
 
-
             //var tt = context.TblApprovalGroup.FromSql("[sp_getGroup] @p0, @p1", parameters: new[] { groupId, groupId });
         }
 
@@ -179,7 +211,6 @@ namespace FintrakBanking.Repositories.Admin
         {
             return context.tbl_Profile_Group.Any(x => x.GroupName.ToLower() == groupName);
         }
-
 
         public async Task<bool> AddGroup(AppGroupViewModel group)
         {
@@ -306,60 +337,65 @@ namespace FintrakBanking.Repositories.Admin
 
         public async Task<bool> UpdateUser(int userId, AppUserViewModel user)
         {
-
-            var targetGroups = context.tbl_Profile_UserGroup.Where(x => x.UserId == userId).ToList();
-            var targetActivities = context.tbl_Profile_AdditionalActivity.Where(x => x.UserId == userId).ToList();
-            if (targetGroups.Any())
+            var targetUser = context.tbl_Profile_User.Find(userId);
+            if (targetUser.ApprovalStatus == true)
             {
-                foreach (var item in targetGroups)
+                var targetGroups = context.tbl_Profile_UserGroup.Where(x => x.UserId == userId).ToList();
+                var targetActivities = context.tbl_Profile_AdditionalActivity.Where(x => x.UserId == userId).ToList();
+                if (targetGroups.Any())
                 {
-                    context.tbl_Profile_UserGroup.Remove(item);
-                }
-            }
-
-            if (targetActivities.Any())
-            {
-                foreach (var item in targetActivities)
-                {
-                    context.tbl_Profile_AdditionalActivity.Remove(item);
-                }
-            }
-
-            if (user.group.Count > 0)
-            {
-                foreach (var item in user.group)
-                {
-                    var grpItem = new tbl_Profile_UserGroup()
+                    foreach (var item in targetGroups)
                     {
-                        GroupId = item.groupId,
-                        UserId = userId,
-                        DateTimeCreated = DateTime.Now,
-                        CreatedBy = user.createdBy
-                    };
-
-                    context.tbl_Profile_UserGroup.Add(grpItem);
+                        context.tbl_Profile_UserGroup.Remove(item);
+                    }
                 }
-            }
 
-            if (user.activities.Any())
-            {
-                foreach (var item in user.activities)
+                if (targetActivities.Any())
                 {
-                    var userActivity = new tbl_Profile_AdditionalActivity()
+                    foreach (var item in targetActivities)
                     {
-                        ActivityId = item.activityId,
-                        UserId = userId,
-                        CreatedBy = user.createdBy,
-                        DateTimeCreated = DateTime.Now
-                    };
-
-                    context.tbl_Profile_AdditionalActivity.Add(userActivity);
+                        context.tbl_Profile_AdditionalActivity.Remove(item);
+                    }
                 }
+
+                if (user.group.Count > 0)
+                {
+                    foreach (var item in user.group)
+                    {
+                        var grpItem = new tbl_Profile_UserGroup()
+                        {
+                            GroupId = item.groupId,
+                            UserId = userId,
+                            DateTimeCreated = DateTime.Now,
+                            CreatedBy = user.createdBy
+                        };
+
+                        context.tbl_Profile_UserGroup.Add(grpItem);
+                    }
+                }
+
+                if (user.activities.Any())
+                {
+                    foreach (var item in user.activities)
+                    {
+                        var userActivity = new tbl_Profile_AdditionalActivity()
+                        {
+                            ActivityId = item.activityId,
+                            UserId = userId,
+                            CreatedBy = user.createdBy,
+                            DateTimeCreated = DateTime.Now
+                        };
+
+                        context.tbl_Profile_AdditionalActivity.Add(userActivity);
+                    }
+                }
+                var response = await context.SaveChangesAsync();
+                return response != 0;
             }
-
-            var response = await context.SaveChangesAsync();
-
-            return response != 0;
+            else
+            {
+                return false;
+            }
         }
 
         public List<string> GetUserActivities(int userId)

@@ -25,14 +25,15 @@ namespace FintrakBanking.Repositories.Setups.General
         private IWorkFlowRepository workFlow;
         private IApprovalLevelStaffRepository level;
         private IProductFeeRepository productFee;
-
+        private IProductCollateralTypeRepository productCollateralType;
 
         public ProductRepository(FinTrakBankingContext _context,
                                 IGeneralSetupRepository _genSetup,
                                 IAuditTrailRepository _auditTrail,
                                 IWorkFlowRepository _workFlow,
                                 IApprovalLevelStaffRepository _level,
-                                IProductFeeRepository _productFee)
+                                IProductFeeRepository _productFee,
+                                IProductCollateralTypeRepository _productCollateralType)
         {
             this.context = _context;
             this.genSetup = _genSetup;
@@ -40,6 +41,7 @@ namespace FintrakBanking.Repositories.Setups.General
             this.workFlow = _workFlow;
             level = _level;
             productFee = _productFee;
+            productCollateralType = _productCollateralType;
         }
 
         private bool SaveAll()
@@ -51,7 +53,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = this.context.tbl_Product.Count(x => x.CompanyId == companyId);
             int counter = data + 1;
-            var productCode = string.Format("{0}", counter.ToString().PadLeft(4, '0'));
+            var productCode = string.Empty;
+            do
+            {
+                productCode = string.Format("{0}", counter.ToString().PadLeft(4, '0'));
+                counter++;
+            }
+            while (context.tbl_Temp_Product.Any(x => x.ProductCode == productCode) == true);
+
             return productCode;
         }
 
@@ -679,6 +688,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     context.tbl_Product_Currency.Add(curr);
                 }
                 productFee.ApproveProductFee(productId, user);
+                productCollateralType.ApproveProductCollateral(productId, user);
             }
 
             productModel.IsCurrent = false;
