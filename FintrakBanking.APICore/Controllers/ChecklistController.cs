@@ -561,8 +561,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-
                 var data = repo.GetAllChecklistTargetType();
                 if (!data.Any())
                 {

@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("temp.tbl_Temp_Chart_Of_Account")]
     public partial class tbl_Temp_Chart_Of_Account
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Temp_Chart_Of_Account()
+        {
+            tbl_Temp_Chart_Of_Account_Currency = new HashSet<tbl_Temp_Chart_Of_Account_Currency>();
+        }
+
         [Key]
         public int GLAccountId { get; set; }
 
@@ -37,6 +43,10 @@ namespace FintrakBanking.Entities.Models
 
         public short FSCaptionId { get; set; }
 
+        public bool IsCurrent { get; set; }
+
+        public short ApprovalStatusId { get; set; }
+
         public bool Deleted { get; set; }
 
         public int? DeletedBy { get; set; }
@@ -51,9 +61,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeUpdated { get; set; }
 
-        public bool IsCurrent { get; set; }
-
-        public short ApprovalStatusId { get; set; }
+        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
 
         public virtual tbl_Branch tbl_Branch { get; set; }
 
@@ -62,5 +70,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Account_Type tbl_Account_Type { get; set; }
 
         public virtual tbl_Financial_Statement_Caption tbl_Financial_Statement_Caption { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Chart_Of_Account_Currency> tbl_Temp_Chart_Of_Account_Currency { get; set; }
     }
 }

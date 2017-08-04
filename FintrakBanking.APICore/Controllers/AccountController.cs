@@ -168,7 +168,7 @@ namespace FintrakBanking.APICore.Controllers
 
             if (ticket == null || ticket.Identity == null || (ticket.Properties != null
                 && ticket.Properties.ExpiresUtc.HasValue
-                && ticket.Properties.ExpiresUtc.Value < DateTimeOffset.UtcNow))
+                && ticket.Properties.ExpiresUtc.Value < DateTimeOffset.Now))
             {
                 return BadRequest("External login failure.");
             }

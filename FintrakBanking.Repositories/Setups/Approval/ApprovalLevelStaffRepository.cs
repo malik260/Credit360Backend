@@ -10,11 +10,10 @@ using FintrakBanking.Interfaces.Admin;
 using System.Threading.Tasks;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.Repositories.Setups.Approval
-{
-    [Export(typeof(IApprovalLevelStaffRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+{ 
     public class ApprovalLevelStaffRepository : IApprovalLevelStaffRepository
     {
         private FinTrakBankingContext context;
@@ -62,9 +61,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return GetApprovalLevelStaff(companyId).Where(c => c.operationId == operationId);
         }
 
-        public IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaffById(int id, int companyId)
+        public IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaffById(int StaffLevelId, int companyId)
         {
-            return GetApprovalLevelStaff(companyId).Where(c => c.approvalLevelId == id);
+            return GetApprovalLevelStaff(companyId).Where(c => c.approvalLevelId == StaffLevelId);
         }
 
         public ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId, int operationId)
@@ -174,5 +173,78 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             return await context.SaveChangesAsync() != 0;
         }
+
+
+        public bool AddApprovalTrail(tbl_Approval_Trail model)
+        {
+            context.tbl_Approval_Trail.Add(model);
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateApprovalTrail(tbl_Approval_Trail model)
+        {
+            bool result = false;
+            var update = context.tbl_Approval_Trail.SingleOrDefault(m => m.OperationId == model.OperationId
+                                                                     && m.ToApprovalLevelId == model.ToApprovalLevelId
+                                                                     && m.TargetId == model.TargetId
+                                                                 && m.ApprovalStatusId == 0);
+
+            if (update != null)
+            {
+                update.ApprovalStatusId = model.ApprovalStatusId;
+                update.ResponseDate = _genSetup.GetApplicaionDate();
+                update.SystemResponseDateTime = model.SystemResponseDateTime;
+                update.ResponseStaffId = model.ResponseStaffId;
+
+                result = context.SaveChanges() != 0;
+            }
+            return result;
+        }
+
+        public IEnumerable<tbl_Staff_Organogram> GetStaffOrganogram(int companyId)
+        {
+            return context.tbl_Staff_Organogram.Where(c => c.CompanyId == companyId);
+        }
+
+        public IQueryable<tbl_Approval_Trail> GetApprovalTrail(int operationId, int targetId, int approvalLevelId, int numberOfApprovals)
+        {
+            return context.tbl_Approval_Trail
+                .Where(c => c.TargetId == targetId &&
+                c.OperationId == operationId &&
+                c.ToApprovalLevelId == approvalLevelId)
+                .Take(numberOfApprovals);
+        }
+        public IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int operationId, int companyId)
+        {
+            var result = (from a in context.tbl_Approval_Trail 
+                          where a.OperationId == operationId && a.CompanyId == companyId
+                          select
+
+                          new WorkflowTrackerViewModel
+                          {
+                              arrivalDate = a.ArrivalDate,
+                              responseApprovalLevel = context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
+                              responseDate = a.ResponseDate,
+                              systemArrivalDate = a.SystemArrivalDateTime,
+                              systemResponseDate = a.SystemResponseDateTime,
+                              responseStaffName = !a.ResponseStaffId.HasValue ? "Awaiting Action" : a.tbl_Staff1.FirstName + " " + a.tbl_Staff1.LastName,
+                              comment = a.Comment,
+                              requestStaffName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
+                              requestApprovalLevel = !a.FromApprovalLevelId.HasValue ? "Initiation" : context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
+                              TargetId = a.TargetId,
+                              approvalStatus = context.tbl_Approval_Status.FirstOrDefault(c => c.ApprovalStatusId == a.ApprovalStatusId).ApprovalStatusName
+                          }
+                          );
+            return result;
+        }
+        public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
+        {
+            var result = GetApprovalTrail(operationId, companyId).Where(c => c.TargetId == targetId).OrderByDescending(c => c.systemArrivalDate).ToList();
+            return result;
+        }
+
+
+
+
     }
 }

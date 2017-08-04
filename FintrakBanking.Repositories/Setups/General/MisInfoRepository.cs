@@ -28,7 +28,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 CompanyId = entity.companyId,
                 CreatedBy = entity.createdBy,
-                DateTimeCreated = DateTime.UtcNow,
+                DateTimeCreated = DateTime.Now,
                 ParentMISInfoId = entity.ParentMisinfoId,
                 MISCode = entity.Miscode,
                 MISName = entity.Misname,
@@ -83,7 +83,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var misinfo = this.context.tbl_MIS_Info.Find(misinfoid);
             misinfo.CompanyId = entity.companyId;
             misinfo.CreatedBy = entity.createdBy;
-            misinfo.DateTimeUpdated = DateTime.UtcNow;
+            misinfo.DateTimeUpdated = DateTime.Now;
             misinfo.ParentMISInfoId = entity.ParentMisinfoId;
             misinfo.MISCode = entity.Miscode;
             misinfo.MISName = entity.Misname;

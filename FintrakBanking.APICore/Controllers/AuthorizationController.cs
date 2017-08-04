@@ -178,15 +178,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("setup/group/activities")]
-        public HttpResponseMessage AddActivitiesGroup([FromBody]GroupViewModel grpModel)
+        public async Task<HttpResponseMessage> AddActivitiesGroup([FromBody]GroupViewModel grpModel)
         {
 
             try
             {
                 var token = new TokenDecryptionHelper();
                 grpModel.createdBy = token.GetStaffId;
-                var data = repo.AddActivitiesToGroup(grpModel);
-                if (data.IsCompleted)
+                var data = await repo.AddActivitiesToGroup(grpModel);
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = grpModel, message = "Group has been created successfully" });

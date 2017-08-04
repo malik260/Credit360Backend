@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Branch = new HashSet<tbl_Branch>();
             tbl_Collateral_Immovable_Property = new HashSet<tbl_Collateral_Immovable_Property>();
             tbl_Staff = new HashSet<tbl_Staff>();
+            tbl_Temp_Collateral_Immovable_Property = new HashSet<tbl_Temp_Collateral_Immovable_Property>();
             tbl_Temp_Staff = new HashSet<tbl_Temp_Staff>();
         }
 
@@ -43,6 +44,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Staff> tbl_Staff { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Collateral_Immovable_Property> tbl_Temp_Collateral_Immovable_Property { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Staff> tbl_Temp_Staff { get; set; }
