@@ -674,6 +674,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     CreatedBy = productModel.CreatedBy,
                     DateTimeCreated = DateTime.Now,
+
                 };
                 context.tbl_Product.Add(product);
 
@@ -681,7 +682,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     var curr = new tbl_Product_Currency()
                     {
-                       // ProductId = c.ProductId,
+                       ProductId = c.ProductId,
                         CurrencyId = c.CurrencyId,
                         DateTimeCreated = genSetup.GetApplicaionDate(),
                     };
