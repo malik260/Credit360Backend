@@ -46,7 +46,26 @@ namespace FintrakBanking.APICore.Controllers
                 } 
         }
 
-
+        [HttpGet]
+        [Route("product-fee/all/mapped/{productId}")]
+        public HttpResponseMessage GetAllMappedFeeByProduct(int productId)
+        {
+            try
+            {
+                var data = repo.GetAllMappedFeeByProduct(productId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [Route("product-fee/unmapped/{productId}")]

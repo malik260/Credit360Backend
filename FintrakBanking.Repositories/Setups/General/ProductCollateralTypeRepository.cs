@@ -120,23 +120,28 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         collateralTypeId = data.CollateralTypeId,
                         collateralTypeName = data.tbl_Collateral_Type.CollateralTypeName,
                         companyId = data.CompanyId,
-
                         createdBy = data.CreatedBy,
-                        //dateTimeCreated = data.DateTimeCreated,
-                        //lastUpdatedBy = data.LastUpdatedBy,
-                        //dateTimeUpdated = data.DateTimeUpdated,
-
-                        //deleted = data.Deleted,
-                        //deletedBy = data.DeletedBy,
-                        //dateTimeDeleted = data.DateTimeDeleted
-                        //lastUpdatedBy = data.LastUpdatedBy.Value,
-                        //dateTimeUpdated = data.DateTimeUpdated,
-
                         deleted = data.Deleted,
-                       // deletedBy = data.DeletedBy,
-                       // dateTimeDeleted = data.DateTimeDeleted
-
                     });
+            
+        }
+
+        public IEnumerable<ProductCollateralTypeViewModel> GetMappedCollateralTypeByProduct(int productId)
+        {
+            var response = (from data in context.tbl_Temp_Product_CollateralType
+                            where data.ProductId == productId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+                            select new ProductCollateralTypeViewModel()
+                            {
+                                productCollateralId = data.ProductCollateralTypeId,
+                                productId = (short)data.ProductId,
+                                collateralTypeId = data.CollateralTypeId,
+                                collateralTypeName = data.tbl_Collateral_Type.CollateralTypeName,
+                                companyId = data.CompanyId,
+                                createdBy = data.CreatedBy,
+                                deleted = data.Deleted,
+                            });
+
+            return response;
         }
 
         public IEnumerable<CollateralTypeViewModel> GetUnmappedCollateralToProduct(int productId)
@@ -151,17 +156,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
                            where a.Deleted == false
                            select new CollateralTypeViewModel
                            {
-                              // collateralCategoryName = a.CollateralCategory.CollateralCategoryName,
-                              // collateralCategoryId = a.CollateralCategoryId,
                                collateralTypeName = a.CollateralTypeName,
                                collateralTypeId = a.CollateralTypeId,
                                companyId = a.CompanyId,
-                               //dateTimeUpdated = a.DateTimeUpdated,
                                deleted = a.Deleted,
                                details = a.Details,
-                               //hairCut = a.HairCut,
-                              // requiresLocation = a.RequiresLocation,
-                               //lastUpdatedBy = a.LastUpdatedBy ?? 0,
                                createdBy = a.CreatedBy,
                                dateTimeCreated = a.DateTimeCreated 
                            });

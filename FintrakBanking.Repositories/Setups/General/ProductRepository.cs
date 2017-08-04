@@ -443,7 +443,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             currencyName = c.tbl_Currency.CurrencyCode + " -- " + c.tbl_Currency.CurrencyName
 
                         }).ToList(),
-                        fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == c.ProductId && curr.Deleted != false).Select(c => new ProductFeeViewModel()
+                        fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == c.ProductId && curr.Deleted == false).Select(c => new ProductFeeViewModel()
                         {
                             productId = c.ProductId,
                             productFeeId = c.ProductFeeId,
@@ -458,7 +458,12 @@ namespace FintrakBanking.Repositories.Setups.General
                             glAccountName = c.tbl_Fee.tbl_Chart_Of_Account.AccountName
 
                         }).ToList(),
-
+                        collateral = context.tbl_Temp_Product_CollateralType.Where(coll => coll.ProductId == c.ProductId && coll.Deleted == false).Select(prodColl => new ProductCollateralTypeViewModel()
+                        {
+                            productId = prodColl.ProductId,
+                            productCollateralId = prodColl.ProductCollateralTypeId,
+                            collateralTypeName = prodColl.tbl_Collateral_Type.CollateralTypeName
+                        }).ToList(),
                         dateTimeUpdated = c.DateTimeUpdated,
                         deleted = c.Deleted,
                         deletedBy = c.DeletedBy,
