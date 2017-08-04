@@ -67,6 +67,8 @@ namespace FintrakBanking.Repositories.Admin
         {
             var userRecord = context.tbl_Profile_User.Find(userid);
 
+            userRecord.IsActive = true;
+            userRecord.IsLocked = false;
             userRecord.ApprovalStatus = true;
             userRecord.DateApproved = DateTime.Now;
             userRecord.DateTimeUpdated = DateTime.Now;
@@ -98,8 +100,8 @@ namespace FintrakBanking.Repositories.Admin
                 Username = user.username,
                 Password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey),
                 IsFirstLoginAttempt = false,
-                IsActive = true,
-                IsLocked = false,
+                IsActive = false,
+                IsLocked = true,
                 FailedLogonAttempt = 0,
                 SecurityQuestion = user.securityQuestion,
                 SecurityAnswer = user.securityAnswer,
