@@ -4,6 +4,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Setups.General;
 using System;  
 using System.Linq;
@@ -45,6 +46,63 @@ namespace FintrakBanking.APICore.Controllers
             var users = repo.GetAllUsers().ToList();
             return Ok( new { result = users });
         }
+
+        [HttpPost]
+        [Route("user/approval")]
+        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.GoForApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "User account has been approved successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+        [HttpGet]
+        [Route("user/approvals/temp")]
+        public HttpResponseMessage GetUsersAwaitingApproval()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var staffinfo = repo.GetUsersAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (staffinfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
 
         [HttpPost]
         [Route("user")]

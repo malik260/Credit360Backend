@@ -13,6 +13,9 @@ using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels;
+using FintrakBanking.Interfaces.Setups.Approval;
 
 namespace FintrakBanking.Repositories.Admin
 {
@@ -22,22 +25,69 @@ namespace FintrakBanking.Repositories.Admin
         private IWorkFlowRepository workFlow;
         private IAuditTrailRepository auditTrail;
         IGeneralSetupRepository genSetup;
+        private IApprovalLevelStaffRepository level;
 
         public AdminRepository(FinTrakBankingContext _context,
             IAuditTrailRepository _auditTrail,
             IGeneralSetupRepository _genSetup,
-            IWorkFlowRepository _workFlow)
+            IWorkFlowRepository _workFlow,
+            IApprovalLevelStaffRepository _level)
         {
             this.context = _context;
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
             workFlow = _workFlow;
+            level = _level;
         }
 
         #region Users
         public bool iSUserExit(string username)
         {
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
+        }
+
+        public bool GoForApproval(ApprovalViewModel entity)
+        {
+            entity.operationId = (int)Operations.UserCreation;
+
+            var response = workFlow.GoForApproval(entity);
+
+            if (response.Result.Item1)
+            {
+                return ApproveUser(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        private bool ApproveUser(int userid, short approvalStatusId, UserInfo user)
+        {
+            var userRecord = context.tbl_Profile_User.Find(userid);
+
+            userRecord.ApprovalStatus = true;
+            userRecord.DateApproved = DateTime.Now;
+            userRecord.DateTimeUpdated = DateTime.Now;
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.UserApproved,
+                StaffId = user.staffId,
+                BranchId = (short)user.BranchId,
+                Detail = $"Approved user '{userRecord.Username}'",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            // Audit Section ---------------------------
+
+            return this.context.SaveChanges() > 0;
         }
 
         public async Task<bool> CreateUser(AppUserViewModel user)
@@ -141,6 +191,49 @@ namespace FintrakBanking.Repositories.Admin
             }
 
             return output != 0;
+        }
+
+        public IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId)
+        {
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.UserCreation);
+            int staffApprovalLevelId = 0;
+
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            return (from c in context.tbl_Profile_User
+                    join br in context.tbl_Branch on c.tbl_Staff.BranchId equals br.BranchId
+                    join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
+                    join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
+                    join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
+                    where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
+                          && atrail.OperationId == (int)Operations.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                    select new UserViewModel()
+                    {
+                        companyId = coy.CompanyId,
+                        username = c.Username,
+                        password = StaticHelpers.EncryptSha512(c.Password, StaticHelpers.EncryptionKey),
+                        IsFirstLoginAttempt = c.IsFirstLoginAttempt,
+                        isActive = c.IsActive,
+                        IsLocked = c.IsLocked,
+                        failedLogonAttempt = c.FailedLogonAttempt,
+                        securityQuestion = c.SecurityQuestion,
+                        securityAnswer = c.SecurityAnswer,
+                        createdBy = c.CreatedBy,
+                        lastUpdatedBy = c.CreatedBy,
+                        dateTimeCreated = c.DateTimeCreated,
+                        approvalStatus = c.ApprovalStatus
+
+                    });
+        }
+        public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
+        {
+            return from ap in context.tbl_Approval_Status
+                   select new ApprovalStatusViewModel
+                   {
+                       approvalStatusId = ap.ApprovalStatusId,
+                       approvalStatusName = ap.ApprovalStatusName,
+                       forDisplay = ap.ForDisplay,
+                   };
         }
 
         public IEnumerable<UserViewModel> GetAllUsers()
