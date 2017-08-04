@@ -191,7 +191,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 amount = x.Amount,
                 rate = x.Rate,
                 valueSource = x.ValueSource,
-                recurring = x.Recurring,
+                recurring = (bool)x.Recurring,
                 primaryTaxId = x.PrimaryTaxId,
                 secondaryTaxId = x.SecondaryTaxId,
                 ranges = context.tbl_Charge_Range.Where(r => r.ChargeFeeId == x.ChargeFeeId)
@@ -233,7 +233,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 amount = data.Amount,
                 rate = data.Rate,
                 valueSource = data.ValueSource,
-                recurring = data.Recurring,
+                recurring = (bool)data.Recurring,
                 primaryTaxId = data.PrimaryTaxId,
                 secondaryTaxId = data.SecondaryTaxId,
                 ranges = context.tbl_Charge_Range.Where(r => r.ChargeFeeId == data.ChargeFeeId)

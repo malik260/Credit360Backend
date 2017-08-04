@@ -465,6 +465,11 @@ namespace FintrakBanking.Entities.Models
             //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Charge_Range)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
                 .HasMany(e => e.tbl_Chart_Of_Account)
                 .WithRequired(e => e.tbl_Company)
                 .WillCascadeOnDelete(false);

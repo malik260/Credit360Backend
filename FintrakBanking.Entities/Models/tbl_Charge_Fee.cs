@@ -49,7 +49,7 @@ namespace FintrakBanking.Entities.Models
 
         public int ValueSource { get; set; }
 
-        public bool Recurring { get; set; }
+        public bool? Recurring { get; set; }
 
         public int? PrimaryTaxId { get; set; }
 
