@@ -94,6 +94,8 @@ namespace FintrakBanking.Repositories.Admin
 
         public async Task<bool> CreateUser(AppUserViewModel user)
         {
+            int output;
+
             var _user = new tbl_Profile_User()
             {
                 StaffId = user.staffId,
@@ -111,7 +113,21 @@ namespace FintrakBanking.Repositories.Admin
                 DateTimeCreated = DateTime.Now,
                 ApprovalStatus = false
             };
-            int output;
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.UserAdded,
+                StaffId = (int)user.createdBy,
+                BranchId = (short)user.userBranchId,
+                Detail = $"Added User with username: '{user.username}' ",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now
+            };
+            //end of Audit section -------------------------------
+
             if (workFlow.CheckRouteForOperation((int)Operations.UserCreation, user.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
@@ -119,19 +135,8 @@ namespace FintrakBanking.Repositories.Admin
                     try
                     {
                         context.tbl_Profile_User.Add(_user);
-                        // Audit Section ---------------------------
-                        var audit = new tbl_Audit
-                        {
-                            AuditTypeId = (short)AuditTypeEnum.UserAdded,
-                            StaffId = (int)user.createdBy,
-                            BranchId = (short)user.userBranchId,
-                            Detail = $"Added User with username: '{user.username}' ",
-                            IPAddress = user.userIPAddress,
-                            Url = user.applicationUrl,
-                            ApplicationDate = genSetup.GetApplicaionDate(),
-                            SystemDateTime = DateTime.Now
-                        };
-                        //end of Audit section -------------------------------
+                        
+                        this.auditTrail.AddAuditTrail(audit);
 
                         if (user.group.Count > 0)
                         {
@@ -144,10 +149,23 @@ namespace FintrakBanking.Repositories.Admin
                                     DateTimeCreated = DateTime.Now,
                                     CreatedBy = user.createdBy
                                 };
-                                // Audit Section Contd.---------------------------
-                                audit.Detail = audit.Detail + " added to group: '{user.group}' ";
-                                //end of Audit section -------------------------------
+
+                                // Audit Section ---------------------------
+                                var userGroupAudit = new tbl_Audit
+                                {
+                                    AuditTypeId = (short)AuditTypeEnum.UserAdded,
+                                    StaffId = (int)user.createdBy,
+                                    BranchId = (short)user.userBranchId,
+                                    Detail = $"Added User with username: '{user.username}' to group: '{user.group}'",
+                                    IPAddress = user.userIPAddress,
+                                    Url = user.applicationUrl,
+                                    ApplicationDate = genSetup.GetApplicaionDate(),
+                                    SystemDateTime = DateTime.Now
+                                };
+
                                 this.auditTrail.AddAuditTrail(audit);
+                                // Audit Section Contd.---------------------------
+
                                 context.tbl_Profile_UserGroup.Add(grpItem);
                             }
                         }
@@ -167,7 +185,9 @@ namespace FintrakBanking.Repositories.Admin
                                 context.tbl_Profile_AdditionalActivity.Add(userActivity);
                             }
                         }
+
                         output = await context.SaveChangesAsync();
+
                         var entity = new ApprovalViewModel
                         {
                             staffId = user.createdBy,
