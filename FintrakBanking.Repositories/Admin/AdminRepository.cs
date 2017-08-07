@@ -233,7 +233,17 @@ namespace FintrakBanking.Repositories.Admin
                         approvalStatus = c.ApprovalStatus,
                         approvalStatusId = atrail.ApprovalStatusId,
                         operationId = atrail.OperationId,
-                        
+                        groupId = c.tbl_Profile_UserGroup.Where(x => x.UserId == c.UserId).Select(x => new UserGroupId
+                        {
+                            groupId = x.GroupId,
+                            groupKey = x.tbl_Profile_Group.GroupName
+                        }).ToList(),
+                        activities = c.tbl_Profile_AdditionalActivity.Where(x => x.UserId == c.UserId).Select(a => new UserActivities
+                        {
+                            activityId = a.ActivityId,
+                            userId = a.UserId
+                        }).ToList()
+
                     });
         }
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
@@ -251,7 +261,8 @@ namespace FintrakBanking.Repositories.Admin
         {
             return (from u in context.tbl_Profile_User
                     join st in context.tbl_Staff
-                    on u.StaffId equals st.StaffId where u.ApprovalStatus == true
+                    on u.StaffId equals st.StaffId
+                    where u.ApprovalStatus == true
                     select new UserViewModel()
                     {
                         user_id = u.UserId,
