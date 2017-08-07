@@ -99,54 +99,6 @@ namespace FintrakBanking.Repositories.Admin
             List<tbl_Profile_UserGroup> userGroups = new List<tbl_Profile_UserGroup>();
             List<tbl_Profile_AdditionalActivity> userActivities = new List<tbl_Profile_AdditionalActivity>();
 
-            if (user.group.Count > 0)
-            {
-                foreach (var item in user.group)
-                {
-                    var grpItem = new tbl_Profile_UserGroup()
-                    {
-                        GroupId = item.groupId,
-                        //UserId = _user.UserId,
-                        DateTimeCreated = DateTime.Now,
-                        CreatedBy = user.createdBy
-                    };
-
-                    // Audit Section ---------------------------
-                    var audit = new tbl_Audit
-                    {
-                        AuditTypeId = (short)AuditTypeEnum.UserAdded,
-                        StaffId = (int)user.createdBy,
-                        BranchId = (short)user.userBranchId,
-                        Detail = $"Added User with username: '{user.username}' to group: '{grpItem.tbl_Profile_Group.GroupName}'",
-                        IPAddress = user.userIPAddress,
-                        Url = user.applicationUrl,
-                        ApplicationDate = genSetup.GetApplicaionDate(),
-                        SystemDateTime = DateTime.Now
-                    };
-
-                    this.auditTrail.AddAuditTrail(audit);
-                    // Audit Section Contd.---------------------------
-
-                    userGroups.Add(grpItem);
-                }
-            }
-
-            if (user.activities.Any())
-            {
-                foreach (var item in user.activities)
-                {
-                    var userActivity = new tbl_Profile_AdditionalActivity()
-                    {
-                        ActivityId = item.activityId,
-                        //UserId = _user.UserId,
-                        CreatedBy = user.createdBy,
-                        DateTimeCreated = DateTime.Now
-                    };
-
-                   userActivities.Add(userActivity);
-                }
-            }
-
             var _user = new tbl_Profile_User()
             {
                 StaffId = user.staffId,
@@ -163,9 +115,23 @@ namespace FintrakBanking.Repositories.Admin
                 LastUpdatedBy = user.createdBy,
                 DateTimeCreated = DateTime.Now,
                 ApprovalStatus = false,
-                tbl_Profile_UserGroup = userGroups,
-                tbl_Profile_AdditionalActivity = userActivities
+                //tbl_Profile_UserGroup = userGroups,
+                //tbl_Profile_AdditionalActivity = userActivities
             };
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.UserAdded,
+                StaffId = (int)user.createdBy,
+                BranchId = (short)user.userBranchId,
+                Detail = $"Added User with username: '{user.username}'",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now
+            };
+
 
             if (workFlow.CheckRouteForOperation((int)Operations.UserCreation, user.companyId))
             {
@@ -174,7 +140,51 @@ namespace FintrakBanking.Repositories.Admin
                     try
                     {
                         context.tbl_Profile_User.Add(_user);
-                        
+                        auditTrail.AddAuditTrail(audit);
+
+                        if (user.group.Count > 0)
+                        {
+                            foreach (var item in user.group)
+                            {
+                                var grpItem = new tbl_Profile_UserGroup()
+                                {
+                                    GroupId = item.groupId,
+                                    UserId = _user.UserId,
+                                    DateTimeCreated = DateTime.Now,
+                                    CreatedBy = user.createdBy
+                                };
+
+                                var targetGroupName = context.tbl_Profile_Group.Where(x => x.GroupId == grpItem.GroupId).FirstOrDefault();
+
+                                audit.Detail = audit.Detail + $" added to group: '{targetGroupName.GroupName}' ";
+                                //end of Audit section -------------------------------
+                                auditTrail.AddAuditTrail(audit);
+
+                                context.tbl_Profile_UserGroup.Add(grpItem);
+                            }
+                        }
+
+                        if (user.activities.Any())
+                        {
+                            foreach (var item in user.activities)
+                            {
+                                var userActivity = new tbl_Profile_AdditionalActivity()
+                                {
+                                    ActivityId = item.activityId,
+                                    UserId = _user.UserId,
+                                    CanAdd = false,
+                                    CanEdit = false,
+                                    CanApprove = false,
+                                    CanDelete = false,
+                                    CanView = false,
+                                    CreatedBy = user.createdBy,
+                                    DateTimeCreated = DateTime.Now
+                                };
+
+                                context.tbl_Profile_AdditionalActivity.Add(userActivity);
+                            }
+                        }
+
                         output = await context.SaveChangesAsync();
 
                         var entity = new ApprovalViewModel
@@ -182,7 +192,7 @@ namespace FintrakBanking.Repositories.Admin
                             staffId = user.createdBy,
                             companyId = user.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = _user.UserId,
+                            targetId = _user.StaffId,
                             operationId = (int)Operations.UserCreation,
                             BranchId = user.userBranchId
                         };
@@ -211,49 +221,50 @@ namespace FintrakBanking.Repositories.Admin
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            return (from c in context.tbl_Profile_User
-                    join br in context.tbl_Branch on c.tbl_Staff.BranchId equals br.BranchId
-                    join st in context.tbl_Staff on c.StaffId equals st.StaffId
-                    join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
-                    join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
-                    join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
-                    where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
-                          && atrail.OperationId == (int)Operations.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
-                    select new UserViewModel()
-                    {
-                        user_id = c.UserId,
-                        companyId = coy.CompanyId,
-                        companyName = coy.Name,
-                        branchId = br.BranchId,
-                        branchName = br.BranchName,
-                        username = c.Username,
-                        email = st.Email,
-                        staffName = st.FirstName + " " + st.LastName,
-                        password = StaticHelpers.EncryptSha512(c.Password, StaticHelpers.EncryptionKey),
-                        IsFirstLoginAttempt = c.IsFirstLoginAttempt,
-                        isActive = c.IsActive,
-                        IsLocked = c.IsLocked,
-                        failedLogonAttempt = c.FailedLogonAttempt,
-                        securityQuestion = c.SecurityQuestion,
-                        securityAnswer = c.SecurityAnswer,
-                        createdBy = c.CreatedBy,
-                        lastUpdatedBy = c.CreatedBy,
-                        dateTimeCreated = c.DateTimeCreated,
-                        approvalStatus = c.ApprovalStatus,
-                        approvalStatusId = atrail.ApprovalStatusId,
-                        operationId = atrail.OperationId,
-                        groupId = c.tbl_Profile_UserGroup.Where(x => x.UserId == c.UserId).Select(x => new UserGroupId
+            var data = (from c in context.tbl_Profile_User
+                        join br in context.tbl_Branch on c.tbl_Staff.BranchId equals br.BranchId
+                        join st in context.tbl_Staff on c.StaffId equals st.StaffId
+                        join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
+                        join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
+                        join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
+                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
+                              && atrail.OperationId == (int)Operations.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                        select new UserViewModel()
                         {
-                            groupId = x.GroupId,
-                            groupKey = x.tbl_Profile_Group.GroupName
-                        }).ToList(),
-                        activities = c.tbl_Profile_AdditionalActivity.Where(x => x.UserId == c.UserId).Select(a => new UserActivities
-                        {
-                            activityId = a.ActivityId,
-                            userId = a.UserId,
-                            activityName = a.tbl_Profile_Activity.ActivityName
-                        }).ToList()
-                    });
+                            user_id = c.UserId,
+                            companyId = coy.CompanyId,
+                            companyName = coy.Name,
+                            branchId = br.BranchId,
+                            branchName = br.BranchName,
+                            username = c.Username,
+                            email = st.Email,
+                            staffName = st.FirstName + " " + st.LastName,
+                            IsFirstLoginAttempt = c.IsFirstLoginAttempt,
+                            isActive = c.IsActive,
+                            IsLocked = c.IsLocked,
+                            failedLogonAttempt = c.FailedLogonAttempt,
+                            securityQuestion = c.SecurityQuestion,
+                            securityAnswer = c.SecurityAnswer,
+                            createdBy = c.CreatedBy,
+                            lastUpdatedBy = c.CreatedBy,
+                            dateTimeCreated = c.DateTimeCreated,
+                            approvalStatus = c.ApprovalStatus,
+                            approvalStatusId = atrail.ApprovalStatusId,
+                            operationId = atrail.OperationId,
+                            groupId = c.tbl_Profile_UserGroup.Where(x => x.UserId == c.UserId).Select(x => new UserGroupId
+                            {
+                                groupId = x.GroupId,
+                                groupKey = x.tbl_Profile_Group.GroupName
+                            }).ToList(),
+                            activities = c.tbl_Profile_AdditionalActivity.Where(x => x.UserId == c.UserId).Select(a => new UserActivities
+                            {
+                                activityId = a.ActivityId,
+                                userId = a.UserId,
+                                activityName = a.tbl_Profile_Activity.ActivityName
+                            }).ToList()
+                        });
+
+            return data;
         }
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {

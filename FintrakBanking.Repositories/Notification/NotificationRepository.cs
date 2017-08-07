@@ -25,28 +25,34 @@ namespace FintrakBanking.Repositories.Notification
 
         public IEnumerable<NotificationViewModel> GetNotification(int staffId, int companyId)
         {
-            IEnumerable<NotificationViewModel> logs = null;
+            List <NotificationViewModel> logs = new List<NotificationViewModel>();
             var approvalLevel = levelStaffRepo.GetAllApprovalLevelStaff(companyId).Where(c => c.staffId == staffId);
             if (approvalLevel.Any())
             {
+
                 foreach (var level in approvalLevel)
                 {
                     NotificationViewModel log = new NotificationViewModel();
-                    logs = (from c in context.tbl_Approval_Trail
-                            where c.CompanyId == companyId &&
-                            c.OperationId == level.operationId &&
-                            c.ApprovalStatusId == 0
-                            && c.ToApprovalLevelId == level.approvalLevelId
-                            group c by c.OperationId into d
-                            select new NotificationViewModel
-                            {
-                                massageCount = d.Count(),
-                                message = "You have " + d.Count().ToString() + " " +
-                                context.tbl_Operations.FirstOrDefault(c => c.OperationId == d
-                              .Select(f => f.OperationId).FirstOrDefault()).OperationName + " request awaiting your action",
-                                operationURL = d.Select(h => h.tbl_Operations.OperationURL).FirstOrDefault()
 
-                            }).ToList();
+                    log = (from c in context.tbl_Approval_Trail
+                           where c.CompanyId == companyId &&
+                           c.OperationId == level.operationId &&
+                           c.ApprovalStatusId == 0
+                           && c.ToApprovalLevelId == level.approvalLevelId
+                           group c by c.OperationId into d
+                           select new NotificationViewModel
+                           {
+                               massageCount = d.Count(),
+                               message = "You have " + d.Count().ToString() + " " +
+                               context.tbl_Operations.FirstOrDefault(c => c.OperationId == d
+                             .Select(f => f.OperationId).FirstOrDefault()).OperationName + " request awaiting your action",
+                               operationURL = d.Select(h => h.tbl_Operations.OperationURL).FirstOrDefault()
+
+                           }).FirstOrDefault ();
+                    if (log != null)
+                    {
+                        logs.Add(log);
+                    }
                 }
 
             }
