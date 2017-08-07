@@ -204,6 +204,7 @@ namespace FintrakBanking.Repositories.Admin
 
             return (from c in context.tbl_Profile_User
                     join br in context.tbl_Branch on c.tbl_Staff.BranchId equals br.BranchId
+                    join st in context.tbl_Staff on c.StaffId equals st.StaffId
                     join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
                     join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
                     join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
@@ -211,8 +212,14 @@ namespace FintrakBanking.Repositories.Admin
                           && atrail.OperationId == (int)Operations.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new UserViewModel()
                     {
+                        user_id = c.UserId,
                         companyId = coy.CompanyId,
+                        companyName = coy.Name,
+                        branchId = br.BranchId,
+                        branchName = br.BranchName,
                         username = c.Username,
+                        email = st.Email,
+                        staffName = st.FirstName + " " + st.LastName,
                         password = StaticHelpers.EncryptSha512(c.Password, StaticHelpers.EncryptionKey),
                         IsFirstLoginAttempt = c.IsFirstLoginAttempt,
                         isActive = c.IsActive,
@@ -223,8 +230,10 @@ namespace FintrakBanking.Repositories.Admin
                         createdBy = c.CreatedBy,
                         lastUpdatedBy = c.CreatedBy,
                         dateTimeCreated = c.DateTimeCreated,
-                        approvalStatus = c.ApprovalStatus
-
+                        approvalStatus = c.ApprovalStatus,
+                        approvalStatusId = atrail.ApprovalStatusId,
+                        operationId = atrail.OperationId,
+                        
                     });
         }
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
