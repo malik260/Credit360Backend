@@ -187,30 +187,32 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public int CalculateNumberOfInstallments(DateTime firstPaymentDate, DateTime maturityDate, FrequencyTypeEnum frequencyType)
-        {            
-                       
-            Period period = Period.Between(LocalDateTime.FromDateTime(firstPaymentDate), LocalDateTime.FromDateTime(maturityDate));
+        {
+            var startdate = LocalDateTime.FromDateTime(firstPaymentDate);
+            var endDate = LocalDateTime.FromDateTime(maturityDate);
+
+            //Period period = Period.Between(startdate, endDate, PeriodUnits.Months);
 
             double numberOfpayments = 0;
             
             if(frequencyType == FrequencyTypeEnum.Daily)
-              numberOfpayments = period.Days;
+              numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Days).Days;
             else if (frequencyType == FrequencyTypeEnum.Monthly)
-                numberOfpayments = period.Months;
+                numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months;
             else if (frequencyType == FrequencyTypeEnum.Quarterly)
-                numberOfpayments = period.Months / 3.0;
+                numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 3.0;
             else if (frequencyType == FrequencyTypeEnum.SixTimesYearly)
-                numberOfpayments = period.Months / 6.0;
+                numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 6.0;
             else if (frequencyType == FrequencyTypeEnum.ThriceYearly)
-                numberOfpayments = period.Months / 4.0;
+                numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 4.0;
             else if (frequencyType == FrequencyTypeEnum.TwiceMonthly)
-                numberOfpayments = period.Months * 2.0;
+                numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months * 2.0;
             else if (frequencyType == FrequencyTypeEnum.TwiceYearly)
-                numberOfpayments = period.Months / 6.0;
+                numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 6.0;
             else if (frequencyType == FrequencyTypeEnum.Weekly)
-                numberOfpayments = period.Weeks;
+                numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Weeks).Weeks;
             else if (frequencyType == FrequencyTypeEnum.Yearly)
-                numberOfpayments = period.Years;
+                numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Years).Years;
 
 
             ////if (tenorModeId == TenorModeEnum.Days)
@@ -575,11 +577,13 @@ namespace FintrakBanking.Repositories.Credit
             LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum) loanInput.scheduleMethodId;
 
             if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
-                output = GenerateIrregularLoanPeriodicSchedule(loanInput, loanInput.irregularPaymentSchedule).ToList();
+                output = GenerateIrregularLoanPeriodicScheduleWithAmortisedCost(loanInput).ToList();
             else if (scheduleMethod == LoanScheduleTypeEnum.Annuity)
             {
-                //if (loanInput.interestFirstpaymentDate == loanInput.principalFirstpaymentDate && loanInput.interestFrequency == loanInput.principalFrequency)
+                if (loanInput.interestFirstpaymentDate == loanInput.principalFirstpaymentDate && loanInput.interestFrequency == loanInput.principalFrequency)
                     output = GenerateNormalAnnuityPeriodicLoanSchedule(loanInput);
+                else
+                    output = GenerateMoratoriumAnnuityPeriodicLoanSchedule(loanInput);
             }
 
             return output;
@@ -602,7 +606,7 @@ namespace FintrakBanking.Repositories.Credit
             return value;
         }
 
-        private double CalculateIRR(LoanPaymentScheduleInputViewModel loanInput, FinancialTypes.AMORTSCHED_table cashflow, int numberOfPayments, int numberOfPaymentsInAYear,
+        private double CalculateIRR(LoanPaymentScheduleInputViewModel loanInput, List<LoanPaymentSchedulePeriodicViewModel>  cashflow, int numberOfPayments, int numberOfPaymentsInAYear,
                                     int daysInAYear, Double FV, string interestRule, DateTime maturityDate)
         {
             double output = 0;
@@ -612,6 +616,9 @@ namespace FintrakBanking.Repositories.Credit
                 output = loanInput.interestRate / 100;
             else if (numberOfPayments < 2 && loanInput.interestRate > 0)
             {
+                //var amounts = paymentSchedule.Where(x => x.paymentNumber > 0).Select(x => x.periodPaymentAmount).ToList();
+                //var dates = paymentSchedule.Where(x => x.paymentNumber > 0).Select(x => x.paymentDate).ToList();
+
                 List<double> cashflowAmounts = new List<double>();
                 List<int> paymentNumbers = new List<int>();
 
@@ -619,12 +626,12 @@ namespace FintrakBanking.Repositories.Credit
                 paymentNumbers.Add(0);
 
                 var counter = 0;
-                foreach (DataRow row in cashflow.Rows)
+                foreach (var payment in cashflow)
                 {
                     if (counter > 0)
                     {
-                        cashflowAmounts.Add(Convert.ToDouble(row["amt_pmt"]));
-                        paymentNumbers.Add(Convert.ToInt32(row["num_pmt"]));
+                        cashflowAmounts.Add(payment.periodPaymentAmount);
+                        paymentNumbers.Add(payment.paymentNumber);
                     }
 
                     counter += 1;
@@ -683,8 +690,7 @@ namespace FintrakBanking.Repositories.Credit
             
             Double FV;
             FinancialTypes.InterestRuleType IntRule;
-            FinancialTypes.AMORTSCHED_table result;
-            FinancialTypes.AMORTSCHED_table amortisedResult;            
+            FinancialTypes.AMORTSCHED_table result;      
 
             FV = wct.NULL_DOUBLE;
             IntRule = FinancialTypes.InterestRuleType.US;           
@@ -692,23 +698,7 @@ namespace FintrakBanking.Repositories.Credit
             //result = wct.AMORTSCHED(PV, LoanDate, rate, FirstPayDate, NumPmts, Pmtpyr, DaysInYr, FV, IntRule);
 
             result = wct.AMORTSCHED(loanInput.principalAmount, loanInput.effectiveDate, (loanInput.interestRate/100.0), loanInput.interestFirstpaymentDate, numberOfPayments, numberOfPaymentsInAYear, daysInAYear, FV, IntRule);
-
             
-            var internalRateOfReturn = CalculateIRR(loanInput, result, numberOfPayments, numberOfPaymentsInAYear,
-                                                        daysInAYear, FV, "U", loanInput.maturityDate);
-
-            amortisedResult = wct.AMORTSCHED(loanInput.principalAmount - loanInput.integralFeeAmount, loanInput.effectiveDate, (internalRateOfReturn / 100.0), loanInput.interestFirstpaymentDate, numberOfPayments, numberOfPaymentsInAYear, daysInAYear, FV, IntRule);
-
-            //var schedule = from a in result.Rows.c join b in amortisedResult on a.num_pmt equals b.num_pmt
-
-            //public int num_pmt;
-            //public DateTime date_pmt;
-            //public double amt_prin_init;
-            //public double amt_pmt;
-            //public double amt_int_pay;
-            //public double amt_prin_pay;
-            //public double amt_int_def;
-            //public double amt_prin_end;
 
             int counter = 0;
             foreach (DataRow row in result.Rows)
@@ -723,8 +713,22 @@ namespace FintrakBanking.Repositories.Credit
                 payment.endPrincipalAmount = Convert.ToDouble(row["amt_prin_end"]);
                 payment.interestRate =  loanInput.interestRate / 100.0;
 
-                //payment.amortisedPaymentNumber = Convert.ToInt32(amortisedResult.Rows[counter]["num_pmt"]);
-                //payment.amortisedPaymentDate = Convert.ToDateTime(amortisedResult.Rows[counter]["date_pmt"]);
+                output.Add(payment);
+
+                counter += 1;
+            }
+
+            var maturityDate = output.Max(x => x.paymentDate); //loanInput.maturityDate
+
+            var internalRateOfReturn = CalculateIRR(loanInput, output, numberOfPayments, numberOfPaymentsInAYear,
+                                             daysInAYear, FV, "U", maturityDate);
+
+            FinancialTypes.AMORTSCHED_table amortisedResult;
+            amortisedResult = wct.AMORTSCHED(loanInput.principalAmount - loanInput.integralFeeAmount, loanInput.effectiveDate, (internalRateOfReturn / 100.0), loanInput.interestFirstpaymentDate, numberOfPayments, numberOfPaymentsInAYear, daysInAYear, FV, IntRule);
+
+            counter = 0;
+            foreach (var payment in output)
+            {
                 payment.amortisedStartPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_init"]);
                 payment.amortisedPeriodPaymentAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_pmt"]);
                 payment.amortisedPeriodInterestAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_int_pay"]);
@@ -732,25 +736,81 @@ namespace FintrakBanking.Repositories.Credit
                 payment.amortisedEndPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_end"]);
                 payment.internalRateOfReturn = internalRateOfReturn / 100.0;
 
-                //public int paymentNumber { get; set; }
-                //public DateTime paymentDate { get; set; }
-                //public double startPrincipalAmount { get; set; }
-                //public double periodicPaymentAmount { get; set; }
-                //public double periodInterestAmount { get; set; }
-                //public double periodPrincipalAmount { get; set; }
-                //public double endPrincipalAmount { get; set; }
-                //public float interestRate { get; set; }
+                counter += 1;
+            }
 
-                //public int amortisedPaymentNumber { get; set; }
-                //public DateTime amortisedPaymentDate { get; set; }
-                //public double amortisedStartPrincipalAmount { get; set; }
-                //public double amortisedPeriodicPaymentAmount { get; set; }
-                //public double amortisedPeriodInterestAmount { get; set; }
-                //public double amortisedPeriodPrincipalAmount { get; set; }
-                //public double amortisedEndPrincipalAmount { get; set; }
-                //public float internalRateOfReturn { get; set; }
+            return output;
+
+        }
+
+        /// <summary>
+        /// USE FOR ANNUITY SCHEDULE WHERE THERE IS A MORATORIUM 
+        /// </summary>
+        /// <param name="loanInput"></param>
+        /// <returns></returns>         
+        private List<LoanPaymentSchedulePeriodicViewModel> GenerateMoratoriumAnnuityPeriodicLoanSchedule(LoanPaymentScheduleInputViewModel loanInput)
+        {
+            List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
+            int numberOfPayments = CalculateNumberOfInstallments(loanInput.interestFirstpaymentDate, loanInput.maturityDate, (FrequencyTypeEnum)loanInput.interestFrequency);
+
+            int numberOfPrincipalPayments = CalculateNumberOfInstallments(loanInput.principalFirstpaymentDate, loanInput.maturityDate, (FrequencyTypeEnum)loanInput.interestFrequency);
+
+            int numberOfPaymentsInAYear = (int)context.tbl_Frequency_Type.FirstOrDefault(x => x.FrequencyTypeId == loanInput.interestFrequency).Value;
+
+            var principalPaymentsInAYear = (int)context.tbl_Frequency_Type.FirstOrDefault(x => x.FrequencyTypeId == loanInput.principalFrequency).Value;
+
+            int principalPaymentMultiple = Convert.ToInt32(12 / principalPaymentsInAYear);
+
+            var principalFirstPaymentNumber = numberOfPayments - numberOfPrincipalPayments;
+
+            Double FV = 0;
+            
+            FinancialTypes.UNEQUALLOANPAYMENTS_table result;
+                        
+
+            //result = wct.AMORTSCHED(loanInput.principalAmount, loanInput.effectiveDate, (loanInput.interestRate / 100.0), loanInput.interestFirstpaymentDate, numberOfPayments, numberOfPaymentsInAYear, daysInAYear, FV, IntRule);
+
+            result = wct.UNEQUALLOANPAYMENTS(loanInput.principalAmount, (loanInput.interestRate / 100.0), loanInput.effectiveDate, numberOfPaymentsInAYear, loanInput.interestFirstpaymentDate, daysInAYear, principalPaymentMultiple, principalFirstPaymentNumber, numberOfPayments, wct.NULL_INT, FV, true);
+
+
+            int counter = 0;
+            foreach (DataRow row in result.Rows)
+            {
+                LoanPaymentSchedulePeriodicViewModel payment = new LoanPaymentSchedulePeriodicViewModel();
+                payment.paymentNumber = Convert.ToInt32(row["num_pmt"]);
+                payment.paymentDate = Convert.ToDateTime(row["date_pmt"]);
+                payment.startPrincipalAmount = Convert.ToDouble(row["amt_prin_init"]);
+                payment.periodPaymentAmount = Convert.ToDouble(row["amt_pmt"]);
+                payment.periodInterestAmount = Convert.ToDouble(row["amt_int_pay"]);
+                payment.periodPrincipalAmount = Convert.ToDouble(row["amt_prin_pay"]);
+                payment.endPrincipalAmount = Convert.ToDouble(row["amt_prin_end"]);
+                payment.interestRate = loanInput.interestRate / 100.0;
 
                 output.Add(payment);
+
+                counter += 1;
+            }
+
+            var maturityDate = output.Max(x => x.paymentDate); //loanInput.maturityDate
+
+            var internalRateOfReturn = CalculateIRR(loanInput, output, numberOfPayments, numberOfPaymentsInAYear,
+                                             daysInAYear, FV, "U", maturityDate);
+
+            FinancialTypes.UNEQUALLOANPAYMENTS_table amortisedResult;
+
+            amortisedResult = wct.UNEQUALLOANPAYMENTS(loanInput.principalAmount - loanInput.integralFeeAmount, (internalRateOfReturn / 100.0), loanInput.effectiveDate, numberOfPaymentsInAYear, loanInput.interestFirstpaymentDate, daysInAYear, principalPaymentMultiple, principalFirstPaymentNumber, numberOfPayments, wct.NULL_INT, FV, true);
+
+            counter = 0;
+            foreach (var payment in output)
+            {
+                payment.amortisedStartPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_init"]);
+                payment.amortisedPeriodPaymentAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_pmt"]);
+                payment.amortisedPeriodInterestAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_int_pay"]);
+                payment.amortisedPeriodPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_pay"]);
+                payment.amortisedEndPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_end"]);
+                payment.internalRateOfReturn = internalRateOfReturn / 100.0;
 
                 counter += 1;
             }
@@ -793,15 +853,50 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private IEnumerable<LoanPaymentSchedulePeriodicViewModel> GenerateIrregularLoanPeriodicSchedule(LoanPaymentScheduleInputViewModel loanInput, IEnumerable<IrregularLoanScheduleInputViewModel> paymentSchedule)
+
+        private List<LoanPaymentSchedulePeriodicViewModel> GenerateIrregularLoanPeriodicScheduleWithAmortisedCost(LoanPaymentScheduleInputViewModel loanInput)
         {
-            if (paymentSchedule.Count() == 0)
+            List<LoanPaymentSchedulePeriodicViewModel> paymentSchedule = GenerateIrregularLoanPeriodicSchedule(loanInput);
+
+            var amounts = paymentSchedule.Select(x => x.periodPaymentAmount).ToList();  //paymentSchedule.Where(x => x.paymentNumber > 0).Select(x => x.periodPaymentAmount).ToList();
+            var dates = paymentSchedule.Select(x => x.paymentDate).ToList();
+
+            amounts[0] = amounts[0] * -1;
+            var internalRateOfReturn = wct.XIRR(amounts, dates, wct.NULL_DOUBLE);
+
+            //FinancialTypes.AMORTSCHED_table amortisedResult;
+            //amortisedResult = wct.AMORTSCHED(loanInput.principalAmount - loanInput.integralFeeAmount, loanInput.effectiveDate, (internalRateOfReturn / 100.0), loanInput.interestFirstpaymentDate, numberOfPayments, numberOfPaymentsInAYear, daysInAYear, FV, IntRule);
+
+            loanInput.principalAmount = loanInput.principalAmount - loanInput.integralFeeAmount;
+            loanInput.interestRate = internalRateOfReturn / 100.0;
+            List<LoanPaymentSchedulePeriodicViewModel> paymentScheduleArmotised = GenerateIrregularLoanPeriodicSchedule(loanInput);
+
+            int counter = 0;
+            foreach (var payment in paymentSchedule)
+            {                
+                payment.amortisedStartPrincipalAmount = paymentScheduleArmotised[counter].startPrincipalAmount;
+                payment.amortisedPeriodPaymentAmount = paymentScheduleArmotised[counter].periodPaymentAmount;
+                payment.amortisedPeriodInterestAmount = paymentScheduleArmotised[counter].periodInterestAmount;
+                payment.amortisedPeriodPrincipalAmount = paymentScheduleArmotised[counter].periodPrincipalAmount;
+                payment.amortisedEndPrincipalAmount = paymentScheduleArmotised[counter].endPrincipalAmount;
+                payment.internalRateOfReturn = internalRateOfReturn / 100.0;
+
+                counter += 1;
+            }
+
+            return paymentSchedule;
+        }
+
+
+        private List<LoanPaymentSchedulePeriodicViewModel> GenerateIrregularLoanPeriodicSchedule(LoanPaymentScheduleInputViewModel loanInput) 
+        {
+            if (loanInput.irregularPaymentSchedule.Count() == 0)
                 throw new Exception("Specify a repayment schedule");
 
-            if (loanInput.principalAmount != (paymentSchedule.Sum(x => x.paymentAmount)))
+            if (loanInput.principalAmount != (loanInput.irregularPaymentSchedule.Sum(x => x.paymentAmount)))
                 throw new Exception("Payment Amount is not equal to the principal Amount");
 
-            if (loanInput.effectiveDate > (paymentSchedule.Min(x => x.paymentDate)))
+            if (loanInput.effectiveDate > (loanInput.irregularPaymentSchedule.Min(x => x.paymentDate)))
                 throw new Exception("Effective Date should be less than the payment date(s)");
 
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
@@ -810,7 +905,7 @@ namespace FintrakBanking.Repositories.Credit
                           amortisedPeriodInterestAmount = 0, periodPaymentAmount = 0, endPrincipalAmount = loanInput.principalAmount});
 
 
-            var data = paymentSchedule.OrderBy(x => x.paymentDate);
+            var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
 
             int paymentNumber = 1;
             double previousPrincipalAmount = loanInput.principalAmount;

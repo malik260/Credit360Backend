@@ -9,7 +9,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short scheduleMethodId { get; set; }
         public Double principalAmount { get; set; }
         public DateTime effectiveDate { get; set; }
-        public float interestRate { get; set; }
+        public double interestRate { get; set; }
         public short principalFrequency { get; set; }
         public short interestFrequency { get; set; }
         public int tenor { get; set; }
