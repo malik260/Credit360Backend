@@ -241,9 +241,9 @@ namespace FintrakBanking.Repositories.Admin
                         activities = c.tbl_Profile_AdditionalActivity.Where(x => x.UserId == c.UserId).Select(a => new UserActivities
                         {
                             activityId = a.ActivityId,
-                            userId = a.UserId
+                            userId = a.UserId,
+                            activityName = a.tbl_Profile_Activity.ActivityName
                         }).ToList()
-
                     });
         }
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
