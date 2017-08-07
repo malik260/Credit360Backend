@@ -96,6 +96,57 @@ namespace FintrakBanking.Repositories.Admin
         {
             int output;
 
+            List<tbl_Profile_UserGroup> userGroups = new List<tbl_Profile_UserGroup>();
+            List<tbl_Profile_AdditionalActivity> userActivities = new List<tbl_Profile_AdditionalActivity>();
+
+            if (user.group.Count > 0)
+            {
+                foreach (var item in user.group)
+                {
+                    var grpItem = new tbl_Profile_UserGroup()
+                    {
+                        GroupId = item.groupId,
+                        //UserId = _user.UserId,
+                        DateTimeCreated = DateTime.Now,
+                        CreatedBy = user.createdBy
+                    };
+
+                    // Audit Section ---------------------------
+                    var audit = new tbl_Audit
+                    {
+                        AuditTypeId = (short)AuditTypeEnum.UserAdded,
+                        StaffId = (int)user.createdBy,
+                        BranchId = (short)user.userBranchId,
+                        Detail = $"Added User with username: '{user.username}' to group: '{grpItem.tbl_Profile_Group.GroupName}'",
+                        IPAddress = user.userIPAddress,
+                        Url = user.applicationUrl,
+                        ApplicationDate = genSetup.GetApplicaionDate(),
+                        SystemDateTime = DateTime.Now
+                    };
+
+                    this.auditTrail.AddAuditTrail(audit);
+                    // Audit Section Contd.---------------------------
+
+                    userGroups.Add(grpItem);
+                }
+            }
+
+            if (user.activities.Any())
+            {
+                foreach (var item in user.activities)
+                {
+                    var userActivity = new tbl_Profile_AdditionalActivity()
+                    {
+                        ActivityId = item.activityId,
+                        //UserId = _user.UserId,
+                        CreatedBy = user.createdBy,
+                        DateTimeCreated = DateTime.Now
+                    };
+
+                   userActivities.Add(userActivity);
+                }
+            }
+
             var _user = new tbl_Profile_User()
             {
                 StaffId = user.staffId,
@@ -111,22 +162,10 @@ namespace FintrakBanking.Repositories.Admin
                 CreatedBy = user.createdBy,
                 LastUpdatedBy = user.createdBy,
                 DateTimeCreated = DateTime.Now,
-                ApprovalStatus = false
+                ApprovalStatus = false,
+                tbl_Profile_UserGroup = userGroups,
+                tbl_Profile_AdditionalActivity = userActivities
             };
-
-            // Audit Section ---------------------------
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.UserAdded,
-                StaffId = (int)user.createdBy,
-                BranchId = (short)user.userBranchId,
-                Detail = $"Added User with username: '{user.username}' ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
-                SystemDateTime = DateTime.Now
-            };
-            //end of Audit section -------------------------------
 
             if (workFlow.CheckRouteForOperation((int)Operations.UserCreation, user.companyId))
             {
@@ -136,56 +175,6 @@ namespace FintrakBanking.Repositories.Admin
                     {
                         context.tbl_Profile_User.Add(_user);
                         
-                        this.auditTrail.AddAuditTrail(audit);
-
-                        if (user.group.Count > 0)
-                        {
-                            foreach (var item in user.group)
-                            {
-                                var grpItem = new tbl_Profile_UserGroup()
-                                {
-                                    GroupId = item.groupId,
-                                    UserId = _user.UserId,
-                                    DateTimeCreated = DateTime.Now,
-                                    CreatedBy = user.createdBy
-                                };
-
-                                // Audit Section ---------------------------
-                                var userGroupAudit = new tbl_Audit
-                                {
-                                    AuditTypeId = (short)AuditTypeEnum.UserAdded,
-                                    StaffId = (int)user.createdBy,
-                                    BranchId = (short)user.userBranchId,
-                                    Detail = $"Added User with username: '{user.username}' to group: '{user.group}'",
-                                    IPAddress = user.userIPAddress,
-                                    Url = user.applicationUrl,
-                                    ApplicationDate = genSetup.GetApplicaionDate(),
-                                    SystemDateTime = DateTime.Now
-                                };
-
-                                this.auditTrail.AddAuditTrail(audit);
-                                // Audit Section Contd.---------------------------
-
-                                context.tbl_Profile_UserGroup.Add(grpItem);
-                            }
-                        }
-
-                        if (user.activities.Any())
-                        {
-                            foreach (var item in user.activities)
-                            {
-                                var userActivity = new tbl_Profile_AdditionalActivity()
-                                {
-                                    ActivityId = item.activityId,
-                                    UserId = _user.UserId,
-                                    CreatedBy = user.createdBy,
-                                    DateTimeCreated = DateTime.Now
-                                };
-
-                                context.tbl_Profile_AdditionalActivity.Add(userActivity);
-                            }
-                        }
-
                         output = await context.SaveChangesAsync();
 
                         var entity = new ApprovalViewModel

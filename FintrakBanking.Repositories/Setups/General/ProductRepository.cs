@@ -399,7 +399,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         companyId = c.CompanyId,
                         productTypeId = c.ProductTypeId,
                         productTypeName = c.tbl_Product_Type.ProductTypeName,
-                        productGroupName = c.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
                         productCategoryId = c.ProductCategoryId,
                         productCategoryName = c.tbl_Product_Category.ProductCategoryName,
                         productClassId = c.ProductClassId,
@@ -414,6 +413,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productDescription = c.ProductDescription,
 
                         productGroupId = c.tbl_Product_Type.ProductGroupId,
+                        productGroupName = c.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
 
                         principalBalanceGl = c.PrincipalBalanceGL,
                         principalBalanceGlCode = (c.PrincipalBalanceGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
@@ -425,7 +425,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         interestReceivablePayableGlCode = (c.InterestReceivablePayableGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
 
                         dormantGl = c.DormantGL,
+                        dormantGlCode = (c.DormantGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
                         premiumDiscountGl = c.PremiumDiscountGL,
+                        premiumDiscountGlCode = (c.PremiumDiscountGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
 
                         dealTypeId = c.DealTypeId,
                         dealTypeName = c.tbl_Deal_Type.DealTypeName,
