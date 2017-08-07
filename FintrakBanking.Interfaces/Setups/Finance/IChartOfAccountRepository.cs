@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Setups.Finance;
 using System.Collections.Generic;
 
@@ -15,6 +16,7 @@ namespace FintrakBanking.Interfaces.Setups.Finance
         ChartOfAccountViewModel GetAccountViewModel(short accountId);
         ChartOfAccountViewModel GetTempAccountDetail(int accountId);
         IEnumerable<ChartOfAccountViewModel> GetAccountsAwaitingApprovals(int accountId, int companyId);
+        bool GoForApproval(ApprovalViewModel entity);
         bool AddTempAccount(ChartOfAccountViewModel account);
         bool IsAccountCodeAlreadyExist(string accountCode);
         bool IsAccountExist(string accountCode);

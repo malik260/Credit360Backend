@@ -199,7 +199,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var currUser = foundUser.First();
 
-                DateTime now = DateTime.UtcNow;
+                DateTime now = DateTime.Now;
                 var userActivities = this._adminRepo.GetUserActivities(currUser.user_id);
 
                 // build the json response

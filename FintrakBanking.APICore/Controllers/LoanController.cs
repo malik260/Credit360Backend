@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 entity.userBranchId = (short)token.GetBranchId;
-                // entity.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
@@ -271,7 +271,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-
                 var data = repo.GeneratePeriodicLoanSchedule(loanInput);
 
                 if (!data.Any())
@@ -279,13 +278,35 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.Where(x => x.paymentNumber > 0).ToList() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        [HttpPost]
+        [Route("daily-schedule")]
+        public HttpResponseMessage GenerateDailyLoanSchedule([FromBody] LoanPaymentScheduleInputViewModel loanInput)
+        {
+            try
+            {
+                var data = repo.GenerateDailyLoanSchedule(loanInput);
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
 
         //[HttpPost][Route("schedule/export")]
         //public HttpResponseMessage ExportScheduleToExcel([FromBody] PaymentScheduleExcelViewModel model)

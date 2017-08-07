@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("core.tbl_Charge_Fee")]
     public partial class tbl_Charge_Fee
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Charge_Fee()
+        {
+            tbl_Charge_Range = new HashSet<tbl_Charge_Range>();
+        }
+
         [Key]
         public int ChargeFeeId { get; set; }
 
@@ -17,8 +23,6 @@ namespace FintrakBanking.Entities.Models
         public string ChargeFeeName { get; set; }
 
         public short AccountCategoryId { get; set; }
-
-        public short FeeTypeId { get; set; }
 
         public short FeeIntervalId { get; set; }
 
@@ -36,17 +40,14 @@ namespace FintrakBanking.Entities.Models
 
         public short? CutOffDay { get; set; }
 
-        [Column(TypeName = "date")]
-        public DateTime FeeDate { get; set; }
-
-        public int OperationId { get; set; }
+        public int? OperationId { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? Amount { get; set; }
 
         public double? Rate { get; set; }
 
-        public int? ValueSource { get; set; }
+        public int ValueSource { get; set; }
 
         public bool? Recurring { get; set; }
 
@@ -82,8 +83,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Fee_Target tbl_Fee_Target { get; set; }
 
-        public virtual tbl_Fee_Type tbl_Fee_Type { get; set; }
-
         public virtual tbl_Operations tbl_Operations { get; set; }
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
@@ -91,5 +90,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Tax tbl_Tax { get; set; }
 
         public virtual tbl_Tax tbl_Tax1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Charge_Range> tbl_Charge_Range { get; set; }
     }
 }

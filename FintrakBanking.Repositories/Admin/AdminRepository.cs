@@ -36,7 +36,6 @@ namespace FintrakBanking.Repositories.Admin
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
         }
 
-
         public async Task<bool> CreateUser(AppUserViewModel user)
         {
             var _user = new tbl_Profile_User()
@@ -79,7 +78,7 @@ namespace FintrakBanking.Repositories.Admin
                     {
                         GroupId = item.groupId,
                         UserId = _user.UserId,
-                        DateTimeCreated = DateTime.UtcNow,
+                        DateTimeCreated = DateTime.Now,
                         CreatedBy = user.createdBy
                     };
                     // Audit Section Contd.---------------------------
@@ -216,7 +215,7 @@ namespace FintrakBanking.Repositories.Admin
             var targetGroup = context.tbl_Profile_Group.Find(groupId);
 
             targetGroup.GroupName = groupModel.groupName;
-            targetGroup.DateTimeUpdated = DateTime.UtcNow;
+            targetGroup.DateTimeUpdated = DateTime.Now;
             targetGroup.LastUpdatedBy = groupModel.createdBy;
 
             var response = await context.SaveChangesAsync();
@@ -291,7 +290,6 @@ namespace FintrakBanking.Repositories.Admin
                         });
             return data;
 
-
         }
 
         public bool AddAccessToActivity(int id, ActivitiesUpdateVm model)
@@ -335,7 +333,7 @@ namespace FintrakBanking.Repositories.Admin
                     {
                         GroupId = item.groupId,
                         UserId = userId,
-                        DateTimeCreated = DateTime.UtcNow,
+                        DateTimeCreated = DateTime.Now,
                         CreatedBy = user.createdBy
                     };
 
@@ -362,9 +360,6 @@ namespace FintrakBanking.Repositories.Admin
             var response = await context.SaveChangesAsync();
 
             return response != 0;
-
-
-
         }
 
         public List<string> GetUserActivities(int userId)
@@ -392,7 +387,6 @@ namespace FintrakBanking.Repositories.Admin
             {
                 return activities.Distinct().ToList();
             }
-
 
         }
 

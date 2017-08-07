@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductViewModel> GetProductByTypeAndCategory(short productTypeId, short productCategoryId);
         bool IsProductCodeAlreadyExist(string productCode);
         bool IsProductExist(string productCode);
+        bool GoForApproval(ApprovalViewModel entity);
         ProductViewModel AddTempProduct(ProductViewModel product);
 
         bool UpdateProduct(int productId, ProductViewModel product);

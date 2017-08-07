@@ -13,9 +13,12 @@ namespace FintrakBanking.Entities.Models
         public tbl_Collateral_Type()
         {
             tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
+            tbl_Temp_Collateral_Customer = new HashSet<tbl_Temp_Collateral_Customer>();
             tbl_Collateral_Type_Sub = new HashSet<tbl_Collateral_Type_Sub>();
             tbl_Collateral_Valuebase_Type = new HashSet<tbl_Collateral_Valuebase_Type>();
             tbl_Product_CollateralType = new HashSet<tbl_Product_CollateralType>();
+            tbl_Temp_Product_CollateralType = new HashSet<tbl_Temp_Product_CollateralType>();
+            tbl_Temp_Product_CollateralType1 = new HashSet<tbl_Temp_Product_CollateralType>();
         }
 
         [Key]
@@ -52,6 +55,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Collateral_Customer> tbl_Temp_Collateral_Customer { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Collateral_Type_Sub> tbl_Collateral_Type_Sub { get; set; }
 
         public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
@@ -61,5 +67,11 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product_CollateralType> tbl_Product_CollateralType { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_CollateralType> tbl_Temp_Product_CollateralType { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_CollateralType> tbl_Temp_Product_CollateralType1 { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Interfaces.Setups.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using System;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace FintrakBanking.APICore.Controllers
     public class GeneralSetupController : ApiControllerBase
     {
         private IGeneralSetupRepository repo;
+        private ICollateralTypeRepository collateralRepo;
 
         public GeneralSetupController(IGeneralSetupRepository _repo)
         {
@@ -276,6 +278,25 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetOperations(operationTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("collateral-types")]
+        public HttpResponseMessage GetAllCollateralTypes()
+        {
+            try
+            {
+                var data = collateralRepo.GetCollateralTypes();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

@@ -25,6 +25,10 @@ namespace FintrakBanking.Entities.Models
             tbl_Collateral_Immovable_Property = new HashSet<tbl_Collateral_Immovable_Property>();
             tbl_Collateral_Stock = new HashSet<tbl_Collateral_Stock>();
             tbl_Collateral_Vehicle = new HashSet<tbl_Collateral_Vehicle>();
+            tbl_Temp_Collateral_Policy = new HashSet<tbl_Temp_Collateral_Policy>();
+            tbl_Temp_Collateral_Plant_And_Equipment = new HashSet<tbl_Temp_Collateral_Plant_And_Equipment>();
+            tbl_Temp_Collateral_PreciousMetal = new HashSet<tbl_Temp_Collateral_PreciousMetal>();
+            tbl_Temp_Collateral_Stock = new HashSet<tbl_Temp_Collateral_Stock>();
         }
 
         [Key]
@@ -117,5 +121,17 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Collateral_Vehicle> tbl_Collateral_Vehicle { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Collateral_Policy> tbl_Temp_Collateral_Policy { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Collateral_Plant_And_Equipment> tbl_Temp_Collateral_Plant_And_Equipment { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Collateral_PreciousMetal> tbl_Temp_Collateral_PreciousMetal { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Collateral_Stock> tbl_Temp_Collateral_Stock { get; set; }
     }
 }

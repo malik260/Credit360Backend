@@ -10,6 +10,8 @@ namespace FintrakBanking.Interfaces.Setups.General
     {
         IEnumerable<ProductCollateralTypeViewModel> GetCollateralTypeByProduct(int productId);
 
+        IEnumerable<ProductCollateralTypeViewModel> GetMappedCollateralTypeByProduct(int productId);
+
         IEnumerable<CollateralTypeViewModel> GetUnmappedCollateralToProduct(int productId);
 
         ProductCollateralTypeViewModel GetProductCollateralTypeViewModel(int productCollateralTypeId);

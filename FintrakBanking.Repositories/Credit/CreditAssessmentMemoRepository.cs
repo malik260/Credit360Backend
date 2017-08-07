@@ -54,7 +54,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationUrl = entity.applicationUrl,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 BranchId = entity.userBranchId,
-                companyId = entity.companyId,
+                companyId = entity.companyId,  
                 createdBy = entity.createdBy,
                 staffId = entity.createdBy,
                 targetId = request.AccessmentMemorandumId,
@@ -70,7 +70,14 @@ namespace FintrakBanking.Repositories.Credit
         //    return loan.GetAllLoanApplications(companyId)
         //        .Where(c => c.branchId == branchId && c.approvalStatusId == (int)ApprovalStatusEnum.Pending);
         //}
-
+        /// <summary>
+        /// This is use to get cam request further proccessing.
+        /// </summary>
+        /// <param name="companyId"> </param>
+        /// <param name="branchId"></param>
+        /// <param name="staffId"></param>
+        /// <param name="operationId">request or operation type</param>
+        /// <returns></returns>
         public IQueryable<LoanApplicationViewModel> GetRequestOnCreditAssessmentMemo(int companyId, int branchId, int staffId, int operationId)
         {
             int staffApprovalLevelId = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, operationId).staffLevelId;
@@ -79,7 +86,7 @@ namespace FintrakBanking.Repositories.Credit
                     join e in context.tbl_Credit_Assessment_Memorandum on d.loanApplicationId equals e.LoanApplicationId
                     where c.OperationId == operationId && e.IsSubmitted == true && e.IsProccessed == false && d.branchId == branchId
                     && c.ToApprovalLevelId == staffApprovalLevelId
-                    select d);
+                    select d).OrderBy(c=> c.applicationDate);
         }
 
         public bool SubmitRequestForProcessing(ApprovalViewModel entity)
