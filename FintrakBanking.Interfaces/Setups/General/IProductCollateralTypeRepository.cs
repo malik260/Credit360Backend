@@ -19,7 +19,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         int AddProductCollateralType(ProductCollateralTypeViewModel collateralType);
 
         int AddMultipleProductCollateralType(List<ProductCollateralTypeViewModel> collateralTypes);
-
+        void ApproveProductCollateral(int productId, UserInfo user);
+        int AddTempProductCollateralType(ProductCollateralTypeViewModel productCollateral);
 
         bool DeleteProductCollateralType(int productCollateralTypeId, UserInfo user);
 

@@ -32,6 +32,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool Deleted { get; set; }
 
+        public bool IsCurrent { get; set; }
+
+        public short ApprovalStatusId { get; set; }
+
         public virtual tbl_Company tbl_Company { get; set; }
 
         public virtual tbl_Company tbl_Company1 { get; set; }
