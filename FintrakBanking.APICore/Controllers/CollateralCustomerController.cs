@@ -18,13 +18,16 @@ namespace FintrakBanking.APICore.Controllers
     {
         private ICollateralCustomerRepository repo;
 
-        public CollateralCustomerController(ICollateralCustomerRepository _repo )
+        public CollateralCustomerController()
+        {
+        }
+        public CollateralCustomerController(ICollateralCustomerRepository _repo)
         {
             this.repo = _repo;
         }
 
         #region Collateral 
-        [HttpPost][Route("collateral-customer")]
+        [HttpPost][Route("customer-collateral")]
         public async Task<HttpResponseMessage> AddCollateral([FromBody] CollateralCustomerViewModel entity)
         {
             try
@@ -34,7 +37,6 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
-                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.companyId = token.GetCompanyId;
 
                 var response = await repo.AddCollateralCustomer(entity);
@@ -47,12 +49,11 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-               //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
-        [HttpPut][Route("collateral-customer/{collateralCustomerId}")]
+        [HttpPut][Route("customer-collateral/{collateralCustomerId}")]
         public async Task<HttpResponseMessage> UpdateCustomCollateral(int collateralCustomerId, [FromBody] CollateralCustomerViewModel entity)
         {
 
@@ -62,7 +63,6 @@ namespace FintrakBanking.APICore.Controllers
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userBranchId = (short)token.GetBranchId;
-                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
 
                 var response = await repo.UpdateCollateralCustomer(collateralCustomerId, entity);
                 if (!response)
@@ -73,12 +73,11 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
-        [HttpDelete][Route("collateral-customer/{collateralCustomerId}")]
+        [HttpDelete][Route("customer-collateral/{collateralCustomerId}")]
         public async Task<HttpResponseMessage> DeleteCollateralCustomer(int collateralCustomerId)
         {
             try
@@ -91,7 +90,6 @@ namespace FintrakBanking.APICore.Controllers
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
-                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
                 };
 
                 var response = await repo.DeleteCollateralCustomer(collateralCustomerId, user);
@@ -104,19 +102,20 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
-        [HttpGet][Route("collateral-customer/customer/{customerId}")]
+        [HttpGet]
+        [Route("customer-collateral/{customerId}")]
         public HttpResponseMessage GetCollateralCustomer(int customerId)
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var response = repo.GetCollateralCustomer(customerId, token.GetCompanyId);
+                var response = repo.GetCollateralCustomerByCustomerId(2,1);// repo.GetCollateralCustomer(customerId, token.GetCompanyId);
+
                 if (response == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -125,8 +124,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
         #endregion Collateral 

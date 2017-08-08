@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
         Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity);
         Task<bool> DeleteCollateralCustomer(int collateralCustomerId, UserInfo user);
         Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity);
-        IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId);
+        IEnumerable<CollateralCustomerViewModel> GetCollateralCustomerByCustomerId(int customerId, int companyId);
         #endregion Collateral
 
         #region Miscellaneous Notes

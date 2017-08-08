@@ -129,7 +129,7 @@ namespace FintrakBanking.Repositories.Credit
                     }).ToList();
         }
 
-        private List<CollateralCustomerViewModel> GetCollateralCustomerByCustomerId(int customerId, int companyId)
+        public IEnumerable<CollateralCustomerViewModel> GetCollateralCustomerByCustomerId(int customerId, int companyId)
         {
             return CollateralCustomer(customerId, companyId);
         }

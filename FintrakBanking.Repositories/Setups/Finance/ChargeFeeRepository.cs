@@ -118,16 +118,16 @@ namespace FintrakBanking.Repositories.Setups.Finance
             data.LastUpdatedBy = model.lastUpdatedBy;
             data.DateTimeUpdated = general.GetApplicaionDate();
 
-            // still testing
-            //var notRemoved = model.ranges.Select(range => range.chargeRangeId).ToArray();
-            //context.tbl_Charge_Range.RemoveRange(
-            //    context.tbl_Charge_Range.Where(range => !notRemoved.Contains(range.ChargeRangeId) && range.ChargeFeeId == chargeFeeId)
-            //);
+            var notRemoved = model.ranges.Select(range => range.chargeRangeId).ToArray();
+            context.tbl_Charge_Range.RemoveRange(
+                context.tbl_Charge_Range.Where(range => !notRemoved.Contains(range.ChargeRangeId) && range.ChargeFeeId == chargeFeeId)
+            );
+
+            var count = model.ranges.Count();
 
             foreach (var range in model.ranges)
             {
-                var rangedata = this.context.tbl_Charge_Range.Find(range.chargeRangeId);
-                if (rangedata == null)
+                if (range.chargeRangeId <= 0)
                 {
                     context.tbl_Charge_Range.Add(new tbl_Charge_Range
                     {
@@ -141,16 +141,6 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         CreatedBy = (int)model.createdBy,
                         DateTimeCreated = general.GetApplicaionDate()
                     });
-                }
-                else
-                {
-                    // rangedata.ChargeFeeId = range.chargeFeeId;
-                    rangedata.Minimum = range.minimum;
-                    rangedata.Maximum = range.maximum;
-                    rangedata.Rate = range.rate;
-                    rangedata.Amount = range.amount;
-                    rangedata.MinimumAndAbove = range.minimumAndAbove;
-                    rangedata.MaximumAndBelow = range.maximumAndBelow;
                 }
             }
 
@@ -196,6 +186,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 secondaryTaxId = x.SecondaryTaxId,
                 ranges = context.tbl_Charge_Range.Where(r => r.ChargeFeeId == x.ChargeFeeId)
                     .Select(r => new ChargeRangeViewModel {
+                        chargeRangeId = r.ChargeRangeId,
                         minimum = r.Minimum,
                         maximum = r.Maximum,
                         amount = r.Amount,
@@ -239,6 +230,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 ranges = context.tbl_Charge_Range.Where(r => r.ChargeFeeId == data.ChargeFeeId)
                     .Select(r => new ChargeRangeViewModel
                     {
+                        chargeRangeId = r.ChargeRangeId,
                         minimum = r.Minimum,
                         maximum = r.Maximum,
                         amount = r.Amount,
