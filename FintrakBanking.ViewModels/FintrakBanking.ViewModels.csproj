@@ -69,7 +69,7 @@
     <Compile Include="Customer\CustomerFSCaptionGroupViewModel.cs" />
     <Compile Include="Customer\CustomerFSCaptionViewModel.cs" />
     <Compile Include="Customer\CustomerFSRatioCaptionViewModel.cs" />
-    <Compile Include="Customer\CustomerGroupMapppingViewModel.cs" />
+    <Compile Include="Customer\CustomerGroupMappingViewModel.cs" />
     <Compile Include="Customer\CustomerGroupViewModel.cs" />
     <Compile Include="Customer\CustomerIdentificationViewModels.cs" />
     <Compile Include="Customer\CustomerPhoneContactViewModels.cs" />

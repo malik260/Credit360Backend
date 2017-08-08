@@ -382,7 +382,7 @@ namespace FintrakBanking.Repositories.Customer
         #endregion
 
         #region tbl_Customer Group Mapping
-        public bool AddCustomerGroupMapping(CustomerGroupMapppingViewModel entity)
+        public bool AddCustomerGroupMapping(CustomerGroupMappingViewModel entity)
         {
             var groupMap = new tbl_Customer_Group_Mapping
             {
@@ -422,14 +422,19 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
 
+        public bool AddTempCustomerGroupMapping(CustomerGroupMappingViewModel model)
+        {
+            throw new Exception("On the way");
+        }
+
 
         ///TODO: Implement a more efficient method 
-        public bool AddMultipleCustomerGroupMapping(List<CustomerGroupMapppingViewModel> customerGroups)
+        public bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups)
         {
             if (customerGroups.Count <= 0)
                 return false;
 
-            foreach (CustomerGroupMapppingViewModel item in customerGroups)
+            foreach (CustomerGroupMappingViewModel item in customerGroups)
             {
                 AddCustomerGroupMapping(item);
             }
@@ -437,11 +442,11 @@ namespace FintrakBanking.Repositories.Customer
             return true;
         }
 
-        public IEnumerable<CustomerGroupMapppingViewModel> GetCustomerGroupMapping()
+        public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
         {
             var customerGroupMapping = from a in context.tbl_Customer_Group_Mapping
                                        where a.Deleted == false
-                                       select new CustomerGroupMapppingViewModel
+                                       select new CustomerGroupMappingViewModel
                                        {
 
                                            customerGroupMappingId = a.CustomerGroupMappingId,
@@ -455,11 +460,11 @@ namespace FintrakBanking.Repositories.Customer
             return customerGroupMapping;
         }
 
-        public CustomerGroupMapppingViewModel GetCustomerGroupMappingByGroupMapId(int groupMapId)
+        public CustomerGroupMappingViewModel GetCustomerGroupMappingByGroupMapId(int groupMapId)
         {
             var customerGroupMapping = from a in context.tbl_Customer_Group_Mapping
                                        where a.CustomerGroupMappingId == groupMapId && a.Deleted == false
-                                       select new CustomerGroupMapppingViewModel
+                                       select new CustomerGroupMappingViewModel
                                        {
 
                                            customerGroupMappingId = a.CustomerGroupMappingId,
@@ -474,11 +479,11 @@ namespace FintrakBanking.Repositories.Customer
 
         }
 
-        public IEnumerable<CustomerGroupMapppingViewModel> GetCustomerGroupMappingByGroupId(int customerGroupId)
+        public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMappingByGroupId(int customerGroupId)
         {
             var customerGroupMapping = from a in context.tbl_Customer_Group_Mapping
                                        where a.CustomerGroupId == customerGroupId && a.Deleted == false
-                                       select new CustomerGroupMapppingViewModel
+                                       select new CustomerGroupMappingViewModel
                                        {
                                            customerGroupMappingId = a.CustomerGroupMappingId,
                                            customerGroupId = a.CustomerGroupId,
@@ -529,7 +534,7 @@ namespace FintrakBanking.Repositories.Customer
 
         }
 
-        public bool UpdateCustomerGroupMapping(int groupMapId, CustomerGroupMapppingViewModel entity)
+        public bool UpdateCustomerGroupMapping(int groupMapId, CustomerGroupMappingViewModel entity)
         {
             var groupMap = context.tbl_Customer_Group_Mapping.Find(groupMapId);
             if (groupMap == null) return false;
@@ -560,6 +565,11 @@ namespace FintrakBanking.Repositories.Customer
 
             this.auditTrail.AddAuditTrail(audit);
             return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateCustomerGroupMappingForApproval(int groupMapId, CustomerGroupMappingViewModel model)
+        {
+            throw new Exception("Not implemented"); 
         }
 
         public bool DeleteCustomerGroupMapping(int groupMapId, UserInfo user)

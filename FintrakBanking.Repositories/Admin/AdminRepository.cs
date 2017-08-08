@@ -232,6 +232,7 @@ namespace FintrakBanking.Repositories.Admin
                         select new UserViewModel()
                         {
                             user_id = c.UserId,
+                            staffId = c.StaffId,
                             companyId = coy.CompanyId,
                             companyName = coy.Name,
                             branchId = br.BranchId,
