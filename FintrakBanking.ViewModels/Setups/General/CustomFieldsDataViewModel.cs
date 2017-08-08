@@ -3,7 +3,7 @@
 namespace FintrakBanking.ViewModels.Setups.Credit
 {
 
-    public class CustomFieldsDataViewModel : GenaralEntity
+    public class CustomFieldsDataViewModel : GeneralEntity
     {
         public CustomFieldsDataViewModel() {
             customFieldOption = new List<CustomFieldOptionViewModel>();

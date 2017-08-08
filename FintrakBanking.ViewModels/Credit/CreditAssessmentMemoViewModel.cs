@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class CreditAssessmentMemoViewModel : GenaralEntity
+    public class CreditAssessmentMemoViewModel : GeneralEntity
     {
         public int loanApplicationId { get; set; }
         public string camref { get; set; }

@@ -78,7 +78,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"Added fee: { fee.feeName } of type {fee.feeTypeName} ",
                     IPAddress = fee.userIPAddress,
                     Url = fee.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 
@@ -126,7 +126,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Added fee: { feeModel.feeName } of type {feeModel.feeTypeName} ",
                 IPAddress = feeModel.userIPAddress,
                 Url = feeModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             //end of Audit section -------------------------------
@@ -274,7 +274,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Udated fee: { fee.feeName } of type {fee.feeTypeName} ",
                 IPAddress = fee.userIPAddress,
                 Url = fee.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -347,7 +347,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Updated Fee: { feeModel.feeName } with fee account category '{feeModel.accountCategoryName}'",
                 IPAddress = feeModel.userIPAddress,
                 Url = feeModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = feeId
             };
@@ -449,7 +449,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Approved Fee '{feeModel.FeeName}' with fee account category '{feeModel.tbl_Account_Category.AccountCategoryName}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

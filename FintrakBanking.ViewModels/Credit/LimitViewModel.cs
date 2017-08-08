@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class LimitViewModel : GenaralEntity
+    public class LimitViewModel : GeneralEntity
     {
         public int limitId { get; set; }
         public string limitName { get; set; }
@@ -16,7 +16,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    public class LimitDetailViewModel : GenaralEntity
+    public class LimitDetailViewModel : GeneralEntity
     {
         public int limitDetailId { get; set; }
         public int limitTypeId { get; set; }

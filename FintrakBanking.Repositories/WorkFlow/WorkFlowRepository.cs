@@ -73,7 +73,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             trail = new tbl_Approval_Trail
             {
-                ArrivalDate = genSetup.GetApplicaionDate(),
+                ArrivalDate = genSetup.GetApplicationDate(),
                 ToApprovalLevelId = entity.nextLevelId == 0 ? GetStatingApprovalLevel(entity.operationId, entity.companyId) : entity.nextLevelId,
                 TargetId = entity.targetId,
                 ApprovalStatusId = entity.approvalStatusId,
@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 {
                                     trail = new tbl_Approval_Trail
                                     {
-                                        ArrivalDate = genSetup.GetApplicaionDate(),
+                                        ArrivalDate = genSetup.GetApplicationDate(),
                                         FromApprovalLevelId = currentStaffLevel.approvalLevelId,
                                         ToApprovalLevelId = currentStaffLevel.approvalLevelId,
                                         TargetId = entity.targetId,
@@ -358,7 +358,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             trail = new tbl_Approval_Trail
             {
-                ArrivalDate = genSetup.GetApplicaionDate(),
+                ArrivalDate = genSetup.GetApplicationDate(),
                 FromApprovalLevelId = currentLevel,
                 ToApprovalLevelId = nextLevelId,
                 TargetId = targetId,
@@ -379,7 +379,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             trail = new tbl_Approval_Trail
             {
-                ArrivalDate = genSetup.GetApplicaionDate(),
+                ArrivalDate = genSetup.GetApplicationDate(),
                 ToApprovalLevelId = approval.myLevelId,
                 SystemResponseDateTime = DateTime.Now,
                 TargetId = approval.targetId,
@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                     trail = new tbl_Approval_Trail
                     {
-                        ArrivalDate = genSetup.GetApplicaionDate(),
+                        ArrivalDate = genSetup.GetApplicationDate(),
                         FromApprovalLevelId = currentLevel,
                         ToApprovalLevelId = nextLevelId,SystemArrivalDateTime = DateTime.Now ,
                         TargetId = approval.targetId,

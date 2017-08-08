@@ -11,7 +11,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string optionsValue { get; set; }
     }
 
-    public class CustomFieldViewModel : GenaralEntity
+    public class CustomFieldViewModel : GeneralEntity
     {
         public CustomFieldViewModel()
         {
@@ -40,7 +40,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int parentHostPageId { get; set; }
     }
 
-    public class AddCustomFieldViewModel : GenaralEntity
+    public class AddCustomFieldViewModel : GeneralEntity
     {
         //public AddCustomFieldViewModel()
         //{

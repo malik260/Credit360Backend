@@ -80,7 +80,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 MaximumAmount = model.maximumAmount,
                 StaffId = model.staffId,
                 ApprovalLevelId = model.approvalLevelId,
-                DateTimeCreated = _genSetup.GetApplicaionDate(),
+                DateTimeCreated = _genSetup.GetApplicationDate(),
                 CreatedBy = (int)model.createdBy
             };
 
@@ -96,7 +96,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Detail = $"Added Approval-Level '{audit_staff_level.LevelName}' for user code '{audit_staff.StaffCode}' .",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = model.staffLevelId
             };
@@ -116,7 +116,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             data.StaffId = model.staffId;
             data.ApprovalLevelId = model.approvalLevelId;
             data.MaximumAmount = model.maximumAmount;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
             data.LastUpdatedBy = (int)model.createdBy;
 
             // Audit Section ---------------------------
@@ -131,7 +131,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Detail = $"Added Approval Level for staff with code '{audit_staff.StaffCode}' to level {model.staffLevelName}'",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = model.staffLevelId
             };
@@ -146,7 +146,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var data = this.context.tbl_Approval_Level_Staff.Find(StaffLevelId);
             {
-                data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+                data.DateTimeDeleted = _genSetup.GetApplicationDate();
                 data.Deleted = true;
                 data.DeletedBy = user.staffId;
             };
@@ -163,7 +163,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Detail = $"Added Approval Level Staff {audit_staff_level.LevelName}' for staff with code '{audit_staff.StaffCode}' ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = data.StaffLevelId
             };
@@ -192,7 +192,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if (update != null)
             {
                 update.ApprovalStatusId = model.ApprovalStatusId;
-                update.ResponseDate = _genSetup.GetApplicaionDate();
+                update.ResponseDate = _genSetup.GetApplicationDate();
                 update.SystemResponseDateTime = model.SystemResponseDateTime;
                 update.ResponseStaffId = model.ResponseStaffId;
 

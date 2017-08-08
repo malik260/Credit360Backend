@@ -36,7 +36,7 @@ namespace FintrakBanking.Repositories.Finance
                 UseAmount = model.useAmount,
                 CompanyId = model.companyId,
                 CreatedBy = (int)model.createdBy,
-                DateTimeCreated = general.GetApplicaionDate()
+                DateTimeCreated = general.GetApplicationDate()
             };
 
             context.tbl_Tax.Add(data);
@@ -50,7 +50,7 @@ namespace FintrakBanking.Repositories.Finance
                 Detail = $"Added Tax '{ data.TaxName }' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicaionDate(),
+                ApplicationDate = general.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
@@ -75,7 +75,7 @@ namespace FintrakBanking.Repositories.Finance
             data.UseAmount = model.useAmount;
 
             data.LastUpdatedBy = model.lastUpdatedBy;
-            data.DateTimeUpdated = general.GetApplicaionDate();
+            data.DateTimeUpdated = general.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -86,7 +86,7 @@ namespace FintrakBanking.Repositories.Finance
                 Detail = $"Updated Tax '{ data.TaxName }' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicaionDate(),
+                ApplicationDate = general.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
@@ -144,7 +144,7 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             data.Deleted = true;
-            data.DateTimeUpdated = general.GetApplicaionDate();
+            data.DateTimeUpdated = general.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -155,7 +155,7 @@ namespace FintrakBanking.Repositories.Finance
                 Detail = $"Deleted Tax '{ data.TaxName }' ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = general.GetApplicaionDate(),
+                ApplicationDate = general.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);

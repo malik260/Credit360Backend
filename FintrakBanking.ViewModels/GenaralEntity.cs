@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 namespace FintrakBanking.ViewModels
 {
-    public class GenaralEntity
+    public class GeneralEntity
     {
         public int companyId { get; set; }
         public int createdBy { get; set; }

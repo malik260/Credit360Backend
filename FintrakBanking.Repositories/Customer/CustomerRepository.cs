@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail =  $"Added Customer  { entity.customerName } with Code: { entity.customerCode } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -237,7 +237,7 @@ namespace FintrakBanking.Repositories.Customer
                     Detail = "Added Customer's Customer Info for: " + customer.FirstName + " " + customer.LastName + " with Id: " + info.CustomerId + " to company" + " (" + info.CompanyName + ") " + " on " + info.CompanyInfomationId,
                     IPAddress = ent.userIPAddress,
                     Url = ent.applicationUrl,
-                    ApplicationDate = _genSetup.GetApplicaionDate(),
+                    ApplicationDate = _genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 
@@ -320,7 +320,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = "Deleted Customer: " + customer.LastName + " with code: " + customer.CustomerCode,
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -521,7 +521,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = "Updated tbl_Customer: " + entity.customerName + " with code: " + entity.customerCode + " on" + " (" + entity.customerId + ") ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

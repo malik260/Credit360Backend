@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Customer
 {
-    public class CustomerFSRatioCaptionViewModel : GenaralEntity
+    public class CustomerFSRatioCaptionViewModel : GeneralEntity
     {
 
         public short ratioCaptionId { get; set; }
@@ -14,7 +14,7 @@ namespace FintrakBanking.ViewModels.Customer
         public int position { get; set; }
     }
 
-    public class CustomerFSRatioDetailViewModel : GenaralEntity
+    public class CustomerFSRatioDetailViewModel : GeneralEntity
     {
         public int ratioDetailId { get; set; }
         public short ratioCaptionId { get; set; }
@@ -28,13 +28,13 @@ namespace FintrakBanking.ViewModels.Customer
         public string valueTypeName { get; set; }
 
     }
-    public class CustomerFSRatioDivisorTypeViewModel : GenaralEntity
+    public class CustomerFSRatioDivisorTypeViewModel : GeneralEntity
     {
         public short divisorTypeId { get; set; }
         public string divisorTypeName { get; set; }
     }
 
-    public class CustomerFSRatioValueTypeViewModel : GenaralEntity
+    public class CustomerFSRatioValueTypeViewModel : GeneralEntity
     {
         public short valueTypeId { get; set; }
         public string valueTypeName { get; set; }

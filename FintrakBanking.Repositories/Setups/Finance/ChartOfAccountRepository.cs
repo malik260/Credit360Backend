@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         {
                             GLAccountId = c.GLAccountId,
                             CurrencyId = c.CurrencyId,
-                            DateTimeCreated = _genSetup.GetApplicaionDate(),
+                            DateTimeCreated = _genSetup.GetApplicationDate(),
                             DateTimeUpdated = DateTime.Now,
                         };
                         context.tbl_Chart_Of_Account_Currency.Add(curr);
@@ -123,7 +123,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     BranchSpecific = accountModel.BranchSpecific,
                     FSCaptionId = accountModel.FSCaptionId,
                     AccountStatusId = accountModel.AccountStatusId,
-                    DateTimeCreated = _genSetup.GetApplicaionDate(),
+                    DateTimeCreated = _genSetup.GetApplicationDate(),
                     CreatedBy = accountModel.CreatedBy
                 };
                 context.tbl_Chart_Of_Account.Add(account);
@@ -134,7 +134,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     {
                         GLAccountId = c.GLAccountId,
                         CurrencyId = c.CurrencyId,
-                        DateTimeCreated = _genSetup.GetApplicaionDate(),
+                        DateTimeCreated = _genSetup.GetApplicationDate(),
                     };
                     context.tbl_Chart_Of_Account_Currency.Add(curr);
                 }
@@ -154,7 +154,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 Detail = $"Approved Account '{accountModel.AccountName}' with staff code'{accountModel.AccountCode}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -179,7 +179,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     CurrencyId = item.currencyId,
                     //GlaccountId = chartOfAccount.GlaccountId,
                     CreatedBy = item.createdBy,
-                    DateTimeCreated = _genSetup.GetApplicaionDate()
+                    DateTimeCreated = _genSetup.GetApplicationDate()
                 };
 
                 currencies.Add(chartOfAccountCurrency);
@@ -198,7 +198,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 AccountStatusId = account.accountStatusId,
 
                 CreatedBy = account.createdBy,
-                DateTimeCreated = _genSetup.GetApplicaionDate(),
+                DateTimeCreated = _genSetup.GetApplicationDate(),
                 tbl_Chart_Of_Account_Currency = currencies
             };
 
@@ -213,7 +213,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 IPAddress = account.userIPAddress,
                 Url = account.applicationUrl,
                 SystemDateTime = DateTime.Now,
-                ApplicationDate = _genSetup.GetApplicaionDate()
+                ApplicationDate = _genSetup.GetApplicationDate()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -250,7 +250,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     //GLAccountId = item.glaccountId,
                     CurrencyId = item.currencyId,
                     CreatedBy = item.createdBy,
-                    DateTimeCreated = _genSetup.GetApplicaionDate()
+                    DateTimeCreated = _genSetup.GetApplicationDate()
                 };
                 currencies.Add(chartOfAccountCurrency);
             }
@@ -268,7 +268,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 FSCaptionId = accountModel.fsCaptionId,
                 AccountStatusId = accountModel.accountStatusId,
                 CreatedBy = accountModel.createdBy,
-                DateTimeCreated = _genSetup.GetApplicaionDate(),
+                DateTimeCreated = _genSetup.GetApplicationDate(),
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                 IsCurrent = true,
                 tbl_Temp_Chart_Of_Account_Currency = currencies,
@@ -283,7 +283,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 Detail = $"Initiated Chart of Account Creation for '{accountModel.accountName}' with code'{accountModel.accountCode}'",
                 IPAddress = accountModel.userIPAddress,
                 Url = accountModel.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -432,7 +432,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             accountModel.AccountStatusId = account.accountStatusId;
 
             accountModel.LastUpdatedBy = account.lastUpdatedBy;
-            accountModel.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            accountModel.DateTimeUpdated = _genSetup.GetApplicationDate();
 
             //Account Currencies Update
             foreach (var currency in account.currencies)
@@ -453,7 +453,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 IPAddress = account.userIPAddress,
                 Url = account.applicationUrl,
                 SystemDateTime = DateTime.Now,
-                ApplicationDate = _genSetup.GetApplicaionDate()
+                ApplicationDate = _genSetup.GetApplicationDate()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -516,7 +516,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         //GLAccountId = item.glaccountId,
                         CurrencyId = item.currencyId,
                         CreatedBy = accountModel.createdBy,
-                        DateTimeCreated = _genSetup.GetApplicaionDate()
+                        DateTimeCreated = _genSetup.GetApplicationDate()
                     };
                     tempCurrencies.Add(chartOfAccountCurrency);
                 }
@@ -535,7 +535,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     AccountStatusId = accountModel.accountStatusId,
                     //GLAccountId = accountId,
                     CreatedBy = accountModel.createdBy,
-                    DateTimeCreated = _genSetup.GetApplicaionDate(),
+                    DateTimeCreated = _genSetup.GetApplicationDate(),
                     ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
                     IsCurrent = true,
 
@@ -553,7 +553,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 Detail = $"Initiated updated of Chart Of Account '{accountModel.accountName}' with code'{accountModel.accountCode}'",
                 IPAddress = accountModel.userIPAddress,
                 Url = accountModel.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = accountId
 
@@ -671,7 +671,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             accountModel.Deleted = true;
             //accountModel.DeletedBy = ;
-            accountModel.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            accountModel.DateTimeDeleted = _genSetup.GetApplicationDate();
 
             var audit = new tbl_Audit
             {
@@ -682,7 +682,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
                 SystemDateTime = DateTime.Now,
-                ApplicationDate = _genSetup.GetApplicaionDate()
+                ApplicationDate = _genSetup.GetApplicationDate()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------

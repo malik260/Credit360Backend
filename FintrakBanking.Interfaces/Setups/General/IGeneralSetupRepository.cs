@@ -27,7 +27,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<LookupViewModel> GetAllFrequencyTypes();
         //Task<bool>  SaveProductGroup(ProductGroupViewModel group);
-        DateTime GetApplicaionDate();
+        DateTime GetApplicationDate();
 
         IEnumerable<LookupViewModel> GetAllOperationTypes();
 

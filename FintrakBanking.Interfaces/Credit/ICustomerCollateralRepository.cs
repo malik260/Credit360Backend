@@ -18,6 +18,10 @@ namespace FintrakBanking.Interfaces.Credit
         bool IsCollateralDocExists(string docName);
         #endregion Collateral
 
+        #region Collateral Type
+        IEnumerable<CollateralTypeViewModel> GetCollateralType();
+        #endregion End of Collateral Type 
+
         #region Miscellaneous Notes
         Task<bool> DeleteCollateralMiscellaneousNotes(int miscNoteId, UserInfo user);
         Task<bool> UpdateCollateralMiscellaneousNotes(int miscNoteId, CollateralMiscellaneousNotesViewModel entity);

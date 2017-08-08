@@ -2,7 +2,7 @@
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class StaffInfoViewModel : GenaralEntity
+    public class StaffInfoViewModel : GeneralEntity
     {
         public int StaffId { get; set; }
         public string StaffCode { get; set; }

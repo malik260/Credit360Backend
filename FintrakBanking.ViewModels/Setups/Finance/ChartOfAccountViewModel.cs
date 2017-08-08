@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FintrakBanking.ViewModels.Setups.Finance
 {
-    public class ChartOfAccountViewModel : GenaralEntity
+    public class ChartOfAccountViewModel : GeneralEntity
     {
 
         public ChartOfAccountViewModel()
@@ -35,7 +35,7 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public string accountDetail { get { return this.accountCode + " -- " + this.accountName + " -- " + accountCategoryName; } }
     }
 
-    public class ChartOfAccountCurrencyViewModel: GenaralEntity
+    public class ChartOfAccountCurrencyViewModel: GeneralEntity
     {
         public int glaccountId { get; set; }
         public int glaccountCurrencyId { get; set; }

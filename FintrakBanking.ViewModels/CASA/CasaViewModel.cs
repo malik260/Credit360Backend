@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.CASA
 {
-    public class CasaViewModel : GenaralEntity
+    public class CasaViewModel : GeneralEntity
     {
         public int casaAccountId { get; set; }
         public string productAccountNumber { get; set; }

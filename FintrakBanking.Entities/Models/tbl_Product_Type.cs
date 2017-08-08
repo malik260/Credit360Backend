@@ -16,6 +16,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Fee = new HashSet<tbl_Fee>();
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
+            tbl_Temp_Charge_Fee = new HashSet<tbl_Temp_Charge_Fee>();
             tbl_Temp_Fee = new HashSet<tbl_Temp_Fee>();
         }
 
@@ -63,6 +64,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
 
         public virtual tbl_Deal_Classification tbl_Deal_Classification { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Charge_Fee> tbl_Temp_Charge_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Fee> tbl_Temp_Fee { get; set; }

@@ -91,7 +91,7 @@ namespace FintrakBanking.Repositories.Credit
                 CompanyId = model.companyId,
                 IsActive = model.isActive,
                 ProductClassId = (short)model.productClassId,
-                DateTimeCreated = _genSetup.GetApplicaionDate(),
+                DateTimeCreated = _genSetup.GetApplicationDate(),
                 CreatedBy = (int)model.createdBy
             };
 
@@ -108,7 +108,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Added Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -148,7 +148,7 @@ namespace FintrakBanking.Repositories.Credit
                     ItemDescription = item.itemDescription,
                     IsRequired = item.isRequired,
                     IsActive = item.isActive,
-                    DateTimeCreated = _genSetup.GetApplicaionDate(),
+                    DateTimeCreated = _genSetup.GetApplicationDate(),
                     CreatedBy = (int)model.createdBy
                 };
 
@@ -165,7 +165,7 @@ namespace FintrakBanking.Repositories.Credit
                     Detail = $"Added Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
                     IPAddress = model.userIPAddress,
                     Url = model.applicationUrl,
-                    ApplicationDate = _genSetup.GetApplicaionDate(),
+                    ApplicationDate = _genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 
@@ -189,7 +189,7 @@ namespace FintrakBanking.Repositories.Credit
             data.IsActive = model.isActive;
             data.IsRequired = model.isRequired;
             data.ProductClassId = (short)model.productClassId;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
             data.LastUpdatedBy = (int)model.createdBy;
 
             //Audit Section ---------------------------
@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Updated Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
@@ -219,7 +219,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = this.context.tbl_Checklist_Definition.Find(CheckListDefinitionId);
             data.Deleted = true;
             data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
 
@@ -234,7 +234,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Deleted Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
@@ -300,7 +300,7 @@ namespace FintrakBanking.Repositories.Credit
                 CheckedBy = (int)model.createdBy,
                 DeferedDate = model.deferedDate,
                 Remark = model.remark,
-                DateTimeCreated = _genSetup.GetApplicaionDate(),
+                DateTimeCreated = _genSetup.GetApplicationDate(),
                 CreatedBy = (int)model.createdBy
             };
 
@@ -315,7 +315,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Added Loan Checklist {audit_checklist.tbl_CheckList_Item.CheckListItemName}", // on Loan '{data.LoanId}' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -339,7 +339,7 @@ namespace FintrakBanking.Repositories.Credit
             data.CheckedBy = (int)model.createdBy;
             data.DeferedDate = model.deferedDate;
             data.Remark = model.remark;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
             data.LastUpdatedBy = (int)model.createdBy;
 
             // Audit Section ---------------------------
@@ -353,7 +353,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Added Loan Checklist {audit_checklist.tbl_CheckList_Item.CheckListItemName}",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -369,7 +369,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = context.tbl_Checklist_Detail.Find(ChecklistId);
             data.Deleted = true;
             data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit_checklist = (context.tbl_Checklist_Definition.FirstOrDefault(x => x.
@@ -383,7 +383,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Added Loan Checklist {audit_checklist.tbl_CheckList_Item.CheckListItemName}",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
@@ -428,7 +428,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = new tbl_CheckList_Item
             {
                 CheckListItemName = model.checkListItemName,
-                DateTimeCreated = _genSetup.GetApplicaionDate(),
+                DateTimeCreated = _genSetup.GetApplicationDate(),
                 CreatedBy = (int)model.createdBy
             };
 
@@ -441,7 +441,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Added Checklist Item Item '{model.checkListItemName}'",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -472,7 +472,7 @@ namespace FintrakBanking.Repositories.Credit
             if (data == null) return false;
 
             data.CheckListItemName = model.checkListItemName;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
             data.LastUpdatedBy = (int)model.createdBy;
 
             // Audit Section ---------------------------
@@ -484,7 +484,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Updated Checklist Item '{model.checkListItemName}'",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -499,7 +499,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = context.tbl_CheckList_Item.Find(CheckListItemId);
             data.Deleted = true;
             data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -510,7 +510,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Deleted Checklist Item '{data.CheckListItemName}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
