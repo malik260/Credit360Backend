@@ -20,7 +20,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IProductRepository product;
         private IMediaRepository media;
-      
+
 
         public CustomerCollateralRepository(FinTrakBankingContext _context,
                                         IGeneralSetupRepository _genSetup,

@@ -31,7 +31,9 @@ namespace FintrakBanking.ViewModels.Setups.General
         public double? productPriceIndexSpread { get; set; }
 
         public int? dormantGl { get; set; }
+        public string dormantGlCode { get; set; }
         public int? premiumDiscountGl { get; set; }
+        public string premiumDiscountGlCode { get; set; }
         public short? dealTypeId { get; set; }
         public string dealTypeName { get; set; }
         public short? dealClassificationId { get; set; }
