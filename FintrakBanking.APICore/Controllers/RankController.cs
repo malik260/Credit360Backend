@@ -8,11 +8,15 @@ using System.Web;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    [RoutePrefix("api/v1/setup")]
+    [RoutePrefix("api/v1/setups")]
     public class RankController : ApiControllerBase
     {
         private IRankRepository repo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
+        //public RankController(IRankRepository _repo)
+        //{
+        //    this.repo = _repo;
+        //}
         public RankController(IRankRepository _repo)
         {
             this.repo = _repo;
