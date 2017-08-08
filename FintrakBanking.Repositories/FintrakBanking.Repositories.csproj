@@ -66,8 +66,8 @@
     <Compile Include="Admin\CurrencyRateRepository.cs" />
     <Compile Include="AppEmail\EmailRepository.cs" />
     <Compile Include="CASA\CasaRepository.cs" />
-    <Compile Include="Credit\CollateralCustomerRepository.cs" />
     <Compile Include="Credit\CreditAssessmentMemoRepository.cs" />
+    <Compile Include="Credit\CustomerCollateralRepository.cs" />
     <Compile Include="Credit\LimitRepository.cs" />
     <Compile Include="Credit\LoanApplicationRepository.cs" />
     <Compile Include="Credit\LoanCovenantRepository.cs" />

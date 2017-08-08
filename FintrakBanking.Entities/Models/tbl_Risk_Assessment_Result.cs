@@ -10,16 +10,18 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Risk_Assessment_Result
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int RiskAssessmentId { get; set; }
+        public int AssessmentResultId { get; set; }
 
-        public int RatingIndexId { get; set; }
+        public int LoanApplicationId { get; set; }
 
-        public int LoanId { get; set; }
+        public int RiskAssessmentTitleId { get; set; }
 
-        public decimal IndexScore { get; set; }
+        [StringLength(50)]
+        public string CreditRating { get; set; }
 
-        public int CompanyId { get; set; }
+        public decimal TotalScore { get; set; }
+
+        public short CompanyId { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
 

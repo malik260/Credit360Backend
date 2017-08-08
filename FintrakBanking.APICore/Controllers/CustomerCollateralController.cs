@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels;
@@ -9,27 +9,38 @@ using System.Net.Http;
 using System.Web;
 using FintrakBanking.APICore.core;
 using System.Net;
-
+using FintrakBanking.Interfaces.Setups.Finance;
+using System.Web.Http.Cors;
+using FintrakBanking.Interfaces.ErrorLogger;
+using System.Linq;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    [RoutePrefix("api/v1/credit")]
-    public class CollateralCustomerController : ApiControllerBase
-    {
-        private ICollateralCustomerRepository repo;
+    // GET: CustomerCollateral
+    [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
 
-        public CollateralCustomerController(ICollateralCustomerRepository _repo )
+    [System.Web.Http.RoutePrefix("api/v1/credit")]
+    public class CustomerCollateralController : ApiControllerBase
+    {
+        TokenDecryptionHelper token = null;
+        private ICustomerCollateralRepository repo;
+        IErrorLogRepository errorLogger;
+
+        public CustomerCollateralController(ICustomerCollateralRepository _repo,
+                                            IErrorLogRepository _errorLogger)
         {
-            this.repo = _repo;
+            repo = _repo;
+            this.errorLogger = _errorLogger;
         }
 
         #region Collateral 
-        [HttpPost][Route("collateral-customer")]
+        [HttpPost]
+        [Route("collateral-customer")]
         public async Task<HttpResponseMessage> AddCollateral([FromBody] CollateralCustomerViewModel entity)
         {
             try
             {
-                 TokenDecryptionHelper token = new TokenDecryptionHelper();
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 entity.createdBy = token.GetStaffId;
                 entity.userBranchId = (short)token.GetBranchId;
@@ -47,12 +58,13 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-               //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
-        [HttpPut][Route("collateral-customer/{collateralCustomerId}")]
+        [HttpPut]
+        [Route("collateral-customer/{collateralCustomerId}")]
         public async Task<HttpResponseMessage> UpdateCustomCollateral(int collateralCustomerId, [FromBody] CollateralCustomerViewModel entity)
         {
 
@@ -71,14 +83,15 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
-        [HttpDelete][Route("collateral-customer/{collateralCustomerId}")]
+        [HttpDelete]
+        [Route("collateral-customer/{collateralCustomerId}")]
         public async Task<HttpResponseMessage> DeleteCollateralCustomer(int collateralCustomerId)
         {
             try
@@ -109,7 +122,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("collateral-customer/customer/{customerId}")]
+        [HttpGet]
+        [Route("collateral-customer/customer/{customerId}")]
         public HttpResponseMessage GetCollateralCustomer(int customerId)
         {
             try
@@ -123,16 +137,17 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        #endregion Collateral 
+        #endregion
 
         #region Seniority Of Claims
-        [HttpGet][Route("collateral-seniority-of-claims")]
+        [HttpGet]
+        [Route("collateral-seniority-of-claims")]
         public HttpResponseMessage GetCollateralSeciorityOfClaims()
         {
             try
@@ -146,9 +161,9 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-               // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -156,7 +171,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #region Listing Functions
-        [HttpGet][Route("collateral-value-base-type")]
+        [HttpGet]
+        [Route("collateral-value-base-type")]
         public HttpResponseMessage GetCollateralValueBaseType()
         {
             try
@@ -170,9 +186,9 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                 //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -198,7 +214,8 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpGet][Route("collateral-valuer-type")]
+        [HttpGet]
+        [Route("collateral-valuer-type")]
         public HttpResponseMessage GetCollateralValuerType()
         {
             try
@@ -212,7 +229,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -242,7 +259,8 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpGet][Route("collateral-sub-type/{collateralSubTypeId}")]
+        [HttpGet]
+        [Route("collateral-sub-type/{collateralSubTypeId}")]
         public HttpResponseMessage GetCollateralSubTypeById(short collateralSubTypeId)
         {
             try
@@ -256,7 +274,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -264,7 +282,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet][Route("collateral-sub-type/collateral-type/{collateralTypeId}")]
+        [System.Web.Http.HttpGet]
+        [Route("collateral-sub-type/collateral-type/{collateralTypeId}")]
         public HttpResponseMessage GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
         {
             try
@@ -278,12 +297,14 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         #endregion End of Listing Functions
+
     }
 }

@@ -13,31 +13,31 @@ using FintrakBanking.Interfaces.media;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    public class CollateralCustomerRepository : ICollateralCustomerRepository
+    public class CustomerCollateralRepository : ICustomerCollateralRepository
     {
         private FinTrakBankingContext context;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
         private IProductRepository product;
         private IMediaRepository media;
-        public CollateralCustomerRepository(FinTrakBankingContext _context,
+      
+
+        public CustomerCollateralRepository(FinTrakBankingContext _context,
                                         IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail,
                                         IProductRepository _product,
                                         IMediaRepository _media)
         {
-            this.context = _context;
-            this.genSetup = _genSetup;
+            context = _context;
+            genSetup = _genSetup;
             auditTrail = _auditTrail;
             product = _product;
             media = _media;
         }
 
-
         #region Collateral Customer 
         public IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId)
         {
-
             var collateral = GetCollateralCustomerByCustomerId(customerId, companyId).Where(x => x.deleted == false);
 
             foreach (var c in collateral)
@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
                 c.collateralInsurancePolicy = GetCollateralInsurancePolicyByCollateralCustomerId(c.collateralCustomerId);
                 c.collateralGaurantee = GetCollateralGauranteeByCollateralCustomerId(c.collateralCustomerId);
                 c.collateralVehicle = GetCollateralVehicleByCollateralCustomerId(c.collateralCustomerId);
-                c.collateralMiscellaneous = GetCollateralMiscellaneousByCollateralCustomerId(c.collateralCustomerId);
+                //c.collateralMiscellaneous = GetCollateralMiscellaneousByCollateralCustomerId(c.collateralCustomerId);
                 c.collateralCustomerPolicy = GetCollateralCustomerPolicyByCollateralCustomerId(c.collateralCustomerId);
             }
 
@@ -58,7 +58,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public async Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity)
         {
-
             var collateral = new tbl_Collateral_Customer
             {
                 CompanyId = entity.companyId,
@@ -90,7 +89,6 @@ namespace FintrakBanking.Repositories.Credit
 
             context.tbl_Collateral_Customer.Add(collateral);
             return await context.SaveChangesAsync() != 0;
-
         }
 
         public async Task<bool> DeleteCollateralCustomer(int colleralCustomerId, UserInfo user)
@@ -124,7 +122,7 @@ namespace FintrakBanking.Repositories.Credit
                         dateActedOn = c.DateActedOn,
                         actedOnBy = c.ActedOnBy,
                         camRefNumber = c.CamRefNumber,
-                        dateTimeCreated = genSetup.GetApplicaionDate().Date,
+                        dateTimeCreated = c.DateTimeCreated,
                         createdBy = c.CreatedBy,
                     }).ToList();
         }
@@ -148,7 +146,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.DateActedOn = entity.dateActedOn;
             collateral.ActedOnBy = entity.actedOnBy;
             collateral.CamRefNumber = entity.camRefNumber;
-            collateral.DateTimeUpdated = genSetup.GetApplicaionDate().Date;
+            collateral.DateTimeUpdated = entity.dateTimeCreated;
             collateral.LastUpdatedBy = entity.lastUpdatedBy;
 
             //TblCollateralMachineDetail collateralMachineDetail = collateral.TblCollateralMachineDetail.FirstOrDefault();
@@ -215,8 +213,6 @@ namespace FintrakBanking.Repositories.Credit
                 collateralDeposit.MaturityDate = entity.collateralDeposit.maturityDate;
                 collateralDeposit.MaturityAmount = entity.collateralDeposit.maturityAmount;
                 collateralDeposit.Remark = entity.collateralDeposit.remark;
-
-                
             }
 
             if (entity.collateralTypeId == (int)CollateralTypeEnum.CASA)
@@ -232,15 +228,12 @@ namespace FintrakBanking.Repositories.Credit
                 collateralCasa.LienAmount = entity.collateralCasa.lienAmount;
                 collateralCasa.SecurityValue = entity.collateralCasa.securityValue;
                 collateralCasa.Remark = entity.collateralCasa.remark;
-
-                
-
             }
 
             if (entity.collateralTypeId == (int)CollateralTypeEnum.PlantAndMachinery)
             {
                 var collateralMachineDetail = context.tbl_Collateral_Plant_And_Equipment.Find(entity.collateralMachineDetail.collateralMachineDetailId);
-                    
+
                 collateralMachineDetail.MachineName = entity.collateralMachineDetail.machineName;
                 collateralMachineDetail.CollateralSubTypeId = entity.collateralMachineDetail.collateralSubTypeId;
                 collateralMachineDetail.Description = entity.collateralMachineDetail.description;
@@ -289,8 +282,6 @@ namespace FintrakBanking.Repositories.Credit
                 collateralInsurancePolicy.InsurerDetails = entity.collateralInsurancePolicy.insurerDetails;
                 collateralInsurancePolicy.RenewalFrequencyTypeId = entity.collateralInsurancePolicy.renewalFrequencyTypeId;
                 collateralInsurancePolicy.Remark = entity.collateralInsurancePolicy.remark;
-
-                
             }
 
             if (entity.collateralTypeId == (int)CollateralTypeEnum.Gaurantee)
@@ -308,8 +299,6 @@ namespace FintrakBanking.Repositories.Credit
                 collateralGaurantee.EndDate = entity.collateralGaurantee.endDate;
                 collateralGaurantee.GuarantorAddress = entity.collateralGaurantee.guarantorAddress;
                 collateralGaurantee.Remark = entity.collateralGaurantee.remark;
-
-                
             }
 
             if (entity.collateralTypeId == (int)CollateralTypeEnum.Vehicle)
@@ -365,7 +354,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralCustomerPolicy.InsuranceCompanyName = entity.collateralCustomerPolicy.insuranceCompanyName;
                 collateralCustomerPolicy.StartDate = entity.collateralCustomerPolicy.startDate;
                 collateralCustomerPolicy.EndDate = entity.collateralCustomerPolicy.endDate;
-    }
+            }
 
             var audit = new tbl_Audit
             {
@@ -554,7 +543,7 @@ namespace FintrakBanking.Repositories.Credit
                 LienAmount = entity.lienAmount,
                 SecurityValue = entity.securityValue,
                 Remark = entity.remark
-    });
+            });
 
             return collateral;
         }
@@ -711,7 +700,7 @@ namespace FintrakBanking.Repositories.Credit
                         unitValue = m.UnitValue,
                         numberOfUnits = m.NumberOfUnits,
                         remark = m.Remark
-                        
+
 
 
                     }).FirstOrDefault();
@@ -1037,8 +1026,8 @@ namespace FintrakBanking.Repositories.Credit
                     ColumnValue = note.columnValue
                 });
             }
-               
-                return collateral;
+
+            return collateral;
         }
 
         public Task<bool> DeleteCollateralMiscellaneousNotes(int miscNoteId, UserInfo user)
@@ -1087,13 +1076,13 @@ namespace FintrakBanking.Repositories.Credit
             customerPolicy.Add(new tbl_Collateral_Customer_Policy
             {
                 //PolicyId = entity.policyId,
-               // CollateralCustomerId = entity.collateralCustomerId,
+                // CollateralCustomerId = entity.collateralCustomerId,
                 PolicyReferenceNumber = entity.policyReferenceNumber,
                 InsuranceCompanyName = entity.insuranceCompanyName,
                 StartDate = entity.startDate,
                 EndDate = entity.endDate
 
-    });
+            });
 
             return customerPolicy;
         }
@@ -1135,7 +1124,7 @@ namespace FintrakBanking.Repositories.Credit
                 IsMandatory = entity.isMandatory,
                 Remark = entity.remark,
                 //CreatedBy = entity
-               // DateTimeCreated = entity
+                // DateTimeCreated = entity
             });
 
             return collateral;
@@ -1188,10 +1177,10 @@ namespace FintrakBanking.Repositories.Credit
             return (from m in context.tbl_Collateral_SeniorityOfClaims
                     select new CollateralSeniorityOfClaimsViewModel
                     {
-                         seniorityOfClaimId = m.CollateralSeniorityOfClaimId,
+                        seniorityOfClaimId = m.CollateralSeniorityOfClaimId,
                         seniorityOfClaims = m.SeniorityOfClaims,
                         description = m.Description,
-                        dateTimeCreated = genSetup.GetApplicaionDate().Date,
+                        dateTimeCreated = genSetup.GetApplicaionDate(),
                     });
         }
         #endregion Seniority Of Claims
@@ -1267,6 +1256,5 @@ namespace FintrakBanking.Repositories.Credit
             return CollateralSubType().Where(x => x.collateralTypeId == collateralTypeId);
         }
         #endregion End of Listing Functions
-
     }
 }

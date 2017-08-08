@@ -1,21 +1,21 @@
 ﻿using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels.Setups.Credit;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Credit
 {
-    public interface ICollateralCustomerRepository
+    public interface ICustomerCollateralRepository
     {
         #region Collateral
-        bool IsCollateralDocExists(string docName);
         Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity);
         Task<bool> DeleteCollateralCustomer(int collateralCustomerId, UserInfo user);
         Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity);
         IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId);
+        bool IsCollateralDocExists(string docName);
         #endregion Collateral
 
         #region Miscellaneous Notes
@@ -33,7 +33,7 @@ namespace FintrakBanking.Interfaces.Credit
         #region Listing Functions
         IEnumerable<CollateralValueBaseTypeViewModel> GetCollateralValueBaseType();
 
-        //IEnumerable<CollateralValuersViewModel> GetCollateralValuers(int companyId);
+        IEnumerable<CollateralValuersViewModel> GetCollateralValuer(int companyId);
 
         IEnumerable<CollateralValuerTypeViewModel> GetCollateralValuerType();
 

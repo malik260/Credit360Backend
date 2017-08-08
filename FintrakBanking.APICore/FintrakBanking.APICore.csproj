@@ -266,11 +266,11 @@
     <Compile Include="Controllers\ChargeFeeController.cs" />
     <Compile Include="Controllers\ChartOfAccountController.cs" />
     <Compile Include="Controllers\ChecklistController.cs" />
-    <Compile Include="Controllers\CollateralCustomerController.cs" />
     <Compile Include="Controllers\CompanyController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\CreditAssessmentMemoController.cs" />
     <Compile Include="Controllers\CurrencyRateController.cs" />
+    <Compile Include="Controllers\CustomerCollateralController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\CustomerFSController.cs" />
     <Compile Include="Controllers\CustomerGroupController.cs" />

@@ -67,7 +67,9 @@ namespace FintrakBanking.Repositories.Admin
         {
             var userRecord = context.tbl_Profile_User.Find(userid);
 
-            userRecord.ApprovalStatus = true;
+            userRecord.IsLocked = false;
+            userRecord.IsActive = true;
+            userRecord.ApprovalStatusId = approvalStatusId;
             userRecord.DateApproved = DateTime.Now;
             userRecord.DateTimeUpdated = DateTime.Now;
 
@@ -98,8 +100,8 @@ namespace FintrakBanking.Repositories.Admin
                 Username = user.username,
                 Password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey),
                 IsFirstLoginAttempt = false,
-                IsActive = true,
-                IsLocked = false,
+                IsActive = false,
+                IsLocked = true,
                 FailedLogonAttempt = 0,
                 SecurityQuestion = user.securityQuestion,
                 SecurityAnswer = user.securityAnswer,
@@ -107,7 +109,7 @@ namespace FintrakBanking.Repositories.Admin
                 CreatedBy = user.createdBy,
                 LastUpdatedBy = user.createdBy,
                 DateTimeCreated = DateTime.Now,
-                ApprovalStatus = false
+                ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
             };
             int output;
             if (workFlow.CheckRouteForOperation((int)Operations.UserCreation, user.companyId))
@@ -516,7 +518,6 @@ namespace FintrakBanking.Repositories.Admin
             {
                 return activities.Distinct().ToList();
             }
-
         }
 
         #endregion
