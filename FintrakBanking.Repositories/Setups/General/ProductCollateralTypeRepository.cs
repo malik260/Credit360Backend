@@ -91,6 +91,111 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 return -1;
         }
 
+        public int AddTempProductCollateralType(ProductCollateralTypeViewModel productCollateral)
+        {
+            var dataExist = this.context.tbl_Temp_Product_CollateralType.FirstOrDefault(x => x.ProductId == productCollateral.productId
+                                                                && x.CollateralTypeId == productCollateral.collateralTypeId
+                                                                && x.Deleted == true); // .Find(accountId);
+
+            var tempProductCollateralEntity = dataExist;
+
+            if (dataExist == null)
+            {
+                tempProductCollateralEntity = new tbl_Temp_Product_CollateralType()
+                {
+                    ProductId = productCollateral.productId,
+                    CompanyId = productCollateral.companyId,
+                    CollateralTypeId = productCollateral.collateralTypeId,
+                    CreatedBy = productCollateral.createdBy,
+                    DateTimeCreated = _genSetup.GetApplicaionDate(),
+                    Deleted = false,
+                    IsCurrent = true
+                };
+
+                var existingProductApprovalLog = context.tbl_Temp_Product.Find(productCollateral.productId);
+                var ProductData = context.tbl_Temp_Product.Find(productCollateral.productId);
+
+                if (existingProductApprovalLog != null)
+                {
+                    ProductData.IsCurrent = true;
+                }
+
+                this.context.tbl_Temp_Product_CollateralType.Add(tempProductCollateralEntity);
+                // Audit Section ---------------------------
+                var product = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productCollateral.productId);
+                var collateralInfo = this.context.tbl_Collateral_Type.FirstOrDefault(x => x.CollateralTypeId == productCollateral.collateralTypeId);
+                var audit = new tbl_Audit
+                {
+                    AuditTypeId = (short)AuditTypeEnum.ProductCollateralAdded,
+                    StaffId = productCollateral.createdBy,
+                    BranchId = (short)productCollateral.userBranchId,
+                    Detail = "Added product collateral type: " + collateralInfo.CollateralTypeName + " to product " + product.ProductCode + " (" + product.ProductName + ")",
+                    IPAddress = productCollateral.userIPAddress,
+                    Url = productCollateral.applicationUrl,
+                    SystemDateTime = DateTime.Now,
+                    ApplicationDate = _genSetup.GetApplicaionDate()
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+
+                //end of Audit section -------------------------------
+            }
+            else
+            {
+                tempProductCollateralEntity.ProductId = productCollateral.productId;
+                tempProductCollateralEntity.CollateralTypeId = productCollateral.collateralTypeId;
+
+                tempProductCollateralEntity.Deleted = false;
+            }
+
+            var status = this.SaveAll();
+
+            if (status)
+                return tempProductCollateralEntity.ProductCollateralTypeId;
+            else
+                return -1;
+        }
+
+        public void ApproveProductCollateral(int productId, UserInfo user)
+        {
+            var productCollateralTypeModel = context.tbl_Temp_Product_CollateralType.Where(x => x.ProductId == productId
+                                                                        && x.Deleted == false
+                                                                        && x.IsCurrent == true);
+            var productToUpdate = context.tbl_Product.Find(productId);
+
+            foreach (var p in productCollateralTypeModel)
+            {
+                var productCollateralType = new tbl_Product_CollateralType()
+                {
+                    ProductId = p.ProductId,
+                    CompanyId = p.CompanyId,
+                    CreatedBy = p.CreatedBy,
+                    DateTimeCreated = _genSetup.GetApplicaionDate(),
+                    Deleted = false
+                };
+                context.tbl_Product_CollateralType.Add(productCollateralType);
+                context.tbl_Temp_Product_CollateralType.Remove(p);
+            }
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.ProductFeeAdded,
+                StaffId = user.staffId,
+                BranchId = (short)user.BranchId,
+                Detail = $"Added CollateralType for product '{productToUpdate.ProductName}' with product code'{productToUpdate.ProductCode}'",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            // Audit Section ---------------------------
+
+            //return this.SaveAll();
+        }
+
         public int AddMultipleProductCollateralType(List<ProductCollateralTypeViewModel> collateralTypes)
         {
             if (collateralTypes.Count <= 0)
@@ -120,23 +225,28 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         collateralTypeId = data.CollateralTypeId,
                         collateralTypeName = data.tbl_Collateral_Type.CollateralTypeName,
                         companyId = data.CompanyId,
-
                         createdBy = data.CreatedBy,
-                        //dateTimeCreated = data.DateTimeCreated,
-                        //lastUpdatedBy = data.LastUpdatedBy,
-                        //dateTimeUpdated = data.DateTimeUpdated,
-
-                        //deleted = data.Deleted,
-                        //deletedBy = data.DeletedBy,
-                        //dateTimeDeleted = data.DateTimeDeleted
-                        //lastUpdatedBy = data.LastUpdatedBy.Value,
-                        //dateTimeUpdated = data.DateTimeUpdated,
-
                         deleted = data.Deleted,
-                       // deletedBy = data.DeletedBy,
-                       // dateTimeDeleted = data.DateTimeDeleted
-
                     });
+            
+        }
+
+        public IEnumerable<ProductCollateralTypeViewModel> GetMappedCollateralTypeByProduct(int productId)
+        {
+            var response = (from data in context.tbl_Temp_Product_CollateralType
+                            where data.ProductId == productId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+                            select new ProductCollateralTypeViewModel()
+                            {
+                                productCollateralId = data.ProductCollateralTypeId,
+                                productId = (short)data.ProductId,
+                                collateralTypeId = data.CollateralTypeId,
+                                collateralTypeName = data.tbl_Collateral_Type.CollateralTypeName,
+                                companyId = data.CompanyId,
+                                createdBy = data.CreatedBy,
+                                deleted = data.Deleted,
+                            });
+
+            return response;
         }
 
         public IEnumerable<CollateralTypeViewModel> GetUnmappedCollateralToProduct(int productId)
@@ -151,17 +261,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
                            where a.Deleted == false
                            select new CollateralTypeViewModel
                            {
-                              // collateralCategoryName = a.CollateralCategory.CollateralCategoryName,
-                              // collateralCategoryId = a.CollateralCategoryId,
                                collateralTypeName = a.CollateralTypeName,
                                collateralTypeId = a.CollateralTypeId,
                                companyId = a.CompanyId,
-                               //dateTimeUpdated = a.DateTimeUpdated,
                                deleted = a.Deleted,
                                details = a.Details,
-                               //hairCut = a.HairCut,
-                              // requiresLocation = a.RequiresLocation,
-                               //lastUpdatedBy = a.LastUpdatedBy ?? 0,
                                createdBy = a.CreatedBy,
                                dateTimeCreated = a.DateTimeCreated 
                            });

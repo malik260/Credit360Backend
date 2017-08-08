@@ -25,14 +25,15 @@ namespace FintrakBanking.Repositories.Setups.General
         private IWorkFlowRepository workFlow;
         private IApprovalLevelStaffRepository level;
         private IProductFeeRepository productFee;
-
+        private IProductCollateralTypeRepository productCollateralType;
 
         public ProductRepository(FinTrakBankingContext _context,
                                 IGeneralSetupRepository _genSetup,
                                 IAuditTrailRepository _auditTrail,
                                 IWorkFlowRepository _workFlow,
                                 IApprovalLevelStaffRepository _level,
-                                IProductFeeRepository _productFee)
+                                IProductFeeRepository _productFee,
+                                IProductCollateralTypeRepository _productCollateralType)
         {
             this.context = _context;
             this.genSetup = _genSetup;
@@ -40,6 +41,7 @@ namespace FintrakBanking.Repositories.Setups.General
             this.workFlow = _workFlow;
             level = _level;
             productFee = _productFee;
+            productCollateralType = _productCollateralType;
         }
 
         private bool SaveAll()
@@ -51,7 +53,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = this.context.tbl_Product.Count(x => x.CompanyId == companyId);
             int counter = data + 1;
-            var productCode = string.Format("{0}", counter.ToString().PadLeft(4, '0'));
+            var productCode = string.Empty;
+            do
+            {
+                productCode = string.Format("{0}", counter.ToString().PadLeft(4, '0'));
+                counter++;
+            }
+            while (context.tbl_Temp_Product.Any(x => x.ProductCode == productCode) == true);
+
             return productCode;
         }
 
@@ -390,7 +399,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         companyId = c.CompanyId,
                         productTypeId = c.ProductTypeId,
                         productTypeName = c.tbl_Product_Type.ProductTypeName,
-                        productGroupName = c.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
                         productCategoryId = c.ProductCategoryId,
                         productCategoryName = c.tbl_Product_Category.ProductCategoryName,
                         productClassId = c.ProductClassId,
@@ -405,6 +413,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productDescription = c.ProductDescription,
 
                         productGroupId = c.tbl_Product_Type.ProductGroupId,
+                        productGroupName = c.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
 
                         principalBalanceGl = c.PrincipalBalanceGL,
                         principalBalanceGlCode = (c.PrincipalBalanceGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
@@ -416,7 +425,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         interestReceivablePayableGlCode = (c.InterestReceivablePayableGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
 
                         dormantGl = c.DormantGL,
+                        dormantGlCode = (c.DormantGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
                         premiumDiscountGl = c.PremiumDiscountGL,
+                        premiumDiscountGlCode = (c.PremiumDiscountGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
 
                         dealTypeId = c.DealTypeId,
                         dealTypeName = c.tbl_Deal_Type.DealTypeName,
@@ -443,7 +454,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             currencyName = c.tbl_Currency.CurrencyCode + " -- " + c.tbl_Currency.CurrencyName
 
                         }).ToList(),
-                        fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == c.ProductId && curr.Deleted != false).Select(c => new ProductFeeViewModel()
+                        fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == c.ProductId && curr.Deleted == false).Select(c => new ProductFeeViewModel()
                         {
                             productId = c.ProductId,
                             productFeeId = c.ProductFeeId,
@@ -458,7 +469,12 @@ namespace FintrakBanking.Repositories.Setups.General
                             glAccountName = c.tbl_Fee.tbl_Chart_Of_Account.AccountName
 
                         }).ToList(),
-
+                        collateral = context.tbl_Temp_Product_CollateralType.Where(coll => coll.ProductId == c.ProductId && coll.Deleted == false).Select(prodColl => new ProductCollateralTypeViewModel()
+                        {
+                            productId = prodColl.ProductId,
+                            productCollateralId = prodColl.ProductCollateralTypeId,
+                            collateralTypeName = prodColl.tbl_Collateral_Type.CollateralTypeName
+                        }).ToList(),
                         dateTimeUpdated = c.DateTimeUpdated,
                         deleted = c.Deleted,
                         deletedBy = c.DeletedBy,
@@ -660,6 +676,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     CreatedBy = productModel.CreatedBy,
                     DateTimeCreated = DateTime.Now,
+
                 };
                 context.tbl_Product.Add(product);
 
@@ -667,13 +684,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     var curr = new tbl_Product_Currency()
                     {
-                       // ProductId = c.ProductId,
+                       ProductId = c.ProductId,
                         CurrencyId = c.CurrencyId,
                         DateTimeCreated = genSetup.GetApplicaionDate(),
                     };
                     context.tbl_Product_Currency.Add(curr);
                 }
                 productFee.ApproveProductFee(productId, user);
+                productCollateralType.ApproveProductCollateral(productId, user);
             }
 
             productModel.IsCurrent = false;

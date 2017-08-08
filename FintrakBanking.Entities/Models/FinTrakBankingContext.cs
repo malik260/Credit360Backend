@@ -164,12 +164,12 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Type_Batch> tbl_Loan_Type_Batch { get; set; }
         public virtual DbSet<tbl_MachineValue_Base> tbl_MachineValue_Base { get; set; }
         public virtual DbSet<tbl_Product_CollateralType> tbl_Product_CollateralType { get; set; }
+        public virtual DbSet<tbl_Risk_Assessment> tbl_Risk_Assessment { get; set; }
         public virtual DbSet<tbl_Risk_Assessment_Index> tbl_Risk_Assessment_Index { get; set; }
         public virtual DbSet<tbl_Risk_Assessment_Index_Type> tbl_Risk_Assessment_Index_Type { get; set; }
         public virtual DbSet<tbl_Risk_Assessment_Result> tbl_Risk_Assessment_Result { get; set; }
         public virtual DbSet<tbl_Risk_Assessment_Title> tbl_Risk_Assessment_Title { get; set; }
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
-        public virtual DbSet<tbl_Risk_RiskAssessment_Result> tbl_Risk_RiskAssessment_Result { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
@@ -1724,6 +1724,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Loan_Application)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Risk_Assessment)
+                .WithRequired(e => e.tbl_Loan_Application)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<tbl_Loan_Covenant_Detail>()
                 .Property(e => e.CovenantAmount)
                 .HasPrecision(19, 4);
@@ -1778,6 +1783,11 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Risk_Assessment_Index_Type>()
                 .HasMany(e => e.tbl_Risk_Assessment_Index)
                 .WithRequired(e => e.tbl_Risk_Assessment_Index_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Risk_Assessment_Title>()
+                .HasMany(e => e.tbl_Risk_Assessment)
+                .WithRequired(e => e.tbl_Risk_Assessment_Title)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Risk_Assessment_Title>()

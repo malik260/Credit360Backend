@@ -130,7 +130,7 @@ on c.DepartmentId equals dept.DepartmentId
                              BranchName = br.BranchName,
                              DepartmentName = dept.DepartmentName,
                              // MisInfoCode = c.Misinfo.Misname,
-                             SensitivityLevel = context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
+                             SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
                              // State = c.State.StateName
                          });
             return staff;

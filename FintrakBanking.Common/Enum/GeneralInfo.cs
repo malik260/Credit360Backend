@@ -54,6 +54,10 @@ namespace FintrakBanking.Common.Enum
         ProductFeeAdded = 112, ProductFeeUpdated = 113, ProductFeeDeleted = 114,
         TaxAdded = 116, TaxUpdated = 117, TaxDeleted = 118,
         ChargeFeeAdded = 119, ChargeFeeUpdated = 120, ChargeFeeDeleted = 121,
+        UserApproved = 122,
+        CustomerGroupApproved = 123,
+        FeeUpdated = 124,
+        FeeApproved = 125
     };
 
 

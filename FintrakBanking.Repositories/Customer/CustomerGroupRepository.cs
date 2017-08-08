@@ -12,6 +12,8 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Customer;
 using System.ComponentModel.Composition;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.Business;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -22,14 +24,23 @@ namespace FintrakBanking.Repositories.Customer
         private FinTrakBankingContext context;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
+        private IWorkFlowRepository workFlow;
+
 
         public CustomerGroupRepository(FinTrakBankingContext _context,
                                         IGeneralSetupRepository _genSetup,
-                                        IAuditTrailRepository _auditTrail)
+                                        IAuditTrailRepository _auditTrail,
+                                        IWorkFlowRepository _workFlow)
         {
             this.context = _context;
             this.genSetup = _genSetup;
             auditTrail = _auditTrail;
+            workFlow = _workFlow;
+        }
+
+        private bool SaveAll()
+        {
+            return context.SaveChanges() > 0;
         }
 
         #region tbl_Customer - Group
@@ -57,12 +68,79 @@ namespace FintrakBanking.Repositories.Customer
                 ApplicationDate = genSetup.GetApplicaionDate(),
                 SystemDateTime = DateTime.Now
             };
-
             this.auditTrail.AddAuditTrail(audit);
+
             //end of Audit section -------------------------------
+
 
             return context.SaveChanges() != 0;
 
+        }
+
+        public bool AddTempCustomerGroup(CustomerGroupViewModel custGroupModel)
+        {
+            bool output = false;
+
+            var tempGroup = new tbl_Temp_Customer_Group
+            {
+                GroupCode = custGroupModel.groupCode,
+                GroupName = custGroupModel.groupName,
+                GroupDescription = custGroupModel.groupDescription,
+                CreatedBy = (int)custGroupModel.createdBy,
+                DateTimeCreated = genSetup.GetApplicaionDate()
+            };
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
+                StaffId = custGroupModel.createdBy,
+                BranchId = (short)custGroupModel.userBranchId,
+                Detail = $"Added Customer Group: { custGroupModel.groupName } with Code: { custGroupModel.groupCode } ( { custGroupModel.groupName } )",
+                IPAddress = custGroupModel.userIPAddress,
+                Url = custGroupModel.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now
+            };
+            //end of Audit section -------------------------------
+
+
+            if (workFlow.CheckRouteForOperation((int)Operations.CustomerGroupCreation, custGroupModel.companyId))
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        auditTrail.AddAuditTrail(audit);
+                        context.tbl_Temp_Customer_Group.Add(tempGroup);
+                        output = this.SaveAll();
+
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = custGroupModel.createdBy,
+                            companyId = custGroupModel.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = custGroupModel.customerGroupId,
+                            operationId = (int)Operations.CustomerGroupCreation,
+                            BranchId = custGroupModel.userBranchId
+                        };
+                        var response = workFlow.LogForApproval(entity);
+                        trans.Commit();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new Exception(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Approval route have not been defined for this operation");
+            }
+
+            return output;
         }
 
 
@@ -121,7 +199,7 @@ namespace FintrakBanking.Repositories.Customer
                                     dateTimeCreated = a.DateTimeCreated,
                                     createdBy = a.CreatedBy
                                 };
-            return customerGroup.SingleOrDefault();
+            return customerGroup.FirstOrDefault();
         }
 
         public bool UpdateCustomerGroup(int customerGroupId, CustomerGroupViewModel entity)
@@ -151,6 +229,154 @@ namespace FintrakBanking.Repositories.Customer
 
             //end of Audit section -----------------------
             return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateCustomerGroupForApproval(int customerGroupId, CustomerGroupViewModel entity)
+        {
+            if (entity == null)
+                return false;
+
+            var existStingTempGroup = context.tbl_Temp_Customer_Group.Where(x => x.GroupCode.ToLower() ==
+            entity.groupCode.ToLower() && x.IsCurrent == true &&
+            x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+
+            if (existStingTempGroup.Any())
+            {
+                foreach (var item in existStingTempGroup)
+                {
+                    item.IsCurrent = false;
+                    item.DateTimeUpdated = DateTime.Now;
+                }
+            }
+
+            var targetGroup = this.context.tbl_Customer_Group.Find(customerGroupId);
+
+            var unApprovedCustomerGroupEdit = context.tbl_Temp_Customer_Group.Where(x => x.IsCurrent == true
+            && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
+
+            tbl_Temp_Customer_Group tempCustomerGroup;
+
+            if (unApprovedCustomerGroupEdit.Any())
+            {
+                throw new Exception("Customer group is already undergoing approval");
+            }
+            else
+            {
+                tempCustomerGroup = new tbl_Temp_Customer_Group()
+                {
+                    GroupCode = targetGroup.GroupCode,
+                    GroupName = entity.groupName,
+                    GroupDescription = entity.groupDescription,
+                    CreatedBy = entity.createdBy,
+                    DateTimeCreated = genSetup.GetApplicaionDate(),
+                    ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
+                    IsCurrent = true,
+                };
+
+                context.tbl_Temp_Customer_Group.Add(tempCustomerGroup);
+
+            }
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CustomerGroupUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = $"Updated Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName })",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now,
+                TargetId = customerGroupId
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section ------------------------------- 
+
+            var output = this.SaveAll();
+
+            var approvalEntity = new ApprovalViewModel
+            {
+                staffId = entity.createdBy,
+                companyId = entity.companyId,
+                approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                targetId = tempCustomerGroup.CustomerGroupId,
+                operationId = (int)Operations.CustomerGroupCreation,
+                BranchId = entity.userBranchId
+            };
+            var response = workFlow.LogForApproval(approvalEntity);
+
+            return output;
+        }
+
+        public bool GoForApproval(ApprovalViewModel entity)
+        {
+            entity.operationId = (int)Operations.CustomerGroupCreation;
+
+            var response = workFlow.GoForApproval(entity);
+
+            if (response.Result.Item1)
+            {
+                return ApproveCustomerGroup(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        private bool ApproveCustomerGroup(int customerGroupId, short approvalStatusId, UserInfo user)
+        {
+            var customerGroupModel = context.tbl_Temp_Customer_Group.Find(customerGroupId);
+            var customerGroupToUpdate = context.tbl_Customer_Group.Where(x => x.GroupCode == customerGroupModel.GroupCode);
+            var existingCustomerGroup = customerGroupToUpdate.FirstOrDefault();
+
+            //Update existing customer group with tempCustomerGroup record
+            if (customerGroupToUpdate.Any())
+            {
+                existingCustomerGroup.GroupCode = customerGroupModel.GroupCode;
+                existingCustomerGroup.GroupName = customerGroupModel.GroupName;
+                existingCustomerGroup.GroupDescription = customerGroupModel.GroupDescription;
+                existingCustomerGroup.CreatedBy = customerGroupModel.CreatedBy;
+                existingCustomerGroup.DateTimeUpdated = DateTime.Now;
+            }
+            else //Insert a new customer group record into the real customer group table
+            {
+                var customerGroup = new tbl_Customer_Group()
+                {
+                    GroupCode = customerGroupModel.GroupCode,
+                    GroupName = customerGroupModel.GroupName,
+                    GroupDescription = customerGroupModel.GroupDescription,
+                    CreatedBy = customerGroupModel.CreatedBy,
+                    DateTimeCreated = DateTime.Now
+                };
+                context.tbl_Customer_Group.Add(customerGroup);
+
+            }
+
+            customerGroupModel.IsCurrent = false;
+            customerGroupModel.ApprovalStatusId = approvalStatusId;
+            customerGroupModel.DateTimeUpdated = DateTime.Now;
+
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CustomerGroupApproved,
+                StaffId = user.staffId,
+                BranchId = (short)user.BranchId,
+                Detail = $"Approved Customer Group '{customerGroupModel.GroupName}' with group code'{customerGroupModel.GroupCode}'",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            // Audit Section ---------------------------
+
+            return this.SaveAll();
         }
 
         #endregion
@@ -372,11 +598,11 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<LookupViewModel> GetCustomerGroupRelationshipTypes()
         {
             return from a in context.tbl_Customer_Group_RelationshipType
-                select new LookupViewModel
-                {
-                    lookupId = a.RelationshipTypeId,
-                    lookupName = a.RelationshipTypeName
-                };
+                   select new LookupViewModel
+                   {
+                       lookupId = a.RelationshipTypeId,
+                       lookupName = a.RelationshipTypeName
+                   };
         }
         #endregion
     }

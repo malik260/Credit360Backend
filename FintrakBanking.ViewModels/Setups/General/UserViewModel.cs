@@ -42,9 +42,13 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? lastUpdatedBy { get; set; }
         public DateTime? dateTimeCreated { get; set; }
         public DateTime? dateTimeUpdated { get; set; }
-
+        public bool approvalStatus { get; set; }
         public List<UserGroupId> groupId { get; set; }
         public List<UserActivities> activities { get; set; }
+
+        public int operationId { get; set; }
+        public int approvalStatusId { get; set; }
+        public string comment { get; set; }
 
         public string strIsFirstLogin
         {
