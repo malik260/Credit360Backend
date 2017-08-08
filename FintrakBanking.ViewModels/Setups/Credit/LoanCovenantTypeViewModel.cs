@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Setups
 {
-    public class LoanCovenantTypeViewModel : GenaralEntity
+    public class LoanCovenantTypeViewModel : GeneralEntity
     {
         public short covenantTypeId { get; set; }
         public string covenantTypeName { get; set; }

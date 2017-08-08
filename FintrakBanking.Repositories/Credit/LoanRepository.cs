@@ -124,7 +124,7 @@ namespace FintrakBanking.Repositories.Credit
                         LoanTypeBatchCode = GenerateLoanTypeBatchCode(),
                         CustomerId = customerId,
                         LoanTypeId = (short)loanTypeId,
-                        DateCreated = generalSetup.GetApplicaionDate()
+                        DateCreated = generalSetup.GetApplicationDate()
                     };
 
                     this.context.tbl_Loan_Type_Batch.Add(data);
@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.Credit
                         CustomerGroupId = customerGroupId,
                         GroupAmount = groupAmount,
                         LoanTypeId = (short)loanTypeId,
-                        DateCreated = generalSetup.GetApplicaionDate()
+                        DateCreated = generalSetup.GetApplicationDate()
                     };
 
                     this.context.tbl_Loan_Type_Batch.Add(data);
@@ -305,9 +305,9 @@ namespace FintrakBanking.Repositories.Credit
                 FixedPrincipal = entity.fixedPrincipal,
                 ProfileLoan = entity.profileLoan,                                
                 CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
-                DateCreated = generalSetup.GetApplicaionDate(),
+                DateCreated = generalSetup.GetApplicationDate(),
                 CreatedBy = (int)entity.createdBy,
-                DateTimeCreated = generalSetup.GetApplicaionDate()
+                DateTimeCreated = generalSetup.GetApplicationDate()
             };
 
             context.tbl_Loan.Add(data);
@@ -322,7 +322,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Applied for loan with reference number: {entity.loanReferenceNumber}",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicaionDate(),
+                ApplicationDate = generalSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

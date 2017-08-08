@@ -65,7 +65,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DependentAmount = productFee.dependentAmount,
 
                     CreatedBy = productFee.createdBy,
-                    DateTimeCreated = genSetup.GetApplicaionDate(),
+                    DateTimeCreated = genSetup.GetApplicationDate(),
                     Deleted = false
                 };
 
@@ -80,7 +80,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"Added Product Fee: { productFee.feeName } to product {product} with amount {productFee.rateValue} ",
                     IPAddress = productFee.userIPAddress,
                     Url = productFee.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 
@@ -124,7 +124,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DependentAmount = productFee.dependentAmount,
 
                     CreatedBy = productFee.createdBy,
-                    DateTimeCreated = genSetup.GetApplicaionDate(),
+                    DateTimeCreated = genSetup.GetApplicationDate(),
                     Deleted = false,
                     IsCurrent= true
                 };
@@ -148,7 +148,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"Initiated adding Fee: { productFee.feeName } for product {productName} with amount {productFee.rateValue} ",
                     IPAddress = productFee.userIPAddress,
                     Url = productFee.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 
@@ -191,7 +191,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DependentAmount = p.DependentAmount,
 
                     CreatedBy = p.CreatedBy,
-                    DateTimeCreated = genSetup.GetApplicaionDate(),
+                    DateTimeCreated = genSetup.GetApplicationDate(),
                     Deleted = false
                 };
                 context.tbl_Product_Fee.Add(product);
@@ -207,7 +207,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Added Fee for product '{productToUpdate.ProductName}' with product code'{productToUpdate.ProductCode}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -244,7 +244,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             data.Deleted = true;
             //accountModel.DeletedBy = ;
-            data.DateTimeDeleted = genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = genSetup.GetApplicationDate();
             // Audit Section ---------------------------
             var productFee = this.context.tbl_Fee.FirstOrDefault(x => x.FeeId == data.FeeId);
             var audit = new tbl_Audit
@@ -255,7 +255,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Deleted tbl_Product Fee: {productFee.FeeName} to product {data.tbl_Product} ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -475,7 +475,7 @@ namespace FintrakBanking.Repositories.Setups.General
             productFeeEntity.DependentAmount = productFee.dependentAmount;
 
             productFeeEntity.LastUpdatedBy = productFee.lastUpdatedBy;
-            productFeeEntity.DateTimeUpdated = genSetup.GetApplicaionDate();
+            productFeeEntity.DateTimeUpdated = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var productName = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
@@ -487,7 +487,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Updated tbl_Product Fee: { productFee.feeName } to product {productName} with amount {productFee.rateValue} ",
                 IPAddress = productFee.userIPAddress,
                 Url = productFee.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

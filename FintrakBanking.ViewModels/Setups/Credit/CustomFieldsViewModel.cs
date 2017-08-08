@@ -2,7 +2,7 @@
 
 namespace FintrakBanking.ViewModels.Setups.Credit
 {
-    public class CustomFieldsViewModel : GenaralEntity
+    public class CustomFieldsViewModel : GeneralEntity
     {
         public int collateralCustomFieldId { get; set; }
         public int collateralTypeId { get; set; }    

@@ -58,7 +58,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 Detail = $"Added Finance Account Category:  {accountCategory.AccountCategoryName}",
                 IPAddress = category.userIPAddress,
                 Url = category.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
 
 

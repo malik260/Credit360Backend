@@ -2,7 +2,7 @@
 
 namespace FintrakBanking.ViewModels.Customer
 {
-    public class CustomerEmploymentHistoryViewModels : GenaralEntity
+    public class CustomerEmploymentHistoryViewModels : GeneralEntity
     {
         public int placeOfWorkId { get; set; }
         public string employerName { get; set; }

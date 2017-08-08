@@ -82,7 +82,7 @@ namespace FintrakBanking.Repositories.Credit
                 LimitMetricId = model.limitMetricId,
                 CompanyId = model.companyId,
                 CreatedBy = (int)model.createdBy,
-                DateTimeCreated = _genSetup.GetApplicaionDate()
+                DateTimeCreated = _genSetup.GetApplicationDate()
             };
 
             context.tbl_Limit.Add(data);
@@ -97,7 +97,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Added Limit '{ data.LimitName }' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -117,7 +117,7 @@ namespace FintrakBanking.Repositories.Credit
             data.LimitMetricId = model.limitMetricId;
             data.CompanyId = model.companyId;
             data.LastUpdatedBy = (int)model.createdBy;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             
@@ -129,7 +129,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Updated Limit : '{ data.LimitName }' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -144,7 +144,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = context.tbl_Limit.Find(limitId);
             data.Deleted = true;
             data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var limit = this.context.tbl_Limit.SingleOrDefault(x => x.LimitId == limitId);
@@ -156,7 +156,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Deleted Limit : '{ limit.LimitName }' ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -226,7 +226,7 @@ namespace FintrakBanking.Repositories.Credit
                 TargetId = model.targetId,
                 LimitFrequencyTypeId = model.limitFrequencyTypeId,
                 CreatedBy = (int)model.createdBy,
-                DateTimeCreated = _genSetup.GetApplicaionDate()
+                DateTimeCreated = _genSetup.GetApplicationDate()
         };
 
             context.tbl_Limit_Detail.Add(data);
@@ -242,7 +242,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Added Limit Deatil for limit: '{ audit_limit_detail.LimitName }' with type: '{audit_limit_type.LimitTypeName}' and values between: '{model.minimumValue} - {model.maximumValue}'",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -264,7 +264,7 @@ namespace FintrakBanking.Repositories.Credit
             data.TargetId = model.targetId;
             data.LimitFrequencyTypeId = model.limitFrequencyTypeId;
             data.LastUpdatedBy = (int)model.createdBy;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit_limit_detail = (context.tbl_Limit.FirstOrDefault(x => x.LimitId == data.LimitId));
@@ -277,7 +277,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Updated '{ audit_limit_detail.LimitName }' limit on type: '{audit_limit_type.LimitTypeName}' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -292,7 +292,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = context.tbl_Limit_Detail.Find(limitDetailId);
             data.Deleted = true;
             data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit_limit_detail = (context.tbl_Limit.FirstOrDefault(x => x.LimitId == data.LimitId));
@@ -304,7 +304,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Deleted Limit detail '{ audit_limit_detail.LimitName }'. ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

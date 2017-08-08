@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     CollateralTypeId = productCollateral.collateralTypeId,
                     CompanyId = productCollateral.companyId,
                     CreatedBy = productCollateral.createdBy,
-                    DateTimeCreated = _genSetup.GetApplicaionDate()
+                    DateTimeCreated = _genSetup.GetApplicationDate()
                 };
 
                 this.context.tbl_Product_CollateralType.Add(productCollateralEntity);
@@ -76,7 +76,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 IPAddress = productCollateral.userIPAddress,
                 Url = productCollateral.applicationUrl,
                 SystemDateTime = DateTime.Now,
-                ApplicationDate = _genSetup.GetApplicaionDate()
+                ApplicationDate = _genSetup.GetApplicationDate()
 
 
             };
@@ -107,7 +107,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     CompanyId = productCollateral.companyId,
                     CollateralTypeId = productCollateral.collateralTypeId,
                     CreatedBy = productCollateral.createdBy,
-                    DateTimeCreated = _genSetup.GetApplicaionDate(),
+                    DateTimeCreated = _genSetup.GetApplicationDate(),
                     Deleted = false,
                     IsCurrent = true
                 };
@@ -133,7 +133,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     IPAddress = productCollateral.userIPAddress,
                     Url = productCollateral.applicationUrl,
                     SystemDateTime = DateTime.Now,
-                    ApplicationDate = _genSetup.GetApplicaionDate()
+                    ApplicationDate = _genSetup.GetApplicationDate()
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -170,7 +170,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     ProductId = p.ProductId,
                     CompanyId = p.CompanyId,
                     CreatedBy = p.CreatedBy,
-                    DateTimeCreated = _genSetup.GetApplicaionDate(),
+                    DateTimeCreated = _genSetup.GetApplicationDate(),
                     Deleted = false
                 };
                 context.tbl_Product_CollateralType.Add(productCollateralType);
@@ -186,7 +186,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 Detail = $"Added CollateralType for product '{productToUpdate.ProductName}' with product code'{productToUpdate.ProductCode}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -311,7 +311,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 return false;
 
             data.Deleted = true;
-            data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
 
@@ -335,7 +335,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 Detail = "Deleted product collateral type: " + collateralInfo.collateralTypeName + " to product " + collateralInfo.productCode + " (" + collateralInfo.productName + ")",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -372,7 +372,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 Detail = "Deleted product collateral type: " + collateralType.tbl_Collateral_Type.CollateralTypeName + " to product " + collateralType.tbl_Product.ProductCode + " (" + collateralType.tbl_Product.ProductName + ")",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

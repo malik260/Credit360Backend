@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-   public class LoanViewModel : GenaralEntity
+   public class LoanViewModel : GeneralEntity
     {
         public int loanId { get; set; }
         public int customerId { get; set; }

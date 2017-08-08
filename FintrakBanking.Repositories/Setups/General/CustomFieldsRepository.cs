@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Added the following custom field : { model.labelName} to  {context.tbl_Custom_HostPage.Find(model.hostPageId).HostPage } form ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -96,7 +96,7 @@ namespace FintrakBanking.Repositories.Setups.General
             custom.ItemOrder = model.itemOrder;
             custom.Required = model.required;
             custom.LastUpdatedBy = model.lastUpdatedBy;
-            custom.DateTimeUpdated = genSetup.GetApplicaionDate().Date;
+            custom.DateTimeUpdated = genSetup.GetApplicationDate().Date;
             //foreach (var option in model.customFieldOption)
             //{
             //    var options = context.TblCustomFieldOption.SingleOrDefault(c => c.CustomFieldOptionsId == option.customFieldOptionsId);
@@ -113,7 +113,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"updated the following custom field : { model.labelName} to  {context.tbl_Custom_HostPage.Find(model.hostPageId).HostPage } form ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -176,7 +176,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"Added the following custom field : { entity.labelName} to  {context.tbl_Custom_HostPage.Find(entity.hostPageId).HostPage } form ",
                     IPAddress = entity.userIPAddress,
                     Url = entity.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 
@@ -219,7 +219,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 var custom = context.tbl_Custom_Fields.Find(customFields[i].customFieldId);
                 custom.Deleted = true;
-                custom.DateTimeDeleted = genSetup.GetApplicaionDate().Date;
+                custom.DateTimeDeleted = genSetup.GetApplicationDate().Date;
                 custom.DeletedBy = user.staffId;
                 // Audit Section ---------------------------
                 var audit = new tbl_Audit
@@ -230,7 +230,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"updated the following custom field : { custom.LabelName} to  {context.tbl_Custom_HostPage.Find(custom.HostPageId).HostPage } form ",
                     IPAddress = user.userIPAddress,
                     Url = user.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 
@@ -260,7 +260,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 custom.ItemOrder = entity.itemOrder;
                 custom.Required = entity.required;
                 custom.LastUpdatedBy = entity.lastUpdatedBy;
-                custom.DateTimeUpdated = genSetup.GetApplicaionDate().Date;
+                custom.DateTimeUpdated = genSetup.GetApplicationDate().Date;
                 foreach (var option in entity.customFieldOption)
                 {
                     var options = context.tbl_Custom_Field_Option .SingleOrDefault(c => c.CustomFieldOptionsId == option.customFieldOptionsId);
@@ -277,7 +277,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"updated the following custom field : { entity.labelName} to  {context.tbl_Custom_HostPage.Find(entity.hostPageId).HostPage } form ",
                     IPAddress = entity.userIPAddress,
                     Url = entity.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 
@@ -305,7 +305,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         CustomFieldDataUpload = entity.customFieldDataUpload,
                         CustomFieldsDataId = entity.customFieldsDataId,
-                        DateTimeCreated = genSetup.GetApplicaionDate().Date,
+                        DateTimeCreated = genSetup.GetApplicationDate().Date,
                         CreatedBy = entity.createdBy
                     };
                     context.tbl_Custom_Field_Data_Upload.Add(fieldDetailsUpload);
@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     OwnerId = entity.ownerId,
                     CustomFieldId = entity.customFieldId,
                     DataDetails = entity.isUpload ? Guid.NewGuid().ToString() : entity.dataDetails,
-                    DateTimeCreated = genSetup.GetApplicaionDate().Date 
+                    DateTimeCreated = genSetup.GetApplicationDate().Date 
                 };
                 context.tbl_Custom_Fields_Data.Add(fieldDetails);
 
@@ -329,7 +329,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"Added the following custom field : { entity.labelName} to  {context.tbl_Custom_HostPage.Find(entity.hostPageId).HostPage } form ",
                     IPAddress = entity.userIPAddress,
                     Url = entity.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 
@@ -393,7 +393,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 var field = context.tbl_Custom_Fields_Data.Find(entity.customFieldsDataId);
                 field.Deleted = true;
                 field.DeletedBy = user.staffId;
-                field.DateTimeDeleted = genSetup.GetApplicaionDate().Date;
+                field.DateTimeDeleted = genSetup.GetApplicationDate().Date;
 
                 var audit = new tbl_Audit
                 {
@@ -403,7 +403,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"Deleted a custome field data for : { entity.labelName} from  {context.tbl_Custom_HostPage.Find(entity.hostPageId).HostPage }  ",
                     IPAddress = entity.userIPAddress,
                     Url = entity.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 
@@ -422,7 +422,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var fieldDetailsUpload = context.tbl_Custom_Field_Data_Upload.Find(entity.customFieldDataUpload);
                     fieldDetailsUpload.CustomFieldDataUpload = entity.customFieldDataUpload;
                     fieldDetailsUpload.CustomFieldsDataId = entity.customFieldsDataId;
-                    fieldDetailsUpload.DateTimeCreated = genSetup.GetApplicaionDate().Date;
+                    fieldDetailsUpload.DateTimeCreated = genSetup.GetApplicationDate().Date;
                     fieldDetailsUpload.CreatedBy = entity.createdBy;                      
                 }
                 var fieldDetails = context.tbl_Custom_Fields_Data.Find(entity.customFieldsDataId);
@@ -430,7 +430,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 fieldDetails.OwnerId = entity.ownerId;
                 fieldDetails.CustomFieldId = entity.customFieldId;
                 fieldDetails.DataDetails = entity.isUpload ? Guid.NewGuid().ToString() : entity.dataDetails;
-                fieldDetails.DateTimeCreated = genSetup.GetApplicaionDate().Date;
+                fieldDetails.DateTimeCreated = genSetup.GetApplicationDate().Date;
               
 
                 var audit = new tbl_Audit
@@ -441,7 +441,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"Added the following custom field : { entity.labelName} to  {context.tbl_Custom_HostPage.Find(entity.hostPageId).HostPage } form ",
                     IPAddress = entity.userIPAddress,
                     Url = entity.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
 

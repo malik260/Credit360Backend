@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Credit
 {
-    public class AssessmentTemplatesViewModel : GenaralEntity
+    public class AssessmentTemplatesViewModel : GeneralEntity
     {
         public int creditTemplateId { get; set; }
         public string templateTitle { get; set; }

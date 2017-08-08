@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Setups.Finance
 {
-    public class ChargeFeeViewModel : GenaralEntity
+    public class ChargeFeeViewModel : GeneralEntity
     {
         public ChargeFeeViewModel()
         {
@@ -34,7 +34,7 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public List<ChargeRangeViewModel> ranges { get; set; }
     }
 
-    public class ChargeRangeViewModel : GenaralEntity
+    public class ChargeRangeViewModel : GeneralEntity
     {
         public int chargeRangeId { get; set; }
         public decimal? minimum { get; set; }

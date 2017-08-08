@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Customer
 {
-    public class CustomerBvnViewModels : GenaralEntity
+    public class CustomerBvnViewModels : GeneralEntity
     {
         public int customerBvnid { get; set; }
         public int customerId { get; set; }

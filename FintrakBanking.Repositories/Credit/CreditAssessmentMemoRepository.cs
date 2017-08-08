@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy = entity.createdBy,
                 ProductClassId = entity.productClassId ,
                 ApprovalLevelId = entity.approvalLevelId,
-                DateTimeCreated = genSetup.GetApplicaionDate()
+                DateTimeCreated = genSetup.GetApplicationDate()
             };
             context.tbl_Credit_Template.Add(template);
             return await context.SaveChangesAsync() > 0;
@@ -126,7 +126,7 @@ namespace FintrakBanking.Repositories.Credit
                 template.ProductClassId = entity.productClassId;
                 template.LastUpdatedBy  = entity.createdBy;
                 template.ApprovalLevelId = entity.approvalLevelId;
-                template.DateTimeUpdated  = genSetup.GetApplicaionDate ();
+                template.DateTimeUpdated  = genSetup.GetApplicationDate ();
             };
         
             return await context.SaveChangesAsync() > 0;

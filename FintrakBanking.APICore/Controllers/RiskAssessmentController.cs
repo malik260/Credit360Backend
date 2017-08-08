@@ -13,11 +13,11 @@ namespace FintrakBanking.APICore.Controllers
 {
     // [EnableCors("AllDomain")]
     [RoutePrefix("api/v1/risk")] 
-    public class RriskAssessmentController : ApiControllerBase
+    public class RiskAssessmentController : ApiControllerBase
     {
         private IRiskImplementation repo;
 
-        public RriskAssessmentController(IRiskImplementation _repo)
+        public RiskAssessmentController(IRiskImplementation _repo)
         {
             this.repo = _repo;
         }
