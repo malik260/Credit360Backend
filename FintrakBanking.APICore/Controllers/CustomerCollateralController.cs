@@ -260,29 +260,24 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
         [HttpGet]
-        [Route("collateral-sub-type/{collateralSubTypeId}")]
-        public HttpResponseMessage GetCollateralSubTypeById(short collateralSubTypeId)
+        [Route("collateral-sub-type")]
+        public HttpResponseMessage GetCollateralSubTypes()
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var response = repo.GetCollateralSubTypeById(collateralSubTypeId);
-                if (response == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
+                var response = repo.GetCollateralSubTypes();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
             {
-                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
 
-        [System.Web.Http.HttpGet]
+        [HttpGet]
         [Route("collateral-sub-type/collateral-type/{collateralTypeId}")]
         public HttpResponseMessage GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
         {

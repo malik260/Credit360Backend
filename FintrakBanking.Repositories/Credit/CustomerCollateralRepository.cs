@@ -1246,9 +1246,17 @@ namespace FintrakBanking.Repositories.Credit
                     }).ToList();
         }
 
-        public CollateralSubTypeViewModel GetCollateralSubTypeById(short collateralSubTypeId)
+        public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes()
         {
-            return CollateralSubType().Where(x => x.collateralSubTypeId == collateralSubTypeId).FirstOrDefault();
+            return (from m in context.tbl_Collateral_Type_Sub
+                    select new CollateralSubTypeViewModel
+                    {
+                        collateralSubTypeId = m.CollateralSubTypeId,
+                        collateralTypeId = m.CollateralTypeId,
+                        collateralSubTypeName = m.CollateralSubTypeName,
+                        haircut = m.Haircut,
+                        revaluationDuration = m.RevaluationDuration
+                    }).ToList();
         }
 
         public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
