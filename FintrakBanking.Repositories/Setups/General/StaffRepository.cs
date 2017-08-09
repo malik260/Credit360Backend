@@ -599,7 +599,6 @@ on c.DepartmentId equals dept.DepartmentId
                         RankName = c.tbl_Staff_Rank.RankName,
                         BranchName = br.BranchName,
                         DepartmentName = dept.DepartmentName,
-                        ApprovalStatusId = c.ApprovalStatusId,
                         OperationId = atrail.OperationId,
                         SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description
 

@@ -39,7 +39,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.AddCustomerGroup(entity);
+                var data = repo.AddTempCustomerGroup(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.Created, new { success = true, result = data, message = "The record has been created successfully" });
@@ -137,7 +137,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.UpdateCustomerGroup(customerGroupId, entity);
+                var data = repo.UpdateCustomerGroupForApproval(customerGroupId, entity);
 
                 if (data)
                 {
@@ -157,7 +157,7 @@ namespace FintrakBanking.APICore.Controllers
         #region Customer Group Mapping
         [HttpPost]
         [Route("customer-group-mapping")]
-        public HttpResponseMessage AddCustomerGroupMapping([FromBody] CustomerGroupMapppingViewModel entity)
+        public HttpResponseMessage AddCustomerGroupMapping([FromBody] CustomerGroupMappingViewModel entity)
         {
             try
             {
@@ -185,7 +185,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("customer-group-mapping/multiple")]
-        public HttpResponseMessage AddMultipleCustomerGroupMapping([FromBody] List<CustomerGroupMapppingViewModel> customerGroups)
+        public HttpResponseMessage AddMultipleCustomerGroupMapping([FromBody] List<CustomerGroupMappingViewModel> customerGroups)
         {
             try
             {
@@ -305,7 +305,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("customer-group-mapping/{groupMapId}")]
-        public HttpResponseMessage UpdateCustomerGroupMaping(int groupMapId, [FromBody] CustomerGroupMapppingViewModel entity)
+        public HttpResponseMessage UpdateCustomerGroupMaping(int groupMapId, [FromBody] CustomerGroupMappingViewModel entity)
         {
             try
             {
