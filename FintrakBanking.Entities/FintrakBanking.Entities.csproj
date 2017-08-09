@@ -227,6 +227,7 @@
     <Compile Include="Models\tbl_Stock.cs" />
     <Compile Include="Models\tbl_Sub_Sector.cs" />
     <Compile Include="Models\tbl_Tax.cs" />
+    <Compile Include="Models\tbl_Temp_Charge_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Chart_Of_Account.cs" />
     <Compile Include="Models\tbl_Temp_Chart_Of_Account_Currency.cs" />
     <Compile Include="Models\tbl_Temp_Collateral_Casa.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Models\tbl_Temp_Collateral_Stock.cs" />
     <Compile Include="Models\tbl_Temp_Collateral_Vehicle.cs" />
     <Compile Include="Models\tbl_Temp_Customer_Group.cs" />
+    <Compile Include="Models\tbl_Temp_Customer_Group_Mapping.cs" />
     <Compile Include="Models\tbl_Temp_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Product.cs" />
     <Compile Include="Models\tbl_Temp_Product_CollateralType.cs" />

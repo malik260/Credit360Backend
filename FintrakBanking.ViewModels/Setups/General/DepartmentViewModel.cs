@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class DepartmentViewModel : GenaralEntity
+    public class DepartmentViewModel : GeneralEntity
     {
         public short DepartmentId { get; set; }
         public short? BranchId { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class CollateralTypeViewModel : GenaralEntity
+    public class CollateralTypeViewModel : GeneralEntity
     {
         public int collateralTypeId { get; set; }
         public string collateralTypeName { get; set; }
@@ -13,7 +13,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? chargeGLAccountId { get; set; }
     }
 
-    public class CollateralTypeSubViewModel : GenaralEntity
+    public class CollateralTypeSubViewModel : GeneralEntity
     {
         public short collateralSubTypeId { get; set; }
         public string collateralSubTypeName { get; set; }
@@ -22,7 +22,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int revaluationDuration { get; set; }
     }
 
-    public class CollateralSeniorityOfClaimsViewModel : GenaralEntity
+    public class CollateralSeniorityOfClaimsViewModel : GeneralEntity
     {
         public short seniorityOfClaimId { get; set; }
         public string seniorityOfClaims { get; set; }

@@ -13,6 +13,7 @@ using FintrakBanking.Interfaces.Setups.Finance;
 using System.Web.Http.Cors;
 using FintrakBanking.Interfaces.ErrorLogger;
 using System.Linq;
+using FintrakBanking.Interfaces.Setups.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -24,12 +25,14 @@ namespace FintrakBanking.APICore.Controllers
     {
         TokenDecryptionHelper token = null;
         private ICustomerCollateralRepository repo;
+        private ICollateralTypeRepository repo_type;
         IErrorLogRepository errorLogger;
 
-        public CustomerCollateralController(ICustomerCollateralRepository _repo,
+        public CustomerCollateralController(ICustomerCollateralRepository _repo, ICollateralTypeRepository _repo_type,
                                             IErrorLogRepository _errorLogger)
         {
             repo = _repo;
+            this.repo_type = _repo_type;
             this.errorLogger = _errorLogger;
         }
 
@@ -145,6 +148,188 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
+        #region Collatera Types
+        [HttpGet]
+        [Route("collateral-type")]
+        public HttpResponseMessage GetCollateralType(short collateralTypeId)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var response = repo_type.GetCollateralTypes();
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("collateral-sub-type/{collateralSubTypeId}")]
+        public HttpResponseMessage GetCollateralSubTypeById(short collateralSubTypeId)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var response = repo_type.GetCollateralSubTypeById(collateralSubTypeId);
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("collateral-sub-type/collateral-type/{collateralTypeId}")]
+        public HttpResponseMessage GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var response = repo_type.GetCollateralSubTypeByCollateralTypeId(collateralTypeId);
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("collateral-sub-type")]
+        public async Task<HttpResponseMessage> AddCollateralSubType([FromBody] CollateralSubTypeViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.companyId = token.GetCompanyId;
+
+                var response = await repo_type.AddCollateralSubTypes(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("collateral-type/{collateralTypeId}")]
+        public async Task<HttpResponseMessage> UpdateCollateralType(short collateralTypeId, [FromBody] CollateralTypeViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userBranchId = (short)token.GetBranchId;
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var response = await repo_type.UpdateCollateralTypes(collateralTypeId, entity);
+                if (!response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("collateral-sub-type/{collateralSubTypeId}")]
+        public async Task<HttpResponseMessage> UpdateCollateralSubType(short collateralSubTypeId, [FromBody] CollateralSubTypeViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userBranchId = (short)token.GetBranchId;
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var response = await repo_type.UpdateCollateralSubTypes(collateralSubTypeId, entity);
+                if (!response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("collateral-sub-type/{collateralSubTypeId}")]
+        public async Task<HttpResponseMessage> DeleteCollateralSubType(int collateralSubTypeId)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
+
+                var response = await repo.DeleteCollateralCustomer(collateralSubTypeId, user);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        #endregion  End of Collateral Types
+
+
         #region Seniority Of Claims
         [HttpGet]
         [Route("collateral-seniority-of-claims")]
@@ -172,14 +357,14 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Listing Functions
         [HttpGet]
-        [Route("collateral-value-base-type")]
-        public HttpResponseMessage GetCollateralValueBaseType()
+        [Route("collateral-sub-type/{collateralSubTypeId}")]
+        public HttpResponseMessage GetCollateralSubTypeById(short collateralSubTypeId)
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var response = repo.GetCollateralValueBaseType();
+                var response = repo.GetCollateralSubTypeById(collateralSubTypeId);
                 if (response == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -188,35 +373,35 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
-        //[HttpGet][Route("collateral-valuers")]
-        //public HttpResponseMessage GetCollateralValuers()
-        //{
-        //    try
-        //    {
-        //         TokenDecryptionHelper token = new TokenDecryptionHelper();
-
-        //        var response = repo.GetCollateralValuers(token.GetCompanyId);
-        //        if (response == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-        //    }
-        //}
-
         [HttpGet]
-        [Route("collateral-valuer-type")]
-        public HttpResponseMessage GetCollateralValuerType()
+        [Route("collateral-valuers")]
+        public HttpResponseMessage GetCollateralValuers()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var response = repo.GetCollateralValuer(token.GetCompanyId);
+                if (response == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (System.Exception ex)
+            {
+                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [System.Web.Http.HttpGet]
+        [Route("collateral-sub-type/collateral-type/{collateralTypeId}")]
+        public HttpResponseMessage GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
         {
             try
             {
@@ -259,45 +444,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpGet]
-        [Route("collateral-sub-type")]
-        public HttpResponseMessage GetCollateralSubTypes()
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
-                var response = repo.GetCollateralSubTypes();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-
-        [HttpGet]
-        [Route("collateral-sub-type/collateral-type/{collateralTypeId}")]
-        public HttpResponseMessage GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
-                var response = repo.GetCollateralSubTypeByCollateralTypeId(collateralTypeId);
-                if (response == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (Exception ex)
-            {
-                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+      
 
         #endregion End of Listing Functions
 

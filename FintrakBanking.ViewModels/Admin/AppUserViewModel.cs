@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Admin
 {
-    public class AppUserViewModel : GenaralEntity
+    public class AppUserViewModel : GeneralEntity
     {
         public AppUserViewModel()
         {

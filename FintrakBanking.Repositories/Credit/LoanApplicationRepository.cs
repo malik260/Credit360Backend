@@ -160,7 +160,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Change Loan Application Status with reference number '{data.ApplicationReferenceNumber}' to {GetLoanStatus((short)entity.approvalStatusId)}",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = entity.targetId
             };
@@ -202,12 +202,12 @@ namespace FintrakBanking.Repositories.Credit
                 TeamMISCode = loan.teamMiscode,
                 InterestRate = loan.interestRate,
                 PrincipalAmount = loan.principalAmount,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 LoanInformation = loan.loanInformation,
                 IsRealatedParty = loan.isRealatedParty,
                 IsPoliticallyExposed = loan.isPoliticallyExposed,
                 CreatedBy = (int)loan.createdBy,
-                DateTimeCreated = genSetup.GetApplicaionDate(),
+                DateTimeCreated = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -241,7 +241,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Applied for loan with reference number: {refNumber}",
                 IPAddress = loan.userIPAddress,
                 Url = loan.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = loan.loanApplicationId
                  

@@ -35,7 +35,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
         {
             var index = new tbl_Risk_Assessment_Index
             {
-                DateTimeCreated = genSetup.GetApplicaionDate().Date,
+                DateTimeCreated = genSetup.GetApplicationDate().Date,
                 Name = entity.name,
                 Description = entity.description,
                 Weight = entity.weight,
@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 Detail = $"Added Risk assessment index: { entity.name } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -74,7 +74,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
         {
             var index = context.tbl_Risk_Assessment_Index.SingleOrDefault(c => c.RiskId == riskId);
             index.Deleted = true;
-            index.DateTimeDeleted = genSetup.GetApplicaionDate();
+            index.DateTimeDeleted = genSetup.GetApplicationDate();
             index.DeletedBy = (int)user.staffId;
 
             // Audit Section ---------------------------
@@ -86,7 +86,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 Detail = $"Deleted Risk assessment index: { index.Name } ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -152,7 +152,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
             index.RiskAssessmentTitleId = entity.riskAssessmentTitleId;
             index.CompanyId = entity.companyId;
             index.Weight = entity.weight;
-            index.DateTimeUpdated = genSetup.GetApplicaionDate().Date;
+            index.DateTimeUpdated = genSetup.GetApplicationDate().Date;
             index.LastUpdatedBy = entity.lastUpdatedBy;
 
             // Audit Section ---------------------------
@@ -164,7 +164,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 Detail = $"Deleted Risk assessment index: { index.Name } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -285,7 +285,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
             var title = new tbl_Risk_Assessment_Title
             {
                 RiskTitle = entity.riskTitle,
-                DateTimeCreated = genSetup.GetApplicaionDate().Date,
+                DateTimeCreated = genSetup.GetApplicationDate().Date,
                 CreatedBy = entity.createdBy,
                 CompanyId = entity.companyId,
                 RiskTypeId = entity.riskTypeId,
@@ -302,7 +302,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 Detail = $"Added Risk assessment title: { entity.riskTitle } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -316,7 +316,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
         {
             var title = context.tbl_Risk_Assessment_Title.SingleOrDefault(c => c.RiskAssessmentTitleId == riskAssessmentTitleId);
             title.RiskTitle = entity.riskTitle;
-            title.DateTimeUpdated = genSetup.GetApplicaionDate();
+            title.DateTimeUpdated = genSetup.GetApplicationDate();
             title.RiskTypeId = entity.riskTypeId;
             title.ProductId = entity.productId;
             title.LastUpdatedBy = entity.lastUpdatedBy;
@@ -330,7 +330,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 Detail = $"Update Risk assessment title: { entity.riskTitle } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -344,7 +344,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
         {
             var title = context.tbl_Risk_Assessment_Title.SingleOrDefault(c => c.RiskAssessmentTitleId == riskAssessmentTitleId);
             title.Deleted = true;
-            title.DateTimeDeleted = genSetup.GetApplicaionDate();
+            title.DateTimeDeleted = genSetup.GetApplicationDate();
             title.DeletedBy = user.staffId;
 
 
@@ -357,7 +357,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 Detail = $"Delete Risk assessment title: { title.RiskTitle } ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

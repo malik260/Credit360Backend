@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FintrakBanking.ViewModels.Customer
 {
-    public class CustomerViewModels : GenaralEntity
+    public class CustomerViewModels : GeneralEntity
     {
         public CustomerViewModels()
         {

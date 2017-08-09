@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.media;
+using FintrakBanking.Interfaces.Setups.Credit;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -20,19 +21,19 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IProductRepository product;
         private IMediaRepository media;
+        private ICollateralTypeRepository collateralType;
 
 
-        public CustomerCollateralRepository(FinTrakBankingContext _context,
-                                        IGeneralSetupRepository _genSetup,
-                                        IAuditTrailRepository _auditTrail,
-                                        IProductRepository _product,
-                                        IMediaRepository _media)
+        public CustomerCollateralRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
+                                        IAuditTrailRepository _auditTrail, IProductRepository _product,
+                                        IMediaRepository _media, ICollateralTypeRepository _collateralType)
         {
-            context = _context;
-            genSetup = _genSetup;
-            auditTrail = _auditTrail;
-            product = _product;
-            media = _media;
+            this.context = _context;
+            this.genSetup = _genSetup;
+            this.auditTrail = _auditTrail;
+            this.product = _product;
+            this.media = _media;
+            this.collateralType = _collateralType;
         }
 
         #region Collateral Customer 
@@ -73,7 +74,7 @@ namespace FintrakBanking.Repositories.Credit
                 DateActedOn = entity.dateActedOn,
                 ActedOnBy = entity.actedOnBy,
                 CamRefNumber = entity.camRefNumber,
-                DateTimeCreated = genSetup.GetApplicaionDate().Date,
+                DateTimeCreated = genSetup.GetApplicationDate().Date,
                 CreatedBy = entity.createdBy,
                 tbl_Collateral_Immovable_Property = AddCollateralProperty((CollateralTypeEnum)entity.collateralTypeId, entity.collateralProperty),
                 tbl_Collateral_Deposit = AddCollateralDeposit((CollateralTypeEnum)entity.collateralTypeId, entity.collateralDeposit),
@@ -96,7 +97,7 @@ namespace FintrakBanking.Repositories.Credit
             var collateral = context.tbl_Collateral_Customer.Find(colleralCustomerId);
             collateral.Deleted = true;
             collateral.DeletedBy = user.staffId;
-            collateral.DateTimeDeleted = genSetup.GetApplicaionDate();
+            collateral.DateTimeDeleted = genSetup.GetApplicationDate();
 
             return await context.SaveChangesAsync() != 0;
         }
@@ -364,7 +365,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Update collateral with code: { entity.collateralCode} of { entity.valuationCycle} valuation cycle",
                 //Ipaddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -1180,25 +1181,12 @@ namespace FintrakBanking.Repositories.Credit
                         seniorityOfClaimId = m.CollateralSeniorityOfClaimId,
                         seniorityOfClaims = m.SeniorityOfClaims,
                         description = m.Description,
-                        dateTimeCreated = genSetup.GetApplicaionDate(),
+                        dateTimeCreated = genSetup.GetApplicationDate(),
                     });
         }
         #endregion Seniority Of Claims
 
         #region Listing Functions
-        public IEnumerable<CollateralTypeViewModel> GetCollateralType()
-        {
-            return (from m in context.tbl_Collateral_Type
-                    select new CollateralTypeViewModel
-                    {
-                        collateralTypeId = m.CollateralTypeId,
-                        collateralTypeName = m.CollateralTypeName,
-                        chargeGLAccountId = m.ChargeGLAccountId,
-                        requireInsurancePolicy = m.RequireInsurancePolicy,
-                        details = m.Details
-                    });
-        }
-
         public IEnumerable<CollateralValueBaseTypeViewModel> GetCollateralValueBaseType()
         {
             return (from m in context.tbl_Collateral_Valuebase_Type
@@ -1233,35 +1221,20 @@ namespace FintrakBanking.Repositories.Credit
                     });
         }
 
-        private IEnumerable<CollateralSubTypeViewModel> CollateralSubType()
+        public IEnumerable<CollateralTypeViewModel> GetCollateralType()
         {
-            return (from m in context.tbl_Collateral_Type_Sub
-                    select new CollateralSubTypeViewModel
-                    {
-                        collateralSubTypeId = m.CollateralSubTypeId,
-                        collateralTypeId = m.CollateralTypeId,
-                        collateralSubTypeName = m.CollateralSubTypeName,
-                        haircut = m.Haircut,
-                        revaluationDuration = m.RevaluationDuration
-                    }).ToList();
+            return this.collateralType.GetCollateralTypes();
         }
 
         public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes()
         {
-            return (from m in context.tbl_Collateral_Type_Sub
-                    select new CollateralSubTypeViewModel
-                    {
-                        collateralSubTypeId = m.CollateralSubTypeId,
-                        collateralTypeId = m.CollateralTypeId,
-                        collateralSubTypeName = m.CollateralSubTypeName,
-                        haircut = m.Haircut,
-                        revaluationDuration = m.RevaluationDuration
-                    }).ToList();
+            return CollateralSubType().Where(x => x.collateralSubTypeId == collateralSubTypeId).FirstOrDefault();
         }
 
         public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
         {
-            return CollateralSubType().Where(x => x.collateralTypeId == collateralTypeId);
+            return this.collateralType.GetCollateralSubTypeByCollateralTypeId(collateralTypeId);
+            //return CollateralSubType().Where(x => x.collateralTypeId == collateralTypeId);
         }
         #endregion End of Listing Functions
     }

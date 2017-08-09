@@ -83,7 +83,7 @@ namespace FintrakBanking.Repositories.Admin
                 Detail = $"Approved user '{userRecord.Username}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -128,7 +128,7 @@ namespace FintrakBanking.Repositories.Admin
                 Detail = $"Added User with username: '{user.username}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -367,7 +367,7 @@ namespace FintrakBanking.Repositories.Admin
                 Detail = $"Added User group: '{group.groupName}' ",
                 IPAddress = group.userIPAddress,
                 Url = group.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -394,7 +394,7 @@ namespace FintrakBanking.Repositories.Admin
                 Detail = $"Added User group: '{groupModel.groupName}' ",
                 IPAddress = groupModel.userIPAddress,
                 Url = groupModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

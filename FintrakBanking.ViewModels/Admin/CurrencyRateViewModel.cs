@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Admin
 {
-    public class CurrencyRateViewModel : GenaralEntity
+    public class CurrencyRateViewModel : GeneralEntity
     {
         public short currencyRateId { get; set; }
         public short currencyId { get; set; }

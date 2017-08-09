@@ -43,7 +43,7 @@ namespace FintrakBanking.Repositories.Customer
                 CovenantDetail = entity.covenantDetail,
                 CovenantTypeId = entity.covenantTypeId,
                 CreatedBy = entity.createdBy,
-                DateTimeCreated = this.genSetup.GetApplicaionDate().Date,
+                DateTimeCreated = this.genSetup.GetApplicationDate().Date,
                 FrequencyTypeId = entity.frequencyTypeId,
                 LoanId = entity.loanId
             };
@@ -57,7 +57,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Added loan convent to loan ref: { loanRef } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -70,7 +70,7 @@ namespace FintrakBanking.Repositories.Customer
             var convenant = context.tbl_Loan_Covenant_Detail.Find(loanCovenantDetailId);
             convenant.Deleted = true;
             convenant.DeletedBy = user.staffId;
-            convenant.DateTimeDeleted = this.genSetup.GetApplicaionDate().Date; 
+            convenant.DateTimeDeleted = this.genSetup.GetApplicationDate().Date; 
 
             var loanRef = context.tbl_Loan.SingleOrDefault(c => c.LoanId == loanCovenantDetailId).LoanReferenceNumber;
             var audit = new tbl_Audit
@@ -81,7 +81,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Delete loan convent to loan ref: { loanRef } ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -133,7 +133,7 @@ namespace FintrakBanking.Repositories.Customer
             convenant.CovenantDetail = entity.covenantDetail;
             convenant.CovenantTypeId = entity.covenantTypeId;
             convenant.CreatedBy = entity.createdBy;
-            convenant.DateTimeUpdated = this.genSetup.GetApplicaionDate().Date;
+            convenant.DateTimeUpdated = this.genSetup.GetApplicationDate().Date;
             convenant.FrequencyTypeId = entity.frequencyTypeId;
             convenant.LoanId = entity.loanId;
 
@@ -146,7 +146,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Updated loan convent to loan ref: { loanRef } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
@@ -180,7 +180,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Defined loan convent type: { entity.covenantTypeName } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Updated loan convent type: { entity.covenantTypeName } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Setups.Approval
 {
-    public class ApprovalLevelViewModel : GenaralEntity
+    public class ApprovalLevelViewModel : GeneralEntity
     {
         public int approvalLevelId { get; set; }
         public string levelName { get; set; } 

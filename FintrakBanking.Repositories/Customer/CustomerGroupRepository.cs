@@ -52,7 +52,7 @@ namespace FintrakBanking.Repositories.Customer
                 GroupName = entity.groupName,
                 GroupDescription = entity.groupDescription,
                 CreatedBy = (int)entity.createdBy,
-                DateTimeCreated = genSetup.GetApplicaionDate()
+                DateTimeCreated = genSetup.GetApplicationDate()
             };
             context.tbl_Customer_Group.Add(group);
 
@@ -65,7 +65,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Added Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName } )",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
@@ -87,7 +87,7 @@ namespace FintrakBanking.Repositories.Customer
                 GroupName = custGroupModel.groupName,
                 GroupDescription = custGroupModel.groupDescription,
                 CreatedBy = (int)custGroupModel.createdBy,
-                DateTimeCreated = genSetup.GetApplicaionDate()
+                DateTimeCreated = genSetup.GetApplicationDate()
             };
 
             // Audit Section ---------------------------
@@ -99,7 +99,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Added Customer Group: { custGroupModel.groupName } with Code: { custGroupModel.groupCode } ( { custGroupModel.groupName } )",
                 IPAddress = custGroupModel.userIPAddress,
                 Url = custGroupModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             //end of Audit section -------------------------------
@@ -149,7 +149,7 @@ namespace FintrakBanking.Repositories.Customer
             var group = context.tbl_Customer_Group.Find(groupId);
             group.Deleted = true;
             group.DeletedBy = (int)user.createdBy;
-            group.DateTimeDeleted = genSetup.GetApplicaionDate();
+            group.DateTimeDeleted = genSetup.GetApplicationDate();
             // Audit Section ---------------------------
             var entity = context.tbl_Customer_Group.FirstOrDefault(x => x.CustomerGroupId == groupId);
             var audit = new tbl_Audit
@@ -160,7 +160,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Deleted Customer Group: { entity.GroupName } with Code: { entity.GroupCode } ( { entity.GroupName })",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -210,7 +210,7 @@ namespace FintrakBanking.Repositories.Customer
             group.GroupName = entity.groupName;
             group.GroupDescription = entity.groupDescription;
             group.LastUpdatedBy = (int)entity.createdBy;
-            group.DateTimeUpdated = genSetup.GetApplicaionDate();
+            group.DateTimeUpdated = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -221,7 +221,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Updated Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName })",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -268,7 +268,7 @@ namespace FintrakBanking.Repositories.Customer
                     GroupName = entity.groupName,
                     GroupDescription = entity.groupDescription,
                     CreatedBy = entity.createdBy,
-                    DateTimeCreated = genSetup.GetApplicaionDate(),
+                    DateTimeCreated = genSetup.GetApplicationDate(),
                     ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
                     IsCurrent = true,
                 };
@@ -286,7 +286,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Updated Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName })",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = customerGroupId
             };
@@ -369,7 +369,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Approved Customer Group '{customerGroupModel.GroupName}' with group code'{customerGroupModel.GroupCode}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -412,7 +412,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Added Customer Group Mapping to customer: { customer } with code: {entity.customerCode } to group  ( { groupName } ) ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -501,7 +501,7 @@ namespace FintrakBanking.Repositories.Customer
 
             groupMap.Deleted = true;
             groupMap.DeletedBy = (int)user.createdBy;
-            groupMap.DateTimeDeleted = genSetup.GetApplicaionDate();
+            groupMap.DateTimeDeleted = genSetup.GetApplicationDate();
 
             var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
                                                     .Select(x => new
@@ -519,7 +519,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Deleted Customer Group Mapping for customer: { customer} with Code: {groupMap.tbl_Customer.CustomerCode} to group({customerGroupName })",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -536,7 +536,7 @@ namespace FintrakBanking.Repositories.Customer
 
             groupMap.CustomerGroupMappingId = groupMapId;
             groupMap.LastUpdatedBy = (int)entity.createdBy;
-            groupMap.DateTimeUpdated = genSetup.GetApplicaionDate();
+            groupMap.DateTimeUpdated = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
@@ -554,7 +554,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Updated Customer Group Mapping for customer: { customer }  with code:  { groupMap.tbl_Customer.CustomerCode } to group ( {groupName } ) ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -568,7 +568,7 @@ namespace FintrakBanking.Repositories.Customer
 
             groupMap.Deleted = true;
             groupMap.DeletedBy = (int)user.createdBy;
-            groupMap.DateTimeDeleted = genSetup.GetApplicaionDate();
+            groupMap.DateTimeDeleted = genSetup.GetApplicationDate();
 
             var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
                                                     .Select(x => new
@@ -587,7 +587,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Deleted Customer Group Mapping for customer: { customer} with Code: {groupMap.tbl_Customer.CustomerCode} to group({customerGroupName })",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
