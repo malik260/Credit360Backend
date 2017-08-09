@@ -389,7 +389,7 @@ namespace FintrakBanking.Repositories.Customer
                 CustomerId = entity.customerId,
                 CustomerGroupId = entity.customerGroupId,
                 RelationshipTypeId = entity.relationshipTypeId,
-                CreatedBy = entity.createdBy,
+                ////CreatedBy = entity.createdBy,
                 DateTimeCreated = DateTime.Now
             };
 
@@ -407,11 +407,11 @@ namespace FintrakBanking.Repositories.Customer
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
+                //StaffId = entity.createdBy,
+                //BranchId = (short)entity.userBranchId,
                 Detail = $"Added Customer Group Mapping to customer: { customer } with code: {entity.customerCode } to group  ( { groupName } ) ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
+                //IPAddress = entity.userIPAddress,
+                //Url = entity.applicationUrl,
                 ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
@@ -452,9 +452,9 @@ namespace FintrakBanking.Repositories.Customer
                                            customerGroupMappingId = a.CustomerGroupMappingId,
                                            customerGroupId = a.CustomerGroupId,
                                            relationshipTypeId = a.RelationshipTypeId,
-                                           createdBy = a.CreatedBy,
+                                           //createdBy = a.CreatedBy,
                                            customerId = a.CustomerId,
-                                           dateTimeCreated = a.DateTimeCreated
+                                           //dateTimeCreated = a.DateTimeCreated
                                        };
 
             return customerGroupMapping;
@@ -470,9 +470,9 @@ namespace FintrakBanking.Repositories.Customer
                                            customerGroupMappingId = a.CustomerGroupMappingId,
                                            customerGroupId = a.CustomerGroupId,
                                            relationshipTypeId = a.RelationshipTypeId,
-                                           createdBy = a.CreatedBy,
+                                           //createdBy = a.CreatedBy,
                                            customerId = a.CustomerId,
-                                           dateTimeCreated = a.DateTimeCreated
+                                           //dateTimeCreated = a.DateTimeCreated
                                        };
 
             return customerGroupMapping.SingleOrDefault();
@@ -489,12 +489,12 @@ namespace FintrakBanking.Repositories.Customer
                                            customerGroupId = a.CustomerGroupId,
                                            relationshipTypeId = a.RelationshipTypeId,
                                            relationshipTypeName = a.tbl_Customer_Group_RelationshipType.RelationshipTypeName,
-                                           createdBy = a.CreatedBy,
+                                           //createdBy = a.CreatedBy,
                                            customerId = a.CustomerId,
                                            customerCode = a.tbl_Customer.CustomerCode,
                                            customerName = a.tbl_Customer.LastName + " " + a.tbl_Customer.FirstName,
                                            customerType = a.tbl_Customer.tbl_Customer_Type.Name,
-                                           dateTimeCreated = a.DateTimeCreated
+                                           //dateTimeCreated = a.DateTimeCreated
                                        };
 
             return customerGroupMapping;
@@ -540,7 +540,7 @@ namespace FintrakBanking.Repositories.Customer
             if (groupMap == null) return false;
 
             groupMap.CustomerGroupMappingId = groupMapId;
-            groupMap.LastUpdatedBy = (int)entity.createdBy;
+            //groupMap.LastUpdatedBy = (int)entity.createdBy;
             groupMap.DateTimeUpdated = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
@@ -554,11 +554,11 @@ namespace FintrakBanking.Repositories.Customer
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.CustomerGroupMappingUpdated,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
+                ////StaffId = entity.createdBy,
+                //BranchId = (short)entity.userBranchId,
                 Detail = $"Updated Customer Group Mapping for customer: { customer }  with code:  { groupMap.tbl_Customer.CustomerCode } to group ( {groupName } ) ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
+                //IPAddress = entity.userIPAddress,
+                //Url = entity./*applicationUrl*/,
                 ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };

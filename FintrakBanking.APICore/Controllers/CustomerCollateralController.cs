@@ -172,23 +172,18 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("collateral-sub-type/{collateralSubTypeId}")]
-        public HttpResponseMessage GetCollateralSubTypeById(short collateralSubTypeId)
+        [Route("collateral-sub-type")]
+        public HttpResponseMessage GetCollateralSubTypes()
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var response = repo_type.GetCollateralSubTypeById(collateralSubTypeId);
-                if (response == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
+                var response = repo_type.GetCollateralSubTypes();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
             {
-                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -355,29 +350,7 @@ namespace FintrakBanking.APICore.Controllers
         #endregion Seniority Of Claims
 
 
-        #region Listing Functions
-        [HttpGet]
-        [Route("collateral-sub-type/{collateralSubTypeId}")]
-        public HttpResponseMessage GetCollateralSubTypeById(short collateralSubTypeId)
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
-                var response = repo.GetCollateralSubTypeById(collateralSubTypeId);
-                if (response == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpGet]
+       [HttpGet]
         [Route("collateral-valuers")]
         public HttpResponseMessage GetCollateralValuers()
         {
@@ -395,28 +368,6 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        [System.Web.Http.HttpGet]
-        [Route("collateral-sub-type/collateral-type/{collateralTypeId}")]
-        public HttpResponseMessage GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
-                var response = repo.GetCollateralValuerType();
-                if (response == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (Exception ex)
-            {
-                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -443,10 +394,7 @@ namespace FintrakBanking.APICore.Controllers
         //        return new { success = false, message = ex.Message });
         //    }
         //}
-
-      
-
-        #endregion End of Listing Functions
+        
 
     }
 }

@@ -1225,17 +1225,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             return this.collateralType.GetCollateralTypes();
         }
-
-        public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes()
-        {
-            return CollateralSubType().Where(x => x.collateralSubTypeId == collateralSubTypeId).FirstOrDefault();
-        }
-
-        public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
-        {
-            return this.collateralType.GetCollateralSubTypeByCollateralTypeId(collateralTypeId);
-            //return CollateralSubType().Where(x => x.collateralTypeId == collateralTypeId);
-        }
+        
         #endregion End of Listing Functions
     }
 }

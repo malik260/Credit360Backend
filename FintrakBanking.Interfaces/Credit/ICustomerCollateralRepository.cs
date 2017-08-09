@@ -43,9 +43,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         //CollateralCustomerPolicyViewModel GetCollateralCustomerPolicyByCollateralCustomerId(short collateralCustomerId);
 
-        IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes();
+       // IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes();
 
-        IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypeByCollateralTypeId(short collateralTypeId);
+        //IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypeByCollateralTypeId(short collateralTypeId);
         #endregion End Of Listing Functions
 
     }

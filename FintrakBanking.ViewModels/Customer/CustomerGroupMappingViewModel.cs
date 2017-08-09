@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Customer
 {
-    public class CustomerGroupMappingViewModel : GenaralEntity
+    public class CustomerGroupMappingViewModel : GeneralEntity
     {
         public int customerGroupMappingId { get; set; }
         public int customerId { get; set; }
