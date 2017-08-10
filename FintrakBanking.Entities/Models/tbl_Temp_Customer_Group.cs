@@ -41,10 +41,11 @@ namespace FintrakBanking.Entities.Models
 
         public short ApprovalStatusId { get; set; }
 
+        public int CompanyId { get; set; }
+
         public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
 
-        public virtual tbl_Temp_Customer_Group tbl_Temp_Customer_Group1 { get; set; }
+        public virtual tbl_Company tbl_Company { get; set; }
 
-        public virtual tbl_Temp_Customer_Group tbl_Temp_Customer_Group2 { get; set; }
     }
 }
