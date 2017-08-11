@@ -2,6 +2,7 @@ using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
@@ -39,17 +40,25 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.AddCustomerGroup(entity);
+                var data = repo.AddTempCustomerGroup(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.Created, new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.Created,
+                        new
+                        {
+                            success = true,
+                            result = data,
+                            message = "The record has been created successfully, now awaiting approval"
+                        });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
 
@@ -108,6 +117,28 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("customer-group/awaiting-approval")]
+        public HttpResponseMessage GetCustomerGroupAwaitingApproval()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+
+                var data = repo.GetCustomerGroupsAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
         [Route("customer-group/{customerGroupId}")]
         public HttpResponseMessage GetCustomerGroupByCustomerId(int customerGroupId)
         {
@@ -132,17 +163,17 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 entity.userBranchId = (short)token.GetBranchId;
-                entity.userIPAddress = Request.RequestUri.Host;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.UpdateCustomerGroup(customerGroupId, entity);
+                var data = repo.UpdateCustomerGroupForApproval(customerGroupId, entity);
 
                 if (data)
                 {
 
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully, now awaiting approval" });
 
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
@@ -152,12 +183,42 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
         }
+
+        [HttpPost]
+        [Route("customer-group/approval")]
+        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var data = repo.GoForApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "customer group has been approved successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An error occured: {ex.Message}" });
+            }
+        }
         #endregion
 
         #region Customer Group Mapping
         [HttpPost]
         [Route("customer-group-mapping")]
-        public HttpResponseMessage AddCustomerGroupMapping([FromBody] CustomerGroupMapppingViewModel entity)
+        public HttpResponseMessage AddCustomerGroupMapping([FromBody] CustomerGroupMappingViewModel entity)
         {
             try
             {
@@ -169,10 +230,10 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.AddCustomerGroupMapping(entity);
+                var data = repo.AddTempCustomerGroupMapping(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.Created, new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.Created, new { success = true, result = data, message = "The record has been created successfully, now awaiting approval" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
@@ -185,7 +246,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("customer-group-mapping/multiple")]
-        public HttpResponseMessage AddMultipleCustomerGroupMapping([FromBody] List<CustomerGroupMapppingViewModel> customerGroups)
+        public HttpResponseMessage AddMultipleCustomerGroupMapping([FromBody] List<CustomerGroupMappingViewModel> customerGroups)
         {
             try
             {
@@ -305,7 +366,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("customer-group-mapping/{groupMapId}")]
-        public HttpResponseMessage UpdateCustomerGroupMaping(int groupMapId, [FromBody] CustomerGroupMapppingViewModel entity)
+        public HttpResponseMessage UpdateCustomerGroupMaping(int groupMapId, [FromBody] CustomerGroupMappingViewModel entity)
         {
             try
             {

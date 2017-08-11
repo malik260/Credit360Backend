@@ -859,8 +859,8 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Customer_Group>()
-                .HasOptional(e => e.tbl_Customer_Group1)
-                .WithRequired(e => e.tbl_Customer_Group2);
+                .Property(e => e.GroupCode)
+                .IsUnicode(false);
 
             modelBuilder.Entity<tbl_Customer_Group_RelationshipType>()
                 .HasMany(e => e.tbl_Customer_Group_Mapping)
@@ -2420,8 +2420,8 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<tbl_Temp_Customer_Group>()
-                .HasOptional(e => e.tbl_Temp_Customer_Group1)
-                .WithRequired(e => e.tbl_Temp_Customer_Group2);
+                .Property(e => e.GroupCode)
+                .IsUnicode(false);
 
             modelBuilder.Entity<tbl_Temp_Product>()
                 .HasMany(e => e.tbl_Temp_Product_CollateralType)
