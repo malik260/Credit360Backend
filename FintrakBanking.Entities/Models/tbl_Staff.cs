@@ -19,12 +19,16 @@ namespace FintrakBanking.Entities.Models
             tbl_CASA = new HashSet<tbl_CASA>();
             tbl_CASA1 = new HashSet<tbl_CASA>();
             tbl_Customer = new HashSet<tbl_Customer>();
+            tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
+            tbl_Finance_Transaction1 = new HashSet<tbl_Finance_Transaction>();
             tbl_Notification_Log = new HashSet<tbl_Notification_Log>();
             tbl_Profile_User = new HashSet<tbl_Profile_User>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Application1 = new HashSet<tbl_Loan_Application>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Loan1 = new HashSet<tbl_Loan>();
+            tbl_Loan_Preliminary_Evaluation = new HashSet<tbl_Loan_Preliminary_Evaluation>();
+            tbl_Loan_Preliminary_Evaluation1 = new HashSet<tbl_Loan_Preliminary_Evaluation>();
             tbl_Loan_Relationship_Officer_History = new HashSet<tbl_Loan_Relationship_Officer_History>();
         }
 
@@ -142,6 +146,12 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Customer> tbl_Customer { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Notification_Log> tbl_Notification_Log { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -158,6 +168,12 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Preliminary_Evaluation> tbl_Loan_Preliminary_Evaluation { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Preliminary_Evaluation> tbl_Loan_Preliminary_Evaluation1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
