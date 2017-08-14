@@ -17,15 +17,15 @@ namespace FintrakBanking.Repositories.Setups.Finance
     {
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
-        private IAuditTrailRepository audit;
+        private IAuditTrailRepository auditTrail;
         private IWorkFlowRepository workFlow;
 
         public ChargeFeeRepository(FinTrakBankingContext context, IGeneralSetupRepository general, 
-                                    IAuditTrailRepository audit, IWorkFlowRepository _workFlow)
+                                    IAuditTrailRepository _auditTrail, IWorkFlowRepository _workFlow)
         {
             this.context = context;
             this.general = general;
-            this.audit = audit;
+            this.auditTrail = _auditTrail;
             this.workFlow = _workFlow;
         }
 
@@ -51,93 +51,93 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return true;
         }
 
-        //public bool AddTempChargeFee(ChargeFeeViewModel chargeFeemodel)
-        //{
-        //    bool output = false;
-        //    var existStingTempChargeFee = context.tbl_Temp_Charge_Fee.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower()
-        //                                                          && x.IsCurrent == true
-        //                                                          && x.CompanyId == staffModel.companyId
-        //                                                          && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
+        public bool AddTempChargeFee(ChargeFeeViewModel chargeFeemodel)
+        {
+            bool output = false;
+            var existStingTempChargeFee = context.tbl_Temp_Charge_Fee.Where(x => x.ChargeFeeName.ToLower() == chargeFeemodel.chargeName.ToLower()
+                                                                  && x.IsCurrent == true
+                                                                  && x.CompanyId == chargeFeemodel.companyId
+                                                                  && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
 
-        //    if (existStingTempChargeFee.Any())
-        //    {
-        //        throw new Exception("Staff Information already exist and is undergoing approval");
-        //    }
+            if (existStingTempChargeFee.Any())
+            {
+                throw new Exception("Charge Fee Information already exist and is undergoing approval");
+            }
 
-        //    var staff = new tbl_Temp_Charge_Fee()
-        //    {
-        //        ChargeFeeName = model.chargeName,
-        //        AccountCategoryId = model.accountCategoryId,
-        //        FeeIntervalId = model.frequencyTypeId,
-        //        ProductTypeId = model.productId,
-        //        FeeTargetId = model.targetId,
-        //        GLAccountId = model.ledgerAccountId,
-        //        FeeAmortisationTypeId = model.amortisationTypeId,
-        //        IsIntegralFee = model.isIntegral,
-        //        IncludeCutOffDay = model.includeCutOffDay,
-        //        CutOffDay = model.cutOffDay,
-        //        OperationId = model.operationId,
-        //        Amount = model.amount,
-        //        Rate = model.rate,
-        //        ValueSource = model.valueSource,
-        //        Recurring = model.recurring,
-        //        PrimaryTaxId = model.primaryTaxId,
-        //        SecondaryTaxId = model.secondaryTaxId,
-        //        CompanyId = model.companyId,
-        //        CreatedBy = (int)model.createdBy,
-        //        DateTimeCreated = general.GetApplicaionDate(),
-        //        //ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-        //        //IsCurrent = true
+            var chargeFee = new tbl_Temp_Charge_Fee()
+            {
+                ChargeFeeName = chargeFeemodel.chargeName,
+                AccountCategoryId = chargeFeemodel.accountCategoryId,
+                FeeIntervalId = chargeFeemodel.frequencyTypeId,
+                ProductTypeId = chargeFeemodel.productId,
+                FeeTargetId = chargeFeemodel.targetId,
+                GLAccountId = chargeFeemodel.ledgerAccountId,
+                FeeAmortisationTypeId = chargeFeemodel.amortisationTypeId,
+                IsIntegralFee = chargeFeemodel.isIntegral,
+                IncludeCutOffDay = chargeFeemodel.includeCutOffDay,
+                CutOffDay = chargeFeemodel.cutOffDay,
+                OperationId = chargeFeemodel.operationId,
+                Amount = chargeFeemodel.amount,
+                Rate = chargeFeemodel.rate,
+                ValueSource = chargeFeemodel.valueSource,
+                Recurring = chargeFeemodel.recurring,
+                PrimaryTaxId = chargeFeemodel.primaryTaxId,
+                SecondaryTaxId = chargeFeemodel.secondaryTaxId,
+                CompanyId = chargeFeemodel.companyId,
+                CreatedBy = (int)chargeFeemodel.createdBy,
+                DateTimeCreated = general.GetApplicationDate(),
+                //ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
+                //IsCurrent = true
 
-        //    };
-        //    // Audit Section ---------------------------
-        //    var audit = new tbl_Audit
-        //    {
-        //        AuditTypeId = (short)AuditTypeEnum.CreateStaffInitiated,
-        //        StaffId = staffModel.createdBy,
-        //        BranchId = (short)staffModel.BranchId,
-        //        Detail = $"Initiated Staff Creation for '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
-        //        IPAddress = staffModel.userIPAddress,
-        //        Url = staffModel.applicationUrl,
-        //        ApplicationDate = genSetup.GetApplicaionDate(),
-        //        SystemDateTime = DateTime.Now
-        //    };
+            };
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CreateStaffInitiated,
+                StaffId = chargeFeemodel.createdBy,
+                BranchId = (short)chargeFeemodel.userBranchId,
+                Detail ="", // $"Initiated Staff Creation for '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
+                IPAddress = chargeFeemodel.userIPAddress,
+                Url = chargeFeemodel.applicationUrl,
+                ApplicationDate = general.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
 
-        //    if (workFlow.CheckRouteForOperation((int)Operations.StaffCreation, staffModel.companyId))
-        //    {
-        //        using (var trans = context.Database.BeginTransaction())
-        //        {
-        //            try
-        //            {
-        //                auditTrail.AddAuditTrail(audit);
-        //                this.context.tbl_Temp_Staff.Add(staff);
-        //                output = this.SaveAll();
+            if (workFlow.CheckRouteForOperation((int)Operations.FeeCreation, chargeFeemodel.companyId))
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        auditTrail.AddAuditTrail(audit);
+                        this.context.tbl_Temp_Charge_Fee.Add(chargeFee);
+                        output = context.SaveChanges() != 0;
 
-        //                var entity = new ApprovalViewModel
-        //                {
-        //                    staffId = staffModel.createdBy,
-        //                    companyId = staffModel.companyId,
-        //                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-        //                    targetId = staff.StaffId,
-        //                    operationId = (int)Operations.StaffCreation,
-        //                    BranchId = staffModel.userBranchId
-        //                };
-        //                var response = workFlow.LogForApproval(entity);
-        //                trans.Commit();
-        //            }
-        //            catch (Exception)
-        //            {
-        //                trans.Rollback();
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        throw new Exception("Approval route have not been defined for this operation");
-        //    }
-        //    return output;
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = chargeFeemodel.createdBy,
+                            companyId = chargeFeemodel.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = chargeFee.ChargeFeeId,
+                            operationId = (int)Operations.FeeCreation,
+                            BranchId = chargeFeemodel.userBranchId
+                        };
+                        var response = workFlow.LogForApproval(entity);
+                        trans.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        trans.Rollback();
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Approval route have not been defined for this operation");
+            }
+            return output;
 
-        //}
+        }
 
         public bool AddChargeFee(ChargeFeeViewModel model)
         {
@@ -199,7 +199,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 ApplicationDate = general.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
-            this.audit.AddAuditTrail(audit);
+            this.auditTrail.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
@@ -271,7 +271,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 ApplicationDate = general.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
-            this.audit.AddAuditTrail(audit);
+            this.auditTrail.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
@@ -385,7 +385,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 ApplicationDate = general.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
-            this.audit.AddAuditTrail(audit);
+            this.auditTrail.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
