@@ -18,6 +18,7 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanApplicationController : ApiControllerBase
     {
         private ILoanApplicationRepository repoApply;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public LoanApplicationController(ILoanApplicationRepository _repoApply)
         {
@@ -30,7 +31,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var response = repoApply.GetAllLoanApplications(token.GetCompanyId);
                 if (!response.Any())
                 {
@@ -50,7 +50,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null ;
                 var response = repoApply.GetLoanApplicationById(id,token.GetCompanyId);
                 if (response!= null)
                 {
@@ -70,7 +69,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var response = repoApply.GetProductClass();
                 if (!response.Any())
                 {
@@ -91,8 +89,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;
-
                 var response = repoApply.FindLoanApplication(searchCriteria, token.GetCompanyId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
@@ -134,10 +130,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;
-
                 entity.userBranchId = (short)token.GetBranchId;
-                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
@@ -161,14 +154,14 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet][Route("loan/application/pending")]
+        //[HttpGet][Route("loan/application/pending/page/{page}/itemsPerPage/{itemPerPage}")]
         public HttpResponseMessage GetAllPendingLoanApplications( int page, int itemsPerPage)
         {
             try
             {
-                TokenDecryptionHelper token = null ;
                 var response = repoApply.GetAllLoanApplications(token.GetCompanyId).Where(x => x.approvalStatusId == (int)ApprovalStatusEnum.Pending).ToList();
                 int totalItems = response.Count();
-                response = response.OrderBy(x=>x.applicationDate).Skip(page).Take(itemsPerPage).ToList();
+                response = response.OrderByDescending(x => x.applicationDate).ThenByDescending(x => x.loanApplicationId).Skip(page).Take(itemsPerPage).ToList();
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

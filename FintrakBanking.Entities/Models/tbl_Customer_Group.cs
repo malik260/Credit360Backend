@@ -45,10 +45,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public virtual tbl_Customer_Group tbl_Customer_Group1 { get; set; }
-
-        public virtual tbl_Customer_Group tbl_Customer_Group2 { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
 

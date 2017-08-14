@@ -32,6 +32,16 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
+        public bool IsCurrent { get; set; }
+
+        public short ApprovalStatusId { get; set; }
+
+        public int CompanyId { get; set; }
+
+        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+
+        public virtual tbl_Company tbl_Company { get; set; }
+
         public virtual tbl_Customer tbl_Customer { get; set; }
 
         public virtual tbl_Customer_Group_RelationshipType tbl_Customer_Group_RelationshipType { get; set; }

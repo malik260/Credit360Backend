@@ -6,23 +6,28 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Credit_Assessment_Memorandum")]
-    public partial class tbl_Credit_Assessment_Memorandum
+    [Table("credit.tbl_Credit_Appraisal_Memorandum")]
+    public partial class tbl_Credit_Appraisal_Memorandum
     {
         [Key]
-        public int AccessmentMemorandumId { get; set; }
+        public int AppraisalMemorandumId { get; set; }
 
         public int LoanApplicationId { get; set; }
 
-        [Required]
+        //[Required]
         [StringLength(50)]
         public string CAMRef { get; set; }
 
-        public bool IsSubmitted { get; set; }
+        public bool IsCompleted { get; set; }
 
-        public bool IsProccessed { get; set; }
+        public bool RiskRated { get; set; }
 
-        public bool HasBeenRiskRated { get; set; }
+        //[Required]
+        public string CAMDocumentation { get; set; }
+
+        //[Column(TypeName = "xml")]
+        //[Required]
+        public string LoanDetails { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -38,8 +43,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        [Column(TypeName = "ntext")]
-        [Required]
-        public string CAMDocumentation { get; set; }
+        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
     }
 }

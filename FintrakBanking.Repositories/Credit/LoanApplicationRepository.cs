@@ -17,8 +17,6 @@ using System.ComponentModel.Composition;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    [Export(typeof(ILoanApplicationRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class LoanApplicationRepository : ILoanApplicationRepository
     {
         private FinTrakBankingContext context;
@@ -65,6 +63,7 @@ namespace FintrakBanking.Repositories.Credit
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
+                            submittedForAppraisal = a.SubmittedForAppraisal,
                             principalAmount = a.PrincipalAmount,
                             customerGroupId = a.CustomerGroupId ?? 0,
                             customerGroupName = a.CustomerGroupId.HasValue ? a.tbl_Customer_Group.GroupName : "",

@@ -25,6 +25,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanInformation { get; set; }
         public string misCode { get; set; }
         public string teamMiscode { get; set; }
+        public bool submittedForAppraisal { get; set; }
         public bool isRealatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public int approvalStatusId { get; set; }

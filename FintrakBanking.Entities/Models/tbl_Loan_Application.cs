@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Loan_Application()
         {
+            tbl_Credit_Appraisal_Memorandum = new HashSet<tbl_Credit_Appraisal_Memorandum>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Risk_Assessment = new HashSet<tbl_Risk_Assessment>();
         }
@@ -23,6 +24,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string ApplicationReferenceNumber { get; set; }
 
+        public int? LoanPreliminaryEvaluationId { get; set; }
+
         public int CompanyId { get; set; }
 
         public int? CustomerId { get; set; }
@@ -30,6 +33,8 @@ namespace FintrakBanking.Entities.Models
         public short BranchId { get; set; }
 
         public short CurrencyId { get; set; }
+
+        public double ExchangeRate { get; set; }
 
         public short ProductClassId { get; set; }
 
@@ -63,6 +68,8 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string TeamMISCode { get; set; }
+        
+        public bool SubmittedForAppraisal { get; set; }
 
         public bool IsRealatedParty { get; set; }
 
@@ -90,6 +97,16 @@ namespace FintrakBanking.Entities.Models
 
         public int? ActedOnBy { get; set; }
 
+        [StringLength(250)]
+        public string NearestLandMark { get; set; }
+
+        [StringLength(250)]
+        public string NearestBusStop { get; set; }
+
+        public decimal? Longitude { get; set; }
+
+        public decimal? Latitude { get; set; }
+
         public virtual tbl_Branch tbl_Branch { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
@@ -107,7 +124,12 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Staff tbl_Staff1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Credit_Appraisal_Memorandum> tbl_Credit_Appraisal_Memorandum { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+
+        public virtual tbl_Loan_Preliminary_Evaluation tbl_Loan_Preliminary_Evaluation { get; set; }
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
 

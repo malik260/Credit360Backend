@@ -43,6 +43,8 @@ namespace FintrakBanking.Entities.Models
 
         public int SLAInterval { get; set; }
 
+        public bool CanRouteBack { get; set; }
+
         public bool IsPoliticallyExposed { get; set; }
 
         public bool IsActive { get; set; }

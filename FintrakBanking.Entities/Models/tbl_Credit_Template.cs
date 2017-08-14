@@ -12,21 +12,20 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CreditTemplateId { get; set; }
 
-        [Column(TypeName = "ntext")]
-        [Required]
-        public string CreditTemplate { get; set; }
-
-        public int ApprovalLevelId { get; set; }
+        public int CompanyId { get; set; }
 
         [Required]
         [StringLength(250)]
         public string TemplateTitle { get; set; }
 
+        [Required]
+        public string TemplateDocument { get; set; }
+
+        public int ApprovalLevelId { get; set; }
+
         public short ProductClassId { get; set; }
 
         public int? LastUpdatedBy { get; set; }
-
-        public int CompanyId { get; set; }
 
         public DateTime DateTimeCreated { get; set; }
 
@@ -41,6 +40,8 @@ namespace FintrakBanking.Entities.Models
         public int CreatedBy { get; set; }
 
         public virtual tbl_Approval_Level tbl_Approval_Level { get; set; }
+
+        public virtual tbl_Company tbl_Company { get; set; }
 
         public virtual tbl_Product_Class tbl_Product_Class { get; set; }
     }

@@ -10,7 +10,7 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Temp_Charge_Fee
     {
         [Key]
-        public int ChargeFeeId { get; set; }
+        public int Temp_ChargeFeeId { get; set; }
 
         [Required]
         [StringLength(150)]
@@ -68,6 +68,12 @@ namespace FintrakBanking.Entities.Models
         public bool IsCurrent { get; set; }
 
         public short ApprovalStatusId { get; set; }
+
+        public int? ChargeFeeId { get; set; }
+
+        public int? Temp_Root_Id { get; set; }
+
+        public bool isUpdatestatus { get; set; }
 
         public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
 

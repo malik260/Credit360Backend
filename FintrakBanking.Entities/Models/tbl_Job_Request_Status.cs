@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Tenor_Mode")]
-    public partial class tbl_Tenor_Mode
+    [Table("core.tbl_Job_Request_Status")]
+    public partial class tbl_Job_Request_Status
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Tenor_Mode()
+        public tbl_Job_Request_Status()
         {
-            tbl_Approval_Level = new HashSet<tbl_Approval_Level>();
+            tbl_Job_Request = new HashSet<tbl_Job_Request>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short TenorModeId { get; set; }
+        public short RequestStatusId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string TenorModeName { get; set; }
+        public string StatusName { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Level> tbl_Approval_Level { get; set; }
+        public virtual ICollection<tbl_Job_Request> tbl_Job_Request { get; set; }
     }
 }
