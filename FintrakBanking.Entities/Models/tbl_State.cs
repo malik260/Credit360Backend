@@ -26,6 +26,22 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string StateName { get; set; }
 
+        public int? RegionId { get; set; }
+
+        public int? CreatedBy { get; set; }
+
+        public int? LastUpdatedBy { get; set; }
+
+        public DateTime? DateTimeCreated { get; set; }
+
+        public DateTime? DateTimeUpdated { get; set; }
+
+        public bool Deleted { get; set; }
+
+        public int? DeletedBy { get; set; }
+
+        public DateTime? DateTimeDeleted { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Branch> tbl_Branch { get; set; }
 
@@ -33,6 +49,8 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_City> tbl_City { get; set; }
 
         public virtual tbl_Country tbl_Country { get; set; }
+
+        public virtual tbl_Region tbl_Region { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Staff> tbl_Temp_Staff { get; set; }

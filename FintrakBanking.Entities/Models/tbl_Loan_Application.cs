@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Loan_Application()
         {
+            tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Risk_Assessment = new HashSet<tbl_Risk_Assessment>();
         }
@@ -22,6 +23,8 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string ApplicationReferenceNumber { get; set; }
+
+        public int? LoanPreliminaryEvaluationId { get; set; }
 
         public int CompanyId { get; set; }
 
@@ -100,6 +103,9 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
+
         public virtual tbl_Product_Class tbl_Product_Class { get; set; }
 
         public virtual tbl_Staff tbl_Staff { get; set; }
@@ -108,6 +114,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+
+        public virtual tbl_Loan_Preliminary_Evaluation tbl_Loan_Preliminary_Evaluation { get; set; }
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
 
