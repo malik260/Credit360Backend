@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks; 
-using FintrakBanking.Interfaces.Setups.Approval; 
+using System.Threading.Tasks;
+using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.ViewModels.Setups.Approval;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.ViewModels;
@@ -139,8 +139,17 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 var data = repo.GetApprovalLevelByOperationId(id, token.GetCompanyId);
-                return Request.CreateResponse(HttpStatusCode.OK,
-                  new { success = true, result = data, count = 1 });
+                if (data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data.ToList(), count = data.Count() });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data.ToList(), count = data.Count() });
+                }
+                
             }
             catch (System.Exception ex)
             {
@@ -157,9 +166,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token =   new TokenDecryptionHelper( );
+                var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -190,7 +199,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper( );
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 UserInfo user = new UserInfo()
                 {
@@ -198,7 +207,7 @@ namespace FintrakBanking.APICore.Controllers
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
-                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
                 };
 
                 repo.DeleteApprovalLevel(id, user);
@@ -217,15 +226,24 @@ namespace FintrakBanking.APICore.Controllers
 
         #region
         [HttpGet]
-        [Route("workflowtracker/operation/{oId}/targetId/{tId}")]
+        [Route("workflowtracker/operation/{oId}/target/{tId}")]
         public HttpResponseMessage GetApprovalTrailByOperationIdAndTargetId(int oId, int tId)
         {
             try
             {
                 var token = new TokenDecryptionHelper();
                 var data = repo.GetApprovalTrailByOperationIdAndTargetId(oId, tId, token.GetCompanyId);
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = data, count = 1 });
+                if (data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data.ToList(), count = data.Count() });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, result = data.ToList(), count = data.Count() });
+                }
+
             }
             catch (System.Exception ex)
             {
@@ -240,23 +258,26 @@ namespace FintrakBanking.APICore.Controllers
         [Route("workflowtracker/operation/{id}")]
         public HttpResponseMessage GetApprovalTrail(int id)
         {
-            HttpResponseMessage result= null;
             try
             {
                 var token = new TokenDecryptionHelper();
                 var data = repo.GetApprovalTrail(id, token.GetCompanyId);
                 if (data.Any())
                 {
-                    result= Request.CreateResponse(HttpStatusCode.OK,
-                 new { success = true, result = data, count = 1 });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data.ToList(), count = data.Count() });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, result = data.ToList(), count = data.Count() });
                 }
 
             }
             catch (System.Exception ex)
             {
-                result = Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
-            return result;
         }
         #endregion
     }
