@@ -71,10 +71,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string Remark { get; set; }
 
-        [StringLength(250)]
+        [StringLength(100)]
         public string NearestLandMark { get; set; }
 
-        [StringLength(250)]
+        [StringLength(100)]
         public string NearestBusStop { get; set; }
 
         public decimal? Longitude { get; set; }

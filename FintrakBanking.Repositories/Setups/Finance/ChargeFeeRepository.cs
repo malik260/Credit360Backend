@@ -51,15 +51,15 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return true;
         }
 
-        //public bool AddTempChargeFee(ChargeFeeViewModel model)
+        //public bool AddTempChargeFee(ChargeFeeViewModel chargeFeemodel)
         //{
         //    bool output = false;
-        //    var existStingTempStaff = context.tbl_Temp_Staff.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower()
+        //    var existStingTempChargeFee = context.tbl_Temp_Charge_Fee.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower()
         //                                                          && x.IsCurrent == true
         //                                                          && x.CompanyId == staffModel.companyId
         //                                                          && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
 
-        //    if (existStingTempStaff.Any())
+        //    if (existStingTempChargeFee.Any())
         //    {
         //        throw new Exception("Staff Information already exist and is undergoing approval");
         //    }

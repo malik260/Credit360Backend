@@ -10,6 +10,10 @@ namespace FintrakBanking.ViewModels.Customer
         public string groupName { get; set; }
         public string groupCode { get; set; }
         public string groupDescription { get; set; }
+
+        public string comment { get; set; }
+        public int operationId { get; set; }
+        public int approvalStatusId { get; set; }
     }
 
 }

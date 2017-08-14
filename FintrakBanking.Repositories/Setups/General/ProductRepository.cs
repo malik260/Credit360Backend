@@ -675,7 +675,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     AllowOverdrawn = productModel.AllowOverdrawn,
 
                     CreatedBy = productModel.CreatedBy,
-                    DateTimeCreated = DateTime.Now,
+                    DateTimeCreated = genSetup.GetApplicationDate(),
 
                 };
                 context.tbl_Product.Add(product);

@@ -24,6 +24,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string RegionName { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal? CollateralChargeAmount { get; set; }
+
         public virtual tbl_Country tbl_Country { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
