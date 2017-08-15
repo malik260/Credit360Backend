@@ -896,13 +896,10 @@ namespace FintrakBanking.Repositories.Credit
             if (loanInput.principalAmount != (loanInput.irregularPaymentSchedule.Sum(x => x.paymentAmount)))
                 throw new Exception("Payment Amount is not equal to the principal Amount");
 
-<<<<<<< HEAD
-            var firstPaymentDate = paymentSchedule.Min(x => x.paymentDate);
 
-            if (loanInput.effectiveDate > (firstPaymentDate))
-=======
+            
             if (loanInput.effectiveDate > (loanInput.irregularPaymentSchedule.Min(x => x.paymentDate)))
->>>>>>> ffda30796415f58837704fd388836ccdf63ec4df
+
                 throw new Exception("Effective Date should be less than the payment date(s)");
 
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();

@@ -124,6 +124,7 @@ namespace FintrakBanking.APICore.Controllers
                 //user.userIPAddress =  Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 user.applicationUrl = HttpContext.Current.Request.Path;
                 user.companyId = token.GetCompanyId;
+   
                 var result = repo.CreateUser(user).IsCompleted;
                 if (result)
                 {
@@ -386,21 +387,22 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion
 
-        // [HttpGet][Route("audit/log")]
-        //public IHttpActionResult GetAuditLog([FromQuery] int page,[FromQuery] int itemsPerPage)
-        //{
-        //     TokenDecryptionHelper token = null;
+        [HttpGet]
+        [Route("audit/log/{page}/{itemsPerPage}")]
+        public HttpResponseMessage GetAuditLog(int page,int itemsPerPage)
+        {
+            TokenDecryptionHelper token = null;
 
-        //    //token = new TokenDecryptionHelper(this.HttpContext);
-        //    var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId);
-        //    int totalItems = allAuditLog.Count();
+            token = new TokenDecryptionHelper();
+            var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId);
+            int totalItems = allAuditLog.Count();
 
-        //    allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage);
+            allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage);
 
-        //    var result = allAuditLog.ToList();
+            var result = allAuditLog.ToList();
 
 
-        //    returnnew { result = result, itemsPerPage = itemsPerPage, totalItems = totalItems });
-        //}
+            return Request.CreateResponse(HttpStatusCode.OK, new { result = result, itemsPerPage = itemsPerPage, totalItems = totalItems });
+        }
     }
 }

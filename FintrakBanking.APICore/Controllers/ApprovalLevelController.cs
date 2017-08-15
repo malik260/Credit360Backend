@@ -152,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("approval-level/approval-level/{id}")]
+        [Route("approval-level/{id}")]
         public HttpResponseMessage UpdateApprovalLevel(int id, [FromBody] ApprovalLevelViewModel model)
         {
             try
