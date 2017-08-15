@@ -129,7 +129,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Added branch: '{model.branchName}' with code: {model.branchCode} ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             //end of Audit section -------------------------------
@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"Updated branch: '{model.branchName}' with code: {model.branchCode} ",
                     IPAddress = model.userIPAddress,
                     Url = model.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
                 //end of Audit section -------------------------------
@@ -193,7 +193,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     Detail = $"Deleted branch: '{branch.BranchName}' with code: {branch.BranchCode} ",
                     IPAddress = user.userIPAddress,
                     Url = user.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicaionDate(),
+                    ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
                 //end of Audit section -------------------------------

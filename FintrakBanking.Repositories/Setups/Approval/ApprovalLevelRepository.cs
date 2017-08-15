@@ -108,7 +108,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Position = model.position,
                 RouteViaStaffOrganogram = model.routeViaStaffOrganogram,
                 CanDoRiskAssessment = model.canDoRiskAssessment,
-                DateTimeCreated = genSetup.GetApplicaionDate(),
+                DateTimeCreated = genSetup.GetApplicationDate(),
                 CreatedBy = (int)model.createdBy
             };
 
@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Detail = $"Added Approval Level '{model.levelName}'. ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = model.approvalLevelId 
             };
@@ -171,7 +171,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             data.Position = model.position;
             data.RouteViaStaffOrganogram = model.routeViaStaffOrganogram;
             data.CanDoRiskAssessment = model.canDoRiskAssessment;
-            data.DateTimeUpdated = genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = genSetup.GetApplicationDate();
             data.LastUpdatedBy = (int)model.createdBy;
 
             //Audit Section ---------------------------
@@ -183,7 +183,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Detail = $"Updated Approval Level '{model.levelName}'. ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = model.approvalLevelId 
             };
@@ -198,7 +198,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var data = this.context.tbl_Approval_Level.Find(ApprovalLevelId);
             {
-                data.DateTimeDeleted = genSetup.GetApplicaionDate();
+                data.DateTimeDeleted = genSetup.GetApplicationDate();
                 data.Deleted = true;
                 data.DeletedBy = user.staffId;
             };
@@ -212,7 +212,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Detail = $"Deleted Approval Level '{data.LevelName}'. ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = data.ApprovalLevelId 
             };
@@ -241,7 +241,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if (update != null)
             {
                 update.ApprovalStatusId = model.ApprovalStatusId;
-                update.ResponseDate = genSetup.GetApplicaionDate();
+                update.ResponseDate = genSetup.GetApplicationDate();
                 update.ResponseStaffId = model.RequestStaffId;
                 
                 result = context.SaveChanges() != 0;

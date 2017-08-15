@@ -70,6 +70,7 @@
     <Compile Include="Models\tbl_Branch.cs" />
     <Compile Include="Models\tbl_CASA.cs" />
     <Compile Include="Models\tbl_CASA_AccountStatus.cs" />
+    <Compile Include="Models\tbl_CASA_Lien.cs" />
     <Compile Include="Models\tbl_CASA_PostNoStatus.cs" />
     <Compile Include="Models\tbl_Charges.cs" />
     <Compile Include="Models\tbl_Charges_ValueSource.cs" />
@@ -112,14 +113,14 @@
     <Compile Include="Models\tbl_Content_PlaceHolder.cs" />
     <Compile Include="Models\tbl_COT.cs" />
     <Compile Include="Models\tbl_Country.cs" />
-    <Compile Include="Models\tbl_Credit_Assessment_Memorandum.cs" />
-    <Compile Include="Models\tbl_Credit_Assessment_Supporting_Document.cs" />
+    <Compile Include="Models\tbl_Credit_Appraisal_Memorandum.cs" />
     <Compile Include="Models\tbl_Credit_Template.cs" />
     <Compile Include="Models\tbl_Currency.cs" />
     <Compile Include="Models\tbl_Currency_Rate.cs" />
     <Compile Include="Models\tbl_Customer.cs" />
     <Compile Include="Models\tbl_Customer_Account_KYC_Item.cs" />
     <Compile Include="Models\tbl_Customer_Address.cs" />
+    <Compile Include="Models\tbl_Customer_Blacklist.cs" />
     <Compile Include="Models\tbl_Customer_BVN.cs" />
     <Compile Include="Models\tbl_Customer_CompanyInfomation.cs" />
     <Compile Include="Models\tbl_Customer_Custom_Field.cs" />
@@ -159,10 +160,15 @@
     <Compile Include="Models\tbl_Fee_Target.cs" />
     <Compile Include="Models\tbl_Fee_Type.cs" />
     <Compile Include="Models\tbl_FinanceCurrentDate.cs" />
+    <Compile Include="Models\tbl_Finance_Transaction.cs" />
     <Compile Include="Models\tbl_Financial_Statement_Caption.cs" />
     <Compile Include="Models\tbl_Financial_Statement_Type.cs" />
     <Compile Include="Models\tbl_Frequency_Type.cs" />
     <Compile Include="Models\tbl_Guarantor_Document.cs" />
+    <Compile Include="Models\tbl_Job_Request.cs" />
+    <Compile Include="Models\tbl_Job_Request_Document_Mapping.cs" />
+    <Compile Include="Models\tbl_Job_Request_Status.cs" />
+    <Compile Include="Models\tbl_Job_Type.cs" />
     <Compile Include="Models\tbl_KYC_Item.cs" />
     <Compile Include="Models\tbl_Limit.cs" />
     <Compile Include="Models\tbl_Limit_Detail.cs" />
@@ -173,11 +179,15 @@
     <Compile Include="Models\tbl_LoanDetails.cs" />
     <Compile Include="Models\tbl_Loan_Amortization_Schedule.cs" />
     <Compile Include="Models\tbl_Loan_Application.cs" />
+    <Compile Include="Models\tbl_Loan_Camsol.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Detail.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Type.cs" />
+    <Compile Include="Models\tbl_Loan_Document_Type.cs" />
     <Compile Include="Models\tbl_Loan_Guarantor.cs" />
     <Compile Include="Models\tbl_Loan_Operation.cs" />
+    <Compile Include="Models\tbl_Loan_Preliminary_Evaluation.cs" />
+    <Compile Include="Models\tbl_Loan_PrudentialGuideline.cs" />
     <Compile Include="Models\tbl_Loan_Relationship_Officer_History.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Category.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Type.cs" />
@@ -211,13 +221,17 @@
     <Compile Include="Models\tbl_Profile_Priviledge_Activity.cs" />
     <Compile Include="Models\tbl_Profile_User.cs" />
     <Compile Include="Models\tbl_Profile_UserGroup.cs" />
+    <Compile Include="Models\tbl_Region.cs" />
+    <Compile Include="Models\tbl_Risk_Assessment.cs" />
     <Compile Include="Models\tbl_Risk_Assessment_Index.cs" />
     <Compile Include="Models\tbl_Risk_Assessment_Index_Type.cs" />
     <Compile Include="Models\tbl_Risk_Assessment_Result.cs" />
     <Compile Include="Models\tbl_Risk_Assessment_Title.cs" />
     <Compile Include="Models\tbl_Risk_Rating.cs" />
-    <Compile Include="Models\tbl_Risk_RiskAssessment_Result.cs" />
     <Compile Include="Models\tbl_Sector.cs" />
+    <Compile Include="Models\tbl_Solicitor.cs" />
+    <Compile Include="Models\tbl_Solicitor_State_Mapping.cs" />
+    <Compile Include="Models\tbl_Source_Application.cs" />
     <Compile Include="Models\tbl_Staff.cs" />
     <Compile Include="Models\tbl_Staff_JobTitle.cs" />
     <Compile Include="Models\tbl_Staff_Organogram.cs" />
@@ -226,6 +240,7 @@
     <Compile Include="Models\tbl_Stock.cs" />
     <Compile Include="Models\tbl_Sub_Sector.cs" />
     <Compile Include="Models\tbl_Tax.cs" />
+    <Compile Include="Models\tbl_Temp_Charge_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Chart_Of_Account.cs" />
     <Compile Include="Models\tbl_Temp_Chart_Of_Account_Currency.cs" />
     <Compile Include="Models\tbl_Temp_Collateral_Casa.cs" />
@@ -243,6 +258,7 @@
     <Compile Include="Models\tbl_Temp_Collateral_Stock.cs" />
     <Compile Include="Models\tbl_Temp_Collateral_Vehicle.cs" />
     <Compile Include="Models\tbl_Temp_Customer_Group.cs" />
+    <Compile Include="Models\tbl_Temp_Customer_Group_Mapping.cs" />
     <Compile Include="Models\tbl_Temp_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Product.cs" />
     <Compile Include="Models\tbl_Temp_Product_CollateralType.cs" />
@@ -256,5 +272,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

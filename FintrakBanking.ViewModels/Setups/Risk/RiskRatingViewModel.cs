@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Setups
 {
-    public class RiskRatingViewModel : GenaralEntity
+    public class RiskRatingViewModel : GeneralEntity
     {
         public int riskRatingId { get; set; }
         public string rates { get; set; }

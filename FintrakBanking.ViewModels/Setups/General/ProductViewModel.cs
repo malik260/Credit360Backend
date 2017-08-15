@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class ProductViewModel : GenaralEntity
+    public class ProductViewModel : GeneralEntity
     {
         public int productId { get; set; }
         
@@ -31,7 +31,9 @@ namespace FintrakBanking.ViewModels.Setups.General
         public double? productPriceIndexSpread { get; set; }
 
         public int? dormantGl { get; set; }
+        public string dormantGlCode { get; set; }
         public int? premiumDiscountGl { get; set; }
+        public string premiumDiscountGlCode { get; set; }
         public short? dealTypeId { get; set; }
         public string dealTypeName { get; set; }
         public short? dealClassificationId { get; set; }
@@ -66,7 +68,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     }
 
-    public class ProductCurrencyViewModel : GenaralEntity
+    public class ProductCurrencyViewModel : GeneralEntity
     {
         public int productId { get; set; }
         public int productCurrencyId { get; set; }
@@ -74,7 +76,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string currencyName { get; set; }
     }
 
-    public class ProductPriceIndexViewModel : GenaralEntity
+    public class ProductPriceIndexViewModel : GeneralEntity
     {
         public short productPriceIndexId { get; set; }
         public string priceIndexName { get; set; }

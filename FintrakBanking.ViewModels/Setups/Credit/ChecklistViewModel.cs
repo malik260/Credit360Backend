@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Setups.Credit
 {
-    public class ChecklistDetailViewModel : GenaralEntity
+    public class ChecklistDetailViewModel : GeneralEntity
     {
         public long checklistId { get; set; }
         public int checkListDefinitionId { get; set; }
@@ -20,7 +20,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string checkListDefinitionItemName { get; set; }
     }
 
-    public class ChecklistDefinitionViewModel : GenaralEntity
+    public class ChecklistDefinitionViewModel : GeneralEntity
     {
  
         public int checkListDefinitionId { get; set; }
@@ -37,7 +37,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public List<MultipleChecklistItemsViewModel> checklistItems { get; set; }
     }
 
-    public class ChecklistItemViewModel : GenaralEntity
+    public class ChecklistItemViewModel : GeneralEntity
     {
         public int checkListItemId { get; set; }
         public string checkListItemName { get; set; }

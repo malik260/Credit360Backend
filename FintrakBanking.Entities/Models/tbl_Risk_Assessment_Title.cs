@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Risk_Assessment_Title()
         {
+            tbl_Risk_Assessment = new HashSet<tbl_Risk_Assessment>();
             tbl_Risk_Assessment_Index = new HashSet<tbl_Risk_Assessment_Index>();
         }
 
@@ -41,6 +42,9 @@ namespace FintrakBanking.Entities.Models
         public bool Deleted { get; set; }
 
         public int? DeletedBy { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Risk_Assessment> tbl_Risk_Assessment { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Risk_Assessment_Index> tbl_Risk_Assessment_Index { get; set; }

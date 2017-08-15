@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public tbl_Loan()
         {
             tbl_Loan_Amortization_Schedule = new HashSet<tbl_Loan_Amortization_Schedule>();
+            tbl_Loan_Camsol = new HashSet<tbl_Loan_Camsol>();
             tbl_Loan_Covenant_Detail = new HashSet<tbl_Loan_Covenant_Detail>();
         }
 
@@ -31,6 +32,8 @@ namespace FintrakBanking.Entities.Models
 
         public short CurrencyId { get; set; }
 
+        public double ExchangeRate { get; set; }
+
         public int LoanApplicationId { get; set; }
 
         [Required]
@@ -38,8 +41,6 @@ namespace FintrakBanking.Entities.Models
         public string LoanReferenceNumber { get; set; }
 
         public int Tenor { get; set; }
-
-        public short TenorModeId { get; set; }
 
         public short PrincipalFrequencyTypeId { get; set; }
 
@@ -78,6 +79,9 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal PrincipalAmount { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal ApprovedAmount { get; set; }
+
         public int PrincipalInstallmentLeft { get; set; }
 
         public int InterestInstallmentLeft { get; set; }
@@ -107,16 +111,7 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? DisburseDate { get; set; }
 
-        [Column(TypeName = "money")]
-        public decimal? ApprovedAmount { get; set; }
-
-        public bool CreditAppraisalCompleted { get; set; }
-
         public int? OperationId { get; set; }
-
-        public bool HasLien { get; set; }
-
-        public bool HasOfferLetter { get; set; }
 
         public int? CustomerGroupId { get; set; }
 
@@ -153,12 +148,6 @@ namespace FintrakBanking.Entities.Models
 
         public bool SuspendInterest { get; set; }
 
-        public bool CanDisburse { get; set; }
-
-        public bool Booked { get; set; }
-
-        public bool Scheduled { get; set; }
-
         public bool? IsScheduledPrepayment { get; set; }
 
         [Column(TypeName = "money")]
@@ -170,6 +159,10 @@ namespace FintrakBanking.Entities.Models
         public short? ScheduledPrepaymentFrequencyTypeId { get; set; }
 
         public short CustomerSensitivityLevelId { get; set; }
+
+        public int? InternalPrudentialGuidelineStatusId { get; set; }
+
+        public int? ExternalPrudentialGuidelineStatusId { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -203,10 +196,11 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Staff tbl_Staff1 { get; set; }
 
-        public virtual tbl_Tenor_Mode tbl_Tenor_Mode { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Amortization_Schedule> tbl_Loan_Amortization_Schedule { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Camsol> tbl_Loan_Camsol { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Covenant_Detail> tbl_Loan_Covenant_Detail { get; set; }
@@ -214,6 +208,10 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+
+        public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline { get; set; }
+
+        public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline1 { get; set; }
 
         public virtual tbl_Loan_Schedule_Type tbl_Loan_Schedule_Type { get; set; }
 

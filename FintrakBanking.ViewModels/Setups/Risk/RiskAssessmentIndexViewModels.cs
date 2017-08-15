@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Setups
 {
-    public class RiskAssessmentIndexViewModels : GenaralEntity
+    public class RiskAssessmentIndexViewModels : GeneralEntity
     {
         public int riskId { get; set; }
         public string name { get; set; }
@@ -14,7 +14,7 @@
         public bool selected { get; set; }
     }
 
-    public class RiskAssessmentTitleViewModels : GenaralEntity
+    public class RiskAssessmentTitleViewModels : GeneralEntity
     {
         public int riskAssessmentTitleId { get; set; }
         public string riskTitle { get; set; }

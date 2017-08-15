@@ -81,7 +81,7 @@ namespace FintrakBanking.Repositories.Customer
             data.Position = model.position;
 
             data.LastUpdatedBy = (int)model.createdBy;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -92,7 +92,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Updated FS Ratio Caption : { data.RatioCaption } with postion: {data.Position}",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
               
@@ -111,7 +111,7 @@ namespace FintrakBanking.Repositories.Customer
                 Position = model.position,
                 RatioCaption = model.ratioCaptionName,
                 CreatedBy = (int)model.createdBy,
-                DateTimeCreated = _genSetup.GetApplicaionDate()
+                DateTimeCreated = _genSetup.GetApplicationDate()
             };
 
             context.tbl_Customer_FS_Ratio_Caption.Add(data);
@@ -125,7 +125,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Added FS Ratio Caption {data.RatioCaption} and postion {data.Position}.",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -140,7 +140,7 @@ namespace FintrakBanking.Repositories.Customer
             var data = context.tbl_Customer_FS_Ratio_Caption.Find(ratioCaptionId);
             data.Deleted = true;
             data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -151,7 +151,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Deleted FS Ratio Caption: { data.RatioCaption }. ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.Customer
                 ValueTypeId = (short)model.valueTypeId,
 
                 CreatedBy = (int)model.createdBy,
-                DateTimeCreated = _genSetup.GetApplicaionDate()
+                DateTimeCreated = _genSetup.GetApplicationDate()
             };
 
             context.tbl_Customer_FS_Ratio_Detail.Add(data);
@@ -192,7 +192,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Added FS Ratio Detail {data.tbl_Customer_FS_Ratio_Caption} with divisor type '{audit_divisor}' and value typ '{audit_value }' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -272,7 +272,7 @@ namespace FintrakBanking.Repositories.Customer
             data.DivisorTypeId = (short)model.divisorTypeId;
             data.FSCaptionId = (int)model.fscaptionId;
             data.LastUpdatedBy = model.createdBy;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit_divisor = (context.tbl_Customer_FS_Ratio_DivisorType.FirstOrDefault(x => x.DivisorTypeId == data.DivisorTypeId)).DivisorTypeName;
@@ -286,7 +286,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Updated FS Ratio Detail {data.tbl_Customer_FS_Ratio_Caption} with divisor type '{audit_divisor}' and value typ '{audit_value }' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -302,7 +302,7 @@ namespace FintrakBanking.Repositories.Customer
             var data = context.tbl_Customer_FS_Ratio_Detail.Find(ratioDetailId);
             data.Deleted = true;
             data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
 
             // Audit Section ---------------------------
@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Deleted FS Ratio Detail {data.tbl_Customer_FS_Ratio_Caption} with divisor type '{audit_divisor}' and value type '{audit_value }' ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

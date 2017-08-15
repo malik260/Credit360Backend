@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Admin
 {
-    public class AppGroupViewModel : GenaralEntity
+    public class AppGroupViewModel : GeneralEntity
     {
         public short groupId { get; set; }
         public string groupName { get; set; }

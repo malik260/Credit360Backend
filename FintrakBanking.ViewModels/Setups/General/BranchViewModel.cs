@@ -2,7 +2,7 @@
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class BranchViewModel : GenaralEntity
+    public class BranchViewModel : GeneralEntity
     {
         public short branchId { get; set; }
         public int? stateId { get; set; }
@@ -16,7 +16,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string comment { get; set; }
     }
 
-    public class AddBranchViewModel : GenaralEntity
+    public class AddBranchViewModel : GeneralEntity
     {
         public int? stateId { get; set; }
         public int cityId { get; set; }

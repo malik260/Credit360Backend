@@ -46,6 +46,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public List<UserGroupId> groupId { get; set; }
         public List<UserActivities> activities { get; set; }
 
+        public int operationId { get; set; }
+        public int approvalStatusId { get; set; }
+        public string comment { get; set; }
+
         public string strIsFirstLogin
         {
             get

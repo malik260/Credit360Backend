@@ -2,7 +2,7 @@
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class FeeViewModel : GenaralEntity
+    public class FeeViewModel : GeneralEntity
     {
         public int feeId { get; set; }
         public string feeName { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class MisInfoViewModel : GenaralEntity
+    public class MisInfoViewModel : GeneralEntity
     {
         public int MisinfoId { get; set; }
         public string Miscode { get; set; }

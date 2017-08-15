@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public tbl_Customer_Group_RelationshipType()
         {
             tbl_Customer_Group_Mapping = new HashSet<tbl_Customer_Group_Mapping>();
+            tbl_Temp_Customer_Group_Mapping = new HashSet<tbl_Temp_Customer_Group_Mapping>();
         }
 
         [Key]
@@ -24,6 +25,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Customer_Group_Mapping> tbl_Customer_Group_Mapping { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Customer_Group_Mapping> tbl_Temp_Customer_Group_Mapping { get; set; }
 
         public virtual tbl_Customer_Group_RelationshipType tbl_Customer_Group_RelationshipType1 { get; set; }
 

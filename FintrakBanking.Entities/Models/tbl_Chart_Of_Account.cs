@@ -14,6 +14,7 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
             tbl_Fee = new HashSet<tbl_Fee>();
+            tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Product1 = new HashSet<tbl_Product>();
             tbl_Product2 = new HashSet<tbl_Product>();
@@ -30,6 +31,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Temp_Product3 = new HashSet<tbl_Temp_Product>();
             tbl_Temp_Product4 = new HashSet<tbl_Temp_Product>();
             tbl_Temp_Product5 = new HashSet<tbl_Temp_Product>();
+            tbl_Temp_Charge_Fee = new HashSet<tbl_Temp_Charge_Fee>();
             tbl_Temp_Fee = new HashSet<tbl_Temp_Fee>();
         }
 
@@ -86,6 +88,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Fee> tbl_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product> tbl_Product { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -136,6 +141,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product5 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Charge_Fee> tbl_Temp_Charge_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Fee> tbl_Temp_Fee { get; set; }

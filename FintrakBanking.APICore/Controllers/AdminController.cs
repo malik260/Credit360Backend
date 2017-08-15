@@ -108,41 +108,47 @@ namespace FintrakBanking.APICore.Controllers
         [Route("user")]
         public HttpResponseMessage AddUser(  [FromBody]AppUserViewModel user)
         {
-            TokenDecryptionHelper token = null;
-
-            token = new TokenDecryptionHelper();
-            if (I.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
+            try
             {
-                if (repo.iSUserExit(user.username))
+                var token = new TokenDecryptionHelper();
+                if (I.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
+                {
+                    if (repo.iSUserExit(user.username))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { suucess = false, message = "A user with this username already exit" });
+                    }
+
+                    user.createdBy = token.GetStaffId;
+                    user.userBranchId = (short)token.GetBranchId;
+                    user.userIPAddress =  HttpContext.Current.Request.UserHostAddress;
+                    user.applicationUrl = HttpContext.Current.Request.Path;
+                    user.companyId = token.GetCompanyId;
+                    var result = repo.CreateUser(user);
+                    if (result.IsCompleted)
+                    {
+                        repo.CreateUser(user);
+
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = true, result = user, message = "User has been created successfully, now awaiting approval" });
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, result = user, message = "User not created successfully" });
+                    }
+                }
+                else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { suucess = false, message = "A user with this username already exit" });
-                }
-
-                user.createdBy = token.GetStaffId;
-                user.userBranchId = (short)token.GetBranchId;
-                //user.userIPAddress =  Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                user.applicationUrl = HttpContext.Current.Request.Path;
-                user.companyId = token.GetCompanyId;
-   
-                var result = repo.CreateUser(user).IsCompleted;
-                if (result)
-                {
-                    repo.CreateUser(user);
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = user, message = "User has been created successfully" });
+                       new { success = false, message = "You do not have enough right to add user" });
                 }
             }
-            else
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "You do not have enough right to add user" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
-            return Request.CreateResponse(HttpStatusCode.OK,
-                 new { success = false, message = "An unknown error has occured" });
-
+            
         } 
         [HttpPut]
         [Route("user/{id}")]
@@ -387,22 +393,21 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion
 
-        [HttpGet]
-        [Route("audit/log/{page}/{itemsPerPage}")]
-        public HttpResponseMessage GetAuditLog(int page,int itemsPerPage)
-        {
-            TokenDecryptionHelper token = null;
+        // [HttpGet][Route("audit/log")]
+        //public IHttpActionResult GetAuditLog([FromQuery] int page,[FromQuery] int itemsPerPage)
+        //{
+        //     TokenDecryptionHelper token = null;
 
-            token = new TokenDecryptionHelper();
-            var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId);
-            int totalItems = allAuditLog.Count();
+        //    //token = new TokenDecryptionHelper(this.HttpContext);
+        //    var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId);
+        //    int totalItems = allAuditLog.Count();
 
-            allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage);
+        //    allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage);
 
-            var result = allAuditLog.ToList();
+        //    var result = allAuditLog.ToList();
 
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { result = result, itemsPerPage = itemsPerPage, totalItems = totalItems });
-        }
+        //    returnnew { result = result, itemsPerPage = itemsPerPage, totalItems = totalItems });
+        //}
     }
 }

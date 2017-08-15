@@ -17,8 +17,6 @@ using System.ComponentModel.Composition;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    [Export(typeof(ILoanApplicationRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class LoanApplicationRepository : ILoanApplicationRepository
     {
         private FinTrakBankingContext context;
@@ -65,6 +63,7 @@ namespace FintrakBanking.Repositories.Credit
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
+                            submittedForAppraisal = a.SubmittedForAppraisal,
                             principalAmount = a.PrincipalAmount,
                             customerGroupId = a.CustomerGroupId ?? 0,
                             customerGroupName = a.CustomerGroupId.HasValue ? a.tbl_Customer_Group.GroupName : "",
@@ -160,7 +159,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Change Loan Application Status with reference number '{data.ApplicationReferenceNumber}' to {GetLoanStatus((short)entity.approvalStatusId)}",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = entity.targetId
             };
@@ -202,12 +201,12 @@ namespace FintrakBanking.Repositories.Credit
                 TeamMISCode = loan.teamMiscode,
                 InterestRate = loan.interestRate,
                 PrincipalAmount = loan.principalAmount,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 LoanInformation = loan.loanInformation,
                 IsRealatedParty = loan.isRealatedParty,
                 IsPoliticallyExposed = loan.isPoliticallyExposed,
                 CreatedBy = (int)loan.createdBy,
-                DateTimeCreated = genSetup.GetApplicaionDate(),
+                DateTimeCreated = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -241,7 +240,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Applied for loan with reference number: {refNumber}",
                 IPAddress = loan.userIPAddress,
                 Url = loan.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = loan.loanApplicationId
                  

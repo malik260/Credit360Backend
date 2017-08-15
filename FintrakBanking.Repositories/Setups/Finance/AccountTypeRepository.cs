@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 Detail = $"Added accounttype: '{accounttype.accountTypeName}' with code: '{accounttype.accountTypeCode}' ",
                 IPAddress = accounttype.userIPAddress,
                 Url = accounttype.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -133,7 +133,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 Detail = $"Updated accounttype: '{accounttype.accountTypeName}' with code: '{accounttype.accountTypeCode}' ",
                 IPAddress = accounttype.userIPAddress,
                 Url = accounttype.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -160,7 +160,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 Detail = $"Deleted accounttype: '{type.AccountTypeName}' with code: '{type.AccountTypeCode}' ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

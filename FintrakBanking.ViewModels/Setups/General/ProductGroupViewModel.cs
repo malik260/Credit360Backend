@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class ProductGroupViewModel : GenaralEntity
+    public class ProductGroupViewModel : GeneralEntity
     {
         public short productGroupId { get; set; }
         public string productGroupCode { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class ProductCollateralTypeViewModel : GenaralEntity
+    public class ProductCollateralTypeViewModel : GeneralEntity
     {
         public int productCollateralId { get; set; }
         public short productId { get; set; }

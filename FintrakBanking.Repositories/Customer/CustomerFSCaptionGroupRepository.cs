@@ -37,7 +37,7 @@ namespace FintrakBanking.Repositories.Customer
                 CompanyId = entity.companyId,
                 //GroupDescription = entity.groupDescription,
                 CreatedBy = (int)entity.createdBy,
-                DateTimeCreated = _genSetup.GetApplicaionDate()
+                DateTimeCreated = _genSetup.GetApplicationDate()
             };
 
             context.tbl_Customer_FS_Caption_Group.Add(group);
@@ -51,7 +51,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Added Customer FS Caption Group: { entity.fsCaptionGroupName } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -102,7 +102,7 @@ namespace FintrakBanking.Repositories.Customer
             group.FSCaptionGroupName = entity.fsCaptionGroupName;
             
             group.LastUpdatedBy = (int)entity.createdBy;
-            group.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            group.DateTimeUpdated = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -113,7 +113,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Updated Customer FS Caption Group: { entity.fsCaptionGroupName } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

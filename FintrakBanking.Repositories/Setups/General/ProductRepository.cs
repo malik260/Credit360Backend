@@ -130,7 +130,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Updated tbl_Product Group: '{productGroup.productGroupName}' with code: '{productGroup.productGroupCode}' ",
                 IPAddress = productGroup.userIPAddress,
                 Url = productGroup.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
@@ -218,7 +218,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Added tbl_Product Type: '{productType.productTypeName}' ",
                 IPAddress = productType.userIPAddress,
                 Url = productType.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -271,7 +271,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Updated tbl_Product Type: '{productType.productTypeName}' ",
                 IPAddress = productType.userIPAddress,
                 Url = productType.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -399,7 +399,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         companyId = c.CompanyId,
                         productTypeId = c.ProductTypeId,
                         productTypeName = c.tbl_Product_Type.ProductTypeName,
-                        productGroupName = c.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
                         productCategoryId = c.ProductCategoryId,
                         productCategoryName = c.tbl_Product_Category.ProductCategoryName,
                         productClassId = c.ProductClassId,
@@ -414,6 +413,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productDescription = c.ProductDescription,
 
                         productGroupId = c.tbl_Product_Type.ProductGroupId,
+                        productGroupName = c.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
 
                         principalBalanceGl = c.PrincipalBalanceGL,
                         principalBalanceGlCode = (c.PrincipalBalanceGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
@@ -425,7 +425,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         interestReceivablePayableGlCode = (c.InterestReceivablePayableGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
 
                         dormantGl = c.DormantGL,
+                        dormantGlCode = (c.DormantGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
                         premiumDiscountGl = c.PremiumDiscountGL,
+                        premiumDiscountGlCode = (c.PremiumDiscountGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
 
                         dealTypeId = c.DealTypeId,
                         dealTypeName = c.tbl_Deal_Type.DealTypeName,
@@ -630,7 +632,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         //ProductId = c.ProductId,
                         CurrencyId = c.CurrencyId,
-                        DateTimeCreated = genSetup.GetApplicaionDate(),
+                        DateTimeCreated = genSetup.GetApplicationDate(),
                     };
                     context.tbl_Product_Currency.Add(curr);
                 }
@@ -673,7 +675,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     AllowOverdrawn = productModel.AllowOverdrawn,
 
                     CreatedBy = productModel.CreatedBy,
-                    DateTimeCreated = DateTime.Now,
+                    DateTimeCreated = genSetup.GetApplicationDate(),
 
                 };
                 context.tbl_Product.Add(product);
@@ -684,7 +686,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                        ProductId = c.ProductId,
                         CurrencyId = c.CurrencyId,
-                        DateTimeCreated = genSetup.GetApplicaionDate(),
+                        DateTimeCreated = genSetup.GetApplicationDate(),
                     };
                     context.tbl_Product_Currency.Add(curr);
                 }
@@ -706,7 +708,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Approved Product '{productModel.ProductName}' with product code'{productModel.ProductCode}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -741,7 +743,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     //ProductId = (short)item.productId,
                     CurrencyId = item.currencyId,
                     CreatedBy = item.createdBy,
-                    DateTimeCreated = genSetup.GetApplicaionDate()
+                    DateTimeCreated = genSetup.GetApplicationDate()
                 };
                 currencies.Add(productCurrency);
             }
@@ -800,7 +802,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Initiated Product Creation for '{productModel.productName}' with code'{productModel.productCode}'",
                 IPAddress = productModel.userIPAddress,
                 Url = productModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -978,7 +980,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         //ProductId = item.productId,
                         CurrencyId = item.currencyId,
                         CreatedBy = productModel.createdBy,
-                        DateTimeCreated = genSetup.GetApplicaionDate()
+                        DateTimeCreated = genSetup.GetApplicationDate()
                     };
                     tempCurrencies.Add(productCurrency);
                 }
@@ -1035,7 +1037,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Updated Product '{productModel.productName}' with code'{productModel.productCode}'",
                 IPAddress = productModel.userIPAddress,
                 Url = productModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = productId
             };
@@ -1169,7 +1171,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Added tbl_Product Price Index: '{prodPriceIndex.priceIndexName}' ",
                 IPAddress = prodPriceIndex.userIPAddress,
                 Url = prodPriceIndex.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -1209,7 +1211,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Updated tbl_Product Price Index: '{prodPriceIndex.priceIndexName}' ",
                 IPAddress = prodPriceIndex.userIPAddress,
                 Url = prodPriceIndex.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -1226,7 +1228,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 return false;
 
             data.Deleted = true;
-            data.DateTimeDeleted = genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var productPriceIndex = this.context.tbl_Product_Price_Index.FirstOrDefault(x => x.ProductPriceIndexId == data.ProductPriceIndexId);
@@ -1238,7 +1240,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Detail = $"Deleted tbl_Product Price Index: '{data.PriceIndexName}' with rate '{data.PriceIndexRate}' ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = productPriceIndexId
             };

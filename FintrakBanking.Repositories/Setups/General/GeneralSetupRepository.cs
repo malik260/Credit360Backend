@@ -23,7 +23,7 @@ namespace FintrakBanking.Repositories.Setups.General
             this.cultureHelper = _cultureHelper;
         }
 
-        public DateTime GetApplicaionDate()
+        public DateTime GetApplicationDate()
         {
             return this.context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;            
         }

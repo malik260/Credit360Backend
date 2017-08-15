@@ -13,7 +13,8 @@ namespace FintrakBanking.Common.Enum
         ProductCreation = 5,
         ProductsUpdate = 6,
         ChartOfAccountCreation = 7,
-        ChartOfAccountUpdate = 8,
-        CAM = 9
+        CustomerGroupCreation = 8,
+        CAM = 9,
+        FeeCreation = 10
     }
 }

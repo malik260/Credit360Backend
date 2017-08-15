@@ -260,7 +260,7 @@ on c.DepartmentId equals dept.DepartmentId
                 Detail = $"Updated Staff '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
                 IPAddress = staffModel.userIPAddress,
                 Url = staffModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = staffid
 
@@ -305,7 +305,7 @@ on c.DepartmentId equals dept.DepartmentId
                 Detail = $"Deleted Staff '{targetStaff.FirstName}' with code'{targetStaff.StaffCode}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -436,7 +436,7 @@ on c.DepartmentId equals dept.DepartmentId
                 Detail = $"Approved Staff '{staffModel.FirstName + " " + staffModel.LastName}' with staff code'{staffModel.StaffCode}'",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -502,7 +502,7 @@ on c.DepartmentId equals dept.DepartmentId
                 Detail = $"Initiated Staff Creation for '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
                 IPAddress = staffModel.userIPAddress,
                 Url = staffModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -599,7 +599,6 @@ on c.DepartmentId equals dept.DepartmentId
                         RankName = c.tbl_Staff_Rank.RankName,
                         BranchName = br.BranchName,
                         DepartmentName = dept.DepartmentName,
-                        ApprovalStatusId = c.ApprovalStatusId,
                         OperationId = atrail.OperationId,
                         SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description
 

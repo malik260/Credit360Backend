@@ -124,7 +124,7 @@ namespace FintrakBanking.Repositories.Credit
                         LoanTypeBatchCode = GenerateLoanTypeBatchCode(),
                         CustomerId = customerId,
                         LoanTypeId = (short)loanTypeId,
-                        DateCreated = generalSetup.GetApplicaionDate()
+                        DateCreated = generalSetup.GetApplicationDate()
                     };
 
                     this.context.tbl_Loan_Type_Batch.Add(data);
@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.Credit
                         CustomerGroupId = customerGroupId,
                         GroupAmount = groupAmount,
                         LoanTypeId = (short)loanTypeId,
-                        DateCreated = generalSetup.GetApplicaionDate()
+                        DateCreated = generalSetup.GetApplicationDate()
                     };
 
                     this.context.tbl_Loan_Type_Batch.Add(data);
@@ -260,21 +260,21 @@ namespace FintrakBanking.Repositories.Credit
 
                 EffectiveDate = entity.effectiveDate,
                 TerminalDate = entity.terminalDate,
-                HasLien = false,
-                HasOfferLetter = false,
+                //HasLien = false,
+                //HasOfferLetter = false,
                 DischargeLetter = false,
                 SuspendInterest = false,
-                CanDisburse = false,
-                Booked = false,
-                CreditAppraisalCompleted = false,
-                Scheduled = entity.scheduled,
+                //CanDisburse = false,
+                //Booked = false,
+                //CreditAppraisalCompleted = false,
+                //Scheduled = entity.scheduled,
                 CustomerId = entity.customerId,
                 ProductId =(short) entity.productId,
                 CompanyId = entity.companyId,
                 CasaAccountId = entity.casaAccountId,
                 BranchId = entity.branchId,                
                 Tenor = entity.tenor,
-                TenorModeId = entity.tenorModeId,
+                //TenorModeId = entity.tenorModeId,
                 PrincipalFrequencyTypeId = entity.principalFrequencyTypeId,
                 InterestFrequencyTypeId = entity.interestFrequencyTypeId,
                 FeeFrequencyTypeId = entity.feeFrequencyTypeId,                
@@ -294,7 +294,7 @@ namespace FintrakBanking.Repositories.Credit
                 DisbursedBy = entity.disbursedBy,
                 DisburserComment = entity.disburserComment,
                 DisburseDate = entity.disburseDate,
-                ApprovedAmount = entity.approvedAmount, 
+                //ApprovedAmount = entity.approvedAmount, 
                 OperationId = entity.operationId,
                 TrancheBatchCode = entity.trancheBatchCode,
                 EquityContribution = entity.equityContribution,
@@ -305,9 +305,9 @@ namespace FintrakBanking.Repositories.Credit
                 FixedPrincipal = entity.fixedPrincipal,
                 ProfileLoan = entity.profileLoan,                                
                 CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
-                DateCreated = generalSetup.GetApplicaionDate(),
+                DateCreated = generalSetup.GetApplicationDate(),
                 CreatedBy = (int)entity.createdBy,
-                DateTimeCreated = generalSetup.GetApplicaionDate()
+                DateTimeCreated = generalSetup.GetApplicationDate()
             };
 
             context.tbl_Loan.Add(data);
@@ -322,7 +322,7 @@ namespace FintrakBanking.Repositories.Credit
                 Detail = $"Applied for loan with reference number: {entity.loanReferenceNumber}",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicaionDate(),
+                ApplicationDate = generalSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -351,7 +351,7 @@ namespace FintrakBanking.Repositories.Credit
                         branchId = data.BranchId,
                         loanReferenceNumber = data.LoanReferenceNumber,
                         tenor = data.Tenor,
-                        tenorModeId = data.TenorModeId,
+                        //tenorModeId = data.TenorModeId,
                         principalFrequencyTypeId = data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = data.InterestFrequencyTypeId,
                         feeFrequencyTypeId = data.FeeFrequencyTypeId,
@@ -379,10 +379,10 @@ namespace FintrakBanking.Repositories.Credit
                         disburserComment = data.DisburserComment,
                         disburseDate = data.DisburseDate,
                         approvedAmount = data.ApprovedAmount,
-                        creditAppraisalCompleted = data.CreditAppraisalCompleted,
+                        //creditAppraisalCompleted = data.CreditAppraisalCompleted,
                         operationId = data.OperationId,
-                        hasLien = data.HasLien,
-                        hasOfferLetter = data.HasOfferLetter,
+                        //hasLien = data.HasLien,
+                        //hasOfferLetter = data.HasOfferLetter,
                         customerGroupId = data.CustomerGroupId,
                         loanTypeId = data.LoanTypeId,
                         loanTypeBatchId = data.LoanTypeBatchId,
@@ -398,9 +398,9 @@ namespace FintrakBanking.Repositories.Credit
                         profileLoan = data.ProfileLoan,
                         dischargeLetter = data.DischargeLetter,
                         suspendInterest = data.SuspendInterest,
-                        canDisburse = data.CanDisburse,
-                        booked = data.Booked,
-                        scheduled = data.Scheduled,
+                        //canDisburse = data.CanDisburse,
+                        //booked = data.Booked,
+                        //scheduled = data.Scheduled,
                         customerSensitivityLevelId = data.CustomerSensitivityLevelId,
                         createdBy = data.CreatedBy,
                         dateTimeCreated = data.DateTimeCreated
@@ -423,7 +423,7 @@ namespace FintrakBanking.Repositories.Credit
                         branchId = data.BranchId,
                         loanReferenceNumber = data.LoanReferenceNumber,
                         tenor = data.Tenor,
-                        tenorModeId = data.TenorModeId,
+                        //tenorModeId = data.TenorModeId,
                         principalFrequencyTypeId = data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = data.InterestFrequencyTypeId,
                         feeFrequencyTypeId = data.FeeFrequencyTypeId,
@@ -451,10 +451,10 @@ namespace FintrakBanking.Repositories.Credit
                         disburserComment = data.DisburserComment,
                         disburseDate = data.DisburseDate,
                         approvedAmount = data.ApprovedAmount,
-                        creditAppraisalCompleted = data.CreditAppraisalCompleted,
+                        //creditAppraisalCompleted = data.CreditAppraisalCompleted,
                         operationId = data.OperationId,
-                        hasLien = data.HasLien,
-                        hasOfferLetter = data.HasOfferLetter,
+                        //hasLien = data.HasLien,
+                        //hasOfferLetter = data.HasOfferLetter,
                         customerGroupId = data.CustomerGroupId,
                         loanTypeId = data.LoanTypeId,
                         loanTypeBatchId = data.LoanTypeBatchId,
@@ -469,9 +469,9 @@ namespace FintrakBanking.Repositories.Credit
                         profileLoan = data.ProfileLoan,
                         dischargeLetter = data.DischargeLetter,
                         suspendInterest = data.SuspendInterest,
-                        canDisburse = data.CanDisburse,
-                        booked = data.Booked,
-                        scheduled = data.Scheduled,
+                        //canDisburse = data.CanDisburse,
+                        //booked = data.Booked,
+                        //scheduled = data.Scheduled,
                         customerSensitivityLevelId = data.CustomerSensitivityLevelId,
                         createdBy = data.CreatedBy,
                         dateTimeCreated = data.DateTimeCreated
@@ -492,7 +492,7 @@ namespace FintrakBanking.Repositories.Credit
                     branchId = o.BranchId,
                     loanReferenceNumber = o.LoanReferenceNumber,
                     tenor = o.Tenor,
-                    tenorModeId = o.TenorModeId,
+                    //tenorModeId = o.TenorModeId,
                     principalFrequencyTypeId = o.PrincipalFrequencyTypeId,
                     interestFrequencyTypeId = o.InterestFrequencyTypeId,
                     feeFrequencyTypeId = o.FeeFrequencyTypeId,

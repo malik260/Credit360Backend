@@ -14,6 +14,7 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Company = new HashSet<tbl_Company>();
             tbl_State = new HashSet<tbl_State>();
+            tbl_Region = new HashSet<tbl_Region>();
         }
 
         [Key]
@@ -28,5 +29,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_State> tbl_State { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Region> tbl_Region { get; set; }
     }
 }

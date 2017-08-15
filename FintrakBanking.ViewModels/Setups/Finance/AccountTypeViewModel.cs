@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FintrakBanking.ViewModels.Setups.Finance
 {
-    public class AddAccountTypeViewModel : GenaralEntity
+    public class AddAccountTypeViewModel : GeneralEntity
     {
         public int accountTypeCode { get; set; }
         public string accountTypeName { get; set; }
         public short accountCategoryId { get; set; }
     }
 
-    public class AccountTypeViewModel : GenaralEntity
+    public class AccountTypeViewModel : GeneralEntity
     {
         public int accountTypeId { get; set; }
         public int accountTypeCode { get; set; }

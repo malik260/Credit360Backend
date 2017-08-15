@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Customer
                 Amount = entity.amount,                            
 
                 CreatedBy = (int)entity.createdBy,
-                DateTimeCreated = _genSetup.GetApplicaionDate()
+                DateTimeCreated = _genSetup.GetApplicationDate()
             };
 
             context.tbl_Customer_FS_Caption_Detail.Add(data);
@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Added FS Caption Detail for customer {customer} and caption {caption} . Amount is { data.Amount.ToString("#,##0") } with date {data.FSDate.ToString("dd/MM/yyyy")}",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -88,7 +88,7 @@ namespace FintrakBanking.Repositories.Customer
             var data = context.tbl_Customer_FS_Caption_Detail.Find(fsdetailId);
             data.Deleted = true;
             data.DeletedBy = (int)user.createdBy;
-            data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
 
             // Audit Section ---------------------------
@@ -114,7 +114,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Deleted FS Caption Detail for customer {customer} and caption {caption}. Amount is { data.Amount.ToString("#,##0") } with date {data.FSDate.ToString("dd/MM/yyyy")}",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -194,7 +194,7 @@ namespace FintrakBanking.Repositories.Customer
             data.Amount = entity.amount;
 
             data.LastUpdatedBy = entity.createdBy;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var captionInfo = context.tbl_Customer_FS_Caption.FirstOrDefault(x => x.FSCaptionId == data.FSCaptionId);
@@ -210,7 +210,7 @@ namespace FintrakBanking.Repositories.Customer
                 Detail = $"Updated FS Caption Detail for customer {customer} and caption {caption} . Amount is { data.Amount.ToString("#,##0") } with date {data.FSDate.ToString("dd/MM/yyyy")}",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
