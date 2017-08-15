@@ -304,5 +304,49 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("customer/sectors")]
+        public HttpResponseMessage GetAllSectors()
+        {
+            try
+            {
+                var data = repo.GetCustomerSectors();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer/subsector/{subSectorId}/sectors")]
+        public HttpResponseMessage GetAllSectorsBySubSectorId(short subSectorId)
+        {
+            try
+            {
+                var data = repo.GetCustomerSectorBySubSectorId(subSectorId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
 }

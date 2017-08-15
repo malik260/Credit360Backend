@@ -68,4 +68,13 @@ namespace FintrakBanking.ViewModels.Customer
         public int? branchId { get; set; }
     }
 
+    public class CustomerSectorViewModel
+    {
+        public short subSectorId { get; set; }
+        public short sectorId { get; set; }
+        public string sectorName { get; set; }
+        public string sectorCode { get; set; }
+
+    }
+
 }

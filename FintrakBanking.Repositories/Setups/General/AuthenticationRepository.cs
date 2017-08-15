@@ -95,7 +95,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             catch (Exception ex)
             {
-                result = false;
+                throw ex;
             }
 
             return result;

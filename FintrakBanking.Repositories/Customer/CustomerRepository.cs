@@ -2,7 +2,7 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Customer;
-using FintrakBanking.Interfaces.Setups.General; 
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
 using System;
@@ -22,7 +22,7 @@ namespace FintrakBanking.Repositories.Customer
         private IGeneralSetupRepository _genSetup;
         private int customerId;
         int status = 0;
-        
+
         public CustomerRepository(IAuditTrailRepository _auditTrail,
                                     IGeneralSetupRepository genSetup,
                                     FinTrakBankingContext _context)
@@ -73,12 +73,12 @@ namespace FintrakBanking.Repositories.Customer
             status = 1;
             if (entity.CustomerAddresses.Count > 0)
             {
-                 AddCustomerAddresses(entity.CustomerAddresses, status);
+                AddCustomerAddresses(entity.CustomerAddresses, status);
             }
 
             if (entity.CustomerBvn.Count > 0)
             {
-                 AddCustomerBvn(entity.CustomerBvn, status);
+                AddCustomerBvn(entity.CustomerBvn, status);
             }
 
             if (entity.CustomerPhoneContact.Count > 0)
@@ -107,7 +107,7 @@ namespace FintrakBanking.Repositories.Customer
                 AuditTypeId = (short)AuditTypeEnum.CustomerAdded,
                 StaffId = entity.createdBy,
                 BranchId = (short)entity.userBranchId,
-                Detail =  $"Added Customer  { entity.customerName } with Code: { entity.customerCode } ",
+                Detail = $"Added Customer  { entity.customerName } with Code: { entity.customerCode } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
                 ApplicationDate = _genSetup.GetApplicationDate(),
@@ -118,13 +118,13 @@ namespace FintrakBanking.Repositories.Customer
 
             //end of Audit section -------------------------------
 
-            
+
             return response;
         }
 
 
-        private void  AddCustomerAddresses(List<CustomerAddressViewModels> entity,
-           int  status )
+        private void AddCustomerAddresses(List<CustomerAddressViewModels> entity,
+           int status)
         {
             var address = new tbl_Customer_Address();
             foreach (var ent in entity)
@@ -139,9 +139,9 @@ namespace FintrakBanking.Repositories.Customer
                 address.POBox = ent.pobox;
                 address.StateId = ent.stateId;
 
-                context.tbl_Customer_Address.Add(address);     
+                context.tbl_Customer_Address.Add(address);
 
-            }             
+            }
         }
 
         private void AddCustomerBvn(List<CustomerBvnViewModels> entity, int status)
@@ -161,7 +161,7 @@ namespace FintrakBanking.Repositories.Customer
 
                 context.tbl_Customer_BVN.Add(customerBvn);
 
-               // Audit Section ---------------------------
+                // Audit Section ---------------------------
                 //var audit = new tbl_Audit
                 //{
                 //    AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
@@ -301,7 +301,7 @@ namespace FintrakBanking.Repositories.Customer
             }
         }
 
-        public async Task<bool> DeleteCustomer(int customerId,  UserInfo user)
+        public async Task<bool> DeleteCustomer(int customerId, UserInfo user)
         {
             var customer = context.tbl_Customer.Find(customerId);
 
@@ -517,7 +517,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 AuditTypeId = (short)AuditTypeEnum.CustomerUpdated,
                 StaffId = entity.createdBy,
-                BranchId = (short) entity.userBranchId,
+                BranchId = (short)entity.userBranchId,
                 Detail = "Updated tbl_Customer: " + entity.customerName + " with code: " + entity.customerCode + " on" + " (" + entity.customerId + ") ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
@@ -577,7 +577,36 @@ namespace FintrakBanking.Repositories.Customer
             }
 
             return customers;
-        }	
+        }
+
+        public IEnumerable<CustomerSectorViewModel> GetCustomerSectors()
+        {
+            var data = (from cs in context.tbl_Sector
+                        select new CustomerSectorViewModel()
+                        {
+                            sectorId = cs.SectorId,
+                            sectorName = cs.Name,
+                            sectorCode = cs.Code,
+                            subSectorId = cs.tbl_Sub_Sector.FirstOrDefault(s => s.SectorId == cs.SectorId).SubSectorId
+                        });
+
+            return data;
+        }
+
+        public IEnumerable<CustomerSectorViewModel> GetCustomerSectorBySubSectorId(short ssId)
+        {
+            var data = (from s in context.tbl_Sub_Sector
+                        where s.SubSectorId == ssId
+                        select new CustomerSectorViewModel()
+                        {
+                            subSectorId = s.SubSectorId,
+                            sectorId = s.tbl_Sector.SectorId,
+                            sectorName = s.Name,
+                            sectorCode = s.Code
+                        });
+
+            return data;
+        }
     }
 }
 

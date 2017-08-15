@@ -46,6 +46,5 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
-
     }
 }

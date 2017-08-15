@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LoanApplicationId { get; set; }
 
-        //[Required]
+        [Required]
         [StringLength(50)]
         public string CAMRef { get; set; }
 
@@ -22,11 +22,11 @@ namespace FintrakBanking.Entities.Models
 
         public bool RiskRated { get; set; }
 
-        //[Required]
+        [Required]
         public string CAMDocumentation { get; set; }
 
-        //[Column(TypeName = "xml")]
-        //[Required]
+        [Column(TypeName = "xml")]
+        [Required]
         public string LoanDetails { get; set; }
 
         public int CreatedBy { get; set; }

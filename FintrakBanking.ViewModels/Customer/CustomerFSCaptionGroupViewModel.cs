@@ -8,7 +8,6 @@ namespace FintrakBanking.ViewModels.Customer
     {
         public short fsCaptionGroupId { get; set; }
         public string fsCaptionGroupName { get; set; }
-        public string companyName { get; set; }
         //public int companyId { get; set; }
     }
 }

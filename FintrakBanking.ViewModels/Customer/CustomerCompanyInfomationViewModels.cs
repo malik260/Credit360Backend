@@ -5,7 +5,6 @@
         public int companyInfomationId { get; set; }
         public int customerId { get; set; }
         public string registrationNumber { get; set; }
-        public string companyName { get; set; }
         public string companyWebsite { get; set; }
         public string companyEmail { get; set; }
         public string registeredOffice { get; set; }
