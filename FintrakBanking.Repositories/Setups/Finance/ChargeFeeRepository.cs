@@ -118,7 +118,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             staffId = chargeFeemodel.createdBy,
                             companyId = chargeFeemodel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = chargeFee.ChargeFeeId,
+                            targetId = (int)chargeFee.ChargeFeeId,
                             operationId = (int)Operations.FeeCreation,
                             BranchId = chargeFeemodel.userBranchId
                         };
