@@ -22,11 +22,9 @@ namespace FintrakBanking.Entities.Models
 
         public bool RiskRated { get; set; }
 
-        [Required]
         public string CAMDocumentation { get; set; }
 
         [Column(TypeName = "xml")]
-        [Required]
         public string LoanDetails { get; set; }
 
         public int CreatedBy { get; set; }

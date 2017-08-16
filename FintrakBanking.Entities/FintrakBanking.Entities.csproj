@@ -54,7 +54,6 @@
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\Model1.cs" />
     <Compile Include="Models\sysdiagram.cs" />
-    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />

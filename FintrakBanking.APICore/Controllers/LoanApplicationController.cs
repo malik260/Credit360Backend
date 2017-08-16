@@ -2,6 +2,7 @@ using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Linq;
@@ -18,15 +19,18 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanApplicationController : ApiControllerBase
     {
         private ILoanApplicationRepository repoApply;
+        private ILoanPrelimenaryEvaluationRepository repoLoanPEN;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public LoanApplicationController(ILoanApplicationRepository _repoApply)
+        public LoanApplicationController(ILoanApplicationRepository _repoApply, ILoanPrelimenaryEvaluationRepository _repoLoanPEN)
         {
             this.repoApply = _repoApply;
+            repoLoanPEN = _repoLoanPEN;
         }
 
         #region Loan Application
-        [HttpGet][Route("loan-application")]
+        [HttpGet]
+        [Route("loan-application")]
         public HttpResponseMessage GetAllLoanApplications()
         {
             try
@@ -45,13 +49,14 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("loan-application/{id}")]
+        [HttpGet]
+        [Route("loan-application/{id}")]
         public HttpResponseMessage GetLoanApplicationById(int id)
         {
             try
             {
-                var response = repoApply.GetLoanApplicationById(id,token.GetCompanyId);
-                if (response!= null)
+                var response = repoApply.GetLoanApplicationById(id, token.GetCompanyId);
+                if (response != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
@@ -64,7 +69,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("loan-product-class")]
+        [HttpGet]
+        [Route("loan-product-class")]
         public HttpResponseMessage GetProductClass()
         {
             try
@@ -83,8 +89,9 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        
-        [HttpGet][Route("loan-application/search/{searchCriteria}")]
+
+        [HttpGet]
+        [Route("loan-application/search/")]
         public HttpResponseMessage FindLoan(string searchCriteria)
         {
             try
@@ -125,7 +132,8 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpPost][Route("loan/application")]
+        [HttpPost]
+        [Route("loan/application")]
         public async Task<HttpResponseMessage> LoanBooking([FromBody] LoanApplicationViewModel entity)
         {
             try
@@ -153,9 +161,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("loan/application/pending")]
+        [HttpGet]
+        [Route("loan/application/pending")]
         //[HttpGet][Route("loan/application/pending/page/{page}/itemsPerPage/{itemPerPage}")]
-        public HttpResponseMessage GetAllPendingLoanApplications( int page, int itemsPerPage)
+        public HttpResponseMessage GetAllPendingLoanApplications(int page, int itemsPerPage)
         {
             try
             {
@@ -175,6 +184,97 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        #endregion
+
+        #region Loan Prelimenary Evaluation
+
+        [HttpPost]
+        [Route("loan/prelimenary-evaluation")]
+        public HttpResponseMessage AddPrelimenaryEvaluation(LoanPrelimenaryEvaluationViewModel model)
+        {
+            try
+            {
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.userBranchId = (short)token.GetBranchId;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.branchId = (short)token.GetBranchId;
+
+                var response = repoLoanPEN.AddPrelimenaryEvaluation(model);
+
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Prelimenary evaluation note created successfully, now awaiting approval" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Prelimenary evaluation note not created" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan/prelimenary-evaluation/approval")]
+        public HttpResponseMessage ApprovePrelimenaryEvaluation(ApprovalViewModel model)
+        {
+            try
+            {
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.BranchId = (short)token.GetBranchId;
+                model.staffId = token.GetStaffId;
+
+                var data = repoLoanPEN.GoForApproval(model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, message = "Prelimenary evaluation note has been approved successfully" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan/prelimenary-evaluation/awaiting-approval")]
+        public HttpResponseMessage GetLoanPrelimenaryEvaluationsForAppproval()
+        {
+            try
+            {
+                var data = repoLoanPEN.GetPrelimenaryEvaluationsAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
         #endregion
 
     }

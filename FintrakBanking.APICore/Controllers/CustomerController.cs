@@ -14,7 +14,7 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
 
-    [RoutePrefix("api/v1/customers")]
+    [RoutePrefix("api/v1/customer")]
     public class CustomerController : ApiControllerBase
     {
         private ICustomerRepository repo;
@@ -26,7 +26,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpPost]
-        [Route("customer")]
+        [Route("")]
         public HttpResponseMessage AddCustomer([FromBody]CustomerViewModels entity)
         {
             try
@@ -56,7 +56,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [Route("customer/{customerId}")]
+        [Route("{customerId}")]
         public HttpResponseMessage DeleteCustomer(int customerId)
         {
             try
@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("customer/{customerId}")]
+        [Route("{customerId}")]
         public HttpResponseMessage GetCustomer(int custormerId)
         {
 
@@ -116,13 +116,13 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("customer-by-branch/{branchId}")]
+        [Route("customer-by-branch")]
         public HttpResponseMessage GetCustomerByBranchId()
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetCustomerByBranchId(token.GetCompanyId);
+                var data = repo.GetCustomerByBranchId(token.GetBranchId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -276,7 +276,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("customer/{customerId}")]
+        [Route("{customerId}")]
         public HttpResponseMessage UpdateCustomer(int customerId, CustomerViewModels entity)
         {
             try
@@ -306,7 +306,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("customer/sectors")]
+        [Route("sectors")]
         public HttpResponseMessage GetAllSectors()
         {
             try
@@ -328,7 +328,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("customer/subsector/{subSectorId}/sectors")]
+        [Route("subsector/{subSectorId}/sectors")]
         public HttpResponseMessage GetAllSectorsBySubSectorId(short subSectorId)
         {
             try

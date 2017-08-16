@@ -369,6 +369,7 @@ namespace FintrakBanking.Repositories.Customer
                        relationshipOfficerId = a.RelationshipOfficerId.Value,
                        spouse = a.Spouse,
                        subSectorId = a.SubSectorId,
+                       subSectorName = a.tbl_Sub_Sector.Name,
                        taxNumber = a.TaxNumber
                        ,
                        CustomerAddresses = context.tbl_Customer_Address.Where(x => x.CustomerId == a.CustomerId).Select(x => new CustomerAddressViewModels()
@@ -587,7 +588,6 @@ namespace FintrakBanking.Repositories.Customer
                             sectorId = cs.SectorId,
                             sectorName = cs.Name,
                             sectorCode = cs.Code,
-                            subSectorId = cs.tbl_Sub_Sector.FirstOrDefault(s => s.SectorId == cs.SectorId).SubSectorId
                         });
 
             return data;

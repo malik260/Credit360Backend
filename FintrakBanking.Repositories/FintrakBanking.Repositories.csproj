@@ -72,6 +72,7 @@
     <Compile Include="Credit\LimitRepository.cs" />
     <Compile Include="Credit\LoanApplicationRepository.cs" />
     <Compile Include="Credit\LoanCovenantRepository.cs" />
+    <Compile Include="Credit\LoanPrelimenaryEvaluationRepository.cs" />
     <Compile Include="Credit\LoanRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionGroupRepository.cs" />

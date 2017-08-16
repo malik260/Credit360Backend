@@ -15,6 +15,7 @@ namespace FintrakBanking.Common.Enum
         ChartOfAccountCreation = 7,
         CustomerGroupCreation = 8,
         CAM = 9,
-        FeeCreation = 10
+        FeeCreation = 10,
+        LoanPrelimenaryEvaluation = 11
     }
 }

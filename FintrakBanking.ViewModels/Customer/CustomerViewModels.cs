@@ -49,6 +49,7 @@ namespace FintrakBanking.ViewModels.Customer
         public bool creationMailSent { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public short subSectorId { get; set; }
+        public string subSectorName { get; set; }
         public string taxNumber { get; set; }
 
         public List<CustomerAddressViewModels> CustomerAddresses { get; set; }

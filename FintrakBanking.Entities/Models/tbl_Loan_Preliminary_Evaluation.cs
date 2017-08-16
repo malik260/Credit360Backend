@@ -34,13 +34,87 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(300)]
+        public string ProjectDescription { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string ClientDescription { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string OwnershipStructure { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string ProjectFinancingPlan { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string ExistingExposure { get; set; }
+
+        [Required]
+        [StringLength(300)]
         public string BankRole { get; set; }
 
         [Required]
         [StringLength(300)]
         public string CollateralArrangement { get; set; }
 
+        [Required]
+        [StringLength(300)]
+        public string ProposedTermsAndConditions { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string ImplementationArrangements { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string MarketDemand { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string BusinessProfile { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string RisksAndConcerns { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string RiskMitigants { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string PrudentialExposureLimitImplications { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string EnvironmentalImpact { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string SustainableBankingImplications { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string BankParticipationJustification { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string PortfolioStrategicAlignment { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string CommercialViabilityAssessment { get; set; }
+
+        [Required]
+        [StringLength(300)]
+        public string AccountOfficer { get; set; }
+
         public short ApprovalStatusId { get; set; }
+
+        public bool IsCurrent { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -49,6 +123,8 @@ namespace FintrakBanking.Entities.Models
         public int? LastUpdatedBy { get; set; }
 
         public DateTime? DateTimeUpdated { get; set; }
+
+        public DateTime? DateApproved { get; set; }
 
         public bool Deleted { get; set; }
 

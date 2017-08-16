@@ -62,6 +62,7 @@ namespace FintrakBanking.Common.Enum
 
 
         AppraisalMemorandumAdded = 119, AppraisalMemorandumUpdated = 120, AppraisalMemorandumDeleted = 121,
+        LoanPrelimenaryEvaluation = 126,
     };
 
 
