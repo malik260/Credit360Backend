@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Setups.Finance
 {
-    public class TaxViewModel : GenaralEntity
+    public class TaxViewModel : GeneralEntity
     {
         public int taxId { get; set; }
         public string taxName { get; set; }

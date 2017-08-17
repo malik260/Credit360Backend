@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Setups.Approval
 {
-    public class ApprovalGroupMappingViewModel : GenaralEntity
+    public class ApprovalGroupMappingViewModel : GeneralEntity
     {
         public int groupOperationMappingId { get; set; }
         public int operationId { get; set; }

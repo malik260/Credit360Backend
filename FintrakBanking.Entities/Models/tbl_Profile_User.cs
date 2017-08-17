@@ -62,6 +62,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateApproved { get; set; }
 
+        public short ApprovalStatusId { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Profile_AdditionalActivity> tbl_Profile_AdditionalActivity { get; set; }
 

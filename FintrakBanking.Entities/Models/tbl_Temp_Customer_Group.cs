@@ -23,10 +23,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(1000)]
         public string GroupDescription { get; set; }
 
-        public bool? IsCurrent { get; set; }
-
-        public short? ApprovalStatusId { get; set; }
-
         public int CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
@@ -41,8 +37,14 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
+        public bool IsCurrent { get; set; }
+
+        public short ApprovalStatusId { get; set; }
+
+        public int CompanyId { get; set; }
+
         public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
 
-        public virtual tbl_Approval_Status tbl_Approval_Status1 { get; set; }
+        public virtual tbl_Company tbl_Company { get; set; }
     }
 }

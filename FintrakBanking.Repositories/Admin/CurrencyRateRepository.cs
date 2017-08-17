@@ -91,7 +91,7 @@ namespace FintrakBanking.Repositories.Admin
                  SellingRate = model.sellingRate ,
                  Date = model.date,
                  CreatedBy = (int)model.createdBy,
-                 DateTimeCreated = _genSetup.GetApplicaionDate()
+                 DateTimeCreated = _genSetup.GetApplicationDate()
             };
 
             context.tbl_Currency_Rate.Add(data);
@@ -108,7 +108,7 @@ namespace FintrakBanking.Repositories.Admin
                 Detail = $"Added Currency Rate :  { data.BuyingRate } for date: '{data.Date}' on {audit_BaseCurrency} to: {audit_Currency} conversion",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -129,7 +129,7 @@ namespace FintrakBanking.Repositories.Admin
             data.Date = model.date;
 
             data.LastUpdatedBy = (int)model.createdBy;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit_Currency = (context.tbl_Currency.FirstOrDefault(x => x.CurrencyId == model.currencyId)).CurrencyName;
@@ -143,7 +143,7 @@ namespace FintrakBanking.Repositories.Admin
                 Detail = $"Updated Currency Rate : { data.BuyingRate } for date: '{data.Date}' on {audit_BaseCurrency} to: {audit_Currency} conversion",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 

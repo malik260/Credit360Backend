@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
@@ -11,25 +12,29 @@ namespace FintrakBanking.Interfaces.Customer
     {
         #region tbl_Customer Group Repository
         bool AddCustomerGroup(CustomerGroupViewModel entity);
+        bool AddTempCustomerGroup(CustomerGroupViewModel entity);
         IEnumerable<CustomerGroupViewModel> GetCustomerGroup();
         CustomerGroupViewModel GetCustomerGroupByCustomerId(int customerGroupId);
         bool UpdateCustomerGroup(int groupId, CustomerGroupViewModel entity);
+        bool UpdateCustomerGroupForApproval(int groupId, CustomerGroupViewModel entity);
         bool DeleteCustomerGroup(int groupId, UserInfo user);
-
+        IEnumerable<CustomerGroupViewModel> GetCustomerGroupsAwaitingApprovals(int staffId, int companyId);
+        bool GoForApproval(ApprovalViewModel entity);
         #endregion
 
         #region tbl_Customer Group Mapping repository
-        bool AddCustomerGroupMapping( CustomerGroupMapppingViewModel entity);
+        bool AddCustomerGroupMapping( CustomerGroupMappingViewModel entity);
+        bool AddTempCustomerGroupMapping(CustomerGroupMappingViewModel entity);
+        bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups);
 
-        bool AddMultipleCustomerGroupMapping(List<CustomerGroupMapppingViewModel> customerGroups);
 
-
-        IEnumerable<CustomerGroupMapppingViewModel> GetCustomerGroupMapping();
-        IEnumerable<CustomerGroupMapppingViewModel> GetCustomerGroupMappingByGroupId(int customerGroupId);
-        CustomerGroupMapppingViewModel GetCustomerGroupMappingByGroupMapId(int groupMapId);
+        IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping();
+        IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMappingByGroupId(int customerGroupId);
+        CustomerGroupMappingViewModel GetCustomerGroupMappingByGroupMapId(int groupMapId);
         IEnumerable<LookupViewModel> GetCustomerGroupRelationshipTypes();
 
-        bool UpdateCustomerGroupMapping(int groupMapId, CustomerGroupMapppingViewModel entity);
+        bool UpdateCustomerGroupMapping(int groupMapId, CustomerGroupMappingViewModel entity);
+        bool UpdateCustomerGroupMappingForApproval(int groupMapId, CustomerGroupMappingViewModel entity);
         bool DeleteCustomerGroupMapping(int groupMapId, UserInfo user);
 
         #endregion

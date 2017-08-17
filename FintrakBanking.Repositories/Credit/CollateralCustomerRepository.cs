@@ -10,12 +10,9 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.media;
-using System.ComponentModel.Composition;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    [Export(typeof(ICollateralCustomerRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class CollateralCustomerRepository : ICollateralCustomerRepository
     {
         private FinTrakBankingContext context;

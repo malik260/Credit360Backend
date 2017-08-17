@@ -32,230 +32,38 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             auditTrail = _auditTrail;
         }
 
-        //public async Task<bool> AddCollateralCategory(CollateralCategoryViewModel entity)
-        //{
-        //    var category = new TblCollateralCategory
-        //    {
-        //        CollateralCategoryName = entity.collateralCategoryName,
-        //        CompanyId = entity.companyId,
-        //        CreatedBy = (int)entity.createdBy,
-        //        DateTimeCreated = DateTime.Now,
-        //        IsProduct = entity.isProduct,
-        //        ProductGroupId = entity.productGroupId
-        //    };
-        //    context.TblCollateralCategory.Add(category);
-
-        //    // Audit Section ---------------------------
-        //    var audit = new tbl_Audit
-        //    {
-        //        AuditTypeId = (short)AuditTypeEnum.CollateralCategoryAdded,
-        //        StaffId = entity.createdBy,
-        //        BranchId = (short)entity.userBranchId,
-        //        Detail = $"Added Collateral Category: { entity.collateralCategoryName } ",
-        //        IPAddress = entity.userIPAddress,
-        //        Url = entity.applicationUrl,
-        //        ApplicationDate = genSetup.GetApplicaionDate(),
-        //        SystemDateTime = DateTime.Now
-        //    };
-
-        //    this.auditTrail.AddAuditTrail(audit);
-
-        //    //end of Audit section -------------------------------
-
-        //    var respose = await context.SaveChangesAsync() != 0;
-        //    return respose;
-        //}
-
-        //public async Task<bool> UpdateCollateralCategory(int categoryId, CollateralCategoryViewModel entity)
-        //{
-        //    var category = context.TblCollateralCategory.SingleOrDefault(c => c.CollateralCategoryId == categoryId);
-
-        //    category.CompanyId = entity.companyId;
-        //    category.DateTimeCreated = DateTime.Now;
-        //    category.IsProduct = entity.isProduct;
-        //    category.DateTimeUpdated = entity.dateTimeUpdated;
-        //    category.LastUpdatedBy = entity.lastUpdatedBy;
-        //    category.ProductGroupId = entity.productGroupId;
-        //    category.CollateralCategoryName = entity.collateralCategoryName;
-        //    var respose = await context.SaveChangesAsync() != 0;
-
-        //    // Audit Section ---------------------------
-        //    var audit = new tbl_Audit
-        //    {
-        //        AuditTypeId = (short)AuditTypeEnum.CollateralCategoryUpdated,
-        //        StaffId = entity.createdBy,
-        //        BranchId = (short)entity.userBranchId,
-        //        Detail = $"Updated Collateral Category: { entity.collateralCategoryName } ",
-        //        IPAddress = entity.userIPAddress,
-        //        Url = entity.applicationUrl,
-        //        ApplicationDate = genSetup.GetApplicaionDate(),
-        //        SystemDateTime = DateTime.Now
-        //    };
-
-        //    this.auditTrail.AddAuditTrail(audit);
-
-        //    //end of Audit section -------------------------------
-
-        //    return respose;
-        //}
-
-        //public async Task<bool> DeleteCollateralCategory(int categoryId, CollateralCategoryViewModel entity, UserInfo user)
-        //{
-        //    var category = context.TblCollateralCategory.SingleOrDefault(c => c.CollateralCategoryId == categoryId);
-
-        //    category.DateTimeCreated = DateTime.Now;
-        //    category.DeletedBy = entity.deletedBy;
-        //    category.Deleted = true;
-
-        //    // Audit Section ---------------------------
-        //    var audit = new tbl_Audit
-        //    {
-        //        AuditTypeId = (short)AuditTypeEnum.CollateralCategoryDeleted,
-        //        StaffId = user.staffId,
-        //        BranchId = (short)user.BranchId,
-        //        Detail = $"Deleted Collateral Category: { entity.collateralCategoryName } ",
-        //        IPAddress = user.userIPAddress,
-        //        Url = user.applicationUrl,
-        //        ApplicationDate = genSetup.GetApplicaionDate(),
-        //        SystemDateTime = DateTime.Now
-        //    };
-
-        //    this.auditTrail.AddAuditTrail(audit);
-
-        //    //end of Audit section -------------------------------
-        //    return await context.SaveChangesAsync() != 0;
-        //}
-
-        //public IEnumerable<CollateralCategoryViewModel> GetCollateralCategory()
-        //{
-        //    var category = (from a in context.TblCollateralCategory
-        //                    where a.Deleted == false
-        //                    select new CollateralCategoryViewModel
-        //                    {
-        //                        collateralCategoryId = a.CollateralCategoryId,
-        //                        collateralCategoryName = a.CollateralCategoryName,
-        //                        companyId = (short)a.CompanyId,
-        //                        createdBy = a.CreatedBy,
-        //                        dateTimeCreated = DateTime.Now,
-        //                        isProduct = a.IsProduct,
-        //                        productGroupId = (short)a.ProductGroupId
-        //                    }).ToList();
-        //    return category;
-        //}
-
-        //public CollateralCategoryViewModel GetCollateralCategoryById(int categoryId)
-        //{
-        //    var category = (from a in context.TblCollateralCategory
-        //                    where a.CollateralCategoryId == categoryId && a.Deleted == false
-        //                    select new CollateralCategoryViewModel
-        //                    {
-        //                        collateralCategoryId = a.CollateralCategoryId,
-        //                        collateralCategoryName = a.CollateralCategoryName,
-        //                        companyId = a.CompanyId,
-        //                        createdBy = a.CreatedBy,
-        //                        dateTimeCreated = a.DateTimeCreated,
-        //                        isProduct = a.IsProduct,
-        //                        productGroupId = a.ProductGroupId
-        //                    }).SingleOrDefault();
-        //    return category;
-        //}
-
-        //public IEnumerable<CollateralCategoryViewModel> GetCollateralCategoryByProductGroupId(int ProductGroupId)
-        //{
-        //    var category = (from a in context.TblCollateralCategory
-        //                    where a.ProductGroupId == ProductGroupId && a.Deleted == false
-        //                    select new CollateralCategoryViewModel
-        //                    {
-        //                        collateralCategoryId = a.CollateralCategoryId,
-        //                        collateralCategoryName = a.CollateralCategoryName,
-        //                        companyId = a.CompanyId,
-        //                        createdBy = a.CreatedBy,
-        //                        dateTimeCreated = a.DateTimeCreated,
-        //                        isProduct = a.IsProduct,
-        //                        productGroupId = a.ProductGroupId
-        //                    }).ToList();
-        //    return category;
-        //}
+        #region Collateral Type
+        private IEnumerable<CollateralTypeViewModel>  CollateralTypes()
+        {
+            return (from m in context.tbl_Collateral_Type
+                    select new CollateralTypeViewModel
+                    {
+                        collateralTypeId = m.CollateralTypeId,
+                        collateralTypeName = m.CollateralTypeName,
+                        chargeGLAccountId = m.ChargeGLAccountId,
+                        requireInsurancePolicy = m.RequireInsurancePolicy,
+                        details = m.Details
+                    });
+        }
 
         public IEnumerable<CollateralTypeViewModel> GetCollateralTypes()
         {
-            var category = (from a in context.tbl_Collateral_Type
-                            where a.Deleted == false
-                            select new CollateralTypeViewModel
-                            {
-                               // collateralCategoryName = context.TblCollateralCategory.SingleOrDefault(c => c.CollateralCategoryId == a.CollateralCategoryId).CollateralCategoryName,
-                                //collateralCategoryId = a.CollateralCategoryId,
-                                collateralTypeName = a.CollateralTypeName,
-                                collateralTypeId = a.CollateralTypeId,
-                                dateTimeUpdated = a.DateTimeUpdated,
-                                deleted = a.Deleted,
-                                details = a.Details,
-                               // hairCut = a.HairCut,
-                               // requiresLocation = a.RequiresLocation,
-                                //lastUpdatedBy = (int) a.LastUpdatedBy,
-                                companyId = a.CompanyId,
-                                createdBy = a.CreatedBy,
-                                dateTimeCreated = a.DateTimeCreated
-                            }).ToList();
-            return category;
+            return CollateralTypes();
         }
 
         public CollateralTypeViewModel GetCollateralTypesById(int typeId)
         {
-            var category = (from a in context.tbl_Collateral_Type
-                            where a.CollateralTypeId == typeId && a.Deleted == false
-                            select new CollateralTypeViewModel
-                            {
-                               // collateralCategoryName = context.TblCollateralCategory.SingleOrDefault(c => c.CollateralCategoryId == a.CollateralCategoryId).CollateralCategoryName,
-                               // collateralCategoryId = a.CollateralCategoryId,
-                                collateralTypeName = a.CollateralTypeName,
-                                collateralTypeId = a.CollateralTypeId,
-                                dateTimeUpdated = a.DateTimeUpdated,
-                                deleted = a.Deleted,
-                                details = a.Details,
-                              //  hairCut = a.HairCut,
-                              //  requiresLocation = a.RequiresLocation,
-                                //lastUpdatedBy = a.LastUpdatedBy.Value,
-                                companyId = (short)a.CompanyId,
-                                createdBy = a.CreatedBy,
-                                dateTimeCreated = DateTime.Now
-                            }).SingleOrDefault();
-            return category;
-        }
-
-        public CollateralTypeViewModel GetCollateralTypeByCategoryId(int categoryId)
-        {
-            var category = (from a in context.tbl_Collateral_Type 
-                           // where a.CollateralCategoryId == categoryId && a.Deleted == false
-                            select new CollateralTypeViewModel
-                            {
-                                //collateralCategoryName = context.TblCollateralCategory.SingleOrDefault(c => c.CollateralCategoryId == a.CollateralCategoryId).CollateralCategoryName,
-                                //collateralCategoryId = a.CollateralCategoryId,
-                                collateralTypeName = a.CollateralTypeName,
-                                collateralTypeId = a.CollateralTypeId,
-                                dateTimeUpdated = a.DateTimeUpdated,
-                                deleted = a.Deleted,
-                                details = a.Details,
-                               // hairCut = a.HairCut,
-                               // requiresLocation = a.RequiresLocation,
-                                lastUpdatedBy = a.LastUpdatedBy.Value,
-                                companyId = a.CompanyId,
-                                createdBy = a.CreatedBy,
-                                dateTimeCreated = a.DateTimeCreated
-                            }).SingleOrDefault();
-            return category;
+            return CollateralTypes().Where(a => a.collateralTypeId == typeId).SingleOrDefault();
         }
 
         public async Task<bool> UpdateCollateralTypes(int typeId, CollateralTypeViewModel entity)
         {
             var type = context.tbl_Collateral_Type.SingleOrDefault(c => c.CollateralTypeId == typeId);
 
-            type.CompanyId = entity.companyId;
-            type.DateTimeCreated = DateTime.Now;
-            type.DateTimeUpdated = entity.dateTimeUpdated;
+            type.ChargeGLAccountId = entity.chargeGLAccountId;
+            type.RequireInsurancePolicy = entity.requireInsurancePolicy;
+            type.DateTimeUpdated = genSetup.GetApplicationDate();
             type.LastUpdatedBy = entity.lastUpdatedBy;
-            type.CollateralTypeName = entity.collateralTypeName;
-            //type.CollateralCategoryId = entity.collateralCategoryId;
             var respose = await context.SaveChangesAsync() != 0;
 
             // Audit Section ---------------------------
@@ -267,7 +75,72 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 Detail = $"Updated Collateral Type: { entity.collateralTypeName } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            return respose;
+        }
+        #endregion End of Collateral Type
+
+
+        #region Collateral SubTypes
+        private IEnumerable<CollateralSubTypeViewModel> CollateralSubType()
+        {
+            return (from m in context.tbl_Collateral_Type_Sub
+                    select new CollateralSubTypeViewModel
+                    {
+                        collateralSubTypeId = m.CollateralSubTypeId,
+                        collateralTypeId = m.CollateralTypeId,
+                        collateralSubTypeName = m.CollateralSubTypeName,
+                        haircut = m.Haircut,
+                        revaluationDuration = m.RevaluationDuration,
+                        dateTimeCreated = m.DateTimeCreated.Date,
+                        createdBy = m.CreatedBy
+                    }).ToList();
+        }
+
+        public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes()
+        {
+            return (from m in context.tbl_Collateral_Type_Sub
+                    select new CollateralSubTypeViewModel
+                    {
+                        collateralSubTypeId = m.CollateralSubTypeId,
+                        collateralTypeId = m.CollateralTypeId,
+                        collateralSubTypeName = m.CollateralSubTypeName,
+                        haircut = m.Haircut,
+                        revaluationDuration = m.RevaluationDuration,
+                    }).ToList();
+        }
+
+        public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
+        {
+            return CollateralSubType().Where(x => x.collateralTypeId == collateralTypeId);
+        }
+
+        public async Task<bool> UpdateCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity)
+        {
+            var subType = context.tbl_Collateral_Type_Sub.Find(subTypeId);
+
+            subType.CollateralTypeId = entity.collateralTypeId;
+            subType.CollateralSubTypeName = entity.collateralSubTypeName;
+            subType.DateTimeUpdated = genSetup.GetApplicationDate();
+            subType.LastUpdatedBy = entity.lastUpdatedBy;
+            var respose = await context.SaveChangesAsync() != 0;
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CollateralTypeUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = $"Updated Collateral Type: { entity.collateralSubTypeName } ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -277,9 +150,9 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             return respose;
         }
 
-        public async Task<bool> DeleteCollateralTypes(int typeId, CollateralTypeViewModel entity, UserInfo user)
+        public async Task<bool> DeleteCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity, UserInfo user)
         {
-            var type = context.tbl_Collateral_Type.SingleOrDefault(c => c.CollateralTypeId == typeId);
+            var type = context.tbl_Collateral_Type_Sub.Find(subTypeId);
 
             type.DateTimeCreated = DateTime.Now;
             type.DeletedBy = entity.deletedBy;
@@ -291,10 +164,10 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 AuditTypeId = (short)AuditTypeEnum.CollateralTypeUpdated,
                 StaffId = user.staffId,
                 BranchId = (short)user.BranchId,
-                Detail = $"Deleted Collateral Type: { entity.collateralTypeName } ",
+                Detail = $"Deleted Collateral Sub Type: { entity.collateralSubTypeName } ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -304,20 +177,16 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-        public async Task<bool> AddCollateralTypes(CollateralTypeViewModel entity)
+        public async Task<bool> AddCollateralSubTypes(CollateralSubTypeViewModel entity)
         {
-            var type = new tbl_Collateral_Type
+            var type = new tbl_Collateral_Type_Sub
             {
-                CollateralTypeName = entity.collateralTypeName,
-                CompanyId = entity.companyId,
-                CreatedBy = (int)entity.createdBy,
-                DateTimeCreated = DateTime.Now,
-               // CollateralCategoryId = entity.collateralCategoryId,
-                Details = entity.details,
-               // HairCut = entity.hairCut,
-               // RequiresLocation = entity.requiresLocation
+                CollateralSubTypeName = entity.collateralSubTypeName,
+                CollateralTypeId = entity.collateralTypeId,
+                Haircut = entity.haircut,
+                RevaluationDuration = entity.revaluationDuration
             };
-            context.tbl_Collateral_Type.Add(type);
+            context.tbl_Collateral_Type_Sub.Add(type);
             var respose = await context.SaveChangesAsync() != 0;
 
             // Audit Section ---------------------------
@@ -326,10 +195,10 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 AuditTypeId = (short)AuditTypeEnum.CollateralTypeAdded,
                 StaffId = entity.createdBy,
                 BranchId = (short)entity.userBranchId,
-                Detail = $"Added Collateral Type: { entity.collateralTypeName } ",
+                Detail = $"Added Collateral Type sub: { entity.collateralSubTypeName } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicaionDate(),
+                ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
@@ -338,15 +207,15 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             //end of Audit section -------------------------------
             return respose;
         }
+        #endregion End od Collateral SubType
 
-        
 
         //#region Collateral Custom Fields
         //public async Task<bool> AddCollateralCustomFields(CollateralCustomFieldsViewModel entity)
         //{
         //    var custome = new TblCollateralCustomFields
         //    {
-               
+
         //        CollateralTypeId = entity.collateralTypeId,
         //        CompanyId = entity.companyId,
         //        ControlType = entity.controlType,
@@ -355,7 +224,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         //        ItemOrder = entity.itemOrder,
         //        Required = entity.required,
         //        LabelName = entity.labelName
-                 
+
         //    };   
 
         //    // Audit Section ---------------------------
@@ -380,7 +249,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         //public async Task<bool> UpdateCollateralCustomFields(int collateralCustomFieldsId, CollateralCustomFieldsViewModel entity)
         //{
         //    var fields = context.TblCollateralCustomFields.Find(collateralCustomFieldsId);
-        
+
         //    fields.CollateralTypeId = entity.collateralTypeId;
         //    fields.CompanyId = entity.companyId;
         //    fields.ControlType = entity.controlType;
@@ -412,7 +281,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         //public async Task<bool> DeleteCollateralCustomFields(int collateralCustomFieldsId, UserInfo user)
         //{
         //    var fields = context.TblCollateralCustomFields.Find(collateralCustomFieldsId);
-                        
+
         //    fields.Deleted = fields.Deleted;
         //    fields.DeletedBy = fields.DeletedBy;
         //    fields.DateTimeDeleted = fields.DateTimeUpdated;           

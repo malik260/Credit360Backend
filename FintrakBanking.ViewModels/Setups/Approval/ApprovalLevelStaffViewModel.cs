@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FintrakBanking.Interfaces.Setups.Approval
 {
-    public class ApprovalLevelStaffViewModel : GenaralEntity
+    public class ApprovalLevelStaffViewModel : GeneralEntity
     {
         public int staffLevelId { get; set; }
         public int groupId { get; set; }

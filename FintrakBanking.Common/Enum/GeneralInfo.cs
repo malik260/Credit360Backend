@@ -57,7 +57,11 @@ namespace FintrakBanking.Common.Enum
         UserApproved = 122,
         CustomerGroupApproved = 123,
         FeeUpdated = 124,
-        FeeApproved = 125
+        FeeApproved = 125,
+
+
+
+        AppraisalMemorandumAdded = 119, AppraisalMemorandumUpdated = 120, AppraisalMemorandumDeleted = 121,
     };
 
 

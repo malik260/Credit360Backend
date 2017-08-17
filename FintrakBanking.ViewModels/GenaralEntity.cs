@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Text;
 namespace FintrakBanking.ViewModels
 {
-    public class GenaralEntity
+    public class GeneralEntity
     {
         public int companyId { get; set; }
+        public string companyName { get; set; }
         public int createdBy { get; set; }
         public int lastUpdatedBy { get; set; }
         public DateTime dateTimeCreated { get; set; }

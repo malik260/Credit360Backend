@@ -45,7 +45,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Position = model.position,                
 
                 CreatedBy = model.createdBy,
-                DateTimeCreated = generalSetup.GetApplicaionDate()                
+                DateTimeCreated = generalSetup.GetApplicationDate()                
             };
 
             this.context.tbl_Approval_Group_Mapping.Add(entity);
@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
                 SystemDateTime = DateTime.Now,
-                ApplicationDate = generalSetup.GetApplicaionDate(),
+                ApplicationDate = generalSetup.GetApplicationDate(),
                 TargetId = entity.GroupOperationMappingId
             };
             this.auditTrail.AddAuditTrail(audit);
@@ -84,7 +84,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             entity.Deleted = true;
             entity.DeletedBy = model.createdBy;
-            entity.DateTimeDeleted = generalSetup.GetApplicaionDate();
+            entity.DateTimeDeleted = generalSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var operationName = this.context.tbl_Operations.FirstOrDefault(x => x.OperationId == entity.OperationId).OperationName;
@@ -98,7 +98,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
                 SystemDateTime = DateTime.Now,
-                ApplicationDate = generalSetup.GetApplicaionDate(),
+                ApplicationDate = generalSetup.GetApplicationDate(),
                 TargetId = entity.GroupOperationMappingId
             };
 
@@ -171,7 +171,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             entity.Position = model.position;
 
             entity.LastUpdatedBy = model.createdBy;
-            entity.DateTimeUpdated = generalSetup.GetApplicaionDate();
+            entity.DateTimeUpdated = generalSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var operationName = this.context.tbl_Operations.FirstOrDefault(x => x.OperationId == model.operationId).OperationName;
@@ -185,7 +185,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
                 SystemDateTime = DateTime.Now,
-                ApplicationDate = generalSetup.GetApplicaionDate(),
+                ApplicationDate = generalSetup.GetApplicationDate(),
                 TargetId = entity.GroupOperationMappingId
             };
 

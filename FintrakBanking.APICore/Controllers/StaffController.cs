@@ -393,7 +393,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("staff/search/{queryString}")]
+        [Route("staff/search/")]
         public HttpResponseMessage SearchStaff(string queryString)
         {
             try

@@ -64,7 +64,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 IsCommittee = model.isCommittee,
                 IsBeforeCAMApproval = model.isBeforeCamapproval,
                 CompanyId = model.companyId,
-                DateTimeCreated = _genSetup.GetApplicaionDate(),
+                DateTimeCreated = _genSetup.GetApplicationDate(),
                 CreatedBy = (int)model.createdBy
             };
 
@@ -77,7 +77,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Detail = $"Added Approval Group '{model.groupName}' with Is Committee: {model.isCommittee} ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = model.groupId
             };
@@ -95,7 +95,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             data.GroupName = model.groupName;
             data.IsBeforeCAMApproval = model.isBeforeCamapproval;
             data.IsCommittee = model.isCommittee;
-            data.DateTimeUpdated = _genSetup.GetApplicaionDate();
+            data.DateTimeUpdated = _genSetup.GetApplicationDate();
             data.LastUpdatedBy = (int)model.createdBy;
 
             //Audit Section ---------------------------
@@ -107,7 +107,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Detail = $"Updated Approval Group '{model.groupName}' with Is Committee: {model.isCommittee} ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = model.groupId
             };
@@ -122,7 +122,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var data = this.context.tbl_Approval_Group.Find(GroupId);
             data.Deleted = true;
             data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicaionDate();
+            data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
 
             //Audit Section ---------------------------
@@ -134,7 +134,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Detail = $"Deleted Approval Group '{data.GroupName}' with Is Committee: {data.IsCommittee} ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicaionDate(),
+                ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = data.GroupId
             };

@@ -42,6 +42,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Interfaces.Notification;
     using FintrakBanking.Repositories.Notification;
     using FintrakBanking.Repositories.Finance;
+    using FintrakBanking.Interfaces.media;
+    using FintrakBanking.Repositories.media;
 
     public static class NinjectWebCommon 
     {
@@ -123,10 +125,10 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICultureHelper>().To<CultureHelper>();
             kernel.Bind<ICasaRepository>().To<CasaRepository>();
             kernel.Bind<IErrorLogRepository>().To<ErrorLogRepository>();
-            kernel.Bind<ICollateralCustomerRepository>().To<CollateralCustomerRepository>();
             kernel.Bind<IEmailRepository>().To<EmailRepository>();
             kernel.Bind<IAdminRepository>().To<AdminRepository>();
             kernel.Bind<ILoanCovenantRepository>().To<LoanCovenantRepository>();
+            kernel.Bind<ICustomerCollateralRepository>().To<CustomerCollateralRepository>();
             kernel.Bind<ICountryRepository>().To<CountryRepository>();
             kernel.Bind<ICustomerFSCaptionGroupRepository>().To<CustomerFSCaptionGroupRepository>();
             kernel.Bind<ICustomerFSCaptionRepository>().To<CustomerFSCaptionRepository>();
@@ -145,11 +147,14 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IApprovalLevelRepository>().To<ApprovalLevelRepository>();
             kernel.Bind<IApprovalLevelStaffRepository>().To<ApprovalLevelStaffRepository>();
             kernel.Bind<ILoanApplicationRepository>().To<LoanApplicationRepository>();
+            kernel.Bind<IMediaRepository>().To<MediaRepository>();
             kernel.Bind<ICanAuthorizationRepository>().To<CanAuthorizationRepository>();
             kernel.Bind<INotificationRepository>().To<NotificationRepository>();
             kernel.Bind<ITaxRepository>().To<TaxRepository>();
             kernel.Bind<IChargeFeeRepository>().To<ChargeFeeRepository>();
             kernel.Bind<ILoanScheduleRepository>().To<LoanScheduleRepository>();
+            kernel.Bind<IAppraisalMemorandumRepository>().To<AppraisalMemorandumRepository>();
         }        
     }
+    
 }

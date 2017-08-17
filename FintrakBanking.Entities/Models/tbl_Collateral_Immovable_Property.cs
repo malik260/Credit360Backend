@@ -71,6 +71,16 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string Remark { get; set; }
 
+        [StringLength(250)]
+        public string NearestLandMark { get; set; }
+
+        [StringLength(250)]
+        public string NearestBusStop { get; set; }
+
+        public decimal? Longitude { get; set; }
+
+        public decimal? Latitude { get; set; }
+
         public virtual tbl_City tbl_City { get; set; }
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }

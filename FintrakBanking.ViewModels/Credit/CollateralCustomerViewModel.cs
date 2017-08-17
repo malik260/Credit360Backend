@@ -5,7 +5,7 @@ using System.Text;
 namespace FintrakBanking.ViewModels.Credit
 {
 
-    public class CollateralCustomerViewModel : GenaralEntity
+    public class CollateralCustomerViewModel : GeneralEntity
     {
         public int collateralCustomerId { get; set; }
         public int collateralTypeId { get; set; }
@@ -255,7 +255,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string remark { get; set; }
     }
 
-    public class CollateralValueBaseTypeViewModel : GenaralEntity
+    public class CollateralValueBaseTypeViewModel : GeneralEntity
     {
         public short collateralValueBaseTypeId { get; set; }
         public string valueBaseTypeName { get; set; }
@@ -263,7 +263,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string remark { get; set; }
     }
 
-    public class CollateralValuersViewModel : GenaralEntity
+    public class CollateralValuersViewModel : GeneralEntity
     {
         public short collateralValuerId { get; set; }
         public string valuerLicenceNumber { get; set; }
@@ -275,7 +275,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string countryName { get; set; }
     }
 
-    public class CollateralValuerTypeViewModel : GenaralEntity
+    public class CollateralValuerTypeViewModel : GeneralEntity
     {
         public short collateralValuerTypeId { get; set; }
         public string valuerTypeName { get; set; }
@@ -293,7 +293,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    public class CollateralSubTypeViewModel
+    public class CollateralSubTypeViewModel : GeneralEntity
     {
         public short collateralSubTypeId { get; set; }
         public string collateralSubTypeName { get; set; }
