@@ -2,7 +2,9 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
@@ -18,14 +20,18 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingContext context;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
+        private IWorkFlowRepository workFlow;
+
 
         public FeeRepository(FinTrakBankingContext _context,
-                                        IGeneralSetupRepository genSetup, IGeneralSetupRepository _genSetup,
-                                        IAuditTrailRepository _auditTrail)
+                                        IGeneralSetupRepository _genSetup,
+                                        IAuditTrailRepository _auditTrail,
+                                        IWorkFlowRepository _workFlow)
         {
             this.context = _context;
             this.genSetup = _genSetup;
             auditTrail = _auditTrail;
+            workFlow = _workFlow;
         }
 
         private bool SaveAll()
@@ -66,7 +72,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 // Audit Section ---------------------------
                 var audit = new tbl_Audit
                 {
-                    AuditTypeId = (short)AuditTypeEnum.CollateralCategoryAdded,
+                    AuditTypeId = (short)AuditTypeEnum.FeeAdded,
                     StaffId = fee.createdBy,
                     BranchId = (short)fee.userBranchId,
                     Detail = $"Added fee: { fee.feeName } of type {fee.feeTypeName} ",
@@ -85,6 +91,85 @@ namespace FintrakBanking.Repositories.Setups.General
             
             else
                 return -1;
+        }
+
+        public bool AddTempFee(FeeViewModel feeModel)
+        {
+            bool output = false;
+
+            var tempFee = new tbl_Temp_Fee()
+            {
+                FeeName = feeModel.feeName,
+                AccountCategoryId = feeModel.accountCategoryId,
+                FeeTypeId = feeModel.feeTypeId,
+                FeeIntervalId = feeModel.feeIntervalId,
+                ProductTypeId = feeModel.productTypeId,
+                FeeTargetId = feeModel.feeTargetId,
+                IsIntegralFee = feeModel.isIntegralFee,
+                GLAccountId = feeModel.glAccountId,
+                FeeAmortisationTypeId = feeModel.feeAmortisationTypeId,
+                IncludeCutOffDay = feeModel.includeCutOffDay,
+                CutOffDay = feeModel.cutOffDay,
+                CompanyId = feeModel.companyId,
+                FeeDate = DateTime.Now,
+
+                CreatedBy = feeModel.createdBy,
+                DateTimeCreated = DateTime.Now,
+            };
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.FeeAdded,
+                StaffId = feeModel.createdBy,
+                BranchId = (short)feeModel.userBranchId,
+                Detail = $"Added fee: { feeModel.feeName } of type {feeModel.feeTypeName} ",
+                IPAddress = feeModel.userIPAddress,
+                Url = feeModel.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now
+            };
+            //end of Audit section -------------------------------
+
+
+            if (workFlow.CheckRouteForOperation((int)Operations.FeeCreation, feeModel.companyId))
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        this.auditTrail.AddAuditTrail(audit);
+                        this.context.tbl_Temp_Fee.Add(tempFee);
+
+                        output = this.SaveAll();
+
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = feeModel.createdBy,
+                            companyId = feeModel.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = feeModel.feeId,
+                            operationId = (int)Operations.FeeCreation,
+                            BranchId = feeModel.userBranchId
+                        };
+                        var response = workFlow.LogForApproval(entity);
+                        trans.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new Exception(ex.Message);
+                    }
+                }
+            }
+
+            else
+            {
+                throw new Exception("Approval route have not been defined for this operation");
+            }
+
+            return output;
+
         }
 
         public IEnumerable<FeeViewModel> GetAllFee()
@@ -198,11 +283,186 @@ namespace FintrakBanking.Repositories.Setups.General
             //end of Audit section -------------------------------
             return this.SaveAll();
         }
-        #endregion tbl_Product Fee
 
-        #region Fee Related Lookups
+        public bool UpdateFeeForApproval(int feeId, FeeViewModel feeModel)
+        {
+            if (feeModel == null)
+                return false;
 
-        public IEnumerable<LookupViewModel> GetFeeAccountCategory()
+            var existStingTempFee = context.tbl_Temp_Fee.Where(x => x.AccountCategoryId ==
+            feeModel.accountCategoryId && x.IsCurrent == true &&
+            x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+
+            if (existStingTempFee.Any())
+            {
+                foreach (var item in existStingTempFee)
+                {
+                    item.IsCurrent = false;
+                    item.DateTimeUpdated = DateTime.Now;
+                }
+            }
+
+            var targetFee = this.context.tbl_Fee.Find(feeId);
+
+            var unApprovedFeeEdit = context.tbl_Temp_Fee.Where(x => x.IsCurrent == true
+            && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
+
+            tbl_Temp_Fee tempFee;
+
+            if (unApprovedFeeEdit.Any())
+            {
+                throw new Exception("Fee is already undergoing approval");
+            }
+            else
+            {
+                tempFee = new tbl_Temp_Fee()
+                {
+                    FeeName = feeModel.feeName,
+                    AccountCategoryId = targetFee.AccountCategoryId,
+                    FeeTypeId = feeModel.feeTypeId,
+                    FeeIntervalId = feeModel.feeIntervalId,
+                    ProductTypeId = feeModel.productTypeId,
+                    FeeTargetId = feeModel.feeTargetId,
+                    IsIntegralFee = feeModel.isIntegralFee,
+                    GLAccountId = feeModel.glAccountId,
+                    FeeAmortisationTypeId = feeModel.feeAmortisationTypeId,
+                    IncludeCutOffDay = feeModel.includeCutOffDay,
+                    CutOffDay = feeModel.cutOffDay,
+                    CompanyId = feeModel.companyId,
+                    FeeDate = DateTime.Now,
+
+                    CreatedBy = feeModel.createdBy,
+                    DateTimeCreated = DateTime.Now,
+                };
+
+                context.tbl_Temp_Fee.Add(tempFee);
+            }
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.FeeUpdated,
+                StaffId = feeModel.createdBy,
+                BranchId = (short)feeModel.userBranchId,
+                Detail = $"Updated Fee: { feeModel.feeName } with fee account category '{feeModel.accountCategoryName}'",
+                IPAddress = feeModel.userIPAddress,
+                Url = feeModel.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now,
+                TargetId = feeId
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section ------------------------------- 
+
+            var output = this.SaveAll();
+
+            var approvalEntity = new ApprovalViewModel
+            {
+                staffId = feeModel.createdBy,
+                companyId = feeModel.companyId,
+                approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                targetId = tempFee.FeeId,
+                operationId = (int)Operations.FeeCreation,
+                BranchId = feeModel.userBranchId
+            };
+            var response = workFlow.LogForApproval(approvalEntity);
+
+            return output;
+        }
+
+        public bool GoForApproval(ApprovalViewModel entity)
+        {
+            entity.operationId = (int)Operations.FeeCreation;
+
+            var response = workFlow.GoForApproval(entity);
+
+            if (response.Result.Item1)
+            {
+                return ApproveFee(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        private bool ApproveFee(int feeId, short approvalStatusId, UserInfo user)
+        {
+            var feeModel = context.tbl_Temp_Fee.Find(feeId);
+            var feeToUpdate = context.tbl_Fee.Where(x => x.AccountCategoryId == feeModel.AccountCategoryId);
+            var existingFee = feeToUpdate.FirstOrDefault();
+
+            //Update existing fee with tempFee record
+            if (feeToUpdate.Any())
+            {
+                existingFee.FeeName = feeModel.FeeName;
+                existingFee.AccountCategoryId = feeModel.AccountCategoryId;
+                existingFee.FeeTypeId = feeModel.FeeTypeId;
+                existingFee.FeeIntervalId = feeModel.FeeIntervalId;
+                existingFee.ProductTypeId = feeModel.ProductTypeId;
+                existingFee.FeeTargetId = feeModel.FeeTargetId;
+                existingFee.IsIntegralFee = feeModel.IsIntegralFee;
+                existingFee.GLAccountId = feeModel.GLAccountId;
+                existingFee.FeeAmortisationTypeId = feeModel.FeeAmortisationTypeId;
+                existingFee.IncludeCutOffDay = feeModel.IncludeCutOffDay;
+                existingFee.CutOffDay = feeModel.CutOffDay;
+                existingFee.CompanyId = feeModel.CompanyId;
+                existingFee.FeeDate = feeModel.FeeDate;
+
+                existingFee.CreatedBy = feeModel.CreatedBy;
+                existingFee.DateTimeUpdated = DateTime.Now;
+            }
+            else //Insert a newfee record into the real fee table
+            {
+                var fee = new tbl_Fee()
+                {
+                    FeeName = feeModel.FeeName,
+                    AccountCategoryId = feeModel.AccountCategoryId,
+                    FeeTypeId = feeModel.FeeTypeId,
+                    FeeIntervalId = feeModel.FeeIntervalId,
+                    ProductTypeId = feeModel.ProductTypeId,
+                    FeeTargetId = feeModel.FeeTargetId,
+                    IsIntegralFee = feeModel.IsIntegralFee,
+                    GLAccountId = feeModel.GLAccountId,
+                    FeeAmortisationTypeId = feeModel.FeeAmortisationTypeId,
+                    IncludeCutOffDay = feeModel.IncludeCutOffDay,
+                    CutOffDay = feeModel.CutOffDay,
+                    CompanyId = feeModel.CompanyId,
+                    FeeDate = DateTime.Now,
+                    DateTimeCreated = DateTime.Now
+                };
+                context.tbl_Fee.Add(fee);
+
+            }
+
+            feeModel.IsCurrent = false;
+            feeModel.ApprovalStatusId = approvalStatusId;
+            feeModel.DateTimeUpdated = DateTime.Now;
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.FeeApproved,
+                StaffId = user.staffId,
+                BranchId = (short)user.BranchId,
+                Detail = $"Approved Fee '{feeModel.FeeName}' with fee account category '{feeModel.tbl_Account_Category.AccountCategoryName}'",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicaionDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            // Audit Section ---------------------------
+
+            return this.SaveAll();
+        }
+            #endregion tbl_Product Fee
+
+            #region Fee Related Lookups
+
+            public IEnumerable<LookupViewModel> GetFeeAccountCategory()
         {
             return (from data in context.tbl_Account_Category
                     where data.AccountCategoryId == (short)AccountCategoryEnum.Income || data.AccountCategoryId == (short)AccountCategoryEnum.Expense

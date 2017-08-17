@@ -47,6 +47,27 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("product-collateral-type/all/mapped/{productId}")]
+        public HttpResponseMessage GetAllMappedCollateralToProduct(int productId)
+        {
+            try
+            {
+                var data = repo.GetMappedCollateralTypeByProduct(productId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                            new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("product-collateral-type/unmapped/{productId}")]
         public HttpResponseMessage GetUnmappedCollateralToProduct(int productId)
         {
@@ -66,6 +87,8 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
                 } 
         }
+
+        
 
         [HttpGet]
         [Route("product-collateral-type/{productCollateralTypeId}")]

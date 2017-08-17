@@ -57,7 +57,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial, Version=1.15.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>\\192.168.10.8\shared\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +73,7 @@
     <Compile Include="Credit\LoanApplicationRepository.cs" />
     <Compile Include="Credit\LoanCovenantRepository.cs" />
     <Compile Include="Credit\LoanRepository.cs" />
+    <Compile Include="Credit\LoanScheduleRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionGroupRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionRepository.cs" />

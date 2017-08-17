@@ -4,6 +4,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Setups.General;
 using System;  
 using System.Linq;
@@ -47,43 +48,107 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
+        [Route("user/approval")]
+        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.GoForApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "User account has been approved successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+        [HttpGet]
+        [Route("user/approvals/temp")]
+        public HttpResponseMessage GetUsersAwaitingApproval()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var staffinfo = repo.GetUsersAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (staffinfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+        [HttpPost]
         [Route("user")]
         public HttpResponseMessage AddUser(  [FromBody]AppUserViewModel user)
         {
-            TokenDecryptionHelper token = null;
-
-            token = new TokenDecryptionHelper();
-            if (I.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
+            try
             {
-                if (repo.iSUserExit(user.username))
+                var token = new TokenDecryptionHelper();
+                if (I.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
+                {
+                    if (repo.iSUserExit(user.username))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { suucess = false, message = "A user with this username already exit" });
+                    }
+
+                    user.createdBy = token.GetStaffId;
+                    user.userBranchId = (short)token.GetBranchId;
+                    user.userIPAddress =  HttpContext.Current.Request.UserHostAddress;
+                    user.applicationUrl = HttpContext.Current.Request.Path;
+                    user.companyId = token.GetCompanyId;
+                    var result = repo.CreateUser(user);
+                    if (result.IsCompleted)
+                    {
+                        repo.CreateUser(user);
+
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = true, result = user, message = "User has been created successfully, now awaiting approval" });
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, result = user, message = "User not created successfully" });
+                    }
+                }
+                else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { suucess = false, message = "A user with this username already exit" });
-                }
-
-                user.createdBy = token.GetStaffId;
-                user.userBranchId = (short)token.GetBranchId;
-                //user.userIPAddress =  Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                user.applicationUrl = HttpContext.Current.Request.Path;
-                user.companyId = token.GetCompanyId;
-                var result = repo.CreateUser(user).IsCompleted;
-                if (result)
-                {
-                    repo.CreateUser(user);
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = user, message = "User has been created successfully" });
+                       new { success = false, message = "You do not have enough right to add user" });
                 }
             }
-            else
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "You do not have enough right to add user" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
-            return Request.CreateResponse(HttpStatusCode.OK,
-                 new { success = false, message = "An unknown error has occured" });
-
+            
         } 
         [HttpPut]
         [Route("user/{id}")]

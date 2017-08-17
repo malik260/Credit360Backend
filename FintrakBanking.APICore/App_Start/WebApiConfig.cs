@@ -27,6 +27,8 @@ namespace FintrakBanking.APICore
 
             config.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 
+            config.Formatters.JsonFormatter.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Local;
+
             //Enable cors
             var cors = new EnableCorsAttribute("*", "*", "*");
             config.EnableCors(cors);

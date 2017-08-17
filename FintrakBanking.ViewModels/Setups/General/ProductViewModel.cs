@@ -31,7 +31,9 @@ namespace FintrakBanking.ViewModels.Setups.General
         public double? productPriceIndexSpread { get; set; }
 
         public int? dormantGl { get; set; }
+        public string dormantGlCode { get; set; }
         public int? premiumDiscountGl { get; set; }
+        public string premiumDiscountGlCode { get; set; }
         public short? dealTypeId { get; set; }
         public string dealTypeName { get; set; }
         public short? dealClassificationId { get; set; }
@@ -55,13 +57,14 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool? approved { get; set; }
 
         public int approvalStatusId { get; set; }
-        public string productCurrencies { get; set; }
         public int operationId { get; set; }
         public string comment { get; set; }
 
         public List<ProductCurrencyViewModel> currencies { get; set; }
 
         public List<ProductFeeViewModel> fees { get; set; }
+
+        public List<ProductCollateralTypeViewModel> collateral { get; set; }
 
     }
 
