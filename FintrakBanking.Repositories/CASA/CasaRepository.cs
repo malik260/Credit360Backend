@@ -7,6 +7,7 @@ using System.Text;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -152,7 +153,6 @@ namespace FintrakBanking.Repositories.CASA
                         branchId = data.BranchId,
                         branchCode = data.tbl_Branch.BranchCode,
                         branchName = data.tbl_Branch.BranchName,
-
                         isCurrentAccount = data.IsCurrentAccount,
                         tenor = data.Tenor ?? 0,
                         interestRate = data.InterestRate ?? 0,
@@ -166,6 +166,7 @@ namespace FintrakBanking.Repositories.CASA
                         ledgerBalance = data.LedgerBalance,
 
                         relationshipOfficerId = data.RelationshipOfficerId ?? 0,
+                        relationshipManagerId = data.RelationshipManagerId ?? 0,
                         misCode = data.MISCode,
 
                         overdraftAmount = data.OverdraftAmount ?? 0,
@@ -206,7 +207,7 @@ namespace FintrakBanking.Repositories.CASA
             {
                 allCustomer = from cust in context.tbl_Customer
                               join acc in context.tbl_CASA on cust.CustomerId equals acc.CustomerId
-                              join prod in context.tbl_Product on acc.ProductId equals prod.ProductId 
+                              join prod in context.tbl_Product on acc.ProductId equals prod.ProductId
                               where cust.Deleted == false && cust.CompanyId == companyId
                               select new CustomerSearchVM
                               {
@@ -215,7 +216,7 @@ namespace FintrakBanking.Repositories.CASA
                                   customerCode = cust.CustomerCode,
                                   firstName = cust.FirstName,
                                   lastName = cust.LastName,
-                                  middleName = cust.MaidenName, 
+                                  middleName = cust.MaidenName,
                                   relationshipManagerId = acc.RelationshipManagerId ?? 0,
                                   relationshipOfficerId = acc.RelationshipOfficerId ?? 0
                               };
@@ -232,19 +233,19 @@ namespace FintrakBanking.Repositories.CASA
             else
             {
                 allCustomer = from cg in context.tbl_Customer_Group
-                              join gm in context.tbl_Customer_Group_Mapping                              
+                              join gm in context.tbl_Customer_Group_Mapping
                               on cg.CustomerGroupId equals gm.CustomerGroupId
-                              join casa in context.tbl_CASA 
+                              join casa in context.tbl_CASA
                               on gm.CustomerId equals casa.CustomerId
-                              join prod in context.tbl_Product on casa.ProductId equals prod.ProductId 
-                              where cg.Deleted == false && gm.Deleted==false && casa.Deleted==false
+                              join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
+                              where cg.Deleted == false && gm.Deleted == false && casa.Deleted == false
                               select new CustomerSearchVM
                               {
                                   customerId = cg.CustomerGroupId,
                                   customerCode = cg.GroupCode,
                                   firstName = cg.GroupName,
                                   lastName = string.Empty,
-                                  accountNumber = casa.ProductAccountNumber, 
+                                  accountNumber = casa.ProductAccountNumber,
                                   relationshipManagerId = casa.RelationshipManagerId ?? 0,
                                   relationshipOfficerId = casa.RelationshipOfficerId ?? 0
                               };
@@ -253,16 +254,90 @@ namespace FintrakBanking.Repositories.CASA
                 if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
                 {
                     allCustomer = allCustomer
-                        .Where(x => x.firstName.ToLower().Contains(searchQuery));
+                        .Where(x => x.firstName.ToLower().Contains(searchQuery)
+                        || x.middleName.ToLower().Contains(searchQuery)
+                        || x.lastName.ToLower().Contains(searchQuery)
+                        || x.accountNumber.Contains(searchQuery));
                 }
             }
 
-            
+
 
             return allCustomer;
         }
 
+        private IQueryable<CasaCustomerSearchViewModel> GetAllAccounts()
+        {
+            var data = (from casa in context.tbl_CASA
+                        join cust in context.tbl_Customer on casa.CustomerId equals cust.CustomerId
+                        join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
+                        join sector in context.tbl_Sub_Sector on cust.SubSectorId equals sector.SubSectorId
+                        select new CasaCustomerSearchViewModel()
+                        {
+                            casaAccountId = casa.CasaAccountId,
+                            productAccountNumber = casa.ProductAccountNumber,
+                            productAccountName = casa.ProductAccountName,
+                            customerId = casa.CustomerId,
+                            customerCode = cust.CustomerCode,
+                            accountHolder = cust.FirstName + " " + cust.LastName,
+                            productId = prod.ProductId,
+                            productCode = prod.ProductCode,
+                            productName = prod.ProductName,
+                            productClassId = prod.ProductClassId,
+                            productClassName = prod.tbl_Product_Class.ProductClassName,
+                            companyId = casa.CompanyId,
+                            branchId = casa.BranchId,
+                            branchCode = casa.tbl_Branch.BranchCode,
+                            branchName = casa.tbl_Branch.BranchName,
+                            relationshipOfficerId = casa.RelationshipOfficerId ?? 0,
+                            relationshipManagerId = casa.RelationshipManagerId ?? 0,
+                            subSectorId = sector.SubSectorId,
+                            subSectorName = sector.Name,
+                            customerSectorId = sector.tbl_Sector.SectorId,
+                            customerSectorName = sector.tbl_Sector.Name,
+                            customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == casa.CustomerId).Select(b => new CustomerBvnViewModels()
+                            {
+                                bankVerificationNumber = b.BankVerificationNumber,
+                                customerBvnid = b.CustomerBVNId,
+                                firstname = b.Firstname,
+                                isValidBvn = b.IsValidBVN,
+                                isPoliticallyExposed = b.IsPoliticallyExposed,
+                                surname = b.Surname
+                            }).ToList(),
+                            customerCompanyDirectors = context.tbl_Customer_Company_Director.Where(s => s.CustomerId == casa.CustomerId).Select(s => new CustomerCompanyDirectorsViewModels()
+                            {
+                                bankVerificationNumber = s.CustomerBVN,
+                                companyDirectorTypeId = s.CompanyDirectorTypeId,
+                                companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                customerId = s.CustomerId,
+                                customerName = s.Firstname + " " + s.Surname,
+                            }).ToList(),
+                        });
+
+            return data;
+        }
 
 
+        public IQueryable<CasaCustomerSearchViewModel> SearchForCustomerAccount(int companyId, string searchQuery)
+        {
+            IQueryable<CasaCustomerSearchViewModel> allCustomers = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allCustomers = GetAllAccounts()
+                    .Where(c => c.companyId == companyId)
+                    .Where(x => x.accountHolder.Contains(searchQuery)
+               || x.customerCode.Contains(searchQuery)
+               || x.productAccountNumber.Contains(searchQuery)
+                );
+            }
+
+            return allCustomers;
+        }
     }
 }

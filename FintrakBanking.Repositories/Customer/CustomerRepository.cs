@@ -331,7 +331,7 @@ namespace FintrakBanking.Repositories.Customer
         }
 
 
-        IEnumerable<CustomerViewModels> GetCustomers()
+        IQueryable<CustomerViewModels> GetCustomers()
         {
             return from a in context.tbl_Customer
                    where a.Deleted == false
@@ -341,6 +341,7 @@ namespace FintrakBanking.Repositories.Customer
                    {
                        accountCreationComplete = a.AccountCreationComplete,
                        branchId = a.BranchId,
+                       branchName = a.tbl_Branch.BranchName,
                        childDateOfBirth = a.ChildDateOfBirth.Value,
                        companyId = a.CompanyId,
                        createdBy = a.CreatedBy,
@@ -368,6 +369,8 @@ namespace FintrakBanking.Repositories.Customer
                        politicallyExposedPerson = a.PoliticallyExposedPerson,
                        relationshipOfficerId = a.RelationshipOfficerId.Value,
                        spouse = a.Spouse,
+                       sectorId = a.tbl_Sub_Sector.tbl_Sector.SectorId,
+                       sectorName = a.tbl_Sub_Sector.tbl_Sector.Name,
                        subSectorId = a.SubSectorId,
                        subSectorName = a.tbl_Sub_Sector.Name,
                        taxNumber = a.TaxNumber
@@ -389,6 +392,7 @@ namespace FintrakBanking.Repositories.Customer
                            customerBvnid = b.CustomerBVNId,
                            firstname = b.Firstname,
                            isValidBvn = b.IsValidBVN,
+                           isPoliticallyExposed = b.IsPoliticallyExposed,
                            surname = b.Surname
                        }).ToList(),
                        CustomerPhoneContact = context.tbl_Customer_PhoneContact.Where(c => c.CustomerId == a.CustomerId).Select(c => new CustomerPhoneContactViewModels
@@ -436,6 +440,14 @@ namespace FintrakBanking.Repositories.Customer
                            employerName = s.EmployerName,
                            officePhone = s.OfficePhone,
                            employerStateId = s.EmployerStateId
+                       }).ToList(),
+                       CustomerCompanyDirectors = context.tbl_Customer_Company_Director.Where(s => s.CustomerId == a.CustomerId).Select(s => new CustomerCompanyDirectorsViewModels()
+                       {
+                           bankVerificationNumber = s.CustomerBVN,
+                           companyDirectorTypeId = s.CompanyDirectorTypeId,
+                           companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                           customerId = s.CustomerId,
+                           customerName = s.Firstname + " " + s.Surname,
                        }).ToList()
 
                    };
@@ -546,6 +558,43 @@ namespace FintrakBanking.Repositories.Customer
                 ).ToList();
             }
             return customer;
+        }
+
+        public IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string searchQuery)
+        {
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+            IQueryable<CustomerSearchItemViewModels> allCustomers = null;
+
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allCustomers = GetCustomers().
+                    Where(c => c.companyId == companyId)
+                    .Where(x => x.firstName.ToLower().Contains(searchQuery)
+
+               || x.lastName.ToLower().Contains(searchQuery)
+               || x.middleName.ToLower().Contains(searchQuery)
+               || x.customerCode.Contains(searchQuery)
+                ).Select(c => new CustomerSearchItemViewModels
+                {
+                    customerId = c.customerId,
+                    branchId = c.branchId,
+                    branchName = c.branchName,
+                    customerName = c.firstName + " " + c.lastName,
+                    customerTypeId = c.customerTypeId,
+                    customerTypeName = c.customerTypeName,
+                    customerCode = c.customerCode,
+                    customerSectorId = c.sectorId,
+                    customerSectorName = c.sectorName,
+                    subSectorId = c.subSectorId,
+                    subSectorName = c.subSectorName,
+                    relationshipOfficerId = c.relationshipOfficerId
+                });
+            }
+            return allCustomers;
         }
 
         public IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search)

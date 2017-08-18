@@ -52,7 +52,6 @@
     <Compile Include="documentModel\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="documentModel\tbl_Media_Collateral_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\Model1.cs" />
     <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
@@ -124,6 +123,8 @@
     <Compile Include="Models\tbl_Customer_Blacklist.cs" />
     <Compile Include="Models\tbl_Customer_BVN.cs" />
     <Compile Include="Models\tbl_Customer_CompanyInfomation.cs" />
+    <Compile Include="Models\tbl_Customer_Company_Director.cs" />
+    <Compile Include="Models\tbl_Customer_Company_DirectorType.cs" />
     <Compile Include="Models\tbl_Customer_Custom_Field.cs" />
     <Compile Include="Models\tbl_Customer_Edit_History.cs" />
     <Compile Include="Models\tbl_Customer_EducationLevelType.cs" />
@@ -181,6 +182,7 @@
     <Compile Include="Models\tbl_Loan_Amortization_Schedule.cs" />
     <Compile Include="Models\tbl_Loan_Application.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
+    <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Detail.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Type.cs" />

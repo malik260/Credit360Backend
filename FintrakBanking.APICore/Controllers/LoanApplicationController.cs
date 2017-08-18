@@ -19,10 +19,10 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanApplicationController : ApiControllerBase
     {
         private ILoanApplicationRepository repoApply;
-        private ILoanPrelimenaryEvaluationRepository repoLoanPEN;
+        private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public LoanApplicationController(ILoanApplicationRepository _repoApply, ILoanPrelimenaryEvaluationRepository _repoLoanPEN)
+        public LoanApplicationController(ILoanApplicationRepository _repoApply, ILoanPreliminaryEvaluationRepository _repoLoanPEN)
         {
             this.repoApply = _repoApply;
             repoLoanPEN = _repoLoanPEN;
@@ -91,7 +91,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("loan-application/search/")]
+        [Route("loan-application/search/{searchCriteria}")]
         public HttpResponseMessage FindLoan(string searchCriteria)
         {
             try
@@ -186,11 +186,11 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion
 
-        #region Loan Prelimenary Evaluation
+        #region Loan Preliminary Evaluation
 
         [HttpPost]
-        [Route("loan/prelimenary-evaluation")]
-        public HttpResponseMessage AddPrelimenaryEvaluation(LoanPrelimenaryEvaluationViewModel model)
+        [Route("loan/preliminary-evaluation")]
+        public HttpResponseMessage AddPreliminaryEvaluation(LoanPreliminaryEvaluationViewModel model)
         {
             try
             {
@@ -201,17 +201,17 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
                 model.branchId = (short)token.GetBranchId;
 
-                var response = repoLoanPEN.AddPrelimenaryEvaluation(model);
+                var response = repoLoanPEN.AddPreliminaryEvaluation(model);
 
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Prelimenary evaluation note created successfully, now awaiting approval" });
+                        new { success = true, message = "Preliminary evaluation note created successfully, now awaiting approval" });
                 }
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Prelimenary evaluation note not created" });
+                        new { success = true, message = "Preliminary evaluation note not created" });
                 }
             }
             catch (Exception ex)
@@ -222,8 +222,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("loan/prelimenary-evaluation/approval")]
-        public HttpResponseMessage ApprovePrelimenaryEvaluation(ApprovalViewModel model)
+        [Route("loan/preliminary-evaluation/approval")]
+        public HttpResponseMessage ApprovePreliminaryEvaluation(ApprovalViewModel model)
         {
             try
             {
@@ -239,7 +239,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = "Prelimenary evaluation note has been approved successfully" });
+                                            new { success = true, message = "Preliminary evaluation note has been approved successfully" });
                 }
                 else
                 {
@@ -255,12 +255,34 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan/prelimenary-evaluation/awaiting-approval")]
-        public HttpResponseMessage GetLoanPrelimenaryEvaluationsForAppproval()
+        [Route("loan-preliminary-evaluation")]
+        public HttpResponseMessage GetLoanPreliminaryEvaluations()
         {
             try
             {
-                var data = repoLoanPEN.GetPrelimenaryEvaluationsAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repoLoanPEN.GetAllLoanPreliminaryEvaluations();
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan/preliminary-evaluation/awaiting-approval")]
+        public HttpResponseMessage GetLoanPreliminaryEvaluationsForAppproval()
+        {
+            try
+            {
+                var data = repoLoanPEN.GetPreliminaryEvaluationsAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (!data.Any())
                 {

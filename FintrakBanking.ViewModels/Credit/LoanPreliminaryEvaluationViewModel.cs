@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Credit
 {
-    public class LoanPrelimenaryEvaluationViewModel: GeneralEntity
+    public class LoanPreliminaryEvaluationViewModel: GeneralEntity
     {
         public int loanPreliminaryEvaluationId { get; set; }
         public string preliminaryEvaluationCode { get; set; }
@@ -31,7 +31,6 @@
         public string bankParticipationJustification { get; set; }
         public string portfolioStrategicAlignment { get; set; }
         public string commercialViabilityAssessment { get; set; }
-        public string accountOfficer { get; set; }
 
         public int operationId { get; set; }
         public short approvalStatusId { get; set; }

@@ -50,7 +50,7 @@
     <Compile Include="Credit\ICustomerCollateralRepository.cs" />
     <Compile Include="Credit\ILimitRepository.cs" />
     <Compile Include="Credit\ILoanApplicationRepository.cs" />
-    <Compile Include="Credit\ILoanPrelimenaryEvaluationRepository.cs" />
+    <Compile Include="Credit\ILoanPreliminaryEvaluationRepository.cs" />
     <Compile Include="Credit\ILoanRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionGroupRepository.cs" />

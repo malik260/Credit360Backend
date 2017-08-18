@@ -15,9 +15,9 @@ using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    [Export(typeof(ILoanPrelimenaryEvaluationRepository))]
+    [Export(typeof(ILoanPreliminaryEvaluationRepository))]
     [PartCreationPolicy(CreationPolicy.NonShared)]
-    public class LoanPrelimenaryEvaluationRepository : ILoanPrelimenaryEvaluationRepository
+    public class LoanPreliminaryEvaluationRepository : ILoanPreliminaryEvaluationRepository
     {
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
@@ -26,7 +26,7 @@ namespace FintrakBanking.Repositories.Credit
         private IApprovalLevelStaffRepository level;
 
 
-        public LoanPrelimenaryEvaluationRepository(IAuditTrailRepository _auditTrail,
+        public LoanPreliminaryEvaluationRepository(IAuditTrailRepository _auditTrail,
                                     IGeneralSetupRepository _genSetup, IWorkFlowRepository _workFlow,
         FinTrakBankingContext _context, IApprovalLevelStaffRepository _level)
         {
@@ -42,7 +42,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool AddPrelimenaryEvaluation(LoanPrelimenaryEvaluationViewModel model)
+        public bool AddPreliminaryEvaluation(LoanPreliminaryEvaluationViewModel model)
         {
             if (model == null)
             {
@@ -54,7 +54,6 @@ namespace FintrakBanking.Repositories.Credit
             var penRecord = new tbl_Loan_Preliminary_Evaluation()
             {
                 PreliminaryEvaluationCode = GeneratePENCode(model.companyId),
-                AccountOfficer = model.accountOfficer,
                 BankParticipationJustification = model.bankParticipationJustification,
                 BankRole = model.bankRole,
                 BranchId = model.userBranchId,
@@ -89,7 +88,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var auditRecord = new tbl_Audit()
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanPrelimenaryEvaluation,
+                AuditTypeId = (short)AuditTypeEnum.LoanPreliminaryEvaluation,
                 BranchId = model.userBranchId,
                 StaffId = model.createdBy,
                 Detail = $"Created Prelimenary Evaluation with code ({model.preliminaryEvaluationCode}) for customer {customerRecord.FirstName} {customerRecord.LastName}",
@@ -99,7 +98,7 @@ namespace FintrakBanking.Repositories.Credit
                 ApplicationDate = genSetup.GetApplicationDate(),
             };
 
-            if (workFlow.CheckRouteForOperation((int)Operations.LoanPrelimenaryEvaluation, penRecord.CompanyId))
+            if (workFlow.CheckRouteForOperation((int)Operations.LoanPreliminaryEvaluation, penRecord.CompanyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -116,7 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = penRecord.CompanyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = penRecord.LoanPreliminaryEvaluationId,
-                            operationId = (int)Operations.LoanPrelimenaryEvaluation,
+                            operationId = (int)Operations.LoanPreliminaryEvaluation,
                             BranchId = model.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -150,9 +149,9 @@ namespace FintrakBanking.Repositories.Credit
             return penCode;
         }
 
-        public IEnumerable<LoanPrelimenaryEvaluationViewModel> GetPrelimenaryEvaluationsAwaitingApproval(int staffId, int companyId)
+        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetPreliminaryEvaluationsAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.LoanPrelimenaryEvaluation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.LoanPreliminaryEvaluation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -162,12 +161,12 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.tbl_Branch on pen.BranchId equals br.BranchId
                         join atrail in context.tbl_Approval_Trail on pen.LoanPreliminaryEvaluationId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && pen.IsCurrent == true
-                              && atrail.OperationId == (int)Operations.LoanPrelimenaryEvaluation && atrail.ToApprovalLevelId == staffApprovalLevelId
-                        select new LoanPrelimenaryEvaluationViewModel()
+                              && atrail.OperationId == (int)Operations.LoanPreliminaryEvaluation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                        select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.CompanyId,
                             companyName = pen.tbl_Company.Name,
-                            accountOfficer = pen.AccountOfficer,
+                            loanPreliminaryEvaluationId = pen.LoanPreliminaryEvaluationId,
                             preliminaryEvaluationCode = pen.PreliminaryEvaluationCode,
                             bankParticipationJustification = pen.BankParticipationJustification,
                             bankRole = pen.BankRole,
@@ -194,6 +193,8 @@ namespace FintrakBanking.Repositories.Credit
                             prudentialExposureLimitImplications = pen.PrudentialExposureLimitImplications,
                             relationshipManagerId = pen.RelationshipManagerId,
                             relationshipOfficerId = pen.RelationshipOfficerId,
+                            taxIdentificationNumber = pen.TaxIdentificationNumber,
+                            registrationNumber = pen.RegistrationNumber,
                             operationId = atrail.OperationId,
                         });
             return data;
@@ -201,13 +202,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.LoanPrelimenaryEvaluation;
+            entity.operationId = (int)Operations.LoanPreliminaryEvaluation;
 
             var response = workFlow.GoForApproval(entity);
 
             if (response.Result.Item1)
             {
-                return ApprovePrelimenaryEvaluation(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApprovePreliminaryEvaluation(entity.targetId, response.Result.Item2.approvalStatusId, entity);
             }
             else
             {
@@ -215,10 +216,11 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private bool ApprovePrelimenaryEvaluation(int loanPenId, short approvalStatusId, UserInfo user)
+        private bool ApprovePreliminaryEvaluation(int loanPenId, short approvalStatusId, UserInfo user)
         {
             var penRecord = context.tbl_Loan_Preliminary_Evaluation.Find(loanPenId);
 
+            penRecord.IsCurrent = false;
             penRecord.ApprovalStatusId = approvalStatusId;
             penRecord.DateApproved = DateTime.Now;
             penRecord.DateTimeUpdated = DateTime.Now;
@@ -226,7 +228,7 @@ namespace FintrakBanking.Repositories.Credit
             // Audit Section ---------------------------
             var audit = new tbl_Audit
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanPrelimenaryEvaluation,
+                AuditTypeId = (short)AuditTypeEnum.LoanPreliminaryEvaluation,
                 StaffId = user.staffId,
                 BranchId = (short)user.BranchId,
                 Detail = $"Approved Prelimenary Evaluation with code ({penRecord.PreliminaryEvaluationCode})",
@@ -241,6 +243,49 @@ namespace FintrakBanking.Repositories.Credit
 
             return this.context.SaveChanges() > 0;
 
+        }
+
+        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanPreliminaryEvaluations()
+        {
+            var data = (from p in context.tbl_Loan_Preliminary_Evaluation
+                        join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
+                        join br in context.tbl_Branch on p.BranchId equals br.BranchId
+                        where p.IsCurrent == false && p.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
+                        select new LoanPreliminaryEvaluationViewModel()
+                        {
+                            companyId = p.CompanyId,
+                            companyName = p.tbl_Company.Name,
+                            preliminaryEvaluationCode = p.PreliminaryEvaluationCode,
+                            bankParticipationJustification = p.BankParticipationJustification,
+                            bankRole = p.BankRole,
+                            branchId = br.BranchId,
+                            branchName = br.BranchName,
+                            businessProfile = p.BusinessProfile,
+                            clientDescription = p.ClientDescription,
+                            collateralArrangement = p.CollateralArrangement,
+                            commercialViabilityAssessment = p.CommercialViabilityAssessment,
+                            customerId = p.CustomerId,
+                            customerName = p.tbl_Customer.FirstName + " " + p.tbl_Customer.LastName,
+                            environmentalImpact = p.EnvironmentalImpact,
+                            exisitingExposure = p.ExistingExposure,
+                            implementationArrangements = p.ImplementationArrangements,
+                            marketDemand = p.MarketDemand,
+                            ownershipStructure = p.OwnershipStructure,
+                            portfolioStrategicAlignment = p.PortfolioStrategicAlignment,
+                            projectDescription = p.ProjectDescription,
+                            projectFinancingPlan = p.ProjectFinancingPlan,
+                            proposedTermsAndConditions = p.ProposedTermsAndConditions,
+                            riskMitigants = p.RiskMitigants,
+                            risksAndConcerns = p.RisksAndConcerns,
+                            sustainableBankingImplications = p.SustainableBankingImplications,
+                            prudentialExposureLimitImplications = p.PrudentialExposureLimitImplications,
+                            relationshipManagerId = p.RelationshipManagerId,
+                            relationshipOfficerId = p.RelationshipOfficerId,
+                            taxIdentificationNumber = p.TaxIdentificationNumber,
+                            registrationNumber = p.RegistrationNumber,
+                        }).ToList();
+
+            return data;
         }
     }
 }

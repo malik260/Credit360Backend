@@ -19,6 +19,8 @@ namespace FintrakBanking.APICore.Controllers
     {
         private ICustomerRepository repo;
 
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
+
         public CustomerController(ICustomerRepository _repo)
         {
             this.repo = _repo;
@@ -31,7 +33,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;
 
                 entity.userBranchId = (short)token.GetBranchId;
                 //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -61,7 +62,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;
                 UserInfo user = new UserInfo()
                 {
                     BranchId = token.GetBranchId,
@@ -96,8 +96,6 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetCustomer(custormerId);
                 if (data != null)
                 {
@@ -121,7 +119,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.GetCustomerByBranchId(token.GetBranchId);
                 if (!data.Any())
                 {
@@ -165,7 +162,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.CustomerSearch(token.GetCompanyId, search);
                 if (!data.Any())
                 {
@@ -183,13 +179,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("customer-search/realtime/")]
+        public HttpResponseMessage SearchCustomerRealTime(string searchQuery)
+        {
+            try
+            {
+                var data = repo.CustomerSearchRealTime(token.GetCompanyId, searchQuery);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                     new { success = true, result = data.ToList() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [Route("customer-search")]
         public HttpResponseMessage SearchCustomer([FromBody] CustomerSearchItemViewModels search)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.CustomerSearch(token.GetCompanyId, search);
                 if (!data.Any())
                 {
@@ -281,7 +293,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 entity.userBranchId = (short)token.GetBranchId;
                 //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;

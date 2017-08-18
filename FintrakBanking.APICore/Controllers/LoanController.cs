@@ -51,7 +51,8 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpGet][Route("loan-types")]
+        [HttpGet]
+        [Route("loan-types")]
         public HttpResponseMessage GetAllLoanTypes()
         {
             try
@@ -70,7 +71,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("loan-schedule-category")]
+        [HttpGet]
+        [Route("loan-schedule-category")]
         public HttpResponseMessage GetAllLoanScheduleCategory()
         {
             try
@@ -89,7 +91,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("loan-schedule-types")]
+        [HttpGet]
+        [Route("loan-schedule-types")]
         public HttpResponseMessage GetAllLoanScheduleType()
         {
             try
@@ -109,7 +112,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet][Route("loan-schedule-types/category/{categoryId}")]
+        [HttpGet]
+        [Route("loan-schedule-types/category/{categoryId}")]
         public HttpResponseMessage GetLoanScheduleTypeByCategory(short categoryId)
         {
             try
@@ -129,7 +133,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost][Route("loan-booking")]
+        [HttpPost]
+        [Route("loan-booking")]
         public HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
         {
             try
@@ -157,7 +162,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("number-of-installments/tenor-mode/{tenorModeId}/frequency-type/{frequencyTypeId}/tenor/{tenor}")]
+        [HttpGet]
+        [Route("number-of-installments/tenor-mode/{tenorModeId}/frequency-type/{frequencyTypeId}/tenor/{tenor}")]
         public HttpResponseMessage GetNumberOfInstallments(short tenorModeId, short frequencyTypeId, int tenor)
         {
             try
@@ -174,7 +180,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("{loanId}")]
+        [HttpGet]
+        [Route("{loanId}")]
         public HttpResponseMessage GetLoan(int loanId)
         {
             try
@@ -191,7 +198,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("find/{searchCriteria}")]
+        [HttpGet]
+        [Route("customer/{customerId}")]
+        public HttpResponseMessage GetCustomerLoans(int customerId)
+        {
+            try
+            {
+                var data = repo.GetLoanByCustomerId(customerId);
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("find/{searchCriteria}")]
         public HttpResponseMessage FindLoan(string searchCriteria)
         {
             try
@@ -208,7 +237,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost][Route("loan-search")]
+        [HttpPost]
+        [Route("loan-search")]
         public HttpResponseMessage SearchLoan([FromBody] LoanSearchViewModel searchModel)
         {
             try
@@ -228,7 +258,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("first-pay-date/effective-date/{effectiveDate}/frequency-type/{frequencyTypeId}")]
+        [HttpGet]
+        [Route("first-pay-date/effective-date/{effectiveDate}/frequency-type/{frequencyTypeId}")]
         public HttpResponseMessage GetFirstPayDate(DateTime effectiveDate, short frequencyTypeId)
         {
             try
@@ -245,7 +276,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost][Route("schedule")]
+        [HttpPost]
+        [Route("schedule")]
         public HttpResponseMessage GenerateLoanSchedule([FromBody] LoanPaymentScheduleInput input)
         {
             try

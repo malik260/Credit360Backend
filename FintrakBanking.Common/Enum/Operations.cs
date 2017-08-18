@@ -16,6 +16,6 @@ namespace FintrakBanking.Common.Enum
         CustomerGroupCreation = 8,
         CAM = 9,
         FeeCreation = 10,
-        LoanPrelimenaryEvaluation = 11
+        LoanPreliminaryEvaluation = 11
     }
 }

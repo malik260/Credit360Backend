@@ -14,5 +14,17 @@
         public string previousCreditRating { get; set; }
     }
 
-
+    public class CustomerCompanyDirectorsViewModels : GeneralEntity
+    {
+        public int companyDirectorId { get; set; }
+        public int customerId { get; set; }
+        public string customerName { get; set; }
+        public string surname { get; set; }
+        public string firstname { get; set; }
+        public string bankVerificationNumber { get; set; }
+        public int companyDirectorTypeId { get; set; }
+        public string companyDirectorTypeName { get; set; }
+        public int numberOfShares { get; set; }
+        public bool isPoliticallyExposed { get; set; }
+    }
 }

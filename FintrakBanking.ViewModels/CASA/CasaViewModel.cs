@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Customer;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -46,12 +47,28 @@ namespace FintrakBanking.ViewModels.CASA
         public string refreshBatchId { get; set; }
         public DateTime ? lastRefreshDatetime { get; set; }
         public short ? aprovalStatusId { get; set; }
-        //public int createdBy { get; set; }
-        //public int? lastUpdatedBy { get; set; }
-        //public DateTime? dateTimeCreated { get; set; }
-        //public DateTime? dateTimeUpdated { get; set; }
-        //public bool deleted { get; set; }
-        //public int deletedBy { get; set; }
-        //public DateTime dateTimeDeleted { get; set; }
+    }
+
+    public class CasaCustomerSearchViewModel: CasaViewModel
+    {
+        public CasaCustomerSearchViewModel()
+        {
+            customerBvnInformation = new List<CustomerBvnViewModels>();
+            customerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
+        }
+        
+        public int productClassId { get; set; }
+        public string productClassName { get; set; }
+        public int customerSectorId { get; set; }
+        public string customerSectorName { get; set; }
+        public int subSectorId { get; set; }
+        public string subSectorName { get; set; }
+        public string relationshipManagerName { get; set; }
+        public string relationshipOfficerName { get; set; }
+        public string accountHolder { get; set; }
+
+        public List<CustomerBvnViewModels> customerBvnInformation { get; set; }
+        public List<CustomerCompanyDirectorsViewModels> customerCompanyDirectors { get; set; }
+
     }
 }

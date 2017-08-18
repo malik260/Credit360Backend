@@ -337,6 +337,84 @@ namespace FintrakBanking.Repositories.Credit
                 return "";
         }
 
+        private IQueryable<LoanViewModel> GetAllLoans()
+        {
+            var data = (from l in context.tbl_Loan
+                        select new LoanViewModel()
+                        {
+                            loanId = l.LoanId,
+                            customerId = l.CustomerId,
+                            customerName = l.tbl_Customer.FirstName + " " + l.tbl_Customer.LastName,
+                            productId = l.ProductId,
+                            companyId = l.CompanyId,
+                            casaAccountId = l.CasaAccountId,
+                            branchId = l.BranchId,
+                            branchName = l.tbl_Branch.BranchName,
+                            loanReferenceNumber = l.LoanReferenceNumber,
+                            tenor = l.Tenor,
+                            //tenorModeId = l.TenorModeId,
+                            principalFrequencyTypeId = l.PrincipalFrequencyTypeId,
+                            interestFrequencyTypeId = l.InterestFrequencyTypeId,
+                            feeFrequencyTypeId = l.FeeFrequencyTypeId,
+                            principalNumberOfInstallment = l.PrincipalNumberOfInstallment,
+                            interestNumberOfInstallment = l.InterestNumberOfInstallment,
+                            relationshipOfficerId = l.RelationshipOfficerId,
+                            relationshipManagerId = l.RelationshipManagerId,
+                            misCode = l.MISCode,
+                            teamMiscode = l.TeamMISCode,
+                            interestRate = l.InterestRate,
+                            effectiveDate = l.EffectiveDate,
+                            terminalDate = l.TerminalDate,
+                            dateCreated = l.DateCreated,
+                            principalAmount = l.PrincipalAmount,
+                            principalInstallmentLeft = l.PrincipalInstallmentLeft,
+                            interestInstallmentLeft = l.InterestInstallmentLeft,
+                            approvalStatusId = l.ApprovalStatusId,
+                            approvedBy = l.ApprovedBy,
+                            approverComment = l.ApproverComment,
+                            dateApproved = l.DateApproved,
+                            loanStatusId = l.LoanStatusId,
+                            scheduleTypeId = l.ScheduleTypeId,
+                            isDisbursed = l.IsDisbursed,
+                            disbursedBy = l.DisbursedBy,
+                            disburserComment = l.DisburserComment,
+                            disburseDate = l.DisburseDate,
+                            approvedAmount = l.ApprovedAmount,
+                            //creditAppraisalCompleted = l.CreditAppraisalCompleted,
+                            operationId = l.OperationId,
+                            //hasLien = l.HasLien,
+                            //hasOfferLetter = l.HasOfferLetter,
+                            customerGroupId = l.CustomerGroupId,
+                            loanTypeId = l.LoanTypeId,
+                            loanTypeName = l.tbl_Loan_Type.LoanTypeName,
+                            loanTypeBatchId = l.LoanTypeBatchId,
+                            trancheBatchCode = l.TrancheBatchCode,
+                            equityContribution = l.EquityContribution,
+                            feePercent = l.FeePercent,
+                            firstPrincipalPaymentDate = l.FirstPrincipalPaymentDate,
+                            firstInterestPaymentDate = l.FirstInterestPaymentDate,
+                            outstandingPrincipal = l.OutstandingPrincipal,
+                            principalAdditionCount = l.PrincipalAdditionCount,
+                            principalReductionCount = l.PrincipalReductionCount,
+                            fixedPrincipal = l.FixedPrincipal,
+                            profileLoan = l.ProfileLoan,
+                            dischargeLetter = l.DischargeLetter,
+                            suspendInterest = l.SuspendInterest,
+                            //canDisburse = l.CanDisburse,
+                            //booked = l.Booked,
+                            //scheduled = l.Scheduled,
+                            customerSensitivityLevelId = l.CustomerSensitivityLevelId,
+                            createdBy = l.CreatedBy,
+                            dateTimeCreated = l.DateTimeCreated
+                        });
+            return data;
+        }
+
+        public IEnumerable<LoanViewModel> GetLoanByCustomerId(int customerId)
+        {
+            return GetAllLoans().Where(l => l.customerId == customerId);
+        }
+
         public LoanViewModel GetLoan(int loanId)
         {
             return (from data in context.tbl_Loan

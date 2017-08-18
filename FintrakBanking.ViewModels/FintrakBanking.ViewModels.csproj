@@ -58,7 +58,7 @@
     <Compile Include="Credit\LoanCovenantDetailViewModel.cs" />
     <Compile Include="Credit\LoanPaymentScheduleInput.cs" />
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
-    <Compile Include="Credit\LoanPrelimenaryEvaluationViewModel.cs" />
+    <Compile Include="Credit\LoanPreliminaryEvaluationViewModel.cs" />
     <Compile Include="Credit\LoanViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
     <Compile Include="Customer\CustomerAddressViewModels.cs" />

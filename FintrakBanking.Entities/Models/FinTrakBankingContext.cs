@@ -52,6 +52,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Customer_Address> tbl_Customer_Address { get; set; }
         public virtual DbSet<tbl_Customer_Blacklist> tbl_Customer_Blacklist { get; set; }
         public virtual DbSet<tbl_Customer_BVN> tbl_Customer_BVN { get; set; }
+        public virtual DbSet<tbl_Customer_Company_Director> tbl_Customer_Company_Director { get; set; }
+        public virtual DbSet<tbl_Customer_Company_DirectorType> tbl_Customer_Company_DirectorType { get; set; }
         public virtual DbSet<tbl_Customer_CompanyInfomation> tbl_Customer_CompanyInfomation { get; set; }
         public virtual DbSet<tbl_Customer_Custom_Field> tbl_Customer_Custom_Field { get; set; }
         public virtual DbSet<tbl_Customer_Edit_History> tbl_Customer_Edit_History { get; set; }
@@ -159,6 +161,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Amortization_Schedule> tbl_Loan_Amortization_Schedule { get; set; }
         public virtual DbSet<tbl_Loan_Application> tbl_Loan_Application { get; set; }
         public virtual DbSet<tbl_Loan_Camsol> tbl_Loan_Camsol { get; set; }
+        public virtual DbSet<tbl_Loan_Collateral_Mapping> tbl_Loan_Collateral_Mapping { get; set; }
         public virtual DbSet<tbl_Loan_Comment> tbl_Loan_Comment { get; set; }
         public virtual DbSet<tbl_Loan_Covenant_Detail> tbl_Loan_Covenant_Detail { get; set; }
         public virtual DbSet<tbl_Loan_Covenant_Type> tbl_Loan_Covenant_Type { get; set; }
@@ -182,7 +185,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Solicitor> tbl_Solicitor { get; set; }
         public virtual DbSet<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
         public virtual DbSet<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
@@ -850,6 +853,12 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Customer)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<tbl_Customer_Company_DirectorType>()
+                .HasMany(e => e.tbl_Customer_Company_Director)
+                .WithRequired(e => e.tbl_Customer_Company_DirectorType)
+                .HasForeignKey(e => e.CompanyDirectorTypeId)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<tbl_Customer_FS_Caption>()
                 .HasMany(e => e.tbl_Customer_FS_Caption_Detail)
                 .WithRequired(e => e.tbl_Customer_FS_Caption)
@@ -891,6 +900,11 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Customer_FS_Ratio_ValueType>()
                 .HasMany(e => e.tbl_Customer_FS_Ratio_Detail)
                 .WithRequired(e => e.tbl_Customer_FS_Ratio_ValueType)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer_Group>()
+                .HasMany(e => e.tbl_Customer_Group_Mapping)
+                .WithRequired(e => e.tbl_Customer_Group)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Customer_Group_RelationshipType>()
@@ -1521,6 +1535,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Collateral_Customer>()
+                .HasMany(e => e.tbl_Loan_Collateral_Mapping)
+                .WithRequired(e => e.tbl_Collateral_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
                 .HasMany(e => e.tbl_Temp_Collateral_Policy)
                 .WithRequired(e => e.tbl_Collateral_Customer)
                 .WillCascadeOnDelete(false);
@@ -1905,6 +1924,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Loan>()
                 .HasMany(e => e.tbl_Loan_Camsol)
+                .WithRequired(e => e.tbl_Loan)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .HasMany(e => e.tbl_Loan_Collateral_Mapping)
                 .WithRequired(e => e.tbl_Loan)
                 .WillCascadeOnDelete(false);
 
