@@ -97,7 +97,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetCustomer(custormerId);
-                if (data != null)
+                if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
@@ -226,7 +226,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetCustomerByCompanyId(companyId);
-                if (!data.Any())
+                if (data == null )
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });

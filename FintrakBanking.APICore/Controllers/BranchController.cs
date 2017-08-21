@@ -84,6 +84,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var branch = repo.GetAllBranchByCompanyId(token.GetCompanyId);
                 return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
+
             }
             catch (System.Exception ex)
             {
