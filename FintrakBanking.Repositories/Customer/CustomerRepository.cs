@@ -12,9 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Customer
-{
-    [Export(typeof(ICustomerRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+{ 
     public class CustomerRepository : ICustomerRepository
     {
         private FinTrakBankingContext context;
@@ -441,11 +439,11 @@ namespace FintrakBanking.Repositories.Customer
 
         }
 
-        public IEnumerable<CustomerViewModels> GetCustomer(int custormerId)
+        public CustomerViewModels GetCustomer(int custormerId)
         {
 
-            return GetCustomers().Where(a => a.customerId == customerId);
-
+           var data = GetCustomers().Where(a => a.customerId == custormerId).FirstOrDefault();
+            return data;
         }
 
         public IEnumerable<CustomerViewModels> GetCustomerByBranchId(int branchId)

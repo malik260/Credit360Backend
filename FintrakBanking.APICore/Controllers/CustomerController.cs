@@ -90,16 +90,16 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("customer/{customerId}")]
-        public HttpResponseMessage GetCustomer(int custormerId)
+        [Route("customer/{id}")]
+        public HttpResponseMessage GetCustomer(int id)
         {
 
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var data = repo.GetCustomer(custormerId);
-                if (data != null)
+                var data = repo.GetCustomer(id);
+                if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
@@ -214,7 +214,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetCustomerByCompanyId(companyId);
-                if (!data.Any())
+                if (data == null )
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });

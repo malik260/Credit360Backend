@@ -260,21 +260,17 @@ namespace FintrakBanking.Repositories.Credit
 
                 EffectiveDate = entity.effectiveDate,
                 TerminalDate = entity.terminalDate,
-                //HasLien = false,
-                //HasOfferLetter = false,
+                
                 DischargeLetter = false,
                 SuspendInterest = false,
-                //CanDisburse = false,
-                //Booked = false,
-                //CreditAppraisalCompleted = false,
-                //Scheduled = entity.scheduled,
+            
                 CustomerId = entity.customerId,
                 ProductId =(short) entity.productId,
                 CompanyId = entity.companyId,
                 CasaAccountId = entity.casaAccountId,
                 BranchId = entity.branchId,                
                 Tenor = entity.tenor,
-                //TenorModeId = entity.tenorModeId,
+                
                 PrincipalFrequencyTypeId = entity.principalFrequencyTypeId,
                 InterestFrequencyTypeId = entity.interestFrequencyTypeId,
                 FeeFrequencyTypeId = entity.feeFrequencyTypeId,                
@@ -308,6 +304,7 @@ namespace FintrakBanking.Repositories.Credit
                 DateCreated = generalSetup.GetApplicationDate(),
                 CreatedBy = (int)entity.createdBy,
                 DateTimeCreated = generalSetup.GetApplicationDate()
+                  
             };
 
             context.tbl_Loan.Add(data);
