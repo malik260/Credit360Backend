@@ -271,14 +271,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     from c in another.DefaultIfEmpty()
                     where a.OperationId == operationId && a.CompanyId == companyId
                          select  new {
-                        RequestStaffName = $"{a.tbl_Staff.FirstName}  {a.tbl_Staff.LastName }" ,
+                        RequestStaffName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
                         RequestApprovalLevel = c == null ? "Initiation" : c.LevelName,
                         ArrivalDate = a.ArrivalDate.Date + a.SystemArrivalDateTime.Date.TimeOfDay  ,
                         
                         ApprovalStatus = d.ApprovalStatusName ,
 
                         ResponseDate = a.ResponseDate + a.SystemResponseDateTime.Value .Date.TimeOfDay,
-                        ResponseStaffName = $"{a.tbl_Staff.FirstName}  {a.tbl_Staff.LastName }",
+                        ResponseStaffName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
                         ResponseApprovalLevel = b.LevelName,
                         TargetId = a.TargetId 
                     })

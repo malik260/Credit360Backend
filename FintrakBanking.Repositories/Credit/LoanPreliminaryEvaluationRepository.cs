@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var penRecord = new tbl_Loan_Preliminary_Evaluation()
             {
-                PreliminaryEvaluationCode = GeneratePENCode(model.companyId),
+                PreliminaryEvaluationCode = GeneratePENCode(),
                 BankParticipationJustification = model.bankParticipationJustification,
                 BankRole = model.bankRole,
                 BranchId = model.userBranchId,
@@ -138,9 +138,9 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        private string GeneratePENCode(int companyId)
+        private string GeneratePENCode()
         {
-            var data = this.context.tbl_Loan_Preliminary_Evaluation.Count(x => x.CompanyId == companyId);
+            var data = this.context.tbl_Loan_Preliminary_Evaluation.Count();
             int counter = data + 1;
             var penCode = string.Empty;
 

@@ -295,6 +295,9 @@ namespace FintrakBanking.Repositories.CASA
                             subSectorName = sector.Name,
                             customerSectorId = sector.tbl_Sector.SectorId,
                             customerSectorName = sector.tbl_Sector.Name,
+                            taxIdentificationNumber = cust.TaxNumber,
+                            registrationNumber = cust.tbl_Customer_CompanyInfomation.FirstOrDefault(x => x.CustomerId == cust.CustomerId).RegistrationNumber,
+
                             customerTypeId = cust.CustomerTypeId,
                             customerTypeName = cust.tbl_Customer_Type.Name,
                             customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == casa.CustomerId).Select(b => new CustomerBvnViewModels()

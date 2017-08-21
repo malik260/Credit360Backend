@@ -71,5 +71,7 @@ namespace FintrakBanking.ViewModels.CASA
         public List<CustomerCompanyDirectorsViewModels> customerCompanyDirectors { get; set; }
         public short? customerTypeId { get; set; }
         public string customerTypeName { get; set; }
+        public string taxIdentificationNumber { get; set; }
+        public string registrationNumber { get; set; }
     }
 }
