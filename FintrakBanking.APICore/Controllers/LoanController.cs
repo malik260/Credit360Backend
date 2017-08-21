@@ -20,12 +20,14 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanController : ApiControllerBase
     {
         private ILoanRepository repo;
+        private ILoanScheduleRepository scheduleRepo;
         //private IHostingEnvironment _hostingEnvironment;
-        public LoanController(ILoanRepository _repo
+        public LoanController(ILoanRepository _repo, ILoanScheduleRepository _scheduleRepo
             //, IHostingEnvironment hostingEnvironment
             )
         {
             this.repo = _repo;
+            this.scheduleRepo = _scheduleRepo;
             //this._hostingEnvironment = hostingEnvironment;
         }
 
@@ -75,7 +77,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllLoanScheduleCategory();
+                var data = scheduleRepo.GetAllLoanScheduleCategory();
                 //if (!data.Any())
                 //{
                 //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -94,7 +96,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllLoanScheduleType();
+                var data = scheduleRepo.GetAllLoanScheduleType();
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -114,7 +116,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetLoanScheduleTypeByCategory(categoryId);
+                var data = scheduleRepo.GetLoanScheduleTypeByCategory(categoryId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -164,7 +166,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var data = repo.CalculateNumberOfInstallments((TenorModeEnum)tenorModeId, frequencyTypeId, tenor);
+                var data = scheduleRepo.CalculateNumberOfInstallments((TenorModeEnum)tenorModeId, frequencyTypeId, tenor);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
@@ -235,7 +237,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 //TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var data = repo.CalculateFirstPayDate(effectiveDate, frequencyTypeId);
+                var data = scheduleRepo.CalculateFirstPayDate(effectiveDate, frequencyTypeId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
@@ -245,25 +247,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost][Route("schedule")]
-        public HttpResponseMessage GenerateLoanSchedule([FromBody] LoanPaymentScheduleInput input)
-        {
-            try
-            {
-
-                var data = repo.GenerateLoanSchedule(input);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.Where(x => x.paymentNumber > 0).ToList() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
 
         [HttpPost]
         [Route("periodic-schedule")]
@@ -271,7 +254,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GeneratePeriodicLoanSchedule(loanInput);
+                var data = scheduleRepo.GeneratePeriodicLoanSchedule(loanInput);
 
                 if (!data.Any())
                 {
@@ -292,7 +275,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GenerateDailyLoanSchedule(loanInput);
+                var data = scheduleRepo.GenerateDailyLoanSchedule(loanInput);
 
                 if (!data.Any())
                 {

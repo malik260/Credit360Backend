@@ -35,8 +35,8 @@ namespace FintrakBanking.Repositories.AppEmail
             mailMessage.Subject = subject;
             // var bodyBuilder = new  BodyBuilder();
             mailMessage.IsBodyHtml = true;
-            mailMessage .Body  = message;
-            mailMessage .BodyEncoding = Encoding.ASCII;
+            mailMessage.Body  = message;
+            mailMessage.BodyEncoding = Encoding.ASCII;
 
             
             SmtpClient mClient = new SmtpClient();

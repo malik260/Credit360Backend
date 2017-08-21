@@ -153,6 +153,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<INotificationRepository>().To<NotificationRepository>();
             kernel.Bind<ITaxRepository>().To<TaxRepository>();
             kernel.Bind<IChargeFeeRepository>().To<ChargeFeeRepository>();
+            kernel.Bind<ILoanScheduleRepository>().To<LoanScheduleRepository>();
             kernel.Bind<IAppraisalMemorandumRepository>().To<AppraisalMemorandumRepository>();
             kernel.Bind<ICreditTemplateRepository>().To<CreditTemplateRepository>();
             kernel.Bind<ILoanDocumentRepository>().To<LoanDocumentRepository>();
