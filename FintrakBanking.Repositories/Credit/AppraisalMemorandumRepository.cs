@@ -34,7 +34,7 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.tbl_Credit_Appraisal_Memorandum.Where(x => x.Deleted == false).Select(x => new AppraisalMemorandumViewModel
             {
 
-                //appraisalMemorandumId = x.AppraisalMemorandumId,
+                appraisalMemorandumId = x.AppraisalMemorandumId,
                 loanApplicationId = x.LoanApplicationId,
                 camRef = x.CAMRef,
                 isCompleted = x.IsCompleted,
@@ -77,6 +77,8 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
+            this.FlagSubmittedForAppraisal(model.loanApplicationId);
+
             context.SaveChanges();
 
             return new AppraisalMemorandumViewModel
@@ -91,7 +93,18 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        public string GetUniqueReferenceNumber(int type)
+        private bool FlagSubmittedForAppraisal(int id)
+        {
+            var application = context.tbl_Loan_Application.Find(id);
+            if (application != null)
+            {
+                application.SubmittedForAppraisal = true;
+                return true;
+            }
+            return false;
+        }
+
+        private string GetUniqueReferenceNumber(int type)
         {
             int size = 16;
             byte[] data = new byte[size];

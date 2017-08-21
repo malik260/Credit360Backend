@@ -56,6 +56,7 @@
     <Compile Include="Credit\LimitViewModel.cs" />
     <Compile Include="Credit\LoanApplicationViewModel.cs" />
     <Compile Include="Credit\LoanCovenantDetailViewModel.cs" />
+    <Compile Include="Credit\LoanDocumentViewModel.cs" />
     <Compile Include="Credit\LoanPaymentScheduleInput.cs" />
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
     <Compile Include="Credit\LoanViewModel.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Setups\Credit\ChecklistViewModel.cs" />
     <Compile Include="Setups\Credit\CollateralLocationsViewModel.cs" />
     <Compile Include="Setups\Credit\CollateralTypeViewModel.cs" />
+    <Compile Include="Setups\Credit\CreditTemplateViewModel.cs" />
     <Compile Include="Setups\Credit\CustomFieldsViewModel.cs" />
     <Compile Include="Setups\Credit\LoanCovenantTypeViewModel.cs" />
     <Compile Include="Setups\Finance\AccountCategoryViewModel.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="Setups\Risk\RiskRatingViewModel.cs" />
     <Compile Include="UserInfo.cs" />
     <Compile Include="WorkFlow\ApprovalViewModel.cs" />
+    <Compile Include="WorkFlow\JobRequestViewModel.cs" />
     <Compile Include="WorkFlow\WorkflowTrackerViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

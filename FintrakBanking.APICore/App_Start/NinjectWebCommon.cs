@@ -98,7 +98,8 @@ namespace FintrakBanking.APICore.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<FinTrakBankingContext>().To<FinTrakBankingContext>();
-
+            kernel.Bind<FinTrakBankingDocumentsContext>().To<FinTrakBankingDocumentsContext>();
+            
             kernel.Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
             kernel.Bind<IAuthenticationRepository>().To<AuthenticationRepository>();
             kernel.Bind<IAuthorizationRepository>().To<AuthorizationRepository>();
@@ -153,7 +154,11 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ITaxRepository>().To<TaxRepository>();
             kernel.Bind<IChargeFeeRepository>().To<ChargeFeeRepository>();
             kernel.Bind<IAppraisalMemorandumRepository>().To<AppraisalMemorandumRepository>();
-        }        
+            kernel.Bind<ICreditTemplateRepository>().To<CreditTemplateRepository>();
+            kernel.Bind<ILoanDocumentRepository>().To<LoanDocumentRepository>();
+            kernel.Bind<IJobRequestRepository>().To<JobRequestRepository>();
+
+        }
     }
     
 }

@@ -47,9 +47,11 @@
     <Compile Include="AppEmail\IEmailRepository.cs" />
     <Compile Include="CASA\ICasaRepository.cs" />
     <Compile Include="Credit\IAppraisalMemorandumRepository.cs" />
+    <Compile Include="Credit\ICreditTemplateRepository.cs" />
     <Compile Include="Credit\ICustomerCollateralRepository.cs" />
     <Compile Include="Credit\ILimitRepository.cs" />
     <Compile Include="Credit\ILoanApplicationRepository.cs" />
+    <Compile Include="Credit\ILoanDocumentRepository.cs" />
     <Compile Include="Credit\ILoanRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionGroupRepository.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="Setups\General\IRankRepository.cs" />
     <Compile Include="Setups\General\IStaffRepository.cs" />
     <Compile Include="Setups\Risk\IRiskSetupRepository.cs" />
+    <Compile Include="WorkFlow\IJobRequestRepository.cs" />
     <Compile Include="WorkFlow\IWorkFlowRepository.cs" />
   </ItemGroup>
   <ItemGroup>
