@@ -68,11 +68,15 @@
     <Compile Include="AppEmail\EmailRepository.cs" />
     <Compile Include="CASA\CasaRepository.cs" />
     <Compile Include="Credit\AppraisalMemorandumRepository.cs" />
+    <Compile Include="Credit\CreditTemplateRepository.cs" />
     <Compile Include="Credit\CustomerCollateralRepository.cs" />
     <Compile Include="Credit\LimitRepository.cs" />
     <Compile Include="Credit\LoanApplicationRepository.cs" />
     <Compile Include="Credit\LoanCovenantRepository.cs" />
+    <Compile Include="Credit\LoanPreliminaryEvaluationRepository.cs" />
+    <Compile Include="Credit\LoanDocumentRepository.cs" />
     <Compile Include="Credit\LoanRepository.cs" />
+    <Compile Include="Credit\LoanScheduleRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionGroupRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionRepository.cs" />
@@ -115,6 +119,7 @@
     <Compile Include="Setups\General\RankRepository.cs" />
     <Compile Include="Setups\General\StaffRepository.cs" />
     <Compile Include="Setups\Risk\RiskRepository.cs" />
+    <Compile Include="WorkFlow\JobRequestRepository.cs" />
     <Compile Include="WorkFlow\WorkFlowRepository.cs" />
   </ItemGroup>
   <ItemGroup>

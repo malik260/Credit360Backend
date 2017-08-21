@@ -28,6 +28,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsValidBVN { get; set; }
 
+        public bool IsPoliticallyExposed { get; set; }
+
         public int CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }

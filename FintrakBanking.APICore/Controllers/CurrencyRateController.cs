@@ -23,6 +23,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+
         [HttpGet][Route("currency")]
         public HttpResponseMessage GetCurrency()
         {

@@ -20,12 +20,14 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanController : ApiControllerBase
     {
         private ILoanRepository repo;
+        private ILoanScheduleRepository scheduleRepo;
         //private IHostingEnvironment _hostingEnvironment;
-        public LoanController(ILoanRepository _repo
+        public LoanController(ILoanRepository _repo, ILoanScheduleRepository _scheduleRepo
             //, IHostingEnvironment hostingEnvironment
             )
         {
             this.repo = _repo;
+            this.scheduleRepo = _scheduleRepo;
             //this._hostingEnvironment = hostingEnvironment;
         }
 
@@ -51,7 +53,8 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpGet][Route("loan-types")]
+        [HttpGet]
+        [Route("loan-types")]
         public HttpResponseMessage GetAllLoanTypes()
         {
             try
@@ -70,12 +73,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("loan-schedule-category")]
+        [HttpGet]
+        [Route("loan-schedule-category")]
         public HttpResponseMessage GetAllLoanScheduleCategory()
         {
             try
             {
-                var data = repo.GetAllLoanScheduleCategory();
+                var data = scheduleRepo.GetAllLoanScheduleCategory();
                 //if (!data.Any())
                 //{
                 //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -89,12 +93,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("loan-schedule-types")]
+        [HttpGet]
+        [Route("loan-schedule-types")]
         public HttpResponseMessage GetAllLoanScheduleType()
         {
             try
             {
-                var data = repo.GetAllLoanScheduleType();
+                var data = scheduleRepo.GetAllLoanScheduleType();
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -109,12 +114,13 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet][Route("loan-schedule-types/category/{categoryId}")]
+        [HttpGet]
+        [Route("loan-schedule-types/category/{categoryId}")]
         public HttpResponseMessage GetLoanScheduleTypeByCategory(short categoryId)
         {
             try
             {
-                var data = repo.GetLoanScheduleTypeByCategory(categoryId);
+                var data = scheduleRepo.GetLoanScheduleTypeByCategory(categoryId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -129,7 +135,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost][Route("loan-booking")]
+        [HttpPost]
+        [Route("loan-booking")]
         public HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
         {
             try
@@ -157,14 +164,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("number-of-installments/tenor-mode/{tenorModeId}/frequency-type/{frequencyTypeId}/tenor/{tenor}")]
+        [HttpGet]
+        [Route("number-of-installments/tenor-mode/{tenorModeId}/frequency-type/{frequencyTypeId}/tenor/{tenor}")]
         public HttpResponseMessage GetNumberOfInstallments(short tenorModeId, short frequencyTypeId, int tenor)
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var data = repo.CalculateNumberOfInstallments((TenorModeEnum)tenorModeId, frequencyTypeId, tenor);
+                var data = scheduleRepo.CalculateNumberOfInstallments((TenorModeEnum)tenorModeId, frequencyTypeId, tenor);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
@@ -174,7 +182,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("{loanId}")]
+        [HttpGet]
+        [Route("{loanId}")]
         public HttpResponseMessage GetLoan(int loanId)
         {
             try
@@ -191,7 +200,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("find/{searchCriteria}")]
+        [HttpGet]
+        [Route("customer/{customerId}")]
+        public HttpResponseMessage GetCustomerLoans(int customerId)
+        {
+            try
+            {
+                var data = repo.GetLoanByCustomerId(customerId);
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("find/{searchCriteria}")]
         public HttpResponseMessage FindLoan(string searchCriteria)
         {
             try
@@ -208,7 +239,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost][Route("loan-search")]
+        [HttpPost]
+        [Route("loan-search")]
         public HttpResponseMessage SearchLoan([FromBody] LoanSearchViewModel searchModel)
         {
             try
@@ -228,14 +260,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet][Route("first-pay-date/effective-date/{effectiveDate}/frequency-type/{frequencyTypeId}")]
+        [HttpGet]
+        [Route("first-pay-date/effective-date/{effectiveDate}/frequency-type/{frequencyTypeId}")]
         public HttpResponseMessage GetFirstPayDate(DateTime effectiveDate, short frequencyTypeId)
         {
             try
             {
                 //TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                var data = repo.CalculateFirstPayDate(effectiveDate, frequencyTypeId);
+                var data = scheduleRepo.CalculateFirstPayDate(effectiveDate, frequencyTypeId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
@@ -245,25 +278,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost][Route("schedule")]
-        public HttpResponseMessage GenerateLoanSchedule([FromBody] LoanPaymentScheduleInput input)
-        {
-            try
-            {
-
-                var data = repo.GenerateLoanSchedule(input);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.Where(x => x.paymentNumber > 0).ToList() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
 
         [HttpPost]
         [Route("periodic-schedule")]
@@ -271,7 +285,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GeneratePeriodicLoanSchedule(loanInput);
+                var data = scheduleRepo.GeneratePeriodicLoanSchedule(loanInput);
 
                 if (!data.Any())
                 {
@@ -292,7 +306,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GenerateDailyLoanSchedule(loanInput);
+                var data = scheduleRepo.GenerateDailyLoanSchedule(loanInput);
 
                 if (!data.Any())
                 {
