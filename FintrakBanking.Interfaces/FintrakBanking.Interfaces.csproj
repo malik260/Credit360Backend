@@ -51,6 +51,7 @@
     <Compile Include="Credit\ILimitRepository.cs" />
     <Compile Include="Credit\ILoanApplicationRepository.cs" />
     <Compile Include="Credit\ILoanRepository.cs" />
+    <Compile Include="Credit\ILoanScheduleRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionGroupRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionRepository.cs" />
