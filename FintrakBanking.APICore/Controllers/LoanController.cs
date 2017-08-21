@@ -278,12 +278,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("schedule")]
-        public HttpResponseMessage GenerateLoanSchedule([FromBody] LoanPaymentScheduleInput input)
-        {
-            try
-            {
 
         [HttpPost]
         [Route("periodic-schedule")]
