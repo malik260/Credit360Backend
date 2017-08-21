@@ -283,6 +283,7 @@
     <Compile Include="Controllers\FeeController.cs" />
     <Compile Include="Controllers\GeneralSetupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ImageUploadController.cs" />
     <Compile Include="Controllers\JobTitleController.cs" />
     <Compile Include="Controllers\LimitController.cs" />
     <Compile Include="Controllers\LoanApplicationController.cs" />
