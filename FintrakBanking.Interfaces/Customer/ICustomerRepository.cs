@@ -1,13 +1,14 @@
 ﻿using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Customer
 {
     public interface ICustomerRepository
     {
-        IEnumerable<CustomerViewModels> GetCustomer(int custormerId);
+         CustomerViewModels GetCustomer(int custormerId);
 
         IEnumerable<CustomerViewModels> GetCustomerByBranchId(int branchId);
 
@@ -25,5 +26,9 @@ namespace FintrakBanking.Interfaces.Customer
 
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search) ;
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
+        IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
+
+        IEnumerable<CustomerSectorViewModel> GetCustomerSectors();
+        IEnumerable<CustomerSectorViewModel> GetCustomerSectorBySubSectorId(short ssId);
     }
 }

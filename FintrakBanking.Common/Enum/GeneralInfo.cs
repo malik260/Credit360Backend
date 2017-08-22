@@ -60,8 +60,13 @@ namespace FintrakBanking.Common.Enum
         FeeApproved = 125,
 
 
+        JobRequestAdded = 119, JobRequestUpdated = 120, JobRequestDeleted = 121,
 
+        CreditTemplateAdded = 119, CreditTemplateUpdated = 120, CreditTemplateDeleted = 121,
+        LoanDocumentAdded = 119, LoanDocumentUpdated = 120, LoanDocumentDeleted = 121,
         AppraisalMemorandumAdded = 119, AppraisalMemorandumUpdated = 120, AppraisalMemorandumDeleted = 121,
+        JobTypeAdded = 119, JobTypeUpdated = 120,
+        LoanPreliminaryEvaluation = 126,
     };
 
 

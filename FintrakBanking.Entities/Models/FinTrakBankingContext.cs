@@ -1066,10 +1066,6 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Job_Request)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<tbl_Job_Request>()
-                .HasOptional(e => e.tbl_Job_Request1)
-                .WithRequired(e => e.tbl_Job_Request2);
-
             modelBuilder.Entity<tbl_Job_Request_Status>()
                 .HasMany(e => e.tbl_Job_Request)
                 .WithRequired(e => e.tbl_Job_Request_Status)
@@ -1328,18 +1324,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Finance_Transaction1)
                 .WithRequired(e => e.tbl_Staff1)
                 .HasForeignKey(e => e.ApprovedBy)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Staff>()
-                .HasMany(e => e.tbl_Job_Request)
-                .WithRequired(e => e.tbl_Staff)
-                .HasForeignKey(e => e.SenderStaffId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Staff>()
-                .HasMany(e => e.tbl_Job_Request1)
-                .WithRequired(e => e.tbl_Staff1)
-                .HasForeignKey(e => e.ReceiverStaffId)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Staff>()
@@ -1935,6 +1919,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Loan>()
                 .HasMany(e => e.tbl_Loan_Camsol)
+                .WithRequired(e => e.tbl_Loan)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .HasMany(e => e.tbl_Loan_Collateral_Mapping)
                 .WithRequired(e => e.tbl_Loan)
                 .WillCascadeOnDelete(false);
 

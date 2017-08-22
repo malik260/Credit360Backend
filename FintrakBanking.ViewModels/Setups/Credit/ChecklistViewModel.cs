@@ -33,7 +33,6 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public String productClassName { get; set; }
         public String approvalLevelName { get; set; }
         public String checkListItemName { get; set; }
-        public String companyName { get; set; } 
         public List<MultipleChecklistItemsViewModel> checklistItems { get; set; }
     }
 

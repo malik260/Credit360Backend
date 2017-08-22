@@ -18,11 +18,14 @@ namespace FintrakBanking.Interfaces.Credit
 
         string AddLoanBooking(LoanViewModel entity);
 
+        IEnumerable<LoanViewModel> GetLoanByCustomerId(int customerId);
+
         LoanViewModel GetLoan(int loanId);
         
         IEnumerable<LoanViewModel> FindLoan(string referenceNumberOrName, int companyId);
 
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
+
 
         IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
 
@@ -42,5 +45,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanSchedule(LoanPaymentScheduleInputViewModel loanInput);
 
         List<LoanPaymentScheduleDailyViewModel> GenerateDailyLoanSchedule(LoanPaymentScheduleInputViewModel loanInput);
+
     }
 }

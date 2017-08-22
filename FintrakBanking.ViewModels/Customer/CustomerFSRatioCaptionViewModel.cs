@@ -9,7 +9,6 @@ namespace FintrakBanking.ViewModels.Customer
 
         public short ratioCaptionId { get; set; }
         public string ratioCaptionName { get; set; }
-        public string companyName { get; set; }
         public bool annualised { get; set; }
         public int position { get; set; }
     }
