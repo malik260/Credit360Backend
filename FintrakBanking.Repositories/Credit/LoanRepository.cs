@@ -21,8 +21,6 @@ namespace FintrakBanking.Repositories.Credit
     using wct = XLeratorDLL_financial.XLeratorDLL_financial;
     using FinancialTypes = XLeratorDLL_financial.FinancialTypes;
 
-    [Export(typeof(ILoanRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class LoanRepository : ILoanRepository
     {
         private FinTrakBankingContext context;

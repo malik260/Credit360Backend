@@ -174,7 +174,7 @@ namespace FintrakBanking.Repositories.Customer
                             select data.FSCaptionId).ToList();
 
             var captions = (from a in context.tbl_Customer_FS_Caption
-                       where a.FSCaptionGroupId == fsCaptionGroupId && a.IsTotalLine == false && a.Deleted == false // && !dataList.Contains(data.FeeId)
+                       where a.FSCaptionGroupId == fsCaptionGroupId && a.IsTotalLine == false && a.Deleted == false // && !dataList.Contains(data.ProductProductFeeId)
                        orderby a.FSTypeId, a.Position
                        select new CustomerFSCaptionViewModel
                        {

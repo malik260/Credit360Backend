@@ -53,7 +53,6 @@
     <Compile Include="documentModel\tbl_Media_Collateral_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\FinTrakBankingDocumentsContext.cs" />
-    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -219,7 +218,6 @@
     <Compile Include="Models\tbl_Product_Class_Type.cs" />
     <Compile Include="Models\tbl_Product_CollateralType.cs" />
     <Compile Include="Models\tbl_Product_Currency.cs" />
-    <Compile Include="Models\tbl_Product_Fee.cs" />
     <Compile Include="Models\tbl_Product_Group.cs" />
     <Compile Include="Models\tbl_Product_Price_Index.cs" />
     <Compile Include="Models\tbl_Product_Type.cs" />

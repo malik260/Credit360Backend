@@ -107,7 +107,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public int AddTempProductFee(ProductFeeViewModel productFee)
         {
             var dataExist = this.context.tbl_Temp_Product_Fee.FirstOrDefault(x => x.ProductId == productFee.productId 
-                                                                && x.FeeId == productFee.feeId 
+                                                                && x.ProductFeeId == productFee.feeId 
                                                                 && x.Deleted == true); // .Find(accountId);
 
             var tempProductFeeEntity = dataExist;
@@ -117,7 +117,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductFeeEntity = new tbl_Temp_Product_Fee()
                 {
                     ProductId = productFee.productId,
-                    FeeId = productFee.feeId,
+                    ProductFeeId = productFee.feeId,
                     CompanyId = productFee.companyId,
 
                     RateValue = productFee.rateValue,
@@ -298,7 +298,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         productFeeId = data.ProductFeeId,
                         productId = (short)data.ProductId,
-                        feeId = data.FeeId,
+                        feeId = data.ProductFeeId,
                         feeName = data.tbl_Fee.FeeName,
                         feeIntervalName = data.tbl_Fee.tbl_Fee_Interval.FeeIntervalName,
                         feeTargetName = data.tbl_Fee.tbl_Fee_Target.FeeTargetName,
@@ -330,7 +330,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productFeeId = data.ProductFeeId,
                         productName = p.ProductName,
                         productId = (short)data.ProductId,
-                        feeId = data.FeeId,
+                        feeId = data.ProductFeeId,
                         feeName = data.tbl_Fee.FeeName,
                         companyId = data.CompanyId,
 
@@ -362,15 +362,15 @@ namespace FintrakBanking.Repositories.Setups.General
                     }).FirstOrDefault();
         }
 
-        public List<ProductFeeViewModel> GetTempProductFee(int productFeeId)
+        public List<ProductFeeViewModel> GetTempProductFee(int productProductFeeId)
         {
             return (from data in context.tbl_Temp_Product_Fee
-                    where data.ProductFeeId == productFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+                    where data.ProductFeeId == productProductFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
                     select new ProductFeeViewModel()
                     {
                         productFeeId = data.ProductFeeId,
                         productId = (short)data.ProductId,
-                        feeId = data.FeeId,
+                        feeId = data.ProductFeeId,
                         feeName = data.tbl_Fee.FeeName,
                         companyId = data.CompanyId,
 
@@ -389,7 +389,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             select data.ChargeFeeId).ToList();           
 
             var fee = (from data in context.tbl_Fee
-                       where data.Deleted == false // && !dataList.Contains(data.FeeId)
+                       where data.Deleted == false // && !dataList.Contains(data.ProductFeeId)
                        select new FeeViewModel
                        {
                            feeId = data.FeeId,
@@ -427,13 +427,13 @@ namespace FintrakBanking.Repositories.Setups.General
         //{
         //    var dataList = (from data in context.tbl_Temp_Product_Fee
         //                    where data.ProductId == productId && data.Deleted == false
-        //                    select data.FeeId).ToList();
+        //                    select data.ProductFeeId).ToList();
 
         //    var fee = (from data in context.tbl_Temp_Fee
-        //               where data.Deleted == false // && !dataList.Contains(data.FeeId)
+        //               where data.Deleted == false // && !dataList.Contains(data.ProductFeeId)
         //               select new FeeViewModel
         //               {
-        //                   feeId = data.FeeId,
+        //                   feeId = data.ProductFeeId,
         //                   feeName = data.FeeName,
         //                   accountCategoryId = data.AccountCategoryId,
         //                   accountCategoryName = data.tbl_Account_Category.AccountCategoryName,

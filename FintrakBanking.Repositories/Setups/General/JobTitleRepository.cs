@@ -7,8 +7,7 @@ using System.Linq;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    [Export(typeof(IJobTitleRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+
     public class JobTitleRepository : IJobTitleRepository
     {
         private FinTrakBankingContext context;

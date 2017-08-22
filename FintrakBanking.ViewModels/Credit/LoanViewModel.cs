@@ -130,6 +130,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanName { get; set; }
         public string loanReferenceNumber { get; set; }
         public string productAccountNumber { get; set; }
+
     }
 
 }

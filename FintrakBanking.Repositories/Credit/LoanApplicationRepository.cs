@@ -2,6 +2,7 @@
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using System;
@@ -23,6 +24,8 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IWorkFlowRepository workFlow;
+        //private ILoanRepository loanRepository;
+        //private ICustomerRepository customerRepository;
 
         public LoanApplicationRepository(IAuditTrailRepository _auditTrail,
                                     IGeneralSetupRepository _genSetup, IWorkFlowRepository _workFlow,
@@ -32,6 +35,8 @@ namespace FintrakBanking.Repositories.Credit
             auditTrail = _auditTrail;
             this.genSetup = _genSetup;
             workFlow = _workFlow;
+            //loanRepository = _loanRepository;
+            //customerRepository = _customerRepository;
         }
 
         private IEnumerable<LoanApplicationViewModel> GetLoanApplications(int companyId)
@@ -57,8 +62,8 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerId = a.RelationshipManagerId,
                             relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
                             misCode = a.MISCode,
-                            //productClassId = a.ProductClassId,
-                            //productClassName = a.tbl_Product_Class.ProductClassName,
+                            productClassId = a.ProductId,
+                            productClassName = a.tbl_Product.ProductName,
                             teamMiscode = a.TeamMISCode,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
@@ -119,7 +124,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipManagerId = a.RelationshipManagerId,
                             misCode = a.MISCode,
-                            //productClassId = a.ProductClassId,
+                            productClassId = a.ProductId,
                             teamMiscode = a.TeamMISCode,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
@@ -170,22 +175,49 @@ namespace FintrakBanking.Repositories.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-
-
-
-
-
-
-
-        public async Task<bool> CreateLoanApplication(LoanApplicationViewModel loan)
+        public async Task<bool> AddLoanApplication(LoanApplicationViewModel loan)
         {
             bool isGroupLoan = false;
 
-            if (loan.loanTypeId > (int)LoanTypeEnum.CustomerGroup )
+            if (loan.loanTypeId == (short)LoanTypeEnum.Single || loan.loanTypeId == (short)LoanTypeEnum.Batch)
             {
+                
+                //if (loanRepository.ValidateCamsol(loan.customerId.Value) > 0) {
+                //    throw new Exception("Customer '" + loan.customerName + "' has been CAMSOL");
+                //}
+
+                //if (loanRepository.ValidateWatchList(loan.customerId.Value) > 0)
+                //{
+                //    throw new Exception("Customer '" + loan.customerName + "' has been Watchlisted");
+                //}
+
+                //if (customerRepository.ValidateBlackList(loan.customerId.Value) > 0)
+                //{
+                //    throw new Exception("Customer '" + loan.customerName + "' has been Blacklisted");
+                //}
+
                 isGroupLoan = true;
             }
+            else if (loan.loanTypeId == (short)LoanTypeEnum.CustomerGroup)
+            {
+                //if (loanRepository.ValidateCamsol(loan.customerId.Value) > 0)
+                //{
+                //    throw new Exception("Customer '" + loan.customerName + "' has been CAMSOL");
+                //}
 
+                //if (loanRepository.ValidateWatchList(loan.customerId.Value) > 0)
+                //{
+                //    throw new Exception("Customer '" + loan.customerName + "' has been Watchlisted");
+                //}
+
+                //if (customerRepository.ValidateBlackList(loan.customerId.Value) > 0)
+                //{
+                //    throw new Exception("Customer '" + loan.customerName + "' has been Blacklisted");
+                //}
+
+                isGroupLoan = false;
+
+            }
 
             string refNumber = GenerateLoanReference(loan.customerId.Value);
 
@@ -194,7 +226,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = new tbl_Loan_Application
             {
                 ApplicationReferenceNumber = refNumber,
-                //ProductClassId = loan.productClassId,
+                ProductId = loan.productClassId,
                 LoanTypeId = loan.loanTypeId,
                 LoanStatusId = loanStatusId,
                 CompanyId = loan.companyId,
@@ -272,7 +304,7 @@ namespace FintrakBanking.Repositories.Credit
                 var wf = new ApprovalViewModel
                 {
                     companyId = data.CompanyId,
-                    operationId = (int)Operations.LoanApplication,
+                    operationId = (int)OperationsEnum.LoanApplication,
                     staffId = data.CreatedBy,
                     targetId = data.LoanApplicationId,
                     approvalStatusId =(short)ApprovalStatusEnum.Pending,
