@@ -12,7 +12,7 @@ using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using System.Data;
 using NodaTime;
-
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -25,7 +25,7 @@ namespace FintrakBanking.Repositories.Credit
     {
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
-        private IAuditTrailRepository auditTrail;        
+        private IAuditTrailRepository auditTrail;
 
         public LoanRepository(FinTrakBankingContext _context,
                                         IGeneralSetupRepository _genSetup,
@@ -33,7 +33,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             this.context = _context;
             this.generalSetup = _genSetup;
-            auditTrail = _auditTrail;            
+            auditTrail = _auditTrail;
         }
 
         //public List<LoanPaymentScheduleOutput> GenerateLoanPaymentSchedule(LoanPaymentScheduleInput input)
@@ -941,6 +941,81 @@ namespace FintrakBanking.Repositories.Credit
             return output;
 
         }
-    }
+
+        #region CAM Approved Loan Applications
+        public IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId)
+        {
+            var data = (from a in context.tbl_Loan_Application
+                        join c in context.tbl_Credit_Appraisal_Memorandum 
+                        on a.LoanApplicationId equals c.LoanApplicationId 
+                        join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
+                        where a.CompanyId == companyId && a.Deleted == false && c.IsCompleted ==true
+                        select new CamProcessedLoanViewModel
+                        {
+                            approvalStatusId = a.ApprovalStatusId,
+                            loanApplicationId = a.LoanApplicationId,
+                            applicationReferenceNumber = a.ApplicationReferenceNumber,
+                            customerId = a.CustomerId ?? 0,
+                            customerName = a.CustomerId.HasValue ? a.tbl_Customer.FirstName + " " + a.tbl_Customer.MiddleName + " " + a.tbl_Customer.LastName : "",
+                            loanInformation = a.LoanInformation,
+                            companyId = a.CompanyId,
+                            branchId = a.BranchId,
+                            branchName = a.tbl_Branch.BranchName,
+                            tenor = a.Tenor,
+                            relationshipOfficerId = a.RelationshipOfficerId,
+                            relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
+                            relationshipManagerId = a.RelationshipManagerId,
+                            relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
+                            misCode = a.MISCode,
+                            productId = a.ProductId,
+                            //productClassName = a.tbl_Product_Class.ProductClassName,
+                            teamMiscode = a.TeamMISCode,
+                            interestRate = a.InterestRate,
+                            isRealatedParty = a.IsRealatedParty,
+                            isPoliticallyExposed = a.IsPoliticallyExposed,
+                            submittedForAppraisal = a.SubmittedForAppraisal,
+                            principalAmount = a.PrincipalAmount,
+                            customerGroupId = a.CustomerGroupId ?? 0,
+                            customerGroupName = a.CustomerGroupId.HasValue ? a.tbl_Customer_Group.GroupName : "",
+                            customerCode = cust.CustomerCode,
+                            loanTypeId = a.LoanTypeId,
+                            loanTypeName = a.tbl_Loan_Type.LoanTypeName,
+                            camReference = c.CAMRef,
+                            loanDetails = c.LoanDetails,
+                            createdBy = a.CreatedBy,
+                            applicationDate = a.ApplicationDate,
+                            dateTimeCreated = a.DateTimeCreated
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId)
+        {
+            var data = (from c in context.tbl_Charge_Fee
+                        join p in context.tbl_Product_Charge_Fee
+                        on c.ChargeFeeId equals p.ChargeFeeId
+                        where p.ProductId == productId && p.Deleted == false
+                        select new ProductFeeViewModel
+                        {
+                            productFeeId = p.ProductFeeId,
+                            productId = p.ProductId,
+                            productName = p.tbl_Product.ProductName,
+                            feeId = c.ChargeFeeId,
+                            feeName = c.ChargeFeeName,
+                            feeTargetName = c.tbl_Fee_Target.FeeTargetName,
+                            feeIntervalName = c.tbl_Fee_Interval.FeeIntervalName,
+                            //feeTypeName 
+                            //glAccountCode = c.GLAccountId,
+                            //glAccountName = c.tbl_Casa
+                            rateValue = (decimal) p.RateValue,
+                            dependentAmount = p.DependentAmount
+
+                        }).ToList();
+            return data;
+        }
+
+            #endregion End of CAM Approved Loan Applications
+
+        }
 }
 

@@ -6,28 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Credit_Appraisal_Memorandum")]
-    public partial class tbl_Credit_Appraisal_Memorandum
+    [Table("core.tbl_Product_Charge_Fee")]
+    public partial class tbl_Product_Charge_Fee
     {
         [Key]
-        public int AppraisalMemorandumId { get; set; }
+        public int ProductFeeId { get; set; }
 
-        public int LoanApplicationId { get; set; }
+        public short ProductId { get; set; }
 
         public int CompanyId { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string CAMRef { get; set; }
+        public int ChargeFeeId { get; set; }
 
-        public bool IsCompleted { get; set; }
+        [Column(TypeName = "money")]
+        public decimal RateValue { get; set; }
 
-        public bool RiskRated { get; set; }
-
-        public string CAMDocumentation { get; set; }
-
-        [Column(TypeName = "xml")]
-        public string LoanDetails { get; set; }
+        [Column(TypeName = "money")]
+        public decimal? DependentAmount { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -37,14 +32,16 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeUpdated { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool? Deleted { get; set; }
 
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
 
+        public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
+
         public virtual tbl_Company tbl_Company { get; set; }
 
-        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+        public virtual tbl_Product tbl_Product { get; set; }
     }
 }

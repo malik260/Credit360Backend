@@ -3,6 +3,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,10 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> FindLoan(string referenceNumberOrName, int companyId);
 
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
+
+        IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
+
+        IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId);
 
         int CalculateNumberOfInstallments(TenorModeEnum tenorModeId, short frequencyTypeId, int tenor);
 

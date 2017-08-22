@@ -57,8 +57,8 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerId = a.RelationshipManagerId,
                             relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
                             misCode = a.MISCode,
-                            productClassId = a.ProductClassId,
-                            productClassName = a.tbl_Product_Class.ProductClassName,
+                            //productClassId = a.ProductClassId,
+                            //productClassName = a.tbl_Product_Class.ProductClassName,
                             teamMiscode = a.TeamMISCode,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
@@ -119,7 +119,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipManagerId = a.RelationshipManagerId,
                             misCode = a.MISCode,
-                            productClassId = a.ProductClassId,
+                            //productClassId = a.ProductClassId,
                             teamMiscode = a.TeamMISCode,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
@@ -187,7 +187,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = new tbl_Loan_Application
             {
                 ApplicationReferenceNumber = refNumber,
-                ProductClassId = loan.productClassId,
+                //ProductClassId = loan.productClassId,
                 LoanTypeId = loan.loanTypeId,
                 LoanStatusId = loanStatusId,
                 CompanyId = loan.companyId,

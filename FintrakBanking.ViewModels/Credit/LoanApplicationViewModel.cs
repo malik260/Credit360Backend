@@ -8,10 +8,10 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int loanApplicationId { get; set; }
         public string applicationReferenceNumber { get; set; }
-        public int ? customerId { get; set; }
+        public int? customerId { get; set; }
         public short branchId { get; set; }
         public short productClassId { get; set; }
-        public int ? customerGroupId { get; set; }
+        public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public short currencyId { get; set; }
         public short loanStatusId { get; set; }
@@ -39,7 +39,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManagerName { get; set; }
         public string tenorModeName { get; set; }
         public string amount { get { return this.principalAmount.ToString("#,#.00#"); } }
-        public string applicantName {  get { return this.customerName + "" + this.customerGroupName; }  }
+        public string applicantName { get { return this.customerName + "" + this.customerGroupName; } }
+
     }
 
     public class ProductClassViewModel

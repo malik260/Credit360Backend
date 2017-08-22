@@ -123,6 +123,8 @@
     <Compile Include="Models\tbl_Customer_Blacklist.cs" />
     <Compile Include="Models\tbl_Customer_BVN.cs" />
     <Compile Include="Models\tbl_Customer_CompanyInfomation.cs" />
+    <Compile Include="Models\tbl_Customer_Company_Director.cs" />
+    <Compile Include="Models\tbl_Customer_Company_DirectorType.cs" />
     <Compile Include="Models\tbl_Customer_Custom_Field.cs" />
     <Compile Include="Models\tbl_Customer_Edit_History.cs" />
     <Compile Include="Models\tbl_Customer_EducationLevelType.cs" />
@@ -143,6 +145,7 @@
     <Compile Include="Models\tbl_Customer_NextOfKin.cs" />
     <Compile Include="Models\tbl_Customer_PhoneContact.cs" />
     <Compile Include="Models\tbl_Customer_Sensitivity_Level.cs" />
+    <Compile Include="Models\tbl_Customer_Status.cs" />
     <Compile Include="Models\tbl_Customer_Type.cs" />
     <Compile Include="Models\tbl_Custom_Fields.cs" />
     <Compile Include="Models\tbl_Custom_Fields_Data.cs" />
@@ -176,10 +179,12 @@
     <Compile Include="Models\tbl_Limit_Type.cs" />
     <Compile Include="Models\tbl_Limit_Value_Type.cs" />
     <Compile Include="Models\tbl_Loan.cs" />
+    <Compile Include="Models\tbl_LoanApplication_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_LoanDetails.cs" />
     <Compile Include="Models\tbl_Loan_Amortization_Schedule.cs" />
     <Compile Include="Models\tbl_Loan_Application.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
+    <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Detail.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Type.cs" />
@@ -204,6 +209,7 @@
     <Compile Include="Models\tbl_Operations_Type.cs" />
     <Compile Include="Models\tbl_Product.cs" />
     <Compile Include="Models\tbl_Product_Category.cs" />
+    <Compile Include="Models\tbl_Product_Charge_Fee.cs" />
     <Compile Include="Models\tbl_Product_Class.cs" />
     <Compile Include="Models\tbl_Product_Class_Type.cs" />
     <Compile Include="Models\tbl_Product_CollateralType.cs" />
