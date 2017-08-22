@@ -72,6 +72,7 @@
     <Compile Include="Models\tbl_CASA.cs" />
     <Compile Include="Models\tbl_CASA_AccountStatus.cs" />
     <Compile Include="Models\tbl_CASA_Lien.cs" />
+    <Compile Include="Models\tbl_CASA_Lien_Type.cs" />
     <Compile Include="Models\tbl_CASA_PostNoStatus.cs" />
     <Compile Include="Models\tbl_Charges.cs" />
     <Compile Include="Models\tbl_Charges_ValueSource.cs" />
@@ -190,6 +191,7 @@
     <Compile Include="Models\tbl_Loan_Covenant_Detail.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Type.cs" />
     <Compile Include="Models\tbl_Loan_Document_Type.cs" />
+    <Compile Include="Models\tbl_Loan_Fee.cs" />
     <Compile Include="Models\tbl_Loan_Guarantor.cs" />
     <Compile Include="Models\tbl_Loan_Operation.cs" />
     <Compile Include="Models\tbl_Loan_Preliminary_Evaluation.cs" />

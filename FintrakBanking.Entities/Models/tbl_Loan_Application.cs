@@ -37,6 +37,8 @@ namespace FintrakBanking.Entities.Models
 
         public short ProductId { get; set; }
 
+        public int CasaAccountId { get; set; }
+
         public double ExchangeRate { get; set; }
 
         public int? CustomerGroupId { get; set; }
@@ -109,6 +111,8 @@ namespace FintrakBanking.Entities.Models
         public bool SubmittedForAppraisal { get; set; }
 
         public virtual tbl_Branch tbl_Branch { get; set; }
+
+        public virtual tbl_CASA tbl_CASA { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
 
