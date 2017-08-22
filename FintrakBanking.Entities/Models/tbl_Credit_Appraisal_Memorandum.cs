@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         public int LoanApplicationId { get; set; }
 
+        public int CompanyId { get; set; }
+
         [Required]
         [StringLength(50)]
         public string CAMRef { get; set; }
@@ -40,6 +42,8 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
+
+        public virtual tbl_Company tbl_Company { get; set; }
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
     }

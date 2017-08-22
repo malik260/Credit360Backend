@@ -58,6 +58,7 @@ namespace FintrakBanking.Common.Enum
         CustomerGroupApproved = 123,
         FeeUpdated = 124,
         FeeApproved = 125,
+        LienAdded=126,
 
 
 

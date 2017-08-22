@@ -577,7 +577,11 @@ namespace FintrakBanking.Repositories.Customer
             }
 
             return customers;
-        }	
+        }
+
+
+       
+
     }
 }
 

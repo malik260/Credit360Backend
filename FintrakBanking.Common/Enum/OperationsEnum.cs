@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.Common.Enum
 {
-    public enum Operations
+    public enum OperationsEnum
     {
         LoanApplication  = 1,
         LoanBooking = 2,
@@ -15,6 +15,7 @@ namespace FintrakBanking.Common.Enum
         ChartOfAccountCreation = 7,
         CustomerGroupCreation = 8,
         CAM = 9,
-        FeeCreation = 10
+        FeeCreation = 10,
+        CollateralSearch = 11
     }
 }

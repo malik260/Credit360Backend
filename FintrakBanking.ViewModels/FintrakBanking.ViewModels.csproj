@@ -49,6 +49,7 @@
     <Compile Include="Admin\UserActions.cs" />
     <Compile Include="CASA\CasaViewModel.cs" />
     <Compile Include="CASA\CustomerSearchVM.cs" />
+    <Compile Include="CreditLimitValidations\CreditLimitValidationsModel.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
     <Compile Include="Credit\CollateralCustomerViewModel.cs" />
@@ -77,6 +78,8 @@
     <Compile Include="Customer\CustomerViewModels.cs" />
     <Compile Include="Customer\LoanCovenantDetailViewModel.cs" />
     <Compile Include="ErrorLogger\ErrorViewModel.cs" />
+    <Compile Include="Finance\CasaLienViewModel.cs" />
+    <Compile Include="Finance\FinanceTransactionViewModel.cs" />
     <Compile Include="GenaralEntity.cs" />
     <Compile Include="LookupViewModel.cs" />
     <Compile Include="Notification\NotificationViewModel.cs" />

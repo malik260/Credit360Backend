@@ -19,6 +19,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string LienReferenceNumber { get; set; }
 
+        public int CompanyId { get; set; }
+
+        public short BranchId { get; set; }
+
         [Column(TypeName = "money")]
         public decimal LienCreditAmount { get; set; }
 
@@ -29,11 +33,17 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string Description { get; set; }
 
-        public short SourceTypeId { get; set; }
+        public short LienTypeId { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime DateCreated { get; set; }
 
         public int CreatedBy { get; set; }
+
+        public virtual tbl_Branch tbl_Branch { get; set; }
+
+        public virtual tbl_CASA_Lien_Type tbl_CASA_Lien_Type { get; set; }
+
+        public virtual tbl_Company tbl_Company { get; set; }
     }
 }

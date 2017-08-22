@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Amortization_Schedule = new HashSet<tbl_Loan_Amortization_Schedule>();
             tbl_Loan_Camsol = new HashSet<tbl_Loan_Camsol>();
             tbl_Loan_Covenant_Detail = new HashSet<tbl_Loan_Covenant_Detail>();
+            tbl_Loan_Fee = new HashSet<tbl_Loan_Fee>();
         }
 
         [Key]
@@ -204,6 +205,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Covenant_Detail> tbl_Loan_Covenant_Detail { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Fee> tbl_Loan_Fee { get; set; }
 
         public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
 

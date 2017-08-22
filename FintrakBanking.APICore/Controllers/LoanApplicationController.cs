@@ -3,6 +3,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Interfaces.CreditLimitValidations;
 using System;
 using System.Linq;
 using System.Net;
@@ -18,11 +19,15 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanApplicationController : ApiControllerBase
     {
         private ILoanApplicationRepository repoApply;
+        private ILoanRepository loanRepository;
+        private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public LoanApplicationController(ILoanApplicationRepository _repoApply)
+        public LoanApplicationController(ILoanApplicationRepository _repoApply, ILoanRepository _loanRepository, ICreditLimitValidationsRepository _creditLimitValidationsRepository)
         {
             this.repoApply = _repoApply;
+            this.loanRepository = _loanRepository;
+            this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
         }
 
         #region Loan Application
@@ -126,10 +131,30 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
         [HttpPost][Route("loan/application")]
-        public async Task<HttpResponseMessage> LoanBooking([FromBody] LoanApplicationViewModel entity)
+        public async Task<HttpResponseMessage> AddLoanApplication([FromBody] LoanApplicationViewModel entity)
         {
             try
             {
+
+                if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
+                {
+                    throw new Exception("Customer '" + entity.customerName + "' has been CAMSOL");
+                }
+
+                if (creditLimitValidationsRepository.ValidateWatchList(entity.customerId.Value) > 0)
+                {
+                    throw new Exception("Customer '" + entity.customerName + "' has been Watchlisted");
+                }
+
+                if (creditLimitValidationsRepository.ValidateBlackList(entity.customerId.Value) > 0)
+                {
+                    throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
+                }
+
+
+              //var model =  creditLimitValidationsRepository.ValidateAmountByBranch1(entity.branchId).Difference;
+
+
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
@@ -139,7 +164,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.misCode = "001";
                 entity.teamMiscode = "004";
 
-                var response = await repoApply.CreateLoanApplication(entity);
+                var response = await repoApply.AddLoanApplication(entity);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation completed successfully" });

@@ -25,5 +25,7 @@ namespace FintrakBanking.Interfaces.Customer
 
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search) ;
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
+
+        //int ValidateBlackList(int customerId);
     }
 }
