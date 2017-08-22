@@ -217,9 +217,9 @@ namespace FintrakBanking.Repositories.Setups.General
             //return this.SaveAll();
         }
 
-        public bool DeleteMultipleProductFee(List<int> productProductFeeIds)
+        public bool DeleteMultipleProductFee(List<int> productFeeIds)
         {
-            if (productProductFeeIds.Count <= 0)
+            if (productFeeIds.Count <= 0)
                 return false;
 
             var dataList = (from a in context.tbl_Product_Charge_Fee
@@ -235,7 +235,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.SaveAll();
         }
 
-        public bool DeleteProductFee(int productProductFeeId, UserInfo user)
+        public bool DeleteProductFee(int productFeeId, UserInfo user)
         {
             var data = this.context.tbl_Product_Charge_Fee.Find(productFeeId);
 
@@ -315,7 +315,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     });
         }
 
-        public bool DoesProductFeeExist(int productProductFeeId)
+        public bool DoesProductFeeExist(int productFeeId)
         {
             return context.tbl_Product_Charge_Fee.Any(x => x.ProductFeeId == productFeeId);
         }
@@ -342,7 +342,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     }).ToList();
         }
 
-        public ProductFeeViewModel GetProductFee(int productProductFeeId)
+        public ProductFeeViewModel GetProductFee(int productFeeId)
         {
             return (from data in context.tbl_Product_Charge_Fee
                     where data.ProductFeeId == productFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
@@ -464,7 +464,7 @@ namespace FintrakBanking.Repositories.Setups.General
         //    return fee;
         //}
 
-        public bool UpdateProductFee(int productProductFeeId, ProductFeeViewModel productFee)
+        public bool UpdateProductFee(int productFeeId, ProductFeeViewModel productFee)
         {
             var productFeeEntity = this.context.tbl_Product_Charge_Fee.Find(productFeeId);
 

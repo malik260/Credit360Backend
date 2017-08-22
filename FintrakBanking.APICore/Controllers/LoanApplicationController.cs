@@ -25,7 +25,7 @@ namespace FintrakBanking.APICore.Controllers
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public LoanApplicationController(ILoanApplicationRepository _repoApply, ILoanRepository _loanRepository, ICreditLimitValidationsRepository _creditLimitValidationsRepository)
+        public LoanApplicationController(ILoanApplicationRepository _repoApply, ILoanRepository _loanRepository, ICreditLimitValidationsRepository _creditLimitValidationsRepository, ILoanPreliminaryEvaluationRepository _repoLoanPEN)
         {
             this.repoApply = _repoApply;
             this.loanRepository = _loanRepository;
