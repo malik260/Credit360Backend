@@ -1,20 +1,15 @@
-﻿using System;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Repositories.Setups.General;
+using FintrakBanking.ViewModels.Setups.General;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.OAuth;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.OAuth;
-using FintrakBanking.APICore.Models;
-using FintrakBanking.Entities.Models;
-using System.Configuration;
-using FintrakBanking.ViewModels.Setups.General;
-using FintrakBanking.Common;
-using FintrakBanking.Repositories.Setups.General;
 
 namespace FintrakBanking.APICore.Providers
 {
@@ -25,26 +20,14 @@ namespace FintrakBanking.APICore.Providers
 
         public ApplicationOAuthProvider(string publicClientId)
         {
-            if (publicClientId == null)
-            {
-                throw new ArgumentNullException("publicClientId");
-            }
-
-            _publicClientId = publicClientId;
+            if( publicClientId==null) throw new ArgumentNullException("publicClientId");
             this.repo = new FinTrakBankingContext();
-
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var origin = context.OwinContext.Request.Headers["Origin"];
-            //if (origin == null)
-            //{
-            //   // context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
-            //    //HttpContext.Current.Response.AddHeader("Access-Control-Allow-Origin", origin);
-            //    //HttpContext.Current.Response.AddHeader("Access-Control-Allow-Methods", "GET,POST");
-            //}
-            //context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+            //var origin = context.OwinContext.Request.Headers["Origin"];
+
             var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
             var userVM = new UserViewModel();
 

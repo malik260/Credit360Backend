@@ -116,6 +116,12 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string RegistrationNumber { get; set; }
 
+
+        [Required]
+        [StringLength(300)]
+        public string AccountOfficer { get; set; }
+
+
         public short ApprovalStatusId { get; set; }
 
         public bool IsCurrent { get; set; }

@@ -1076,6 +1076,25 @@ namespace FintrakBanking.Entities.Models
                 .WithOptional(e => e.tbl_Frequency_Type)
                 .HasForeignKey(e => e.RenewalFrequencyTypeId);
 
+            modelBuilder.Entity<tbl_Job_Request>()
+                .HasMany(e => e.tbl_Job_Request_Document_Mapping)
+                .WithRequired(e => e.tbl_Job_Request)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Job_Request>()
+                .HasOptional(e => e.tbl_Job_Request1)
+                .WithRequired(e => e.tbl_Job_Request2);
+
+            modelBuilder.Entity<tbl_Job_Request_Status>()
+                .HasMany(e => e.tbl_Job_Request)
+                .WithRequired(e => e.tbl_Job_Request_Status)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Job_Type>()
+                .HasMany(e => e.tbl_Job_Request)
+                .WithRequired(e => e.tbl_Job_Type)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<tbl_MIS_Info>()
                 .HasMany(e => e.tbl_MIS_Info1)
                 .WithOptional(e => e.tbl_MIS_Info2)
@@ -1113,6 +1132,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Product>()
                 .HasMany(e => e.tbl_Product_CollateralType)
+                .WithRequired(e => e.tbl_Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product>()
+                .HasMany(e => e.tbl_Loan_Application)
                 .WithRequired(e => e.tbl_Product)
                 .WillCascadeOnDelete(false);
 
@@ -1900,13 +1924,40 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan>()
-                .HasMany(e => e.tbl_Loan_Covenant_Detail)
+                .HasMany(e => e.tbl_Loan_Collateral_Mapping)
                 .WithRequired(e => e.tbl_Loan)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan>()
-                .HasMany(e => e.tbl_Loan_Fee)
+                .HasMany(e => e.tbl_Loan_Covenant_Detail)
                 .WithRequired(e => e.tbl_Loan)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .Property(e => e.PrincipalAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .Property(e => e.Longitude)
+                .HasPrecision(12, 9);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .Property(e => e.Latitude)
+                .HasPrecision(12, 9);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Credit_Appraisal_Memorandum)
+                .WithRequired(e => e.tbl_Loan_Application)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Loan_Application)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Risk_Assessment)
+                .WithRequired(e => e.tbl_Loan_Application)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan_Camsol>()

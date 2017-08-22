@@ -182,15 +182,15 @@ namespace FintrakBanking.APICore.Controllers
         { 
                 try
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                TokenDecryptionHelper token =   new TokenDecryptionHelper();
 
-                    model.userBranchId = (short)token.GetBranchId;
-                    //  model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                    //  model.applicationUrl = Request.Path.Value;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
+                model.userBranchId = (short)token.GetBranchId;
+                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+               // model.applicationUrl = Request.Path.Value;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
-                    var data = repoGroup.AddApprovalGroup(model);
+                var data = repoGroup.AddApprovalGroup(model);
                     if (data)
                     {
                        return  Request.CreateResponse(HttpStatusCode.OK,

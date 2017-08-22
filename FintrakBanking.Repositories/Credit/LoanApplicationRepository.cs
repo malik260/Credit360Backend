@@ -231,8 +231,7 @@ namespace FintrakBanking.Repositories.Credit
                 LoanStatusId = loanStatusId,
                 CompanyId = loan.companyId,
                 BranchId = loan.branchId,
-                Tenor = loan.tenor,
-                //TenorModeId = loan.tenorModeId,
+                Tenor = loan.tenor, 
                 RelationshipOfficerId = loan.relationshipOfficerId,
                 RelationshipManagerId = loan.relationshipManagerId,
                 MISCode = loan.misCode,
@@ -246,7 +245,15 @@ namespace FintrakBanking.Repositories.Credit
                 IsPoliticallyExposed = loan.isPoliticallyExposed,
                 CreatedBy = (int)loan.createdBy,
                 DateTimeCreated = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                SystemDateTime = DateTime.Now,                 
+                ExchangeRate = loan.exchangeRate,
+                LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,
+                Latitude = loan.latitude,
+                Longitude = loan.longitude,
+                CustomerId = loan.customerId,
+                NearestBusStop = loan.nearestBusStop,
+                NearestLandMark = loan.nearestLandMark,
+                SubmittedForAppraisal = loan.submittedForAppraisal
             };
 
             if (isGroupLoan)

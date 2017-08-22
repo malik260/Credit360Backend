@@ -6,8 +6,8 @@ namespace FintrakBanking.Common.Enum
 {
     public enum OperationsEnum
     {
-        LoanApplication  = 1,
-        LoanBooking = 2,
+        LoanApplication  = 2,
+        LoanBooking = 1,
         StaffCreation = 3,
         UserCreation = 4,
         ProductCreation = 5,
@@ -16,6 +16,6 @@ namespace FintrakBanking.Common.Enum
         CustomerGroupCreation = 8,
         CAM = 9,
         FeeCreation = 10,
-        CollateralSearch = 11
+        LoanPreliminaryEvaluation = 11
     }
 }

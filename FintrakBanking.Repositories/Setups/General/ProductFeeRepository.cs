@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public int AddProductFee(ProductFeeViewModel productFee)
         {
             var existingApprovedProduct = context.tbl_Product.Where(x => x.ProductId == productFee.productId);
-            var dataExist = this.context.tbl_Product_Charge_Fee.FirstOrDefault(x => x.ProductId == productFee.productId && x.ProductFeeId == productFee.feeId && x.Deleted == true); // .Find(accountId);
+            var dataExist = this.context.tbl_Product_Charge_Fee.FirstOrDefault(x => x.ProductId == productFee.productId && x.ChargeFeeId == productFee.feeId && x.Deleted == true); // .Find(accountId);
 
             var productFeeEntity = dataExist;
 
@@ -58,7 +58,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 productFeeEntity = new tbl_Product_Charge_Fee()
                 {
                     ProductId = productFee.productId,
-                    ProductFeeId = productFee.feeId,
+                    ChargeFeeId = productFee.feeId,
                     CompanyId = productFee.companyId,
 
                     RateValue = productFee.rateValue,
@@ -184,7 +184,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 var product = new tbl_Product_Charge_Fee()
                 {
                     ProductId = p.ProductId,
-                    ProductFeeId = p.ProductFeeId,
+                    ChargeFeeId = p.FeeId,
                     CompanyId = p.CompanyId,
 
                     RateValue = p.RateValue,
@@ -223,7 +223,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 return false;
 
             var dataList = (from a in context.tbl_Product_Charge_Fee
-                            where productProductFeeIds.ToList().Contains(a.ProductFeeId)
+                            where productFeeIds.ToList().Contains(a.ProductFeeId)
                             select a);
 
             foreach (tbl_Product_Charge_Fee data in dataList)
@@ -237,7 +237,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool DeleteProductFee(int productProductFeeId, UserInfo user)
         {
-            var data = this.context.tbl_Product_Charge_Fee.Find(productProductFeeId);
+            var data = this.context.tbl_Product_Charge_Fee.Find(productFeeId);
 
             if (data == null)
                 return false;
@@ -246,7 +246,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //accountModel.DeletedBy = ;
             data.DateTimeDeleted = genSetup.GetApplicationDate();
             // Audit Section ---------------------------
-            var productFee = this.context.tbl_Fee.FirstOrDefault(x => x.FeeId == data.ProductFeeId);
+            var productFee = this.context.tbl_Fee.FirstOrDefault(x => x.FeeId == data.ChargeFeeId);
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.ProductFeeDeleted,
@@ -273,7 +273,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         productFeeId = data.ProductFeeId,
                         productId = (short)data.ProductId,
-                        feeId = data.ProductFeeId,
+                        feeId = data.ChargeFeeId,
                         feeName = data.tbl_Charge_Fee.ChargeFeeName,
                         feeIntervalName = data.tbl_Charge_Fee.tbl_Fee_Interval.FeeIntervalName,
                         feeTargetName = data.tbl_Charge_Fee.tbl_Fee_Target.FeeTargetName,
@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool DoesProductFeeExist(int productProductFeeId)
         {
-            return context.tbl_Product_Charge_Fee.Any(x => x.ProductFeeId == productProductFeeId);
+            return context.tbl_Product_Charge_Fee.Any(x => x.ProductFeeId == productFeeId);
         }
 
         public List<ProductFeeViewModel> GetProductFeeAwaitingApprovals(int tempProductId)
@@ -345,13 +345,12 @@ namespace FintrakBanking.Repositories.Setups.General
         public ProductFeeViewModel GetProductFee(int productProductFeeId)
         {
             return (from data in context.tbl_Product_Charge_Fee
-                    where data.ProductFeeId == productProductFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+                    where data.ProductFeeId == productFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
                     select new ProductFeeViewModel()
                     {
                         productFeeId = data.ProductFeeId,
                         productId = (short)data.ProductId,
-                        feeId = data.ProductFeeId,
-                        //feeName = data.tbl_Fee.FeeName,
+                        feeId = data.ChargeFeeId,
                         feeName = data.tbl_Charge_Fee.ChargeFeeName,
                         companyId = data.CompanyId,
 
@@ -387,7 +386,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {           
             var dataList = (from data in context.tbl_Product_Charge_Fee
                             where data.ProductId == productId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
-                            select data.ProductFeeId).ToList();           
+                            select data.ChargeFeeId).ToList();           
 
             var fee = (from data in context.tbl_Fee
                        where data.Deleted == false // && !dataList.Contains(data.ProductFeeId)
@@ -467,7 +466,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool UpdateProductFee(int productProductFeeId, ProductFeeViewModel productFee)
         {
-            var productFeeEntity = this.context.tbl_Product_Charge_Fee.Find(productProductFeeId);
+            var productFeeEntity = this.context.tbl_Product_Charge_Fee.Find(productFeeId);
 
             if (productFeeEntity == null)
                 return false;

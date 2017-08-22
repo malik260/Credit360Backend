@@ -254,9 +254,6 @@ namespace FintrakBanking.APICore.Controllers
                 //We can now use staffId extracted from the token as the created by
                 //We ca also get companyId too
 
-                model.createdBy = staffId; ///This staff Id was gotten from the token
-
-
                 var staff = repo.AddTempStaff(model);
 
                 if (staff)
@@ -393,7 +390,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("staff/search/{queryString}")]
+        [Route("staff/search/")]
         public HttpResponseMessage SearchStaff(string queryString)
         {
             try

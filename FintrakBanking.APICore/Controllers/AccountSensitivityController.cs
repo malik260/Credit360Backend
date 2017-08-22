@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Controllers
                 try
                 {
                     var sensitivityLevel = repo.GetAllAccountSensitivityLevels();
-                    return Request.CreateResponse(HttpStatusCode.OK, Ok(sensitivityLevel));
+                    return Request.CreateResponse(HttpStatusCode.OK, new { result= sensitivityLevel });
                 }
                 catch (System.Exception ex)
                 {

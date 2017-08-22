@@ -1,18 +1,14 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Admin;
-using FintrakBanking.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using System.Globalization;
-using FintrakBanking.Common.Enum;
-using System.ComponentModel.Composition;
 
 namespace FintrakBanking.Repositories.Admin
-{ 
+{
     public class CurrencyRateRepository : ICurrencyRateRepository
     {
         private FinTrakBankingContext context;
