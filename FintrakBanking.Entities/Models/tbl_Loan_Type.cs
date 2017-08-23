@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public tbl_Loan_Type()
         {
             tbl_Loan = new HashSet<tbl_Loan>();
+            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Type_Batch = new HashSet<tbl_Loan_Type_Batch>();
         }
 
@@ -25,6 +26,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Type_Batch> tbl_Loan_Type_Batch { get; set; }

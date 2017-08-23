@@ -35,6 +35,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Customer_NextOfKin = new HashSet<tbl_Customer_NextOfKin>();
             tbl_Customer_PhoneContact = new HashSet<tbl_Customer_PhoneContact>();
             tbl_Customer_Address = new HashSet<tbl_Customer_Address>();
+            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Preliminary_Evaluation = new HashSet<tbl_Loan_Preliminary_Evaluation>();
             tbl_Loan_Type_Batch = new HashSet<tbl_Loan_Type_Batch>();
         }
@@ -227,6 +228,9 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Customer_FS_Caption_Group tbl_Customer_FS_Caption_Group { get; set; }
 
         public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Preliminary_Evaluation> tbl_Loan_Preliminary_Evaluation { get; set; }

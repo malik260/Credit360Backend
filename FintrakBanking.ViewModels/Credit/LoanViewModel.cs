@@ -90,7 +90,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanDetails { get; set; }
         public string camReference { get; set; }
         public string customerCode { get; set; }
-        public short productId { get; set; }
+        public short? productId { get; set; }
         
     }
 

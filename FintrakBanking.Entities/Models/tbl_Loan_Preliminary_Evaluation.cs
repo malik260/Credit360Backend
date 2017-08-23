@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.tbl_Loan_Preliminary_Evaluation")]
     public partial class tbl_Loan_Preliminary_Evaluation
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Loan_Preliminary_Evaluation()
+        {
+            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
+        }
+
         [Key]
         public int LoanPreliminaryEvaluationId { get; set; }
 
@@ -139,5 +145,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Staff tbl_Staff { get; set; }
 
         public virtual tbl_Staff tbl_Staff1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
     }
 }
