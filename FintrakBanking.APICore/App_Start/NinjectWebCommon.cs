@@ -13,6 +13,7 @@ namespace FintrakBanking.APICore.App_Start
     using System.Web.Http;
     using WebApiContrib.IoC.Ninject;
     using FintrakBanking.Entities.Models;
+    using FintrakBanking.Entities.DocumentModels;
     using FintrakBanking.Interfaces.Admin;
     using FintrakBanking.Interfaces.AppEmail;
     using FintrakBanking.Interfaces.CASA;
@@ -140,10 +141,9 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IChecklistRepository>().To<ChecklistRepository>();
             kernel.Bind<ILoanRepository>().To<LoanRepository>();
             kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
-            kernel.Bind<ILimitRepository>().To<LimitRepository>();
+            //kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IApprovalGroupMappingRepository>().To<ApprovalGroupMappingRepository>();
             kernel.Bind<IWorkFlowRepository>().To<WorkFlowRepository>();
-            kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IApprovalGroupRepository>().To<ApprovalGroupRepository>();
             kernel.Bind<IApprovalLevelRepository>().To<ApprovalLevelRepository>();
             kernel.Bind<IApprovalLevelStaffRepository>().To<ApprovalLevelStaffRepository>();

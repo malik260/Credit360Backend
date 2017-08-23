@@ -1,4 +1,4 @@
-﻿using FintrakBanking.Entities.documentModel;
+﻿using FintrakBanking.Entities.DocumentModels;
 //using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.media;
 using System;

@@ -8,7 +8,7 @@ using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.Common.Enum;
 using System.Linq;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.Repositories.Setups.Finance
@@ -79,7 +79,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 OperationId = chargeFeemodel.operationId,
                 Amount = chargeFeemodel.amount,
                 Rate = chargeFeemodel.rate,
-                ValueSource = chargeFeemodel.valueSource,
+                FeeTypeId = chargeFeemodel.valueSource,
                 Recurring = chargeFeemodel.recurring,
                 PrimaryTaxId = chargeFeemodel.primaryTaxId,
                 SecondaryTaxId = chargeFeemodel.secondaryTaxId,
@@ -156,7 +156,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 OperationId = model.operationId,
                 Amount = model.amount,
                 Rate = model.rate,
-                ValueSource = model.valueSource,
+                FeeTypeId = model.valueSource,
                 Recurring = model.recurring,
                 PrimaryTaxId = model.primaryTaxId,
                 SecondaryTaxId = model.secondaryTaxId,
@@ -205,9 +205,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateChargeFee(ChargeFeeViewModel model, int chargeFeeId)
+        public bool UpdateChargeFee(ChargeFeeViewModel model, int chargeProductFeeId)
         {
-            var data = this.context.tbl_Charge_Fee.Find(chargeFeeId);
+            var data = this.context.tbl_Charge_Fee.Find(chargeProductFeeId);
             if (data == null)
             {
                 return false;
@@ -226,7 +226,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             data.OperationId = model.operationId;
             data.Amount = model.amount;
             data.Rate = model.rate;
-            data.ValueSource = model.valueSource;
+            data.FeeTypeId = model.valueSource;
             data.Recurring = model.recurring;
             data.PrimaryTaxId = model.primaryTaxId;
             data.SecondaryTaxId = model.secondaryTaxId;
@@ -235,7 +235,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             var notRemoved = model.ranges.Select(range => range.chargeRangeId).ToArray();
             context.tbl_Charge_Range.RemoveRange(
-                context.tbl_Charge_Range.Where(range => !notRemoved.Contains(range.ChargeRangeId) && range.ChargeFeeId == chargeFeeId)
+                context.tbl_Charge_Range.Where(range => !notRemoved.Contains(range.ChargeRangeId) && range.ChargeFeeId == chargeProductFeeId)
             );
 
             var count = model.ranges.Count();
@@ -246,7 +246,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 {
                     context.tbl_Charge_Range.Add(new tbl_Charge_Range
                     {
-                        ChargeFeeId = chargeFeeId,
+                        ChargeFeeId = chargeProductFeeId,
                         Minimum = range.minimum,
                         Maximum = range.maximum,
                         Rate = range.rate,
@@ -295,7 +295,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 operationId = x.OperationId,
                 amount = x.Amount,
                 rate = x.Rate,
-                valueSource = x.ValueSource,
+                valueSource = x.FeeTypeId,
                 recurring = (bool)x.Recurring,
                 primaryTaxId = x.PrimaryTaxId,
                 secondaryTaxId = x.SecondaryTaxId,
@@ -313,9 +313,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
             });
         }
 
-        public ChargeFeeViewModel GetChargeFee(int chargeFeeId)
+        public ChargeFeeViewModel GetChargeFee(int chargeProductFeeId)
         {
-            var data = this.context.tbl_Charge_Fee.Find(chargeFeeId);
+            var data = this.context.tbl_Charge_Fee.Find(chargeProductFeeId);
 
             if (data == null)
             {
@@ -338,7 +338,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 operationId = data.OperationId,
                 amount = data.Amount,
                 rate = data.Rate,
-                valueSource = data.ValueSource,
+                valueSource = data.FeeTypeId,
                 recurring = (bool)data.Recurring,
                 primaryTaxId = data.PrimaryTaxId,
                 secondaryTaxId = data.SecondaryTaxId,
@@ -362,9 +362,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return this.GetAllChargeFee().Where(x => x.companyId == companyId);
         }
 
-        public bool DeleteChargeFee(int chargeFeeId, UserInfo user)
+        public bool DeleteChargeFee(int chargeProductFeeId, UserInfo user)
         {
-            var data = this.context.tbl_Charge_Fee.Find(chargeFeeId);
+            var data = this.context.tbl_Charge_Fee.Find(chargeProductFeeId);
             if (data == null)
             {
                 return false;

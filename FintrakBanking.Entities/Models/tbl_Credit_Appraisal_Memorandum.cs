@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         public int LoanApplicationId { get; set; }
 
+        public int CompanyId { get; set; }
+
         [Required]
         [StringLength(50)]
         public string CAMRef { get; set; }

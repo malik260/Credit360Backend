@@ -1,7 +1,7 @@
 ﻿using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationViewModel> GetAllLoanApplications(int companyId);
 
+        IEnumerable<LoanApplicationViewModel> GetLoanApplicationJobs(int companyId, int level, int scope);
+
         IEnumerable<LoanApplicationViewModel> GetLoanApplicationById(int loanApplicationId, int companyId);
 
         IEnumerable<ProductClassViewModel> GetProductClass();
@@ -28,7 +30,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         Task<bool> UpdateApprovalStatus(ApprovalViewModel entity);
 
-        Task<bool> CreateLoanApplication(LoanApplicationViewModel loan);
+        Task<bool> AddLoanApplication(LoanApplicationViewModel loan);
 
     }
 }

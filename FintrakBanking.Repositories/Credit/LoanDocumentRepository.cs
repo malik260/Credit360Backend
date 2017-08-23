@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;

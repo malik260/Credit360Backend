@@ -19,16 +19,21 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanController : ApiControllerBase
     {
         private ILoanRepository repo;
+        private ICustomerCollateralRepository repoCollateral;
         private ILoanScheduleRepository scheduleRepo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         //private IHostingEnvironment _hostingEnvironment;
-        public LoanController(ILoanRepository _repo, ILoanScheduleRepository _scheduleRepo
-            //, IHostingEnvironment hostingEnvironment
-            )
+        //private IHostingEnvironment _hostingEnvironment;
+        //TokenDecryptionHelper token = new TokenDecryptionHelper();
+        public LoanController(ILoanRepository _repo,
+                              ICustomerCollateralRepository _repoCollateral,
+                               ILoanScheduleRepository _scheduleRepo)
         {
             this.repo = _repo;
+            this.repoCollateral = _repoCollateral;
             this.scheduleRepo = _scheduleRepo;
+
             //this._hostingEnvironment = hostingEnvironment;
         }
 
@@ -352,6 +357,60 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpGet]
+        [Route("detail")]
+        public HttpResponseMessage GetBookedLoanDetails()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var data = repo.GetBookedLoanDetails(token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("details/customer/{customerCode}")]
+        public HttpResponseMessage GetBookedLoanDetails(string customerCode)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var data = repo.GetBookedLoanDetailsByCustomerCode(customerCode, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("details/reference-number/{loanReferenceNumber}")]
+        public HttpResponseMessage GetBookedLoanDetailsByLoanReferenceNumber(string loanReferenceNumber)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var data = repo.GetBookedLoanDetailsByLoanReferenceNumber(loanReferenceNumber, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         //[HttpPost][Route("schedule/export")]
         //public HttpResponseMessage ExportScheduleToExcel([FromBody] PaymentScheduleExcelViewModel model)
         //{
@@ -463,14 +522,72 @@ namespace FintrakBanking.APICore.Controllers
 
 
         //}
+        #endregion
 
+        #region CAM Approved Loan Applications
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum")]
+        public HttpResponseMessage GetCamProcessedLoanApplications()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetCamProcessedLoanApplications(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
+        [HttpGet]
+        [Route("loan-application/collateral/customer/{customerId}")]
+        public HttpResponseMessage GetCollateralCustomer(int customerId)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repoCollateral.GetCollateralCustomer(customerId,token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/charge-fee/product/{productId}")]
+        public HttpResponseMessage GetLoanProductChargeFeesByProductId(int productId)
+        {
+            try
+            {
+                var response = repo.GetLoanProductChargeFeesByProductId(productId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
 
         #endregion
-
-
     }
 }

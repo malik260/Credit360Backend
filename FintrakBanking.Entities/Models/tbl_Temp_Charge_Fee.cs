@@ -41,7 +41,7 @@ namespace FintrakBanking.Entities.Models
 
         public double? Rate { get; set; }
 
-        public int ValueSource { get; set; }
+        public short FeeTypeId { get; set; }
 
         public bool? Recurring { get; set; }
 

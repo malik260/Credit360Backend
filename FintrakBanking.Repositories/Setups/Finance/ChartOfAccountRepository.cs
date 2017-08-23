@@ -6,7 +6,7 @@ using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.Finance;
 using System;
 using System.Collections.Generic;

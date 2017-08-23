@@ -6,7 +6,7 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.Approval;
 using System;
 using System.Collections.Generic;

@@ -26,6 +26,12 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<LookupViewModel> GetAllFSTypes();
 
+        IEnumerable<LookupViewModel> GetSector();
+
+        IEnumerable<LookupViewModel> GetSubsector();
+
+        int GetLoanApplicationRef(); 
+
         IEnumerable<LookupViewModel> GetAllFrequencyTypes();
         //Task<bool>  SaveProductGroup(ProductGroupViewModel group);
         DateTime GetApplicationDate();

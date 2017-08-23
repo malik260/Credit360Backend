@@ -10,7 +10,7 @@ using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Interfaces.Setups.Approval;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.Setups.General
@@ -458,7 +458,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             productId = c.ProductId,
                             productFeeId = c.ProductFeeId,
-                            feeId = c.FeeId,
+                            feeId = c.ProductFeeId,
                             rateValue = c.RateValue,
                             dependentAmount = c.DependentAmount,
                             feeName = c.tbl_Fee.FeeName,
@@ -550,7 +550,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             productId = c.ProductId,
                             productFeeId = c.ProductFeeId,
-                            feeId = c.FeeId,
+                            feeId = c.ProductFeeId,
                             rateValue = c.RateValue,
                             dependentAmount = c.DependentAmount,
                             feeName = c.tbl_Fee.FeeName,

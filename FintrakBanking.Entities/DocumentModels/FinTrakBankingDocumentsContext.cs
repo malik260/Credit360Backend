@@ -1,4 +1,4 @@
-namespace FintrakBanking.Entities.Models
+namespace FintrakBanking.Entities.DocumentModels
 {
     using System;
     using System.Data.Entity;
