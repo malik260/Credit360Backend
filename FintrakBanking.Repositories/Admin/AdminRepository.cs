@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Admin
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.UserCreation;
+            entity.operationId = (int)OperationsEnum.UserCreation;
 
             var response = workFlow.GoForApproval(entity);
 
@@ -133,7 +133,7 @@ namespace FintrakBanking.Repositories.Admin
             };
 
 
-            if (workFlow.CheckRouteForOperation((int)Operations.UserCreation, user.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -193,7 +193,7 @@ namespace FintrakBanking.Repositories.Admin
                             companyId = user.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = _user.StaffId,
-                            operationId = (int)Operations.UserCreation,
+                            operationId = (int)OperationsEnum.UserCreation,
                             BranchId = user.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -216,7 +216,7 @@ namespace FintrakBanking.Repositories.Admin
 
         public IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.UserCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.UserCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -228,7 +228,7 @@ namespace FintrakBanking.Repositories.Admin
                         join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
                         join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
-                              && atrail.OperationId == (int)Operations.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                              && atrail.OperationId == (int)OperationsEnum.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new UserViewModel()
                         {
                             user_id = c.UserId,

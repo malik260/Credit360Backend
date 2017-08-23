@@ -36,6 +36,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Reflection.Context" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -54,10 +55,13 @@
     <Compile Include="Enum\CollateralTypeEnum.cs" />
     <Compile Include="Enum\DayCountConventionEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />
+    <Compile Include="Enum\LimitValueTypeEnum.cs" />
     <Compile Include="Enum\LoanScheduleTypeEnum.cs" />
     <Compile Include="Enum\LoanStatusEnum.cs" />
     <Compile Include="Enum\LoanTypeEnum.cs" />
-    <Compile Include="Enum\Operations.cs" />
+    <Compile Include="Enum\LimitMatricEnum.cs" />
+    <Compile Include="Enum\LimitType.cs" />
+    <Compile Include="Enum\OperationsEnum.cs" />
     <Compile Include="Enum\FrequencyTypeEnum.cs" />
     <Compile Include="Enum\ProcessViewScopeEnum.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />

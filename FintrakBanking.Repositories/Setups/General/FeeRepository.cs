@@ -132,7 +132,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //end of Audit section -------------------------------
 
 
-            if (workFlow.CheckRouteForOperation((int)Operations.FeeCreation, feeModel.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.FeeCreation, feeModel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -149,7 +149,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             companyId = feeModel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = feeModel.feeId,
-                            operationId = (int)Operations.FeeCreation,
+                            operationId = (int)OperationsEnum.FeeCreation,
                             BranchId = feeModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 companyId = feeModel.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempFee.FeeId,
-                operationId = (int)Operations.FeeCreation,
+                operationId = (int)OperationsEnum.FeeCreation,
                 BranchId = feeModel.userBranchId
             };
             var response = workFlow.LogForApproval(approvalEntity);
@@ -372,7 +372,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.FeeCreation;
+            entity.operationId = (int)OperationsEnum.FeeCreation;
 
             var response = workFlow.GoForApproval(entity);
 

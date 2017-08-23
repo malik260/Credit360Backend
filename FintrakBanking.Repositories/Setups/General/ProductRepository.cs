@@ -383,7 +383,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ProductViewModel> GetProductAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.ProductCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.ProductCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -392,7 +392,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
                     join atrail in context.tbl_Approval_Trail on c.ProductId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)Operations.ProductCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                          && atrail.OperationId == (int)OperationsEnum.ProductCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new ProductViewModel()
                     {
                         productId = c.ProductId,
@@ -458,7 +458,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             productId = c.ProductId,
                             productFeeId = c.ProductFeeId,
-                            feeId = c.FeeId,
+                            feeId = c.ProductFeeId,
                             rateValue = c.RateValue,
                             dependentAmount = c.DependentAmount,
                             feeName = c.tbl_Fee.FeeName,
@@ -550,7 +550,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             productId = c.ProductId,
                             productFeeId = c.ProductFeeId,
-                            feeId = c.FeeId,
+                            feeId = c.ProductFeeId,
                             rateValue = c.RateValue,
                             dependentAmount = c.DependentAmount,
                             feeName = c.tbl_Fee.FeeName,
@@ -576,7 +576,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.ProductCreation;
+            entity.operationId = (int)OperationsEnum.ProductCreation;
 
             var response = workFlow.GoForApproval(entity);
 
@@ -806,7 +806,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)Operations.ProductCreation, productModel.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.ProductCreation, productModel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -822,7 +822,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             companyId = productModel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = product.ProductId,
-                            operationId = (int)Operations.ProductCreation,
+                            operationId = (int)OperationsEnum.ProductCreation,
                             BranchId = productModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -1053,7 +1053,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 companyId = productModel.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempProduct.ProductId,
-                operationId = (int)Operations.ProductCreation,
+                operationId = (int)OperationsEnum.ProductCreation,
                 BranchId = productModel.userBranchId
             };
             var response = workFlow.LogForApproval(entity);

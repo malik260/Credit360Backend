@@ -31,7 +31,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.UserCreation;
+            entity.operationId = (int)OperationsEnum.UserCreation;
 
             var response = workFlow.GoForApproval(entity);
 
@@ -103,7 +103,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)Operations.FeeCreation, chargeFeemodel.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.FeeCreation, chargeFeemodel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -119,7 +119,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             companyId = chargeFeemodel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = (int)chargeFee.ChargeFeeId,
-                            operationId = (int)Operations.FeeCreation,
+                            operationId = (int)OperationsEnum.FeeCreation,
                             BranchId = chargeFeemodel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -205,9 +205,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateChargeFee(ChargeFeeViewModel model, int chargeFeeId)
+        public bool UpdateChargeFee(ChargeFeeViewModel model, int chargeProductFeeId)
         {
-            var data = this.context.tbl_Charge_Fee.Find(chargeFeeId);
+            var data = this.context.tbl_Charge_Fee.Find(chargeProductFeeId);
             if (data == null)
             {
                 return false;
@@ -235,7 +235,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             var notRemoved = model.ranges.Select(range => range.chargeRangeId).ToArray();
             context.tbl_Charge_Range.RemoveRange(
-                context.tbl_Charge_Range.Where(range => !notRemoved.Contains(range.ChargeRangeId) && range.ChargeFeeId == chargeFeeId)
+                context.tbl_Charge_Range.Where(range => !notRemoved.Contains(range.ChargeRangeId) && range.ChargeFeeId == chargeProductFeeId)
             );
 
             var count = model.ranges.Count();
@@ -246,7 +246,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 {
                     context.tbl_Charge_Range.Add(new tbl_Charge_Range
                     {
-                        ChargeFeeId = chargeFeeId,
+                        ChargeFeeId = chargeProductFeeId,
                         Minimum = range.minimum,
                         Maximum = range.maximum,
                         Rate = range.rate,
@@ -313,9 +313,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
             });
         }
 
-        public ChargeFeeViewModel GetChargeFee(int chargeFeeId)
+        public ChargeFeeViewModel GetChargeFee(int chargeProductFeeId)
         {
-            var data = this.context.tbl_Charge_Fee.Find(chargeFeeId);
+            var data = this.context.tbl_Charge_Fee.Find(chargeProductFeeId);
 
             if (data == null)
             {
@@ -362,9 +362,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return this.GetAllChargeFee().Where(x => x.companyId == companyId);
         }
 
-        public bool DeleteChargeFee(int chargeFeeId, UserInfo user)
+        public bool DeleteChargeFee(int chargeProductFeeId, UserInfo user)
         {
-            var data = this.context.tbl_Charge_Fee.Find(chargeFeeId);
+            var data = this.context.tbl_Charge_Fee.Find(chargeProductFeeId);
             if (data == null)
             {
                 return false;

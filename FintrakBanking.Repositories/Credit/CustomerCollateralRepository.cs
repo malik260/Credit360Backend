@@ -111,9 +111,11 @@ namespace FintrakBanking.Repositories.Credit
                     select new CollateralCustomerViewModel
                     {
                         collateralTypeId = c.CollateralTypeId,
+                        collateralType = c.tbl_Collateral_Type.CollateralTypeName,
                         collateralCustomerId = c.CollateralCustomerId,
                         collateralCode = c.CollateralCode,
                         currencyId = c.CurrencyId,
+                        currency = c.tbl_Currency.CurrencyName,
                         allowSharing = c.AllowSharing,
                         isLocationBased = c.IsLocationBased,
                         valuationCycle = c.ValuationCycle,

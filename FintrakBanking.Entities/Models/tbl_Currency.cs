@@ -17,6 +17,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Company = new HashSet<tbl_Company>();
             tbl_Chart_Of_Account_Currency = new HashSet<tbl_Chart_Of_Account_Currency>();
             tbl_Temp_Chart_Of_Account_Currency = new HashSet<tbl_Temp_Chart_Of_Account_Currency>();
+            tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
             tbl_Currency_Rate = new HashSet<tbl_Currency_Rate>();
             tbl_Currency_Rate1 = new HashSet<tbl_Currency_Rate>();
             tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
@@ -59,6 +60,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Chart_Of_Account_Currency> tbl_Temp_Chart_Of_Account_Currency { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Currency_Rate> tbl_Currency_Rate { get; set; }

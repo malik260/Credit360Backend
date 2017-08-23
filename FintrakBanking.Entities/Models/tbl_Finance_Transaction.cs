@@ -42,6 +42,8 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime TransactionDate { get; set; }
 
+        public int CompanyId { get; set; }
+
         public short SourceBranchId { get; set; }
 
         public short DestinationBranchId { get; set; }
@@ -70,6 +72,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Branch tbl_Branch1 { get; set; }
 
         public virtual tbl_CASA tbl_CASA { get; set; }
+
+        public virtual tbl_Company tbl_Company { get; set; }
 
         public virtual tbl_Currency tbl_Currency { get; set; }
 

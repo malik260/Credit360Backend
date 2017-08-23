@@ -30,7 +30,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         Task<bool> UpdateApprovalStatus(ApprovalViewModel entity);
 
-        Task<bool> CreateLoanApplication(LoanApplicationViewModel loan);
+        Task<bool> AddLoanApplication(LoanApplicationViewModel loan);
 
     }
 }

@@ -106,7 +106,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("user")]
-        public HttpResponseMessage AddUser(  [FromBody]AppUserViewModel user)
+        public async Task<HttpResponseMessage> AddUserAsync([FromBody]AppUserViewModel user)
         {
             try
             {
@@ -121,13 +121,13 @@ namespace FintrakBanking.APICore.Controllers
 
                     user.createdBy = token.GetStaffId;
                     user.userBranchId = (short)token.GetBranchId;
-                    user.userIPAddress =  HttpContext.Current.Request.UserHostAddress;
+                    user.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                     user.applicationUrl = HttpContext.Current.Request.Path;
                     user.companyId = token.GetCompanyId;
-                    var result = repo.CreateUser(user);
-                    if (result.IsCompleted)
+                    var result = await repo.CreateUser(user);
+                    if (result)
                     {
-                        repo.CreateUser(user);
+                        //repo.CreateUser(user);
 
                         return Request.CreateResponse(HttpStatusCode.OK,
                            new { success = true, result = user, message = "User has been created successfully, now awaiting approval" });
@@ -148,8 +148,8 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-            
-        } 
+
+        }
         [HttpPut]
         [Route("user/{id}")]
         public HttpResponseMessage UpdateUser(int id, [FromBody]AppUserViewModel user)

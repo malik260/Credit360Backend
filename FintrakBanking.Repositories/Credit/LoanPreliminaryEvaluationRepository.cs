@@ -98,7 +98,7 @@ namespace FintrakBanking.Repositories.Credit
                 ApplicationDate = genSetup.GetApplicationDate(),
             };
 
-            if (workFlow.CheckRouteForOperation((int)Operations.LoanPreliminaryEvaluation, penRecord.CompanyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.LoanPreliminaryEvaluation, penRecord.CompanyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -115,7 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = penRecord.CompanyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = penRecord.LoanPreliminaryEvaluationId,
-                            operationId = (int)Operations.LoanPreliminaryEvaluation,
+                            operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
                             BranchId = model.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -151,7 +151,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanPreliminaryEvaluationViewModel> GetPreliminaryEvaluationsAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.LoanPreliminaryEvaluation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanPreliminaryEvaluation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -161,7 +161,7 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.tbl_Branch on pen.BranchId equals br.BranchId
                         join atrail in context.tbl_Approval_Trail on pen.LoanPreliminaryEvaluationId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && pen.IsCurrent == true
-                              && atrail.OperationId == (int)Operations.LoanPreliminaryEvaluation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                              && atrail.OperationId == (int)OperationsEnum.LoanPreliminaryEvaluation && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.CompanyId,
@@ -202,7 +202,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.LoanPreliminaryEvaluation;
+            entity.operationId = (int)OperationsEnum.LoanPreliminaryEvaluation;
 
             var response = workFlow.GoForApproval(entity);
 

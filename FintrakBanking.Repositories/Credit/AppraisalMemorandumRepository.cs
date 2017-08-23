@@ -84,7 +84,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 operationId = (int)Operations.CAM,
                 targetId = model.loanApplicationId,
-                myLevelId = 4,//model.levelId,
+                myLevelId = 4, //model.levelId,
                 approvalStatusId = 0,
                 operationURL = model.applicationUrl,
                 comment = "TEST CAM", //model.comment,

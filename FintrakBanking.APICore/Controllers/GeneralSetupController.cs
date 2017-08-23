@@ -80,6 +80,27 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("loanApplicationReferance")]
+        public HttpResponseMessage GetLoanApplicationRef()
+        {
+            try
+            {
+                var data = repo.GetLoanApplicationRef();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+       
+
+        [HttpGet]
         [Route("customer-type")]
         public HttpResponseMessage GetAllCustomerType()
         {
@@ -125,6 +146,43 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetApplicationDate();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("sector")]
+        public HttpResponseMessage GetSector()
+        {
+            try
+            {
+                var data = repo.GetSector();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("subsector")]
+        public HttpResponseMessage GetSubsector()
+        {
+            try
+            {
+                var data = repo.GetSubsector();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
