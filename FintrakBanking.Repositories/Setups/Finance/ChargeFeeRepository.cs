@@ -79,7 +79,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 OperationId = chargeFeemodel.operationId,
                 Amount = chargeFeemodel.amount,
                 Rate = chargeFeemodel.rate,
-                ValueSource = chargeFeemodel.valueSource,
+                FeeTypeId = chargeFeemodel.valueSource,
                 Recurring = chargeFeemodel.recurring,
                 PrimaryTaxId = chargeFeemodel.primaryTaxId,
                 SecondaryTaxId = chargeFeemodel.secondaryTaxId,
@@ -156,7 +156,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 OperationId = model.operationId,
                 Amount = model.amount,
                 Rate = model.rate,
-                ValueSource = model.valueSource,
+                FeeTypeId = model.valueSource,
                 Recurring = model.recurring,
                 PrimaryTaxId = model.primaryTaxId,
                 SecondaryTaxId = model.secondaryTaxId,
@@ -226,7 +226,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             data.OperationId = model.operationId;
             data.Amount = model.amount;
             data.Rate = model.rate;
-            data.ValueSource = model.valueSource;
+            data.FeeTypeId = model.valueSource;
             data.Recurring = model.recurring;
             data.PrimaryTaxId = model.primaryTaxId;
             data.SecondaryTaxId = model.secondaryTaxId;
@@ -295,7 +295,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 operationId = x.OperationId,
                 amount = x.Amount,
                 rate = x.Rate,
-                valueSource = x.ValueSource,
+                valueSource = x.FeeTypeId,
                 recurring = (bool)x.Recurring,
                 primaryTaxId = x.PrimaryTaxId,
                 secondaryTaxId = x.SecondaryTaxId,
@@ -338,7 +338,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 operationId = data.OperationId,
                 amount = data.Amount,
                 rate = data.Rate,
-                valueSource = data.ValueSource,
+                valueSource = data.FeeTypeId,
                 recurring = (bool)data.Recurring,
                 primaryTaxId = data.PrimaryTaxId,
                 secondaryTaxId = data.SecondaryTaxId,

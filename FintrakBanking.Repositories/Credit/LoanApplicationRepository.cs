@@ -44,11 +44,11 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationId = a.LoanApplicationId,
                             applicationReferenceNumber = a.ApplicationReferenceNumber,
                             customerId = a.CustomerId ?? 0,
-                            customerName = a.CustomerId.HasValue ? a.tbl_Customer.FirstName + " " + a.tbl_Customer.MiddleName + " " + a.tbl_Customer.LastName : "",
+                            //customerName = a.CustomerId.HasValue ? a.tbl_Customer.FirstName + " " + a.tbl_Customer.MiddleName + " " + a.tbl_Customer.LastName : "",
                             loanInformation = a.LoanInformation,
                             companyId = a.CompanyId,
                             branchId = a.BranchId,
-                            branchName = a.tbl_Branch.BranchName,
+                            //branchName = a.tbl_Branch.BranchName,
                             tenor = a.Tenor,
                             //tenorModeId = a.TenorModeId,
                             //tenorModeName = a.tbl_Tenor_Mode.TenorModeName,
@@ -98,7 +98,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var groupApprovalLevelIds = context.tbl_Approval_Level
                         .Where(x => x.GroupOperationMappingId == levelGroupId)
-                        .Select(x => x.ApprovalLevelId).ToArray();
+                        .Select(x => x.ApprovalLevelId);
 
                     applications = applications.Where(x => groupApprovalLevelIds.Contains(x.approvalLevelId));
                 }
@@ -137,8 +137,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.tbl_Loan_Application
                         where a.CompanyId == companyId && a.Deleted == false
-                        && (a.ApplicationReferenceNumber == referenceNumberOrName ||
-                      $"{a.tbl_Customer.FirstName} {a.tbl_Customer.MiddleName} {a.tbl_Customer.LastName} {a.tbl_Customer.CustomerCode} ".Contains(referenceNumberOrName))
+                        //&& (a.ApplicationReferenceNumber == referenceNumberOrName || $"{a.tbl_Customer.FirstName} {a.tbl_Customer.MiddleName} {a.tbl_Customer.LastName} {a.tbl_Customer.CustomerCode} ".Contains(referenceNumberOrName))
                         select new LoanApplicationViewModel
                         {
                             loanApplicationId = a.LoanApplicationId,
@@ -203,7 +202,7 @@ namespace FintrakBanking.Repositories.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-        public async Task<bool> CreateLoanApplication(LoanApplicationViewModel loan)
+        public async Task<bool> AddLoanApplication(LoanApplicationViewModel loan)
         {
             bool isGroupLoan = false;
 
@@ -297,7 +296,7 @@ namespace FintrakBanking.Repositories.Credit
                 var wf = new ApprovalViewModel
                 {
                     companyId = data.CompanyId,
-                    operationId = (int)Operations.LoanApplication,
+                    operationId = (int)OperationsEnum.LoanApplication,
                     staffId = data.CreatedBy,
                     targetId = data.LoanApplicationId,
                     approvalStatusId =(short)ApprovalStatusEnum.Pending,

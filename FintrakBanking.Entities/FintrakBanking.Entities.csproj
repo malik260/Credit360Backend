@@ -49,10 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="documentModel\FinTrakBankingDocumentsContext.cs" />
-    <Compile Include="documentModel\tbl_Media_Collateral_Documents.cs" />
+    <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\tbl_Media_Collateral_Documents.cs" />
+    <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -146,7 +147,6 @@
     <Compile Include="Models\tbl_Customer_NextOfKin.cs" />
     <Compile Include="Models\tbl_Customer_PhoneContact.cs" />
     <Compile Include="Models\tbl_Customer_Sensitivity_Level.cs" />
-    <Compile Include="Models\tbl_Customer_Status.cs" />
     <Compile Include="Models\tbl_Customer_Type.cs" />
     <Compile Include="Models\tbl_Custom_Fields.cs" />
     <Compile Include="Models\tbl_Custom_Fields_Data.cs" />
@@ -203,8 +203,6 @@
     <Compile Include="Models\tbl_Loan_Type_Batch.cs" />
     <Compile Include="Models\tbl_MachineValue_Base.cs" />
     <Compile Include="Models\tbl_Management_Type.cs" />
-    <Compile Include="Models\tbl_Media_Collateral_Documents.cs" />
-    <Compile Include="Models\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\tbl_MIS_Info.cs" />
     <Compile Include="Models\tbl_MIS_Type.cs" />
     <Compile Include="Models\tbl_Nature_Of_Business.cs" />

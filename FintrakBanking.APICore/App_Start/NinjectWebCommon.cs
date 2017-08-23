@@ -13,6 +13,7 @@ namespace FintrakBanking.APICore.App_Start
     using System.Web.Http;
     using WebApiContrib.IoC.Ninject;
     using FintrakBanking.Entities.Models;
+    using FintrakBanking.Entities.DocumentModels;
     using FintrakBanking.Interfaces.Admin;
     using FintrakBanking.Interfaces.AppEmail;
     using FintrakBanking.Interfaces.CASA;

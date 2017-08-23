@@ -82,7 +82,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var response = this.workflow.GoForApproval(new ApprovalViewModel
             {
-                operationId = (int)Operations.CAM,
+                operationId = (int)OperationsEnum.CAM,
                 targetId = model.loanApplicationId,
                 myLevelId = 4, //model.levelId,
                 approvalStatusId = 0,
@@ -236,7 +236,7 @@ namespace FintrakBanking.Repositories.Credit
             var allstaff = this.GetAllStaffNames();
 
             return this.context.tbl_Approval_Trail
-                .Where(x => x.OperationId == (int)Operations.CAM && x.TargetId == applicationId)
+                .Where(x => x.OperationId == (int)OperationsEnum.CAM && x.TargetId == applicationId)
                 .Select(x => new ApprovalTrailViewModel
                 {
                     approvalTrailId = x.ApprovalTrailId,
