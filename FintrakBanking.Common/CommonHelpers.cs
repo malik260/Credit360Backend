@@ -321,8 +321,21 @@ namespace FintrakBanking.Common
             {
                 result.Append(chars[b % (chars.Length)]);
             }
-            return result.ToString();
+            string code = string.Empty;
+            for (int i = 0; i < result.Length ; i++)
+            {
+                code += result[i];
+            }
+            return code ;
         }
 
+
+        public static int GetLoanReferanceNumber()
+        {
+            TimeSpan epochTicks = new TimeSpan(new DateTime(1970, 1, 1).Ticks);
+            TimeSpan unixTicks = new TimeSpan(DateTime.UtcNow.Ticks) - epochTicks;
+            double unixTime = unixTicks.TotalSeconds;
+            return (int)unixTime;
+        }
     }
 }
