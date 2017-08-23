@@ -272,7 +272,7 @@ namespace FintrakBanking.Repositories.Credit
                 var wf = new ApprovalViewModel
                 {
                     companyId = data.CompanyId,
-                    operationId = (int)Operations.LoanApplication,
+                    operationId = (int)OperationsEnum.LoanApplication,
                     staffId = data.CreatedBy,
                     targetId = data.LoanApplicationId,
                     approvalStatusId =(short)ApprovalStatusEnum.Pending,

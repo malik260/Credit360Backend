@@ -27,4 +27,6 @@
         public int numberOfShares { get; set; }
         public bool isPoliticallyExposed { get; set; }
     }
+
+    public class CustomerCompanyShareholdersViewModels: CustomerCompanyDirectorsViewModels { }
 }

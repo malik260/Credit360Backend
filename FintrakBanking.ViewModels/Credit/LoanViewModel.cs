@@ -78,6 +78,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string customerName { get; set; }
+        public bool isCamsol { get; set; }
     }
 
     public class LoanSearchViewModel

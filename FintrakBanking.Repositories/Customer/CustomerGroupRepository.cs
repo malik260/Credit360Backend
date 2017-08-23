@@ -15,6 +15,7 @@ using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Business;
 using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.ViewModels.CASA;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -112,7 +113,7 @@ namespace FintrakBanking.Repositories.Customer
             //end of Audit section -------------------------------
 
 
-            if (workFlow.CheckRouteForOperation((int)Operations.CustomerGroupCreation, custGroupModel.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.CustomerGroupCreation, custGroupModel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -128,7 +129,7 @@ namespace FintrakBanking.Repositories.Customer
                             companyId = custGroupModel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = tempGroup.CustomerGroupId,
-                            operationId = (int)Operations.CustomerGroupCreation,
+                            operationId = (int)OperationsEnum.CustomerGroupCreation,
                             BranchId = custGroupModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -177,35 +178,33 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
 
+        private IQueryable<CustomerGroupViewModel> GetAllCustomerGroups()
+        {
+            var data = (from a in context.tbl_Customer_Group
+                        where a.Deleted == false
+                        select new CustomerGroupViewModel
+                        {
+                            groupCode = a.GroupCode,
+                            groupName = a.GroupName,
+                            groupDescription = a.GroupDescription,
+                            customerGroupId = a.CustomerGroupId,
+                            dateTimeCreated = a.DateTimeCreated,
+                            createdBy = a.CreatedBy
+                        });
+            return data;
+        }
+
         public IEnumerable<CustomerGroupViewModel> GetCustomerGroup()
         {
-            var customerGroup = from a in context.tbl_Customer_Group
-                                where a.Deleted == false
-                                select new CustomerGroupViewModel
-                                {
-                                    groupCode = a.GroupCode,
-                                    groupName = a.GroupName,
-                                    groupDescription = a.GroupDescription,
-                                    customerGroupId = a.CustomerGroupId,
-                                    dateTimeCreated = a.DateTimeCreated,
-                                    createdBy = a.CreatedBy
-                                };
+            var customerGroup = GetAllCustomerGroups();
+
             return customerGroup;
         }
 
         public CustomerGroupViewModel GetCustomerGroupByCustomerId(int customerGroupId)
         {
-            var customerGroup = from a in context.tbl_Customer_Group
-                                where a.CustomerGroupId == customerGroupId && a.Deleted == false
-                                select new CustomerGroupViewModel
-                                {
-                                    groupCode = a.GroupCode,
-                                    groupName = a.GroupName,
-                                    groupDescription = a.GroupDescription,
-                                    customerGroupId = a.CustomerGroupId,
-                                    dateTimeCreated = a.DateTimeCreated,
-                                    createdBy = a.CreatedBy
-                                };
+            var customerGroup = GetCustomerGroup().Where(x => x.customerGroupId == customerGroupId);
+
             return customerGroup.FirstOrDefault();
         }
 
@@ -309,7 +308,7 @@ namespace FintrakBanking.Repositories.Customer
                 companyId = entity.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempCustomerGroup.CustomerGroupId,
-                operationId = (int)Operations.CustomerGroupCreation,
+                operationId = (int)OperationsEnum.CustomerGroupCreation,
                 BranchId = entity.userBranchId
             };
             var response = workFlow.LogForApproval(approvalEntity);
@@ -319,7 +318,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.CustomerGroupCreation;
+            entity.operationId = (int)OperationsEnum.CustomerGroupCreation;
 
             var response = workFlow.GoForApproval(entity);
 
@@ -389,7 +388,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupViewModel> GetCustomerGroupsAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.CustomerGroupCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.CustomerGroupCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -398,7 +397,7 @@ namespace FintrakBanking.Repositories.Customer
                     join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
                     join atrail in context.tbl_Approval_Trail on c.CustomerGroupId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)Operations.CustomerGroupCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                          && atrail.OperationId == (int)OperationsEnum.CustomerGroupCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new CustomerGroupViewModel()
                     {
                         companyId = c.CompanyId,
@@ -491,7 +490,7 @@ namespace FintrakBanking.Repositories.Customer
             };
 
 
-            if (workFlow.CheckRouteForOperation((int)Operations.CustomerGroupCreation, model.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.CustomerGroupCreation, model.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -507,7 +506,7 @@ namespace FintrakBanking.Repositories.Customer
                             companyId = model.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = groupMap.CustomerGroupMappingId,
-                            operationId = (int)Operations.CustomerGroupCreation,
+                            operationId = (int)OperationsEnum.CustomerGroupCreation,
                             BranchId = model.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -577,7 +576,7 @@ namespace FintrakBanking.Repositories.Customer
                                            //dateTimeCreated = a.DateTimeCreated
                                        };
 
-            return customerGroupMapping.SingleOrDefault();
+            return customerGroupMapping.FirstOrDefault();
 
         }
 
@@ -746,7 +745,7 @@ namespace FintrakBanking.Repositories.Customer
                 companyId = model.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempCustomerGroupMap.CustomerGroupMappingId,
-                operationId = (int)Operations.CustomerGroupCreation,
+                operationId = (int)OperationsEnum.CustomerGroupCreation,
                 BranchId = model.userBranchId
             };
             var response = workFlow.LogForApproval(approvalEntity);
@@ -843,7 +842,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapsAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.CustomerGroupCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.CustomerGroupCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -852,7 +851,7 @@ namespace FintrakBanking.Repositories.Customer
                     join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
                     join atrail in context.tbl_Approval_Trail on c.CustomerGroupId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)Operations.CustomerGroupCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                          && atrail.OperationId == (int)OperationsEnum.CustomerGroupCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new CustomerGroupMappingViewModel()
                     {
                         companyId = c.CompanyId,
@@ -873,6 +872,57 @@ namespace FintrakBanking.Repositories.Customer
                        lookupId = a.RelationshipTypeId,
                        lookupName = a.RelationshipTypeName
                    };
+        }
+
+        private IQueryable<CustomerGroupViewModel> GellAllCustomerGroupMappings()
+        {
+            var data = (from a in context.tbl_Customer_Group
+                        where a.Deleted == false
+                        select new CustomerGroupViewModel
+                        {
+                            customerGroupId = a.CustomerGroupId,
+                            customerGroupName = a.GroupName,
+                            customerGroupCode = a.GroupCode,
+                            customerGroupMappings = context.tbl_Customer_Group_Mapping.Where(x => x.CustomerGroupId == a.CustomerGroupId).Select(s => new CustomerGroupMappingViewModel
+                            {
+                                customerGroupMappingId = s.CustomerGroupMappingId,
+                                customerGroupId = s.CustomerGroupId,
+                                customerId = s.CustomerId,
+                                customerCode = s.tbl_Customer.CustomerCode,
+                                customerName = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
+                                customerType = s.tbl_Customer.tbl_Customer_Type.Name,
+                                relationshipTypeId = s.RelationshipTypeId,
+                                relationshipTypeName = s.tbl_Customer_Group_RelationshipType.RelationshipTypeName,
+                                productAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == s.CustomerId).ProductAccountNumber,
+                                accountHolder = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
+                                companyId = s.tbl_Customer.CompanyId,
+                                branchId = s.tbl_Customer.BranchId,
+                                isBlackListed = context.tbl_Customer_Blacklist.Where(x => x.CustomerId == s.CustomerId).Any(),
+                            }).ToList(),
+                        });
+
+            return data;
+        }
+
+        public IQueryable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery)
+        {
+            IQueryable<CustomerGroupViewModel> allGroups = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allGroups = GellAllCustomerGroupMappings()
+                    //.Where(c => c.companyId == companyId)
+                    .Where(x => x.customerGroupName.Contains(searchQuery)
+                    || x.customerGroupCode.Contains(searchQuery)
+                );
+            }
+
+            return allGroups;
         }
         #endregion
     }

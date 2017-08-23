@@ -17,7 +17,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         string AddLoanBooking(LoanViewModel entity);
 
-        IEnumerable<LoanViewModel> GetLoanByCustomerId(int customerId);
+        IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
 
         LoanViewModel GetLoan(int loanId);
         
@@ -25,6 +25,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
 
- 
+        IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId);
     }
 }

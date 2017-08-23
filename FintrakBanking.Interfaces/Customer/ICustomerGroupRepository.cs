@@ -3,6 +3,7 @@ using FintrakBanking.ViewModels.Business;
 using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,6 +38,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool UpdateCustomerGroupMappingForApproval(int groupMapId, CustomerGroupMappingViewModel entity);
         bool DeleteCustomerGroupMapping(int groupMapId, UserInfo user);
 
+        IQueryable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery);
         #endregion
     }
 }

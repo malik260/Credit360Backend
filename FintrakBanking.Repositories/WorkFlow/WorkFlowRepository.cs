@@ -231,7 +231,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private decimal GetAmount(ApprovalViewModel entity)
         {
             decimal amount = 0;
-            if (entity.operationId == (int)Operations.LoanApplication)
+            if (entity.operationId == (int)OperationsEnum.LoanApplication)
             {
                 var loan = context.tbl_Loan_Application.Where(c => c.CompanyId == entity.companyId && c.LoanApplicationId == entity.targetId);
                 if (loan.Any())
@@ -239,7 +239,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     amount = loan.SingleOrDefault().PrincipalAmount;
                 }
             }
-            if (entity.operationId == (int)Operations.LoanBooking)
+            if (entity.operationId == (int)OperationsEnum.LoanBooking)
             { 
                 var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.LoanId == entity.targetId);
                 if (loan.Any())
@@ -253,7 +253,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private decimal GetTenor(ApprovalViewModel entity)
         {
             decimal tenor = 0;
-            if (entity.operationId == (int)Operations.LoanApplication)
+            if (entity.operationId == (int)OperationsEnum.LoanApplication)
             {
                 var loan = context.tbl_Loan_Application.Where(c => c.CompanyId == entity.companyId && c.LoanApplicationId == entity.targetId);
                 if (loan.Any())
@@ -261,7 +261,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     tenor = loan.SingleOrDefault().Tenor;
                 }
             }
-            if (entity.operationId == (int)Operations.LoanBooking)
+            if (entity.operationId == (int)OperationsEnum.LoanBooking)
             {
                 var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.LoanId == entity.targetId);
                 if (loan.Any())
@@ -468,33 +468,32 @@ namespace FintrakBanking.Repositories.WorkFlow
         
         private Tuple<bool, ApprovalViewModel> ApproveOperation(ApprovalViewModel entity)
         {
-            if (entity.operationId == int.Parse(Operations.LoanApplication.ToString()))
+            if (entity.operationId == int.Parse(OperationsEnum.LoanApplication.ToString()))
             {
                 return Tuple.Create(true, entity);
             }
 
-            if (entity.operationId == int.Parse(Operations.LoanBooking.ToString()))
+            if (entity.operationId == int.Parse(OperationsEnum.LoanBooking.ToString()))
             {
                 return Tuple.Create(true, entity);
             }
-            if (entity.operationId == int.Parse(Operations.ProductCreation.ToString()))
+            if (entity.operationId == int.Parse(OperationsEnum.ProductCreation.ToString()))
             {
                 return Tuple.Create(true, entity);
             }
-            if (entity.operationId == int.Parse(Operations.ProductsUpdate.ToString()))
+            if (entity.operationId == int.Parse(OperationsEnum.StaffCreation.ToString()))
             {
                 return Tuple.Create(true, entity);
             }
-
-            if (entity.operationId == int.Parse(Operations.StaffCreation.ToString()))
+            if (entity.operationId == int.Parse(OperationsEnum.UserCreation.ToString()))
             {
                 return Tuple.Create(true, entity);
             }
-            if (entity.operationId == int.Parse(Operations.UserCreation.ToString()))
+            if (entity.operationId == int.Parse(OperationsEnum.ChartOfAccountCreation.ToString()))
             {
                 return Tuple.Create(true, entity);
             }
-            if (entity.operationId == int.Parse(Operations.ChartOfAccountCreation.ToString()))
+            if (entity.operationId == int.Parse(OperationsEnum.LoanPreliminaryEvaluation.ToString()))
             {
                 return Tuple.Create(true, entity);
             }

@@ -31,7 +31,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.UserCreation;
+            entity.operationId = (int)OperationsEnum.UserCreation;
 
             var response = workFlow.GoForApproval(entity);
 
@@ -103,7 +103,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)Operations.FeeCreation, chargeFeemodel.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.FeeCreation, chargeFeemodel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -119,7 +119,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             companyId = chargeFeemodel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = (int)chargeFee.ChargeFeeId,
-                            operationId = (int)Operations.FeeCreation,
+                            operationId = (int)OperationsEnum.FeeCreation,
                             BranchId = chargeFeemodel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);

@@ -124,7 +124,7 @@ namespace FintrakBanking.APICore.Controllers
         { 
                 try
                 {
-                    TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
+                    TokenDecryptionHelper token = new TokenDecryptionHelper();
                     model.userBranchId = (short)token.GetBranchId;
                     // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                      model.applicationUrl = HttpContext.Current.Request.Path;
