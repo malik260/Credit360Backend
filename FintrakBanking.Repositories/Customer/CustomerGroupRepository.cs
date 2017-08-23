@@ -112,7 +112,7 @@ namespace FintrakBanking.Repositories.Customer
             //end of Audit section -------------------------------
 
 
-            if (workFlow.CheckRouteForOperation((int)Operations.CustomerGroupCreation, custGroupModel.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.CustomerGroupCreation, custGroupModel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -128,7 +128,7 @@ namespace FintrakBanking.Repositories.Customer
                             companyId = custGroupModel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = tempGroup.CustomerGroupId,
-                            operationId = (int)Operations.CustomerGroupCreation,
+                            operationId = (int)OperationsEnum.CustomerGroupCreation,
                             BranchId = custGroupModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -309,7 +309,7 @@ namespace FintrakBanking.Repositories.Customer
                 companyId = entity.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempCustomerGroup.CustomerGroupId,
-                operationId = (int)Operations.CustomerGroupCreation,
+                operationId = (int)OperationsEnum.CustomerGroupCreation,
                 BranchId = entity.userBranchId
             };
             var response = workFlow.LogForApproval(approvalEntity);
@@ -319,7 +319,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.CustomerGroupCreation;
+            entity.operationId = (int)OperationsEnum.CustomerGroupCreation;
 
             var response = workFlow.GoForApproval(entity);
 
@@ -389,7 +389,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupViewModel> GetCustomerGroupsAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.CustomerGroupCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.CustomerGroupCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -398,7 +398,7 @@ namespace FintrakBanking.Repositories.Customer
                     join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
                     join atrail in context.tbl_Approval_Trail on c.CustomerGroupId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)Operations.CustomerGroupCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                          && atrail.OperationId == (int)OperationsEnum.CustomerGroupCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new CustomerGroupViewModel()
                     {
                         companyId = c.CompanyId,
@@ -491,7 +491,7 @@ namespace FintrakBanking.Repositories.Customer
             };
 
 
-            if (workFlow.CheckRouteForOperation((int)Operations.CustomerGroupCreation, model.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.CustomerGroupCreation, model.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -507,7 +507,7 @@ namespace FintrakBanking.Repositories.Customer
                             companyId = model.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = groupMap.CustomerGroupMappingId,
-                            operationId = (int)Operations.CustomerGroupCreation,
+                            operationId = (int)OperationsEnum.CustomerGroupCreation,
                             BranchId = model.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -746,7 +746,7 @@ namespace FintrakBanking.Repositories.Customer
                 companyId = model.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempCustomerGroupMap.CustomerGroupMappingId,
-                operationId = (int)Operations.CustomerGroupCreation,
+                operationId = (int)OperationsEnum.CustomerGroupCreation,
                 BranchId = model.userBranchId
             };
             var response = workFlow.LogForApproval(approvalEntity);
@@ -843,7 +843,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapsAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.CustomerGroupCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.CustomerGroupCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -852,7 +852,7 @@ namespace FintrakBanking.Repositories.Customer
                     join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
                     join atrail in context.tbl_Approval_Trail on c.CustomerGroupId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)Operations.CustomerGroupCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                          && atrail.OperationId == (int)OperationsEnum.CustomerGroupCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new CustomerGroupMappingViewModel()
                     {
                         companyId = c.CompanyId,

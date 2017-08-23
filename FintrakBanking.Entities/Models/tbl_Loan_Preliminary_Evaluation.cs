@@ -109,10 +109,16 @@ namespace FintrakBanking.Entities.Models
         public string CommercialViabilityAssessment { get; set; }
 
         [Required]
-        [StringLength(300)]
-        public string AccountOfficer { get; set; }
+        [StringLength(50)]
+        public string TaxIdentificationNumber { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string RegistrationNumber { get; set; }
 
         public short ApprovalStatusId { get; set; }
+
+        public bool IsCurrent { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -121,6 +127,8 @@ namespace FintrakBanking.Entities.Models
         public int? LastUpdatedBy { get; set; }
 
         public DateTime? DateTimeUpdated { get; set; }
+
+        public DateTime? DateApproved { get; set; }
 
         public bool Deleted { get; set; }
 

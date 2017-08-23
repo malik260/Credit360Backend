@@ -12,8 +12,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int limitMetricId { get; set; }
         public String limitValueType { get; set; }
         public String limitMetric { get; set; }
-        public String companyName { get; set; }
-
     }
 
     public class LimitDetailViewModel : GeneralEntity

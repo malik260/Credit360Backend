@@ -10,6 +10,5 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public string groupName { get; set; }
         public bool isCommittee { get; set; }
         public bool isBeforeCamapproval { get; set; }
-        public string companyName { get; set; }
     }
 }

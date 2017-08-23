@@ -12,7 +12,6 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Fee()
         {
-            tbl_Product_Fee = new HashSet<tbl_Product_Fee>();
             tbl_Temp_Product_Fee = new HashSet<tbl_Temp_Product_Fee>();
         }
 
@@ -69,9 +68,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Account_Category tbl_Account_Category { get; set; }
 
         public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product_Fee> tbl_Product_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Product_Fee> tbl_Temp_Product_Fee { get; set; }

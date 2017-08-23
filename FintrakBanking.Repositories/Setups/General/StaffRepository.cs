@@ -277,7 +277,7 @@ on c.DepartmentId equals dept.DepartmentId
                 companyId = staffModel.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempStaff.StaffId,
-                operationId = (int)Operations.StaffCreation,
+                operationId = (int)OperationsEnum.StaffCreation,
                 BranchId = staffModel.userBranchId
             };
             var response = workFlow.LogForApproval(entity);
@@ -332,7 +332,7 @@ on c.DepartmentId equals dept.DepartmentId
 
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.StaffCreation;
+            entity.operationId = (int)OperationsEnum.StaffCreation;
 
             var response = workFlow.GoForApproval(entity);
 
@@ -506,7 +506,7 @@ on c.DepartmentId equals dept.DepartmentId
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)Operations.StaffCreation, staffModel.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.StaffCreation, staffModel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -522,7 +522,7 @@ on c.DepartmentId equals dept.DepartmentId
                             companyId = staffModel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = staff.StaffId,
-                            operationId = (int)Operations.StaffCreation,
+                            operationId = (int)OperationsEnum.StaffCreation,
                             BranchId = staffModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -554,7 +554,7 @@ on c.DepartmentId equals dept.DepartmentId
 
         public IEnumerable<StaffInfoViewModel> GetStaffAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.StaffCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.StaffCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -565,7 +565,7 @@ on c.DepartmentId equals dept.DepartmentId
                     join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
                     join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)Operations.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                          && atrail.OperationId == (int)OperationsEnum.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new StaffInfoViewModel()
                     {
                         StaffId = c.StaffId,
@@ -582,7 +582,9 @@ on c.DepartmentId equals dept.DepartmentId
                         Gender = c.Gender,
                         GenderOfNok = c.GenderOfNOK,
                         JobTitleId = c.JobTitleId,
+                        JobTitleName = c.tbl_Staff_JobTitle.JobTitleName,
                         MisinfoId = c.MISInfoId,
+                        MisInfoCode = c.tbl_MIS_Info.MISCode,
                         NameOfNok = c.NameOfNOK,
                         NokrelationShip = c.NOKRelationShip,
                         Phone = c.Phone,

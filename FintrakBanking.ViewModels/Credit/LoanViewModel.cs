@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Setups.Finance;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -75,15 +76,61 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public string productAccountNumber { get; set; }
         public string productAccountName { get; set; }
+        public string loanTypeName { get; set; }
+        public string branchName { get; set; }
+        public string customerName { get; set; }
+        public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
+        public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
+        public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
+        public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
+    }
+
+    public class CamProcessedLoanViewModel : LoanApplicationViewModel
+    {
+        public string loanDetails { get; set; }
+        public string camReference { get; set; }
+        public string customerCode { get; set; }
+        public short productId { get; set; }
+        
+    }
+
+    public class LoanChargeFeeViewModel : ChargeFeeViewModel
+    {
+        public decimal dependantAmount { get; set; }
+        public double rateValue { get; set; }
+    }
+
+    public class LoanCollateralMappingViewModel 
+    {
+        public int loanCollateralMappingId { get; set; }
+        public int? loanId { get; set; }
+        public int collateralCustomerId { get; set; }
+        public int loanApplicationId { get; set; }
 
     }
 
-    public class LoanSearchViewModel
+
+
+    public class LoanGuarantorViewModel
+    {
+    public short loanGuarantorId { get; set; }
+    public int? customerId { get; set; }
+    public string loanReferenceNumber { get; set; }
+    public short? productId { get; set; }
+    public string fullName { get; set; }
+    public string phoneNumber1 { get; set; }
+    public string phoneNumber2 { get; set; }
+    public string relationship { get; set; }
+    public int? relationshipDuration { get; set; }
+    }
+
+        public class LoanSearchViewModel
     {
         public string customerName { get; set; }
         public string loanName { get; set; }
         public string loanReferenceNumber { get; set; }
         public string productAccountNumber { get; set; }
+
     }
 
 }

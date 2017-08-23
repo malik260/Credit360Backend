@@ -39,7 +39,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManagerName { get; set; }
         public string tenorModeName { get; set; }
 
-
         public string amount { get { return this.principalAmount.ToString("#,#.00#"); } }
         public string applicantName { get { return this.customerName + "" + this.customerGroupName; } }
 

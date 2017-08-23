@@ -8,13 +8,6 @@ namespace FintrakBanking.APICore.JWTAuth
 {
     public class TokenDecryptionHelper
     {
-        
-        //public TokenDecryptionHelper()
-        //{
-            
-        //}
-
-
         public int GetStaffId { get { return int.Parse(this.GetInfoFromToken(1).ToString()); } }
         public int GetCompanyId { get { return int.Parse(this.GetInfoFromToken(2).ToString()); } }
         public int GetCountryId { get { return int.Parse(this.GetInfoFromToken(5).ToString()); } }
@@ -22,12 +15,10 @@ namespace FintrakBanking.APICore.JWTAuth
         public string GetUsername { get { return this.GetInfoFromToken(4).ToString(); } }
         public int GetUserId { get { return int.Parse(this.GetInfoFromToken(6).ToString()); } }
 
-
         private object GetInfoFromToken(int tokenType)
         {
-            var tokenIdentity = new ClaimsIdentity(HttpContext.Current.User.Identity);// this._context.User.Identity);
+            var tokenIdentity = new ClaimsIdentity(HttpContext.Current.User.Identity);
             var decryptedToken = tokenIdentity.Claims;
-
 
             switch (tokenType)
             {
@@ -46,9 +37,6 @@ namespace FintrakBanking.APICore.JWTAuth
                 default:                 
                     return decryptedToken.First(st => st.Type == "staffId").Value.ToString();
             }
-
-            //return null;
         }
-
     }
 }

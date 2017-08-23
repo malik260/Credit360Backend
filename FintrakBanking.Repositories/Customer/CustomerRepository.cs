@@ -2,7 +2,7 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Customer;
-using FintrakBanking.Interfaces.Setups.General; 
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
 using System;
@@ -20,7 +20,7 @@ namespace FintrakBanking.Repositories.Customer
         private IGeneralSetupRepository _genSetup;
         private int customerId;
         int status = 0;
-        
+
         public CustomerRepository(IAuditTrailRepository _auditTrail,
                                     IGeneralSetupRepository genSetup,
                                     FinTrakBankingContext _context)
@@ -71,12 +71,12 @@ namespace FintrakBanking.Repositories.Customer
             status = 1;
             if (entity.CustomerAddresses.Count > 0)
             {
-                 AddCustomerAddresses(entity.CustomerAddresses, status);
+                AddCustomerAddresses(entity.CustomerAddresses, status);
             }
 
             if (entity.CustomerBvn.Count > 0)
             {
-                 AddCustomerBvn(entity.CustomerBvn, status);
+                AddCustomerBvn(entity.CustomerBvn, status);
             }
 
             if (entity.CustomerPhoneContact.Count > 0)
@@ -105,7 +105,7 @@ namespace FintrakBanking.Repositories.Customer
                 AuditTypeId = (short)AuditTypeEnum.CustomerAdded,
                 StaffId = entity.createdBy,
                 BranchId = (short)entity.userBranchId,
-                Detail =  $"Added Customer  { entity.customerName } with Code: { entity.customerCode } ",
+                Detail = $"Added Customer  { entity.customerName } with Code: { entity.customerCode } ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
                 ApplicationDate = _genSetup.GetApplicationDate(),
@@ -116,13 +116,13 @@ namespace FintrakBanking.Repositories.Customer
 
             //end of Audit section -------------------------------
 
-            
+
             return response;
         }
 
 
-        private void  AddCustomerAddresses(List<CustomerAddressViewModels> entity,
-           int  status )
+        private void AddCustomerAddresses(List<CustomerAddressViewModels> entity,
+           int status)
         {
             var address = new tbl_Customer_Address();
             foreach (var ent in entity)
@@ -137,9 +137,9 @@ namespace FintrakBanking.Repositories.Customer
                 address.POBox = ent.pobox;
                 address.StateId = ent.stateId;
 
-                context.tbl_Customer_Address.Add(address);     
+                context.tbl_Customer_Address.Add(address);
 
-            }             
+            }
         }
 
         private void AddCustomerBvn(List<CustomerBvnViewModels> entity, int status)
@@ -159,7 +159,7 @@ namespace FintrakBanking.Repositories.Customer
 
                 context.tbl_Customer_BVN.Add(customerBvn);
 
-               // Audit Section ---------------------------
+                // Audit Section ---------------------------
                 //var audit = new tbl_Audit
                 //{
                 //    AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
@@ -299,7 +299,7 @@ namespace FintrakBanking.Repositories.Customer
             }
         }
 
-        public async Task<bool> DeleteCustomer(int customerId,  UserInfo user)
+        public async Task<bool> DeleteCustomer(int customerId, UserInfo user)
         {
             var customer = context.tbl_Customer.Find(customerId);
 
@@ -329,7 +329,7 @@ namespace FintrakBanking.Repositories.Customer
         }
 
 
-        IEnumerable<CustomerViewModels> GetCustomers()
+        IQueryable<CustomerViewModels> GetCustomers()
         {
             return from a in context.tbl_Customer
                    where a.Deleted == false
@@ -339,6 +339,7 @@ namespace FintrakBanking.Repositories.Customer
                    {
                        accountCreationComplete = a.AccountCreationComplete,
                        branchId = a.BranchId,
+                       branchName = a.tbl_Branch.BranchName,
                        childDateOfBirth = a.ChildDateOfBirth.Value,
                        companyId = a.CompanyId,
                        createdBy = a.CreatedBy,
@@ -366,7 +367,10 @@ namespace FintrakBanking.Repositories.Customer
                        politicallyExposedPerson = a.PoliticallyExposedPerson,
                        relationshipOfficerId = a.RelationshipOfficerId.Value,
                        spouse = a.Spouse,
+                       sectorId = a.tbl_Sub_Sector.tbl_Sector.SectorId,
+                       sectorName = a.tbl_Sub_Sector.tbl_Sector.Name,
                        subSectorId = a.SubSectorId,
+                       subSectorName = a.tbl_Sub_Sector.Name,
                        taxNumber = a.TaxNumber
                        ,
                        CustomerAddresses = context.tbl_Customer_Address.Where(x => x.CustomerId == a.CustomerId).Select(x => new CustomerAddressViewModels()
@@ -386,6 +390,7 @@ namespace FintrakBanking.Repositories.Customer
                            customerBvnid = b.CustomerBVNId,
                            firstname = b.Firstname,
                            isValidBvn = b.IsValidBVN,
+                           isPoliticallyExposed = b.IsPoliticallyExposed,
                            surname = b.Surname
                        }).ToList(),
                        CustomerPhoneContact = context.tbl_Customer_PhoneContact.Where(c => c.CustomerId == a.CustomerId).Select(c => new CustomerPhoneContactViewModels
@@ -433,6 +438,14 @@ namespace FintrakBanking.Repositories.Customer
                            employerName = s.EmployerName,
                            officePhone = s.OfficePhone,
                            employerStateId = s.EmployerStateId
+                       }).ToList(),
+                       CustomerCompanyDirectors = context.tbl_Customer_Company_Director.Where(s => s.CustomerId == a.CustomerId).Select(s => new CustomerCompanyDirectorsViewModels()
+                       {
+                           bankVerificationNumber = s.CustomerBVN,
+                           companyDirectorTypeId = s.CompanyDirectorTypeId,
+                           companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                           customerId = s.CustomerId,
+                           customerName = s.Firstname + " " + s.Surname,
                        }).ToList()
 
                    };
@@ -515,7 +528,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 AuditTypeId = (short)AuditTypeEnum.CustomerUpdated,
                 StaffId = entity.createdBy,
-                BranchId = (short) entity.userBranchId,
+                BranchId = (short)entity.userBranchId,
                 Detail = "Updated tbl_Customer: " + entity.customerName + " with code: " + entity.customerCode + " on" + " (" + entity.customerId + ") ",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
@@ -543,6 +556,43 @@ namespace FintrakBanking.Repositories.Customer
                 ).ToList();
             }
             return customer;
+        }
+
+        public IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string searchQuery)
+        {
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+            IQueryable<CustomerSearchItemViewModels> allCustomers = null;
+
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allCustomers = GetCustomers().
+                    Where(c => c.companyId == companyId)
+                    .Where(x => x.firstName.ToLower().Contains(searchQuery)
+
+               || x.lastName.ToLower().Contains(searchQuery)
+               || x.middleName.ToLower().Contains(searchQuery)
+               || x.customerCode.Contains(searchQuery)
+                ).Select(c => new CustomerSearchItemViewModels
+                {
+                    customerId = c.customerId,
+                    branchId = c.branchId,
+                    branchName = c.branchName,
+                    customerName = c.firstName + " " + c.lastName,
+                    customerTypeId = c.customerTypeId,
+                    customerTypeName = c.customerTypeName,
+                    customerCode = c.customerCode,
+                    customerSectorId = c.sectorId,
+                    customerSectorName = c.sectorName,
+                    subSectorId = c.subSectorId,
+                    subSectorName = c.subSectorName,
+                    relationshipOfficerId = c.relationshipOfficerId
+                });
+            }
+            return allCustomers;
         }
 
         public IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search)
@@ -575,7 +625,35 @@ namespace FintrakBanking.Repositories.Customer
             }
 
             return customers;
-        }	
+        }
+
+        public IEnumerable<CustomerSectorViewModel> GetCustomerSectors()
+        {
+            var data = (from cs in context.tbl_Sector
+                        select new CustomerSectorViewModel()
+                        {
+                            sectorId = cs.SectorId,
+                            sectorName = cs.Name,
+                            sectorCode = cs.Code,
+                        });
+
+            return data;
+        }
+
+        public IEnumerable<CustomerSectorViewModel> GetCustomerSectorBySubSectorId(short ssId)
+        {
+            var data = (from s in context.tbl_Sub_Sector
+                        where s.SubSectorId == ssId
+                        select new CustomerSectorViewModel()
+                        {
+                            subSectorId = s.SubSectorId,
+                            sectorId = s.tbl_Sector.SectorId,
+                            sectorName = s.Name,
+                            sectorCode = s.Code
+                        });
+
+            return data;
+        }
     }
 }
 

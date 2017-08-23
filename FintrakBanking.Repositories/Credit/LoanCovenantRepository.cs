@@ -33,6 +33,19 @@ namespace FintrakBanking.Repositories.Customer
         }
 
         #region LoanCovenantDetail
+        public async Task<int> AddMultipleLoanCovenantDetail(List<LoanCovenantDetailViewModel> covenantModel)
+        {
+            if (covenantModel.Count <= 0)
+                return -1;
+
+            foreach (LoanCovenantDetailViewModel entity in covenantModel)
+            {
+                await AddLoanCovenantDetail(entity);
+            }
+
+            return 1;
+
+        }
         public async  Task<bool> AddLoanCovenantDetail(LoanCovenantDetailViewModel entity)
         {
             var convenant = new tbl_Loan_Covenant_Detail

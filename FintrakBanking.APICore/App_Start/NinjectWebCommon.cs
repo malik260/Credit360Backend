@@ -98,7 +98,8 @@ namespace FintrakBanking.APICore.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<FinTrakBankingContext>().To<FinTrakBankingContext>();
-
+            kernel.Bind<FinTrakBankingDocumentsContext>().To<FinTrakBankingDocumentsContext>();
+            
             kernel.Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
             kernel.Bind<IAuthenticationRepository>().To<AuthenticationRepository>();
             kernel.Bind<IAuthorizationRepository>().To<AuthorizationRepository>();
@@ -139,10 +140,9 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IChecklistRepository>().To<ChecklistRepository>();
             kernel.Bind<ILoanRepository>().To<LoanRepository>();
             kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
-            kernel.Bind<ILimitRepository>().To<LimitRepository>();
+            //kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IApprovalGroupMappingRepository>().To<ApprovalGroupMappingRepository>();
             kernel.Bind<IWorkFlowRepository>().To<WorkFlowRepository>();
-            kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IApprovalGroupRepository>().To<ApprovalGroupRepository>();
             kernel.Bind<IApprovalLevelRepository>().To<ApprovalLevelRepository>();
             kernel.Bind<IApprovalLevelStaffRepository>().To<ApprovalLevelStaffRepository>();
@@ -154,6 +154,10 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IChargeFeeRepository>().To<ChargeFeeRepository>();
             kernel.Bind<ILoanScheduleRepository>().To<LoanScheduleRepository>();
             kernel.Bind<IAppraisalMemorandumRepository>().To<AppraisalMemorandumRepository>();
+            kernel.Bind<ICreditTemplateRepository>().To<CreditTemplateRepository>();
+            kernel.Bind<ILoanDocumentRepository>().To<LoanDocumentRepository>();
+            kernel.Bind<IJobRequestRepository>().To<JobRequestRepository>();
+            kernel.Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
         }        
     }
     
