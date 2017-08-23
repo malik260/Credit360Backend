@@ -10,6 +10,7 @@ using FintrakBanking.Common.Enum;
 using System.Linq;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.Finance
 {
@@ -29,15 +30,15 @@ namespace FintrakBanking.Repositories.Setups.Finance
             this.workFlow = _workFlow;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.UserCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveChargeFee(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveChargeFee(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {

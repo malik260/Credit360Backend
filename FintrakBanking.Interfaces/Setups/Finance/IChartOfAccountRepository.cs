@@ -2,6 +2,7 @@
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.Finance;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.Finance
 {
@@ -16,7 +17,7 @@ namespace FintrakBanking.Interfaces.Setups.Finance
         ChartOfAccountViewModel GetAccountViewModel(short accountId);
         ChartOfAccountViewModel GetTempAccountDetail(int accountId);
         IEnumerable<ChartOfAccountViewModel> GetAccountsAwaitingApprovals(int accountId, int companyId);
-        bool GoForApproval(ApprovalViewModel entity);
+        Task<bool> GoForApproval(ApprovalViewModel entity);
         bool AddTempAccount(ChartOfAccountViewModel account);
         bool IsAccountCodeAlreadyExist(string accountCode);
         bool IsAccountExist(string accountCode);

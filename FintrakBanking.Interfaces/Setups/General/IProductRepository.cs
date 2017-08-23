@@ -3,6 +3,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
@@ -26,7 +27,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductViewModel> GetProductByTypeAndCategory(short productTypeId, short productCategoryId);
         bool IsProductCodeAlreadyExist(string productCode);
         bool IsProductExist(string productCode);
-        bool GoForApproval(ApprovalViewModel entity);
+        Task<bool> GoForApproval(ApprovalViewModel entity);
         ProductViewModel AddTempProduct(ProductViewModel product);
 
         bool UpdateProduct(int productId, ProductViewModel product);

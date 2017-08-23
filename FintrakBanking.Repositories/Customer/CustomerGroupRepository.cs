@@ -16,6 +16,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.ViewModels.CASA;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -316,15 +317,15 @@ namespace FintrakBanking.Repositories.Customer
             return output;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.CustomerGroupCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveCustomerGroup(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveCustomerGroup(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {

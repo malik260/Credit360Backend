@@ -20,7 +20,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool UpdateCustomerGroupForApproval(int groupId, CustomerGroupViewModel entity);
         bool DeleteCustomerGroup(int groupId, UserInfo user);
         IEnumerable<CustomerGroupViewModel> GetCustomerGroupsAwaitingApprovals(int staffId, int companyId);
-        bool GoForApproval(ApprovalViewModel entity);
+        Task<bool> GoForApproval(ApprovalViewModel entity);
         #endregion
 
         #region tbl_Customer Group Mapping repository

@@ -1,10 +1,6 @@
-﻿using FintrakBanking.ViewModels.WorkFlow;
-using FintrakBanking.ViewModels.Credit;
+﻿using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Credit
@@ -15,7 +11,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanPreliminaryEvaluationViewModel> GetPreliminaryEvaluationsAwaitingApproval(int staffId, int companyId);
 
-        bool GoForApproval(ApprovalViewModel entity);
+        Task<bool> GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanPreliminaryEvaluations();
     }

@@ -123,12 +123,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Url = model.applicationUrl,
                 ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
-                TargetId = model.approvalLevelId 
+                TargetId = model.approvalLevelId
             };
 
             context.tbl_Approval_Level.Add(data);
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
+
+
 
             return context.SaveChanges() != 0;
         }
@@ -224,10 +226,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         }
 
-        public bool AddApprovalTrail(tbl_Approval_Trail model)
+        public async Task<bool> AddApprovalTrail(tbl_Approval_Trail model)
         {
             context.tbl_Approval_Trail.Add(model);
-            return context.SaveChanges() != 0;
+            return await context.SaveChangesAsync() != 0;
         }
         
         public  bool UpdateApprovalTrail(tbl_Approval_Trail model)

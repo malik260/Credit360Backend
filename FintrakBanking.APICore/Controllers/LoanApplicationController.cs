@@ -269,7 +269,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("loan/preliminary-evaluation/approval")]
-        public HttpResponseMessage ApprovePreliminaryEvaluation(ApprovalViewModel model)
+        public async Task<HttpResponseMessage> ApprovePreliminaryEvaluationAsync(ApprovalViewModel model)
         {
             try
             {
@@ -280,7 +280,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var data = repoLoanPEN.GoForApproval(model);
+                var data = await repoLoanPEN.GoForApproval(model);
 
                 if (data)
                 {

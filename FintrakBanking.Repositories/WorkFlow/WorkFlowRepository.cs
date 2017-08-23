@@ -162,7 +162,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         RequestStaffId = entity.staffId,
                                         OperationId = entity.operationId,
                                     };
-                                    approvelRepo.AddApprovalTrail(trail);
+                                    await approvelRepo.AddApprovalTrail(trail);
                                 }
                             }
                         }
@@ -430,7 +430,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         OperationId = approval.operationId
                     };
 
-                    result = approvelRepo.AddApprovalTrail(trail);
+                    result = approvelRepo.AddApprovalTrail(trail).IsCompleted;
 
                 }
             }
