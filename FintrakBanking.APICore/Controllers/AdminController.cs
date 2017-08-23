@@ -4,7 +4,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels.Admin;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.General;
 using System;  
 using System.Linq;

@@ -59,6 +59,7 @@
     <Compile Include="Enum\LoanTypeEnum.cs" />
     <Compile Include="Enum\Operations.cs" />
     <Compile Include="Enum\FrequencyTypeEnum.cs" />
+    <Compile Include="Enum\ProcessViewScopeEnum.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />
     <Compile Include="Extensions\DataExtensions.cs" />
     <Compile Include="Extensions\MefExtensions.cs" />

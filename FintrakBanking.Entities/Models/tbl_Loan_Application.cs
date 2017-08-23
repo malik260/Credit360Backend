@@ -91,6 +91,8 @@ namespace FintrakBanking.Entities.Models
 
         public int ApprovalStatusId { get; set; }
 
+        public int ApprovalLevelId { get; set; }
+
         public DateTime? DateActedOn { get; set; }
 
         public int? ActedOnBy { get; set; }

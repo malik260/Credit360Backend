@@ -12,7 +12,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Interfaces.Setups.Approval;

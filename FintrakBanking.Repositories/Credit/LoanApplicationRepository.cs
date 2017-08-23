@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common;
 using FintrakBanking.Common.Enum; 
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 using System.ComponentModel.Composition;
 
@@ -71,8 +71,9 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
                             createdBy = a.CreatedBy,
                             applicationDate = a.ApplicationDate,
-                            dateTimeCreated = a.DateTimeCreated
-                        }).ToList();
+                            dateTimeCreated = a.DateTimeCreated,
+                            approvalLevelId = a.ApprovalLevelId
+                        });
             return data;
 
         }
@@ -80,6 +81,38 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationViewModel> GetAllLoanApplications(int companyId)
         {
             return GetLoanApplications(companyId);
+        }
+
+        public IEnumerable<LoanApplicationViewModel> GetLoanApplicationJobs(int companyId, int levelId, int scope)
+        {
+            var applications = GetLoanApplications(companyId).Where(x => x.approvalStatusId == (int)ApprovalStatusEnum.Pending); // scope 3 entire process
+
+            if (scope == (int)ProcessViewScopeEnum.Group)
+            {
+                int levelGroupId;
+                var level = context.tbl_Approval_Level.Find(levelId);
+
+                if (level != null)
+                {
+                    levelGroupId = level.GroupOperationMappingId;
+
+                    var groupApprovalLevelIds = context.tbl_Approval_Level
+                        .Where(x => x.GroupOperationMappingId == levelGroupId)
+                        .Select(x => x.ApprovalLevelId).ToArray();
+
+                    applications = applications.Where(x => groupApprovalLevelIds.Contains(x.approvalLevelId));
+                }
+            }
+
+            if (scope == (int)ProcessViewScopeEnum.Level)
+            {
+                applications = applications.Where(x => x.approvalLevelId == levelId);
+            }
+
+            return applications
+                .OrderByDescending(x => x.applicationDate)
+                .ThenByDescending(x => x.loanApplicationId)
+                .ToList();
         }
 
 
@@ -170,13 +203,6 @@ namespace FintrakBanking.Repositories.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-
-
-
-
-
-
-
         public async Task<bool> CreateLoanApplication(LoanApplicationViewModel loan)
         {
             bool isGroupLoan = false;
@@ -185,7 +211,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 isGroupLoan = true;
             }
-
 
             string refNumber = GenerateLoanReference(loan.customerId.Value);
 

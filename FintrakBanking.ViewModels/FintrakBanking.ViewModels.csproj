@@ -130,6 +130,7 @@
     <Compile Include="Setups\Risk\RiskAssessmentIndexViewModels.cs" />
     <Compile Include="Setups\Risk\RiskRatingViewModel.cs" />
     <Compile Include="UserInfo.cs" />
+    <Compile Include="WorkFlow\ApprovalTrailViewModel.cs" />
     <Compile Include="WorkFlow\ApprovalViewModel.cs" />
     <Compile Include="WorkFlow\JobRequestViewModel.cs" />
     <Compile Include="WorkFlow\WorkflowTrackerViewModel.cs" />

@@ -1,5 +1,6 @@
-﻿using FintrakBanking.ViewModels.Business;
+﻿using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;

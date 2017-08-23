@@ -13,7 +13,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Customer;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Setups.Approval;
 
 namespace FintrakBanking.Repositories.Customer

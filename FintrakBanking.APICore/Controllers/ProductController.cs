@@ -2,7 +2,7 @@
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Linq;
 using System.Net;

@@ -29,6 +29,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isRealatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public int approvalStatusId { get; set; }
+        public int approvalLevelId { get; set; }
 
         public string customerName { get; set; }
         public string branchName { get; set; }
