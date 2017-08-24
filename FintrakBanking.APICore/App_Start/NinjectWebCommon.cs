@@ -45,6 +45,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Finance;
     using FintrakBanking.Interfaces.media;
     using FintrakBanking.Repositories.media;
+    using FintrakBanking.Interfaces.CreditLimitValidations;
+    using FintrakBanking.Repositories.CreditLimitValidations;
 
     public static class NinjectWebCommon 
     {
