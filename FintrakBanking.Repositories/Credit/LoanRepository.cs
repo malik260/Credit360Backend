@@ -514,12 +514,28 @@ namespace FintrakBanking.Repositories.Credit
             return GetAllLoans().Where(l => l.customerId == customerId);
         }
 
-        public IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId)
+        public IQueryable<LoanRepaymentScheduleViewModel> RuningLoans(int customerId, int companyId)
         {
-            var data = GetAllLoans().Where(x => x.customerGroupId == customerGroupId);
 
-            return data;
+            var loans = GetLoansByCompanyId(companyId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.companyId == customerId)
+                .Select(c => new LoanRepaymentScheduleViewModel()
+                {
+                    principalRepayment = (decimal)c.outstandingPrincipal,
+                    interestAccrual = (decimal)c.outstandingPrincipal,
+                    customerId = c.customerId,
+                    principalAmount = c.principalAmount,
+                    effectiveDate = c.effectiveDate,
+                    interestRate = c.interestRate,
+                    loanId = c.loanId,
+                    productName = c.productAccountName,
+                    tenor = c.tenor,
+                    terminationDate = c.terminalDate
+                }).AsQueryable();
+            return loans;
         }
+
+
+
 
         public LoanViewModel GetLoan(int loanId)
         {
@@ -1297,9 +1313,15 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId)
+        {
+            throw new NotImplementedException();
+        }
+
+
         #endregion End of CAM Approved Loan Applications
 
-        }
+    }
 
 }
 

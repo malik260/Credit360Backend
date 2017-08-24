@@ -55,6 +55,26 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("loan-application/customer/{id}")]
+        public HttpResponseMessage ExistingLoanApplication(int id)
+        {
+            try
+            {
+                var response = repoApply.ExistingLoanApplication(id,token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
         [Route("loan-application/{id}")]
         public HttpResponseMessage GetLoanApplicationById(int id)
         {

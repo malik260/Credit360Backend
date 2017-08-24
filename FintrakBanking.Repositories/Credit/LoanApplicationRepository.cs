@@ -34,7 +34,22 @@ namespace FintrakBanking.Repositories.Credit
             workFlow = _workFlow;
         }
 
-        private IEnumerable<LoanApplicationViewModel> GetLoanApplications(int companyId)
+        public IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId)
+        {
+            var data = GetLoanApplications(companyId).Where(c => c.customerId == customerId).Select(c => new ExistingLoanApplicationViewModel()
+            {
+                applicationDate = c.applicationDate,
+                applicationReferenceNumber = c.applicationReferenceNumber,
+                interestRate = c.interestRate,
+                loanTypeName = c.loanTypeName,
+                branch = c.branchName,
+                principalAmount = c.amount,
+                tenor = c.tenor
+            }).ToList();
+            return data;
+        }
+
+        private IQueryable<LoanApplicationViewModel> GetLoanApplications(int companyId)
         {
             var data = (from a in context.tbl_Loan_Application
                         where a.CompanyId == companyId && a.Deleted == false
@@ -80,7 +95,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationViewModel> GetAllLoanApplications(int companyId)
         {
-            return GetLoanApplications(companyId);
+            return GetLoanApplications(companyId).ToList();
         }
 
         public IEnumerable<LoanApplicationViewModel> GetLoanApplicationJobs(int companyId, int levelId, int scope)
@@ -118,7 +133,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationViewModel> GetLoanApplicationById(int loanApplicationId, int companyId)
         {
-            return GetLoanApplications(companyId).Where(c => c.loanApplicationId == loanApplicationId);
+            return GetLoanApplications(companyId).Where(c => c.loanApplicationId == loanApplicationId).ToList();
         }
 
         public IEnumerable<ProductClassViewModel> GetProductClass()

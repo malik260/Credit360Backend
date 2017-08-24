@@ -19,10 +19,12 @@ namespace FintrakBanking.Repositories.CreditOperations
         }
 
 
-        public decimal GetCollateralSearchChargeAmount(int collateralcustomerId)
+        public decimal GetCollateralSearchChargeAmount(int stateId)
         {
-            var collateralAmount = this.context.tbl_Collateral_Immovable_Property.Include("tbl_City").Include("tbl_State").FirstOrDefault(x => x.CollateralCustomerId == collateralcustomerId).tbl_City.tbl_State.CollateralSearchChargeAmount;
-            return collateralAmount;
+            var collateralSearchChargeAmount = this.context.tbl_State.FirstOrDefault(x => x.StateId == stateId).CollateralSearchChargeAmount;
+
+
+            return collateralSearchChargeAmount;
         }
     }
 }
