@@ -23,7 +23,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
         public short branchId { get; set; }
-        public short productClassId { get; set; }
+        public short? productClassId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public short currencyId { get; set; }
@@ -42,6 +42,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isRealatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public int approvalStatusId { get; set; }
+        public int approvalLevelId { get; set; }
 
         public string customerName { get; set; }
         public string branchName { get; set; }

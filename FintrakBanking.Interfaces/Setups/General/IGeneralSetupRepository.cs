@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 
@@ -40,5 +41,11 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetAllOperations();
 
         IEnumerable<LookupViewModel> GetOperations(short operationTypeId);
+
+        IEnumerable<SectorViewModel> GetAllSectors();
+
+        IEnumerable<SectorViewModel> GetSectorsBySubSectorId(short ssId);
+
+        IEnumerable<SectorViewModel> GetAllSubSectors();
     }
 }

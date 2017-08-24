@@ -1,6 +1,7 @@
 using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Customer;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
 using System;
@@ -25,7 +26,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             this.repo = _repo;
         }
-
 
         [HttpPost]
         [Route("")]
@@ -314,50 +314,6 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
 
-        }
-
-        [HttpGet]
-        [Route("sectors")]
-        public HttpResponseMessage GetAllSectors()
-        {
-            try
-            {
-                var data = repo.GetCustomerSectors();
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, result = data, count = data.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-
-        [HttpGet]
-        [Route("subsector/{subSectorId}/sectors")]
-        public HttpResponseMessage GetAllSectorsBySubSectorId(short subSectorId)
-        {
-            try
-            {
-                var data = repo.GetCustomerSectorBySubSectorId(subSectorId);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, result = data, count = data.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"Error: {e.Message}" });
-            }
         }
     }
 }

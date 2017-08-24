@@ -86,7 +86,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetLoanApplicationRef();
-                if (data == null)
+                if (data > 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
@@ -365,6 +365,72 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("sectors")]
+        public HttpResponseMessage GetAllSectors()
+        {
+            try
+            {
+                var data = repo.GetAllSectors();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("subsector/{subSectorId}/sectors")]
+        public HttpResponseMessage GetAllSectorsBySubSectorId(short subSectorId)
+        {
+            try
+            {
+                var data = repo.GetSectorsBySubSectorId(subSectorId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("subsectors")]
+        public HttpResponseMessage GetAllSubSectors()
+        {
+            try
+            {
+                var data = repo.GetAllSubSectors();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
             }
         }
 

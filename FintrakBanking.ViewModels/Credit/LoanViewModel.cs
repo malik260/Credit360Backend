@@ -94,6 +94,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string customerName { get; set; }
+        public bool isCamsol { get; set; }
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
@@ -105,7 +106,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanDetails { get; set; }
         public string camReference { get; set; }
         public string customerCode { get; set; }
-        public short productId { get; set; }
+        public short? productId { get; set; }
         
     }
 

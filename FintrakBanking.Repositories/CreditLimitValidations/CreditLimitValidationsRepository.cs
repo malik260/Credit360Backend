@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common;
 using FintrakBanking.Common.Enum; 
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 using System.ComponentModel.Composition;
 //using System.Math;

@@ -3,7 +3,8 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Helper;
 using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.ViewModels; 
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -217,6 +218,52 @@ namespace FintrakBanking.Repositories.Setups.General
         //}
 
         //   public IEnumerable<LoanCovenantDetailViewModel>  Get
+
+
+        public IEnumerable<SectorViewModel> GetAllSectors()
+        {
+            var data = (from cs in context.tbl_Sector
+                        join ss in context.tbl_Sub_Sector on cs.SectorId equals ss.SectorId into ssTemp
+                        from ss in ssTemp.DefaultIfEmpty()
+                        select new SectorViewModel()
+                        {
+                            sectorId = cs.SectorId,
+                            subSectorId = ss.SubSectorId,
+                            sectorName = cs.Name,
+                            sectorCode = cs.Code,
+                        });
+
+            return data;
+        }
+
+        public IEnumerable<SectorViewModel> GetAllSubSectors()
+        {
+            var data = (from cs in context.tbl_Sub_Sector
+                        select new SectorViewModel()
+                        {
+                            subSectorId = cs.SubSectorId,
+                            sectorId = cs.tbl_Sector.SectorId,
+                            sectorName = cs.Name,
+                            sectorCode = cs.Code,
+                        });
+
+            return data;
+        }
+
+        public IEnumerable<SectorViewModel> GetSectorsBySubSectorId(short ssId)
+        {
+            var data = (from s in context.tbl_Sub_Sector
+                        where s.SubSectorId == ssId
+                        select new SectorViewModel()
+                        {
+                            subSectorId = s.SubSectorId,
+                            sectorId = s.tbl_Sector.SectorId,
+                            sectorName = s.Name,
+                            sectorCode = s.Code
+                        });
+
+            return data;
+        }
 
     }
 }

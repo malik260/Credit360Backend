@@ -477,26 +477,39 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeId = l.LoanTypeId,
                             loanTypeName = l.tbl_Loan_Type.LoanTypeName,
                             loanTypeBatchId = l.LoanTypeBatchId,
-                            trancheBatchCode = l.TrancheBatchCode,
-                            equityContribution = l.EquityContribution,
-                            feePercent = l.FeePercent,
-                            firstPrincipalPaymentDate = l.FirstPrincipalPaymentDate,
-                            firstInterestPaymentDate = l.FirstInterestPaymentDate,
-                            outstandingPrincipal = l.OutstandingPrincipal,
-                            principalAdditionCount = l.PrincipalAdditionCount,
-                            principalReductionCount = l.PrincipalReductionCount,
+                            trancheBatchCode = l.TrancheBatchCode ?? "Empty",
+                            equityContribution = l.EquityContribution ?? 0,
+                            feePercent = l.FeePercent ?? 0,
+                            firstPrincipalPaymentDate = l.FirstPrincipalPaymentDate ?? DateTime.Now,
+                            firstInterestPaymentDate = l.FirstInterestPaymentDate ?? DateTime.Now,
+                            outstandingPrincipal = l.OutstandingPrincipal ?? 0,
+                            principalAdditionCount = l.PrincipalAdditionCount ?? 0,
+                            principalReductionCount = l.PrincipalReductionCount ?? 0,
                             fixedPrincipal = l.FixedPrincipal,
                             profileLoan = l.ProfileLoan,
                             dischargeLetter = l.DischargeLetter,
                             suspendInterest = l.SuspendInterest,
                             customerSensitivityLevelId = l.CustomerSensitivityLevelId,
                             createdBy = l.CreatedBy,
-                            dateTimeCreated = l.DateTimeCreated
+                            dateTimeCreated = l.DateTimeCreated,
+                            isCamsol = context.tbl_Loan_Camsol.Where(x => x.LoanId == l.LoanId).Any()
                         });
             return data;
         }
 
-        public IEnumerable<LoanViewModel> GetLoanByCustomerId(int customerId)
+        public bool validateCamsol(int loanId)
+        {
+            var check = context.tbl_Loan_Camsol.Where(x => x.LoanId == loanId);
+
+            if (check.Any())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId)
         {
             return GetAllLoans().Where(l => l.customerId == customerId);
         }
@@ -1195,11 +1208,11 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationId = a.LoanApplicationId,
                             applicationReferenceNumber = a.ApplicationReferenceNumber,
                             customerId = a.CustomerId ?? 0,
-                            customerName = a.CustomerId.HasValue ? a.tbl_Customer.FirstName + " " + a.tbl_Customer.MiddleName + " " + a.tbl_Customer.LastName : "",
+                            //customerName = a.CustomerId.HasValue ? a.tbl_Customer.FirstName + " " + a.tbl_Customer.MiddleName + " " + a.tbl_Customer.LastName : "",
                             loanInformation = a.LoanInformation,
                             companyId = a.CompanyId,
                             branchId = a.BranchId,
-                            branchName = a.tbl_Branch.BranchName,
+                            //branchName = a.tbl_Branch.BranchName,
                             tenor = a.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,

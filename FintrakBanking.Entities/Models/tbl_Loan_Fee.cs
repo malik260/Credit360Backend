@@ -25,6 +25,8 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal FeeAmount { get; set; }
 
+        public bool IsIntegralFee { get; set; }
+
         public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
 
         public virtual tbl_Loan tbl_Loan { get; set; }

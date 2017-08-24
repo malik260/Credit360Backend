@@ -2,7 +2,6 @@
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using System;
@@ -12,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common;
 using FintrakBanking.Common.Enum; 
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 using System.ComponentModel.Composition;
 
@@ -24,8 +23,6 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IWorkFlowRepository workFlow;
-        //private ILoanRepository loanRepository;
-        //private ICustomerRepository customerRepository;
 
         public LoanApplicationRepository(IAuditTrailRepository _auditTrail,
                                     IGeneralSetupRepository _genSetup, IWorkFlowRepository _workFlow,
@@ -35,8 +32,6 @@ namespace FintrakBanking.Repositories.Credit
             auditTrail = _auditTrail;
             this.genSetup = _genSetup;
             workFlow = _workFlow;
-            //loanRepository = _loanRepository;
-            //customerRepository = _customerRepository;
         }
 
         public IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId)
@@ -77,8 +72,8 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerId = a.RelationshipManagerId,
                             relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
                             misCode = a.MISCode,
-                            productClassId = a.ProductId,
-                            productClassName = a.tbl_Product.ProductName,
+                            productClassId = a.ProductClassId,
+                            productClassName = a.tbl_Product_Class.ProductClassName,
                             teamMiscode = a.TeamMISCode,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
@@ -91,7 +86,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
                             createdBy = a.CreatedBy,
                             applicationDate = a.ApplicationDate,
-                            dateTimeCreated = a.DateTimeCreated
+                            dateTimeCreated = a.DateTimeCreated,
+                            approvalLevelId = a.ApprovalLevelId
                         });
             return data;
 
@@ -100,6 +96,38 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationViewModel> GetAllLoanApplications(int companyId)
         {
             return GetLoanApplications(companyId).ToList();
+        }
+
+        public IEnumerable<LoanApplicationViewModel> GetLoanApplicationJobs(int companyId, int levelId, int scope)
+        {
+            var applications = GetLoanApplications(companyId).Where(x => x.approvalStatusId == (int)ApprovalStatusEnum.Pending); // scope 3 entire process
+
+            if (scope == (int)ProcessViewScopeEnum.Group)
+            {
+                int levelGroupId;
+                var level = context.tbl_Approval_Level.Find(levelId);
+
+                if (level != null)
+                {
+                    levelGroupId = level.GroupOperationMappingId;
+
+                    var groupApprovalLevelIds = context.tbl_Approval_Level
+                        .Where(x => x.GroupOperationMappingId == levelGroupId)
+                        .Select(x => x.ApprovalLevelId);
+
+                    applications = applications.Where(x => groupApprovalLevelIds.Contains(x.approvalLevelId));
+                }
+            }
+
+            if (scope == (int)ProcessViewScopeEnum.Level)
+            {
+                applications = applications.Where(x => x.approvalLevelId == levelId);
+            }
+
+            return applications
+                .OrderByDescending(x => x.applicationDate)
+                .ThenByDescending(x => x.loanApplicationId)
+                .ToList();
         }
 
 
@@ -124,8 +152,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.tbl_Loan_Application
                         where a.CompanyId == companyId && a.Deleted == false
-                        && (a.ApplicationReferenceNumber == referenceNumberOrName ||
-                      $"{a.tbl_Customer.FirstName} {a.tbl_Customer.MiddleName} {a.tbl_Customer.LastName} {a.tbl_Customer.CustomerCode} ".Contains(referenceNumberOrName))
+                        //&& (a.ApplicationReferenceNumber == referenceNumberOrName || $"{a.tbl_Customer.FirstName} {a.tbl_Customer.MiddleName} {a.tbl_Customer.LastName} {a.tbl_Customer.CustomerCode} ".Contains(referenceNumberOrName))
                         select new LoanApplicationViewModel
                         {
                             loanApplicationId = a.LoanApplicationId,
@@ -139,7 +166,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipManagerId = a.RelationshipManagerId,
                             misCode = a.MISCode,
-                            productClassId = a.ProductId,
+                            productClassId = a.ProductClassId,
                             teamMiscode = a.TeamMISCode,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
@@ -194,44 +221,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool isGroupLoan = false;
 
-            if (loan.loanTypeId == (short)LoanTypeEnum.Single || loan.loanTypeId == (short)LoanTypeEnum.Batch)
+            if (loan.loanTypeId > (int)LoanTypeEnum.CustomerGroup )
             {
-                
-                //if (loanRepository.ValidateCamsol(loan.customerId.Value) > 0) {
-                //    throw new Exception("Customer '" + loan.customerName + "' has been CAMSOL");
-                //}
-
-                //if (loanRepository.ValidateWatchList(loan.customerId.Value) > 0)
-                //{
-                //    throw new Exception("Customer '" + loan.customerName + "' has been Watchlisted");
-                //}
-
-                //if (customerRepository.ValidateBlackList(loan.customerId.Value) > 0)
-                //{
-                //    throw new Exception("Customer '" + loan.customerName + "' has been Blacklisted");
-                //}
-
                 isGroupLoan = true;
-            }
-            else if (loan.loanTypeId == (short)LoanTypeEnum.CustomerGroup)
-            {
-                //if (loanRepository.ValidateCamsol(loan.customerId.Value) > 0)
-                //{
-                //    throw new Exception("Customer '" + loan.customerName + "' has been CAMSOL");
-                //}
-
-                //if (loanRepository.ValidateWatchList(loan.customerId.Value) > 0)
-                //{
-                //    throw new Exception("Customer '" + loan.customerName + "' has been Watchlisted");
-                //}
-
-                //if (customerRepository.ValidateBlackList(loan.customerId.Value) > 0)
-                //{
-                //    throw new Exception("Customer '" + loan.customerName + "' has been Blacklisted");
-                //}
-
-                isGroupLoan = false;
-
             }
 
             string refNumber = GenerateLoanReference(loan.customerId.Value);
@@ -241,7 +233,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = new tbl_Loan_Application
             {
                 ApplicationReferenceNumber = refNumber,
-                ProductId = loan.productClassId,
+                ProductClassId = loan.productClassId,
                 LoanTypeId = loan.loanTypeId,
                 LoanStatusId = loanStatusId,
                 CompanyId = loan.companyId,
