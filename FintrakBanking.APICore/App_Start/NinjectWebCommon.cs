@@ -45,6 +45,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Finance;
     using FintrakBanking.Interfaces.media;
     using FintrakBanking.Repositories.media;
+    using FintrakBanking.Interfaces.CreditLimitValidations;
+    using FintrakBanking.Repositories.CreditLimitValidations;
 
     public static class NinjectWebCommon 
     {
@@ -132,6 +134,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILoanCovenantRepository>().To<LoanCovenantRepository>();
             kernel.Bind<ICustomerCollateralRepository>().To<CustomerCollateralRepository>();
             kernel.Bind<ICountryRepository>().To<CountryRepository>();
+            kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<ICustomerFSCaptionGroupRepository>().To<CustomerFSCaptionGroupRepository>();
             kernel.Bind<ICustomerFSCaptionRepository>().To<CustomerFSCaptionRepository>();
             kernel.Bind<ICustomerFSCaptionDetailRepository>().To<CustomerFSCaptionDetailRepository>();
