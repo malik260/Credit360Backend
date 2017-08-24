@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -267,6 +268,9 @@
     <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\AuthorizationController.cs" />
     <Compile Include="Controllers\BranchController.cs" />
+    <Compile Include="Controllers\CreditOperationsController.cs" />
+    <Compile Include="Controllers\FinanceTransactionController.cs" />
+    <Compile Include="Controllers\CreditLimitValidationsController.cs" />
     <Compile Include="Controllers\CasaController.cs" />
     <Compile Include="Controllers\ChargeFeeController.cs" />
     <Compile Include="Controllers\ChartOfAccountController.cs" />

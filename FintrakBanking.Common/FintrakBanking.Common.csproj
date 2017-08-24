@@ -63,6 +63,8 @@
     <Compile Include="Enum\LimitType.cs" />
     <Compile Include="Enum\OperationsEnum.cs" />
     <Compile Include="Enum\FrequencyTypeEnum.cs" />
+    <Compile Include="Enum\LienTypeEnum.cs" />
+    <Compile Include="Enum\SourceApplicationEnum.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />
     <Compile Include="Extensions\DataExtensions.cs" />
     <Compile Include="Extensions\MefExtensions.cs" />

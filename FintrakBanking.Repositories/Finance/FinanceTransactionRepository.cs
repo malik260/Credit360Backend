@@ -9,6 +9,7 @@ using System.Linq;
 using System;
 using System.ServiceModel;
 using System.Collections.Generic;
+using FintrakBanking.Interfaces.CreditOperations;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -18,44 +19,34 @@ namespace FintrakBanking.Repositories.Finance
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
+        private ICreditOperationsRepository creditOperations;
 
         public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail,
-
-        FinTrakBankingContext _context)
+                                            ICreditOperationsRepository _creditOperations, FinTrakBankingContext _context)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
             auditTrail = _auditTrail;
-
+            this.creditOperations = _creditOperations;
         }
+
 
         [OperationBehavior(TransactionScopeRequired = true)]
         public CasaLienViewModel AddCollateralSearchLien(CasaLienViewModel model)
         {
-            ////CasaLienViewModel model = new CasaLienViewModel();
-            //var appRefNo = this.context.tbl_Loan_Application.FirstOrDefault(x => x.CustomerId == casaaccountId).ApplicationReferenceNumber;
-            //var company = this.context.tbl_Loan_Application.FirstOrDefault(x => x.CustomerId == casaaccountId).CompanyId;
-            ////var sector = this.context.tbl_Loan_Application.FirstOrDefault(x => x.CustomerId == casaaccountId).BranchId;
-            //var branch = this.context.tbl_Loan_Application.FirstOrDefault(x => x.CustomerId == casaaccountId).BranchId;
-
-            //model.productAccountNumber = model.productAccountNumber;
-            //model.createdBy = company;
-            //model.lienReferenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
-            //model.sourceTypeId = 1;
-            //model.lienCreditAmount = amount;
-            //model.lienDebitAmount = 0;
 
             var data = new tbl_CASA_Lien
             {
                 ProductAccountNumber = model.productAccountNumber,
                 LienReferenceNumber = CommonHelpers.GenerateRandomDigitCode(10),
+                SourceReferenceNumber = model.sourceReferenceNumber,
                 BranchId = model.branchId,
                 CompanyId = model.companyId,
-                LienCreditAmount = model.lienCreditAmount,
+                LienCreditAmount = creditOperations.GetCollateralSearchChargeAmount(model.stateId),
                 LienDebitAmount = 0,
-                LienTypeId = model.lienTypeId,
+                LienTypeId = (short) LienTypeEnum.CollateralSearch,
                 CreatedBy = model.createdBy,
-                Description = model.description,
+                Description = "lien placed due to loan application collateral search", // model.description,
                 DateCreated = generalSetup.GetApplicationDate()
                 
             };
@@ -69,7 +60,7 @@ namespace FintrakBanking.Repositories.Finance
                 AuditTypeId = (short)AuditTypeEnum.LienAdded,
                 StaffId = model.createdBy,
                 BranchId = model.branchId,
-                Detail = $"Applied for lien with reference number: {model.lienReferenceNumber}",
+                Detail = $"Applied for lien with reference number: {data.LienReferenceNumber}",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
                 ApplicationDate = generalSetup.GetApplicationDate(),
@@ -83,6 +74,7 @@ namespace FintrakBanking.Repositories.Finance
             return model;
         }
 
+        [OperationBehavior(TransactionScopeRequired = true)]
         public string PostTransaction(FinanceTransactionViewModel transaction)
         {
             transaction.batchCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -119,13 +111,14 @@ namespace FintrakBanking.Repositories.Finance
                 trans.TransactionDate = transaction.transactionDate;
                 trans.CurrencyId = transaction.currencyId;
                 trans.CurrencyRate = transaction.currencyRate;
-                trans.PostedDateTime = transaction.postedDateTime;
+                trans.PostedDateTime = DateTime.Now;
                 trans.IsApproved = transaction.isApproved;
                 trans.PostedBy = transaction.postedBy;
                 trans.ApprovedBy = transaction.approvedBy;
                 trans.ApprovedDate = transaction.approvedDate;
                 trans.ApprovedDateTime = transaction.approvedDateTime;
                 trans.SourceApplicationId = transaction.sourceApplicationId;
+                trans.CompanyId = transaction.companyId;
 
 
                 trans.GLAccountId = item.glAccountId;
@@ -145,75 +138,74 @@ namespace FintrakBanking.Repositories.Finance
             return transaction.batchCode;
         }
 
-
-
-
-
         [OperationBehavior(TransactionScopeRequired = true)]
         public CasaLienViewModel PostCollateralSearch(CasaLienViewModel model)
         {
-
-            //CasaLienViewModel model = new CasaLienViewModel();
-            //var appRefNo = this.context.tbl_Loan_Application.FirstOrDefault(x => x.CustomerId == casaaccountId).ApplicationReferenceNumber;
-            //var company = this.context.tbl_Loan_Application.FirstOrDefault(x => x.CustomerId == casaaccountId).CompanyId;
-            ////var sector = this.context.tbl_Loan_Application.FirstOrDefault(x => x.CustomerId == casaaccountId).BranchId;
-            //var branch = this.context.tbl_Loan_Application.FirstOrDefault(x => x.CustomerId == casaaccountId).BranchId;
-
-            //model.productAccountNumber = appRefNo;
-            ////model.createdBy = ;
-            ////model.lienReferenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
-            //model.sourceTypeId = 1;
-            //model.lienCreditAmount = 0;
-            //model.lienDebitAmount = amount;
-
-            //var lienRefNo = context.tbl_CASA_Lien.Where(x => x.SourceTypeId == model.lienTypeId && x.ProductAccountNumber == model.productAccountNumber).Max(x => x.LienReferenceNumber);
-
-            var lienRefNo = this.context.tbl_CASA_Lien.FirstOrDefault(x => x.LienTypeId == model.lienTypeId && x.ProductAccountNumber == model.productAccountNumber).LienReferenceNumber;
+            var lienSearchAmount = this.context.tbl_CASA_Lien.FirstOrDefault(x => x.LienReferenceNumber == model.lienReferenceNumber).LienCreditAmount;
 
             var data = new tbl_CASA_Lien
             {
 
+
                 ProductAccountNumber = model.productAccountNumber,
-                LienReferenceNumber = lienRefNo, //CommonHelpers.GenerateRandomDigitCode(10),
+                LienReferenceNumber = model.lienReferenceNumber, //CommonHelpers.GenerateRandomDigitCode(10),
                 BranchId = model.branchId,
                 CompanyId = model.companyId,
                 LienCreditAmount = 0,
-                LienDebitAmount = model.lienDebitAmount,
-                LienTypeId = model.lienTypeId,
+                LienDebitAmount = lienSearchAmount,//creditOperations.GetCollateralSearchChargeAmount(model.stateId),
+                LienTypeId = (short)LienTypeEnum.CollateralSearch,
                 CreatedBy = model.createdBy,
-                Description = model.description,
+                Description = "",
                 DateCreated = generalSetup.GetApplicationDate()
             };
 
             context.tbl_CASA_Lien.Add(data);
 
             FinanceTransactionViewModel collateralTransaction = new FinanceTransactionViewModel();
-            collateralTransaction.operationId = (int) OperationsEnum.CollateralSearch;
+            
+
+            var casa = this.context.tbl_CASA.FirstOrDefault(x => x.ProductAccountNumber == model.productAccountNumber && x.CompanyId == model.companyId);
+
+            collateralTransaction.operationId = (int)OperationsEnum.CollateralSearch;
+            collateralTransaction.description = "Customer Collateral Search Charge";
+            collateralTransaction.valueDate = generalSetup.GetApplicationDate();
+            collateralTransaction.transactionDate = collateralTransaction.valueDate;
+            collateralTransaction.currencyId = casa.CurrencyId;
+            collateralTransaction.currencyRate = GetExchangeRate(collateralTransaction.currencyId, collateralTransaction.valueDate, model.companyId);            
+            collateralTransaction.isApproved = true;
+            collateralTransaction.postedBy = model.createdBy;
+            collateralTransaction.approvedBy = model.createdBy;
+            collateralTransaction.approvedDate = collateralTransaction.transactionDate;
+            collateralTransaction.approvedDateTime = DateTime.Now;
+            collateralTransaction.sourceApplicationId = (short) SourceApplicationEnum.FinTrakBanking;
+            collateralTransaction.companyId = model.companyId;
+
+            FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            debit.sourceReferenceNumber = casa.ProductAccountNumber;
+            debit.casaAccountId = casa.CasaAccountId;
+            debit.debitAmount = lienSearchAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = casa.BranchId;
+
+            var chargeGL = this.context.tbl_Collateral_Type.FirstOrDefault(x => x.CollateralTypeId == (int) CollateralTypeEnum.Property).ChargeGLAccountId.Value;
+            FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+            credit.glAccountId = chargeGL;
+
+            credit.sourceReferenceNumber = casa.ProductAccountNumber;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = lienSearchAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
 
 
-            //trans.BatchCode = transaction.batchCode;
-            //trans.OperationId = transaction.operationId;
-            //trans.Description = transaction.description;
-            //trans.ValueDate = transaction.valueDate;
-            //trans.TransactionDate = transaction.transactionDate;
-            //trans.CurrencyId = transaction.currencyId;
-            //trans.CurrencyRate = transaction.currencyRate;
-            //trans.PostedDateTime = transaction.postedDateTime;
-            //trans.IsApproved = transaction.isApproved;
-            //trans.PostedBy = transaction.postedBy;
-            //trans.ApprovedBy = transaction.approvedBy;
-            //trans.ApprovedDate = transaction.approvedDate;
-            //trans.ApprovedDateTime = transaction.approvedDateTime;
-            //trans.SourceApplicationId = transaction.sourceApplicationId;
+            collateralTransaction.transactionDetails.Add(debit);
+            collateralTransaction.transactionDetails.Add(credit);
 
+            PostTransaction(collateralTransaction);
 
-            //trans.GLAccountId = item.glAccountId;
-            //trans.SourceReferenceNumber = item.sourceReferenceNumber;
-            //trans.CasaAccountId = item.casaAccountId;
-            //trans.DebitAmount = item.debitAmount;
-            //trans.CreditAmount = item.creditAmount;
-            //trans.SourceBranchId = item.sourceBranchId;
-            //trans.DestinationBranchId = item.destinationBranchId;
             // Audit Section ---------------------------            
 
             var audit = new tbl_Audit
@@ -236,5 +228,21 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
+        public double GetExchangeRate(short currencyId, DateTime date, int companyId)
+        {
+            var baseCurrency = this.context.tbl_Company.FirstOrDefault(x => x.CompanyId == companyId).CurrencyId;
+
+            if (currencyId == baseCurrency)
+            {
+                return 1;
+            }
+            else
+            {
+                var rate = this.context.tbl_Currency_Rate.FirstOrDefault(x => x.BaseCurrencyId == baseCurrency && x.CurrencyId == currencyId && x.Date == date).SellingRate;
+
+                return rate;
+            }           
+            
+        }
     }
 }

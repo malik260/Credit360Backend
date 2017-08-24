@@ -42,6 +42,8 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime TransactionDate { get; set; }
 
+        public int CompanyId { get; set; }
+
         public short SourceBranchId { get; set; }
 
         public short DestinationBranchId { get; set; }
