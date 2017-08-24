@@ -517,7 +517,7 @@ namespace FintrakBanking.Repositories.Credit
         public IQueryable<LoanRepaymentScheduleViewModel> RuningLoans(int customerId, int companyId)
         {
 
-            var loans = GetLoanByCustomerId(customerId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.companyId == companyId)
+            var loans = GetLoansByCompanyId(companyId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.companyId == customerId)
                 .Select(c => new LoanRepaymentScheduleViewModel()
                 {
                     principalRepayment = (decimal)c.outstandingPrincipal,
@@ -1313,9 +1313,15 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId)
+        {
+            throw new NotImplementedException();
+        }
+
+
         #endregion End of CAM Approved Loan Applications
 
-        }
+    }
 
 }
 

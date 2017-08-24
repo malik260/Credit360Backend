@@ -135,6 +135,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILoanCovenantRepository>().To<LoanCovenantRepository>();
             kernel.Bind<ICustomerCollateralRepository>().To<CustomerCollateralRepository>();
             kernel.Bind<ICountryRepository>().To<CountryRepository>();
+            kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<ICustomerFSCaptionGroupRepository>().To<CustomerFSCaptionGroupRepository>();
             kernel.Bind<ICustomerFSCaptionRepository>().To<CustomerFSCaptionRepository>();
             kernel.Bind<ICustomerFSCaptionDetailRepository>().To<CustomerFSCaptionDetailRepository>();
