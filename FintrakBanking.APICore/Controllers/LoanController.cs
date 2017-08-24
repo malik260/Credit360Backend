@@ -13,7 +13,7 @@ using FintrakBanking.APICore.core;
 using System.Web;
 using System.Collections.Generic;
 
-namespace FintrakBanking.APICore.Controllers
+namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
     // [EnableCors("AllDomain")]
     [RoutePrefix("api/v1/loan")]
@@ -58,6 +58,27 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
+        [HttpGet]
+        [Route("runningloans/customer/{id}")]
+        public HttpResponseMessage GetAllLoanTypes(int id)
+        {
+            try
+            {
+
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.RuningLoans( id, token.GetCompanyId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         [HttpGet]
         [Route("loan-types")]
         public HttpResponseMessage GetAllLoanTypes()

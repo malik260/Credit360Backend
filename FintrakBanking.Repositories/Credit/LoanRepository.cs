@@ -501,6 +501,29 @@ namespace FintrakBanking.Repositories.Credit
             return GetAllLoans().Where(l => l.customerId == customerId);
         }
 
+        public IQueryable<LoanRepaymentScheduleViewModel> RuningLoans(int customerId, int companyId)
+        {
+
+            var loans = GetLoanByCustomerId(customerId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.companyId == companyId)
+                .Select(c => new LoanRepaymentScheduleViewModel()
+                {
+                    principalRepayment = (decimal)c.outstandingPrincipal,
+                    interestAccrual = (decimal)c.outstandingPrincipal,
+                    customerId = c.customerId,
+                    principalAmount = c.principalAmount,
+                    effectiveDate = c.effectiveDate,
+                    interestRate = c.interestRate,
+                    loanId = c.loanId,
+                    productName = c.productAccountName,
+                    tenor = c.tenor,
+                    terminationDate = c.terminalDate
+                }).AsQueryable();
+            return loans;
+        }
+
+
+
+
         public LoanViewModel GetLoan(int loanId)
         {
             return (from data in context.tbl_Loan

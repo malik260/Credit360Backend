@@ -13,6 +13,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
+        IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId);
 
         IEnumerable<LoanApplicationViewModel> GetAllLoanApplications(int companyId);
 
