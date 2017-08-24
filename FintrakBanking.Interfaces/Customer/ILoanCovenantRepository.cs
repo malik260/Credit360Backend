@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace FintrakBanking.Interfaces.Customer
 {
     public interface ILoanCovenantRepository
     {
         #region Loan Covenant Detail
+        Task<int> AddMultipleLoanCovenantDetail(List<LoanCovenantDetailViewModel> covenantModel);
         Task<bool> AddLoanCovenantDetail(LoanCovenantDetailViewModel entity);
         Task<bool> DeleteLoanCovenantDetail(int loanCovenantDetailId, UserInfo user );
         Task<bool> UpdateLoanCovenantDetail(int loanCovenantDetailId, LoanCovenantDetailViewModel entity);
@@ -23,7 +25,8 @@ namespace FintrakBanking.Interfaces.Customer
         Task<bool> AddLoanCovenantType(LoanCovenantTypeViewModel entity);         
         Task<bool> UpdateLoanCovenantType(short loanCovenantTypeId, LoanCovenantTypeViewModel entity);
         IEnumerable<LoanCovenantTypeViewModel> GetLoanCovenantType(int companyId);
-      
+
+
         #endregion Loan Covenant Detail
     }
 }

@@ -28,7 +28,6 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
 
-        IEnumerable<CustomerSectorViewModel> GetCustomerSectors();
-        IEnumerable<CustomerSectorViewModel> GetCustomerSectorBySubSectorId(short ssId);
+        
     }
 }

@@ -13,8 +13,10 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Customer;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.ViewModels.CASA;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -177,35 +179,33 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
 
+        private IQueryable<CustomerGroupViewModel> GetAllCustomerGroups()
+        {
+            var data = (from a in context.tbl_Customer_Group
+                        where a.Deleted == false
+                        select new CustomerGroupViewModel
+                        {
+                            groupCode = a.GroupCode,
+                            groupName = a.GroupName,
+                            groupDescription = a.GroupDescription,
+                            customerGroupId = a.CustomerGroupId,
+                            dateTimeCreated = a.DateTimeCreated,
+                            createdBy = a.CreatedBy
+                        });
+            return data;
+        }
+
         public IEnumerable<CustomerGroupViewModel> GetCustomerGroup()
         {
-            var customerGroup = from a in context.tbl_Customer_Group
-                                where a.Deleted == false
-                                select new CustomerGroupViewModel
-                                {
-                                    groupCode = a.GroupCode,
-                                    groupName = a.GroupName,
-                                    groupDescription = a.GroupDescription,
-                                    customerGroupId = a.CustomerGroupId,
-                                    dateTimeCreated = a.DateTimeCreated,
-                                    createdBy = a.CreatedBy
-                                };
+            var customerGroup = GetAllCustomerGroups();
+
             return customerGroup;
         }
 
         public CustomerGroupViewModel GetCustomerGroupByCustomerId(int customerGroupId)
         {
-            var customerGroup = from a in context.tbl_Customer_Group
-                                where a.CustomerGroupId == customerGroupId && a.Deleted == false
-                                select new CustomerGroupViewModel
-                                {
-                                    groupCode = a.GroupCode,
-                                    groupName = a.GroupName,
-                                    groupDescription = a.GroupDescription,
-                                    customerGroupId = a.CustomerGroupId,
-                                    dateTimeCreated = a.DateTimeCreated,
-                                    createdBy = a.CreatedBy
-                                };
+            var customerGroup = GetCustomerGroup().Where(x => x.customerGroupId == customerGroupId);
+
             return customerGroup.FirstOrDefault();
         }
 
@@ -317,15 +317,15 @@ namespace FintrakBanking.Repositories.Customer
             return output;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.CustomerGroupCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveCustomerGroup(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveCustomerGroup(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {
@@ -577,7 +577,7 @@ namespace FintrakBanking.Repositories.Customer
                                            //dateTimeCreated = a.DateTimeCreated
                                        };
 
-            return customerGroupMapping.SingleOrDefault();
+            return customerGroupMapping.FirstOrDefault();
 
         }
 
@@ -873,6 +873,57 @@ namespace FintrakBanking.Repositories.Customer
                        lookupId = a.RelationshipTypeId,
                        lookupName = a.RelationshipTypeName
                    };
+        }
+
+        private IQueryable<CustomerGroupViewModel> GellAllCustomerGroupMappings()
+        {
+            var data = (from a in context.tbl_Customer_Group
+                        where a.Deleted == false
+                        select new CustomerGroupViewModel
+                        {
+                            customerGroupId = a.CustomerGroupId,
+                            customerGroupName = a.GroupName,
+                            customerGroupCode = a.GroupCode,
+                            customerGroupMappings = context.tbl_Customer_Group_Mapping.Where(x => x.CustomerGroupId == a.CustomerGroupId).Select(s => new CustomerGroupMappingViewModel
+                            {
+                                customerGroupMappingId = s.CustomerGroupMappingId,
+                                customerGroupId = s.CustomerGroupId,
+                                customerId = s.CustomerId,
+                                customerCode = s.tbl_Customer.CustomerCode,
+                                customerName = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
+                                customerType = s.tbl_Customer.tbl_Customer_Type.Name,
+                                relationshipTypeId = s.RelationshipTypeId,
+                                relationshipTypeName = s.tbl_Customer_Group_RelationshipType.RelationshipTypeName,
+                                productAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == s.CustomerId).ProductAccountNumber,
+                                accountHolder = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
+                                companyId = s.tbl_Customer.CompanyId,
+                                branchId = s.tbl_Customer.BranchId,
+                                isBlackListed = context.tbl_Customer_Blacklist.Where(x => x.CustomerId == s.CustomerId).Any(),
+                            }).ToList(),
+                        });
+
+            return data;
+        }
+
+        public IQueryable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery)
+        {
+            IQueryable<CustomerGroupViewModel> allGroups = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allGroups = GellAllCustomerGroupMappings()
+                    //.Where(c => c.companyId == companyId)
+                    .Where(x => x.customerGroupName.Contains(searchQuery)
+                    || x.customerGroupCode.Contains(searchQuery)
+                );
+            }
+
+            return allGroups;
         }
         #endregion
     }

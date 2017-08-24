@@ -16,6 +16,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Checklist_Definition = new HashSet<tbl_Checklist_Definition>();
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Credit_Template = new HashSet<tbl_Credit_Template>();
+            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
         }
 
@@ -39,6 +40,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Credit_Template> tbl_Credit_Template { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
 
         public virtual tbl_Product_Class_Type tbl_Product_Class_Type { get; set; }
 

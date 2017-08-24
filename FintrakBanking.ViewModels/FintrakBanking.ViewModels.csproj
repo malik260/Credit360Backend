@@ -110,6 +110,7 @@
     <Compile Include="Setups\General\CityViewModel.cs" />
     <Compile Include="Setups\General\CompanyViewModel.cs" />
     <Compile Include="Setups\General\CountryViewModel.cs" />
+    <Compile Include="Setups\General\SectorViewModel.cs" />
     <Compile Include="Setups\General\CustomFieldsDataViewModel.cs" />
     <Compile Include="Setups\General\CustomFieldsViewModel.cs" />
     <Compile Include="Setups\General\DepartmentViewModel.cs" />
@@ -133,6 +134,7 @@
     <Compile Include="Setups\Risk\RiskAssessmentIndexViewModels.cs" />
     <Compile Include="Setups\Risk\RiskRatingViewModel.cs" />
     <Compile Include="UserInfo.cs" />
+    <Compile Include="WorkFlow\ApprovalTrailViewModel.cs" />
     <Compile Include="WorkFlow\ApprovalViewModel.cs" />
     <Compile Include="WorkFlow\JobRequestViewModel.cs" />
     <Compile Include="WorkFlow\WorkflowTrackerViewModel.cs" />

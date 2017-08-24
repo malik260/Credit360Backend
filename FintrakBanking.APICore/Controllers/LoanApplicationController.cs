@@ -2,7 +2,7 @@ using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using System;
@@ -41,6 +41,26 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repoApply.GetAllLoanApplications(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/customer/{id}")]
+        public HttpResponseMessage ExistingLoanApplication(int id)
+        {
+            try
+            {
+                var response = repoApply.ExistingLoanApplication(id,token.GetCompanyId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -208,6 +228,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan/application/job")]
+        public HttpResponseMessage GetLoanApplicationJobs(int page, int itemsPerPage, int level, int scope)
+        {
+            try
+            {
+                var response = repoApply.GetLoanApplicationJobs(token.GetCompanyId, level, scope);
+
+                int totalItems = response.Count();
+
+                response = response
+                    .Skip(page).Take(itemsPerPage)
+                    .ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, totalItems = totalItems, message = "Empty result" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         #endregion
 
         #region Loan Preliminary Evaluation
@@ -247,7 +289,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("loan/preliminary-evaluation/approval")]
-        public HttpResponseMessage ApprovePreliminaryEvaluation(ApprovalViewModel model)
+        public async Task<HttpResponseMessage> ApprovePreliminaryEvaluationAsync(ApprovalViewModel model)
         {
             try
             {
@@ -258,7 +300,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var data = repoLoanPEN.GoForApproval(model);
+                var data = await repoLoanPEN.GoForApproval(model);
 
                 if (data)
                 {

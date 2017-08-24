@@ -11,12 +11,11 @@ namespace FintrakBanking.Common.Enum
         StaffCreation = 3,
         UserCreation = 4,
         ProductCreation = 5,
-        ProductsUpdate = 6,
+        CAM = 6,
         ChartOfAccountCreation = 7,
         CustomerGroupCreation = 8,
-        CAM = 9,
+        LoanPreliminaryEvaluation = 9,
         FeeCreation = 10,
-        LoanPreliminaryEvaluation = 11,
         CollateralSearch = 12
     }
 }

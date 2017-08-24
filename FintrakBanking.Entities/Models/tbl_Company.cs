@@ -27,12 +27,12 @@ namespace FintrakBanking.Entities.Models
             tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
             tbl_Temp_Collateral_Customer = new HashSet<tbl_Temp_Collateral_Customer>();
             tbl_Company1 = new HashSet<tbl_Company>();
-            tbl_Credit_Appraisal_Memorandum = new HashSet<tbl_Credit_Appraisal_Memorandum>();
             tbl_Credit_Template = new HashSet<tbl_Credit_Template>();
             tbl_Customer_Blacklist = new HashSet<tbl_Customer_Blacklist>();
             tbl_Customer_FS_Caption_Group = new HashSet<tbl_Customer_FS_Caption_Group>();
             tbl_Customer_FS_Ratio_Caption = new HashSet<tbl_Customer_FS_Ratio_Caption>();
             tbl_Customer = new HashSet<tbl_Customer>();
+            tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
             tbl_Limit = new HashSet<tbl_Limit>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Camsol = new HashSet<tbl_Loan_Camsol>();
@@ -210,9 +210,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Currency tbl_Currency { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Credit_Appraisal_Memorandum> tbl_Credit_Appraisal_Memorandum { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Credit_Template> tbl_Credit_Template { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -226,6 +223,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Customer> tbl_Customer { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Limit> tbl_Limit { get; set; }

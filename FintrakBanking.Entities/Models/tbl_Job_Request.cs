@@ -34,16 +34,17 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsAcknowledged { get; set; }
 
-        public int OperationsId { get; set; }
+        public int TargetId { get; set; }
 
         public int StaffApprovalGroupId { get; set; }
+
+        public int OperationsId { get; set; }
+
         public short RequestStatusId { get; set; }
 
-        //[Required]
         [StringLength(700)]
         public string SenderComment { get; set; }
 
-        //[Required]
         [StringLength(50)]
         public string ResponseComment { get; set; }
 
@@ -70,11 +71,18 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Job_Request_Document_Mapping> tbl_Job_Request_Document_Mapping { get; set; }
 
+        public virtual tbl_Job_Request tbl_Job_Request1 { get; set; }
+
+        public virtual tbl_Job_Request tbl_Job_Request2 { get; set; }
+
         public virtual tbl_Job_Request_Status tbl_Job_Request_Status { get; set; }
 
         public virtual tbl_Job_Type tbl_Job_Type { get; set; }
 
         public virtual tbl_Operations tbl_Operations { get; set; }
 
+        public virtual tbl_Staff tbl_Staff { get; set; }
+
+        public virtual tbl_Staff tbl_Staff1 { get; set; }
     }
 }

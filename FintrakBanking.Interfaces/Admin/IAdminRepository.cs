@@ -1,6 +1,6 @@
 ﻿using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Admin;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.Admin
 
         bool iSUserExit(string username);
 
-        bool GoForApproval(ApprovalViewModel entity);
+        Task<bool> GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId);
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();

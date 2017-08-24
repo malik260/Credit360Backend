@@ -1,6 +1,8 @@
 ﻿using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
@@ -21,5 +23,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetFeeInterval();
 
         IEnumerable<LookupViewModel> GetFeeTarget();
+
+        Task<bool> GoForApproval(ApprovalViewModel entity);
     }
 }

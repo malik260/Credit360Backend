@@ -34,7 +34,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 JobTypeId = model.jobTypeId,
                 SenderStaffId = model.createdBy,
                 ReceiverStaffId = model.receiverStaffId,
-                StaffApprovalGroupId=model.staffApprovalGroupId,
+                //StaffApprovalGroupId=model.staffApprovalGroupId,
                 //ReassignedTo = model.reassignedTo,
                 //IsReassigned = model.isReassigned,
                 //IsAcknowledged = model.isAcknowledged,
@@ -117,7 +117,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             var applicationDate = general.GetApplicationDate();
 
-            data.ReassignedTo = model.reassignedTo;
+            data.ReassignedTo = (int) model.reassignedTo;
             data.IsReassigned = true;
             data.IsAcknowledged = true;
             data.RequestStatusId = 2;
@@ -157,7 +157,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeId = x.JobTypeId,
                 senderStaffId = x.SenderStaffId,
                 receiverStaffId = x.ReceiverStaffId,
-                staffApprovalGroupId = x.StaffApprovalGroupId,
                 reassignedTo = x.ReassignedTo,
                 isReassigned = x.IsReassigned,
                 isAcknowledged = x.IsAcknowledged,

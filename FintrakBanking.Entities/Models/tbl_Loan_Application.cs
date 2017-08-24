@@ -35,7 +35,9 @@ namespace FintrakBanking.Entities.Models
 
         public short CurrencyId { get; set; }
 
-        public short ProductId { get; set; }
+        public short? ProductClassId { get; set; }
+
+        public short? ProductId { get; set; }
 
         public int CasaAccountId { get; set; }
 
@@ -110,9 +112,9 @@ namespace FintrakBanking.Entities.Models
 
         public bool SubmittedForAppraisal { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
+        public int ApprovalLevelId { get; set; }
 
-        public virtual tbl_CASA tbl_CASA { get; set; }
+        public virtual tbl_Branch tbl_Branch { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
 
@@ -122,7 +124,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
 
-        public virtual tbl_Product tbl_Product { get; set; }
+        public virtual tbl_Product_Class tbl_Product_Class { get; set; }
 
         public virtual tbl_Staff tbl_Staff { get; set; }
 

@@ -49,7 +49,7 @@ namespace FintrakBanking.Entities.Models
 
         public double? Rate { get; set; }
 
-        public int ValueSource { get; set; }
+        public short FeeTypeId { get; set; }
 
         public bool? Recurring { get; set; }
 
@@ -84,6 +84,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Fee_Interval tbl_Fee_Interval { get; set; }
 
         public virtual tbl_Fee_Target tbl_Fee_Target { get; set; }
+
+        public virtual tbl_Fee_Type tbl_Fee_Type { get; set; }
 
         public virtual tbl_Operations tbl_Operations { get; set; }
 

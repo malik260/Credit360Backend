@@ -13,6 +13,10 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(50)]
+        public string SourceReferenceNumber { get; set; }
+
+        [Required]
+        [StringLength(50)]
         public string ProductAccountNumber { get; set; }
 
         [Required]

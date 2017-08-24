@@ -6,7 +6,7 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.Approval;
 using System;
 using System.Collections.Generic;
@@ -162,7 +162,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         RequestStaffId = entity.staffId,
                                         OperationId = entity.operationId,
                                     };
-                                    approvelRepo.AddApprovalTrail(trail);
+                                    await approvelRepo.AddApprovalTrail(trail);
                                 }
                             }
                         }
@@ -430,7 +430,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         OperationId = approval.operationId
                     };
 
-                    result = approvelRepo.AddApprovalTrail(trail);
+                    result = approvelRepo.AddApprovalTrail(trail).IsCompleted;
 
                 }
             }
@@ -481,11 +481,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return Tuple.Create(true, entity);
             }
-            if (entity.operationId == int.Parse(OperationsEnum.ProductsUpdate.ToString()))
-            {
-                return Tuple.Create(true, entity);
-            }
-
             if (entity.operationId == int.Parse(OperationsEnum.StaffCreation.ToString()))
             {
                 return Tuple.Create(true, entity);
@@ -495,6 +490,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return Tuple.Create(true, entity);
             }
             if (entity.operationId == int.Parse(OperationsEnum.ChartOfAccountCreation.ToString()))
+            {
+                return Tuple.Create(true, entity);
+            }
+            if (entity.operationId == int.Parse(OperationsEnum.LoanPreliminaryEvaluation.ToString()))
             {
                 return Tuple.Create(true, entity);
             }

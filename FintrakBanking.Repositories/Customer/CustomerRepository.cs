@@ -627,33 +627,6 @@ namespace FintrakBanking.Repositories.Customer
             return customers;
         }
 
-        public IEnumerable<CustomerSectorViewModel> GetCustomerSectors()
-        {
-            var data = (from cs in context.tbl_Sector
-                        select new CustomerSectorViewModel()
-                        {
-                            sectorId = cs.SectorId,
-                            sectorName = cs.Name,
-                            sectorCode = cs.Code,
-                        });
-
-            return data;
-        }
-
-        public IEnumerable<CustomerSectorViewModel> GetCustomerSectorBySubSectorId(short ssId)
-        {
-            var data = (from s in context.tbl_Sub_Sector
-                        where s.SubSectorId == ssId
-                        select new CustomerSectorViewModel()
-                        {
-                            subSectorId = s.SubSectorId,
-                            sectorId = s.tbl_Sector.SectorId,
-                            sectorName = s.Name,
-                            sectorCode = s.Code
-                        });
-
-            return data;
-        }
     }
 }
 
