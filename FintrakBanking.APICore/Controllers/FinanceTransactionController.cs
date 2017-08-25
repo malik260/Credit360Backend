@@ -6,6 +6,7 @@ using System.Net;
 using FintrakBanking.APICore.core;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.ViewModels.Finance;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -41,7 +42,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("Posttransaction")]
-        public HttpResponseMessage PostTransaction(HttpResponseMessage request, [FromBody] FinanceTransactionViewModel transaction)
+        public HttpResponseMessage PostTransaction(HttpResponseMessage request, [FromBody] List<FinanceTransactionViewModel> transaction)
         {
             try
             {

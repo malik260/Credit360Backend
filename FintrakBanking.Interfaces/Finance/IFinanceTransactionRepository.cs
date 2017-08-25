@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.ViewModels.Finance;
 using System;
+using System.Collections.Generic;
 
 namespace FintrakBanking.Interfaces.Finance
 {
@@ -7,9 +8,9 @@ namespace FintrakBanking.Interfaces.Finance
     {
         CasaLienViewModel AddCollateralSearchLien(CasaLienViewModel model);
 
-        CasaLienViewModel PostCollateralSearch(CasaLienViewModel model);
+        FinanceTransactionViewModel PostCollateralSearch(CasaLienViewModel model);
 
-        string PostTransaction(FinanceTransactionViewModel transaction);
+        string PostTransaction(List<FinanceTransactionViewModel> transaction);
 
         double GetExchangeRate(short currencyId, DateTime date, int companyId);
     }
