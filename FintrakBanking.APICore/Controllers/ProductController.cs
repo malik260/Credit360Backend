@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -622,7 +623,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("product/approval")]
-        public async System.Threading.Tasks.Task<HttpResponseMessage> GoForApprovalAsync([FromBody]ApprovalViewModel entity)
+        public async Task<HttpResponseMessage> GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
             try
             {

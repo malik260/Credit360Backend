@@ -15,7 +15,7 @@
         public string clientDescription { get; set; }
         public string registrationNumber { get; set; }
         public string taxIdentificationNumber { get; set; }
-        public string exisitingExposure { get; set; }
+        public int exisitingExposure { get; set; }
         public string projectFinancingPlan { get; set; }
         public string bankRole { get; set; }
         public string proposedTermsAndConditions { get; set; }
@@ -31,6 +31,7 @@
         public string bankParticipationJustification { get; set; }
         public string portfolioStrategicAlignment { get; set; }
         public string commercialViabilityAssessment { get; set; }
+        public bool sendForApproval { get; set; }
 
         public int operationId { get; set; }
         public short approvalStatusId { get; set; }

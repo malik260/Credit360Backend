@@ -14,5 +14,8 @@ namespace FintrakBanking.Interfaces.Credit
         Task<bool> GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanPreliminaryEvaluations();
+
+        bool UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model);
+
     }
 }
