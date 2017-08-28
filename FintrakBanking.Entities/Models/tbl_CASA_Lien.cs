@@ -37,8 +37,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string Description { get; set; }
 
-        public string SourceReferenceNumber { get; set; }
-
         public short LienTypeId { get; set; }
 
         [Column(TypeName = "date")]

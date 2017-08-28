@@ -136,7 +136,10 @@ namespace FintrakBanking.Entities.Models
         public DateTime? FirstInterestPaymentDate { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? OutstandingPrincipal { get; set; }
+        public decimal OutstandingPrincipal { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal OutstandingInterest { get; set; }
 
         public int? PrincipalAdditionCount { get; set; }
 

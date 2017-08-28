@@ -271,10 +271,12 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (model.sendForApproval)
                 {
+                    model.isCurrent = true;
                     responseMessage = "Preliminary evaluation note created successfully, now awaiting approval";
                 }
                 else
                 {
+                    model.isCurrent = false;
                     responseMessage = "Preliminary evaluation note created successfully";
                 }
 
@@ -344,7 +346,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
             catch (Exception ex)
             {
@@ -392,10 +394,12 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (model.sendForApproval)
                 {
+                    model.isCurrent = true;
                     responseMessage = "Preliminary evaluation note updated successfully, now awaiting approval";
                 }
                 else
                 {
+                    model.isCurrent = false;
                     responseMessage = "Preliminary evaluation note updated successfully";
                 }
 

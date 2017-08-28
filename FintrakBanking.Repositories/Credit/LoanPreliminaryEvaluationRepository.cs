@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -50,14 +51,12 @@ namespace FintrakBanking.Repositories.Credit
                 return false;
             }
 
-
-
             bool output = false;
 
             var penRecord = new tbl_Loan_Preliminary_Evaluation()
             {
                 PreliminaryEvaluationCode = GeneratePENCode(),
-                BankParticipationJustification = model.bankParticipationJustification,
+                //BankParticipationJustification = model.bankParticipationJustification,
                 BankRole = model.bankRole,
                 BranchId = model.userBranchId,
                 BusinessProfile = model.businessProfile,
@@ -67,7 +66,9 @@ namespace FintrakBanking.Repositories.Credit
                 CompanyId = model.companyId,
                 CustomerId = model.customerId,
                 EnvironmentalImpact = model.environmentalImpact,
-                ExistingExposure = model.exisitingExposure,
+                ExistingExposure = model.existingExposure,
+                RegistrationNumber = model.registrationNumber,
+                TaxIdentificationNumber = model.registrationNumber,
                 ImplementationArrangements = model.implementationArrangements,
                 MarketDemand = model.marketDemand,
                 OwnershipStructure = model.ownershipStructure,
@@ -75,14 +76,12 @@ namespace FintrakBanking.Repositories.Credit
                 ProjectDescription = model.projectDescription,
                 ProjectFinancingPlan = model.projectFinancingPlan,
                 ProposedTermsAndConditions = model.proposedTermsAndConditions,
-                RiskMitigants = model.riskMitigants,
                 RisksAndConcerns = model.risksAndConcerns,
-                SustainableBankingImplications = model.sustainableBankingImplications,
                 PrudentialExposureLimitImplications = model.prudentialExposureLimitImplications,
                 RelationshipManagerId = model.relationshipManagerId,
                 RelationshipOfficerId = model.relationshipOfficerId,
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-                IsCurrent = true,
+                IsCurrent = model.isCurrent,
                 DateTimeCreated = genSetup.GetApplicationDate(),
                 CreatedBy = model.createdBy
             };
@@ -159,7 +158,7 @@ namespace FintrakBanking.Repositories.Credit
             var penRecord = new tbl_Loan_Preliminary_Evaluation()
             {
                 PreliminaryEvaluationCode = GeneratePENCode(),
-                BankParticipationJustification = model.bankParticipationJustification,
+                //BankParticipationJustification = model.bankParticipationJustification,
                 BankRole = model.bankRole,
                 BranchId = model.userBranchId,
                 BusinessProfile = model.businessProfile,
@@ -169,7 +168,9 @@ namespace FintrakBanking.Repositories.Credit
                 CompanyId = model.companyId,
                 CustomerId = model.customerId,
                 EnvironmentalImpact = model.environmentalImpact,
-                ExistingExposure = model.exisitingExposure,
+                RegistrationNumber = model.registrationNumber,
+                TaxIdentificationNumber = model.registrationNumber,
+                ExistingExposure = model.existingExposure,
                 ImplementationArrangements = model.implementationArrangements,
                 MarketDemand = model.marketDemand,
                 OwnershipStructure = model.ownershipStructure,
@@ -177,14 +178,12 @@ namespace FintrakBanking.Repositories.Credit
                 ProjectDescription = model.projectDescription,
                 ProjectFinancingPlan = model.projectFinancingPlan,
                 ProposedTermsAndConditions = model.proposedTermsAndConditions,
-                RiskMitigants = model.riskMitigants,
                 RisksAndConcerns = model.risksAndConcerns,
-                SustainableBankingImplications = model.sustainableBankingImplications,
                 PrudentialExposureLimitImplications = model.prudentialExposureLimitImplications,
                 RelationshipManagerId = model.relationshipManagerId,
                 RelationshipOfficerId = model.relationshipOfficerId,
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-                IsCurrent = true,
+                IsCurrent = model.isCurrent,
                 DateTimeCreated = genSetup.GetApplicationDate(),
                 CreatedBy = model.createdBy
             };
@@ -274,7 +273,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyName = pen.tbl_Company.Name,
                             loanPreliminaryEvaluationId = pen.LoanPreliminaryEvaluationId,
                             preliminaryEvaluationCode = pen.PreliminaryEvaluationCode,
-                            bankParticipationJustification = pen.BankParticipationJustification,
+                            //bankParticipationJustification = pen.BankParticipationJustification,
                             bankRole = pen.BankRole,
                             branchId = br.BranchId,
                             branchName = br.BranchName,
@@ -285,7 +284,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = pen.CustomerId,
                             customerName = pen.tbl_Customer.FirstName + " " + pen.tbl_Customer.LastName,
                             environmentalImpact = pen.EnvironmentalImpact,
-                            exisitingExposure = (int)pen.ExistingExposure,
+                            existingExposure = pen.ExistingExposure,
                             implementationArrangements = pen.ImplementationArrangements,
                             marketDemand = pen.MarketDemand,
                             ownershipStructure = pen.OwnershipStructure,
@@ -293,16 +292,45 @@ namespace FintrakBanking.Repositories.Credit
                             projectDescription = pen.ProjectDescription,
                             projectFinancingPlan = pen.ProjectFinancingPlan,
                             proposedTermsAndConditions = pen.ProposedTermsAndConditions,
-                            riskMitigants = pen.RiskMitigants,
                             risksAndConcerns = pen.RisksAndConcerns,
-                            sustainableBankingImplications = pen.SustainableBankingImplications,
                             prudentialExposureLimitImplications = pen.PrudentialExposureLimitImplications,
                             relationshipManagerId = pen.RelationshipManagerId,
                             relationshipOfficerId = pen.RelationshipOfficerId,
                             taxIdentificationNumber = pen.TaxIdentificationNumber,
                             registrationNumber = pen.RegistrationNumber,
                             operationId = atrail.OperationId,
-                            dateTimeCreated = pen.DateTimeCreated
+                            dateTimeCreated = pen.DateTimeCreated,
+                            customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == pen.CustomerId).Select(b => new CustomerBvnViewModels()
+                            {
+                                bankVerificationNumber = b.BankVerificationNumber,
+                                customerBvnid = b.CustomerBVNId,
+                                firstname = b.Firstname,
+                                isValidBvn = b.IsValidBVN,
+                                isPoliticallyExposed = b.IsPoliticallyExposed,
+                                surname = b.Surname
+                            }).ToList(),
+                            customerCompanyDirectors = context.tbl_Customer_Company_Director
+                            .Where(s => s.CustomerId == pen.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
+                            .Select(s => new CustomerCompanyDirectorsViewModels()
+                            {
+                                bankVerificationNumber = s.CustomerBVN,
+                                companyDirectorTypeId = s.CompanyDirectorTypeId,
+                                companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                customerId = s.CustomerId,
+                                firstname = s.Firstname,
+                                surname = s.Surname
+                            }).ToList(),
+                            customerCompanyShareholders = context.tbl_Customer_Company_Director
+                            .Where(s => s.CustomerId == pen.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
+                            .Select(s => new CustomerCompanyShareholdersViewModels()
+                            {
+                                bankVerificationNumber = s.CustomerBVN,
+                                companyDirectorTypeId = s.CompanyDirectorTypeId,
+                                companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                customerId = s.CustomerId,
+                                firstname = s.Firstname,
+                                surname = s.Surname
+                            }).ToList()
                         });
             return data;
         }
@@ -363,8 +391,9 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             companyId = p.CompanyId,
                             companyName = p.tbl_Company.Name,
+                            loanPreliminaryEvaluationId = p.LoanPreliminaryEvaluationId,
                             preliminaryEvaluationCode = p.PreliminaryEvaluationCode,
-                            bankParticipationJustification = p.BankParticipationJustification,
+                            //bankParticipationJustification = p.BankParticipationJustification,
                             bankRole = p.BankRole,
                             branchId = br.BranchId,
                             branchName = br.BranchName,
@@ -375,7 +404,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = p.CustomerId,
                             customerName = p.tbl_Customer.FirstName + " " + p.tbl_Customer.LastName,
                             environmentalImpact = p.EnvironmentalImpact,
-                            exisitingExposure = (int)p.ExistingExposure,
+                            existingExposure = p.ExistingExposure,
                             implementationArrangements = p.ImplementationArrangements,
                             marketDemand = p.MarketDemand,
                             ownershipStructure = p.OwnershipStructure,
@@ -383,15 +412,44 @@ namespace FintrakBanking.Repositories.Credit
                             projectDescription = p.ProjectDescription,
                             projectFinancingPlan = p.ProjectFinancingPlan,
                             proposedTermsAndConditions = p.ProposedTermsAndConditions,
-                            riskMitigants = p.RiskMitigants,
                             risksAndConcerns = p.RisksAndConcerns,
-                            sustainableBankingImplications = p.SustainableBankingImplications,
                             prudentialExposureLimitImplications = p.PrudentialExposureLimitImplications,
                             relationshipManagerId = p.RelationshipManagerId,
                             relationshipOfficerId = p.RelationshipOfficerId,
                             taxIdentificationNumber = p.TaxIdentificationNumber,
                             registrationNumber = p.RegistrationNumber,
-                        }).ToList();
+                            customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == p.CustomerId).Select(b => new CustomerBvnViewModels()
+                            {
+                                bankVerificationNumber = b.BankVerificationNumber,
+                                customerBvnid = b.CustomerBVNId,
+                                firstname = b.Firstname,
+                                isValidBvn = b.IsValidBVN,
+                                isPoliticallyExposed = b.IsPoliticallyExposed,
+                                surname = b.Surname
+                            }).ToList(),
+                            customerCompanyDirectors = context.tbl_Customer_Company_Director
+                            .Where(s => s.CustomerId == p.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
+                            .Select(s => new CustomerCompanyDirectorsViewModels()
+                            {
+                                bankVerificationNumber = s.CustomerBVN,
+                                companyDirectorTypeId = s.CompanyDirectorTypeId,
+                                companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                customerId = s.CustomerId,
+                                firstname = s.Firstname,
+                                surname = s.Surname
+                            }).ToList(),
+                            customerCompanyShareholders = context.tbl_Customer_Company_Director
+                            .Where(s => s.CustomerId == p.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
+                            .Select(s => new CustomerCompanyShareholdersViewModels()
+                            {
+                                bankVerificationNumber = s.CustomerBVN,
+                                companyDirectorTypeId = s.CompanyDirectorTypeId,
+                                companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                customerId = s.CustomerId,
+                                firstname = s.Firstname,
+                                surname = s.Surname
+                            }).ToList()
+                        });
 
             return data;
         }
@@ -404,7 +462,7 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
 
             penRecord.PreliminaryEvaluationCode = model.preliminaryEvaluationCode;
-            penRecord.BankParticipationJustification = model.bankParticipationJustification;
+            //penRecord.BankParticipationJustification = model.bankParticipationJustification;
             penRecord.BankRole = model.bankRole;
             penRecord.BranchId = model.userBranchId;
             penRecord.BusinessProfile = model.businessProfile;
@@ -414,7 +472,9 @@ namespace FintrakBanking.Repositories.Credit
             penRecord.CompanyId = model.companyId;
             penRecord.CustomerId = model.customerId;
             penRecord.EnvironmentalImpact = model.environmentalImpact;
-            penRecord.ExistingExposure = model.exisitingExposure;
+            penRecord.ExistingExposure = model.existingExposure;
+            penRecord.RegistrationNumber = model.registrationNumber;
+            penRecord.TaxIdentificationNumber = model.registrationNumber;
             penRecord.ImplementationArrangements = model.implementationArrangements;
             penRecord.MarketDemand = model.marketDemand;
             penRecord.OwnershipStructure = model.ownershipStructure;
@@ -422,9 +482,7 @@ namespace FintrakBanking.Repositories.Credit
             penRecord.ProjectDescription = model.projectDescription;
             penRecord.ProjectFinancingPlan = model.projectFinancingPlan;
             penRecord.ProposedTermsAndConditions = model.proposedTermsAndConditions;
-            penRecord.RiskMitigants = model.riskMitigants;
             penRecord.RisksAndConcerns = model.risksAndConcerns;
-            penRecord.SustainableBankingImplications = model.sustainableBankingImplications;
             penRecord.PrudentialExposureLimitImplications = model.prudentialExposureLimitImplications;
             penRecord.RelationshipManagerId = model.relationshipManagerId;
             penRecord.RelationshipOfficerId = model.relationshipOfficerId;

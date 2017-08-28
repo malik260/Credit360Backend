@@ -163,7 +163,6 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IJobRequestRepository>().To<JobRequestRepository>();
             kernel.Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
             kernel.Bind<ILimitRepository>().To<LimitRepository>();
-            kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<IFinanceTransactionRepository>().To<FinanceTransactionRepository>();
         }        
     }

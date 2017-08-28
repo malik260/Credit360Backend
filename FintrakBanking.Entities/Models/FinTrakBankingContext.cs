@@ -340,17 +340,17 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Branch>()
-                .HasMany(e => e.tbl_Customer)
-                .WithRequired(e => e.tbl_Branch)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Branch>()
                 .HasMany(e => e.tbl_CASA_Lien)
                 .WithRequired(e => e.tbl_Branch)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Branch>()
                 .HasMany(e => e.tbl_CASA)
+                .WithRequired(e => e.tbl_Branch)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Branch>()
+                .HasMany(e => e.tbl_Customer)
                 .WithRequired(e => e.tbl_Branch)
                 .WillCascadeOnDelete(false);
 
@@ -364,11 +364,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Finance_Transaction1)
                 .WithRequired(e => e.tbl_Branch1)
                 .HasForeignKey(e => e.DestinationBranchId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Branch>()
-                .HasMany(e => e.tbl_Loan_Application)
-                .WithRequired(e => e.tbl_Branch)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Branch>()
@@ -1952,6 +1947,10 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan>()
+                .Property(e => e.OutstandingInterest)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan>()
                 .Property(e => e.ScheduledPrepaymentAmount)
                 .HasPrecision(19, 4);
 
@@ -1981,6 +1980,11 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Loan_Application>()
                 .Property(e => e.Latitude)
                 .HasPrecision(12, 9);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Credit_Appraisal_Memorandum)
+                .WithRequired(e => e.tbl_Loan_Application)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan_Application>()
                 .HasMany(e => e.tbl_Loan)
