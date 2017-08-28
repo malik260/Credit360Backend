@@ -31,6 +31,7 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public short? cutOffDay { get; set; }
         public bool isIntegral { get; set; }
 
+
         public List<ChargeRangeViewModel> ranges { get; set; }
     }
 

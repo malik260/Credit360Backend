@@ -24,6 +24,7 @@ namespace FintrakBanking.ViewModels.Finance
         public short sourceApplicationId { get; set; }
 
         public List<FinanceTransactionDetailViewModel> transactionDetails { get; set; }
+
     }
 
     public class FinanceTransactionDetailViewModel

@@ -99,6 +99,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
+
     }
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
