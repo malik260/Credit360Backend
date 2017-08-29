@@ -261,6 +261,8 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                var responseMessage = string.Empty;
+
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.userBranchId = (short)token.GetBranchId;
@@ -268,12 +270,23 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
                 model.branchId = (short)token.GetBranchId;
 
+                if (model.sendForApproval)
+                {
+                    model.isCurrent = true;
+                    responseMessage = "Preliminary evaluation note created successfully, now awaiting approval";
+                }
+                else
+                {
+                    model.isCurrent = false;
+                    responseMessage = "Preliminary evaluation note created successfully";
+                }
+
                 var response = repoLoanPEN.AddPreliminaryEvaluation(model);
 
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Preliminary evaluation note created successfully, now awaiting approval" });
+                        new { success = true, message = $"{responseMessage}" });
                 }
                 else
                 {
@@ -334,7 +347,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
             catch (Exception ex)
             {
@@ -362,6 +375,52 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [Route("loan/preliminary-evaluation/{loanPenId}")]
+        public HttpResponseMessage UpdateLoanPreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
+        {
+            try
+            {
+                var responseMessage = string.Empty;
+
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.userBranchId = (short)token.GetBranchId;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.branchId = (short)token.GetBranchId;
+
+                if (model.sendForApproval)
+                {
+                    model.isCurrent = true;
+                    responseMessage = "Preliminary evaluation note updated successfully, now awaiting approval";
+                }
+                else
+                {
+                    model.isCurrent = false;
+                    responseMessage = "Preliminary evaluation note updated successfully";
+                }
+
+                var response = repoLoanPEN.UpdatePreliminaryEvaluation(loanPenId, model);
+
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = $"{responseMessage}" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Preliminary evaluation note not updated" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
             }
         }
         #endregion

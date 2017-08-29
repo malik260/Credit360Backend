@@ -75,73 +75,87 @@ namespace FintrakBanking.Repositories.Finance
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public string PostTransaction(FinanceTransactionViewModel transaction)
+        public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions)
         {
-            transaction.batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+           var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+            //transaction.batchCode = batchCode;
+
+            var transactionCount = (from a in inputTransactions
+                                    select a.transactionDetails.Count());
+            
+            if(transactionCount.Sum() < 2) //transaction.transactionDetails.Count() < 2
+                throw new Exception("Specify both debit and credit transactions");
 
             List<tbl_Finance_Transaction> transactions = new List<tbl_Finance_Transaction>();
 
-            if(transaction.transactionDetails.Count() < 2)
-                throw new Exception("Specify both debit and credit transactions");
+            var debitSum = (from a in inputTransactions
+                            select a.transactionDetails.Sum(x => x.debitAmount));
 
-            var debitSum = transaction.transactionDetails.Sum(x => x.debitAmount);
-            var creditSum = transaction.transactionDetails.Sum(x => x.creditAmount);
+            //transaction.transactionDetails.Sum(x => x.debitAmount);
+            var creditSum = (from a in inputTransactions
+                             select a.transactionDetails.Sum(x => x.creditAmount));
+            //transaction.transactionDetails.Sum(x => x.creditAmount);
 
-            if(debitSum != creditSum)
+            if (debitSum != creditSum)
                 throw new Exception("Total Debit Amount should equal Total Credit Amount");
 
-            foreach (var item in transaction.transactionDetails)
+            foreach (var mainItem in inputTransactions)
             {
-                if (item.debitAmount != 0 && item.creditAmount != 0)
-                    throw new Exception("Debit or Credit Amount should be 0");
+                foreach (var item in mainItem.transactionDetails)
+                {
+                    if (item.debitAmount != 0 && item.creditAmount != 0)
+                        throw new Exception("Debit or Credit Amount should be 0");
 
-                if (item.debitAmount < 0)
-                    throw new Exception("Debit Amount should NOT be less than 0");
+                    if (item.debitAmount < 0)
+                        throw new Exception("Debit Amount should NOT be less than 0");
 
-                if (item.creditAmount < 0)
-                    throw new Exception("Credit Amount should NOT be less than 0");
-
-
-                tbl_Finance_Transaction trans = new tbl_Finance_Transaction();
-
-                trans.BatchCode = transaction.batchCode;
-                trans.OperationId = transaction.operationId;
-                trans.Description = transaction.description;
-                trans.ValueDate = transaction.valueDate;
-                trans.TransactionDate = transaction.transactionDate;
-                trans.CurrencyId = transaction.currencyId;
-                trans.CurrencyRate = transaction.currencyRate;
-                trans.PostedDateTime = DateTime.Now;
-                trans.IsApproved = transaction.isApproved;
-                trans.PostedBy = transaction.postedBy;
-                trans.ApprovedBy = transaction.approvedBy;
-                trans.ApprovedDate = transaction.approvedDate;
-                trans.ApprovedDateTime = transaction.approvedDateTime;
-                trans.SourceApplicationId = transaction.sourceApplicationId;
-                trans.CompanyId = transaction.companyId;
+                    if (item.creditAmount < 0)
+                        throw new Exception("Credit Amount should NOT be less than 0");
 
 
-                trans.GLAccountId = item.glAccountId;
-                trans.SourceReferenceNumber = item.sourceReferenceNumber;
-                trans.CasaAccountId = item.casaAccountId;
-                trans.DebitAmount = item.debitAmount;
-                trans.CreditAmount = item.creditAmount;
-                trans.SourceBranchId = item.sourceBranchId;
-                trans.DestinationBranchId = item.destinationBranchId;
+                    tbl_Finance_Transaction trans = new tbl_Finance_Transaction();
 
-                transactions.Add(trans);
+                    trans.BatchCode = batchCode;
+                    trans.OperationId = mainItem.operationId;
+                    trans.Description = mainItem.description;
+                    trans.ValueDate = mainItem.valueDate;
+                    trans.TransactionDate = mainItem.transactionDate;
+                    trans.CurrencyId = mainItem.currencyId;
+                    trans.CurrencyRate = mainItem.currencyRate;
+                    trans.PostedDateTime = DateTime.Now;
+                    trans.IsApproved = mainItem.isApproved;
+                    trans.PostedBy = mainItem.postedBy;
+                    trans.ApprovedBy = mainItem.approvedBy;
+                    trans.ApprovedDate = mainItem.approvedDate;
+                    trans.ApprovedDateTime = mainItem.approvedDateTime;
+                    trans.SourceApplicationId = mainItem.sourceApplicationId;
+                    trans.CompanyId = mainItem.companyId;
+
+
+                    trans.GLAccountId = item.glAccountId;
+                    trans.SourceReferenceNumber = item.sourceReferenceNumber;
+                    trans.CasaAccountId = item.casaAccountId;
+                    trans.DebitAmount = item.debitAmount;
+                    trans.CreditAmount = item.creditAmount;
+                    trans.SourceBranchId = item.sourceBranchId;
+                    trans.DestinationBranchId = item.destinationBranchId;
+
+                    transactions.Add(trans);
+                }
             }
 
             this.context.tbl_Finance_Transaction.AddRange(transactions);
             context.SaveChanges();
 
-            return transaction.batchCode;
+            return batchCode;
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public CasaLienViewModel PostCollateralSearch(CasaLienViewModel model)
+        public FinanceTransactionViewModel PostCollateralSearch(CasaLienViewModel model)
         {
             var lienSearchAmount = this.context.tbl_CASA_Lien.FirstOrDefault(x => x.LienReferenceNumber == model.lienReferenceNumber).LienCreditAmount;
+
 
             var data = new tbl_CASA_Lien
             {
@@ -204,7 +218,10 @@ namespace FintrakBanking.Repositories.Finance
             collateralTransaction.transactionDetails.Add(debit);
             collateralTransaction.transactionDetails.Add(credit);
 
-            PostTransaction(collateralTransaction);
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(PostCollateralSearch(model));
+            PostTransaction(inputTransactions);
 
             // Audit Section ---------------------------            
 
@@ -224,7 +241,7 @@ namespace FintrakBanking.Repositories.Finance
 
             //end of Audit section -------------------------------
             context.SaveChanges();
-            return model;
+            return collateralTransaction;
 
         }
 

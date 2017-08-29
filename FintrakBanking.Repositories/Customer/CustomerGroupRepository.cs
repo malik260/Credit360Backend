@@ -986,6 +986,35 @@ namespace FintrakBanking.Repositories.Customer
                                 companyId = s.tbl_Customer.CompanyId,
                                 branchId = s.tbl_Customer.BranchId,
                                 isBlackListed = context.tbl_Customer_Blacklist.Where(x => x.CustomerId == s.CustomerId).Any(),
+                                customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == s.CustomerId).Select(b => new CustomerBvnViewModels()
+                                {
+                                    bankVerificationNumber = b.BankVerificationNumber,
+                                    customerBvnid = b.CustomerBVNId,
+                                    firstname = b.Firstname,
+                                    isValidBvn = b.IsValidBVN,
+                                    isPoliticallyExposed = b.IsPoliticallyExposed,
+                                    surname = b.Surname
+                                }).ToList(),
+                                customerCompanyDirectors = context.tbl_Customer_Company_Director.Where(x => x.CustomerId == s.CustomerId && 
+                                x.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember).Select(x => new CustomerCompanyDirectorsViewModels()
+                                {
+                                    bankVerificationNumber = x.CustomerBVN,
+                                    companyDirectorTypeId = x.CompanyDirectorTypeId,
+                                    companyDirectorTypeName = x.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                    customerId = x.CustomerId,
+                                    firstname = x.Firstname,
+                                    surname = x.Surname
+                                }).ToList(),
+                                customerCompanyShareholders = context.tbl_Customer_Company_Director.Where(x => x.CustomerId == s.CustomerId &&
+                                x.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder).Select(x => new CustomerCompanyShareholdersViewModels()
+                                {
+                                    bankVerificationNumber = x.CustomerBVN,
+                                    companyDirectorTypeId = x.CompanyDirectorTypeId,
+                                    companyDirectorTypeName = x.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                    customerId = x.CustomerId,
+                                    firstname = x.Firstname,
+                                    surname = x.Surname
+                                }).ToList()
                             }).ToList(),
                         });
 
@@ -1004,7 +1033,7 @@ namespace FintrakBanking.Repositories.Customer
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
                 allGroups = GellAllCustomerGroupMappings()
-                    //.Where(c => c.companyId == companyId)
+                    .Where(c => c.companyId == companyId)
                     .Where(x => x.customerGroupName.Contains(searchQuery)
                     || x.customerGroupCode.Contains(searchQuery)
                 );
