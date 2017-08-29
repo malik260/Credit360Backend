@@ -8,7 +8,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string applicationReferenceNumber { get; set; }
         public DateTime applicationDate { get; set; }
-        public string  principalAmount { get; set; }
+        public decimal   principalAmount { get; set; }
         public double interestRate { get; set; }
         public double exchangeRate { get; set; }
         public string loanTypeName { get; set; }
@@ -22,7 +22,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
-        public short branchId { get; set; }
+        public short? branchId { get; set; }
         public short? productClassId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
@@ -58,11 +58,13 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int? loanPreliminaryEvaluationId { get; set; } 
         public double exchangeRate { get; set; }
-        public string nearestLandMark { get; set; }
-        public string nearestBusStop { get; set; }
-        public decimal? longitude { get; set; }
-        public decimal? latitude { get; set; } 
+        
     }
+
+
+
+
+
 
     public class ProductClassViewModel
     {

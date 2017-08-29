@@ -68,6 +68,9 @@ namespace FintrakBanking.Common.Enum
         AppraisalMemorandumAdded = 119, AppraisalMemorandumUpdated = 120, AppraisalMemorandumDeleted = 121,
         JobTypeAdded = 119, JobTypeUpdated = 120,
         LoanPreliminaryEvaluation = 126,
+
+
+        KYCitemAdd = 127, KYCitemUpdated = 128, KYCDelete = 129
     };
 
 

@@ -15,6 +15,8 @@ using NodaTime;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Interfaces.Customer;
 using System.Threading.Tasks;
+using XLeratorDLL_financial;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -482,7 +484,7 @@ namespace FintrakBanking.Repositories.Credit
                             feePercent = l.FeePercent ?? 0,
                             firstPrincipalPaymentDate = l.FirstPrincipalPaymentDate ?? DateTime.Now,
                             firstInterestPaymentDate = l.FirstInterestPaymentDate ?? DateTime.Now,
-                            outstandingPrincipal = l.OutstandingPrincipal ?? 0,
+                            outstandingPrincipal = l.OutstandingPrincipal ,
                             principalAdditionCount = l.PrincipalAdditionCount ?? 0,
                             principalReductionCount = l.PrincipalReductionCount ?? 0,
                             fixedPrincipal = l.FixedPrincipal,

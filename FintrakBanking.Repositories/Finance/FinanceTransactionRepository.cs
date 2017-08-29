@@ -171,7 +171,7 @@ namespace FintrakBanking.Repositories.Finance
             collateralTransaction.valueDate = generalSetup.GetApplicationDate();
             collateralTransaction.transactionDate = collateralTransaction.valueDate;
             collateralTransaction.currencyId = casa.CurrencyId;
-            collateralTransaction.currencyRate = GetExchangeRate(collateralTransaction.currencyId, collateralTransaction.valueDate, model.companyId);            
+            collateralTransaction.currencyRate = GetExchangeRate(collateralTransaction.currencyId,   model.companyId);            
             collateralTransaction.isApproved = true;
             collateralTransaction.postedBy = model.createdBy;
             collateralTransaction.approvedBy = model.createdBy;
@@ -228,7 +228,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public double GetExchangeRate(short currencyId, DateTime date, int companyId)
+        public double GetExchangeRate(short currencyId,   int companyId)
         {
             var baseCurrency = this.context.tbl_Company.FirstOrDefault(x => x.CompanyId == companyId).CurrencyId;
 
@@ -238,7 +238,8 @@ namespace FintrakBanking.Repositories.Finance
             }
             else
             {
-                var rate = this.context.tbl_Currency_Rate.FirstOrDefault(x => x.BaseCurrencyId == baseCurrency && x.CurrencyId == currencyId && x.Date == date).SellingRate;
+                var rate = this.context.tbl_Currency_Rate.FirstOrDefault(x => x.BaseCurrencyId ==
+                baseCurrency && x.CurrencyId == currencyId && x.Date == generalSetup.GetApplicationDate()).SellingRate;
 
                 return rate;
             }           

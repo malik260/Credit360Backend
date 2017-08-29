@@ -19,9 +19,7 @@ using FintrakBanking.ViewModels.CASA;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Customer
-{
-    [Export(typeof(ICustomerGroupRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+{ 
     public class CustomerGroupRepository : ICustomerGroupRepository
     {
         private FinTrakBankingContext context;
@@ -48,6 +46,95 @@ namespace FintrakBanking.Repositories.Customer
         {
             return context.SaveChanges() > 0;
         }
+
+        #region customer KYC
+
+        //public IQueryable<KYCItemViewModel> GetKYCItems(int companyId)
+        //{
+        //    return (IQueryable<KYCItemViewModel>)context.tbl_KYC_Item.Where(d => d.tbl_Product.CompanyId == companyId).Select(d => new KYCItemViewModel
+        //    {
+        //        createdBy = d.CreatedBy,
+        //        productId = d.ProductId,
+        //        kYCItemId = d.KYCItemId,
+        //        item = d.Item,
+        //        dateTimeCreated = d.DateTimeCreated,
+        //        displayOrder = d.DisplayOrder,
+        //         isMandatory = d.IsMandatory,
+        //        productName = d.tbl_Product.ProductName
+        //    });
+        //}
+
+        //public bool AddKycItem(KYCItemViewModel entity)
+        //{
+            //var data = new tbl_KYC_Item
+            //{
+            //    CreatedBy = entity.createdBy,
+            //    DateTimeCreated = genSetup.GetApplicationDate(),
+            //    DisplayOrder = entity.displayOrder,
+            //    Item = entity.item,
+            //    IsMandatory = entity.isMandatory,
+            //    KYCItemId = entity.kYCItemId,
+            //    ProductId = entity.productId
+            //};
+            //context.tbl_KYC_Item.Add(data);
+            // Audit Section ---------------------------
+            //var audit = new tbl_Audit
+            //{
+            //    AuditTypeId = (short)AuditTypeEnum.KYCitemAdd,
+            //    StaffId = entity.createdBy,
+            //    BranchId = (short)entity.userBranchId,
+            //    Detail = $"Added KYC Item: { entity.item  } ",
+            //    IPAddress = entity.userIPAddress,
+            //    Url = entity.applicationUrl,
+            //    ApplicationDate = genSetup.GetApplicationDate(),
+            //    SystemDateTime = DateTime.Now
+            //};
+            //this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+
+        //    return context.SaveChanges() != 0;
+
+        //}
+
+        //public bool UpdatedKycItem(int kYCItemId ,KYCItemViewModel entity)
+        //{
+        //    var data = context.tbl_KYC_Item.Where(c => c.KYCItemId == kYCItemId).SingleOrDefault();
+            
+        //    data.CreatedBy = entity.createdBy;
+        //    data.DateTimeCreated = entity.dateTimeCreated;
+        //    data.DateTimeUpdated = entity.dateTimeUpdated;
+        //    data.DisplayOrder = entity.displayOrder;
+        //    data.Item = entity.item;
+        //    data.LastUpdatedBy = entity.lastUpdatedBy;
+        //    data.KYCItemId = entity.kYCItemId; 
+        //    data.ProductId = entity.productId;
+        //    data.IsMandatory = entity.isMandatory;
+
+        //    // Audit Section ---------------------------
+        //    var audit = new tbl_Audit
+        //    {
+        //        AuditTypeId = (short)AuditTypeEnum.KYCitemUpdated,
+        //        StaffId = entity.createdBy,
+        //        BranchId = (short)entity.userBranchId,
+        //        Detail = $"Updated KYC Item: { entity.item  } ",
+        //        IPAddress = entity.userIPAddress,
+        //        Url = entity.applicationUrl,
+        //        ApplicationDate = genSetup.GetApplicationDate(),
+        //        SystemDateTime = DateTime.Now
+        //    };
+        //    this.auditTrail.AddAuditTrail(audit);
+
+        //    //end of Audit section -------------------------------
+
+        //    return context.SaveChanges() != 0;
+
+        //}
+
+
+
+
+        #endregion
 
         #region tbl_Customer - Group
         public bool AddCustomerGroup(CustomerGroupViewModel entity)
