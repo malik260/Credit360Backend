@@ -10,15 +10,18 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Loan_Collateral_Mapping
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int LoanCollateralMappingId { get; set; }
 
-        public int LoanId { get; set; }
+        public int? LoanId { get; set; }
 
         public int CollateralCustomerId { get; set; }
+
+        public int LoanApplicationId { get; set; }
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
 
         public virtual tbl_Loan tbl_Loan { get; set; }
+
+        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
     }
 }

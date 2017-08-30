@@ -16,7 +16,6 @@ namespace FintrakBanking.Entities.Models
         }
 
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short JobTypeId { get; set; }
 
         [Required]

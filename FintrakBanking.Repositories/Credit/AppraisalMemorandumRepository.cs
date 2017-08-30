@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using System.Linq;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -16,12 +17,14 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
+        private IWorkFlowRepository workflow;
 
-        public AppraisalMemorandumRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+        public AppraisalMemorandumRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkFlowRepository workflow)
         {
             this.context = context;
             this.general = general;
             this.audit = audit;
+            this.workflow = workflow;
         }
         
         public AppraisalMemorandumViewModel GetAppraisalMemorandumByLoanApplicationId(int id)
@@ -53,14 +56,12 @@ namespace FintrakBanking.Repositories.Credit
                 IsCompleted = model.isCompleted,
                 RiskRated = model.riskRated,
                 CAMDocumentation = model.camDocumentation,
-                LoanDetails = "ujigfghjhg",
-                CreatedBy = 1,
+                LoanDetails = "",
+                CreatedBy = model.createdBy,
                 DateTimeCreated = DateTime.Now
             };
 
             var memo = context.tbl_Credit_Appraisal_Memorandum.Add(data);
-
-            // if (memo == null) { return null; }
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -78,6 +79,18 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             this.FlagSubmittedForAppraisal(model.loanApplicationId);
+
+            var response = this.workflow.GoForApproval(new ApprovalViewModel
+            {
+                operationId = (int)OperationsEnum.CAM,
+                targetId = model.loanApplicationId,
+                myLevelId = 4, //model.levelId,
+                approvalStatusId = 0,
+                operationURL = model.applicationUrl,
+                comment = "TEST CAM", //model.comment,
+                amount = 1000000, //model.loanAmount,
+                isPoliticalyExposed = false, //model.politicalyExposed,
+            });
 
             context.SaveChanges();
 
@@ -170,9 +183,96 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
+            //var levelStaff = context.tbl_Approval_Group_Mapping.Where(x=>x.
+                
+                //GetStaffLevel(model.lastUpdatedBy, model.companyId, (int)Operations.CAM);
+
+            //var response = this.workflow.GoForApproval(new ApprovalViewModel
+            //{
+            //    operationId = (int)Operations.CAM,
+            //    targetId = 2,
+            //    myLevelId = levelId,
+            //    nextLevelId = 2,
+            //    approvalStatusId = 1,
+            //    amount = 2000000,
+            //    comment = "TEST CAM",
+            //    operationURL = "",
+            //    isPoliticalyExposed = false,
+            //});
+
             return context.SaveChanges() != 0;
         }
 
+        public ForwardViewModel ForwardAppraisalMemorandum(ForwardViewModel model)
+        {
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.AppraisalMemorandumAdded,
+                StaffId = model.createdBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"Forward AppraisalMemorandum '{ model.applicationId }' ",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = general.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            context.SaveChanges();
+
+            return new ForwardViewModel
+            {
+                comment = string.Empty,
+                applicationId = 1,
+                receiverStaffId = 1
+            };
+        }
+
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId)
+        {
+            var allstaff = this.GetAllStaffNames();
+
+            return this.context.tbl_Approval_Trail
+                .Where(x => x.OperationId == (int)OperationsEnum.CAM && x.TargetId == applicationId)
+                .Select(x => new ApprovalTrailViewModel
+                {
+                    approvalTrailId = x.ApprovalTrailId,
+                    targetId = x.TargetId,
+                    arrivalDate = x.ArrivalDate,
+                    systemArrivalDateTime = x.SystemArrivalDateTime,
+                    responseDate = x.ResponseDate,
+                    systemResponseDateTime = x.SystemResponseDateTime,
+                    responseStaffId = x.ResponseStaffId,
+                    requestStaffId = x.RequestStaffId,
+                    fromApprovalLevelId = x.FromApprovalLevelId,
+                    toApprovalLevelId = x.ToApprovalLevelId,
+                    approvalStateId = x.ApprovalStateId,
+                    approvalStatusId = x.ApprovalStatusId,
+                    comment = x.Comment,
+                    staffName = allstaff.FirstOrDefault(s => s.id == x.ResponseStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.ResponseStaffId).name,
+                }).OrderByDescending(x => x.approvalTrailId);
+        }
+        
+        private IQueryable<OperationStaffViewModel> GetAllStaffNames()
+        {
+            return this.context.tbl_Staff.Select(s => new OperationStaffViewModel
+            {
+                id = s.StaffId,
+                name = s.LastName + " " + s.FirstName
+            });
+        }
+
+        //public bool PushIntoWorkflowProcess(ApprovalViewModel entity)
+        //{
+        //    return true;
+        //}
+
+        //public bool PushToNext() {
+        //    return true;
+        //}
 
 
     }

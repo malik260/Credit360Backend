@@ -1,4 +1,4 @@
-﻿using FintrakBanking.ViewModels.Business;
+﻿using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Text;

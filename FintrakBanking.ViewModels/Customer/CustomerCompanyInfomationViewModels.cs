@@ -48,4 +48,6 @@
         public short client_SupplierTypeId { get; set; }
         public string client_SupplierTypeName { get; set; }
     }
+
+    public class CustomerCompanyShareholdersViewModels: CustomerCompanyDirectorsViewModels { }
 }

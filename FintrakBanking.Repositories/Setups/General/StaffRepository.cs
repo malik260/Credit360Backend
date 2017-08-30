@@ -5,13 +5,14 @@ using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -277,7 +278,7 @@ on c.DepartmentId equals dept.DepartmentId
                 companyId = staffModel.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempStaff.StaffId,
-                operationId = (int)Operations.StaffCreation,
+                operationId = (int)OperationsEnum.StaffCreation,
                 BranchId = staffModel.userBranchId
             };
             var response = workFlow.LogForApproval(entity);
@@ -330,15 +331,15 @@ on c.DepartmentId equals dept.DepartmentId
             return staff;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.StaffCreation;
+            entity.operationId = (int)OperationsEnum.StaffCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveStaff(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveStaff(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {
@@ -506,7 +507,7 @@ on c.DepartmentId equals dept.DepartmentId
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)Operations.StaffCreation, staffModel.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.StaffCreation, staffModel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -522,7 +523,7 @@ on c.DepartmentId equals dept.DepartmentId
                             companyId = staffModel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = staff.StaffId,
-                            operationId = (int)Operations.StaffCreation,
+                            operationId = (int)OperationsEnum.StaffCreation,
                             BranchId = staffModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -554,7 +555,7 @@ on c.DepartmentId equals dept.DepartmentId
 
         public IEnumerable<StaffInfoViewModel> GetStaffAwaitingApprovals(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.StaffCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.StaffCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -565,7 +566,7 @@ on c.DepartmentId equals dept.DepartmentId
                     join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
                     join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)Operations.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                          && atrail.OperationId == (int)OperationsEnum.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new StaffInfoViewModel()
                     {
                         StaffId = c.StaffId,

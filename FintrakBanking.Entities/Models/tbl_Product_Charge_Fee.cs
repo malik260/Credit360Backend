@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Product_Fee")]
-    public partial class tbl_Product_Fee
+    [Table("core.tbl_Product_Charge_Fee")]
+    public partial class tbl_Product_Charge_Fee
     {
         [Key]
         public int ProductFeeId { get; set; }
@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CompanyId { get; set; }
 
-        public int FeeId { get; set; }
+        public int ChargeFeeId { get; set; }
 
         [Column(TypeName = "money")]
         public decimal RateValue { get; set; }
@@ -38,9 +38,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
 
-        public virtual tbl_Fee tbl_Fee { get; set; }
+        public virtual tbl_Company tbl_Company { get; set; }
 
         public virtual tbl_Product tbl_Product { get; set; }
     }

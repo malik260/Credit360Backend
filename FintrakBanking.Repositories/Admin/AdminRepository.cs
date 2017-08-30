@@ -12,7 +12,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Interfaces.Setups.Approval;
@@ -46,15 +46,15 @@ namespace FintrakBanking.Repositories.Admin
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.UserCreation;
+            entity.operationId = (int)OperationsEnum.UserCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveUser(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveUser(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {
@@ -133,7 +133,7 @@ namespace FintrakBanking.Repositories.Admin
             };
 
 
-            if (workFlow.CheckRouteForOperation((int)Operations.UserCreation, user.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -193,7 +193,7 @@ namespace FintrakBanking.Repositories.Admin
                             companyId = user.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = _user.StaffId,
-                            operationId = (int)Operations.UserCreation,
+                            operationId = (int)OperationsEnum.UserCreation,
                             BranchId = user.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -216,7 +216,7 @@ namespace FintrakBanking.Repositories.Admin
 
         public IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)Operations.UserCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.UserCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -228,7 +228,7 @@ namespace FintrakBanking.Repositories.Admin
                         join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
                         join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
-                              && atrail.OperationId == (int)Operations.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                              && atrail.OperationId == (int)OperationsEnum.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new UserViewModel()
                         {
                             user_id = c.UserId,

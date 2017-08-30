@@ -13,6 +13,7 @@ namespace FintrakBanking.APICore.App_Start
     using System.Web.Http;
     using WebApiContrib.IoC.Ninject;
     using FintrakBanking.Entities.Models;
+    using FintrakBanking.Entities.DocumentModels;
     using FintrakBanking.Interfaces.Admin;
     using FintrakBanking.Interfaces.AppEmail;
     using FintrakBanking.Interfaces.CASA;
@@ -44,6 +45,11 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Finance;
     using FintrakBanking.Interfaces.media;
     using FintrakBanking.Repositories.media;
+    using FintrakBanking.Interfaces.CreditLimitValidations;
+    using FintrakBanking.Repositories.CreditLimitValidations;
+    using FintrakBanking.Interfaces.Finance;
+    using FintrakBanking.Interfaces.CreditOperations;
+    using FintrakBanking.Repositories.CreditOperations;
 
     public static class NinjectWebCommon 
     {
@@ -140,7 +146,6 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IChecklistRepository>().To<ChecklistRepository>();
             kernel.Bind<ILoanRepository>().To<LoanRepository>();
             kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
-            kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IApprovalGroupMappingRepository>().To<ApprovalGroupMappingRepository>();
             kernel.Bind<IWorkFlowRepository>().To<WorkFlowRepository>();
             kernel.Bind<IApprovalGroupRepository>().To<ApprovalGroupRepository>();
@@ -158,6 +163,9 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILoanDocumentRepository>().To<LoanDocumentRepository>();
             kernel.Bind<IJobRequestRepository>().To<JobRequestRepository>();
             kernel.Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
+            kernel.Bind<ILimitRepository>().To<LimitRepository>();
+            kernel.Bind<IFinanceTransactionRepository>().To<FinanceTransactionRepository>();
+            kernel.Bind<ICreditOperationsRepository>().To<CreditOperationsRepository>();
         }        
     }
     

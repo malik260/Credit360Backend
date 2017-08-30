@@ -16,6 +16,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Camsol = new HashSet<tbl_Loan_Camsol>();
             tbl_Loan_Collateral_Mapping = new HashSet<tbl_Loan_Collateral_Mapping>();
             tbl_Loan_Covenant_Detail = new HashSet<tbl_Loan_Covenant_Detail>();
+            tbl_Loan_Fee = new HashSet<tbl_Loan_Fee>();
         }
 
         [Key]
@@ -135,7 +136,10 @@ namespace FintrakBanking.Entities.Models
         public DateTime? FirstInterestPaymentDate { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? OutstandingPrincipal { get; set; }
+        public decimal OutstandingPrincipal { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal OutstandingInterest { get; set; }
 
         public int? PrincipalAdditionCount { get; set; }
 
@@ -173,6 +177,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_CASA tbl_CASA { get; set; }
 
+        public virtual tbl_CASA tbl_CASA1 { get; set; }
+
         public virtual tbl_Company tbl_Company { get; set; }
 
         public virtual tbl_Currency tbl_Currency { get; set; }
@@ -208,6 +214,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Covenant_Detail> tbl_Loan_Covenant_Detail { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Fee> tbl_Loan_Fee { get; set; }
 
         public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
 

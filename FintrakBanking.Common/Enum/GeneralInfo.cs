@@ -58,6 +58,7 @@ namespace FintrakBanking.Common.Enum
         CustomerGroupApproved = 123,
         FeeUpdated = 124,
         FeeApproved = 125,
+        LienAdded=126,
 
 
         JobRequestAdded = 119, JobRequestUpdated = 120, JobRequestDeleted = 121,
@@ -66,7 +67,7 @@ namespace FintrakBanking.Common.Enum
         LoanDocumentAdded = 119, LoanDocumentUpdated = 120, LoanDocumentDeleted = 121,
         AppraisalMemorandumAdded = 119, AppraisalMemorandumUpdated = 120, AppraisalMemorandumDeleted = 121,
         JobTypeAdded = 119, JobTypeUpdated = 120,
-        LoanPreliminaryEvaluation = 126,
+        LoanPreliminaryEvaluationAdded = 126, LoanPreliminaryEvaluationUpdated = 127
     };
 
 

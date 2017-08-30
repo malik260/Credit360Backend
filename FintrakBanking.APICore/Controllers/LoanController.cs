@@ -13,21 +13,27 @@ using FintrakBanking.APICore.core;
 using System.Web;
 using System.Collections.Generic;
 
-namespace FintrakBanking.APICore.Controllers
+namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
-    // [EnableCors("AllDomain")]
     [RoutePrefix("api/v1/loan")]
     public class LoanController : ApiControllerBase
     {
         private ILoanRepository repo;
+        private ICustomerCollateralRepository repoCollateral;
         private ILoanScheduleRepository scheduleRepo;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
+
         //private IHostingEnvironment _hostingEnvironment;
-        public LoanController(ILoanRepository _repo, ILoanScheduleRepository _scheduleRepo
-            //, IHostingEnvironment hostingEnvironment
-            )
+        //private IHostingEnvironment _hostingEnvironment;
+        //TokenDecryptionHelper token = new TokenDecryptionHelper();
+        public LoanController(ILoanRepository _repo,
+                              ICustomerCollateralRepository _repoCollateral,
+                               ILoanScheduleRepository _scheduleRepo)
         {
             this.repo = _repo;
+            this.repoCollateral = _repoCollateral;
             this.scheduleRepo = _scheduleRepo;
+
             //this._hostingEnvironment = hostingEnvironment;
         }
 
@@ -53,6 +59,27 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
+        [HttpGet]
+        [Route("runningloans/customer/{id}")]
+        public HttpResponseMessage GetAllLoanTypes(int id)
+        {
+            try
+            {
+
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.RuningLoans( id, token.GetCompanyId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         [HttpGet]
         [Route("loan-types")]
         public HttpResponseMessage GetAllLoanTypes()
@@ -141,7 +168,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 entity.userBranchId = (short)token.GetBranchId;
                 // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -170,7 +196,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 var data = scheduleRepo.CalculateNumberOfInstallments((TenorModeEnum)tenorModeId, frequencyTypeId, tenor);
 
@@ -188,7 +213,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                //TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 var data = repo.GetLoan(loanId);
 
@@ -206,7 +230,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetLoanByCustomerId(customerId);
+                var data = repo.GetLoanByCustomer(customerId);
 
                 if (!data.Any())
                 {
@@ -222,12 +246,46 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("customer-group/{customerGroupId}")]
+        public HttpResponseMessage GetCustomerGroupLoans(int customerGroupId)
+        {
+            try
+            {
+                var data = repo.GetLoanByCustomerGroup(customerGroupId);
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new
+                    {
+                        success = false,
+                        result = data.ToList(),
+                        message = "No record found"
+                    });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    success = true,
+                    result = data.ToList(),
+                    count = data.Count()
+                });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    success = false,
+                    message = $"Error: {e.Message}"
+                });
+            }
+        }
+
+        [HttpGet]
         [Route("find/{searchCriteria}")]
         public HttpResponseMessage FindLoan(string searchCriteria)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 var data = repo.FindLoan(searchCriteria, token.GetCompanyId);
 
@@ -245,7 +303,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.LoanSearch(token.GetCompanyId, searchModel);
                 //if (!data.Any())
                 //{
@@ -266,7 +323,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                //TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 var data = scheduleRepo.CalculateFirstPayDate(effectiveDate, frequencyTypeId);
 
@@ -321,6 +377,60 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("detail")]
+        public HttpResponseMessage GetBookedLoanDetails()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var data = repo.GetBookedLoanDetails(token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("details/customer/{customerCode}")]
+        public HttpResponseMessage GetBookedLoanDetails(string customerCode)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var data = repo.GetBookedLoanDetailsByCustomerCode(customerCode, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("details/reference-number/{loanReferenceNumber}")]
+        public HttpResponseMessage GetBookedLoanDetailsByLoanReferenceNumber(string loanReferenceNumber)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                var data = repo.GetBookedLoanDetailsByLoanReferenceNumber(loanReferenceNumber, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         //[HttpPost][Route("schedule/export")]
         //public HttpResponseMessage ExportScheduleToExcel([FromBody] PaymentScheduleExcelViewModel model)
@@ -433,14 +543,72 @@ namespace FintrakBanking.APICore.Controllers
 
 
         //}
+        #endregion
 
+        #region CAM Approved Loan Applications
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum")]
+        public HttpResponseMessage GetCamProcessedLoanApplications()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetCamProcessedLoanApplications(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
+        [HttpGet]
+        [Route("loan-application/collateral/customer/{customerId}")]
+        public HttpResponseMessage GetCollateralCustomer(int customerId)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repoCollateral.GetCollateralCustomer(customerId,token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/charge-fee/product/{productId}")]
+        public HttpResponseMessage GetLoanProductChargeFeesByProductId(int productId)
+        {
+            try
+            {
+                var response = repo.GetLoanProductChargeFeesByProductId(productId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
 
         #endregion
-
-
     }
 }

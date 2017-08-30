@@ -26,6 +26,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Collateral_Stock = new HashSet<tbl_Collateral_Stock>();
             tbl_Collateral_Vehicle = new HashSet<tbl_Collateral_Vehicle>();
             tbl_Loan_Collateral_Mapping = new HashSet<tbl_Loan_Collateral_Mapping>();
+            tbl_LoanApplication_Collateral_Mapping = new HashSet<tbl_LoanApplication_Collateral_Mapping>();
             tbl_Temp_Collateral_Policy = new HashSet<tbl_Temp_Collateral_Policy>();
             tbl_Temp_Collateral_Plant_And_Equipment = new HashSet<tbl_Temp_Collateral_Plant_And_Equipment>();
             tbl_Temp_Collateral_PreciousMetal = new HashSet<tbl_Temp_Collateral_PreciousMetal>();
@@ -80,6 +81,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Company tbl_Company { get; set; }
 
+        public virtual tbl_Currency tbl_Currency { get; set; }
+
         public virtual tbl_Customer tbl_Customer { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -125,6 +128,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Collateral_Mapping> tbl_Loan_Collateral_Mapping { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_LoanApplication_Collateral_Mapping> tbl_LoanApplication_Collateral_Mapping { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Collateral_Policy> tbl_Temp_Collateral_Policy { get; set; }

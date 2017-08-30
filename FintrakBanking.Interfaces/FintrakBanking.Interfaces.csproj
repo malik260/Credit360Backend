@@ -46,6 +46,7 @@
     <Compile Include="Admin\ICurrencyRateRepository.cs" />
     <Compile Include="AppEmail\IEmailRepository.cs" />
     <Compile Include="CASA\ICasaRepository.cs" />
+    <Compile Include="CreditLimitValidations\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IAppraisalMemorandumRepository.cs" />
     <Compile Include="Credit\ICreditTemplateRepository.cs" />
     <Compile Include="Credit\ICustomerCollateralRepository.cs" />
@@ -63,9 +64,11 @@
     <Compile Include="Customer\ICustomerRepository.cs" />
     <Compile Include="Customer\ILoanCovenantRepository.cs" />
     <Compile Include="ErrorLogger\IErrorLogRepository.cs" />
+    <Compile Include="Finance\IFinanceTransactionRepository.cs" />
     <Compile Include="Helper\ICultureHelper.cs" />
     <Compile Include="Notification\INotificationRepository.cs" />
     <Compile Include="Media\IMediaRepository.cs" />
+    <Compile Include="Operations\ICreditOperationsRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Risk\IRiskImplementation.cs" />
     <Compile Include="Setups\Approval\IApprovalGroupMappingRepository.cs" />
