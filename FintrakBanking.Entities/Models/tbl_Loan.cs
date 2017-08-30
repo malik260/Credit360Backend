@@ -136,7 +136,10 @@ namespace FintrakBanking.Entities.Models
         public DateTime? FirstInterestPaymentDate { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? OutstandingPrincipal { get; set; }
+        public decimal OutstandingPrincipal { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal OutstandingInterest { get; set; }
 
         public int? PrincipalAdditionCount { get; set; }
 
@@ -224,5 +227,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Loan_Schedule_Type tbl_Loan_Schedule_Type { get; set; }
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
+        public ICollection<tbl_Loan_Guarantor> tbl_Loan_Guarantor { get; set; }
     }
 }

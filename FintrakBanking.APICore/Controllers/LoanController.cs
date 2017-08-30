@@ -142,12 +142,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("loan-booking")]
-        public HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
+        public HttpResponseMessage AddLoanBooking( LoanViewModel entity)
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 entity.userBranchId = (short)token.GetBranchId;
                 // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -494,7 +493,7 @@ namespace FintrakBanking.APICore.Controllers
         //}
         #endregion
 
-        #region CAM Approved Loan Applications
+        #region (Loan Application Date) Pre - Loan booking
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum")]
         public HttpResponseMessage GetCamProcessedLoanApplications()
@@ -538,12 +537,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-application/charge-fee/product/{productId}")]
-        public HttpResponseMessage GetLoanProductChargeFeesByProductId(int productId)
+        [Route("loan-application/charge-fee/{chargeFeeId}/product/{productId}")]
+        public HttpResponseMessage GetLoanProductChargeFee(int chargeFeeId, int productId)
         {
             try
             {
-                var response = repo.GetLoanProductChargeFeesByProductId(productId);
+                var response = repo.GetLoanProductChargeFee(chargeFeeId, productId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -557,7 +556,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan-product-fees/{productId}")]
+        public HttpResponseMessage GetProductFees(int productId)
+        {
+            try
+            {
+                var response = repo.GetProductFees(productId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         #endregion
+
     }
 }

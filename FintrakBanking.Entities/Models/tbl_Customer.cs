@@ -38,6 +38,8 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Preliminary_Evaluation = new HashSet<tbl_Loan_Preliminary_Evaluation>();
             tbl_Loan_Type_Batch = new HashSet<tbl_Loan_Type_Batch>();
+            tbl_Temp_Loan_Fee = new HashSet<tbl_Temp_Loan_Fee>();
+            tbl_Temp_LoanCovenant_Details = new HashSet<tbl_Temp_LoanCovenant_Details>();
         }
 
         [Key]
@@ -148,8 +150,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string TaxNumber { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_CASA> tbl_CASA { get; set; }
 
@@ -237,5 +237,11 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Type_Batch> tbl_Loan_Type_Batch { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Loan_Fee> tbl_Temp_Loan_Fee { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_LoanCovenant_Details> tbl_Temp_LoanCovenant_Details { get; set; }
     }
 }

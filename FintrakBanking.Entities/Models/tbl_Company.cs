@@ -27,7 +27,6 @@ namespace FintrakBanking.Entities.Models
             tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
             tbl_Temp_Collateral_Customer = new HashSet<tbl_Temp_Collateral_Customer>();
             tbl_Company1 = new HashSet<tbl_Company>();
-            tbl_Credit_Appraisal_Memorandum = new HashSet<tbl_Credit_Appraisal_Memorandum>();
             tbl_Credit_Template = new HashSet<tbl_Credit_Template>();
             tbl_Customer_Blacklist = new HashSet<tbl_Customer_Blacklist>();
             tbl_Customer_FS_Caption_Group = new HashSet<tbl_Customer_FS_Caption_Group>();
@@ -209,9 +208,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Company tbl_Company2 { get; set; }
 
         public virtual tbl_Currency tbl_Currency { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Credit_Appraisal_Memorandum> tbl_Credit_Appraisal_Memorandum { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Credit_Template> tbl_Credit_Template { get; set; }

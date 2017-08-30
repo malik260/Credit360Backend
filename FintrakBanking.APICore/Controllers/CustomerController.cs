@@ -114,6 +114,30 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("customers-in-group/{groupId}")]
+        public HttpResponseMessage GetCustomerInGroupByGroupId(int groupId)
+        {
+
+            try
+            {
+                var data = repo.GetCustomerInGroupByGroupId(groupId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
         [Route("customer-by-branch")]
         public HttpResponseMessage GetCustomerByBranchId()
         {

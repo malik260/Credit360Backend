@@ -20,24 +20,28 @@ namespace FintrakBanking.Entities.Models
 
         public int? CustomerId { get; set; }
 
-        [StringLength(200)]
+        [Required]
+        [StringLength(50)]
         public string LoanReferenceNumber { get; set; }
 
-        public short? ProductId { get; set; }
+        public short ProductId { get; set; }
 
+        [Required]
         [StringLength(250)]
         public string FullName { get; set; }
 
+        [Required]
         [StringLength(50)]
         public string PhoneNumber1 { get; set; }
 
         [StringLength(50)]
         public string PhoneNumber2 { get; set; }
 
+        [Required]
         [StringLength(100)]
         public string Relationship { get; set; }
 
-        public int? RelationshipDuration { get; set; }
+        public int RelationshipDuration { get; set; }
 
         public virtual tbl_Customer tbl_Customer { get; set; }
 

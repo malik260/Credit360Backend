@@ -43,8 +43,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
-
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
     }
 }

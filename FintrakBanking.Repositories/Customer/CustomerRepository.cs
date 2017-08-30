@@ -339,7 +339,7 @@ namespace FintrakBanking.Repositories.Customer
                    {
                        accountCreationComplete = a.AccountCreationComplete,
                        branchId = a.BranchId,
-                       branchName = a.tbl_Branch.BranchName,
+                       //branchName = a.tbl_Branch.BranchName,
                        childDateOfBirth = a.ChildDateOfBirth.Value,
                        companyId = a.CompanyId,
                        createdBy = a.CreatedBy,
@@ -485,6 +485,21 @@ namespace FintrakBanking.Repositories.Customer
             return type;
         }
 
+        public IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId)
+        {
+            var data = (from cs in context.tbl_Customer_Group_Mapping
+                        where cs.CustomerGroupId == groupId
+                        select new CustomerViewModels()
+                        {
+                            customerId = cs.CustomerId,
+                            fullName = cs.tbl_Customer.LastName + " " + cs.tbl_Customer.FirstName + "(" + cs.tbl_Customer.CustomerCode +")",
+                            firstName = cs.tbl_Customer.FirstName,
+                            lastName = cs.tbl_Customer.LastName,
+                            customerCode = cs.tbl_Customer.CustomerCode,
+                        });
+
+            return data;
+        }
 
         public async Task<bool> UpdateCustomer(int customerId, CustomerViewModels entity)
         {
@@ -639,6 +654,8 @@ namespace FintrakBanking.Repositories.Customer
 
             return data;
         }
+
+        
 
         public IEnumerable<CustomerSectorViewModel> GetCustomerSectorBySubSectorId(short ssId)
         {

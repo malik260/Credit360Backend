@@ -28,7 +28,7 @@ namespace FintrakBanking.Entities.Models
 
         public int ReceiverStaffId { get; set; }
 
-        public int ReassignedTo { get; set; }
+        public int? ReassignedTo { get; set; }
 
         public bool IsReassigned { get; set; }
 
@@ -36,15 +36,15 @@ namespace FintrakBanking.Entities.Models
 
         public int TargetId { get; set; }
 
+        public int StaffApprovalGroupId { get; set; }
+
         public int OperationsId { get; set; }
 
         public short RequestStatusId { get; set; }
 
-        [Required]
         [StringLength(700)]
         public string SenderComment { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string ResponseComment { get; set; }
 
