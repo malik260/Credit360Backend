@@ -377,7 +377,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IQueryable<LoanViewModel> GetLoansByCompanyId(int companyId)
         {
-            return (context.tbl_Loan.Include("tbl_Customer").Include("tbl_CASA_AccountStatus")
+            return (context.tbl_Loan //.Include("tbl_Customer").Include("tbl_CASA_AccountStatus")
                 .Where(x => x.CompanyId == companyId)
                 .Select(o => new LoanViewModel
                 {

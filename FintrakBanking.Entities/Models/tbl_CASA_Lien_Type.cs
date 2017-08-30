@@ -6,23 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Job_Type")]
-    public partial class tbl_Job_Type
+    [Table("core.tbl_CASA_Lien_Type")]
+    public partial class tbl_CASA_Lien_Type
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Job_Type()
+        public tbl_CASA_Lien_Type()
         {
-            tbl_Job_Request = new HashSet<tbl_Job_Request>();
+            tbl_CASA_Lien = new HashSet<tbl_CASA_Lien>();
         }
 
         [Key]
-        public short JobTypeId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public short LienTypeId { get; set; }
 
         [Required]
-        [StringLength(100)]
-        public string JobTypeName { get; set; }
+        [StringLength(50)]
+        public string LienTypeName { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Job_Request> tbl_Job_Request { get; set; }
+        public virtual ICollection<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
     }
 }

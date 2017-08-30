@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Job_Type")]
-    public partial class tbl_Job_Type
+    [Table("core.tbl_Customer_Company_DirectorType")]
+    public partial class tbl_Customer_Company_DirectorType
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Job_Type()
+        public tbl_Customer_Company_DirectorType()
         {
-            tbl_Job_Request = new HashSet<tbl_Job_Request>();
+            tbl_Customer_Company_Director = new HashSet<tbl_Customer_Company_Director>();
         }
 
         [Key]
-        public short JobTypeId { get; set; }
+        public short CompanyDirectoryTypeId { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string JobTypeName { get; set; }
+        public string CompanyDirectoryTypeName { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Job_Request> tbl_Job_Request { get; set; }
+        public virtual ICollection<tbl_Customer_Company_Director> tbl_Customer_Company_Director { get; set; }
     }
 }

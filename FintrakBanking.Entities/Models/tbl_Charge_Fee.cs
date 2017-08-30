@@ -13,6 +13,8 @@ namespace FintrakBanking.Entities.Models
         public tbl_Charge_Fee()
         {
             tbl_Charge_Range = new HashSet<tbl_Charge_Range>();
+            tbl_Loan_Fee = new HashSet<tbl_Loan_Fee>();
+            tbl_Product_Charge_Fee = new HashSet<tbl_Product_Charge_Fee>();
         }
 
         [Key]
@@ -47,7 +49,7 @@ namespace FintrakBanking.Entities.Models
 
         public double? Rate { get; set; }
 
-        public int ValueSource { get; set; }
+        public short FeeTypeId { get; set; }
 
         public bool? Recurring { get; set; }
 
@@ -83,6 +85,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Fee_Target tbl_Fee_Target { get; set; }
 
+        public virtual tbl_Fee_Type tbl_Fee_Type { get; set; }
+
         public virtual tbl_Operations tbl_Operations { get; set; }
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
@@ -93,5 +97,11 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Charge_Range> tbl_Charge_Range { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Fee> tbl_Loan_Fee { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Product_Charge_Fee> tbl_Product_Charge_Fee { get; set; }
     }
 }

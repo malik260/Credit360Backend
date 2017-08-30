@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Credit_Appraisal_Memorandum = new HashSet<tbl_Credit_Appraisal_Memorandum>();
             tbl_Loan = new HashSet<tbl_Loan>();
+            tbl_Loan_Collateral_Mapping = new HashSet<tbl_Loan_Collateral_Mapping>();
+            tbl_Loan_Application_Collateral = new HashSet<tbl_Loan_Application_Collateral>();
             tbl_Risk_Assessment = new HashSet<tbl_Risk_Assessment>();
         }
 
@@ -34,9 +36,11 @@ namespace FintrakBanking.Entities.Models
 
         public short CurrencyId { get; set; }
 
-        public double ExchangeRate { get; set; }
+        public short ProductId { get; set; }
 
-        public short ProductClassId { get; set; }
+        public int CasaAccountId { get; set; }
+
+        public double ExchangeRate { get; set; }
 
         public int? CustomerGroupId { get; set; }
 
@@ -95,19 +99,11 @@ namespace FintrakBanking.Entities.Models
 
         public int? ActedOnBy { get; set; }
 
-        [StringLength(250)]
-        public string NearestLandMark { get; set; }
-
-        [StringLength(250)]
-        public string NearestBusStop { get; set; }
-
-        public decimal? Longitude { get; set; }
-
-        public decimal? Latitude { get; set; }
-
         public bool SubmittedForAppraisal { get; set; }
 
         public virtual tbl_Branch tbl_Branch { get; set; }
+
+        public virtual tbl_CASA tbl_CASA { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
 
@@ -117,7 +113,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
 
-        public virtual tbl_Product_Class tbl_Product_Class { get; set; }
+        public virtual tbl_Product tbl_Product { get; set; }
 
         public virtual tbl_Staff tbl_Staff { get; set; }
 
@@ -132,6 +128,12 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Loan_Preliminary_Evaluation tbl_Loan_Preliminary_Evaluation { get; set; }
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Collateral_Mapping> tbl_Loan_Collateral_Mapping { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Application_Collateral> tbl_Loan_Application_Collateral { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Risk_Assessment> tbl_Risk_Assessment { get; set; }
