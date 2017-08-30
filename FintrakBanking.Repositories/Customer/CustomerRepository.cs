@@ -12,7 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Customer
-{ 
+{
     public class CustomerRepository : ICustomerRepository
     {
         private FinTrakBankingContext context;
@@ -380,6 +380,8 @@ namespace FintrakBanking.Repositories.Customer
                            cityId = x.CityId,
                            customerId = x.CustomerId,
                            homeTown = x.HomeTown,
+                           nearestLandmark = x.NearestLandmark,
+                           electricMeterNumber = x.ElectricMeterNumber,
                            pobox = x.POBox,
                            stateId = x.StateId,
                            addressId = x.AddressId
@@ -414,7 +416,9 @@ namespace FintrakBanking.Repositories.Customer
                            creditRating = d.CreditRating,
                            registeredOffice = d.RegisteredOffice,
                            previousCreditRating = d.PreviousCreditRating,
-                           registrationNumber = d.RegistrationNumber
+                           registrationNumber = d.RegistrationNumber,
+                           paidUpCapital = d.PaidUpCapital,
+                           authorizedCapital = d.AuthorizedCapital
 
                        }).ToList(),
                        CustomerIdentification = context.tbl_Customer_Identification.Where(e => e.CustomerId == a.CustomerId).Select(e => new CustomerIdentificationViewModels()
@@ -446,8 +450,23 @@ namespace FintrakBanking.Repositories.Customer
                            companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
                            customerId = s.CustomerId,
                            customerName = s.Firstname + " " + s.Surname,
-                       }).ToList()
-
+                           address = s.Address,
+                           phoneNumber = s.Phonenumber,
+                           email = s.Email
+                       }).ToList(),
+                       CustomerClientOrSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId).Select(cs => new CustomerClientOrSupplierViewModels()
+                       {
+   client_SupplierId = cs.Client_SupplierId,
+   clientOrSupplierName = cs.FirstName +" "+ cs.LastName,
+        firstName  = cs.FirstName, 
+       middleName = cs.MiddleName,
+       lastName = cs.LastName,
+       client_SupplierAddress = cs.Client_SupplierAddress,
+       client_SupplierPhoneNumber = cs.Client_SupplierPhoneNumber,
+       client_SupplierEmail = cs.Client_SupplierEmail,
+       client_SupplierTypeId = cs.Client_SupplierTypeId,
+       client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+    }).ToList()
                    };
 
         }
@@ -455,7 +474,7 @@ namespace FintrakBanking.Repositories.Customer
         public CustomerViewModels GetCustomer(int custormerId)
         {
 
-           var data = GetCustomers().Where(a => a.customerId == custormerId).FirstOrDefault();
+            var data = GetCustomers().Where(a => a.customerId == custormerId).FirstOrDefault();
             return data;
         }
 
@@ -654,6 +673,7 @@ namespace FintrakBanking.Repositories.Customer
 
             return data;
         }
+
     }
 }
 

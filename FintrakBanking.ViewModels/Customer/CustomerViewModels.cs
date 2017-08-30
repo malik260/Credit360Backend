@@ -15,6 +15,7 @@ namespace FintrakBanking.ViewModels.Customer
             CustomerIdentification = new List<CustomerIdentificationViewModels>();
             CustomerPhoneContact = new List<CustomerPhoneContactViewModels>();
             CustomerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
+            CustomerClientOrSupplier = new List<CustomerClientOrSupplierViewModels>();
         }
 
         public int customerId { get; set; }
@@ -64,7 +65,7 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerIdentificationViewModels> CustomerIdentification { get; set; }
         public List<CustomerPhoneContactViewModels> CustomerPhoneContact { get; set; }
         public List<CustomerCompanyDirectorsViewModels> CustomerCompanyDirectors { get; set; }
-        
+        public List<CustomerClientOrSupplierViewModels> CustomerClientOrSupplier { get; set; }
     }
 
     public class CustomerSearchItemViewModels
@@ -93,5 +94,4 @@ namespace FintrakBanking.ViewModels.Customer
         public string sectorCode { get; set; }
 
     }
-
 }

@@ -7,6 +7,8 @@
         public int stateId { get; set; }
         public int cityId { get; set; }
         public string homeTown { get; set; }
+        public string nearestLandmark { get; set; }
+        public string electricMeterNumber { get; set; }
         public string pobox { get; set; }
         public int customerId { get; set; }
         public int addressTypeId { get; set; }
