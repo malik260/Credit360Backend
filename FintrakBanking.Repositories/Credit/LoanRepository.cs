@@ -799,6 +799,11 @@ namespace FintrakBanking.Repositories.Credit
             return GetAllLoans().Where(l => l.customerId == customerId);
         }
 
+        public IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId)
+        {
+            return GetAllLoans().Where(l => l.customerGroupId == customerGroupId);
+        }
+
         public IQueryable<LoanRepaymentScheduleViewModel> RuningLoans(int customerId, int companyId)
         {
 
@@ -1598,10 +1603,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId)
-        {
-            throw new NotImplementedException();
-        }
+        
 
 
         #endregion End of CAM Approved Loan Applications

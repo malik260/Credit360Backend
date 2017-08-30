@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels.Customer;
+using System;
 using System.Collections.Generic;
 
 namespace FintrakBanking.ViewModels.Credit
@@ -41,7 +42,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string bankParticipationJustification { get; set; }
         public string portfolioStrategicAlignment { get; set; }
         public string commercialViabilityAssessment { get; set; }
-        public bool sendForApproval { get; set; }
+        public bool sentForEvaluation { get; set; }
+        public bool sentForLoanApplication { get; set; }
         public bool isCurrent { get; set; }
         public int operationId { get; set; }
         public short approvalStatusId { get; set; }
@@ -49,5 +51,6 @@ namespace FintrakBanking.ViewModels.Credit
         public List<CustomerBvnViewModels> customerBvnInformation { get; set; }
         public List<CustomerCompanyShareholdersViewModels> customerCompanyShareholders { get; set; }
         public List<CustomerCompanyDirectorsViewModels> customerCompanyDirectors { get; set; }
+        public string customerCode { get; set; }
     }
 }
