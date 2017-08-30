@@ -4,9 +4,12 @@ namespace FintrakBanking.Entities.Models
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
+    using System.Collections.Generic;
 
     public partial class FinTrakBankingContext : DbContext
     {
+        public IEnumerable<object> tbl_Customer_Client_Supplier;
+
         public FinTrakBankingContext()
             : base("name=FinTrakBankingContext")
         {
