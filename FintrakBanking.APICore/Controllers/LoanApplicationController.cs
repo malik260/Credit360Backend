@@ -19,6 +19,7 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/credit")]
     public class LoanApplicationController : ApiControllerBase
     {
+        
         private ILoanApplicationRepository repoApply;
         private ILoanRepository loanRepository;
         private ICreditLimitValidationsRepository creditLimitValidationsRepository;
@@ -214,7 +215,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repoApply.GetAllLoanApplications(token.GetCompanyId).Where(x => x.approvalStatusId == (int)ApprovalStatusEnum.Pending).ToList();
-                int totalItems = response.Count();
+                int totalItems = response.Count;
                 response = response.OrderByDescending(x => x.applicationDate).ThenByDescending(x => x.loanApplicationId).Skip(page).Take(itemsPerPage).ToList();
                 if (!response.Any())
                 {

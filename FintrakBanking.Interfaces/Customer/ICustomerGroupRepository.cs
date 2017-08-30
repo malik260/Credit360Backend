@@ -11,6 +11,10 @@ namespace FintrakBanking.Interfaces.Customer
 {
     public interface ICustomerGroupRepository
     {
+        //IQueryable<KYCItemViewModel> GetKYCItems(int companyId);
+        //bool AddKycItem(KYCItemViewModel entity);
+        //bool UpdatedKycItem(int KYCItemId ,KYCItemViewModel entity) ;
+
         #region tbl_Customer Group Repository
         bool AddCustomerGroup(CustomerGroupViewModel entity);
         bool AddTempCustomerGroup(CustomerGroupViewModel entity);

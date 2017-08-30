@@ -56,7 +56,6 @@ namespace FintrakBanking.Repositories.Credit
             var penRecord = new tbl_Loan_Preliminary_Evaluation()
             {
                 PreliminaryEvaluationCode = GeneratePENCode(),
-                //BankParticipationJustification = model.bankParticipationJustification,
                 BankRole = model.bankRole,
                 BranchId = model.userBranchId,
                 BusinessProfile = model.businessProfile,
@@ -76,6 +75,7 @@ namespace FintrakBanking.Repositories.Credit
                 ProjectDescription = model.projectDescription,
                 ProjectFinancingPlan = model.projectFinancingPlan,
                 ProposedTermsAndConditions = model.proposedTermsAndConditions,
+                RiskMitigants = model.riskMitigants,
                 RisksAndConcerns = model.risksAndConcerns,
                 PrudentialExposureLimitImplications = model.prudentialExposureLimitImplications,
                 RelationshipManagerId = model.relationshipManagerId,
@@ -173,8 +173,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = pen.CompanyId,
                             companyName = pen.tbl_Company.Name,
                             loanPreliminaryEvaluationId = pen.LoanPreliminaryEvaluationId,
-                            preliminaryEvaluationCode = pen.PreliminaryEvaluationCode,
-                            //bankParticipationJustification = pen.BankParticipationJustification,
+                            preliminaryEvaluationCode = pen.PreliminaryEvaluationCode, 
                             bankRole = pen.BankRole,
                             branchId = br.BranchId,
                             branchName = br.BranchName,

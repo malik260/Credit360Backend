@@ -12,6 +12,6 @@ namespace FintrakBanking.Interfaces.Finance
 
         string PostTransaction(List<FinanceTransactionViewModel> transaction);
 
-        double GetExchangeRate(short currencyId, DateTime date, int companyId);
+        double GetExchangeRate(short currencyId,   int companyId);
     }
 }

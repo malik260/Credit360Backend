@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Setups.Finance;
+﻿using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Setups.Finance;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -70,7 +71,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? feePercent { get; set; }
         public DateTime? firstPrincipalPaymentDate { get; set; }
         public DateTime? firstInterestPaymentDate { get; set; }
-        public decimal? outstandingPrincipal { get; set; }
+        public decimal outstandingPrincipal { get; set; }
         public int? principalAdditionCount { get; set; }
         public int? principalReductionCount { get; set; }
         public bool fixedPrincipal { get; set; }

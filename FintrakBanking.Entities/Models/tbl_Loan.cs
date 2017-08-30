@@ -177,6 +177,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_CASA tbl_CASA { get; set; }
 
+        public virtual tbl_CASA tbl_CASA1 { get; set; }
+
         public virtual tbl_Company tbl_Company { get; set; }
 
         public virtual tbl_Currency tbl_Currency { get; set; }

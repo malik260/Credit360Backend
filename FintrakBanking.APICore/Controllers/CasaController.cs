@@ -34,7 +34,7 @@ namespace FintrakBanking.APICore.Controllers
                 try
                 {
                     CasaViewModel data = repo.GetAccount(accountId);
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (Exception ex)
                 {
@@ -52,7 +52,7 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.GetAccountByCustomerId(customerId);
                     if (data != null)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, data);
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                     }
                     else
                     {

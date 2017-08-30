@@ -18,19 +18,21 @@ namespace FintrakBanking.APICore.Controllers
 
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
+         
+
         public FinanceTransactionController(IFinanceTransactionRepository _repo)
         {
             this.repo = _repo;
         }
 
         [HttpGet]
-        [Route("getexchangerate/{currencyId}/{date}/{companyId}")]
-        public HttpResponseMessage GetExchangeRate(short currencyId, DateTime date, int companyId)
+        [Route("getexchangerate/{currencyId}")]
+        public HttpResponseMessage GetExchangeRate(short currencyId)
         { 
                 try
                 {
-                    var data = repo.GetExchangeRate(currencyId, date, companyId);
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    var data = repo.GetExchangeRate(1, 1);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (Exception ex)
                 {

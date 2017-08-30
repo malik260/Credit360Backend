@@ -36,15 +36,15 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId)
         {
-            var data = GetLoanApplications(companyId).Where(c => c.customerId == customerId).Select(c => new ExistingLoanApplicationViewModel()
+            var data = context.tbl_Loan_Application.Where(c => c.CustomerId == customerId && c.CompanyId == companyId ).Select(c => new ExistingLoanApplicationViewModel()
             {
-                applicationDate = c.applicationDate,
-                applicationReferenceNumber = c.applicationReferenceNumber,
-                interestRate = c.interestRate,
-                loanTypeName = c.loanTypeName,
-                branch = c.branchName,
-                principalAmount = c.amount,
-                tenor = c.tenor
+                applicationDate = c.ApplicationDate,
+                applicationReferenceNumber = c.ApplicationReferenceNumber,
+                interestRate = c.InterestRate,
+                loanTypeName = c.tbl_Loan_Type.LoanTypeName ,
+                branch = c.tbl_Branch.BranchName ,
+                principalAmount = c.PrincipalAmount,
+                tenor = c.Tenor
             }).ToList();
             return data;
         }
@@ -71,9 +71,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
                             relationshipManagerId = a.RelationshipManagerId,
                             relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-                            misCode = a.MISCode,
-                            productClassId = a.ProductClassId,
-                            productClassName = a.tbl_Product_Class.ProductClassName,
+                            misCode = a.MISCode,                  
                             teamMiscode = a.TeamMISCode,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
@@ -86,8 +84,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
                             createdBy = a.CreatedBy,
                             applicationDate = a.ApplicationDate,
-                            dateTimeCreated = a.DateTimeCreated,
-                            approvalLevelId = a.ApprovalLevelId
+                            dateTimeCreated = a.DateTimeCreated
                         });
             return data;
 
@@ -165,8 +162,7 @@ namespace FintrakBanking.Repositories.Credit
                            // tenorModeId = a.TenorModeId,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipManagerId = a.RelationshipManagerId,
-                            misCode = a.MISCode,
-                            productClassId = a.ProductClassId,
+                            misCode = a.MISCode, 
                             teamMiscode = a.TeamMISCode,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
@@ -232,8 +228,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = new tbl_Loan_Application
             {
-                ApplicationReferenceNumber = refNumber,
-                ProductClassId = loan.productClassId,
+                ApplicationReferenceNumber = refNumber, 
                 LoanTypeId = loan.loanTypeId,
                 LoanStatusId = loanStatusId,
                 CompanyId = loan.companyId,
@@ -254,12 +249,8 @@ namespace FintrakBanking.Repositories.Credit
                 DateTimeCreated = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,                 
                 ExchangeRate = loan.exchangeRate,
-                LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,
-                Latitude = loan.latitude,
-                Longitude = loan.longitude,
-                CustomerId = loan.customerId,
-                NearestBusStop = loan.nearestBusStop,
-                NearestLandMark = loan.nearestLandMark,
+                LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,              
+                CustomerId = loan.customerId, 
                 SubmittedForAppraisal = loan.submittedForAppraisal
             };
 

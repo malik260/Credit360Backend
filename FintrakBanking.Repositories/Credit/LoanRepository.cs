@@ -767,7 +767,7 @@ namespace FintrakBanking.Repositories.Credit
                             feePercent = l.FeePercent ?? 0,
                             firstPrincipalPaymentDate = l.FirstPrincipalPaymentDate ?? DateTime.Now,
                             firstInterestPaymentDate = l.FirstInterestPaymentDate ?? DateTime.Now,
-                            outstandingPrincipal = l.OutstandingPrincipal,
+                            outstandingPrincipal = l.OutstandingPrincipal ?? 0,
                             principalAdditionCount = l.PrincipalAdditionCount ?? 0,
                             principalReductionCount = l.PrincipalReductionCount ?? 0,
                             fixedPrincipal = l.FixedPrincipal,

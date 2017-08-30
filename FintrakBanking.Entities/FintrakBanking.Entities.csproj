@@ -47,13 +47,17 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="XLeratorDLL-financial, Version=1.15.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\tbl_Media_Collateral_Documents.cs" />
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\sysdiagrams.cs" />
+    <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -184,6 +188,7 @@
     <Compile Include="Models\tbl_LoanDetails.cs" />
     <Compile Include="Models\tbl_Loan_Amortization_Schedule.cs" />
     <Compile Include="Models\tbl_Loan_Application.cs" />
+    <Compile Include="Models\tbl_Loan_Application_Collateral.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
     <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />

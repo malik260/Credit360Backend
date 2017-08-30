@@ -28,7 +28,7 @@ namespace FintrakBanking.APICore.Controllers
                 try
                 {
                     var data = repo.GetCollateralSearchChargeAmount(stateId);
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (Exception ex)
                 {
