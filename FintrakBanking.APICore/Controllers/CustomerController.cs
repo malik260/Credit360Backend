@@ -1,6 +1,7 @@
 using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Customer;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
 using System;
@@ -14,24 +15,24 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
 
-    [RoutePrefix("api/v1/customers")]
+    [RoutePrefix("api/v1/customer")]
     public class CustomerController : ApiControllerBase
     {
         private ICustomerRepository repo;
+
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public CustomerController(ICustomerRepository _repo)
         {
             this.repo = _repo;
         }
 
-
         [HttpPost]
-        [Route("customer")]
+        [Route("")]
         public HttpResponseMessage AddCustomer([FromBody]CustomerViewModels entity)
         {
             try
             {
-                TokenDecryptionHelper token = null;
 
                 entity.userBranchId = (short)token.GetBranchId;
                 //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -56,12 +57,11 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete]
-        [Route("customer/{customerId}")]
+        [Route("{customerId}")]
         public HttpResponseMessage DeleteCustomer(int customerId)
         {
             try
             {
-                TokenDecryptionHelper token = null;
                 UserInfo user = new UserInfo()
                 {
                     BranchId = token.GetBranchId,
@@ -90,16 +90,14 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("customer/{customerId}")]
+        [Route("{customerId}")]
         public HttpResponseMessage GetCustomer(int custormerId)
         {
 
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetCustomer(custormerId);
-                if (data != null)
+                if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
@@ -116,13 +114,36 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("customer-by-branch/{branchId}")]
+        [Route("customers-in-group/{groupId}")]
+        public HttpResponseMessage GetCustomerInGroupByGroupId(int groupId)
+        {
+
+            try
+            {
+                var data = repo.GetCustomerInGroupByGroupId(groupId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-by-branch")]
         public HttpResponseMessage GetCustomerByBranchId()
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetCustomerByBranchId(token.GetCompanyId);
+                var data = repo.GetCustomerByBranchId(token.GetBranchId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -165,7 +186,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.CustomerSearch(token.GetCompanyId, search);
                 if (!data.Any())
                 {
@@ -183,13 +203,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("customer-search/realtime/")]
+        public HttpResponseMessage SearchCustomerRealTime(string searchQuery)
+        {
+            try
+            {
+                var data = repo.CustomerSearchRealTime(token.GetCompanyId, searchQuery);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                     new { success = true, result = data.ToList() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [Route("customer-search")]
         public HttpResponseMessage SearchCustomer([FromBody] CustomerSearchItemViewModels search)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.CustomerSearch(token.GetCompanyId, search);
                 if (!data.Any())
                 {
@@ -214,7 +250,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetCustomerByCompanyId(companyId);
-                if (!data.Any())
+                if (data == null )
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
@@ -276,12 +312,11 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("customer/{customerId}")]
+        [Route("{customerId}")]
         public HttpResponseMessage UpdateCustomer(int customerId, CustomerViewModels entity)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 entity.userBranchId = (short)token.GetBranchId;
                 //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;

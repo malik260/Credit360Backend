@@ -4,7 +4,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels.Admin;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.General;
 using System;  
 using System.Linq;
@@ -49,7 +49,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("user/approval")]
-        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        public async Task<HttpResponseMessage> GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
 
-                var data = repo.GoForApproval(entity);
+                var data = await repo.GoForApproval(entity);
 
                 if (data)
                 {
@@ -106,7 +106,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("user")]
-        public HttpResponseMessage AddUser(  [FromBody]AppUserViewModel user)
+        public async Task<HttpResponseMessage> AddUserAsync([FromBody]AppUserViewModel user)
         {
             try
             {
@@ -121,13 +121,13 @@ namespace FintrakBanking.APICore.Controllers
 
                     user.createdBy = token.GetStaffId;
                     user.userBranchId = (short)token.GetBranchId;
-                    user.userIPAddress =  HttpContext.Current.Request.UserHostAddress;
+                    user.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                     user.applicationUrl = HttpContext.Current.Request.Path;
                     user.companyId = token.GetCompanyId;
-                    var result = repo.CreateUser(user);
-                    if (result.IsCompleted)
+                    var result = await repo.CreateUser(user);
+                    if (result)
                     {
-                        repo.CreateUser(user);
+                        //repo.CreateUser(user);
 
                         return Request.CreateResponse(HttpStatusCode.OK,
                            new { success = true, result = user, message = "User has been created successfully, now awaiting approval" });
@@ -148,8 +148,8 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-            
-        } 
+
+        }
         [HttpPut]
         [Route("user/{id}")]
         public HttpResponseMessage UpdateUser(int id, [FromBody]AppUserViewModel user)

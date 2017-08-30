@@ -1,10 +1,11 @@
 ﻿using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
@@ -16,7 +17,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool AddTempStaff(StaffInfoViewModel staffModel);
 
-        bool GoForApproval(ApprovalViewModel entity);
+        Task<bool> GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<StaffInfoViewModel> GetAllStaff();
 

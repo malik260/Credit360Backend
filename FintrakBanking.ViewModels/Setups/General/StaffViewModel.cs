@@ -43,6 +43,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int OperationId { get; set; }
 
         public string StaffFullName { get { return this.FirstName + " " + this.MiddleName.Trim() + " " + this.LastName; } }
+
+        public string JobTitleName { get; set; }
     }
 
     public class StaffViewModel

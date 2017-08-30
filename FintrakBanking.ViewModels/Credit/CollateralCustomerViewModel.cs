@@ -9,13 +9,16 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int collateralCustomerId { get; set; }
         public int collateralTypeId { get; set; }
+        public string collateralType { get; set; }
         public string collateralCode { get; set; }
         public short currencyId { get; set; }
+        public string currency { get; set; }
         public bool allowSharing { get; set; }
         public bool isLocationBased { get; set; }
         public int? valuationCycle { get; set; }
         public double hairCut { get; set; }
         public int customerId { get; set; }
+        public string customerName { get; set; }
         public string camRefNumber { get; set; }
         public int approvalStatus { get; set; }
         public DateTime? dateActedOn { get; set; }

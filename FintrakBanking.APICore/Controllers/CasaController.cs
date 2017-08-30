@@ -20,6 +20,8 @@ namespace FintrakBanking.APICore.Controllers
     {
         private ICasaRepository repo;
 
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
+
         public CasaController(ICasaRepository _repo)
         {
             this.repo = _repo;
@@ -32,7 +34,7 @@ namespace FintrakBanking.APICore.Controllers
                 try
                 {
                     CasaViewModel data = repo.GetAccount(accountId);
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (Exception ex)
                 {
@@ -50,7 +52,7 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.GetAccountByCustomerId(customerId);
                     if (data != null)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, data);
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                     }
                     else
                     {
@@ -73,9 +75,8 @@ namespace FintrakBanking.APICore.Controllers
               
                 try
                 {
-                    //var token = new TokenDecryptionHelper(this.HttpContext);                
 
-                    var data = repo.FindAccount(accountNumberOrName, 1);// token.GetCompanyId);
+                    var data = repo.FindAccount(accountNumberOrName, token.GetCompanyId);// token.GetCompanyId);
                     if (data == null)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -93,14 +94,36 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("customer-account/")]
+        public HttpResponseMessage SearchForCustomerAccount(string searchQuery)
+        {
+            try
+            {
+                var data = repo.SearchForCustomerAccount(token.GetCompanyId, searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
         [Route("customer/search")]
         public HttpResponseMessage SearchCustomer(  string q, string t)
         { 
                 try
                 {
-                    // var token = new TokenDecryptionHelper(this.HttpContext);
 
-                    var data = repo.SearchCustomer(int.Parse(t), 1, q).ToList();// token.GetCompanyId,q);
+                    var data = repo.SearchCustomer(int.Parse(t), token.GetCompanyId, q).ToList();
                     if (data == null)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = "No record found" });

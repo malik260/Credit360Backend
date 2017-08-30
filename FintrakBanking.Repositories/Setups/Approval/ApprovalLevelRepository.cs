@@ -32,7 +32,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             auditTrail = _auditTrail;
         }
 
-        private IEnumerable<ApprovalLevelViewModel> GetApprovalLevel(int companyId) 
+        private IEnumerable<ApprovalLevelViewModel> GetApprovalLevel(int companyId)
         {
             var data = (from a in context.tbl_Approval_Level
                         where a.tbl_Approval_Group_Mapping.tbl_Approval_Group.CompanyId == companyId && a.Deleted == false
@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             approvalLevelId = a.ApprovalLevelId,
                             levelName = a.LevelName,
                             canEdit = a.CanEdit,
-                            operationId = a.tbl_Approval_Group_Mapping.OperationId ,
+                            operationId = a.tbl_Approval_Group_Mapping.OperationId,
                             canOverideAuthorisation = a.CanOverideAuthorisation,
                             canPerformFinancialAnalysis = a.CanPerformFinancialAnalysis,
                             canRecieveAdjustment = a.CanRecieveAdjustment,
@@ -123,12 +123,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Url = model.applicationUrl,
                 ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
-                TargetId = model.approvalLevelId 
+                TargetId = model.approvalLevelId
             };
 
             context.tbl_Approval_Level.Add(data);
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
+
+
 
             return context.SaveChanges() != 0;
         }
@@ -148,7 +150,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool UpdateApprovalLevel(int ApprovalLevelId, ApprovalLevelViewModel model)
         {
-            var data = this.context.tbl_Approval_Level .Find(ApprovalLevelId);
+            var data = this.context.tbl_Approval_Level.Find(ApprovalLevelId);
             if (data == null) return false;
 
             data.LevelName = model.levelName;
@@ -185,7 +187,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Url = model.applicationUrl,
                 ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
-                TargetId = model.approvalLevelId 
+                TargetId = model.approvalLevelId
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -214,7 +216,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 Url = user.applicationUrl,
                 ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
-                TargetId = data.ApprovalLevelId 
+                TargetId = data.ApprovalLevelId
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -224,13 +226,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         }
 
-        public bool AddApprovalTrail(tbl_Approval_Trail model)
+        public async Task<bool> AddApprovalTrail(tbl_Approval_Trail model)
         {
             context.tbl_Approval_Trail.Add(model);
-            return context.SaveChanges() != 0;
+            return await context.SaveChangesAsync() != 0;
         }
-        
-        public  bool UpdateApprovalTrail(tbl_Approval_Trail model)
+
+        public bool UpdateApprovalTrail(tbl_Approval_Trail model)
         {
             bool result = false;
             var update = context.tbl_Approval_Trail.SingleOrDefault(m => m.OperationId == model.OperationId
@@ -243,13 +245,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 update.ApprovalStatusId = model.ApprovalStatusId;
                 update.ResponseDate = genSetup.GetApplicationDate();
                 update.ResponseStaffId = model.RequestStaffId;
-                
+
                 result = context.SaveChanges() != 0;
             }
             return result;
         }
 
-        public IEnumerable <tbl_Staff_Organogram> GetStaffOrganogram(int companyId)
+        public IEnumerable<tbl_Staff_Organogram> GetStaffOrganogram(int companyId)
         {
             return context.tbl_Staff_Organogram.Where(c => c.CompanyId == companyId);
         }
@@ -264,25 +266,29 @@ namespace FintrakBanking.Repositories.Setups.Approval
         }
         public IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int operationId, int companyId)
         {
-            var result= (from a in context.tbl_Approval_Trail
-                    join b in context.tbl_Approval_Level on a.ToApprovalLevelId equals b.ApprovalLevelId
-                    join d in context.tbl_Approval_Status on a.ApprovalStatusId equals d.ApprovalStatusId 
-                    join c in context.tbl_Approval_Level on a.FromApprovalLevelId equals c.ApprovalLevelId into another
-                    from c in another.DefaultIfEmpty()
-                    where a.OperationId == operationId && a.CompanyId == companyId
-                         select  new {
-                        RequestStaffName = $"{a.tbl_Staff.FirstName}  {a.tbl_Staff.LastName }" ,
-                        RequestApprovalLevel = c == null ? "Initiation" : c.LevelName,
-                        ArrivalDate = a.ArrivalDate.Date + a.SystemArrivalDateTime.Date.TimeOfDay  ,
-                        
-                        ApprovalStatus = d.ApprovalStatusName ,
+            var result = (from a in context.tbl_Approval_Trail
+                          join b in context.tbl_Approval_Level on a.ToApprovalLevelId equals b.ApprovalLevelId
+                          join d in context.tbl_Approval_Status on a.ApprovalStatusId equals d.ApprovalStatusId
+                          join c in context.tbl_Approval_Level on a.FromApprovalLevelId equals c.ApprovalLevelId into another
+                          from c in another.DefaultIfEmpty()
+                          where a.OperationId == operationId && a.CompanyId == companyId
+                          select new
+                          {
+                              RequestStaffName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
+                              RequestApprovalLevel = c == null ? "Initiation" : c.LevelName,
+                              ArrivalDate = a.ArrivalDate,
+                              //ArrivalDate = a.ArrivalDate + a.SystemArrivalDateTime.TimeOfDay  ,
 
-                        ResponseDate = a.ResponseDate + a.SystemResponseDateTime.Value .Date.TimeOfDay,
-                        ResponseStaffName = $"{a.tbl_Staff.FirstName}  {a.tbl_Staff.LastName }",
-                        ResponseApprovalLevel = b.LevelName,
-                        TargetId = a.TargetId 
-                    })
+                              ApprovalStatus = d.ApprovalStatusName,
+                              //ResponseDate = a.ResponseDate + a.SystemResponseDateTime.Value.TimeOfDay,
+
+                              ResponseDate = a.ResponseDate.HasValue ? a.ResponseDate : DateTime.Now,
+                              ResponseStaffName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
+                              ResponseApprovalLevel = b.LevelName,
+                              TargetId = a.TargetId
+                          })
                         .ToList().AsQueryable();
+
             return (result.Select(c => new WorkflowTrackerViewModel
             {
                 approvalStatus = c.ApprovalStatus,
@@ -296,7 +302,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         }
         public IQueryable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
         {
-            return GetApprovalTrail(operationId,  companyId).Where(c => c.TargetId == targetId);
+            return GetApprovalTrail(operationId, companyId).Where(c => c.TargetId == targetId);
         }
 
     }

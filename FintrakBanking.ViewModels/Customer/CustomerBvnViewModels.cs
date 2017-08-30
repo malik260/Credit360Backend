@@ -8,7 +8,7 @@
         public string firstname { get; set; }
         public string bankVerificationNumber { get; set; }
         public bool isValidBvn { get; set; }
-
+        public bool isPoliticallyExposed { get; set; }
     }
 
 

@@ -6,12 +6,13 @@ using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.Finance;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.Finance
 {
@@ -47,15 +48,15 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return this.context.SaveChanges() > 0;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)Operations.ChartOfAccountCreation;
+            entity.operationId = (int)OperationsEnum.ChartOfAccountCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveAccount(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveAccount(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {
@@ -287,7 +288,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)Operations.ChartOfAccountCreation, accountModel.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.ChartOfAccountCreation, accountModel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -303,7 +304,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             companyId = accountModel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = account.GLAccountId,
-                            operationId = (int)Operations.ChartOfAccountCreation,
+                            operationId = (int)OperationsEnum.ChartOfAccountCreation,
                             BranchId = accountModel.userBranchId
                         };
                         var response = workFlow.LogForApproval(entity);
@@ -570,7 +571,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 companyId = accountModel.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempAccount.GLAccountId,
-                operationId = (int)Operations.ChartOfAccountCreation,
+                operationId = (int)OperationsEnum.ChartOfAccountCreation,
                 BranchId = accountModel.userBranchId
             };
             var response = workFlow.LogForApproval(entity);
@@ -580,7 +581,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public IEnumerable<ChartOfAccountViewModel> GetAccountsAwaitingApprovals(int accountId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(accountId, companyId, (int)Operations.ChartOfAccountCreation);
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(accountId, companyId, (int)OperationsEnum.ChartOfAccountCreation);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -589,7 +590,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
                     join atrail in context.tbl_Approval_Trail on c.GLAccountId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)Operations.ChartOfAccountCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                          && atrail.OperationId == (int)OperationsEnum.ChartOfAccountCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new ChartOfAccountViewModel()
                     {
                         accountId = c.GLAccountId,

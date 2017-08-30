@@ -103,9 +103,9 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsCurrent { get; set; }
 
-        public bool? SentForEvaluation { get; set; }
+        public bool SentForEvaluation { get; set; }
 
-        public bool? SentForLoanApplication { get; set; }
+        public bool SentForLoanApplication { get; set; }
 
         public int CreatedBy { get; set; }
 

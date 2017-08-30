@@ -14,16 +14,20 @@ namespace FintrakBanking.ViewModels.Customer
             CustomerEmploymentHistory = new List<CustomerEmploymentHistoryViewModels>();
             CustomerIdentification = new List<CustomerIdentificationViewModels>();
             CustomerPhoneContact = new List<CustomerPhoneContactViewModels>();
+            CustomerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
+            CustomerClientOrSupplier = new List<CustomerClientOrSupplierViewModels>();
         }
 
         public int customerId { get; set; }
         public string customerCode { get; set; }
         public short branchId { get; set; }
+        public string branchName { get; set; }
         public string title { get; set; }
         public string firstName { get; set; }
         public string middleName { get; set; }
         public string customerTypeName { get; set; }
         public string customerName { get { return this.firstName + " " + this.middleName + " " + this.lastName; } }
+         public string fullName { get; set; }
         public string searchItem { get { return this.firstName + " " + this.middleName + " " + this.lastName + " " + this.customerCode; } }
         public string lastName { get; set; }
         public string gender { get; set; }
@@ -49,6 +53,9 @@ namespace FintrakBanking.ViewModels.Customer
         public bool creationMailSent { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public short subSectorId { get; set; }
+        public string subSectorName { get; set; }
+        public short sectorId { get; set; }
+        public string sectorName { get; set; }
         public string taxNumber { get; set; }
 
         public List<CustomerAddressViewModels> CustomerAddresses { get; set; }
@@ -58,14 +65,34 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerEmploymentHistoryViewModels> CustomerEmploymentHistory { get; set; }
         public List<CustomerIdentificationViewModels> CustomerIdentification { get; set; }
         public List<CustomerPhoneContactViewModels> CustomerPhoneContact { get; set; }
+        public List<CustomerCompanyDirectorsViewModels> CustomerCompanyDirectors { get; set; }
+        public List<CustomerClientOrSupplierViewModels> CustomerClientOrSupplier { get; set; }
     }
 
     public class CustomerSearchItemViewModels
     {
+        public int customerId { get; set; }
         public string customerName { get; set; }
         public string phoneNumber { get; set; }
         public int? customerTypeId { get; set; }
+        public string customerTypeName { get; set; }
+        public string customerCode { get; set; }
+        public int relationshipOfficerId { get; set; }
+        public string relationshipOfficerName { get; set; }
         public int? branchId { get; set; }
+        public string branchName { get; set; }
+        public int customerSectorId { get; set; }
+        public string customerSectorName { get; set; }
+        public short subSectorId { get; set; }
+        public string subSectorName { get; set; }
     }
 
+    public class CustomerSectorViewModel
+    {
+        public short subSectorId { get; set; }
+        public short sectorId { get; set; }
+        public string sectorName { get; set; }
+        public string sectorCode { get; set; }
+
+    }
 }
