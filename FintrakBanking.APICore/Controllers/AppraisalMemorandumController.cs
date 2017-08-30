@@ -86,6 +86,46 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
-        
+
+        [HttpPost]
+        [Route("appraisal-memorandum/forward")]
+        public HttpResponseMessage ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.ForwardAppraisalMemorandum(entity);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpGet]
+        [Route("appraisal-memorandum/trail/{loanApplicationId}")]
+        public HttpResponseMessage GetAppraisalMemorandumTrail(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetAppraisalMemorandumTrail(loanApplicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

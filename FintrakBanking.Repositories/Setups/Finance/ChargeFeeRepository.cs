@@ -8,8 +8,9 @@ using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.Common.Enum;
 using System.Linq;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.Finance
 {
@@ -29,15 +30,15 @@ namespace FintrakBanking.Repositories.Setups.Finance
             this.workFlow = _workFlow;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.UserCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveChargeFee(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveChargeFee(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {
@@ -79,7 +80,10 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 OperationId = chargeFeemodel.operationId,
                 Amount = chargeFeemodel.amount,
                 Rate = chargeFeemodel.rate,
+
                 //ValueSource = chargeFeemodel.feeTypeId,
+                FeeTypeId = chargeFeemodel.valueSource,
+
                 Recurring = chargeFeemodel.recurring,
                 PrimaryTaxId = chargeFeemodel.primaryTaxId,
                 SecondaryTaxId = chargeFeemodel.secondaryTaxId,
@@ -156,7 +160,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 OperationId = model.operationId,
                 Amount = model.amount,
                 Rate = model.rate,
-                FeeTypeId = model.feeTypeId,
+                FeeTypeId = model.valueSource,
                 Recurring = model.recurring,
                 PrimaryTaxId = model.primaryTaxId,
                 SecondaryTaxId = model.secondaryTaxId,
@@ -227,6 +231,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
             data.Amount = model.amount;
             data.Rate = model.rate;
             data.FeeTypeId = model.feeTypeId;
+
+
             data.Recurring = model.recurring;
             data.PrimaryTaxId = model.primaryTaxId;
             data.SecondaryTaxId = model.secondaryTaxId;
@@ -339,6 +345,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 amount = data.Amount,
                 rate = data.Rate,
                 feeTypeId = data.FeeTypeId,
+
                 recurring = (bool)data.Recurring,
                 primaryTaxId = data.PrimaryTaxId,
                 secondaryTaxId = data.SecondaryTaxId,

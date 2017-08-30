@@ -47,13 +47,17 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="XLeratorDLL-financial, Version=1.15.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="documentModel\FinTrakBankingDocumentsContext.cs" />
-    <Compile Include="documentModel\tbl_Media_Collateral_Documents.cs" />
+    <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\tbl_Media_Collateral_Documents.cs" />
+    <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\FinTrakBankingDocumentsContext.cs" />
-    <Compile Include="Models\sysdiagrams.cs" />
+    <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -147,7 +151,6 @@
     <Compile Include="Models\tbl_Customer_NextOfKin.cs" />
     <Compile Include="Models\tbl_Customer_PhoneContact.cs" />
     <Compile Include="Models\tbl_Customer_Sensitivity_Level.cs" />
-    <Compile Include="Models\tbl_Customer_Status.cs" />
     <Compile Include="Models\tbl_Customer_Type.cs" />
     <Compile Include="Models\tbl_Custom_Fields.cs" />
     <Compile Include="Models\tbl_Custom_Fields_Data.cs" />
@@ -185,6 +188,7 @@
     <Compile Include="Models\tbl_LoanDetails.cs" />
     <Compile Include="Models\tbl_Loan_Amortization_Schedule.cs" />
     <Compile Include="Models\tbl_Loan_Application.cs" />
+    <Compile Include="Models\tbl_Loan_Application_Collateral.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
     <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
@@ -204,8 +208,6 @@
     <Compile Include="Models\tbl_Loan_Type_Batch.cs" />
     <Compile Include="Models\tbl_MachineValue_Base.cs" />
     <Compile Include="Models\tbl_Management_Type.cs" />
-    <Compile Include="Models\tbl_Media_Collateral_Documents.cs" />
-    <Compile Include="Models\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\tbl_MIS_Info.cs" />
     <Compile Include="Models\tbl_MIS_Type.cs" />
     <Compile Include="Models\tbl_Nature_Of_Business.cs" />
@@ -270,9 +272,6 @@
     <Compile Include="Models\tbl_Temp_Customer_Group.cs" />
     <Compile Include="Models\tbl_Temp_Customer_Group_Mapping.cs" />
     <Compile Include="Models\tbl_Temp_Fee.cs" />
-    <Compile Include="Models\tbl_Temp_LoanCovenant_Details.cs" />
-    <Compile Include="Models\tbl_Temp_Loan_Fee.cs" />
-    <Compile Include="Models\tbl_Temp_Loan_Guarantor.cs" />
     <Compile Include="Models\tbl_Temp_Product.cs" />
     <Compile Include="Models\tbl_Temp_Product_CollateralType.cs" />
     <Compile Include="Models\tbl_Temp_Product_Currency.cs" />

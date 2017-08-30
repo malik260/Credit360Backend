@@ -1,8 +1,9 @@
 ﻿using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,10 @@ namespace FintrakBanking.Interfaces.Customer
 {
     public interface ICustomerGroupRepository
     {
+        //IQueryable<KYCItemViewModel> GetKYCItems(int companyId);
+        //bool AddKycItem(KYCItemViewModel entity);
+        //bool UpdatedKycItem(int KYCItemId ,KYCItemViewModel entity) ;
+
         #region tbl_Customer Group Repository
         bool AddCustomerGroup(CustomerGroupViewModel entity);
         bool AddTempCustomerGroup(CustomerGroupViewModel entity);
@@ -19,7 +24,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool UpdateCustomerGroupForApproval(int groupId, CustomerGroupViewModel entity);
         bool DeleteCustomerGroup(int groupId, UserInfo user);
         IEnumerable<CustomerGroupViewModel> GetCustomerGroupsAwaitingApprovals(int staffId, int companyId);
-        bool GoForApproval(ApprovalViewModel entity);
+        Task<bool> GoForApproval(ApprovalViewModel entity);
         #endregion
 
         #region tbl_Customer Group Mapping repository
@@ -37,6 +42,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool UpdateCustomerGroupMappingForApproval(int groupMapId, CustomerGroupMappingViewModel entity);
         bool DeleteCustomerGroupMapping(int groupMapId, UserInfo user);
 
+        IQueryable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery);
         #endregion
     }
 }

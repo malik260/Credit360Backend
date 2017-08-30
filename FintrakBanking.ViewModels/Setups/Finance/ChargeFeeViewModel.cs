@@ -19,6 +19,7 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public decimal? amount { get; set; }
         public double? rate { get; set; }
         public short feeTypeId { get; set; }
+        public short valueSource { get; set; }
         public int ledgerAccountId { get; set; }
         public bool recurring { get; set; }
         public short frequencyTypeId { get; set; }
@@ -30,6 +31,7 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public bool includeCutOffDay { get; set; }
         public short? cutOffDay { get; set; }
         public bool isIntegral { get; set; }
+
 
         public List<ChargeRangeViewModel> ranges { get; set; }
     }

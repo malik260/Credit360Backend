@@ -1,0 +1,318 @@
+﻿using FintrakBanking.Interfaces.CreditLimitValidations;
+using System;
+using FintrakBanking.APICore.JWTAuth;
+using System.Web.Http;
+using System.Net.Http;
+using System.Net;
+using FintrakBanking.APICore.core;
+
+
+namespace FintrakBanking.APICore.Controllers
+{
+
+    [RoutePrefix("api/v1/credit/limitvalidations")]
+    public class CreditLimitValidationsController : ApiControllerBase
+    {
+        private ICreditLimitValidationsRepository repo;
+
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+        public CreditLimitValidationsController(ICreditLimitValidationsRepository _repo)
+        {
+            this.repo = _repo;
+        }
+
+
+
+        [HttpGet]
+        [Route("blacklist/{customerId}")]
+        public HttpResponseMessage ValidateBlackList(int customerId)
+        { 
+                try
+                {
+                    var data = repo.ValidateBlackList(customerId);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                catch (Exception ex)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
+                }
+             
+        }
+
+
+        [HttpGet]
+        [Route("watchlist/{customerId}")]
+        public HttpResponseMessage ValidateWatchList(int customerId)
+        {
+            try
+            {
+                var data = repo.ValidateWatchList(customerId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("camsol/{customerId}")]
+        public HttpResponseMessage ValidateCamsol(int customerId)
+        {
+            try
+            {
+                var data = repo.ValidateCamsol(customerId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("validateamount/branch/{branchId}")]
+        public HttpResponseMessage  ValidateAmountByBranch( short branchId)
+        { 
+                try
+                {
+
+                var data = repo.ValidateAmountByBranch(branchId);
+                    if (data != null)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = true, message = "No record found" });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = ex.Message });
+                }
+                  
+        }
+
+        [HttpGet]
+        [Route("validatenpl/branch/{branchId}")]
+        public HttpResponseMessage ValidateNPLByBranch(short branchId)
+        {
+            try
+            {
+
+                var data = repo.ValidateNPLByBranch(branchId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("validateamount/sector/{customerId}")]
+        public HttpResponseMessage ValidateAmountBySector(int customerId)
+        {
+            try
+            {
+
+                var data = repo.ValidateAmountBySector(customerId);
+                if (data != null)
+                {
+                    
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("validatenpl/sector/{customerId}")]
+        public HttpResponseMessage ValidateNPLBySector(int customerId)
+        {
+            try
+            {
+
+                var data = repo.ValidateNPLBySector(customerId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("validateamount/customer/{customerId}")]
+        public HttpResponseMessage ValidateAmountByCustomer(int customerId)
+        {
+            try
+            {
+
+                var data = repo.ValidateAmountByCustomer(customerId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("validatenpl/customer/{customerId}")]
+        public HttpResponseMessage ValidateNPLByCustomer(int customerId)
+        {
+            try
+            {
+
+                var data = repo.ValidateNPLByCustomer(customerId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("validateamount/customergroup/{customerId}")]
+        public HttpResponseMessage ValidateAmountByCustomerGroup(int customergroupId)
+        {
+            try
+            {
+
+                var data = repo.ValidateAmountByCustomerGroup(customergroupId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("validatenpl/customergroup/{customerId}")]
+        public HttpResponseMessage ValidateNPLByCustomerGroup(int customergroupId)
+        {
+            try
+            {
+
+                var data = repo.ValidateNPLByCustomerGroup(customergroupId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("validatecreditlimitnpl/RMBM/{relationshipofficerId}")]
+        public HttpResponseMessage ValidateCreditLimitNPLByRMBM(short relationshipofficerId)
+        {
+            try
+            {
+
+                var data = repo.ValidateCreditLimitNPLByRMBM(relationshipofficerId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+    }
+} 

@@ -55,6 +55,7 @@ namespace FintrakBanking.ViewModels.CASA
         {
             customerBvnInformation = new List<CustomerBvnViewModels>();
             customerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
+            customerCompanyShareholders = new List<CustomerCompanyShareholdersViewModels>();
         }
         
         public int productClassId { get; set; }
@@ -73,5 +74,10 @@ namespace FintrakBanking.ViewModels.CASA
         public string customerTypeName { get; set; }
         public string taxIdentificationNumber { get; set; }
         public string registrationNumber { get; set; }
+        public List<CustomerCompanyShareholdersViewModels> customerCompanyShareholders { get; set; }
+        public bool isBlackList { get; set; }
+        public int? customerGroupId { get; set; }
+        public bool isCamsol { get; set; }
+        public string customerGroupName { get; set; }
     }
 }

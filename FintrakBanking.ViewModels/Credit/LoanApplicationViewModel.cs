@@ -4,14 +4,30 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
+    public class ExistingLoanApplicationViewModel{
+
+        public string applicationReferenceNumber { get; set; }
+        public DateTime applicationDate { get; set; }
+        public decimal   principalAmount { get; set; }
+        public double interestRate { get; set; }
+        public double exchangeRate { get; set; }
+        public string loanTypeName { get; set; }
+        public int tenor { get; set; }
+        public string  branch { get; set; }
+
+    }
+
     public class LoanApplicationViewModel : GeneralEntity
     {
         public int loanApplicationId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
+
+        public short? branchId { get; set; }
+        public short? productClassId { get; set; }
+
         public int? customerGroupId { get; set; }
         public string customerGroupCode { get; set; }
-        public short branchId { get; set; }
         public short productId { get; set; }
         public short loanTypeId { get; set; }
 
@@ -33,6 +49,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isRealatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public int approvalStatusId { get; set; }
+        public int approvalLevelId { get; set; }
 
         public string customerName { get; set; }
         public string branchName { get; set; }
@@ -49,11 +66,13 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int? loanPreliminaryEvaluationId { get; set; } 
         public double exchangeRate { get; set; }
-        public string nearestLandMark { get; set; }
-        public string nearestBusStop { get; set; }
-        public decimal? longitude { get; set; }
-        public decimal? latitude { get; set; } 
+        
     }
+
+
+
+
+
 
     public class ProductClassViewModel
     {

@@ -5,6 +5,7 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -642,10 +643,11 @@ namespace FintrakBanking.Repositories.Customer
             return customers;
         }
 
-        public IEnumerable<CustomerSectorViewModel> GetCustomerSectors()
+
+        public IEnumerable<SectorViewModel> GetCustomerSectors()
         {
             var data = (from cs in context.tbl_Sector
-                        select new CustomerSectorViewModel()
+                        select new SectorViewModel()
                         {
                             sectorId = cs.SectorId,
                             sectorName = cs.Name,
@@ -655,13 +657,13 @@ namespace FintrakBanking.Repositories.Customer
             return data;
         }
 
-        
 
-        public IEnumerable<CustomerSectorViewModel> GetCustomerSectorBySubSectorId(short ssId)
+
+        public IEnumerable<SectorViewModel> GetCustomerSectorBySubSectorId(short ssId)
         {
             var data = (from s in context.tbl_Sub_Sector
                         where s.SubSectorId == ssId
-                        select new CustomerSectorViewModel()
+                        select new SectorViewModel()
                         {
                             subSectorId = s.SubSectorId,
                             sectorId = s.tbl_Sector.SectorId,
@@ -671,6 +673,7 @@ namespace FintrakBanking.Repositories.Customer
 
             return data;
         }
+
     }
 }
 

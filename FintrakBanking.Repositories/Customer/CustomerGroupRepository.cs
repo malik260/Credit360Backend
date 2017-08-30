@@ -13,13 +13,13 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Customer;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.ViewModels.CASA;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Customer
-{
-    [Export(typeof(ICustomerGroupRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+{ 
     public class CustomerGroupRepository : ICustomerGroupRepository
     {
         private FinTrakBankingContext context;
@@ -46,6 +46,95 @@ namespace FintrakBanking.Repositories.Customer
         {
             return context.SaveChanges() > 0;
         }
+
+        #region customer KYC
+
+        //public IQueryable<KYCItemViewModel> GetKYCItems(int companyId)
+        //{
+        //    return (IQueryable<KYCItemViewModel>)context.tbl_KYC_Item.Where(d => d.tbl_Product.CompanyId == companyId).Select(d => new KYCItemViewModel
+        //    {
+        //        createdBy = d.CreatedBy,
+        //        productId = d.ProductId,
+        //        kYCItemId = d.KYCItemId,
+        //        item = d.Item,
+        //        dateTimeCreated = d.DateTimeCreated,
+        //        displayOrder = d.DisplayOrder,
+        //         isMandatory = d.IsMandatory,
+        //        productName = d.tbl_Product.ProductName
+        //    });
+        //}
+
+        //public bool AddKycItem(KYCItemViewModel entity)
+        //{
+            //var data = new tbl_KYC_Item
+            //{
+            //    CreatedBy = entity.createdBy,
+            //    DateTimeCreated = genSetup.GetApplicationDate(),
+            //    DisplayOrder = entity.displayOrder,
+            //    Item = entity.item,
+            //    IsMandatory = entity.isMandatory,
+            //    KYCItemId = entity.kYCItemId,
+            //    ProductId = entity.productId
+            //};
+            //context.tbl_KYC_Item.Add(data);
+            // Audit Section ---------------------------
+            //var audit = new tbl_Audit
+            //{
+            //    AuditTypeId = (short)AuditTypeEnum.KYCitemAdd,
+            //    StaffId = entity.createdBy,
+            //    BranchId = (short)entity.userBranchId,
+            //    Detail = $"Added KYC Item: { entity.item  } ",
+            //    IPAddress = entity.userIPAddress,
+            //    Url = entity.applicationUrl,
+            //    ApplicationDate = genSetup.GetApplicationDate(),
+            //    SystemDateTime = DateTime.Now
+            //};
+            //this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+
+        //    return context.SaveChanges() != 0;
+
+        //}
+
+        //public bool UpdatedKycItem(int kYCItemId ,KYCItemViewModel entity)
+        //{
+        //    var data = context.tbl_KYC_Item.Where(c => c.KYCItemId == kYCItemId).SingleOrDefault();
+            
+        //    data.CreatedBy = entity.createdBy;
+        //    data.DateTimeCreated = entity.dateTimeCreated;
+        //    data.DateTimeUpdated = entity.dateTimeUpdated;
+        //    data.DisplayOrder = entity.displayOrder;
+        //    data.Item = entity.item;
+        //    data.LastUpdatedBy = entity.lastUpdatedBy;
+        //    data.KYCItemId = entity.kYCItemId; 
+        //    data.ProductId = entity.productId;
+        //    data.IsMandatory = entity.isMandatory;
+
+        //    // Audit Section ---------------------------
+        //    var audit = new tbl_Audit
+        //    {
+        //        AuditTypeId = (short)AuditTypeEnum.KYCitemUpdated,
+        //        StaffId = entity.createdBy,
+        //        BranchId = (short)entity.userBranchId,
+        //        Detail = $"Updated KYC Item: { entity.item  } ",
+        //        IPAddress = entity.userIPAddress,
+        //        Url = entity.applicationUrl,
+        //        ApplicationDate = genSetup.GetApplicationDate(),
+        //        SystemDateTime = DateTime.Now
+        //    };
+        //    this.auditTrail.AddAuditTrail(audit);
+
+        //    //end of Audit section -------------------------------
+
+        //    return context.SaveChanges() != 0;
+
+        //}
+
+
+
+
+        #endregion
 
         #region tbl_Customer - Group
         public bool AddCustomerGroup(CustomerGroupViewModel entity)
@@ -177,35 +266,33 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
 
+        private IQueryable<CustomerGroupViewModel> GetAllCustomerGroups()
+        {
+            var data = (from a in context.tbl_Customer_Group
+                        where a.Deleted == false
+                        select new CustomerGroupViewModel
+                        {
+                            groupCode = a.GroupCode,
+                            groupName = a.GroupName,
+                            groupDescription = a.GroupDescription,
+                            customerGroupId = a.CustomerGroupId,
+                            dateTimeCreated = a.DateTimeCreated,
+                            createdBy = a.CreatedBy
+                        });
+            return data;
+        }
+
         public IEnumerable<CustomerGroupViewModel> GetCustomerGroup()
         {
-            var customerGroup = from a in context.tbl_Customer_Group
-                                where a.Deleted == false
-                                select new CustomerGroupViewModel
-                                {
-                                    groupCode = a.GroupCode,
-                                    groupName = a.GroupName,
-                                    groupDescription = a.GroupDescription,
-                                    customerGroupId = a.CustomerGroupId,
-                                    dateTimeCreated = a.DateTimeCreated,
-                                    createdBy = a.CreatedBy
-                                };
+            var customerGroup = GetAllCustomerGroups();
+
             return customerGroup;
         }
 
         public CustomerGroupViewModel GetCustomerGroupByCustomerId(int customerGroupId)
         {
-            var customerGroup = from a in context.tbl_Customer_Group
-                                where a.CustomerGroupId == customerGroupId && a.Deleted == false
-                                select new CustomerGroupViewModel
-                                {
-                                    groupCode = a.GroupCode,
-                                    groupName = a.GroupName,
-                                    groupDescription = a.GroupDescription,
-                                    customerGroupId = a.CustomerGroupId,
-                                    dateTimeCreated = a.DateTimeCreated,
-                                    createdBy = a.CreatedBy
-                                };
+            var customerGroup = GetCustomerGroup().Where(x => x.customerGroupId == customerGroupId);
+
             return customerGroup.FirstOrDefault();
         }
 
@@ -317,15 +404,15 @@ namespace FintrakBanking.Repositories.Customer
             return output;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.CustomerGroupCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveCustomerGroup(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveCustomerGroup(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {
@@ -577,7 +664,7 @@ namespace FintrakBanking.Repositories.Customer
                                            //dateTimeCreated = a.DateTimeCreated
                                        };
 
-            return customerGroupMapping.SingleOrDefault();
+            return customerGroupMapping.FirstOrDefault();
 
         }
 
@@ -873,6 +960,86 @@ namespace FintrakBanking.Repositories.Customer
                        lookupId = a.RelationshipTypeId,
                        lookupName = a.RelationshipTypeName
                    };
+        }
+
+        private IQueryable<CustomerGroupViewModel> GellAllCustomerGroupMappings()
+        {
+            var data = (from a in context.tbl_Customer_Group
+                        where a.Deleted == false
+                        select new CustomerGroupViewModel
+                        {
+                            customerGroupId = a.CustomerGroupId,
+                            customerGroupName = a.GroupName,
+                            customerGroupCode = a.GroupCode,
+                            customerGroupMappings = context.tbl_Customer_Group_Mapping.Where(x => x.CustomerGroupId == a.CustomerGroupId).Select(s => new CustomerGroupMappingViewModel
+                            {
+                                customerGroupMappingId = s.CustomerGroupMappingId,
+                                customerGroupId = s.CustomerGroupId,
+                                customerId = s.CustomerId,
+                                customerCode = s.tbl_Customer.CustomerCode,
+                                customerName = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
+                                customerType = s.tbl_Customer.tbl_Customer_Type.Name,
+                                relationshipTypeId = s.RelationshipTypeId,
+                                relationshipTypeName = s.tbl_Customer_Group_RelationshipType.RelationshipTypeName,
+                                productAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == s.CustomerId).ProductAccountNumber,
+                                accountHolder = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
+                                companyId = s.tbl_Customer.CompanyId,
+                                branchId = s.tbl_Customer.BranchId,
+                                isBlackListed = context.tbl_Customer_Blacklist.Where(x => x.CustomerId == s.CustomerId).Any(),
+                                customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == s.CustomerId).Select(b => new CustomerBvnViewModels()
+                                {
+                                    bankVerificationNumber = b.BankVerificationNumber,
+                                    customerBvnid = b.CustomerBVNId,
+                                    firstname = b.Firstname,
+                                    isValidBvn = b.IsValidBVN,
+                                    isPoliticallyExposed = b.IsPoliticallyExposed,
+                                    surname = b.Surname
+                                }).ToList(),
+                                customerCompanyDirectors = context.tbl_Customer_Company_Director.Where(x => x.CustomerId == s.CustomerId && 
+                                x.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember).Select(x => new CustomerCompanyDirectorsViewModels()
+                                {
+                                    bankVerificationNumber = x.CustomerBVN,
+                                    companyDirectorTypeId = x.CompanyDirectorTypeId,
+                                    companyDirectorTypeName = x.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                    customerId = x.CustomerId,
+                                    firstname = x.Firstname,
+                                    surname = x.Surname
+                                }).ToList(),
+                                customerCompanyShareholders = context.tbl_Customer_Company_Director.Where(x => x.CustomerId == s.CustomerId &&
+                                x.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder).Select(x => new CustomerCompanyShareholdersViewModels()
+                                {
+                                    bankVerificationNumber = x.CustomerBVN,
+                                    companyDirectorTypeId = x.CompanyDirectorTypeId,
+                                    companyDirectorTypeName = x.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                    customerId = x.CustomerId,
+                                    firstname = x.Firstname,
+                                    surname = x.Surname
+                                }).ToList()
+                            }).ToList(),
+                        });
+
+            return data;
+        }
+
+        public IQueryable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery)
+        {
+            IQueryable<CustomerGroupViewModel> allGroups = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allGroups = GellAllCustomerGroupMappings()
+                    //.Where(c => c.companyId == companyId)
+                    .Where(x => x.customerGroupName.Contains(searchQuery)
+                    || x.customerGroupCode.Contains(searchQuery)
+                );
+            }
+
+            return allGroups;
         }
         #endregion
     }

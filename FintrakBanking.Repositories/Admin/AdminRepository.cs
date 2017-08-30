@@ -12,7 +12,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Interfaces.Setups.Approval;
@@ -46,15 +46,15 @@ namespace FintrakBanking.Repositories.Admin
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.UserCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveUser(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveUser(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {

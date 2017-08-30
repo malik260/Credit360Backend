@@ -4,12 +4,13 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -370,15 +371,15 @@ namespace FintrakBanking.Repositories.Setups.General
             return output;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.FeeCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveFee(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveFee(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {

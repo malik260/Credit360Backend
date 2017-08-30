@@ -1,11 +1,27 @@
-﻿using FintrakBanking.ViewModels.Setups.Finance;
+﻿using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Setups.Finance;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-   public class LoanViewModel : GeneralEntity
+    public class LoanRepaymentScheduleViewModel
+    {
+        public int loanId { get; set; }
+        public int customerId { get; set; }
+        public decimal principalRepayment { get; set; }
+        public decimal principalAmount { get; set; }
+        public decimal interestAccrual { get; set; }
+        public string productName { get; set; }
+        public double  interestRate { get; set; }
+        public double tenor { get; set; }
+        public DateTime terminationDate { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public string totalRepayment { get { return (principalRepayment + interestAccrual).ToString("#,#.00#");}}
+    }
+
+        public class LoanViewModel : GeneralEntity
     {
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -55,7 +71,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? feePercent { get; set; }
         public DateTime? firstPrincipalPaymentDate { get; set; }
         public DateTime? firstInterestPaymentDate { get; set; }
-        public decimal? outstandingPrincipal { get; set; }
+        public decimal outstandingPrincipal { get; set; }
         public int? principalAdditionCount { get; set; }
         public int? principalReductionCount { get; set; }
         public bool fixedPrincipal { get; set; }
@@ -82,11 +98,11 @@ namespace FintrakBanking.ViewModels.Credit
 
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
 
+        public bool isCamsol { get; set; }
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
-
 
     }
 
@@ -95,7 +111,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanDetails { get; set; }
         public string camReference { get; set; }
         public string customerCode { get; set; }
-        public short productId { get; set; }
+        public short? productId { get; set; }
         
     }
 

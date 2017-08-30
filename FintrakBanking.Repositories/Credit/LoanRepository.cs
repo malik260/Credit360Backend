@@ -15,6 +15,10 @@ using NodaTime;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Interfaces.Customer;
 using System.Threading.Tasks;
+using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Repositories.Finance;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -28,17 +32,19 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private ILoanScheduleRepository loanSchedule;
         private ILoanCovenantRepository loanCovenant;
+        private IFinanceTransactionRepository financeTransaction;
 
 
         public LoanRepository(FinTrakBankingContext _context,IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
-                                        ILoanCovenantRepository _loanCovenant)
+                                        ILoanCovenantRepository _loanCovenant, IFinanceTransactionRepository _financeTransaction)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
             this.auditTrail = _auditTrail;
             this.loanSchedule = _loanSchedule;
             this.loanCovenant = _loanCovenant;
+            this.financeTransaction = _financeTransaction;
         }
 
         //public List<LoanPaymentScheduleOutput> GenerateLoanPaymentSchedule(LoanPaymentScheduleInput input)
@@ -296,12 +302,13 @@ namespace FintrakBanking.Repositories.Credit
                 DisbursedBy = entity.disbursedBy,
                 DisburserComment = entity.disburserComment,
                 DisburseDate = entity.disburseDate,
-                //ApprovedAmount = entity.approvedAmount, 
+                ApprovedAmount = (decimal)entity.approvedAmount, 
                 OperationId = entity.operationId,
                 TrancheBatchCode = entity.trancheBatchCode,
                 EquityContribution = entity.equityContribution,
                 FeePercent = entity.feePercent,
-                //OutstandingPrincipal = entity.outstandingPrincipal,
+
+                OutstandingPrincipal = entity.outstandingPrincipal,
                 PrincipalAdditionCount = entity.principalAdditionCount,
                 PrincipalReductionCount = entity.principalReductionCount,
                 FixedPrincipal = entity.fixedPrincipal,
@@ -311,14 +318,26 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy = (int)entity.createdBy,
                 DateTimeCreated = generalSetup.GetApplicationDate(),
                 tbl_Loan_Covenant_Detail = AddLoanCovenantDetail(entity.loanCovenant),
-                tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
+                //tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
                 tbl_Loan_Collateral_Mapping = AddLoanCollateralMapping(entity.loanCollateral),
                 tbl_Loan_Fee = AddLoanFees(entity.loanChargeFee)
 
             };
 
             context.tbl_Loan.Add(data);
+         
+                //PostLoanDisbursment(entity);
+                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
+                inputTransactions.Add(BuildLoanDisbursmentPosting(entity));
+
+                inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
+
+                financeTransaction.PostTransaction(inputTransactions);
+
+    
+
+            // Audit Section ---------------------------            
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LoanApplication,
@@ -336,13 +355,281 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
+
+
+
             //end of Audit section -------------------------------
             var dataCount = context.SaveChanges();
 
             if (dataCount > 0)
                 return loanReferenceNumber;
             else
+            
                 return "";
+        }
+
+        //[OperationBehavior(TransactionScopeRequired = true)]
+        //public LoanViewModel PostLoanDisbursment(LoanViewModel model)
+        //{      
+        //    FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
+
+
+        //    var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
+
+        //    loanTransaction.operationId = (int)OperationsEnum.LoanBooking;
+        //    loanTransaction.description = "Loan Disbursment Amount";
+        //    loanTransaction.valueDate = generalSetup.GetApplicationDate();
+        //    loanTransaction.transactionDate = loanTransaction.valueDate;
+        //    loanTransaction.currencyId = casa.CurrencyId;
+        //    loanTransaction.currencyRate = financeTransaction.GetExchangeRate(loanTransaction.currencyId, loanTransaction.valueDate, model.companyId);
+        //    loanTransaction.isApproved = true;
+        //    loanTransaction.postedBy = model.createdBy;
+        //    loanTransaction.approvedBy = model.createdBy;
+        //    loanTransaction.approvedDate = loanTransaction.transactionDate;
+        //    loanTransaction.approvedDateTime = DateTime.Now;
+        //    loanTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+        //    loanTransaction.companyId = model.companyId;
+
+        //    FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+        //    debit.glAccountId = model.casaAccountId;  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+        //    debit.sourceReferenceNumber = model.loanReferenceNumber;
+        //    debit.casaAccountId = casa.CasaAccountId;
+        //    debit.debitAmount = model.principalAmount;
+        //    debit.creditAmount = 0;
+        //    debit.sourceBranchId = model.branchId;
+        //    debit.destinationBranchId = casa.BranchId;
+
+        //    var repaymentGL = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+        //    FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+        //    credit.glAccountId = repaymentGL;
+
+        //    credit.sourceReferenceNumber = model.loanReferenceNumber;
+        //    credit.casaAccountId = casa.CasaAccountId;
+        //    credit.debitAmount = 0;
+        //    credit.creditAmount = model.principalAmount;
+        //    credit.sourceBranchId = model.branchId;
+        //    credit.destinationBranchId = model.branchId;
+
+
+        //    loanTransaction.transactionDetails.Add(debit);
+        //    loanTransaction.transactionDetails.Add(credit);
+
+        //    financeTransaction.PostTransaction(loanTransaction);
+
+        //    // Audit Section ---------------------------            
+
+        //    var audit = new tbl_Audit
+        //    {
+        //        AuditTypeId = (short)AuditTypeEnum.LoanApplication,
+        //        StaffId = model.createdBy,
+        //        BranchId = model.branchId,
+        //        Detail = $"Applied for Loan Disbursment with reference number: {model.loanReferenceNumber}",
+        //        IPAddress = model.userIPAddress,
+        //        Url = model.applicationUrl,
+        //        ApplicationDate = generalSetup.GetApplicationDate(),
+        //        SystemDateTime = DateTime.Now
+        //    };
+
+        //    this.auditTrail.AddAuditTrail(audit);
+
+        //    //end of Audit section -------------------------------
+        //    context.SaveChanges();
+        //    return model;
+
+        //}
+
+        //public LoanViewModel PostLoanChargeFee(LoanViewModel data)
+        //{
+        //    //foreach ( var model in data.loanChargeFee)
+        //    //{
+        //    //    //model.ledgerAccountId = data.
+        //    //}
+        //    //data.loanChargeFee
+        //     LoanChargeFeeViewModel model = new LoanChargeFeeViewModel();
+        //     FinanceTransactionViewModel feeTransaction = new FinanceTransactionViewModel();
+
+            
+        //    var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.ledgerAccountId && x.CompanyId == model.companyId);
+
+        //    feeTransaction.operationId = (int)OperationsEnum.LoanBooking;
+        //    feeTransaction.description = "Fee charge";
+        //    feeTransaction.valueDate = generalSetup.GetApplicationDate();
+        //    feeTransaction.transactionDate = feeTransaction.valueDate;
+        //    feeTransaction.currencyId = casa.CurrencyId;
+        //    feeTransaction.currencyRate = financeTransaction.GetExchangeRate(feeTransaction.currencyId, feeTransaction.valueDate, model.companyId);
+        //    feeTransaction.isApproved = true;
+        //    feeTransaction.postedBy = model.createdBy;
+        //    feeTransaction.approvedBy = model.createdBy;
+        //    feeTransaction.approvedDate = feeTransaction.transactionDate;
+        //    feeTransaction.approvedDateTime = DateTime.Now;
+        //    feeTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+        //    feeTransaction.companyId = model.companyId;
+
+        //    FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+        //    debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+        //    debit.sourceReferenceNumber = data.loanReferenceNumber;
+        //    debit.casaAccountId = casa.CasaAccountId;
+        //    debit.debitAmount = (decimal)model.amount;
+        //    debit.creditAmount = 0;
+        //    debit.sourceBranchId = data.branchId;
+        //    debit.destinationBranchId = casa.BranchId;
+
+        //    var feeGL = model.ledgerAccountId; //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+        //    FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+        //    credit.glAccountId = feeGL;
+
+        //    credit.sourceReferenceNumber = data.loanReferenceNumber;
+        //    credit.casaAccountId = casa.CasaAccountId;
+        //    credit.debitAmount = 0;
+        //    credit.creditAmount = (decimal)model.amount;
+        //    credit.sourceBranchId = data.branchId;
+        //    credit.destinationBranchId = data.branchId;
+
+
+        //    feeTransaction.transactionDetails.Add(debit);
+        //    feeTransaction.transactionDetails.Add(credit);
+
+        //    financeTransaction.PostTransaction(feeTransaction);
+
+        //    // Audit Section ---------------------------            
+
+        //    var audit = new tbl_Audit
+        //    {
+        //        AuditTypeId = (short)AuditTypeEnum.LoanApplication,
+        //        StaffId = model.createdBy,
+        //        BranchId = data.branchId,
+        //        Detail = $"Applied for fee charge with reference number: {data.loanReferenceNumber}",
+        //        IPAddress = model.userIPAddress,
+        //        Url = model.applicationUrl,
+        //        ApplicationDate = generalSetup.GetApplicationDate(),
+        //        SystemDateTime = DateTime.Now
+        //    };
+
+        //    this.auditTrail.AddAuditTrail(audit);
+
+        //    //end of Audit section -------------------------------
+        //    context.SaveChanges();
+        //    return data;
+
+        //}
+
+        public FinanceTransactionViewModel BuildLoanDisbursmentPosting(LoanViewModel model)
+        {
+            FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
+
+
+            var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
+
+            loanTransaction.operationId = (int)OperationsEnum.LoanBooking;
+            loanTransaction.description = "Loan Disbursment Amount";
+            loanTransaction.valueDate = generalSetup.GetApplicationDate();
+            loanTransaction.transactionDate = loanTransaction.valueDate;
+            loanTransaction.currencyId = casa.CurrencyId;
+            loanTransaction.currencyRate = financeTransaction.GetExchangeRate(loanTransaction.currencyId, model.companyId);
+            loanTransaction.isApproved = true;
+            loanTransaction.postedBy = model.createdBy;
+            loanTransaction.approvedBy = model.createdBy;
+            loanTransaction.approvedDate = loanTransaction.transactionDate;
+            loanTransaction.approvedDateTime = DateTime.Now;
+            loanTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            loanTransaction.companyId = model.companyId;
+
+            FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            debit.glAccountId = model.casaAccountId;  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            debit.sourceReferenceNumber = model.loanReferenceNumber;
+            debit.casaAccountId = casa.CasaAccountId;
+            debit.debitAmount = model.principalAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = casa.BranchId;
+
+            var repaymentGL = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+            credit.glAccountId = repaymentGL;
+
+            credit.sourceReferenceNumber = model.loanReferenceNumber;
+            credit.casaAccountId = casa.CasaAccountId;
+            credit.debitAmount = 0;
+            credit.creditAmount = model.principalAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+
+
+            loanTransaction.transactionDetails.Add(debit);
+            loanTransaction.transactionDetails.Add(credit);
+
+            //financeTransaction.PostTransaction(loanTransaction);
+
+            // Audit Section ---------------------------            
+
+ 
+            return loanTransaction;
+
+        }
+
+        public List<FinanceTransactionViewModel> BuildLoanChargeFeesPosting(LoanViewModel loanDetails)
+        {
+            //foreach ( var model in data.loanChargeFee)
+            //{
+            //    //model.ledgerAccountId = data.
+            //}
+            //data.loanChargeFee
+
+            // LoanChargeFeeViewModel model = new LoanChargeFeeViewModel();
+
+            List<FinanceTransactionViewModel> output = new List<FinanceTransactionViewModel>();
+
+            foreach (var item in loanDetails.loanChargeFee)
+            {
+                FinanceTransactionViewModel feeTransaction = new FinanceTransactionViewModel();
+
+
+                var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == loanDetails.casaAccountId);
+
+                feeTransaction.operationId = (int)OperationsEnum.LoanBooking;
+                feeTransaction.description = "Fee charge";
+                feeTransaction.valueDate = generalSetup.GetApplicationDate();
+                feeTransaction.transactionDate = feeTransaction.valueDate;
+                feeTransaction.currencyId = casa.CurrencyId;
+                feeTransaction.currencyRate = financeTransaction.GetExchangeRate(feeTransaction.currencyId, loanDetails.companyId);
+                feeTransaction.isApproved = true;
+                feeTransaction.postedBy = loanDetails.createdBy;
+                feeTransaction.approvedBy = loanDetails.createdBy;
+                feeTransaction.approvedDate = feeTransaction.transactionDate;
+                feeTransaction.approvedDateTime = DateTime.Now;
+                feeTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                feeTransaction.companyId = loanDetails.companyId;
+
+                FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+                debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+                debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
+                debit.casaAccountId = casa.CasaAccountId;
+                //debit.debitAmount = (decimal)item.amount;
+                debit.creditAmount = 0;
+                debit.sourceBranchId = loanDetails.branchId;
+                debit.destinationBranchId = casa.BranchId;
+
+                var feeGL = this.context.tbl_Charge_Fee.Where(x => x.ChargeFeeId == item.chargeFeeId).Select(x => x.GLAccountId).FirstOrDefault();  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+                FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+                credit.glAccountId = feeGL;
+                credit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
+                credit.casaAccountId = casa.CasaAccountId;
+                credit.debitAmount = 0;
+                //credit.creditAmount = (decimal)item.amount;
+                credit.sourceBranchId = loanDetails.branchId;
+                credit.destinationBranchId = loanDetails.branchId;
+
+
+                feeTransaction.transactionDetails.Add(debit);
+                feeTransaction.transactionDetails.Add(credit);
+
+                output.Add(feeTransaction);
+            }
+
+            // Audit Section ---------------------------            
+
+            return output;
+
         }
 
         public ICollection<tbl_Loan_Covenant_Detail> AddLoanCovenantDetail(List<LoanCovenantDetailViewModel> covenantModel)
@@ -515,29 +802,70 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeId = l.LoanTypeId,
                             loanTypeName = l.tbl_Loan_Type.LoanTypeName,
                             loanTypeBatchId = l.LoanTypeBatchId,
-                            trancheBatchCode = l.TrancheBatchCode,
-                            equityContribution = l.EquityContribution,
-                            feePercent = l.FeePercent,
-                            firstPrincipalPaymentDate = l.FirstPrincipalPaymentDate,
-                            firstInterestPaymentDate = l.FirstInterestPaymentDate,
+                            trancheBatchCode = l.TrancheBatchCode ?? "Empty",
+                            equityContribution = l.EquityContribution ?? 0,
+                            feePercent = l.FeePercent ?? 0,
+                            firstPrincipalPaymentDate = l.FirstPrincipalPaymentDate ?? DateTime.Now,
+                            firstInterestPaymentDate = l.FirstInterestPaymentDate ?? DateTime.Now,
                             outstandingPrincipal = l.OutstandingPrincipal,
-                            principalAdditionCount = l.PrincipalAdditionCount,
-                            principalReductionCount = l.PrincipalReductionCount,
+                            principalAdditionCount = l.PrincipalAdditionCount ?? 0,
+                            principalReductionCount = l.PrincipalReductionCount ?? 0,
                             fixedPrincipal = l.FixedPrincipal,
                             profileLoan = l.ProfileLoan,
                             dischargeLetter = l.DischargeLetter,
                             suspendInterest = l.SuspendInterest,
                             customerSensitivityLevelId = l.CustomerSensitivityLevelId,
                             createdBy = l.CreatedBy,
-                            dateTimeCreated = l.DateTimeCreated
+                            dateTimeCreated = l.DateTimeCreated,
+                            isCamsol = context.tbl_Loan_Camsol.Where(x => x.LoanId == l.LoanId).Any()
                         });
             return data;
         }
 
-        public IEnumerable<LoanViewModel> GetLoanByCustomerId(int customerId)
+        public bool validateCamsol(int loanId)
+        {
+            var check = context.tbl_Loan_Camsol.Where(x => x.LoanId == loanId);
+
+            if (check.Any())
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId)
         {
             return GetAllLoans().Where(l => l.customerId == customerId);
         }
+
+        public IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId)
+        {
+            return GetAllLoans().Where(l => l.customerGroupId == customerGroupId);
+        }
+
+        public IQueryable<LoanRepaymentScheduleViewModel> RuningLoans(int customerId, int companyId)
+        {
+
+            var loans = GetLoansByCompanyId(companyId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.companyId == customerId)
+                .Select(c => new LoanRepaymentScheduleViewModel()
+                {
+                    principalRepayment = (decimal)c.outstandingPrincipal,
+                    interestAccrual = (decimal)c.outstandingPrincipal,
+                    customerId = c.customerId,
+                    principalAmount = c.principalAmount,
+                    effectiveDate = c.effectiveDate,
+                    interestRate = c.interestRate,
+                    loanId = c.loanId,
+                    productName = c.productAccountName,
+                    tenor = c.tenor,
+                    terminationDate = c.terminalDate
+                }).AsQueryable();
+            return loans;
+        }
+
+
+
 
         public LoanViewModel GetLoan(int loanId)
         {
@@ -1181,7 +1509,7 @@ namespace FintrakBanking.Repositories.Credit
                             feeIntervalId = c.FeeIntervalId,
                             feeIntervalName = c.tbl_Fee_Interval.FeeIntervalName,
                             feeTypeId = c.FeeTypeId,
-                           // feeTypeName = c.FeeTypeName
+                            //feeTypeName = c.FeeTypeName
 
                         }).ToList();
             return data;
@@ -1286,10 +1614,11 @@ namespace FintrakBanking.Repositories.Credit
                             customerGroupName = a.CustomerGroupId.HasValue ? a.tbl_Customer_Group.GroupName : "",
                             customerGroupCode = a.tbl_Customer_Group.GroupCode,
                             
+                            loanInformation = a.LoanInformation,
                             companyId = a.CompanyId,
                             branchId = (short)a.BranchId,
                             branchName = a.tbl_Branch.BranchName,
-
+                            tenor = a.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
                             relationshipManagerId = a.RelationshipManagerId,
@@ -1303,8 +1632,6 @@ namespace FintrakBanking.Repositories.Credit
                             //loanStatusName = a.tbl_Loan_Status.AccountStatus,
                             camReference = c.CAMRef,
                             loanDetails = c.LoanDetails,
-                            loanInformation = a.LoanInformation,
-                            tenor = a.Tenor,
                             productId = (short)a.ProductId,
                             productName = a.tbl_Product.ProductName,
 
@@ -1323,10 +1650,10 @@ namespace FintrakBanking.Repositories.Credit
 
                             loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId,
                             exchangeRate = a.ExchangeRate,
-                            nearestLandMark = a.NearestLandMark,
-                            nearestBusStop =a.NearestBusStop,
-                            longitude = a.Longitude,
-                            latitude = a.Latitude
+                            //nearestLandMark = a.NearestLandMark,
+                            //nearestBusStop =a.NearestBusStop,
+                            //longitude = a.Longitude,
+                            //latitude = a.Latitude
 
                         }).ToList();
             return data;
@@ -1378,6 +1705,35 @@ namespace FintrakBanking.Repositories.Credit
 
             return loans;
         }
+
+
+        #region CAM Approved Loan Applications
+        public IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId)
+        {
+            var data = (from c in context.tbl_Charge_Fee
+                        join p in context.tbl_Product_Charge_Fee
+                        on c.ChargeFeeId equals p.ChargeFeeId
+                        where p.ProductId == productId && p.Deleted == false
+                        select new ProductFeeViewModel
+                        {
+                            productFeeId = p.ProductFeeId,
+                            productId = p.ProductId,
+                            productName = p.tbl_Product.ProductName,
+                            feeId = c.ChargeFeeId,
+                            feeName = c.ChargeFeeName,
+                            feeTargetName = c.tbl_Fee_Target.FeeTargetName,
+                            feeIntervalName = c.tbl_Fee_Interval.FeeIntervalName,
+                            rateValue = (decimal) p.RateValue,
+                            dependentAmount = p.DependentAmount
+
+                        }).ToList();
+            return data;
+        }
+
+        
+
+
+        #endregion End of CAM Approved Loan Applications
 
     }
 

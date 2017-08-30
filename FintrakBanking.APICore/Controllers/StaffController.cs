@@ -3,7 +3,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Business;
+using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Linq;
 using System.Net;
@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -360,7 +361,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("staff/approval")]
-        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        public async Task<HttpResponseMessage> GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
             try
             {
@@ -371,7 +372,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
 
-                var data = repo.GoForApproval(entity);
+                var data = await repo.GoForApproval(entity);
 
                 if (data)
                 {
