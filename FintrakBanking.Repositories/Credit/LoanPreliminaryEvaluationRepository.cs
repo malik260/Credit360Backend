@@ -14,6 +14,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Customer;
+using System.ServiceModel;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -67,7 +68,7 @@ namespace FintrakBanking.Repositories.Credit
                 EnvironmentalImpact = model.environmentalImpact,
                 ExistingExposure = model.existingExposure,
                 RegistrationNumber = model.registrationNumber,
-                TaxIdentificationNumber = model.registrationNumber,
+                TaxIdentificationNumber = model.taxIdentificationNumber,
                 ImplementationArrangements = model.implementationArrangements,
                 MarketDemand = model.marketDemand,
                 OwnershipStructure = model.ownershipStructure,
@@ -75,7 +76,6 @@ namespace FintrakBanking.Repositories.Credit
                 ProjectDescription = model.projectDescription,
                 ProjectFinancingPlan = model.projectFinancingPlan,
                 ProposedTermsAndConditions = model.proposedTermsAndConditions,
-                RiskMitigants = model.riskMitigants,
                 RisksAndConcerns = model.risksAndConcerns,
                 PrudentialExposureLimitImplications = model.prudentialExposureLimitImplications,
                 RelationshipManagerId = model.relationshipManagerId,
@@ -286,9 +286,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from p in context.tbl_Loan_Preliminary_Evaluation
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
-                        where p.IsCurrent == false && p.SentForLoanApplication == false && 
-                        p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
-                        
+                        where p.IsCurrent == false && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved 
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending 
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
@@ -361,58 +360,55 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public async Task<bool> UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
         {
-            var penRecord = context.tbl_Loan_Preliminary_Evaluation.Find(loanPenId);
+            if (model == null)
+            {
+                return false;
+            }
 
             bool output = false;
 
-            penRecord.PreliminaryEvaluationCode = model.preliminaryEvaluationCode;
-            penRecord.BankRole = model.bankRole;
-            penRecord.BranchId = model.userBranchId;
-            penRecord.BusinessProfile = model.businessProfile;
-            penRecord.ClientDescription = model.clientDescription;
-            penRecord.CollateralArrangement = model.collateralArrangement;
-            penRecord.CommercialViabilityAssessment = model.commercialViabilityAssessment;
-            penRecord.CompanyId = model.companyId;
-            penRecord.CustomerId = model.customerId;
-            penRecord.EnvironmentalImpact = model.environmentalImpact;
-            penRecord.ExistingExposure = model.existingExposure;
-            penRecord.RegistrationNumber = model.registrationNumber;
-            penRecord.TaxIdentificationNumber = model.registrationNumber;
-            penRecord.ImplementationArrangements = model.implementationArrangements;
-            penRecord.MarketDemand = model.marketDemand;
-            penRecord.OwnershipStructure = model.ownershipStructure;
-            penRecord.PortfolioStrategicAlignment = model.portfolioStrategicAlignment;
-            penRecord.ProjectDescription = model.projectDescription;
-            penRecord.ProjectFinancingPlan = model.projectFinancingPlan;
-            penRecord.ProposedTermsAndConditions = model.proposedTermsAndConditions;
-            penRecord.RisksAndConcerns = model.risksAndConcerns;
-            penRecord.PrudentialExposureLimitImplications = model.prudentialExposureLimitImplications;
-            penRecord.RelationshipManagerId = model.relationshipManagerId;
-            penRecord.RelationshipOfficerId = model.relationshipOfficerId;
-            penRecord.ApprovalStatusId = (short)ApprovalStatusEnum.Pending;
-            penRecord.IsCurrent = model.isCurrent;
-            penRecord.SentForEvaluation = model.sentForEvaluation;
-            penRecord.SentForLoanApplication = model.sentForLoanApplication;
-            penRecord.DateTimeUpdated = DateTime.Now;
-            penRecord.CreatedBy = model.createdBy;
+            var penRecord = context.tbl_Loan_Preliminary_Evaluation.Find(loanPenId);
 
-            if (model.sentForEvaluation)
+            if (penRecord != null)
             {
-                penRecord.ApprovalStatusId = (short)ApprovalStatusEnum.Processing;
-
-                var entity = new ApprovalViewModel
-                {
-                    staffId = penRecord.CreatedBy,
-                    companyId = penRecord.CompanyId,
-                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                    targetId = loanPenId,
-                    operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
-                    BranchId = model.userBranchId
-                };
-
-                var response = workFlow.LogForApproval(entity);
+                penRecord.PreliminaryEvaluationCode = model.preliminaryEvaluationCode;
+                penRecord.BankRole = model.bankRole;
+                penRecord.BranchId = model.userBranchId;
+                penRecord.BusinessProfile = model.businessProfile;
+                penRecord.ClientDescription = model.clientDescription;
+                penRecord.CollateralArrangement = model.collateralArrangement;
+                penRecord.CommercialViabilityAssessment = model.commercialViabilityAssessment;
+                penRecord.CompanyId = model.companyId;
+                penRecord.CustomerId = model.customerId;
+                penRecord.EnvironmentalImpact = model.environmentalImpact;
+                penRecord.ExistingExposure = model.existingExposure;
+                penRecord.RegistrationNumber = model.registrationNumber;
+                penRecord.TaxIdentificationNumber = model.taxIdentificationNumber;
+                penRecord.ImplementationArrangements = model.implementationArrangements;
+                penRecord.MarketDemand = model.marketDemand;
+                penRecord.OwnershipStructure = model.ownershipStructure;
+                penRecord.PortfolioStrategicAlignment = model.portfolioStrategicAlignment;
+                penRecord.ProjectDescription = model.projectDescription;
+                penRecord.ProjectFinancingPlan = model.projectFinancingPlan;
+                penRecord.ProposedTermsAndConditions = model.proposedTermsAndConditions;
+                penRecord.RisksAndConcerns = model.risksAndConcerns;
+                penRecord.PrudentialExposureLimitImplications = model.prudentialExposureLimitImplications;
+                penRecord.RelationshipManagerId = model.relationshipManagerId;
+                penRecord.RelationshipOfficerId = model.relationshipOfficerId;
+                penRecord.ApprovalStatusId = model.sentForEvaluation ? (short)ApprovalStatusEnum.Processing
+                    : (short)ApprovalStatusEnum.Pending;
+                penRecord.IsCurrent = model.isCurrent;
+                penRecord.SentForEvaluation = model.sentForEvaluation;
+                penRecord.SentForLoanApplication = model.sentForLoanApplication;
+                penRecord.DateTimeUpdated = DateTime.Now;
+                penRecord.CreatedBy = model.createdBy;
+            }
+            else
+            {
+                return false;
             }
 
             var audit = new tbl_Audit
@@ -432,7 +428,24 @@ namespace FintrakBanking.Repositories.Credit
             this.auditTrail.AddAuditTrail(audit);
             // Audit Section ---------------------------
 
-            return output = await context.SaveChangesAsync() > 0;
+            output = context.SaveChanges() > 0;
+
+            if (model.sentForEvaluation)
+            {
+                var entity = new ApprovalViewModel
+                {
+                    staffId = penRecord.CreatedBy,
+                    companyId = penRecord.CompanyId,
+                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                    targetId = loanPenId,
+                    operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
+                    BranchId = model.userBranchId
+                };
+
+                var response = workFlow.LogForApproval(entity);
+            }
+
+            return output;
 
         }
 
@@ -442,8 +455,15 @@ namespace FintrakBanking.Repositories.Credit
 
             bool output = false;
 
-            penRecord.SentForLoanApplication = model.sentForLoanApplication;
-            penRecord.DateTimeUpdated = DateTime.Now;
+            if (penRecord != null)
+            {
+                penRecord.SentForLoanApplication = model.sentForLoanApplication;
+                penRecord.DateTimeUpdated = DateTime.Now;
+            }
+            else
+            {
+                return false;
+            }
 
             var audit = new tbl_Audit
             {
@@ -456,7 +476,6 @@ namespace FintrakBanking.Repositories.Credit
                 ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = loanPenId
-
             };
 
             this.auditTrail.AddAuditTrail(audit);

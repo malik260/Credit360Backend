@@ -304,14 +304,14 @@ namespace FintrakBanking.Repositories.Credit
                 TrancheBatchCode = entity.trancheBatchCode,
                 EquityContribution = entity.equityContribution,
                 FeePercent = entity.feePercent,
-                OutstandingPrincipal = entity.outstandingPrincipal.Value,
+                OutstandingPrincipal = entity.outstandingPrincipal,
                 PrincipalAdditionCount = entity.principalAdditionCount,
                 PrincipalReductionCount = entity.principalReductionCount,
                 FixedPrincipal = entity.fixedPrincipal,
                 ProfileLoan = entity.profileLoan,
                 CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
                 DateCreated = generalSetup.GetApplicationDate(),
-                CreatedBy = (int)entity.createdBy,
+                CreatedBy = entity.createdBy,
                 DateTimeCreated = generalSetup.GetApplicationDate(),
                 tbl_Loan_Covenant_Detail = AddLoanCovenantDetail(entity.loanCovenant),
                 //tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
@@ -520,7 +520,7 @@ namespace FintrakBanking.Repositories.Credit
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
             loanTransaction.currencyId = casa.CurrencyId;
-            loanTransaction.currencyRate = financeTransaction.GetExchangeRate(loanTransaction.currencyId, loanTransaction.valueDate, model.companyId);
+            loanTransaction.currencyRate = financeTransaction.GetExchangeRate(loanTransaction.currencyId, model.companyId);
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = model.createdBy;
             loanTransaction.approvedBy = model.createdBy;
@@ -586,7 +586,7 @@ namespace FintrakBanking.Repositories.Credit
                 feeTransaction.valueDate = generalSetup.GetApplicationDate();
                 feeTransaction.transactionDate = feeTransaction.valueDate;
                 feeTransaction.currencyId = casa.CurrencyId;
-                feeTransaction.currencyRate = financeTransaction.GetExchangeRate(feeTransaction.currencyId, feeTransaction.valueDate, loanDetails.companyId);
+                feeTransaction.currencyRate = financeTransaction.GetExchangeRate(feeTransaction.currencyId, loanDetails.companyId);
                 feeTransaction.isApproved = true;
                 feeTransaction.postedBy = loanDetails.createdBy;
                 feeTransaction.approvedBy = loanDetails.createdBy;
@@ -767,7 +767,7 @@ namespace FintrakBanking.Repositories.Credit
                             feePercent = l.FeePercent ?? 0,
                             firstPrincipalPaymentDate = l.FirstPrincipalPaymentDate ?? DateTime.Now,
                             firstInterestPaymentDate = l.FirstInterestPaymentDate ?? DateTime.Now,
-                            outstandingPrincipal = l.OutstandingPrincipal ?? 0,
+                            outstandingPrincipal = l.OutstandingPrincipal,
                             principalAdditionCount = l.PrincipalAdditionCount ?? 0,
                             principalReductionCount = l.PrincipalReductionCount ?? 0,
                             fixedPrincipal = l.FixedPrincipal,
