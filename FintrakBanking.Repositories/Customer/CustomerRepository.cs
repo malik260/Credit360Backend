@@ -421,6 +421,7 @@ namespace FintrakBanking.Repositories.Customer
                            paidUpCapital = (int)d.PaidUpCapital,
                            authorizedCapital = (int) d.AuthorisedCapital
 
+
                        }).ToList(),
                        CustomerIdentification = context.tbl_Customer_Identification.Where(e => e.CustomerId == a.CustomerId).Select(e => new CustomerIdentificationViewModels()
                        {

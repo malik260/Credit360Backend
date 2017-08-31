@@ -18,6 +18,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Covenant_Detail = new HashSet<tbl_Loan_Covenant_Detail>();
             tbl_Loan_Fee = new HashSet<tbl_Loan_Fee>();
             tbl_Loan_Guarantor = new HashSet<tbl_Loan_Guarantor>();
+
             tbl_Loan_Schedule_Daily = new HashSet<tbl_Loan_Schedule_Daily>();
             tbl_Loan_Schedule_Periodic = new HashSet<tbl_Loan_Schedule_Periodic>();
         }

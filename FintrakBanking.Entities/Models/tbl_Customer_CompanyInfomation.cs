@@ -47,5 +47,6 @@ namespace FintrakBanking.Entities.Models
         public int? AuthorisedCapital { get; set; }
 
         public virtual tbl_Customer tbl_Customer { get; set; }
+
     }
 }

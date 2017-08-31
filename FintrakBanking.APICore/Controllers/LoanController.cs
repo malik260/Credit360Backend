@@ -64,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
 
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.RuningLoans( id, token.GetCompanyId);
+                var data = repo.RunningLoans( id, token.GetCompanyId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

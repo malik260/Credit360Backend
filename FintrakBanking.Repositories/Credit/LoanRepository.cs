@@ -1,29 +1,25 @@
-﻿using FintrakBanking.Interfaces.Credit;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Customer;
+using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.Setups.General;
+using NodaTime;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using FintrakBanking.ViewModels;
-using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.Common;
-using FintrakBanking.Common.Enum;
-using System.ComponentModel.Composition;
 using System.Data;
-using NodaTime;
-using FintrakBanking.ViewModels.Setups.General;
-using FintrakBanking.Interfaces.Customer;
-using System.Threading.Tasks;
-using FintrakBanking.ViewModels.Finance;
-using FintrakBanking.Interfaces.Finance;
-using FintrakBanking.Repositories.Finance;
-using FintrakBanking.ViewModels.Customer;
+using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    using wct = XLeratorDLL_financial.XLeratorDLL_financial;
     using FinancialTypes = XLeratorDLL_financial.FinancialTypes;
+    using wct = XLeratorDLL_financial.XLeratorDLL_financial;
 
     public class LoanRepository : ILoanRepository
     {
@@ -306,8 +302,8 @@ namespace FintrakBanking.Repositories.Credit
                 ApprovedAmount = (decimal)entity.approvedAmount, 
                 OperationId = entity.operationId,
                 TrancheBatchCode = entity.trancheBatchCode,
-                EquityContribution = (decimal)entity.equityContribution,
 
+                EquityContribution = (decimal)entity.equityContribution,
                 OutstandingPrincipal = entity.outstandingPrincipal,
                 PrincipalAdditionCount = entity.principalAdditionCount,
                 PrincipalReductionCount = entity.principalReductionCount,
@@ -315,7 +311,7 @@ namespace FintrakBanking.Repositories.Credit
                 ProfileLoan = entity.profileLoan,
                 CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
                 DateCreated = generalSetup.GetApplicationDate(),
-                CreatedBy = (int)entity.createdBy,
+                CreatedBy = entity.createdBy,
                 DateTimeCreated = generalSetup.GetApplicationDate(),
                 tbl_Loan_Covenant_Detail = AddLoanCovenantDetail(entity.loanCovenant),
                 tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
@@ -836,7 +832,7 @@ namespace FintrakBanking.Repositories.Credit
             return GetAllLoans().Where(l => l.customerGroupId == customerGroupId);
         }
 
-        public IQueryable<LoanRepaymentScheduleViewModel> RuningLoans(int customerId, int companyId)
+        public IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId)
         {
 
             var loans = GetLoansByCompanyId(companyId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.companyId == customerId)
@@ -986,7 +982,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IQueryable<LoanViewModel> GetLoansByCompanyId(int companyId)
         {
-            return (context.tbl_Loan.Include("tbl_Customer").Include("tbl_CASA_AccountStatus")
+            return (context.tbl_Loan //.Include("tbl_Customer").Include("tbl_CASA_AccountStatus")
                 .Where(x => x.CompanyId == companyId)
                 .Select(o => new LoanViewModel
                 {

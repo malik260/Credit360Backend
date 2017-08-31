@@ -14,14 +14,14 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal principalAmount { get; set; }
         public decimal interestAccrual { get; set; }
         public string productName { get; set; }
-        public double  interestRate { get; set; }
+        public double interestRate { get; set; }
         public double tenor { get; set; }
         public DateTime terminationDate { get; set; }
         public DateTime effectiveDate { get; set; }
-        public string totalRepayment { get { return (principalRepayment + interestAccrual).ToString("#,#.00#");}}
+        public string totalRepayment { get { return (principalRepayment + interestAccrual).ToString("#,#.00#"); } }
     }
 
-        public class LoanViewModel : GeneralEntity
+    public class LoanViewModel : GeneralEntity
     {
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -62,8 +62,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public bool hasLien { get; set; }
         public bool hasOfferLetter { get; set; }
-        public int? customerGroupId { get; set; } 
-        public decimal ? groupAmount { get; set; }
+        public int? customerGroupId { get; set; }
+        public decimal? groupAmount { get; set; }
         public short loanTypeId { get; set; }
         public int? loanTypeBatchId { get; set; }
         public string trancheBatchCode { get; set; }
@@ -111,11 +111,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanDetails { get; set; }
         public string camReference { get; set; }
         public string customerCode { get; set; }
-        public short? productId { get; set; }
-        
+
     }
 
     public class LoanChargeFeeViewModel :ChargeRangeViewModel
+
     {
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
@@ -127,7 +127,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal feeDependentAmount { get; set; }
         public decimal feeAmount { get; set; }
         public short feeIntervalId { get; set; }
-        public string feeIntervalName{ get; set; }
+        public string feeIntervalName { get; set; }
         public int feeTypeId { get; set; }
         public string feeTypeName { get; set; }
         public bool isIntegralFee { get; set; }
@@ -138,7 +138,6 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int loanCollateralMappingId { get; set; }
         public int? loanId { get; set; }
-        public int collateralCustomerId { get; set; }
         public int loanApplicationId { get; set; }
 
     }
@@ -163,7 +162,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-        public class LoanSearchViewModel
+    public class LoanSearchViewModel
     {
         public string customerName { get; set; }
         public string loanName { get; set; }

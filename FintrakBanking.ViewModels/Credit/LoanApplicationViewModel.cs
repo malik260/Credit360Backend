@@ -23,7 +23,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
 
-        public short? branchId { get; set; }
+        public short branchId { get; set; }
         public short? productClassId { get; set; }
 
         public int? customerGroupId { get; set; }
