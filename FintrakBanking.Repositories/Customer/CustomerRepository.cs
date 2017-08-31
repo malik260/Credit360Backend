@@ -418,8 +418,8 @@ namespace FintrakBanking.Repositories.Customer
                            registeredOffice = d.RegisteredOffice,
                            previousCreditRating = d.PreviousCreditRating,
                            registrationNumber = d.RegistrationNumber,
-                           paidUpCapital = d.PaidUpCapital,
-                           authorizedCapital = d.AuthorizedCapital
+                           paidUpCapital = (int)d.PaidUpCapital,
+                           authorizedCapital = (int) d.AuthorisedCapital
 
                        }).ToList(),
                        CustomerIdentification = context.tbl_Customer_Identification.Where(e => e.CustomerId == a.CustomerId).Select(e => new CustomerIdentificationViewModels()
@@ -452,8 +452,8 @@ namespace FintrakBanking.Repositories.Customer
                            customerId = s.CustomerId,
                            customerName = s.Firstname + " " + s.Surname,
                            address = s.Address,
-                           phoneNumber = s.Phonenumber,
-                           email = s.Email
+                           phoneNumber = s.PhoneNumber,
+                           email = s.EmailAddress
                        }).ToList(),
    //                    CustomerClientOrSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId).Select(cs => new CustomerClientOrSupplierViewModels()
    //                    {

@@ -12,8 +12,8 @@
         public string corporateBusinessCategory { get; set; }
         public string creditRating { get; set; }
         public string previousCreditRating { get; set; }
-        public string paidUpCapital { get; set; }
-        public string authorizedCapital { get; set; }
+        public int paidUpCapital { get; set; }
+        public int authorizedCapital { get; set; }
        
     }
 
