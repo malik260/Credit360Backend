@@ -44,5 +44,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateTimeUpdated { get; set; }
 
         public virtual tbl_Customer_Company_DirectorType tbl_Customer_Company_DirectorType { get; set; }
+        public string Address { get; set; }
+        public string PhoneNumber { get; set; }
+        public string EmailAddress { get; set; }
     }
 }

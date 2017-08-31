@@ -191,7 +191,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.branchId = (short)token.GetBranchId;
 
                 entity.misCode = "001";
-                entity.teamMiscode = "004";
+                entity.teamMisCode = "004";
 
                 var response = await repoApply.AddLoanApplication(entity);
                 if (response)

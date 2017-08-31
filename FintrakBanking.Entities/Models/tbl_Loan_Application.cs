@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CustomerId { get; set; }
 
-        public short? BranchId { get; set; }
+        public short BranchId { get; set; }
 
         public short CurrencyId { get; set; }
 

@@ -18,6 +18,7 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public int? operationId { get; set; }
         public decimal? amount { get; set; }
         public double? rate { get; set; }
+        public short feeTypeId { get; set; }
         public short valueSource { get; set; }
         public int ledgerAccountId { get; set; }
         public bool recurring { get; set; }

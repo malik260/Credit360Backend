@@ -71,8 +71,13 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
                             relationshipManagerId = a.RelationshipManagerId,
                             relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-                            misCode = a.MISCode,                  
-                            teamMiscode = a.TeamMISCode,
+
+                            misCode = a.MISCode,
+
+                            productId = (short)a.ProductId,
+                            productName = a.tbl_Product.ProductName,
+                            teamMisCode = a.TeamMISCode,
+
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
@@ -162,8 +167,11 @@ namespace FintrakBanking.Repositories.Credit
                            // tenorModeId = a.TenorModeId,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipManagerId = a.RelationshipManagerId,
-                            misCode = a.MISCode, 
-                            teamMiscode = a.TeamMISCode,
+
+                            misCode = a.MISCode,
+                            productId = (short)a.ProductId,
+                            teamMisCode = a.TeamMISCode,
+
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
@@ -228,7 +236,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = new tbl_Loan_Application
             {
-                ApplicationReferenceNumber = refNumber, 
+                ApplicationReferenceNumber = refNumber,
+                ProductId = loan.productId,
                 LoanTypeId = loan.loanTypeId,
                 LoanStatusId = loanStatusId,
                 CompanyId = loan.companyId,
@@ -238,7 +247,7 @@ namespace FintrakBanking.Repositories.Credit
                 RelationshipManagerId = loan.relationshipManagerId,
                 MISCode = loan.misCode,
                 CurrencyId = loan.currencyId,
-                TeamMISCode = loan.teamMiscode,
+                TeamMISCode = loan.teamMisCode,
                 InterestRate = loan.interestRate,
                 PrincipalAmount = loan.principalAmount,
                 ApplicationDate = genSetup.GetApplicationDate(),

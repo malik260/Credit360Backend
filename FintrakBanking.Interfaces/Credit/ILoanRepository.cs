@@ -31,7 +31,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
 
-        IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId);
+        //IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId);
 
         int CalculateNumberOfInstallments(TenorModeEnum tenorModeId, short frequencyTypeId, int tenor);
 
@@ -53,6 +53,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetBookedLoanDetailsByCustomerCode(string customerCode, int companyId);
 
         IEnumerable<LoanViewModel> GetBookedLoanDetailsByLoanReferenceNumber(string loanReferenceNumber, int companyId);
+        IEnumerable<LoanChargeFeeViewModel> GetProductFees(int productId);
+        IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId );
 
         IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId);
     }

@@ -9,6 +9,7 @@ namespace FintrakBanking.Interfaces.Customer
     public interface ICustomerRepository
     {
          CustomerViewModels GetCustomer(int custormerId);
+        IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId);
 
         IEnumerable<CustomerViewModels> GetCustomerByBranchId(int branchId);
 
