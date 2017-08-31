@@ -839,7 +839,7 @@ namespace FintrakBanking.Repositories.Credit
             return GetAllLoans().Where(l => l.customerGroupId == customerGroupId);
         }
 
-        public IQueryable<LoanRepaymentScheduleViewModel> RuningLoans(int customerId, int companyId)
+        public IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId)
         {
 
             var loans = GetLoansByCompanyId(companyId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.companyId == customerId)
