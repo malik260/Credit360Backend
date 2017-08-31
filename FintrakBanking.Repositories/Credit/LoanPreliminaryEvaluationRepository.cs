@@ -75,7 +75,7 @@ namespace FintrakBanking.Repositories.Credit
                 ProjectDescription = model.projectDescription,
                 ProjectFinancingPlan = model.projectFinancingPlan,
                 ProposedTermsAndConditions = model.proposedTermsAndConditions,
-                RiskMitigants = model.riskMitigants,
+                //RiskMitigants = model.riskMitigants,
                 RisksAndConcerns = model.risksAndConcerns,
                 PrudentialExposureLimitImplications = model.prudentialExposureLimitImplications,
                 RelationshipManagerId = model.relationshipManagerId,

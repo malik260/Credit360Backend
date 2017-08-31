@@ -14,6 +14,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 using System.ComponentModel.Composition;
+using FintrakBanking.Interfaces.CASA;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -23,12 +24,14 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IWorkFlowRepository workFlow;
+        private ICasaRepository casa;
 
-        public LoanApplicationRepository(IAuditTrailRepository _auditTrail,
+        public LoanApplicationRepository(IAuditTrailRepository _auditTrail, ICasaRepository _casa,
                                     IGeneralSetupRepository _genSetup, IWorkFlowRepository _workFlow,
         FinTrakBankingContext _context)
         {
             this.context = _context;
+            this.casa = _casa;
             auditTrail = _auditTrail;
             this.genSetup = _genSetup;
             workFlow = _workFlow;
@@ -216,30 +219,34 @@ namespace FintrakBanking.Repositories.Credit
         public async Task<bool> AddLoanApplication(LoanApplicationViewModel loan)
         {
             bool isGroupLoan = false;
-
+            int response = 0;
             if (loan.loanTypeId > (int)LoanTypeEnum.CustomerGroup )
             {
                 isGroupLoan = true;
             }
 
-            string refNumber = GenerateLoanReference(loan.customerId.Value);
+            //     string refNumber = GenerateLoanReference(loan.customerId.Value);
+
+          var  casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
 
             var loanStatusId = (short)LoanStatusEnum.Inactive;
 
             var data = new tbl_Loan_Application
             {
-                ApplicationReferenceNumber = refNumber, 
+                ApplicationReferenceNumber = loan.applicationReferenceNumber, 
                 LoanTypeId = loan.loanTypeId,
                 LoanStatusId = loanStatusId,
                 CompanyId = loan.companyId,
                 BranchId = loan.branchId,
                 Tenor = loan.tenor, 
+                 CasaAccountId = casaAccountId,
                 RelationshipOfficerId = loan.relationshipOfficerId,
                 RelationshipManagerId = loan.relationshipManagerId,
                 MISCode = loan.misCode,
                 CurrencyId = loan.currencyId,
                 TeamMISCode = loan.teamMiscode,
                 InterestRate = loan.interestRate,
+                ProductId = loan.productId,
                 PrincipalAmount = loan.principalAmount,
                 ApplicationDate = genSetup.GetApplicationDate(),
                 LoanInformation = loan.loanInformation,
@@ -254,6 +261,11 @@ namespace FintrakBanking.Repositories.Credit
                 SubmittedForAppraisal = loan.submittedForAppraisal
             };
 
+            if (loan.LoanApplicationCollateral.Count > 0)
+            {
+                LoanApplicationCollateral(loan.LoanApplicationCollateral);
+            }
+
             if (isGroupLoan)
             {
                 data.CustomerGroupId = loan.customerId;
@@ -265,62 +277,95 @@ namespace FintrakBanking.Repositories.Credit
                 data.CustomerGroupId = null;
             }
 
-            context.tbl_Loan_Application.Add(data);
-
-            ///////////////////////////
-
-           
-
-            //////////////////////////////
-
-
-            // Audit Section ---------------------------            
-
-            var audit = new tbl_Audit
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.LoanApplication, loan.companyId))
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanApplication,
-                StaffId = loan.createdBy,
-                BranchId = (short)loan.userBranchId,
-                Detail = $"Applied for loan with reference number: {refNumber}",
-                IPAddress = loan.userIPAddress,
-                Url = loan.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = loan.loanApplicationId
-                 
-            };
-
-            this.auditTrail.AddAuditTrail(audit);
-
-            //end of Audit section -------------------------------
-            var  response = await context.SaveChangesAsync()  ;
-
-            // send for approval
-
-            if (response > 0)
-            {
-                var wf = new ApprovalViewModel
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    companyId = data.CompanyId,
-                    operationId = (int)OperationsEnum.LoanApplication,
-                    staffId = data.CreatedBy,
-                    targetId = data.LoanApplicationId,
-                    approvalStatusId =(short)ApprovalStatusEnum.Pending,
-                    
-                 
-                };
-               var result= workFlow.LogForApproval(wf);
-              if(  result.Item1)
-                {
-                    return response > 0;
+                    try
+                    {
+                        context.tbl_Loan_Application.Add(data);
+
+                        // Audit Section ---------------------------            
+                        var audit = new tbl_Audit
+                        {
+                            AuditTypeId = (short)AuditTypeEnum.LoanApplication,
+                            StaffId = loan.createdBy,
+                            BranchId = (short)loan.userBranchId,
+                            Detail = $"Applied for loan with reference number: {loan.applicationReferenceNumber}",
+                            IPAddress = loan.userIPAddress,
+                            Url = loan.applicationUrl,
+                            ApplicationDate = genSetup.GetApplicationDate(),
+                            SystemDateTime = DateTime.Now,
+                            TargetId = loan.loanApplicationId
+
+                        };
+
+                        this.auditTrail.AddAuditTrail(audit);
+
+                        //end of Audit section -------------------------------
+
+
+                        response = await context.SaveChangesAsync();
+
+                        // send for approval
+
+                        if (response > 0)
+                        {
+                            var wf = new ApprovalViewModel
+                            {
+                                companyId = data.CompanyId,
+                                operationId = (int)OperationsEnum.LoanApplication,
+                                staffId = data.CreatedBy,
+                                targetId = data.LoanApplicationId,
+                                approvalStatusId = (short)ApprovalStatusEnum.Pending,
+                            };
+                            var result = workFlow.LogForApproval(wf);
+                            if (result.Item1)
+                            {
+                                return response > 0;
+                            }
+                        }
+                        trans.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new Exception(ex.Message);
+                    }
                 }
+               
             }
             return response > 0;
-            
+        }
+        private void LoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity)
+        {
+             foreach (var item in entity)
+            {
+                var loanCollateral = new tbl_Loan_Application_Collateral()
+                {
+                    CertificateOfOwnership = item.certificateOfOwnership,
+                    CityId = item.cityId,
+                    CollateralTypeId = item.collateralTypeId,
+                    CreatedBy = item.createdBy,
+                    DateTimeCreated = genSetup.GetApplicationDate(),
+                    OtherInformations = item.otherInformations,
+                    Latitude = item.latitude,
+                    Longitude = item.longitude,
+                    LocationAddress = item.locationAddress,
+                    NearestBusStop = item.nearestBusStop,
+                    NearestLandmark = item.nearestLandmark,
+                    DocumentTitle = item.documentTitle,
+                    LoanApplicationId = item.loanApplicationId,
+                     SystemDateTime = DateTime.Now
+                    
+                };
+                context.tbl_Loan_Application_Collateral.Add(loanCollateral);
+            }
         }
 
-       
-        private string GenerateLoanReference(int customerId)
+
+
+            private string GenerateLoanReference(int customerId)
         {
             string code = "";
             int data = 0;
