@@ -62,7 +62,7 @@
     <Compile Include="Customer\ICustomerFSRatioRepository.cs" />
     <Compile Include="Customer\ICustomerGroupRepository.cs" />
     <Compile Include="Customer\ICustomerRepository.cs" />
-    <Compile Include="Customer\ILoanCovenantRepository.cs" />
+    <Compile Include="Credit\ILoanCovenantRepository.cs" />
     <Compile Include="ErrorLogger\IErrorLogRepository.cs" />
     <Compile Include="Finance\IFinanceTransactionRepository.cs" />
     <Compile Include="Helper\ICultureHelper.cs" />

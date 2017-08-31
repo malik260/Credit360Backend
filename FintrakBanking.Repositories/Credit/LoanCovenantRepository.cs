@@ -8,7 +8,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Common.Enum;
-using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Credit;
 using System.ComponentModel.Composition;
 
 namespace FintrakBanking.Repositories.Customer

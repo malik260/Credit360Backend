@@ -79,7 +79,6 @@
     <Compile Include="Customer\CustomerPhoneContactViewModels.cs" />
     <Compile Include="Customer\CustomerTypeViewModels.cs" />
     <Compile Include="Customer\CustomerViewModels.cs" />
-    <Compile Include="Customer\LoanCovenantDetailViewModel.cs" />
     <Compile Include="ErrorLogger\ErrorViewModel.cs" />
     <Compile Include="Finance\CasaLienViewModel.cs" />
     <Compile Include="Finance\FinanceTransactionViewModel.cs" />

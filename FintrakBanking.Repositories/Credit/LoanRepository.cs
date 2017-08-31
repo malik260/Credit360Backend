@@ -1,29 +1,25 @@
-﻿using FintrakBanking.Interfaces.Credit;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Customer;
+using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.Setups.General;
+using NodaTime;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using FintrakBanking.ViewModels;
-using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.Common;
-using FintrakBanking.Common.Enum;
-using System.ComponentModel.Composition;
 using System.Data;
-using NodaTime;
-using FintrakBanking.ViewModels.Setups.General;
-using FintrakBanking.Interfaces.Customer;
-using System.Threading.Tasks;
-using FintrakBanking.ViewModels.Finance;
-using FintrakBanking.Interfaces.Finance;
-using FintrakBanking.Repositories.Finance;
-using FintrakBanking.ViewModels.Customer;
+using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    using wct = XLeratorDLL_financial.XLeratorDLL_financial;
     using FinancialTypes = XLeratorDLL_financial.FinancialTypes;
+    using wct = XLeratorDLL_financial.XLeratorDLL_financial;
 
     public class LoanRepository : ILoanRepository
     {
