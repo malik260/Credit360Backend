@@ -67,7 +67,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short loanTypeId { get; set; }
         public int? loanTypeBatchId { get; set; }
         public string trancheBatchCode { get; set; }
-        public decimal? equityContribution { get; set; }
+        public decimal  equityContribution { get; set; }
         public decimal? feePercent { get; set; }
         public DateTime? firstPrincipalPaymentDate { get; set; }
         public DateTime? firstInterestPaymentDate { get; set; }

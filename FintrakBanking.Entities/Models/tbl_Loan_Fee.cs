@@ -27,6 +27,20 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsIntegralFee { get; set; }
 
+        public int CreatedBy { get; set; }
+
+        public DateTime DateTimeCreated { get; set; }
+
+        public int? LastUpdatedBy { get; set; }
+
+        public DateTime? DateTimeUpdated { get; set; }
+
+        public bool Deleted { get; set; }
+
+        public int? DeletedBy { get; set; }
+
+        public DateTime? DateTimeDeleted { get; set; }
+
         public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
 
         public virtual tbl_Loan tbl_Loan { get; set; }

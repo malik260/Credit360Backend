@@ -6,27 +6,34 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Type")]
-    public partial class tbl_Loan_Type
+    [Table("core.tbl_Day_Count_Convention")]
+    public partial class tbl_Day_Count_Convention
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Type()
+        public tbl_Day_Count_Convention()
         {
             tbl_Loan = new HashSet<tbl_Loan>();
-            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
+            tbl_Product = new HashSet<tbl_Product>();
+            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short LoanTypeId { get; set; }
+        public short DayCountConventionId { get; set; }
 
+        [Required]
         [StringLength(50)]
-        public string LoanTypeName { get; set; }
+        public string DayCountConventionName { get; set; }
+
+        public int DaysInAYear { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
+        public virtual ICollection<tbl_Product> tbl_Product { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
     }
 }

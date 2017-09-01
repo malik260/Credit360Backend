@@ -17,7 +17,9 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Collateral_Mapping = new HashSet<tbl_Loan_Collateral_Mapping>();
             tbl_Loan_Covenant_Detail = new HashSet<tbl_Loan_Covenant_Detail>();
             tbl_Loan_Fee = new HashSet<tbl_Loan_Fee>();
+            tbl_Loan_Guarantor = new HashSet<tbl_Loan_Guarantor>();
             tbl_Loan_Schedule_Daily = new HashSet<tbl_Loan_Schedule_Daily>();
+            tbl_Loan_Schedule_Irregular_Input = new HashSet<tbl_Loan_Schedule_Irregular_Input>();
             tbl_Loan_Schedule_Periodic = new HashSet<tbl_Loan_Schedule_Periodic>();
         }
 
@@ -46,11 +48,11 @@ namespace FintrakBanking.Entities.Models
 
         public int Tenor { get; set; }
 
-        public short PrincipalFrequencyTypeId { get; set; }
+        public short SubSectorId { get; set; }
 
-        public short InterestFrequencyTypeId { get; set; }
+        public short? PrincipalFrequencyTypeId { get; set; }
 
-        public short FeeFrequencyTypeId { get; set; }
+        public short? InterestFrequencyTypeId { get; set; }
 
         public int PrincipalNumberOfInstallment { get; set; }
 
@@ -72,7 +74,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime EffectiveDate { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime TerminalDate { get; set; }
+        public DateTime MaturityDate { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime DateCreated { get; set; }
@@ -104,6 +106,10 @@ namespace FintrakBanking.Entities.Models
 
         public short ScheduleTypeId { get; set; }
 
+        public short ScheduleDayCountConventionId { get; set; }
+
+        public short ScheduleDayInterestTypeId { get; set; }
+
         public bool IsDisbursed { get; set; }
 
         [StringLength(50)]
@@ -121,15 +127,11 @@ namespace FintrakBanking.Entities.Models
 
         public short LoanTypeId { get; set; }
 
-        public int LoanTypeBatchId { get; set; }
-
         [StringLength(50)]
         public string TrancheBatchCode { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? EquityContribution { get; set; }
-
-        public decimal? FeePercent { get; set; }
+        public decimal EquityContribution { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? FirstPrincipalPaymentDate { get; set; }
@@ -193,19 +195,23 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Customer_Sensitivity_Level tbl_Customer_Sensitivity_Level { get; set; }
 
+        public virtual tbl_Day_Count_Convention tbl_Day_Count_Convention { get; set; }
+
+        public virtual tbl_Day_Interest_Type tbl_Day_Interest_Type { get; set; }
+
         public virtual tbl_Frequency_Type tbl_Frequency_Type { get; set; }
 
         public virtual tbl_Frequency_Type tbl_Frequency_Type1 { get; set; }
 
         public virtual tbl_Frequency_Type tbl_Frequency_Type2 { get; set; }
 
-        public virtual tbl_Frequency_Type tbl_Frequency_Type3 { get; set; }
-
         public virtual tbl_Product tbl_Product { get; set; }
 
         public virtual tbl_Staff tbl_Staff { get; set; }
 
         public virtual tbl_Staff tbl_Staff1 { get; set; }
+
+        public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Amortization_Schedule> tbl_Loan_Amortization_Schedule { get; set; }
@@ -222,10 +228,16 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Fee> tbl_Loan_Fee { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Guarantor> tbl_Loan_Guarantor { get; set; }
+
         public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Schedule_Irregular_Input> tbl_Loan_Schedule_Irregular_Input { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Periodic> tbl_Loan_Schedule_Periodic { get; set; }

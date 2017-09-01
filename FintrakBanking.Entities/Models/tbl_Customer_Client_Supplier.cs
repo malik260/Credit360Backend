@@ -6,31 +6,25 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Company_Director")]
-    public partial class tbl_Customer_Company_Director
+    [Table("core.tbl_Customer_Client_Supplier")]
+    public partial class tbl_Customer_Client_Supplier
     {
         [Key]
-        public short CompanyDirectorId { get; set; }
+        public int Client_SupplierId { get; set; }
 
         public int CustomerId { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        public string Surname { get; set; }
+        public short CustomerTypeId { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string Firstname { get; set; }
+        [StringLength(100)]
+        public string FirstName { get; set; }
 
-        public short CompanyDirectorTypeId { get; set; }
+        [StringLength(100)]
+        public string MiddleName { get; set; }
 
-        [Required]
-        [StringLength(20)]
-        public string CustomerBVN { get; set; }
-
-        public int NumberOfShares { get; set; }
-
-        public bool IsPoliticallyExposed { get; set; }
+        [StringLength(100)]
+        public string LastName { get; set; }
 
         [StringLength(500)]
         public string Address { get; set; }
@@ -41,17 +35,20 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string EmailAddress { get; set; }
 
-        [StringLength(500)]
-        public string Others { get; set; }
+        public short Client_SupplierTypeId { get; set; }
 
         public int CreatedBy { get; set; }
 
+        [Column(TypeName = "date")]
         public DateTime DateCreated { get; set; }
 
         public int? UpdatedBy { get; set; }
 
+        [Column(TypeName = "date")]
         public DateTime? DateTimeUpdated { get; set; }
 
-        public virtual tbl_Customer_Company_DirectorType tbl_Customer_Company_DirectorType { get; set; }
+        public virtual tbl_Customer tbl_Customer { get; set; }
+
+        public virtual tbl_Customer_Client_Supplier_Type tbl_Customer_Client_Supplier_Type { get; set; }
     }
 }

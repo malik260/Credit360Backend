@@ -11,6 +11,8 @@ using NodaTime;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Interfaces.Credit;
 using System.ComponentModel.Composition;
+using System.ServiceModel;
+using FintrakBanking.Interfaces.Setups.General;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -20,11 +22,13 @@ namespace FintrakBanking.Repositories.Credit
      
     public class LoanScheduleRepository: ILoanScheduleRepository
     {
-        private FinTrakBankingContext context;        
+        private FinTrakBankingContext context;
+        private IGeneralSetupRepository generalSetup;
 
-        public LoanScheduleRepository(FinTrakBankingContext _context)
+        public LoanScheduleRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup)
         {
-            this.context = _context;            
+            this.context = _context;
+            this.generalSetup = _genSetup;
         }
 
         public int CalculateNumberOfInstallments(TenorModeEnum tenorModeId, short frequencyTypeId, int tenor)
@@ -307,7 +311,7 @@ namespace FintrakBanking.Repositories.Credit
                 payment.amortisedPeriodInterestAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_int_pay"]);
                 payment.amortisedPeriodPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_pay"]);
                 payment.amortisedEndPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_end"]);
-                payment.internalRateOfReturn = internalRateOfReturn;
+                payment.effectiveInterestRate = internalRateOfReturn;
 
                 counter += 1;
             }
@@ -386,7 +390,7 @@ namespace FintrakBanking.Repositories.Credit
                 payment.amortisedPeriodInterestAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_int_pay"]);
                 payment.amortisedPeriodPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_pay"]);
                 payment.amortisedEndPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_end"]);
-                payment.internalRateOfReturn = internalRateOfReturn;
+                payment.effectiveInterestRate = internalRateOfReturn;
 
                 counter += 1;
             }
@@ -454,7 +458,7 @@ namespace FintrakBanking.Repositories.Credit
                 payment.amortisedPeriodInterestAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_int_pay"]);
                 payment.amortisedPeriodPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_pay"]);
                 payment.amortisedEndPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_end"]);
-                payment.internalRateOfReturn = internalRateOfReturn;
+                payment.effectiveInterestRate = internalRateOfReturn;
 
                 counter += 1;
             }
@@ -532,7 +536,7 @@ namespace FintrakBanking.Repositories.Credit
                 payment.amortisedPeriodInterestAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_int_pay"]);
                 payment.amortisedPeriodPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_pay"]);
                 payment.amortisedEndPrincipalAmount = Convert.ToDouble(amortisedResult.Rows[counter]["amt_prin_end"]);
-                payment.internalRateOfReturn = internalRateOfReturn;
+                payment.effectiveInterestRate = internalRateOfReturn;
 
                 counter += 1;
             }
@@ -598,7 +602,7 @@ namespace FintrakBanking.Repositories.Credit
                         dayValues.discountPremium = dayValues.amDailyInterestAmount - dayValues.dailyInterestAmount;
                         dayValues.unEarnedFee = dayValues.amClosingBalance - dayValues.closingBalance;
                         dayValues.earnedFee = loanInput.integralFeeAmount - dayValues.unEarnedFee;
-                        dayValues.effectiveInterestRate = item.internalRateOfReturn;
+                        dayValues.effectiveInterestRate = item.effectiveInterestRate;
                         dayValues.numberOfPeriods = numberOfPeriods; 
 
                         //public double balloonAmt { get; set; }
@@ -716,7 +720,7 @@ namespace FintrakBanking.Repositories.Credit
                 payment.amortisedPeriodInterestAmount = paymentScheduleArmotised[counter].periodInterestAmount;
                 payment.amortisedPeriodPrincipalAmount = paymentScheduleArmotised[counter].periodPrincipalAmount;
                 payment.amortisedEndPrincipalAmount = paymentScheduleArmotised[counter].endPrincipalAmount;
-                payment.internalRateOfReturn = internalRateOfReturn;
+                payment.effectiveInterestRate = internalRateOfReturn;
 
                 counter += 1;
             }
@@ -868,7 +872,7 @@ namespace FintrakBanking.Repositories.Credit
                 payment.amortisedPeriodInterestAmount = paymentScheduleArmotised[counter].periodInterestAmount;
                 payment.amortisedPeriodPrincipalAmount = paymentScheduleArmotised[counter].periodPrincipalAmount;
                 payment.amortisedEndPrincipalAmount = paymentScheduleArmotised[counter].endPrincipalAmount;
-                payment.internalRateOfReturn = internalRateOfReturn;
+                payment.effectiveInterestRate = internalRateOfReturn;
 
                 counter += 1;
             }
@@ -967,12 +971,110 @@ namespace FintrakBanking.Repositories.Credit
                 payment.amortisedPeriodInterestAmount = paymentScheduleArmotised[counter].periodInterestAmount;
                 payment.amortisedPeriodPrincipalAmount = paymentScheduleArmotised[counter].periodPrincipalAmount;
                 payment.amortisedEndPrincipalAmount = paymentScheduleArmotised[counter].endPrincipalAmount;
-                payment.internalRateOfReturn = internalRateOfReturn;
+                payment.effectiveInterestRate = internalRateOfReturn;
 
                 counter += 1;
             }
 
             return paymentSchedule;
+        }
+
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool AddLoanSchedule(int loanId, LoanPaymentScheduleInputViewModel loanInput, int staffId)
+        {
+            bool output = false;
+            
+            List<LoanPaymentSchedulePeriodicViewModel> periodicSchedule = GeneratePeriodicLoanSchedule(loanInput);
+
+            List<tbl_Loan_Schedule_Periodic> tblPeriodicSchedule = new List<tbl_Loan_Schedule_Periodic>();
+            foreach (var item in periodicSchedule)
+            {
+                tbl_Loan_Schedule_Periodic schedule = new tbl_Loan_Schedule_Periodic();
+                schedule.LoanId = loanId;
+                schedule.PaymentNumber = item.paymentNumber;
+                schedule.PaymentDate = item.paymentDate;
+                schedule.StartPrincipalAmount = Convert.ToDecimal(item.startPrincipalAmount);
+                schedule.PeriodPaymentAmount = Convert.ToDecimal(item.periodPaymentAmount);
+                schedule.PeriodInterestAmount = Convert.ToDecimal(item.periodInterestAmount);
+                schedule.PeriodPrincipalAmount = Convert.ToDecimal(item.periodPrincipalAmount);
+                schedule.EndPrincipalAmount = Convert.ToDecimal(item.endPrincipalAmount);
+                schedule.InterestRate = loanInput.interestRate;
+
+                schedule.AmortisedStartPrincipalAmount = Convert.ToDecimal(item.amortisedStartPrincipalAmount);
+                schedule.AmortisedPeriodPaymentAmount = Convert.ToDecimal(item.amortisedPeriodPaymentAmount);
+                schedule.AmortisedPeriodInterestAmount = Convert.ToDecimal(item.amortisedPeriodInterestAmount);
+                schedule.AmortisedPeriodPrincipalAmount = Convert.ToDecimal(item.amortisedPeriodPrincipalAmount);
+                schedule.AmortisedEndPrincipalAmount = Convert.ToDecimal(item.amortisedEndPrincipalAmount);
+                schedule.EffectiveInterestRate = item.effectiveInterestRate;
+                schedule.CreatedBy = staffId;
+                schedule.DateTimeCreated = generalSetup.GetApplicationDate();
+
+                tblPeriodicSchedule.Add(schedule);
+            }
+
+
+
+            List<LoanPaymentScheduleDailyViewModel> dailySchedule = GenerateDailyLoanSchedule(loanInput);
+
+            List<tbl_Loan_Schedule_Daily> tblDailySchedule = new List<tbl_Loan_Schedule_Daily>();
+
+            foreach (var item in dailySchedule)
+            {
+                tbl_Loan_Schedule_Daily schedule = new tbl_Loan_Schedule_Daily();
+
+                schedule.LoanId = loanId;
+                schedule.PaymentNumber = item.paymentNumber;
+                schedule.Date = item.date;
+                schedule.PaymentDate = item.paymentDate;
+                schedule.OpeningBalance = Convert.ToDecimal(item.openingBalance);
+                schedule.StartPrincipalAmount = Convert.ToDecimal(item.startPrincipalAmount);
+                schedule.DailyPaymentAmount = Convert.ToDecimal(item.dailyPaymentAmount);
+                schedule.DailyInterestAmount = Convert.ToDecimal(item.dailyInterestAmount);
+                schedule.DailyPrincipalAmount = Convert.ToDecimal(item.dailyPrincipalAmount);
+                schedule.ClosingBalance = Convert.ToDecimal(item.closingBalance);
+                schedule.EndPrincipalAmount = Convert.ToDecimal(item.endPrincipalAmount);
+                schedule.AccruedInterest = Convert.ToDecimal(item.accruedInterest);
+                schedule.AmortisedCost = Convert.ToDecimal(item.amortisedCost);
+                schedule.InterestRate = item.norminalInterestRate;
+
+                schedule.AmortisedOpeningBalance = Convert.ToDecimal(item.amOpeningBalance);
+                schedule.AmortisedStartPrincipalAmount = Convert.ToDecimal(item.amStartPrincipalAmount);
+                schedule.AmortisedDailyPaymentAmount = Convert.ToDecimal(item.amDailyPaymentAmount);
+                schedule.AmortisedDailyInterestAmount = Convert.ToDecimal(item.amDailyInterestAmount);
+                schedule.AmortisedDailyPrincipalAmount = Convert.ToDecimal(item.amDailyPrincipalAmount);
+                schedule.AmortisedClosingBalance = Convert.ToDecimal(item.amClosingBalance);
+                schedule.AmortisedEndPrincipalAmount = Convert.ToDecimal(item.amEndPrincipalAmount);
+                schedule.AmortisedAccruedInterest = Convert.ToDecimal(item.amAccruedInterest);
+                schedule.Amortised_AmortisedCost = Convert.ToDecimal(item.amAmortisedCost);
+                schedule.DiscountPremium = Convert.ToDecimal(item.discountPremium);
+                schedule.UnEarnedFee = Convert.ToDecimal(item.unEarnedFee);
+                schedule.EarnedFee = Convert.ToDecimal(item.earnedFee);
+                schedule.EffectiveInterestRate = item.effectiveInterestRate;
+                schedule.NumberOfPeriods = item.numberOfPeriods;
+                schedule.BallonAmount = Convert.ToDecimal(item.balloonAmt);
+                schedule.CreatedBy = staffId;
+                schedule.DateTimeCreated = generalSetup.GetApplicationDate();
+
+                tblDailySchedule.Add(schedule);
+            }
+
+            this.context.tbl_Loan_Schedule_Periodic.AddRange(tblPeriodicSchedule);
+
+            this.context.tbl_Loan_Schedule_Daily.AddRange(tblDailySchedule);
+
+            //----------update loan details -----------------------------------
+            var loan = this.context.tbl_Loan.FirstOrDefault(x => x.LoanId == loanId);
+            loan.TerminalDate = periodicSchedule.Max(x => x.paymentDate);
+            loan.PrincipalNumberOfInstallment = periodicSchedule.Count() -1;
+            loan.InterestNumberOfInstallment = loan.PrincipalNumberOfInstallment;
+            //-------------------------------------------------
+
+            context.SaveChanges();
+
+
+            output = true;
+
+            return output;
         }
     }
 }
