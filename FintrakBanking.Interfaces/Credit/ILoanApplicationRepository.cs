@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Linq;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -16,17 +16,13 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationViewModel> GetAllLoanApplications(int companyId);
 
-        IEnumerable<LoanApplicationViewModel> GetLoanApplicationJobs(int companyId, int level, int scope);
-
         IEnumerable<LoanApplicationViewModel> GetLoanApplicationById(int loanApplicationId, int companyId);
 
         IEnumerable<ProductClassViewModel> GetProductClass();
 
-        //string AddLoanApplication(LoanApplicationViewModel entity);
+        IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId);
 
         IEnumerable<LoanApplicationViewModel> FindLoanApplication(string referenceNumberOrName, int companyId);
-
-         bool ApprovalOperation(ApprovalViewModel approval);
 
         Task<bool> UpdateApprovalStatus(ApprovalViewModel entity);
 

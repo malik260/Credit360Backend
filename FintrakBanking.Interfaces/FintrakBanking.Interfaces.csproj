@@ -101,6 +101,7 @@
     <Compile Include="Setups\General\IStaffRepository.cs" />
     <Compile Include="Setups\Risk\IRiskSetupRepository.cs" />
     <Compile Include="WorkFlow\IJobRequestRepository.cs" />
+    <Compile Include="WorkFlow\IWorkflow.cs" />
     <Compile Include="WorkFlow\IWorkFlowRepository.cs" />
   </ItemGroup>
   <ItemGroup>

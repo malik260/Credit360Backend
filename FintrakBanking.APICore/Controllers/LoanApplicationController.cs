@@ -185,50 +185,47 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("loan/application/pending")]
-        //[HttpGet][Route("loan/application/pending/page/{page}/itemsPerPage/{itemPerPage}")]
-        public HttpResponseMessage GetAllPendingLoanApplications(int page, int itemsPerPage)
+        [HttpGet, Route("loan-application/pending")]
+        public HttpResponseMessage GetPendingLoanApplications([FromUri] int page, [FromUri] int itemsPerPage)
         {
             try
             {
-                var response = repoApply.GetAllLoanApplications(token.GetCompanyId).Where(x => x.approvalStatusId == (int)ApprovalStatusEnum.Pending).ToList();
-                int totalItems = response.Count();
-                response = response.OrderByDescending(x => x.applicationDate).ThenByDescending(x => x.loanApplicationId).Skip(page).Take(itemsPerPage).ToList();
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, totalItems = totalItems });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-
-        [HttpGet]
-        [Route("loan/application/job")]
-        public HttpResponseMessage GetLoanApplicationJobs(int page, int itemsPerPage, int level, int scope)
-        {
-            try
-            {
-                var response = repoApply.GetLoanApplicationJobs(token.GetCompanyId, level, scope);
-
-                int totalItems = response.Count();
-
-                response = response
+                var data = repoApply.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId)
+                    .OrderByDescending(x => x.applicationDate)
+                    .ThenByDescending(x => x.loanApplicationId)
+                    .Where(x => x.approvalStatusId == (int)ApprovalStatusEnum.Pending)
                     .Skip(page).Take(itemsPerPage)
                     .ToList();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, totalItems = totalItems, message = "Empty result" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (Exception e)
+            catch (System.Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        //[HttpGet]
+        //[Route("loan-application/job")]
+        //public HttpResponseMessage GetLoanApplicationJobs(int page, int itemsPerPage, int level, int scope)
+        //{
+        //    try
+        //    {
+        //        var response = repoApply.GetLoanApplicationJobs(token.GetCompanyId, level, scope);
+
+        //        int totalItems = response.Count();
+
+        //        response = response
+        //            .Skip(page).Take(itemsPerPage)
+        //            .ToList();
+
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, totalItems = totalItems, message = "Empty result" });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
         #endregion
 
