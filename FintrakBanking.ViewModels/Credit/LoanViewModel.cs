@@ -100,6 +100,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
 
+
     }
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
@@ -115,6 +116,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public decimal dependantAmount { get; set; }
         public double rateValue { get; set; }
+
     }
 
     public class LoanCollateralMappingViewModel 
