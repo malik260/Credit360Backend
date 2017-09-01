@@ -1094,7 +1094,7 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Frequency_Type>()
                 .HasMany(e => e.tbl_Loan1)
                 .WithRequired(e => e.tbl_Frequency_Type1)
-                .HasForeignKey(e => e.FeeFrequencyTypeId)
+                //.HasForeignKey(e => e.FeeFrequencyTypeId)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Frequency_Type>()
@@ -1102,10 +1102,10 @@ namespace FintrakBanking.Entities.Models
                 .WithOptional(e => e.tbl_Frequency_Type2)
                 .HasForeignKey(e => e.PrincipalFrequencyTypeId);
 
-            modelBuilder.Entity<tbl_Frequency_Type>()
-                .HasMany(e => e.tbl_Loan3)
-                .WithOptional(e => e.tbl_Frequency_Type3)
-                .HasForeignKey(e => e.ScheduledPrepaymentFrequencyTypeId);
+            //modelBuilder.Entity<tbl_Frequency_Type>();
+                //.HasMany(e => e.tbl_Loan3)
+                //.WithOptional(e => e.tbl_Frequency_Type3)
+                //.HasForeignKey(e => e.ScheduledPrepaymentFrequencyTypeId);
 
             modelBuilder.Entity<tbl_Frequency_Type>()
                 .HasMany(e => e.tbl_Temp_Collateral_Policy)

@@ -10,9 +10,7 @@ using System.ComponentModel.Composition;
 using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Repositories.CASA
-{
-    [Export(typeof(ICasaRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+{ 
     public class CasaRepository : ICasaRepository
     {
         private FinTrakBankingContext context;
@@ -27,6 +25,13 @@ namespace FintrakBanking.Repositories.CASA
             return this.context.SaveChanges() > 0;
         }
 
+        public int GetCasaAccountId(string accountNumber, int companyId)
+        {
+          var  CasaAccount =   ( context.tbl_CASA.Where(d => d.OldProductAccountNumber3 == accountNumber ||
+          d.OldProductAccountNumber2 == accountNumber || d.OldProductAccountNumber1 == accountNumber ||
+          d.ProductAccountNumber == accountNumber && d.CompanyId == companyId)).AsQueryable().SingleOrDefault();
+            return CasaAccount.CasaAccountId;
+        }
 
         /// TODO: Implement server side filtering due to large number of records that may be returned
         public IEnumerable<CasaViewModel> FindAccount(string accountNumberOrName, int companyId)

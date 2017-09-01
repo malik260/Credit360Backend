@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.tbl_Credit_Appraisal_Memorandum")]
     public partial class tbl_Credit_Appraisal_Memorandum
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Credit_Appraisal_Memorandum()
+        {
+            tbl_Credit_Appraisal_Memorandum_Loan_Detail = new HashSet<tbl_Credit_Appraisal_Memorandum_Loan_Detail>();
+        }
+
         [Key]
         public int AppraisalMemorandumId { get; set; }
 
@@ -42,6 +48,11 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
+
+        public virtual tbl_Company tbl_Company { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Credit_Appraisal_Memorandum_Loan_Detail> tbl_Credit_Appraisal_Memorandum_Loan_Detail { get; set; }
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
     }
