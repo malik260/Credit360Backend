@@ -8,6 +8,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Common.Enum;
 using System.Linq;
+using FintrakBanking.ViewModels.Setups.Approval;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -229,9 +230,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }).ToList();
         }
 
-        public IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int groupId)
+        public IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId)
         {
-            return this.GetAllJobRequest().Where(x => x.staffApprovalGroupId == groupId).OrderByDescending(x => x.jobRequestId).ToList();
+            var operationId = (int)OperationsEnum.CAM;
+
+            var approvalGroupIds = context.tbl_Approval_Group_Mapping
+                .Join(context.tbl_Approval_Level,
+                    a => a.GroupOperationMappingId, b => b.GroupOperationMappingId, (a, b) => new { a, b })
+                .Join(context.tbl_Approval_Level_Staff,
+                    c => c.b.ApprovalLevelId, d => d.ApprovalLevelId, (c, d) => new { c, d })
+                .Where(x => x.c.a.OperationId == operationId && x.d.StaffId == staffId)
+                    .Select(x => x.c.b.GroupOperationMappingId);
+
+            return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.staffApprovalGroupId)).OrderByDescending(x => x.jobRequestId).ToList();
         }
 
         #region job-type

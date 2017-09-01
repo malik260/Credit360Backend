@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -89,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("appraisal-memorandum/forward")]
-        public HttpResponseMessage ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
+        public async Task<HttpResponseMessage> ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
         {
             try
             {
@@ -98,10 +99,11 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.ForwardAppraisalMemorandum(entity);
-                if (data != null)
+                var response = await repo.ForwardAppraisalMemorandum(entity);
+
+                if (response == true)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
@@ -119,6 +121,21 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetAppraisalMemorandumTrail(loanApplicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("appraisal-memorandum/privilege/{loanApplicationId}")]
+        public HttpResponseMessage GetUserPrivilege(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetUserPrivilege(token.GetStaffId, loanApplicationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)

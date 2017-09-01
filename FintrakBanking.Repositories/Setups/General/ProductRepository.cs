@@ -333,8 +333,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         dealTypeName = data.tbl_Deal_Type.DealTypeName,
                         dealClassificationId = data.DealClassificationId,
                         dealClassificationName = data.tbl_Deal_Classification.Classification,
-                        dayCountId = data.DayCountId,
-                        dayCountName = data.tbl_Day_Count.DayCountName,
+                        dayCountId = data.DayCountConventionId,
+                        dayCountName = data.tbl_Day_Count_Convention.DayCountConventionName,
 
                         maximumTenor = data.MaximumTenor,
                         minimumTenor = data.MinimumTenor,
@@ -434,8 +434,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         dealTypeName = c.tbl_Deal_Type.DealTypeName,
                         dealClassificationId = c.DealClassificationId,
                         dealClassificationName = c.tbl_Deal_Classification.Classification,
-                        dayCountId = c.DayCountId,
-                        dayCountName = c.tbl_Day_Count.DayCountName,
+                        dayCountId = c.DayCountConventionId,
+                        dayCountName = c.tbl_Day_Count_Convention.DayCountConventionName,
 
                         maximumTenor = c.MaximumTenor,
                         minimumTenor = c.MinimumTenor,
@@ -527,7 +527,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         dealTypeId = c.DealTypeId,
                         dealClassificationId = c.DealClassificationId,
-                        dayCountId = c.DayCountId,
+                        dayCountId = c.DayCountConventionId,
 
                         maximumTenor = c.MaximumTenor,
                         minimumTenor = c.MinimumTenor,
@@ -615,7 +615,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 existingProduct.DealTypeId = productModel.DealTypeId;
                 existingProduct.DealClassificationId = productModel.DealClassificationId;
-                existingProduct.DayCountId = productModel.DayCountId;
+                existingProduct.DayCountConventionId = productModel.DayCountConventionId;
 
                 existingProduct.MaximumTenor = productModel.MaximumTenor;
                 existingProduct.MinimumTenor = productModel.MinimumTenor;
@@ -663,7 +663,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     DealTypeId = productModel.DealTypeId,
                     DealClassificationId = productModel.DealClassificationId,
-                    DayCountId = productModel.DayCountId,
+                    DayCountConventionId = productModel.DayCountConventionId,
 
                     MaximumTenor = productModel.MaximumTenor,
                     MinimumTenor = productModel.MinimumTenor,
@@ -773,7 +773,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 DealTypeId = productModel.dealTypeId,
                 DealClassificationId = productModel.dealClassificationId,
-                DayCountId = productModel.dayCountId,
+                DayCountConventionId = productModel.dayCountId,
 
                 MaximumTenor = productModel.maximumTenor,
                 MinimumTenor = productModel.minimumTenor,
@@ -1010,7 +1010,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     DealTypeId = productModel.dealTypeId,
                     DealClassificationId = productModel.dealClassificationId,
-                    DayCountId = productModel.dayCountId,
+                    DayCountConventionId = productModel.dayCountId,
 
                     MaximumTenor = productModel.maximumTenor,
                     MinimumTenor = productModel.minimumTenor,

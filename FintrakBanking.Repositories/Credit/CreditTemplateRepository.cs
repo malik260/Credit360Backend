@@ -126,13 +126,22 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CreditTemplateViewModel> GetAllCreditTemplateByLevelProduct(int levelId, int productId, int companyId)
         {
-            return this.GetAllCreditTemplate().Where(x => 
+            return this.GetAllCreditTemplate().Where(x =>
                 x.approvalLevelId == levelId
                 && x.productClassId == productId
                 && x.companyId == companyId
             );
         }
-        
+
+        public IEnumerable<CreditTemplateViewModel> GetAllCreditTemplateByProductClass(int productId, int staffId)
+        {
+            var staffApprovalLevelIds = context.tbl_Approval_Level_Staff.Where(x => x.StaffId == staffId).Select(x => x.ApprovalLevelId);
+            return this.GetAllCreditTemplate().Where(x =>
+                staffApprovalLevelIds.Contains(x.approvalLevelId)
+                && x.productClassId == productId
+            );
+        }
+
     }
 }
 

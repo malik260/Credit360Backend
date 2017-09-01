@@ -62,7 +62,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? groupAmount { get; set; }
         public short loanTypeId { get; set; }
         public string trancheBatchCode { get; set; }
-        public decimal? equityContribution { get; set; }
+        public decimal  equityContribution { get; set; }
+
         public DateTime? firstPrincipalPaymentDate { get; set; }
         public DateTime? firstInterestPaymentDate { get; set; }
         public decimal outstandingPrincipal { get; set; }
@@ -109,14 +110,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    public class LoanChargeFeeViewModel :ChargeRangeViewModel
+    public class LoanChargeFeeViewModel : ChargeRangeViewModel
 
     {
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
         public int loanId { get; set; }
         public int productId { get; set; }
-        public int chargeFeeId { get; set; }
         public string chargeFeeName { get; set; }
         public decimal feeRateValue { get; set; }
         public decimal feeDependentAmount { get; set; }

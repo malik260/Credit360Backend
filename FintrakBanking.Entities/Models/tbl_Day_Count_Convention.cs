@@ -6,38 +6,34 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Sub_Sector")]
-    public partial class tbl_Sub_Sector
+    [Table("core.tbl_Day_Count_Convention")]
+    public partial class tbl_Day_Count_Convention
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Sub_Sector()
+        public tbl_Day_Count_Convention()
         {
-            tbl_Customer = new HashSet<tbl_Customer>();
-            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan = new HashSet<tbl_Loan>();
+            tbl_Product = new HashSet<tbl_Product>();
+            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
         }
 
         [Key]
-        public short SubSectorId { get; set; }
-
-        public short? SectorId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public short DayCountConventionId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Name { get; set; }
+        public string DayCountConventionName { get; set; }
 
-        [StringLength(10)]
-        public string Code { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer> tbl_Customer { get; set; }
-
-        public virtual tbl_Sector tbl_Sector { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
+        public int DaysInAYear { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Product> tbl_Product { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
     }
 }

@@ -1,11 +1,11 @@
-﻿using FintrakBanking.Interfaces.CreditLimitValidations;
+﻿//using FintrakBanking.Interfaces.CreditLimitValidations;
 using System;
 using FintrakBanking.APICore.JWTAuth;
 using System.Web.Http;
 using System.Net.Http;
 using System.Net;
 using FintrakBanking.APICore.core;
-
+using FintrakBanking.Interfaces.CreditLimitValidations;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -128,14 +128,68 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+
         [HttpGet]
-        [Route("validateamount/sector/{customerId}")]
-        public HttpResponseMessage ValidateAmountBySector(int customerId)
+        [Route("validateamount/segment/{segmentId}")]
+        public HttpResponseMessage ValidateAmountBySegment(short segmentId)
         {
             try
             {
 
-                var data = repo.ValidateAmountBySector(customerId);
+                var data = repo.ValidateAmountBySegment(segmentId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("validatenpl/segment/{segmentId}")]
+        public HttpResponseMessage ValidateNPLBySegment(short segmentId)
+        {
+            try
+            {
+
+                var data = repo.ValidateNPLBySegment(segmentId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("validateamount/sector/{subSectorId}")]
+        public HttpResponseMessage ValidateAmountBySector(int subSectorId)
+        {
+            try
+            {
+
+                var data = repo.ValidateAmountBySector(subSectorId);
                 if (data != null)
                 {
                     
@@ -156,13 +210,13 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("validatenpl/sector/{customerId}")]
-        public HttpResponseMessage ValidateNPLBySector(int customerId)
+        [Route("validatenpl/sector/{subSectorId}")]
+        public HttpResponseMessage ValidateNPLBySector(int subSectorId)
         {
             try
             {
 
-                var data = repo.ValidateNPLBySector(customerId);
+                var data = repo.ValidateNPLBySector(subSectorId);
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
