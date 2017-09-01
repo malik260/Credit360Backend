@@ -18,15 +18,24 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public short LoanGuarantorId { get; set; }
 
-        public int? CustomerId { get; set; }
+        public int LoanId { get; set; }
 
-        [StringLength(200)]
-        public string LoanReferenceNumber { get; set; }
-
-        public short? ProductId { get; set; }
+        [StringLength(50)]
+        public string BVN { get; set; }
 
         [StringLength(250)]
-        public string FullName { get; set; }
+        public string Firstname { get; set; }
+
+        [StringLength(50)]
+        public string Middlename { get; set; }
+
+        [StringLength(50)]
+        public string Lastname { get; set; }
+
+        [StringLength(100)]
+        public string Relationship { get; set; }
+
+        public int? RelationshipDuration { get; set; }
 
         [StringLength(50)]
         public string PhoneNumber1 { get; set; }
@@ -34,16 +43,29 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string PhoneNumber2 { get; set; }
 
-        [StringLength(100)]
-        public string Relationship { get; set; }
+        [StringLength(50)]
+        public string EmailAddress { get; set; }
 
-        public int? RelationshipDuration { get; set; }
+        [StringLength(500)]
+        public string Address { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public int CreatedBy { get; set; }
 
-        public virtual tbl_Product tbl_Product { get; set; }
+        public DateTime DateTimeCreated { get; set; }
+
+        public int? LastUpdatedBy { get; set; }
+
+        public DateTime? DateTimeUpdated { get; set; }
+
+        public bool Deleted { get; set; }
+
+        public int? DeletedBy { get; set; }
+
+        public DateTime? DateTimeDeleted { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Guarantor_Document> tbl_Guarantor_Document { get; set; }
+
+        public virtual tbl_Loan tbl_Loan { get; set; }
     }
 }

@@ -2,7 +2,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Net;
 using System.Net.Http;

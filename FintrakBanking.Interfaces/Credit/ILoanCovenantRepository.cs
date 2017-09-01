@@ -1,5 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
 using System.Text;

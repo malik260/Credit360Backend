@@ -17,12 +17,14 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         CreditLimitValidationsModel ValidateAmountByBranch(short branchId);
         CreditLimitValidationsModel ValidateNPLByBranch(short branchId);
         CreditLimitValidationsModel ValidateAmountBySector(int customerId);
-        CreditLimitValidationsModel ValidateNPLBySector(int customerId);
-        CreditLimitValidationsModel ValidateAmountByCustomer(int customerId);
+        CreditLimitValidationsModel ValidateNPLBySector(int subSectorId);
+        CreditLimitValidationsModel ValidateAmountByCustomer(int subSectorId);
         CreditLimitValidationsModel ValidateNPLByCustomer(int customerId);
         CreditLimitValidationsModel ValidateAmountByCustomerGroup(int customergroupId);
         CreditLimitValidationsModel ValidateNPLByCustomerGroup(int customergroupId);
         CreditLimitValidationsModel ValidateCreditLimitNPLByRMBM(short relationshipofficerId);
+        CreditLimitValidationsModel ValidateAmountBySegment(short segmentId);
+        CreditLimitValidationsModel ValidateNPLBySegment(short segmentId);
 
     }
 }

@@ -245,7 +245,7 @@ namespace FintrakBanking.Repositories.Credit
                 LoanTypeId = loan.loanTypeId,
                 LoanStatusId = loanStatusId,
                 CompanyId = loan.companyId,
-                BranchId = loan.branchId,
+                BranchId = (short)loan.branchId,
                 Tenor = loan.tenor, 
                  CasaAccountId = casaAccountId,
                 RelationshipOfficerId = loan.relationshipOfficerId,

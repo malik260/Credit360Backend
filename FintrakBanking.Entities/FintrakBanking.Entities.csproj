@@ -57,6 +57,7 @@
     <Compile Include="DocumentModels\tbl_Media_Collateral_Documents.cs" />
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
+    <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Models\tbl_COT.cs" />
     <Compile Include="Models\tbl_Country.cs" />
     <Compile Include="Models\tbl_Credit_Appraisal_Memorandum.cs" />
+    <Compile Include="Models\tbl_Credit_Appraisal_Memorandum_Loan_Detail.cs" />
     <Compile Include="Models\tbl_Credit_Template.cs" />
     <Compile Include="Models\tbl_Currency.cs" />
     <Compile Include="Models\tbl_Currency_Rate.cs" />
@@ -128,6 +130,8 @@
     <Compile Include="Models\tbl_Customer_Address.cs" />
     <Compile Include="Models\tbl_Customer_Blacklist.cs" />
     <Compile Include="Models\tbl_Customer_BVN.cs" />
+    <Compile Include="Models\tbl_Customer_Client_Supplier.cs" />
+    <Compile Include="Models\tbl_Customer_Client_Supplier_Type.cs" />
     <Compile Include="Models\tbl_Customer_CompanyInfomation.cs" />
     <Compile Include="Models\tbl_Customer_Company_Director.cs" />
     <Compile Include="Models\tbl_Customer_Company_DirectorType.cs" />

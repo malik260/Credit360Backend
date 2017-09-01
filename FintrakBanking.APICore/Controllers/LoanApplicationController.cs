@@ -2,9 +2,9 @@ using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.ViewModels.WorkFlow;
-using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Linq;
 using System.Net;
@@ -350,7 +350,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data.Count(), result = data.ToList() });
             }
             catch (Exception ex)
             {
@@ -383,7 +383,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("loan/preliminary-evaluation/{loanPenId}")]
-        public async Task<HttpResponseMessage> UpdateLoanPreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
+        public HttpResponseMessage UpdateLoanPreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
         {
             try
             {
@@ -403,16 +403,12 @@ namespace FintrakBanking.APICore.Controllers
                     model.isCurrent = true;
                     responseMessage = "Preliminary evaluation note updated successfully, now awaiting approval";
                 }
-                else if (model.sentForLoanApplication)
-                {
-                    model.isCurrent = true;
-                }
                 else
                 {
                     model.isCurrent = false;
                 }
 
-                var response = await repoLoanPEN.UpdatePreliminaryEvaluation(loanPenId, model);
+                var response = repoLoanPEN.UpdatePreliminaryEvaluation(loanPenId, model);
 
                 if (response)
                 {

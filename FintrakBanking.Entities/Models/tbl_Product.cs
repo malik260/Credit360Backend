@@ -14,7 +14,6 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_CASA = new HashSet<tbl_CASA>();
             tbl_KYC_Item = new HashSet<tbl_KYC_Item>();
-            tbl_Loan_Guarantor = new HashSet<tbl_Loan_Guarantor>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Product_CollateralType = new HashSet<tbl_Product_CollateralType>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
@@ -119,9 +118,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_KYC_Item> tbl_KYC_Item { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Guarantor> tbl_Loan_Guarantor { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }

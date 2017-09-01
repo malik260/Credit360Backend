@@ -16,7 +16,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<LookupViewModel> GetAllLoanTypes();
 
-        IQueryable<LoanRepaymentScheduleViewModel> RuningLoans(int customerId, int companyId);
+        IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
         string AddLoanBooking(LoanViewModel entity);
 

@@ -19,6 +19,24 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal MaximumAmount { get; set; }
 
+        public short ProcessViewScopeId { get; set; }
+
+        public bool CanViewCAMDocument { get; set; }
+
+        public bool CanViewUploadedFile { get; set; }
+
+        public bool CanViewApproval { get; set; }
+
+        public bool CanApprove { get; set; }
+
+        public bool CanUploadFile { get; set; }
+
+        public bool CanSendJobRequest { get; set; }
+
+        public bool CanEdit { get; set; }
+
+        public bool VetoPower { get; set; }
+
         public int CreatedBy { get; set; }
 
         public DateTime DateTimeCreated { get; set; }
