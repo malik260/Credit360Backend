@@ -241,7 +241,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 PrincipalFrequencyTypeId = entity.principalFrequencyTypeId,
                 InterestFrequencyTypeId = entity.interestFrequencyTypeId,
-                //FeeFrequencyTypeId = entity.feeFrequencyTypeId,
+
                 RelationshipOfficerId = entity.relationshipOfficerId,
                 RelationshipManagerId = entity.relationshipManagerId,
                 MISCode = entity.misCode,
@@ -250,7 +250,7 @@ namespace FintrakBanking.Repositories.Credit
                 PrincipalAmount = entity.principalAmount,
                 PrincipalInstallmentLeft = entity.principalInstallmentLeft,
                 InterestInstallmentLeft = entity.interestInstallmentLeft,
-                ApprovalStatusId = entity.approvalStatusId,
+                ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
                 ApprovedBy = entity.approvedBy,
                 ApproverComment = entity.approverComment,
                 DateApproved = entity.dateApproved,
@@ -259,7 +259,7 @@ namespace FintrakBanking.Repositories.Credit
                 DisburserComment = entity.disburserComment,
                 DisburseDate = entity.disburseDate,
                 ApprovedAmount = (decimal)entity.approvedAmount, 
-                OperationId = entity.operationId,
+                OperationId = (int) OperationsEnum.LoanBooking,
                 TrancheBatchCode = entity.trancheBatchCode,
 
                 EquityContribution = (decimal)entity.equityContribution,
@@ -269,13 +269,15 @@ namespace FintrakBanking.Repositories.Credit
                 FixedPrincipal = entity.fixedPrincipal,
                 ProfileLoan = entity.profileLoan,
                 CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
-                DateCreated = generalSetup.GetApplicationDate(),
+
+                BookingDate = generalSetup.GetApplicationDate(),
                 CreatedBy = entity.createdBy,
                 DateTimeCreated = generalSetup.GetApplicationDate(),
+
                 tbl_Loan_Covenant_Detail = AddLoanCovenantDetail(entity.loanCovenant),
-                tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
+               // tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
                 tbl_Loan_Collateral_Mapping = AddLoanCollateralMapping(entity.loanCollateral),
-                tbl_Loan_Fee = AddLoanFees(entity.loanChargeFee)
+                tbl_Loan_Fee = AddLoanFees(entity.loanChargeFee),
 
             };
 
@@ -718,7 +720,7 @@ namespace FintrakBanking.Repositories.Credit
                             tenor = l.Tenor,
                             principalFrequencyTypeId = (short)l.PrincipalFrequencyTypeId,
                             interestFrequencyTypeId = (short)l.InterestFrequencyTypeId,
-                            //feeFrequencyTypeId = l.FeeFrequencyTypeId,
+
                             principalNumberOfInstallment = l.PrincipalNumberOfInstallment,
                             interestNumberOfInstallment = l.InterestNumberOfInstallment,
                             relationshipOfficerId = l.RelationshipOfficerId,
@@ -728,7 +730,7 @@ namespace FintrakBanking.Repositories.Credit
                             interestRate = l.InterestRate,
                             effectiveDate = l.EffectiveDate,
                             maturityDate = l.MaturityDate,
-                            dateCreated = l.DateCreated,
+                            bookingDate = l.DateCreated,
                             principalAmount = l.PrincipalAmount,
                             principalInstallmentLeft = l.PrincipalInstallmentLeft,
                             interestInstallmentLeft = l.InterestInstallmentLeft,
@@ -830,7 +832,7 @@ namespace FintrakBanking.Repositories.Credit
                         tenor = data.Tenor,
                         principalFrequencyTypeId = (short)data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = (short)data.InterestFrequencyTypeId,
-                        //feeFrequencyTypeId = data.FeeFrequencyTypeId,
+
                         principalNumberOfInstallment = data.PrincipalNumberOfInstallment,
                         interestNumberOfInstallment = data.InterestNumberOfInstallment,
                         relationshipOfficerId = data.RelationshipOfficerId,
@@ -840,7 +842,7 @@ namespace FintrakBanking.Repositories.Credit
                         interestRate = data.InterestRate,
                         effectiveDate = data.EffectiveDate,
                         maturityDate = data.MaturityDate,
-                        dateCreated = data.DateCreated,
+                        bookingDate = data.DateCreated,
                         principalAmount = data.PrincipalAmount,
                         principalInstallmentLeft = data.PrincipalInstallmentLeft,
                         interestInstallmentLeft = data.InterestInstallmentLeft,
@@ -894,7 +896,7 @@ namespace FintrakBanking.Repositories.Credit
                         //tenorModeId = data.TenorModeId,
                         principalFrequencyTypeId = (short)data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = (short)data.InterestFrequencyTypeId,
-                        //feeFrequencyTypeId = data.FeeFrequencyTypeId,
+
                         principalNumberOfInstallment = data.PrincipalNumberOfInstallment,
                         interestNumberOfInstallment = data.InterestNumberOfInstallment,
                         relationshipOfficerId = data.RelationshipOfficerId,
@@ -904,7 +906,7 @@ namespace FintrakBanking.Repositories.Credit
                         interestRate = data.InterestRate,
                         effectiveDate = data.EffectiveDate,
                         maturityDate = data.MaturityDate,
-                        dateCreated = data.DateCreated,
+                        bookingDate = data.DateCreated,
                         principalAmount = data.PrincipalAmount,
                         principalInstallmentLeft = data.PrincipalInstallmentLeft,
                         interestInstallmentLeft = data.InterestInstallmentLeft,
@@ -955,7 +957,7 @@ namespace FintrakBanking.Repositories.Credit
                     //tenorModeId = o.TenorModeId,
                     principalFrequencyTypeId = (short)o.PrincipalFrequencyTypeId,
                     interestFrequencyTypeId = (short)o.InterestFrequencyTypeId,
-                    //feeFrequencyTypeId = o.FeeFrequencyTypeId,
+
                     principalNumberOfInstallment = o.PrincipalNumberOfInstallment,
                     interestNumberOfInstallment = o.InterestNumberOfInstallment,
                     relationshipOfficerId = o.RelationshipOfficerId,
@@ -965,7 +967,7 @@ namespace FintrakBanking.Repositories.Credit
                     interestRate = o.InterestRate,
                     effectiveDate = o.EffectiveDate,
                     maturityDate = o.MaturityDate,
-                    dateCreated = o.DateCreated,
+                    bookingDate = o.DateCreated,
                     principalAmount = o.PrincipalAmount,
                     principalInstallmentLeft = o.PrincipalInstallmentLeft,
                     interestInstallmentLeft = o.InterestInstallmentLeft,
@@ -1165,7 +1167,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatusId = a.ApprovalStatusId,
                             loanApplicationId = a.LoanApplicationId,
                             applicationReferenceNumber = a.ApplicationReferenceNumber,
-
+                            casaAccountId = a.CasaAccountId,
                             customerId = a.CustomerId ?? 0,
                             customerCode = cust.CustomerCode,
                             customerName = a.CustomerId.HasValue ? a.tbl_Customer.FirstName + " " + a.tbl_Customer.MiddleName + " " + a.tbl_Customer.LastName : "",
@@ -1176,7 +1178,7 @@ namespace FintrakBanking.Repositories.Credit
                             
                             loanInformation = a.LoanInformation,
                             companyId = a.CompanyId,
-                            branchId = (short)a.BranchId,
+                            branchId = a.BranchId,
                             branchName = a.tbl_Branch.BranchName,
                             tenor = a.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
