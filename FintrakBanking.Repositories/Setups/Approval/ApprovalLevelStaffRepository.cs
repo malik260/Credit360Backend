@@ -39,8 +39,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             groupId = a.tbl_Approval_Level.tbl_Approval_Group_Mapping.GroupId,
                             operationId = a.tbl_Approval_Level.tbl_Approval_Group_Mapping.OperationId,
                             maximumAmount = a.MaximumAmount,
-                            processViewScope = a.ProcessViewScope,
-                            canViewDocument = a.CanViewDocument,
+                            processViewScope = a.ProcessViewScopeId,
+                            canViewDocument = a.CanViewCAMDocument,
                             canViewUploadedFile = a.CanViewUploadedFile,
                             canViewApproval = a.CanViewApproval,
                             canApprove = a.CanApprove,
@@ -89,8 +89,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 MaximumAmount = model.maximumAmount,
                 StaffId = model.staffId,
                 ApprovalLevelId = model.approvalLevelId,
-                ProcessViewScope = model.processViewScope,
-                CanViewDocument = model.canViewDocument,
+                ProcessViewScopeId = (short)model.processViewScope,
+                CanViewCAMDocument = model.canViewDocument,
                 CanViewUploadedFile = model.canViewUploadedFile,
                 CanViewApproval = model.canViewApproval,
                 CanApprove = model.canApprove,
@@ -134,8 +134,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
             data.StaffId = model.staffId;
             data.ApprovalLevelId = model.approvalLevelId;
             data.MaximumAmount = model.maximumAmount;
-            data.ProcessViewScope = model.processViewScope;
-            data.CanViewDocument = model.canViewDocument;
+            data.ProcessViewScopeId = (short)model.processViewScope;
+            data.CanViewCAMDocument = model.canViewDocument;
             data.CanViewUploadedFile = model.canViewUploadedFile;
             data.CanViewApproval = model.canViewApproval;
             data.CanApprove = model.canApprove;

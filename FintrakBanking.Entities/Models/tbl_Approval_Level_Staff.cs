@@ -16,19 +16,33 @@ namespace FintrakBanking.Entities.Models
 
         public int ApprovalLevelId { get; set; }
 
-        public int ProcessViewScope { get; set; }
+        //public int ProcessViewScope { get; set; }
 
-        public bool CanViewDocument { get; set; }
+        //public bool CanViewDocument { get; set; }
         public bool CanViewUploadedFile { get; set; }
         public bool CanViewApproval { get; set; }
-        public bool CanApprove { get; set; }
-        public bool CanUploadFile { get; set; }
+        //public bool CanApprove { get; set; }
+        //public bool CanUploadFile { get; set; }
         public bool CanSendRequest { get; set; }
-        public bool CanEdit { get; set; }
-        public bool VetoPower { get; set; }
+        //public bool CanEdit { get; set; }
+        //public bool VetoPower { get; set; }
         
         [Column(TypeName = "money")]
         public decimal MaximumAmount { get; set; }
+
+        public short ProcessViewScopeId { get; set; }
+
+        public bool CanViewCAMDocument { get; set; }
+        
+        public bool CanApprove { get; set; }
+
+        public bool CanUploadFile { get; set; }
+
+        public bool CanSendJobRequest { get; set; }
+
+        public bool CanEdit { get; set; }
+
+        public bool VetoPower { get; set; }
 
         public int CreatedBy { get; set; }
 

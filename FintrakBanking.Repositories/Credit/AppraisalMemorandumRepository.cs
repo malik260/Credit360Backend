@@ -213,7 +213,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var application = this.context.tbl_Loan_Application.Find(applicationId);
             var grant = context.tbl_Approval_Group_Mapping
-                                    .Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.ProductClassId)
+                                    .Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.tbl_Product.ProductClassId)
                                 .SelectMany(x => x.tbl_Approval_Level)
                                 .SelectMany(x => x.tbl_Approval_Level_Staff)
                                     .Where(x => x.StaffId == staffId)
@@ -222,7 +222,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 return new PrivilegeViewModel
                 {
-                    viewCamDocument = grant.CanViewDocument,
+                    viewCamDocument = grant.CanViewCAMDocument,
                     viewUploadedFiles = grant.CanViewUploadedFile,
                     viewApproval = grant.CanViewApproval,
                     canMakeChanges = grant.CanEdit,

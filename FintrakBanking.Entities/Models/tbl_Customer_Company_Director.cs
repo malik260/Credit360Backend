@@ -33,6 +33,15 @@ namespace FintrakBanking.Entities.Models
         public bool IsPoliticallyExposed { get; set; }
 
         [StringLength(500)]
+        public string Address { get; set; }
+
+        [StringLength(50)]
+        public string PhoneNumber { get; set; }
+
+        [StringLength(50)]
+        public string EmailAddress { get; set; }
+
+        [StringLength(500)]
         public string Others { get; set; }
 
         public int CreatedBy { get; set; }
@@ -44,5 +53,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateTimeUpdated { get; set; }
 
         public virtual tbl_Customer_Company_DirectorType tbl_Customer_Company_DirectorType { get; set; }
+
+
     }
 }

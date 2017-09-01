@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -20,10 +21,13 @@ namespace FintrakBanking.APICore.Controllers
     {
         private ICustomerGroupRepository repo;
 
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
+
         public CustomerGroupController(ICustomerGroupRepository _repo)
         {
             this.repo = _repo;
         }
+        
         #region Customer Group
         [HttpPost]
         [Route("customer-group")]
@@ -32,8 +36,7 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                var token = new TokenDecryptionHelper();
-
+                
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -69,7 +72,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
 
                 UserInfo user = new UserInfo()
                 {
@@ -122,7 +124,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
 
                 var data = repo.GetCustomerGroupsAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
                 if (!data.Any())
@@ -161,7 +162,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -186,18 +186,17 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("customer-group/approval")]
-        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        public async Task<HttpResponseMessage> GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 entity.BranchId = token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.staffId = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
 
-                var data = repo.GoForApproval(entity);
+                var data = await repo.GoForApproval(entity);
 
                 if (data)
                 {
@@ -213,6 +212,24 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An error occured: {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        [Route("customer-group/search/")]
+        public HttpResponseMessage SearchCustomerGroup(string searchQuery)
+        {
+            try
+            {
+                var data = repo.SearchForCustomerGroup(token.GetCompanyId, searchQuery);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data.ToList() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e}" });
+            }
+        }
+
         #endregion
 
         #region Customer Group Mapping

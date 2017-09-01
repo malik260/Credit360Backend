@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.Admin
 
         bool iSUserExit(string username);
 
-        bool GoForApproval(ApprovalViewModel entity);
+        Task<bool> GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId);
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();

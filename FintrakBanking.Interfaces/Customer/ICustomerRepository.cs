@@ -9,6 +9,7 @@ namespace FintrakBanking.Interfaces.Customer
     public interface ICustomerRepository
     {
          CustomerViewModels GetCustomer(int custormerId);
+        IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId);
 
         IEnumerable<CustomerViewModels> GetCustomerByBranchId(int branchId);
 
@@ -28,7 +29,6 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
 
-        IEnumerable<CustomerSectorViewModel> GetCustomerSectors();
-        IEnumerable<CustomerSectorViewModel> GetCustomerSectorBySubSectorId(short ssId);
+        
     }
 }

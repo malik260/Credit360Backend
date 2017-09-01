@@ -12,6 +12,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -574,15 +575,15 @@ namespace FintrakBanking.Repositories.Setups.General
             return AllProduct().Where(p => p.productCode == productCode && p.companyId == companyId).SingleOrDefault();
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.ProductCreation;
 
-            var response = workFlow.GoForApproval(entity);
+            var response = await workFlow.GoForApproval(entity);
 
-            if (response.Result.Item1)
+            if (response.Item1)
             {
-                return ApproveProduct(entity.targetId, response.Result.Item2.approvalStatusId, entity);
+                return ApproveProduct(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
             {

@@ -160,7 +160,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         RequestStaffId = entity.staffId,
                                         OperationId = entity.operationId,
                                     };
-                                    approvelRepo.AddApprovalTrail(trail);
+                                    await approvelRepo.AddApprovalTrail(trail);
                                 }
                             }
                         }
@@ -430,7 +430,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                          ,Comment = approval.comment 
                     };
 
-                    result = approvelRepo.AddApprovalTrail(trail);
+                    result = approvelRepo.AddApprovalTrail(trail).IsCompleted;
 
                 }
             }
@@ -481,11 +481,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return Tuple.Create(true, entity);
             }
-            if (entity.operationId == int.Parse(OperationsEnum.ProductsUpdate.ToString()))
-            {
-                return Tuple.Create(true, entity);
-            }
-
             if (entity.operationId == int.Parse(OperationsEnum.StaffCreation.ToString()))
             {
                 return Tuple.Create(true, entity);
@@ -495,6 +490,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return Tuple.Create(true, entity);
             }
             if (entity.operationId == int.Parse(OperationsEnum.ChartOfAccountCreation.ToString()))
+            {
+                return Tuple.Create(true, entity);
+            }
+            if (entity.operationId == int.Parse(OperationsEnum.LoanPreliminaryEvaluation.ToString()))
             {
                 return Tuple.Create(true, entity);
             }

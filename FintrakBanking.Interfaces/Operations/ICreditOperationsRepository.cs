@@ -8,7 +8,6 @@ namespace FintrakBanking.Interfaces.CreditOperations
 {
     public interface ICreditOperationsRepository
     {
-        decimal GetCollateralSearchChargeAmount(int collateralcustomerId);
-
+        decimal GetCollateralSearchChargeAmount(int stateId);
     }
 }

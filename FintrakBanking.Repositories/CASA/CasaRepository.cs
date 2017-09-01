@@ -272,6 +272,8 @@ namespace FintrakBanking.Repositories.CASA
                         join cust in context.tbl_Customer on casa.CustomerId equals cust.CustomerId
                         join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
                         join sector in context.tbl_Sub_Sector on cust.SubSectorId equals sector.SubSectorId
+                        join custGroup in context.tbl_Customer_Group_Mapping on cust.CustomerId equals custGroup.CustomerId into cGroup
+                        from custGroup in cGroup.DefaultIfEmpty()
                         select new CasaCustomerSearchViewModel()
                         {
                             casaAccountId = casa.CasaAccountId,
@@ -295,9 +297,11 @@ namespace FintrakBanking.Repositories.CASA
                             subSectorName = sector.Name,
                             customerSectorId = sector.tbl_Sector.SectorId,
                             customerSectorName = sector.tbl_Sector.Name,
+                            customerGroupId = custGroup.CustomerGroupId,
+                            customerGroupName = custGroup.tbl_Customer_Group.GroupName ?? "None",
                             taxIdentificationNumber = cust.TaxNumber,
                             registrationNumber = cust.tbl_Customer_CompanyInfomation.FirstOrDefault(x => x.CustomerId == cust.CustomerId).RegistrationNumber,
-
+                            isBlackList = context.tbl_Customer_Blacklist.Where(x => x.CustomerId == cust.CustomerId).Any(),
                             customerTypeId = cust.CustomerTypeId,
                             customerTypeName = cust.tbl_Customer_Type.Name,
                             customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == casa.CustomerId).Select(b => new CustomerBvnViewModels()
@@ -309,13 +313,27 @@ namespace FintrakBanking.Repositories.CASA
                                 isPoliticallyExposed = b.IsPoliticallyExposed,
                                 surname = b.Surname
                             }).ToList(),
-                            customerCompanyDirectors = context.tbl_Customer_Company_Director.Where(s => s.CustomerId == casa.CustomerId).Select(s => new CustomerCompanyDirectorsViewModels()
+                            customerCompanyDirectors = context.tbl_Customer_Company_Director
+                            .Where(s => s.CustomerId == casa.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
+                            .Select(s => new CustomerCompanyDirectorsViewModels()
                             {
                                 bankVerificationNumber = s.CustomerBVN,
                                 companyDirectorTypeId = s.CompanyDirectorTypeId,
                                 companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
                                 customerId = s.CustomerId,
-                                customerName = s.Firstname + " " + s.Surname,
+                                firstname = s.Firstname,
+                                surname = s.Surname
+                            }).ToList(),
+                            customerCompanyShareholders = context.tbl_Customer_Company_Director
+                            .Where(s => s.CustomerId == casa.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
+                            .Select(s => new CustomerCompanyShareholdersViewModels()
+                            {
+                                bankVerificationNumber = s.CustomerBVN,
+                                companyDirectorTypeId = s.CompanyDirectorTypeId,
+                                companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                customerId = s.CustomerId,
+                                firstname = s.Firstname,
+                                surname = s.Surname
                             }).ToList(),
                         });
 
@@ -343,6 +361,18 @@ namespace FintrakBanking.Repositories.CASA
             }
 
             return allCustomers;
+        }
+
+        private bool validateBlacklist(int customerId)
+        {
+            var check = context.tbl_Customer_BVN.Where(x => x.CustomerId == customerId);
+
+            if (check.Any())
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

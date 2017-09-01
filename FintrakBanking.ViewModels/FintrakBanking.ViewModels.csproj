@@ -63,6 +63,7 @@
     <Compile Include="Credit\LoanPreliminaryEvaluationViewModel.cs" />
     <Compile Include="Credit\LoanViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
+    <Compile Include="CustomerKYCITemViewModel.cs" />
     <Compile Include="Customer\CustomerAddressViewModels.cs" />
     <Compile Include="Customer\CustomerBvnViewModels.cs" />
     <Compile Include="Customer\CustomerCompanyInfomationViewModels.cs" />
@@ -78,7 +79,6 @@
     <Compile Include="Customer\CustomerPhoneContactViewModels.cs" />
     <Compile Include="Customer\CustomerTypeViewModels.cs" />
     <Compile Include="Customer\CustomerViewModels.cs" />
-    <Compile Include="Customer\LoanCovenantDetailViewModel.cs" />
     <Compile Include="ErrorLogger\ErrorViewModel.cs" />
     <Compile Include="Finance\CasaLienViewModel.cs" />
     <Compile Include="Finance\FinanceTransactionViewModel.cs" />
@@ -110,6 +110,7 @@
     <Compile Include="Setups\General\CityViewModel.cs" />
     <Compile Include="Setups\General\CompanyViewModel.cs" />
     <Compile Include="Setups\General\CountryViewModel.cs" />
+    <Compile Include="Setups\General\SectorViewModel.cs" />
     <Compile Include="Setups\General\CustomFieldsDataViewModel.cs" />
     <Compile Include="Setups\General\CustomFieldsViewModel.cs" />
     <Compile Include="Setups\General\DepartmentViewModel.cs" />

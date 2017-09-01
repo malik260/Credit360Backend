@@ -11,7 +11,6 @@ namespace FintrakBanking.Common.Enum
         StaffCreation = 3,
         UserCreation = 4,
         ProductCreation = 5,
-        ProductsUpdate = 5,
         CAM = 6,
         ChartOfAccountCreation = 7,
         CustomerGroupCreation = 8,
