@@ -1,17 +1,14 @@
 using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.Common;
-using FintrakBanking.Common.Enum;
-using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.ViewModels.Credit;
 using System;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.APICore.core;
 using System.Web;
-using System.Collections.Generic;
+using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -67,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
 
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.RuningLoans( id, token.GetCompanyId);
+                var data = repo.RunningLoans( id, token.GetCompanyId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -164,7 +161,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [Route("loan-booking")]
-        public HttpResponseMessage AddLoanBooking( LoanViewModel entity)
+        public HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
         {
             try
             {

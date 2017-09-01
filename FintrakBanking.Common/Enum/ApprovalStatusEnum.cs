@@ -9,6 +9,8 @@ namespace FintrakBanking.Common.Enum
         Pending = 0,
         Processing = 1,
         Approved = 2,
-        Disapproved = 3
+        Disapproved = 3,
+        Authorised = 4,
+        Referred = 5,
     }
 }

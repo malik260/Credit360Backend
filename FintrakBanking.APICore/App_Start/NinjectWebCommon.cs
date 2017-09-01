@@ -40,6 +40,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Setups.General;
     using FintrakBanking.Repositories.Setups.Risk;
     using FintrakBanking.Repositories.WorkFlow;
+    using FintrakBanking.Repositories.CreditLimitValidations;
+    using FintrakBanking.Interfaces.CreditLimitValidations;
     using FintrakBanking.Interfaces.Notification;
     using FintrakBanking.Repositories.Notification;
     using FintrakBanking.Repositories.Finance;
@@ -85,8 +87,7 @@ namespace FintrakBanking.APICore.App_Start
                 kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
                 kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
                 // Support Ninject for dependency injection in WebAPI
-                GlobalConfiguration.Configuration.DependencyResolver =
-                  new NinjectResolver(kernel);
+                GlobalConfiguration.Configuration.DependencyResolver = new NinjectResolver(kernel);
                 RegisterServices(kernel);
                 return kernel;
             }
@@ -148,6 +149,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
             kernel.Bind<IApprovalGroupMappingRepository>().To<ApprovalGroupMappingRepository>();
             kernel.Bind<IWorkFlowRepository>().To<WorkFlowRepository>();
+            kernel.Bind<IWorkflow>().To<Workflow>();
             kernel.Bind<IApprovalGroupRepository>().To<ApprovalGroupRepository>();
             kernel.Bind<IApprovalLevelRepository>().To<ApprovalLevelRepository>();
             kernel.Bind<IApprovalLevelStaffRepository>().To<ApprovalLevelStaffRepository>();
@@ -162,6 +164,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICreditTemplateRepository>().To<CreditTemplateRepository>();
             kernel.Bind<ILoanDocumentRepository>().To<LoanDocumentRepository>();
             kernel.Bind<IJobRequestRepository>().To<JobRequestRepository>();
+            kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
             kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IFinanceTransactionRepository>().To<FinanceTransactionRepository>();

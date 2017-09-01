@@ -59,7 +59,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("credit-template/by-level-product")]
-        public HttpResponseMessage GetCreditTemplateByCompanyId(int approvalLevelId, int productClassId)
+        public HttpResponseMessage GetCreditTemplateLevelProduct(int approvalLevelId, int productClassId)
         {
             try
             {
@@ -69,6 +69,21 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("credit-template/product-class")]
+        public HttpResponseMessage GetCreditTemplateProductClass(int productClassId)
+        {
+            try
+            {
+                var data = repo.GetAllCreditTemplateByProductClass(productClassId, token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)

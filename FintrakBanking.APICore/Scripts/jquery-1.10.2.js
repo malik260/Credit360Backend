@@ -308,7 +308,7 @@ jQuery.fn = jQuery.prototype = {
 	map: function( callback ) {
 		return this.pushStack( jQuery.map(this, function( elem, i ) {
 			return callback.call( elem, i, elem );
-		});
+		}));
 	},
 
 	end: function() {
@@ -5937,7 +5937,7 @@ jQuery.extend({
 			jQuery.find.matchesSelector( elem, expr ) ? [ elem ] : [] :
 			jQuery.find.matches( expr, jQuery.grep( elems, function( elem ) {
 				return elem.nodeType === 1;
-			});
+			}))
 	},
 
 	dir: function( elem, dir, until ) {

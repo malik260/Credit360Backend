@@ -22,6 +22,8 @@ namespace FintrakBanking.Entities.Models
 
         public int GroupId { get; set; }
 
+        public short? ProductId { get; set; }
+
         public short? ProductClassId { get; set; }
 
         public int Position { get; set; }

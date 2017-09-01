@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.Credit
                 return Convert.ToInt32(difference);
             }
 
-            var value = context.tbl_Day_Count.FirstOrDefault(x => x.DayCountId == (short)dayCountId).DaysInAYear;
+            var value = context.tbl_Day_Count_Convention.FirstOrDefault(x => x.DayCountConventionId == (short)dayCountId).DaysInAYear;
 
             return value;
         }
@@ -1064,7 +1064,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //----------update loan details -----------------------------------
             var loan = this.context.tbl_Loan.FirstOrDefault(x => x.LoanId == loanId);
-            loan.TerminalDate = periodicSchedule.Max(x => x.paymentDate);
+            loan.MaturityDate = periodicSchedule.Max(x => x.paymentDate);
             loan.PrincipalNumberOfInstallment = periodicSchedule.Count() -1;
             loan.InterestNumberOfInstallment = loan.PrincipalNumberOfInstallment;
             //-------------------------------------------------
