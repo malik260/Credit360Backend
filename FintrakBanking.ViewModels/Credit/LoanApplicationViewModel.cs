@@ -28,13 +28,19 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
-        public short? branchId { get; set; }
+
+        public short branchId { get; set; }
         public short? productClassId { get; set; }
         public short productId { get; set; }
         public int? customerGroupId { get; set; }
+        public string customerGroupCode { get; set; }
+        public short productId { get; set; }
         public short loanTypeId { get; set; }
+
         public short currencyId { get; set; }
+        public string currencyCode { get; set; }
         public short loanStatusId { get; set; }
+        public string loanStatus { get; set; }
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
         public DateTime applicationDate { get; set; }
@@ -45,7 +51,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short tenorModeId { get; set; }
         public string loanInformation { get; set; }
         public string misCode { get; set; }
-        public string teamMiscode { get; set; }
+        public string teamMisCode { get; set; }
         public bool submittedForAppraisal { get; set; }
         public bool isRealatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
@@ -55,8 +61,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string customerName { get; set; }
         public string branchName { get; set; }
-        public string productClassName { get; set; }
+        public string productName { get; set; }
         public string customerGroupName { get; set; }
+
         public string loanTypeName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }

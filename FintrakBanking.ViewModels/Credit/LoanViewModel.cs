@@ -95,6 +95,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string customerName { get; set; }
+
+        public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
+
         public bool isCamsol { get; set; }
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
@@ -112,13 +115,26 @@ namespace FintrakBanking.ViewModels.Credit
         
     }
 
-    public class LoanChargeFeeViewModel : ChargeFeeViewModel
+    public class LoanChargeFeeViewModel 
     {
-        public decimal dependantAmount { get; set; }
-        public double rateValue { get; set; }
+        public int productFeeId { get; set; }
+        public int loanChargeFeeId { get; set; }
+        public int loanId { get; set; }
+        public int productId { get; set; }
+        public int chargeFeeId { get; set; }
+        public string chargeFeeName { get; set; }
+        public decimal feeRateValue { get; set; }
+        public decimal feeDependentAmount { get; set; }
+        public decimal feeAmount { get; set; }
+        public short feeIntervalId { get; set; }
+        public string feeIntervalName{ get; set; }
+        public int feeTypeId { get; set; }
+        public string feeTypeName { get; set; }
+        public bool isIntegralFee { get; set; }
+
     }
 
-    public class LoanCollateralMappingViewModel 
+    public class LoanCollateralMappingViewModel : CollateralCustomerViewModel
     {
         public int loanCollateralMappingId { get; set; }
         public int? loanId { get; set; }

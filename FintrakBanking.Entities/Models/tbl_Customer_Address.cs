@@ -33,5 +33,7 @@ namespace FintrakBanking.Entities.Models
         public bool Active { get; set; }
 
         public virtual tbl_Customer tbl_Customer { get; set; }
+        public string NearestLandmark { get; set; }
+        public string ElectricMeterNumber { get; set; }
     }
 }

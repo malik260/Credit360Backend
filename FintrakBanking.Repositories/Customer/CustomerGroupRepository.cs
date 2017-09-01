@@ -1033,7 +1033,7 @@ namespace FintrakBanking.Repositories.Customer
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
                 allGroups = GellAllCustomerGroupMappings()
-                    .Where(c => c.companyId == companyId)
+                    //.Where(c => c.companyId == companyId)
                     .Where(x => x.customerGroupName.Contains(searchQuery)
                     || x.customerGroupCode.Contains(searchQuery)
                 );

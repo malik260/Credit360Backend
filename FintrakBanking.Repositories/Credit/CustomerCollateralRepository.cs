@@ -70,6 +70,7 @@ namespace FintrakBanking.Repositories.Credit
                 ValuationCycle = entity.valuationCycle,
                 HairCut = entity.hairCut,
                 CustomerId = entity.customerId,
+                
                 ApprovalStatus = entity.approvalStatus,
                 DateActedOn = entity.dateActedOn,
                 ActedOnBy = entity.actedOnBy,
@@ -121,6 +122,7 @@ namespace FintrakBanking.Repositories.Credit
                         valuationCycle = c.ValuationCycle,
                         hairCut = c.HairCut,
                         customerId = c.CustomerId,
+                        customerName = c.tbl_Customer.LastName + " " + c.tbl_Customer.FirstName,
                         approvalStatus = c.ApprovalStatus,
                         dateActedOn = c.DateActedOn,
                         actedOnBy = c.ActedOnBy,
