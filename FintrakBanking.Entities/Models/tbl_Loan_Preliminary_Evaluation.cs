@@ -32,71 +32,80 @@ namespace FintrakBanking.Entities.Models
 
         public int RelationshipManagerId { get; set; }
 
-        [StringLength(300)]
+        [Required]
+        [StringLength(150)]
         public string ProjectDescription { get; set; }
 
+        [Required]
         [StringLength(300)]
         public string ClientDescription { get; set; }
 
         [StringLength(300)]
         public string OwnershipStructure { get; set; }
 
-        [StringLength(300)]
+        [Required]
+        [StringLength(500)]
         public string ProjectFinancingPlan { get; set; }
 
-        public int? ExistingExposure { get; set; }
+        [Required]
+        [StringLength(150)]
+        public string ExistingExposure { get; set; }
 
-        [StringLength(300)]
+        [Required]
+        [StringLength(150)]
         public string BankRole { get; set; }
 
-        [StringLength(300)]
+        [Required]
+        [StringLength(500)]
         public string CollateralArrangement { get; set; }
 
-        [StringLength(300)]
+        [Required]
         public string ProposedTermsAndConditions { get; set; }
 
-        [StringLength(300)]
+        [Required]
+        [StringLength(500)]
         public string ImplementationArrangements { get; set; }
 
-        [StringLength(300)]
+        [Required]
         public string MarketDemand { get; set; }
 
-        [StringLength(300)]
+        [Required]
         public string BusinessProfile { get; set; }
 
-        [StringLength(300)]
+        [Required]
         public string RisksAndConcerns { get; set; }
 
-        [StringLength(300)]
-        public string RiskMitigants { get; set; }
-
-        [StringLength(300)]
+        [Required]
+        [StringLength(500)]
         public string PrudentialExposureLimitImplications { get; set; }
 
-        [StringLength(300)]
+        [Required]
+        [StringLength(500)]
         public string EnvironmentalImpact { get; set; }
 
-        [StringLength(300)]
-        public string SustainableBankingImplications { get; set; }
-
-        [StringLength(300)]
-        public string BankParticipationJustification { get; set; }
-
-        [StringLength(300)]
+        [Required]
+        [StringLength(500)]
         public string PortfolioStrategicAlignment { get; set; }
 
-        [StringLength(300)]
+        [Required]
+        [StringLength(500)]
         public string CommercialViabilityAssessment { get; set; }
 
+        [Required]
         [StringLength(50)]
         public string TaxIdentificationNumber { get; set; }
 
+        [Required]
         [StringLength(50)]
         public string RegistrationNumber { get; set; }
 
         public short ApprovalStatusId { get; set; }
 
         public bool IsCurrent { get; set; }
+
+        public bool SentForEvaluation { get; set; }
+
+        public bool SentForLoanApplication { get; set; }
 
         public int CreatedBy { get; set; }
 

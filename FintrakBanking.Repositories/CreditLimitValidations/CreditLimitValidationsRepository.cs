@@ -70,7 +70,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
             var outstandingbal = from d in context.tbl_Loan
                                  where d.BranchId == branchId
-                                 let sumPrincipalAmount = context.tbl_Loan.Sum(a => a.PrincipalAmount)
+                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.BranchId == branchId).Sum(a => a.PrincipalAmount)
                                  select sumPrincipalAmount;
 
             var limitAmount = from a in context.tbl_Limit_Detail
@@ -91,7 +91,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
             var outstandingbal = from d in context.tbl_Loan
                                  where d.BranchId == branchId
-                                 let sumPrincipalAmount = context.tbl_Loan.Sum(a => a.PrincipalAmount)
+                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.BranchId == branchId).Sum(a => a.PrincipalAmount)
                                  select sumPrincipalAmount;
 
             var limitAmount = from a in context.tbl_Limit_Detail
@@ -169,7 +169,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  join b in context.tbl_Customer on a.CustomerId equals b.CustomerId
                                  join c in context.tbl_Sub_Sector on b.SubSectorId equals c.SubSectorId
                                  where a.CustomerId==b.CustomerId && b.SubSectorId==c.SubSectorId
-                                 let sumPrincipalAmount = context.tbl_Loan.Sum(a => a.PrincipalAmount)
+                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.CustomerId == customerId).Sum(a => a.PrincipalAmount)
                                  select sumPrincipalAmount;
 
             var limitAmount = from a in context.tbl_Limit_Detail
@@ -197,7 +197,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  join b in context.tbl_Customer on a.CustomerId equals b.CustomerId
                                  join c in context.tbl_Sub_Sector on b.SubSectorId equals c.SubSectorId
                                  where a.CustomerId == b.CustomerId && b.SubSectorId == c.SubSectorId
-                                 let sumPrincipalAmount = context.tbl_Loan.Sum(a => a.PrincipalAmount)
+                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.CustomerId == customerId).Sum(a => a.PrincipalAmount)
                                  select sumPrincipalAmount;
 
             var limitAmount = from a in context.tbl_Limit_Detail
@@ -220,7 +220,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
             var outstandingbal = from d in context.tbl_Loan
                                  where d.CustomerId == customerId
-                                 let sumPrincipalAmount = context.tbl_Loan.Sum(a => a.PrincipalAmount)
+                                 let sumPrincipalAmount = context.tbl_Loan.Where(a=> a.CustomerId == customerId).Sum(a => a.PrincipalAmount)
                                  select sumPrincipalAmount;
 
             var limitAmount = from a in context.tbl_Limit_Detail
@@ -243,7 +243,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
             var outstandingbal = from d in context.tbl_Loan
                                  where d.CustomerId == customerId
-                                 let sumPrincipalAmount = context.tbl_Loan.Sum(a => a.PrincipalAmount)
+                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.CustomerId == customerId).Sum(a => a.PrincipalAmount)
                                  select sumPrincipalAmount;
 
             var limitAmount = from a in context.tbl_Limit_Detail
@@ -266,7 +266,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
             var outstandingbal = from d in context.tbl_Loan
                                  where d.CustomerGroupId == customergroupId
-                                 let sumPrincipalAmount = context.tbl_Loan.Sum(a => a.PrincipalAmount)
+                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.CustomerGroupId == customergroupId).Sum(a => a.PrincipalAmount)
                                  select sumPrincipalAmount;
 
             var customer = this.context.tbl_Loan.FirstOrDefault(x => x.CustomerGroupId == customergroupId).CustomerId;
@@ -289,7 +289,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
             var outstandingbal = from d in context.tbl_Loan
                                  where d.CustomerGroupId == customergroupId
-                                 let sumPrincipalAmount = context.tbl_Loan.Sum(a => a.PrincipalAmount)
+                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.CustomerGroupId == customergroupId).Sum(a => a.PrincipalAmount)
                                  select sumPrincipalAmount;
 
             var customer = this.context.tbl_Loan.FirstOrDefault(x => x.CustomerGroupId == customergroupId).CustomerId;
@@ -314,7 +314,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
             var outstandingbal = from d in context.tbl_Loan
                                  where d.RelationshipOfficerId == relationshipofficerId || d.RelationshipManagerId== relationshipofficerId
-                                 let sumPrincipalAmount = context.tbl_Loan.Sum(a => a.PrincipalAmount)
+                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.RelationshipOfficerId == relationshipofficerId).Sum(a => a.PrincipalAmount)
                                  select sumPrincipalAmount;
 
             var limitAmount = from a in context.tbl_Limit_Detail

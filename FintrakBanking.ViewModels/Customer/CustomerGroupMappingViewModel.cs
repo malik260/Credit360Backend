@@ -7,7 +7,12 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerGroupMappingViewModel : GeneralEntity
     {
-        
+        public CustomerGroupMappingViewModel()
+        {
+            customerBvnInformation = new List<CustomerBvnViewModels>();
+            customerCompanyShareholders = new List<CustomerCompanyShareholdersViewModels>();
+            customerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
+        }
         public int customerGroupMappingId { get; set; }
         public int customerId { get; set; }
         public string customerName { get; set; }
@@ -22,5 +27,9 @@ namespace FintrakBanking.ViewModels.Customer
         public string accountHolder { get; set; }
         public short branchId { get; set; }
         public bool isBlackListed { get; set; }
+
+        public List<CustomerBvnViewModels> customerBvnInformation { get; set; }
+        public List<CustomerCompanyShareholdersViewModels> customerCompanyShareholders { get; set; }
+        public List<CustomerCompanyDirectorsViewModels> customerCompanyDirectors { get; set; }
     }
 }

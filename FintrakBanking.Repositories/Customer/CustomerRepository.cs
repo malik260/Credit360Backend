@@ -5,6 +5,7 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -12,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Customer
-{ 
+{
     public class CustomerRepository : ICustomerRepository
     {
         private FinTrakBankingContext context;
@@ -339,7 +340,7 @@ namespace FintrakBanking.Repositories.Customer
                    {
                        accountCreationComplete = a.AccountCreationComplete,
                        branchId = a.BranchId,
-                       branchName = a.tbl_Branch.BranchName,
+                       //branchName = a.tbl_Branch.BranchName,
                        childDateOfBirth = a.ChildDateOfBirth.Value,
                        companyId = a.CompanyId,
                        createdBy = a.CreatedBy,
@@ -380,6 +381,8 @@ namespace FintrakBanking.Repositories.Customer
                            cityId = x.CityId,
                            customerId = x.CustomerId,
                            homeTown = x.HomeTown,
+                           nearestLandmark = x.NearestLandmark,
+                           electricMeterNumber = x.ElectricMeterNumber,
                            pobox = x.POBox,
                            stateId = x.StateId,
                            addressId = x.AddressId
@@ -414,7 +417,10 @@ namespace FintrakBanking.Repositories.Customer
                            creditRating = d.CreditRating,
                            registeredOffice = d.RegisteredOffice,
                            previousCreditRating = d.PreviousCreditRating,
-                           registrationNumber = d.RegistrationNumber
+                           registrationNumber = d.RegistrationNumber,
+                           paidUpCapital = (int)d.PaidUpCapital,
+                           authorizedCapital = (int) d.AuthorisedCapital
+
 
                        }).ToList(),
                        CustomerIdentification = context.tbl_Customer_Identification.Where(e => e.CustomerId == a.CustomerId).Select(e => new CustomerIdentificationViewModels()
@@ -446,8 +452,23 @@ namespace FintrakBanking.Repositories.Customer
                            companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
                            customerId = s.CustomerId,
                            customerName = s.Firstname + " " + s.Surname,
-                       }).ToList()
-
+                           address = s.Address,
+                           phoneNumber = s.PhoneNumber,
+                           email = s.EmailAddress
+                       }).ToList(),
+   //                    CustomerClientOrSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId).Select(cs => new CustomerClientOrSupplierViewModels()
+   //                    {
+   //client_SupplierId = cs.Client_SupplierId,
+   //clientOrSupplierName = cs.FirstName +" "+ cs.LastName,
+   //     firstName  = cs.FirstName, 
+   //    middleName = cs.MiddleName,
+   //    lastName = cs.LastName,
+   //    client_SupplierAddress = cs.Client_SupplierAddress,
+   //    client_SupplierPhoneNumber = cs.Client_SupplierPhoneNumber,
+   //    client_SupplierEmail = cs.Client_SupplierEmail,
+   //    client_SupplierTypeId = cs.Client_SupplierTypeId,
+   //    client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+   // }).ToList()
                    };
 
         }
@@ -455,7 +476,7 @@ namespace FintrakBanking.Repositories.Customer
         public CustomerViewModels GetCustomer(int custormerId)
         {
 
-           var data = GetCustomers().Where(a => a.customerId == custormerId).FirstOrDefault();
+            var data = GetCustomers().Where(a => a.customerId == custormerId).FirstOrDefault();
             return data;
         }
 
@@ -485,6 +506,21 @@ namespace FintrakBanking.Repositories.Customer
             return type;
         }
 
+        public IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId)
+        {
+            var data = (from cs in context.tbl_Customer_Group_Mapping
+                        where cs.CustomerGroupId == groupId
+                        select new CustomerViewModels()
+                        {
+                            customerId = cs.CustomerId,
+                            fullName = cs.tbl_Customer.LastName + " " + cs.tbl_Customer.FirstName + "(" + cs.tbl_Customer.CustomerCode +")",
+                            firstName = cs.tbl_Customer.FirstName,
+                            lastName = cs.tbl_Customer.LastName,
+                            customerCode = cs.tbl_Customer.CustomerCode,
+                        });
+
+            return data;
+        }
 
         public async Task<bool> UpdateCustomer(int customerId, CustomerViewModels entity)
         {
@@ -625,6 +661,36 @@ namespace FintrakBanking.Repositories.Customer
             }
 
             return customers;
+        }
+
+
+        public IEnumerable<SectorViewModel> GetCustomerSectors()
+        {
+            var data = (from cs in context.tbl_Sector
+                        select new SectorViewModel()
+                        {
+                            sectorId = cs.SectorId,
+                            sectorName = cs.Name,
+                            sectorCode = cs.Code,
+                        });
+
+            return data;
+        }
+
+
+        public IEnumerable<SectorViewModel> GetCustomerSectorBySubSectorId(short ssId)
+        {
+            var data = (from s in context.tbl_Sub_Sector
+                        where s.SubSectorId == ssId
+                        select new SectorViewModel()
+                        {
+                            subSectorId = s.SubSectorId,
+                            sectorId = s.tbl_Sector.SectorId,
+                            sectorName = s.Name,
+                            sectorCode = s.Code
+                        });
+
+            return data;
         }
 
     }

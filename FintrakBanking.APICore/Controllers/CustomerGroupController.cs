@@ -27,6 +27,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             this.repo = _repo;
         }
+        
         #region Customer Group
         [HttpPost]
         [Route("customer-group")]

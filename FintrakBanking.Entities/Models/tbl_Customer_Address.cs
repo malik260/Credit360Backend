@@ -30,8 +30,17 @@ namespace FintrakBanking.Entities.Models
         [StringLength(20)]
         public string POBox { get; set; }
 
+
+        [StringLength(300)]
+        public string NearestLandmark { get; set; }
+
+        [StringLength(50)]
+        public string ElectricMeterNumber { get; set; }
+
+
         public bool Active { get; set; }
 
         public virtual tbl_Customer tbl_Customer { get; set; }
+
     }
 }

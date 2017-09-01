@@ -22,6 +22,8 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
+
+
         [HttpGet]
         [Route("blacklist/{customerId}")]
         public HttpResponseMessage ValidateBlackList(int customerId)
@@ -29,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
                 try
                 {
                     var data = repo.ValidateBlackList(customerId);
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (Exception ex)
                 {
@@ -46,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.ValidateWatchList(customerId);
-                return Request.CreateResponse(HttpStatusCode.OK, data);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
             {
@@ -63,7 +65,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.ValidateCamsol(customerId);
-                return Request.CreateResponse(HttpStatusCode.OK, data);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
             {
@@ -74,7 +76,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("validateamountbybranch/{branchId}")]
+        [Route("validateamount/branch/{branchId}")]
         public HttpResponseMessage  ValidateAmountByBranch( short branchId)
         { 
                 try
@@ -83,7 +85,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ValidateAmountByBranch(branchId);
                     if (data != null)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, data);
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                     }
                     else
                     {
@@ -100,7 +102,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("validatenplbybranch/{branchId}")]
+        [Route("validatenpl/branch/{branchId}")]
         public HttpResponseMessage ValidateNPLByBranch(short branchId)
         {
             try
@@ -109,7 +111,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ValidateNPLByBranch(branchId);
                 if (data != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 else
                 {
@@ -127,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("validateamountbysector/{customerId}")]
+        [Route("validateamount/sector/{customerId}")]
         public HttpResponseMessage ValidateAmountBySector(int customerId)
         {
             try
@@ -136,7 +138,8 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ValidateAmountBySector(customerId);
                 if (data != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 else
                 {
@@ -153,7 +156,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("validatenplbysector/{customerId}")]
+        [Route("validatenpl/sector/{customerId}")]
         public HttpResponseMessage ValidateNPLBySector(int customerId)
         {
             try
@@ -162,7 +165,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ValidateNPLBySector(customerId);
                 if (data != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 else
                 {
@@ -180,7 +183,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("validateamountbycustomer/{customerId}")]
+        [Route("validateamount/customer/{customerId}")]
         public HttpResponseMessage ValidateAmountByCustomer(int customerId)
         {
             try
@@ -189,7 +192,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ValidateAmountByCustomer(customerId);
                 if (data != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 else
                 {
@@ -206,7 +209,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("validatenplbycustomer/{customerId}")]
+        [Route("validatenpl/customer/{customerId}")]
         public HttpResponseMessage ValidateNPLByCustomer(int customerId)
         {
             try
@@ -215,7 +218,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ValidateNPLByCustomer(customerId);
                 if (data != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 else
                 {
@@ -233,7 +236,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("validateamountbycustomergroup/{customerId}")]
+        [Route("validateamount/customergroup/{customerId}")]
         public HttpResponseMessage ValidateAmountByCustomerGroup(int customergroupId)
         {
             try
@@ -242,7 +245,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ValidateAmountByCustomerGroup(customergroupId);
                 if (data != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 else
                 {
@@ -259,7 +262,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("validatenplbycustomergroup/{customerId}")]
+        [Route("validatenpl/customergroup/{customerId}")]
         public HttpResponseMessage ValidateNPLByCustomerGroup(int customergroupId)
         {
             try
@@ -268,7 +271,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ValidateNPLByCustomerGroup(customergroupId);
                 if (data != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 else
                 {
@@ -286,7 +289,7 @@ namespace FintrakBanking.APICore.Controllers
 
 
         [HttpGet]
-        [Route("validatecreditlimitnplbyRMBM/{relationshipofficerId}")]
+        [Route("validatecreditlimitnpl/RMBM/{relationshipofficerId}")]
         public HttpResponseMessage ValidateCreditLimitNPLByRMBM(short relationshipofficerId)
         {
             try
@@ -295,7 +298,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.ValidateCreditLimitNPLByRMBM(relationshipofficerId);
                 if (data != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, data);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 else
                 {

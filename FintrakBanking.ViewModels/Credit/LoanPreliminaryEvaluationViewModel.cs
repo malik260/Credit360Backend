@@ -1,7 +1,18 @@
-﻿namespace FintrakBanking.ViewModels.Credit
+﻿using FintrakBanking.ViewModels.Customer;
+using System;
+using System.Collections.Generic;
+
+namespace FintrakBanking.ViewModels.Credit
 {
     public class LoanPreliminaryEvaluationViewModel: GeneralEntity
     {
+        public LoanPreliminaryEvaluationViewModel()
+        {
+            customerBvnInformation = new List<CustomerBvnViewModels>();
+            customerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
+            customerCompanyShareholders = new List<CustomerCompanyShareholdersViewModels>();
+        }
+
         public int loanPreliminaryEvaluationId { get; set; }
         public string preliminaryEvaluationCode { get; set; }
         public short branchId { get; set; }
@@ -15,7 +26,7 @@
         public string clientDescription { get; set; }
         public string registrationNumber { get; set; }
         public string taxIdentificationNumber { get; set; }
-        public int exisitingExposure { get; set; }
+        public string existingExposure { get; set; }
         public string projectFinancingPlan { get; set; }
         public string bankRole { get; set; }
         public string proposedTermsAndConditions { get; set; }
@@ -31,10 +42,15 @@
         public string bankParticipationJustification { get; set; }
         public string portfolioStrategicAlignment { get; set; }
         public string commercialViabilityAssessment { get; set; }
-        public bool sendForApproval { get; set; }
-
+        public bool sentForEvaluation { get; set; }
+        public bool sentForLoanApplication { get; set; }
+        public bool isCurrent { get; set; }
         public int operationId { get; set; }
         public short approvalStatusId { get; set; }
 
+        public List<CustomerBvnViewModels> customerBvnInformation { get; set; }
+        public List<CustomerCompanyShareholdersViewModels> customerCompanyShareholders { get; set; }
+        public List<CustomerCompanyDirectorsViewModels> customerCompanyDirectors { get; set; }
+        public string customerCode { get; set; }
     }
 }

@@ -65,6 +65,7 @@
     <Compile Include="Enum\OperationsEnum.cs" />
     <Compile Include="Enum\FrequencyTypeEnum.cs" />
     <Compile Include="Enum\LienTypeEnum.cs" />
+    <Compile Include="Enum\PenEvaluationStatusEnum.cs" />
     <Compile Include="Enum\SourceApplicationEnum.cs" />
     <Compile Include="Enum\ProcessViewScopeEnum.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />
