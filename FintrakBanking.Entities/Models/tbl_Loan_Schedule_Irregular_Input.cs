@@ -21,5 +21,9 @@ namespace FintrakBanking.Entities.Models
         public decimal PaymentAmount { get; set; }
 
         public virtual tbl_Loan tbl_Loan { get; set; }
+
+        public int CreatedBy { get; set; }
+
+        public DateTime DateTimeCreated { get; set; }
     }
 }

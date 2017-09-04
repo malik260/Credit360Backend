@@ -983,7 +983,32 @@ namespace FintrakBanking.Repositories.Credit
         public bool AddLoanSchedule(int loanId, LoanPaymentScheduleInputViewModel loanInput, int staffId)
         {
             bool output = false;
-            
+            var applicationDate = generalSetup.GetApplicationDate();
+
+
+            //---------------save irregular loan schedule input---------------------------
+            List<tbl_Loan_Schedule_Irregular_Input> tblIrregularSchedule = new List<tbl_Loan_Schedule_Irregular_Input>();
+            LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
+            if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+            {
+                var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
+                foreach (var item in data)
+                {
+                    tbl_Loan_Schedule_Irregular_Input schedule = new tbl_Loan_Schedule_Irregular_Input();
+                    schedule.LoanId = loanId;
+                    schedule.PaymentDate = item.paymentDate;
+                    schedule.PaymentAmount = Convert.ToDecimal(item.paymentAmount);
+                    schedule.CreatedBy = staffId;
+                    schedule.DateTimeCreated = applicationDate;
+
+                    tblIrregularSchedule.Add(schedule);
+                }
+
+            }
+            //----------------------------------------------
+
+
+            //----------generate and save periodic loan schedule -----------------------------------
             List<LoanPaymentSchedulePeriodicViewModel> periodicSchedule = GeneratePeriodicLoanSchedule(loanInput);
 
             List<tbl_Loan_Schedule_Periodic> tblPeriodicSchedule = new List<tbl_Loan_Schedule_Periodic>();
@@ -1007,13 +1032,14 @@ namespace FintrakBanking.Repositories.Credit
                 schedule.AmortisedEndPrincipalAmount = Convert.ToDecimal(item.amortisedEndPrincipalAmount);
                 schedule.EffectiveInterestRate = item.effectiveInterestRate;
                 schedule.CreatedBy = staffId;
-                schedule.DateTimeCreated = generalSetup.GetApplicationDate();
+                schedule.DateTimeCreated = applicationDate;
 
                 tblPeriodicSchedule.Add(schedule);
             }
+            //-------------------------------------------------------------------------------------
 
 
-
+            //----------generate and save daily loan schedule -----------------------------------
             List<LoanPaymentScheduleDailyViewModel> dailySchedule = GenerateDailyLoanSchedule(loanInput);
 
             List<tbl_Loan_Schedule_Daily> tblDailySchedule = new List<tbl_Loan_Schedule_Daily>();
@@ -1053,10 +1079,18 @@ namespace FintrakBanking.Repositories.Credit
                 schedule.NumberOfPeriods = item.numberOfPeriods;
                 schedule.BallonAmount = Convert.ToDecimal(item.balloonAmt);
                 schedule.CreatedBy = staffId;
-                schedule.DateTimeCreated = generalSetup.GetApplicationDate();
+                schedule.DateTimeCreated = applicationDate;
 
                 tblDailySchedule.Add(schedule);
             }
+            //----------------------------------------------------------------
+
+
+            //------------adding records to the database--------------------------
+
+            if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+            { this.context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }
+
 
             this.context.tbl_Loan_Schedule_Periodic.AddRange(tblPeriodicSchedule);
 
@@ -1070,7 +1104,7 @@ namespace FintrakBanking.Repositories.Credit
             //-------------------------------------------------
 
             context.SaveChanges();
-
+            //-------------------------------------------------------
 
             output = true;
 
