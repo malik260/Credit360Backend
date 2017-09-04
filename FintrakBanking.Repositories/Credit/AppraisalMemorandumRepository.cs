@@ -9,6 +9,8 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using System.Linq;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Repositories.WorkFlow;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -17,9 +19,9 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
-        private IWorkFlowRepository workflow;
+        private IWorkflow workflow;
 
-        public AppraisalMemorandumRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkFlowRepository workflow)
+        public AppraisalMemorandumRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
         {
             this.context = context;
             this.general = general;
@@ -36,7 +38,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             return this.context.tbl_Credit_Appraisal_Memorandum.Where(x => x.Deleted == false).Select(x => new AppraisalMemorandumViewModel
             {
-
                 appraisalMemorandumId = x.AppraisalMemorandumId,
                 loanApplicationId = x.LoanApplicationId,
                 camRef = x.CAMRef,
@@ -80,18 +81,6 @@ namespace FintrakBanking.Repositories.Credit
 
             this.FlagSubmittedForAppraisal(model.loanApplicationId);
 
-            var response = this.workflow.GoForApproval(new ApprovalViewModel
-            {
-                operationId = (int)OperationsEnum.CAM,
-                targetId = model.loanApplicationId,
-                myLevelId = 4, //model.levelId,
-                approvalStatusId = 0,
-                operationURL = model.applicationUrl,
-                comment = "TEST CAM", //model.comment,
-                amount = 1000000, //model.loanAmount,
-                isPoliticalyExposed = false, //model.politicalyExposed,
-            });
-
             context.SaveChanges();
 
             return new AppraisalMemorandumViewModel
@@ -126,36 +115,6 @@ namespace FintrakBanking.Repositories.Credit
             return BitConverter.ToString(data).Replace("-", String.Empty);
         }
 
-        public bool AppendTemplate(AppraisalMemorandumViewModel model, int appraisalMemorandumId, int userId)
-        {
-            var data = this.context.tbl_Credit_Appraisal_Memorandum.Find(appraisalMemorandumId);
-            if (data == null)
-            {
-                return false;
-            }
-
-            data.CAMDocumentation = model.camDocumentation; // TODO
-            data.LastUpdatedBy = model.lastUpdatedBy;
-            data.DateTimeUpdated = general.GetApplicationDate();
-
-            // Audit Section ---------------------------
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.AppraisalMemorandumUpdated, // TODO
-                StaffId = model.lastUpdatedBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated AppraisalMemorandum '{ model.camRef }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
-            this.audit.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-
-            return context.SaveChanges() != 0;
-        }
-
         public bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId)
         {
             var data = this.context.tbl_Credit_Appraisal_Memorandum.Find(appraisalMemorandumId);
@@ -183,52 +142,48 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
-            //var levelStaff = context.tbl_Approval_Group_Mapping.Where(x=>x.
-                
-                //GetStaffLevel(model.lastUpdatedBy, model.companyId, (int)Operations.CAM);
-
-            //var response = this.workflow.GoForApproval(new ApprovalViewModel
-            //{
-            //    operationId = (int)Operations.CAM,
-            //    targetId = 2,
-            //    myLevelId = levelId,
-            //    nextLevelId = 2,
-            //    approvalStatusId = 1,
-            //    amount = 2000000,
-            //    comment = "TEST CAM",
-            //    operationURL = "",
-            //    isPoliticalyExposed = false,
-            //});
-
             return context.SaveChanges() != 0;
         }
 
-        public ForwardViewModel ForwardAppraisalMemorandum(ForwardViewModel model)
+        public async Task<bool> ForwardAppraisalMemorandum(ForwardViewModel model)
         {
+            var operationId = (int)OperationsEnum.CAM;
 
-            // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.receiverLevelId; //?status eror if not provided & error if assign but used
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            await workflow.LogActivity();
+
+            if (workflow.Saved)
             {
-                AuditTypeId = (short)AuditTypeEnum.AppraisalMemorandumAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Forward AppraisalMemorandum '{ model.applicationId }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
-            this.audit.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
+                // Audit Section ---------------------------
+                var audit = new tbl_Audit
+                {
+                    AuditTypeId = (short)AuditTypeEnum.AppraisalMemorandumAdded,
+                    StaffId = model.createdBy,
+                    BranchId = (short)model.userBranchId,
+                    Detail = $"Forward AppraisalMemorandum '{ model.applicationId }' ",
+                    IPAddress = model.userIPAddress,
+                    Url = model.applicationUrl,
+                    ApplicationDate = general.GetApplicationDate(),
+                    SystemDateTime = DateTime.Now
+                };
+                this.audit.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
 
-            context.SaveChanges();
+                var appl = context.tbl_Loan_Application.Find(model.applicationId);
+                appl.ApprovalStatusId = workflow.StatusId;
 
-            return new ForwardViewModel
-            {
-                comment = string.Empty,
-                applicationId = 1,
-                receiverStaffId = 1
-            };
+                context.SaveChanges();
+            }
+
+            return workflow.Saved;
         }
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId)
@@ -252,10 +207,39 @@ namespace FintrakBanking.Repositories.Credit
                     approvalStateId = x.ApprovalStateId,
                     approvalStatusId = x.ApprovalStatusId,
                     comment = x.Comment,
-                    staffName = allstaff.FirstOrDefault(s => s.id == x.ResponseStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.ResponseStaffId).name,
+                    staffName = allstaff.FirstOrDefault(s => s.id == x.RequestStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.RequestStaffId).name,
                 }).OrderByDescending(x => x.approvalTrailId);
         }
-        
+
+        public PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId)
+        {
+            var privilege = new PrivilegeViewModel();
+
+            var application = this.context.tbl_Loan_Application.Find(applicationId);
+            var grant = context.tbl_Approval_Group_Mapping
+                                    .Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.tbl_Product.ProductClassId)
+                                .SelectMany(x => x.tbl_Approval_Level)
+                                .SelectMany(x => x.tbl_Approval_Level_Staff)
+                                    .Where(x => x.StaffId == staffId)
+                                    .SingleOrDefault();
+            if (grant != null)
+            {
+                return new PrivilegeViewModel
+                {
+                    viewCamDocument = grant.CanViewCAMDocument,
+                    viewUploadedFiles = grant.CanViewUploadedFile,
+                    viewApproval = grant.CanViewApproval,
+                    canMakeChanges = grant.CanEdit,
+                    canAppendTemplate = grant.CanEdit,
+                    canApprove = grant.CanApprove,
+                    canUploadFile = grant.CanUploadFile,
+                    canSendRequest = grant.CanSendJobRequest,
+                };
+            }
+
+            return privilege;
+        }
+
         private IQueryable<OperationStaffViewModel> GetAllStaffNames()
         {
             return this.context.tbl_Staff.Select(s => new OperationStaffViewModel
@@ -265,15 +249,11 @@ namespace FintrakBanking.Repositories.Credit
             });
         }
 
-        //public bool PushIntoWorkflowProcess(ApprovalViewModel entity)
-        //{
-        //    return true;
-        //}
-
-        //public bool PushToNext() {
-        //    return true;
-        //}
-
-
+        private bool RunningProcess(int operationId, int targetId)
+        {
+            var trail = context.tbl_Approval_Trail.FirstOrDefault(x => x.OperationId == operationId && x.TargetId == targetId);
+            if (trail == null) { return false; }
+            return true;
+        }
     }
 }

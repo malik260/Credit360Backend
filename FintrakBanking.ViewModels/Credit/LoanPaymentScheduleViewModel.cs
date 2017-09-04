@@ -34,7 +34,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double amortisedPeriodInterestAmount { get; set; }
         public double amortisedPeriodPrincipalAmount { get; set; }
         public double amortisedEndPrincipalAmount { get; set; }
-        public double internalRateOfReturn { get; set; }
+        public double effectiveInterestRate { get; set; }
     }
 
     public class LoanPaymentScheduleDailyViewModel

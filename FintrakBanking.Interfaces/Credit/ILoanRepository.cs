@@ -33,21 +33,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         //IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId);
 
-        int CalculateNumberOfInstallments(TenorModeEnum tenorModeId, short frequencyTypeId, int tenor);
-
-        DateTime CalculateFirstPayDate(DateTime effectiveDate, short frequencyTypeId);
-
-        IEnumerable<LookupViewModel> GetAllLoanScheduleCategory();
-
-        IEnumerable<LookupViewModel> GetAllLoanScheduleType();
-
-        IEnumerable<LookupViewModel> GetLoanScheduleTypeByCategory(short categoryId);
-        IQueryable<LoanPaymentScheduleViewModel> GenerateLoanSchedule(LoanPaymentScheduleInput input);
-
-        List<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanSchedule(LoanPaymentScheduleInputViewModel loanInput);
-
-        List<LoanPaymentScheduleDailyViewModel> GenerateDailyLoanSchedule(LoanPaymentScheduleInputViewModel loanInput);
-
         IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId);
 
         IEnumerable<LoanViewModel> GetBookedLoanDetailsByCustomerCode(string customerCode, int companyId);

@@ -23,8 +23,25 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ForwardViewModel : GeneralEntity
     {
+        public int forwardAction { get; set; } // statusId
+        public int applicationId { get; set; } // targetId
+        public int? productClassId { get; set; }
+        public int? productId { get; set; }
+        public int receiverLevelId { get; set; }
+        public decimal amount { get; set; }
+        public bool politicallyExposed { get; set; }
         public string comment { get; set; }
-        public int applicationId { get; set; }
-        public int receiverStaffId { get; set; }
+    }
+
+    public class PrivilegeViewModel : GeneralEntity
+    {
+        public bool viewCamDocument { get; set; }
+        public bool viewUploadedFiles { get; set; }
+        public bool viewApproval { get; set; }
+        public bool canMakeChanges { get; set; }
+        public bool canAppendTemplate { get; set; }
+        public bool canApprove { get; set; }
+        public bool canUploadFile { get; set; }
+        public bool canSendRequest { get; set; }
     }
 }

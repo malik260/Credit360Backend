@@ -13,7 +13,8 @@
         public string creditRating { get; set; }
         public string previousCreditRating { get; set; }
         public int paidUpCapital { get; set; }
-        public int authorisedCapital { get; set; }
+        public int authorizedCapital { get; set; }
+
        
     }
 

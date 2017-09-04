@@ -16,8 +16,6 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
-    [Export(typeof(IWorkFlowRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class WorkFlowRepository : IWorkFlowRepository
     {
         private tbl_Approval_Trail trail = null;
@@ -62,19 +60,19 @@ namespace FintrakBanking.Repositories.WorkFlow
         /// <returns></returns>
         public Tuple<bool, ApprovalViewModel> LogForApproval(ApprovalViewModel entity)
         {
-
+            var nextLevel = new ApprovalLevelViewModel();
             int? fromApprovalLevelId = null;
             var currentStaffLevel = GetStaffLevel(entity.staffId, entity.companyId, entity.operationId);
             if (currentStaffLevel != null)
             {
                 fromApprovalLevelId = currentStaffLevel.approvalLevelId;
-                // var nextLevel = GetNextApprovalLevel(entity.operationId, currentStaffLevel.approvalLevelId, entity.companyId); //get next level
+                  nextLevel = GetNextApprovalLevel(entity.operationId, currentStaffLevel.approvalLevelId, entity.companyId); //get next level
             }
 
             trail = new tbl_Approval_Trail
             {
                 ArrivalDate = genSetup.GetApplicationDate(),
-                ToApprovalLevelId = entity.nextLevelId == 0 ? GetStatingApprovalLevel(entity.operationId, entity.companyId) : entity.nextLevelId,
+                ToApprovalLevelId = entity.nextLevelId == 0 ? nextLevel.approvalLevelId /**/ : entity.nextLevelId,
                 TargetId = entity.targetId,
                 ApprovalStatusId = entity.approvalStatusId,
                 CompanyId = entity.companyId,
@@ -82,7 +80,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 Comment = entity.comment,
                 ApprovalStateId = (int)ApprovalState.Initiation,
                 OperationId = entity.operationId,
-                FromApprovalLevelId = fromApprovalLevelId,
+                FromApprovalLevelId = fromApprovalLevelId ,//= null ? GetStatingApprovalLevel(entity.operationId, entity.companyId),
                 SystemArrivalDateTime = DateTime.Now
             };
 
@@ -183,7 +181,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (nextLevel.routeViaStaffOrganogram)  // find the next approving officer. use organogram or continue from approval levels
                 {
                     //use organogram 
-                    if (UseOrganogram(entity.staffId, entity.approvalStatusId, entity.targetId, nextLevel, entity.companyId))
+                    if (UseOrganogram(entity.staffId, entity.approvalStatusId, entity.targetId, nextLevel, entity.companyId,entity.comment ))
                     {
                         return Tuple.Create(false, entity);
                     }
@@ -338,7 +336,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             return nextLevel;
         }
 
-        private bool UseOrganogram(int staffId, short approvalStatusId, int targetId, ApprovalLevelViewModel entity, int companyId)
+        private bool UseOrganogram(int staffId, short approvalStatusId, int targetId, ApprovalLevelViewModel entity, int companyId, string comment)
         {
 
             int currentLevel = 0;
@@ -368,7 +366,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 ApprovalStatusId = approvalStatusId,
                 CompanyId = companyId,
                 RequestStaffId = staffId,
-                OperationId = entity.operationId
+                OperationId = entity.operationId,
+                 Comment = comment
             };
 
             approvelRepo.AddApprovalTrail(trail);
@@ -429,6 +428,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         CompanyId = approval.companyId,
                         RequestStaffId = approval.staffId,
                         OperationId = approval.operationId
+                         ,Comment = approval.comment 
                     };
 
                     result = approvelRepo.AddApprovalTrail(trail).IsCompleted;
