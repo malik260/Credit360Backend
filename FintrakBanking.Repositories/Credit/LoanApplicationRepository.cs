@@ -399,15 +399,15 @@ namespace FintrakBanking.Repositories.Credit
             return $"{code}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
         }
 
-        public  bool ApprovalOperation(ApprovalViewModel approval)
-        {
-            return false;///  workFlow.GoForApproval(approval);
-        }
+        //public  bool ApprovalOperation(ApprovalViewModel approval)
+        //{
+        //    return false;///  workFlow.GoForApproval(approval);
+        //}
 
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int companyId, int branchId, int staffId)
         {
             int operationId = (int)OperationsEnum.CAM;
-            int scope = this.GetStaffWorkflowViewScope(operationId, staffId); // TODO
+            int scope = this.GetStaffWorkflowViewScope(operationId, staffId);
 
             if (scope == (int)ProcessViewScopeEnum.Process) // 3
             {
@@ -429,9 +429,8 @@ namespace FintrakBanking.Repositories.Credit
                         relationshipManagerId = a.RelationshipManagerId,
                         relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
                         misCode = a.MISCode,
-                        //productClassId = a.ProductClassId,
-                        //productClassName = a.tbl_Product_Class.ProductClassName,
-                        //teamMiscode = a.TeamMISCode,
+                        productClassId = a.tbl_Product.ProductClassId,
+                        productClassName = a.tbl_Product.tbl_Product_Class.ProductClassName,
                         interestRate = a.InterestRate,
                         isRealatedParty = a.IsRealatedParty,
                         isPoliticallyExposed = a.IsPoliticallyExposed,
@@ -444,7 +443,6 @@ namespace FintrakBanking.Repositories.Credit
                         createdBy = a.CreatedBy,
                         applicationDate = a.ApplicationDate,
                         dateTimeCreated = a.DateTimeCreated,
-                        //approvalLevelId = a.ApprovalLevelId
                     });
             }
 
@@ -455,12 +453,27 @@ namespace FintrakBanking.Repositories.Credit
                         a => a.LoanApplicationId, b => b.TargetId, (a, b) => new { a, b })
                     .Where(x => x.b.OperationId == operationId && x.a.BranchId == branchId);
 
+            if (scope == (int)ProcessViewScopeEnum.Group) // 2
+            {
+                var groupApprovalLevelIds = context.tbl_Approval_Level_Staff
+                    .Where(x => x.Deleted == false && x.StaffId == staffId)
+                    .Select(x => x.tbl_Approval_Level)
+                    .Select(x => x.tbl_Approval_Group_Mapping)
+                    .Where(x => x.Deleted == false
+                            && x.OperationId == operationId
+                            //&& x.ProductClassId == productClassId
+                            //&& x.ProductId == productId
+                            )
+                    .SelectMany(x => x.tbl_Approval_Level)
+                    .Select(x => x.ApprovalLevelId);
+
+                pendingApplications = pendingApplications.Where(x => groupApprovalLevelIds.Contains(x.b.ToApprovalLevelId));
+            }
+
             if (scope == (int)ProcessViewScopeEnum.Level) // 1
             {
                 pendingApplications = pendingApplications.Where(x => staffApprovalLevelIds.Contains(x.b.ToApprovalLevelId));
             }
-
-            // scope (2) = Group cannot be implimented with the existing approval workflow structure!!!
 
             return pendingApplications.Select(x => new LoanApplicationViewModel
             {
@@ -468,7 +481,8 @@ namespace FintrakBanking.Repositories.Credit
                 applicationReferenceNumber = x.a.ApplicationReferenceNumber,
                 customerId = x.a.CustomerId,
                 branchId = x.a.BranchId,
-                //productClassId = x.a.ProductClassId,
+                productClassId = x.a.tbl_Product.ProductClassId,
+                productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                 customerGroupId = x.a.CustomerGroupId,
                 loanTypeId = x.a.LoanTypeId,
                 currencyId = x.a.CurrencyId,
@@ -484,13 +498,10 @@ namespace FintrakBanking.Repositories.Credit
                 isRealatedParty = x.a.IsRealatedParty,
                 isPoliticallyExposed = x.a.IsPoliticallyExposed,
                 approvalStatusId = x.a.ApprovalStatusId,
-                //approvalLevelId = x.a.ApprovalLevelId,
                 branchName = x.a.tbl_Branch.BranchName,
                 relationshipOfficerName = x.a.tbl_Staff.FirstName + " " + x.a.tbl_Staff.MiddleName + " " + x.a.tbl_Staff.LastName,
                 relationshipManagerName = x.a.tbl_Staff.FirstName + " " + x.a.tbl_Staff.MiddleName + " " + x.a.tbl_Staff.LastName,
                 misCode = x.a.MISCode,
-                //productClassName = x.a.tbl_Product_Class.ProductClassName,
-                //teamMiscode = x.a.TeamMISCode,
                 customerGroupName = x.a.CustomerGroupId.HasValue ? x.a.tbl_Customer_Group.GroupName : "",
                 loanTypeName = x.a.tbl_Loan_Type.LoanTypeName,
                 createdBy = x.a.CreatedBy,

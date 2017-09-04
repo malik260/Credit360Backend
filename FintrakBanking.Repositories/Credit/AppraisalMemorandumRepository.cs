@@ -176,6 +176,10 @@ namespace FintrakBanking.Repositories.Credit
                 };
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
+
+                var appl = context.tbl_Loan_Application.Find(model.applicationId);
+                appl.ApprovalStatusId = workflow.StatusId;
+
                 context.SaveChanges();
             }
 

@@ -50,7 +50,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int CompanyId { set { companyId = value; } }
         public int OperationId { set { operationId = value; } }
         public string Comment { set { comment = value; } }
-        public int StatusId { set { statusId = value; } }
+        public int StatusId { get { return statusId; } set { statusId = value; } }
         public int NextLevelId { set { nextLevelId = value; } }
         public int? ProductId { set { productId = value; } }
         public int? ProductClassId { set { productClassId = value; } }
@@ -61,8 +61,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public async Task<bool> LogActivity()
         {
-            if (this.Validation() == false) { return false; }
-            if (this.Authorization() == false) { return false; }
+            if (Validation() == false) { return false; }
+            if (Authorization() == false) { return false; }
             
             var request = context.tbl_Approval_Trail.Where(x =>
                                 x.CompanyId == this.companyId
@@ -74,7 +74,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 this.currentStateId = request.ApprovalStateId;
                 this.requestStaffId = request.RequestStaffId;
-                //if (LastActionIsByStaff()) { return false; }
+                if (LastActionIsByStaff()) { return false; }
                 this.fromLevelId = request.ToApprovalLevelId;
             } else
             {
@@ -126,7 +126,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.saved)
             {
                 this.SendNotifications();
-                this.message = "Push successful!";
+                this.message = "Workflow process activity log successful!";
                 return true;
             }
 
@@ -162,47 +162,56 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool ResolveLevelConfigurations()
         {
             var approvalLevels = context.tbl_Approval_Group_Mapping.Where(x => x.Deleted == false
-                    && x.OperationId == this.operationId
-                    && x.ProductClassId == this.productClassId
-                    && x.ProductId == this.productId
-                ).SelectMany(x => x.tbl_Approval_Level).Where(x => x.IsActive == true);
+                                && x.OperationId == this.operationId
+                                && x.ProductClassId == this.productClassId
+                                && x.ProductId == this.productId
+                            )
+                            .SelectMany(x => x.tbl_Approval_Level).Where(x => x.IsActive == true)
+                            .OrderBy(x => x.tbl_Approval_Group_Mapping.Position)
+                            .ThenBy(x => x.Position);
 
-            if (this.fromLevelId == null)
+            if (this.fromLevelId == null) // resolve user level
             {
-                var staffApprovalLevelIds = context.tbl_Approval_Level_Staff
-                .Where(x => x.Deleted == false && x.StaffId == staffId)
-                .Select(x => x.ApprovalLevelId);
-                var level = approvalLevels.Where(x => staffApprovalLevelIds.Contains(x.ApprovalLevelId))
-                                .OrderBy(x => x.tbl_Approval_Group_Mapping.Position)
-                                .FirstOrDefault();
-                if (level == null) { return false; }
-                this.fromLevelId = level.ApprovalLevelId;
-                this.neededNumberOfApproval = level.NumberOfApprovals;
+                var levelStaff = approvalLevels.SelectMany(x => x.tbl_Approval_Level_Staff).Where(x => x.StaffId == this.staffId).FirstOrDefault();
+                if (levelStaff == null)
+                {
+                    this.message = "Unable to resolve initiating level. No setup for the specified operation!";
+                    return false;
+                }
+                this.fromLevelId = levelStaff.ApprovalLevelId;
+                this.neededNumberOfApproval = levelStaff.tbl_Approval_Level.NumberOfApprovals;
             }
 
+            tbl_Approval_Level next;
             if (this.nextLevelId == null)
             {
-                var fromLevel = context.tbl_Approval_Level.Find(this.fromLevelId);
-                
-                if (fromLevel == null) { return false; }
-                var fromPosition = fromLevel.Position;
-                var next = approvalLevels.Where(x => x.Position > fromPosition)
-                                .OrderBy(x => x.Position)
-                                .FirstOrDefault();
-                if (next == null)
-                {
-                    this.nextLevelId = null;
-                    return true;
-                }
+                var currentLevel = context.tbl_Approval_Level.Find(this.fromLevelId);
+
+                next = approvalLevels.FirstOrDefault(x =>
+                    x.tbl_Approval_Group_Mapping.Position > currentLevel.tbl_Approval_Group_Mapping.Position // next group
+                    || (x.Position > currentLevel.Position && x.tbl_Approval_Group_Mapping.Position == currentLevel.tbl_Approval_Group_Mapping.Position) // same group
+                    );
+            }
+            else
+            {
+                next = context.tbl_Approval_Level.Find(this.nextLevelId);
+            }
+
+            if (next == null) // end of process
+            {
+                this.nextLevelId = null;
+                return true;
+            }
+            else
+            {
                 this.smsNotification = next.CanRecieveSMS;
                 this.emailNotification = next.CanRecieveEmail;
                 this.nextLevelId = next.ApprovalLevelId;
                 this.useOrganogram = next.RouteViaStaffOrganogram;
             }
-
             return true;
         }
-        
+
         private bool ResolveLevelMultipleApproval()
         {
             var votes = context.tbl_Approval_Trail.Where(x =>
@@ -275,7 +284,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             this.statusId = status;
             this.newStateId = (int)ApprovalState.Ended;
-            this.nextLevelId = null;
+            this.nextLevelId = null; // even if there are other higher level which have been resolve prior
         }
 
         private bool Validation()
@@ -303,26 +312,28 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private int? GetStaffApprovalLevelId(int staffId)
         {
-            var approvalLevels = context.tbl_Approval_Group_Mapping.Where(x => x.Deleted == false
-                    && x.OperationId == this.operationId
-                    && x.ProductClassId == this.productClassId
-                    && x.ProductId == this.productId
-                ).SelectMany(x => x.tbl_Approval_Level).Where(x => x.IsActive == true);
-
-            var staffApprovalLevelIds = context.tbl_Approval_Level_Staff.Where(x => x.Deleted == false && x.StaffId == staffId).Select(x => x.ApprovalLevelId);
-
-            var level = approvalLevels.Where(x => staffApprovalLevelIds.Contains(x.ApprovalLevelId))
+            var levelStaff = context.tbl_Approval_Group_Mapping.Where(x => x.Deleted == false
+                                && x.OperationId == this.operationId
+                                && x.ProductClassId == this.productClassId
+                                && x.ProductId == this.productId
+                            )
+                            .SelectMany(x => x.tbl_Approval_Level).Where(x => x.IsActive == true)
                             .OrderBy(x => x.tbl_Approval_Group_Mapping.Position)
-                            .FirstOrDefault();
+                            .ThenBy(x => x.Position)
+                            .SelectMany(x => x.tbl_Approval_Level_Staff).Where(x => x.StaffId == staffId).FirstOrDefault();
 
-            if (level == null) { return null; }
+            if (levelStaff == null)
+            {
+                this.message = "Staff do not exist in the current process flow!";
+                return null;
+            }
 
-            return level.ApprovalLevelId;
+            return levelStaff.ApprovalLevelId;
         }
 
         private void CheckApprovalLimits()
         {
-            if (this.nextLevelId != null && this.amount > 0 && this.statusId == (int)ApprovalStatusEnum.Approved)
+            if (this.nextLevelId != null && this.amount > 0 && ActionIsApprovalDecision())
             {
                 decimal staffCeiling = 0;
                 var levelStaff = context.tbl_Approval_Level_Staff.Where(x => x.StaffId == this.staffId && x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
@@ -341,13 +352,15 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void SetState()
         {
-            if (this.nextLevelId == null
-                || this.statusId == (int)ApprovalStatusEnum.Approved
-                || this.statusId == (int)ApprovalStatusEnum.Disapproved
-                )
+            if (this.nextLevelId == null && ActionIsApprovalDecision())
             {
                 this.newStateId = (int)ApprovalState.Ended;
             }
+        }
+
+        private bool ActionIsApprovalDecision()
+        {
+            return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved);
         }
 
         private void SendNotifications() // TODO

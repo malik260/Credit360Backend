@@ -1213,7 +1213,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeId = a.LoanTypeId,
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
                             loanStatusId = a.LoanStatusId,
-                            //loanStatusName = a.tbl_Loan_Status.AccountStatus,
+                            //loanStatusName = a.tbl_Loan_Type.AccountStatus,
                             camReference = c.CAMRef,
                             loanDetails = c.LoanDetails,
                             productId = (short)a.ProductId,
