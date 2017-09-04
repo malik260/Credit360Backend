@@ -24,7 +24,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         string Comment { set; }
 
-        int StatusId { set; }
+        int StatusId { get; set; }
 
         int NextLevelId { set; }
 
