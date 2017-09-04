@@ -77,10 +77,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime MaturityDate { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime DateCreated { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? BookingDate { get; set; }
+        public DateTime BookingDate { get; set; }
 
         [Column(TypeName = "money")]
         public decimal PrincipalAmount { get; set; }
