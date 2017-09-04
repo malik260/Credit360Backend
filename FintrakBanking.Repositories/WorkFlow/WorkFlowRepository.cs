@@ -158,6 +158,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         CompanyId = entity.companyId,
                                         Comment = entity.comment,
                                         SystemArrivalDateTime = DateTime.Now,
+                                        SystemResponseDateTime = DateTime.Now,
                                         ApprovalStateId = (short)ApprovalState.Processing,
                                         RequestStaffId = entity.staffId,
                                         OperationId = entity.operationId,

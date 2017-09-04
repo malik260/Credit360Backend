@@ -173,7 +173,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = pen.CompanyId,
                             companyName = pen.tbl_Company.Name,
                             loanPreliminaryEvaluationId = pen.LoanPreliminaryEvaluationId,
-                            preliminaryEvaluationCode = pen.PreliminaryEvaluationCode, 
+                            preliminaryEvaluationCode = pen.PreliminaryEvaluationCode,
                             bankRole = pen.BankRole,
                             branchId = br.BranchId,
                             branchName = br.BranchName,
@@ -286,8 +286,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from p in context.tbl_Loan_Preliminary_Evaluation
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
-                        where p.IsCurrent == false && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved 
-                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending 
+                        where p.IsCurrent == false && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
@@ -360,8 +360,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        [OperationBehavior(TransactionScopeRequired = true)]
-        public bool UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
+        public async Task<bool> UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
         {
             if (model == null)
             {
@@ -425,10 +424,11 @@ namespace FintrakBanking.Repositories.Credit
 
             };
 
+
             this.auditTrail.AddAuditTrail(audit);
             // Audit Section ---------------------------
 
-            output = context.SaveChanges() > 0;
+            output = await SaveAllAsync();
 
             if (model.sentForEvaluation)
             {
@@ -444,6 +444,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 var response = workFlow.LogForApproval(entity);
             }
+
+
 
             return output;
 
