@@ -410,7 +410,7 @@ namespace FintrakBanking.Repositories.Credit
                 return false;
             }
 
-            var audit = new tbl_Audit
+            var auditRecord = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LoanPreliminaryEvaluationUpdated,
                 StaffId = model.createdBy,
@@ -425,27 +425,38 @@ namespace FintrakBanking.Repositories.Credit
             };
 
 
-            this.auditTrail.AddAuditTrail(audit);
-            // Audit Section ---------------------------
-
-            output = await SaveAllAsync();
-
-            if (model.sentForEvaluation)
+            using (var trans = context.Database.BeginTransaction())
             {
-                var entity = new ApprovalViewModel
+                try
                 {
-                    staffId = penRecord.CreatedBy,
-                    companyId = penRecord.CompanyId,
-                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                    targetId = loanPenId,
-                    operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
-                    BranchId = model.userBranchId
-                };
+                    context.tbl_Audit.Add(auditRecord);
+                    // Audit Section ---------------------------
 
-                var response = workFlow.LogForApproval(entity);
+                    output = await SaveAllAsync();
+
+                    if (model.sentForEvaluation)
+                    {
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = penRecord.CreatedBy,
+                            companyId = penRecord.CompanyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = loanPenId,
+                            operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
+                            BranchId = model.userBranchId
+                        };
+
+                        await workFlow.LogForApproval(entity);
+                    }
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
-
-
 
             return output;
 

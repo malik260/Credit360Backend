@@ -255,8 +255,9 @@ namespace FintrakBanking.Repositories.Finance
             }
             else
             {
+                DateTime date = generalSetup.GetApplicationDate().Date;
                 var rate = this.context.tbl_Currency_Rate.FirstOrDefault(x => x.BaseCurrencyId ==
-                baseCurrency && x.CurrencyId == currencyId && x.Date == generalSetup.GetApplicationDate()).SellingRate;
+                baseCurrency && x.CurrencyId == currencyId && x.Date == date).SellingRate;
 
                 return rate;
             }           

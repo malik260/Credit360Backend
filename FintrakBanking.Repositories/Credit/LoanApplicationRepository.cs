@@ -10,7 +10,7 @@ using System.Text;
 using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common;
-using FintrakBanking.Common.Enum; 
+using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 using System.ComponentModel.Composition;
@@ -18,7 +18,7 @@ using FintrakBanking.Interfaces.CASA;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    public class LoanApplicationRepository : ILoanApplicationRepository
+    public partial class LoanApplicationRepository : ILoanApplicationRepository
     {
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
@@ -262,7 +262,9 @@ namespace FintrakBanking.Repositories.Credit
                 IsPoliticallyExposed = loan.isPoliticallyExposed,
                 CreatedBy = (int)loan.createdBy,
                 DateTimeCreated = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,                 
+                SystemDateTime = DateTime.Now,              
+                SubSectorId = (short)loan.subSectorId ,
+                  
                 ExchangeRate = loan.exchangeRate,
                 LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,              
                 CustomerId = loan.customerId, 
@@ -327,7 +329,7 @@ namespace FintrakBanking.Repositories.Credit
                                 targetId = data.LoanApplicationId,
                                 approvalStatusId = (short)ApprovalStatusEnum.Pending,
                             };
-                            var result = workFlow.LogForApproval(wf);
+                            var result = await workFlow.LogForApproval(wf);
                             if (result.Item1)
                             {
                                 return response > 0;
@@ -341,7 +343,11 @@ namespace FintrakBanking.Repositories.Credit
                         throw new Exception(ex.Message);
                     }
                 }
-               
+
+            }
+            else
+            {
+                throw new MyException("Approval path has not been defined for this request");
             }
             return response > 0;
         }

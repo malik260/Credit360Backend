@@ -1062,6 +1062,25 @@ namespace FintrakBanking.Repositories.Credit
             return loans;
         }
 
+
+        private int GetDaysInAYear(DayCountConventionEnum dayCountId)
+        {
+            if (dayCountId == DayCountConventionEnum.Actual_Actual)
+            {
+                var currentDate = DateTime.Now;
+                var firstDate = new DateTime(currentDate.Year, 1, 1); //  DateTime.ParseExact(user, "MM-dd-yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                var lastdate = new DateTime(currentDate.Year, 12, 31);
+                var difference = (lastdate - firstDate).TotalDays;
+
+                return Convert.ToInt32(difference);
+            }
+
+            var value = context.tbl_Day_Count_Convention.FirstOrDefault(x => x.DayCountConventionId == (short) dayCountId).DaysInAYear;
+
+            return value;
+        }
+
+
         private List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId)
         {
             var data = (from a in context.tbl_Loan_Covenant_Detail
