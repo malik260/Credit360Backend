@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("{customerId}")]
+        [Route("")]
         public HttpResponseMessage GetCustomer(int custormerId)
         {
 
@@ -314,6 +314,99 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
 
+        }
+
+        [HttpGet]
+        [Route("suppliertype")]
+        public HttpResponseMessage ClientSupplierType()
+        {
+            try
+            {
+                var data = repo.GetClientSupplierType();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("identificationMode")]
+        public HttpResponseMessage GetIdentificationMode()
+        {
+            try
+            {
+                var data = repo.GetIdentificationMode();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("directorsType")]
+        public HttpResponseMessage GetDirectorsTypes()
+        {
+            try
+            {
+                var data = repo.GetDirectorsTypes();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("customer-identification")]
+        public HttpResponseMessage AddCustomerIdentification([FromBody] CustomerIdentificationViewModels entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data =  repo.AddCustomerIdentification(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
         }
     }
 }

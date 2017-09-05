@@ -42,6 +42,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string PreviousCreditRating { get; set; }
 
+        public int? PaidUpCapital { get; set; }
+
+        public int? AuthorisedCapital { get; set; }
+
         public virtual tbl_Customer tbl_Customer { get; set; }
     }
 }

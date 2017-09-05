@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Repositories.Finance;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -265,7 +266,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 CustomerGroupId = entity.customerGroupId,
                 LoanTypeId = entity.loanTypeId,
-                LoanTypeBatchId = GetLoanTypeBatchId((LoanTypeEnum)entity.loanTypeId, entity.customerId, entity.customerGroupId ?? -1, entity.groupAmount ?? 0),
+               LoanTypeBatchId = GetLoanTypeBatchId((LoanTypeEnum)entity.loanTypeId, entity.customerId, entity.customerGroupId ?? -1, entity.groupAmount ?? 0),
 
                 EffectiveDate = entity.effectiveDate,
                 TerminalDate = entity.terminalDate,
@@ -664,10 +665,10 @@ namespace FintrakBanking.Repositories.Credit
             foreach (LoanGuarantorViewModel entity in guarantorModel)
                 guarantor.Add(new tbl_Loan_Guarantor
                 {
-                    CustomerId = entity.customerId,
-                    LoanReferenceNumber = entity.loanReferenceNumber,
-                    ProductId = entity.productId,
-                    FullName = entity.fullName,
+                   CustomerId = entity.customerId,
+                   LoanReferenceNumber = entity.loanReferenceNumber,
+                  ProductId = entity.productId,
+                   FullName = entity.fullName,
                     PhoneNumber1 = entity.phoneNumber1,
                     PhoneNumber2 = entity.phoneNumber2,
                     Relationship = entity.relationship,
@@ -727,9 +728,9 @@ namespace FintrakBanking.Repositories.Credit
                             loanReferenceNumber = l.LoanReferenceNumber,
                             tenor = l.Tenor,
                             //tenorModeId = l.TenorModeId,
-                            principalFrequencyTypeId = l.PrincipalFrequencyTypeId,
-                            interestFrequencyTypeId = l.InterestFrequencyTypeId,
-                            feeFrequencyTypeId = l.FeeFrequencyTypeId,
+                           principalFrequencyTypeId = l.PrincipalFrequencyTypeId,
+                           interestFrequencyTypeId = l.InterestFrequencyTypeId,
+                           feeFrequencyTypeId = l.FeeFrequencyTypeId,
                             principalNumberOfInstallment = l.PrincipalNumberOfInstallment,
                             interestNumberOfInstallment = l.InterestNumberOfInstallment,
                             relationshipOfficerId = l.RelationshipOfficerId,
@@ -761,10 +762,10 @@ namespace FintrakBanking.Repositories.Credit
                             customerGroupId = l.CustomerGroupId,
                             loanTypeId = l.LoanTypeId,
                             loanTypeName = l.tbl_Loan_Type.LoanTypeName,
-                            loanTypeBatchId = l.LoanTypeBatchId,
+                           loanTypeBatchId = l.LoanTypeBatchId,
                             trancheBatchCode = l.TrancheBatchCode ?? "Empty",
-                            equityContribution = l.EquityContribution ?? 0,
-                            feePercent = l.FeePercent ?? 0,
+                           equityContribution = l.EquityContribution ?? 0,
+                           feePercent = l.FeePercent ?? 0,
                             firstPrincipalPaymentDate = l.FirstPrincipalPaymentDate ?? DateTime.Now,
                             firstInterestPaymentDate = l.FirstInterestPaymentDate ?? DateTime.Now,
                             outstandingPrincipal = l.OutstandingPrincipal ?? 0,
@@ -918,8 +919,8 @@ namespace FintrakBanking.Repositories.Credit
                         teamMiscode = data.TeamMISCode,
                         interestRate = data.InterestRate,
                         effectiveDate = data.EffectiveDate,
-                        terminalDate = data.TerminalDate,
-                        dateCreated = data.DateCreated,
+                       terminalDate = data.TerminalDate,
+                       dateCreated = data.DateCreated,
                         principalAmount = data.PrincipalAmount,
                         principalInstallmentLeft = data.PrincipalInstallmentLeft,
                         interestInstallmentLeft = data.InterestInstallmentLeft,
@@ -972,7 +973,7 @@ namespace FintrakBanking.Repositories.Credit
                     //tenorModeId = o.TenorModeId,
                     principalFrequencyTypeId = o.PrincipalFrequencyTypeId,
                     interestFrequencyTypeId = o.InterestFrequencyTypeId,
-                    feeFrequencyTypeId = o.FeeFrequencyTypeId,
+                   feeFrequencyTypeId = o.FeeFrequencyTypeId,
                     principalNumberOfInstallment = o.PrincipalNumberOfInstallment,
                     interestNumberOfInstallment = o.InterestNumberOfInstallment,
                     relationshipOfficerId = o.RelationshipOfficerId,
@@ -981,7 +982,7 @@ namespace FintrakBanking.Repositories.Credit
                     teamMiscode = o.TeamMISCode,
                     interestRate = o.InterestRate,
                     effectiveDate = o.EffectiveDate,
-                    terminalDate = o.TerminalDate,
+                   terminalDate = o.TerminalDate,
                     dateCreated = o.DateCreated,
                     principalAmount = o.PrincipalAmount,
                     principalInstallmentLeft = o.PrincipalInstallmentLeft,

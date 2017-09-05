@@ -16,6 +16,12 @@ namespace FintrakBanking.Interfaces.Customer
 
         IEnumerable<CustomerTypeViewModels> GetCustomerType();
 
+        IEnumerable<CustomerSupplierTypeViewModels> GetClientSupplierType();
+
+        IEnumerable<CustomerIdentificationModeTypeViewModels> GetIdentificationMode();
+
+        IEnumerable<CompanyDirectorTypeViewModels> GetDirectorsTypes();
+
         IEnumerable<CustomerViewModels> GetCustomerByTypeId(int customerTypeId);
 
         Task<bool> AddCustomer(CustomerViewModels entity);
@@ -23,6 +29,8 @@ namespace FintrakBanking.Interfaces.Customer
         Task<bool> UpdateCustomer(int customerId, CustomerViewModels entity);
 
         Task<bool> DeleteCustomer(int customerId,  UserInfo user);
+
+        bool AddCustomerIdentification(CustomerIdentificationViewModels entity);
 
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search) ;
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);

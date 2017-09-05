@@ -120,6 +120,7 @@
     <Compile Include="Models\tbl_COT.cs" />
     <Compile Include="Models\tbl_Country.cs" />
     <Compile Include="Models\tbl_Credit_Appraisal_Memorandum.cs" />
+    <Compile Include="Models\tbl_Credit_Appraisal_Memorandum_Loan_Detail.cs" />
     <Compile Include="Models\tbl_Credit_Template.cs" />
     <Compile Include="Models\tbl_Currency.cs" />
     <Compile Include="Models\tbl_Currency_Rate.cs" />
@@ -128,6 +129,8 @@
     <Compile Include="Models\tbl_Customer_Address.cs" />
     <Compile Include="Models\tbl_Customer_Blacklist.cs" />
     <Compile Include="Models\tbl_Customer_BVN.cs" />
+    <Compile Include="Models\tbl_Customer_Client_Supplier.cs" />
+    <Compile Include="Models\tbl_Customer_Client_Supplier_Type.cs" />
     <Compile Include="Models\tbl_Customer_CompanyInfomation.cs" />
     <Compile Include="Models\tbl_Customer_Company_Director.cs" />
     <Compile Include="Models\tbl_Customer_Company_DirectorType.cs" />
@@ -157,7 +160,8 @@
     <Compile Include="Models\tbl_Custom_Field_Data_Upload.cs" />
     <Compile Include="Models\tbl_Custom_Field_Option.cs" />
     <Compile Include="Models\tbl_Custom_HostPage.cs" />
-    <Compile Include="Models\tbl_Day_Count.cs" />
+    <Compile Include="Models\tbl_Day_Count_Convention.cs" />
+    <Compile Include="Models\tbl_Day_Interest_Type.cs" />
     <Compile Include="Models\tbl_Deal_Classification.cs" />
     <Compile Include="Models\tbl_Deal_Type.cs" />
     <Compile Include="Models\tbl_Department.cs" />
@@ -202,10 +206,12 @@
     <Compile Include="Models\tbl_Loan_PrudentialGuideline.cs" />
     <Compile Include="Models\tbl_Loan_Relationship_Officer_History.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Category.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Daily.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Irregular_Input.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Periodic.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Type.cs" />
     <Compile Include="Models\tbl_Loan_Status.cs" />
     <Compile Include="Models\tbl_Loan_Type.cs" />
-    <Compile Include="Models\tbl_Loan_Type_Batch.cs" />
     <Compile Include="Models\tbl_MachineValue_Base.cs" />
     <Compile Include="Models\tbl_Management_Type.cs" />
     <Compile Include="Models\tbl_MIS_Info.cs" />
