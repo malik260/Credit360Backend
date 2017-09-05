@@ -20,10 +20,10 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal PaymentAmount { get; set; }
 
-        public virtual tbl_Loan tbl_Loan { get; set; }
-
         public int CreatedBy { get; set; }
 
         public DateTime DateTimeCreated { get; set; }
+
+        public virtual tbl_Loan tbl_Loan { get; set; }
     }
 }

@@ -14,6 +14,7 @@ using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.Validation;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
@@ -204,30 +205,35 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.maturityDate <= entity.effectiveDate)
                 throw new Exception("Loan terminal date should be more than effective date");
 
-            
+
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
-            
-                var data = new tbl_Loan
+
+            var data = new tbl_Loan
             {
+                LoanApplicationId =entity.loanApplicationId,
                 LoanReferenceNumber = loanReferenceNumber,
                 LoanStatusId = (short)LoanStatusEnum.Inactive,
                 IsDisbursed = false,
                 PrincipalNumberOfInstallment = 0, // loanSchedule.CalculateNumberOfInstallments((TenorModeEnum)entity.tenorModeId, entity.principalFrequencyTypeId, entity.tenor),
                 InterestNumberOfInstallment = 0, // loanSchedule.CalculateNumberOfInstallments((TenorModeEnum)entity.tenorModeId, entity.interestFrequencyTypeId, entity.tenor),
-                FirstPrincipalPaymentDate = entity.firstPrincipalPaymentDate, 
+                FirstPrincipalPaymentDate = entity.firstPrincipalPaymentDate,
                 FirstInterestPaymentDate = entity.firstInterestPaymentDate,
                 IsScheduledPrepayment = entity.isScheduledPrepayment,
                 ScheduledPrepaymentAmount = entity.scheduledPrepaymentAmount,
-                ScheduledPrepaymentDate = entity.scheduledPrepaymentDate,
-                ScheduledPrepaymentFrequencyTypeId = entity.scheduledPrepaymentFrequencyTypeId,
+                ScheduledPrepaymentDate = DateTime.Now.Date,//entity.scheduledPrepaymentDate,
+                ScheduledPrepaymentFrequencyTypeId = null, // entity.scheduledPrepaymentFrequencyTypeId,
 
                 CustomerGroupId = entity.customerGroupId,
                 LoanTypeId = entity.loanTypeId,
+                SubSectorId = entity.subSectorId,
+                CurrencyId = (short)entity.currencyId,
 
                 //LoanTypeBatchId = GetLoanTypeBatchId((LoanTypeEnum)entity.loanTypeId, entity.customerId, entity.customerGroupId ?? -1, entity.groupAmount ?? 0),
 
-                EffectiveDate = entity.effectiveDate,
-                MaturityDate = entity.maturityDate,
+                EffectiveDate = DateTime.Now.Date,
+                //entity.effectiveDate,
+                MaturityDate = DateTime.Now.Date,
+                //entity.maturityDate,
 
                 DischargeLetter = false,
                 SuspendInterest = false,
@@ -255,11 +261,11 @@ namespace FintrakBanking.Repositories.Credit
                 ApproverComment = entity.approverComment,
                 DateApproved = entity.dateApproved,
                 ScheduleTypeId = entity.scheduleTypeId,
-                DisbursedBy = entity.disbursedBy,
-                DisburserComment = entity.disburserComment,
-                DisburseDate = entity.disburseDate,
-                ApprovedAmount = (decimal)entity.approvedAmount, 
-                OperationId = (int) OperationsEnum.LoanBooking,
+                //DisbursedBy = entity.disbursedBy,
+                //DisburserComment = entity.disburserComment,
+                //DisburseDate = entity.disburseDate,
+                ApprovedAmount = (decimal)entity.approvedAmount,
+                OperationId = (int)OperationsEnum.LoanBooking,
                 TrancheBatchCode = entity.trancheBatchCode,
 
                 EquityContribution = (decimal)entity.equityContribution,
@@ -268,53 +274,63 @@ namespace FintrakBanking.Repositories.Credit
                 PrincipalReductionCount = entity.principalReductionCount,
                 FixedPrincipal = entity.fixedPrincipal,
                 ProfileLoan = entity.profileLoan,
-                CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
+                CustomerSensitivityLevelId = 1, //entity.customerSensitivityLevelId,
 
-                BookingDate = generalSetup.GetApplicationDate(),
+                BookingDate = DateTime.Now.Date,
+                //entity.bookingDate,
                 CreatedBy = entity.createdBy,
-                DateTimeCreated = generalSetup.GetApplicationDate(),
+                DateTimeCreated = DateTime.Now.Date,
+              //  generalSetup.GetApplicationDate(),
 
                 tbl_Loan_Covenant_Detail = AddLoanCovenantDetail(entity.loanCovenant),
-               // tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
-                tbl_Loan_Collateral_Mapping = AddLoanCollateralMapping(entity.loanCollateral),
+                tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
+                //tbl_Loan_Collateral_Mapping = AddLoanCollateralMapping(entity.loanCollateral),
                 tbl_Loan_Fee = AddLoanFees(entity.loanChargeFee),
+                 DisburseDate = DateTime.Now.Date,
+                  AllowForceDebitRepayment = false, 
+                   
 
             };
+                context.tbl_Loan.Add(data);
 
-            context.tbl_Loan.Add(data);
-         
-                //PostLoanDisbursment(entity);
-                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                inputTransactions.Add(BuildLoanDisbursmentPosting(entity));
 
-                inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
+            //PostLoanDisbursment(entity);
+            //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                financeTransaction.PostTransaction(inputTransactions);
+            //    inputTransactions.Add(BuildLoanDisbursmentPosting(entity));
 
-            // Audit Section ---------------------------            
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.LoanApplication,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Applied for loan with reference number: {entity.loanReferenceNumber}",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
+            //    inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
 
-            this.auditTrail.AddAuditTrail(audit);
+            //    financeTransaction.PostTransaction(inputTransactions);
+
+            //Audit Section ---------------------------
+               var audit = new tbl_Audit
+               {
+                   AuditTypeId = (short)AuditTypeEnum.LoanApplication,
+                   StaffId = entity.createdBy,
+                   BranchId = (short)entity.userBranchId,
+                   Detail = $"Applied for loan with reference number: {loanReferenceNumber}",
+                   IPAddress = entity.userIPAddress,
+                   Url = entity.applicationUrl,
+                   ApplicationDate = generalSetup.GetApplicationDate(),
+                   SystemDateTime = DateTime.Now
+               };
+                this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
-            var dataCount = context.SaveChanges();
 
-            if (dataCount > 0)
-                return loanReferenceNumber;
-            else
+                var dataCount = context.SaveChanges();
+                if (dataCount > 0)
+                    return loanReferenceNumber;
+                else
+
+                    return "";
             
-                return "";
+            
+            
+
+            
         }
 
         //[OperationBehavior(TransactionScopeRequired = true)]
@@ -594,11 +610,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 CompanyId = entity.companyId,
                 CovenantAmount = entity.covenantAmount,
-                CovenantDate = entity.covenantDate,
+                CovenantDate = DateTime.Now.Date,
+                //entity.covenantDate,
                 CovenantDetail = entity.covenantDetail,
                 CovenantTypeId = entity.covenantTypeId,
                 CreatedBy = entity.createdBy,
-                DateTimeCreated = this.generalSetup.GetApplicationDate().Date,
+                DateTimeCreated = DateTime.Now.Date, //this.generalSetup.GetApplicationDate().Date,
                 FrequencyTypeId = entity.frequencyTypeId,
                 LoanId = entity.loanId
 
@@ -618,12 +635,14 @@ namespace FintrakBanking.Repositories.Credit
                 CompanyId = entity.companyId,
                 CovenantAmount = entity.covenantAmount,
                 CovenantDetail = entity.covenantDetail,
-                CovenantDate = entity.covenantDate,
+                CovenantDate = DateTime.Now.Date,
+           //     entity.covenantDate,
                 LoanId = entity.loanId,
                 CovenantTypeId = entity.covenantTypeId,
                 FrequencyTypeId = entity.frequencyTypeId,
-                CreatedBy = entity.createdBy,
-                DateTimeCreated = generalSetup.GetApplicationDate()
+                CreatedBy =  entity.createdBy,
+                DateTimeCreated = DateTime.Now.Date,
+           //     generalSetup.GetApplicationDate()
             });
 
             return covenant;
@@ -650,7 +669,7 @@ namespace FintrakBanking.Repositories.Credit
                     Relationship = entity.relationship,
                     RelationshipDuration = (short)entity.relationshipDuration,
                     BVN = entity.bvn,
-                    EmailAddress = entity.emailAddress
+                    EmailAddress = entity.emailAddress, CreatedBy = 1, DateTimeCreated = DateTime.Now.Date
 
                 });
 
@@ -683,20 +702,21 @@ namespace FintrakBanking.Repositories.Credit
             
             fee = new List<tbl_Loan_Fee>();
 
-            foreach (LoanChargeFeeViewModel entity in feeModel)
+            foreach (LoanChargeFeeViewModel ent in feeModel)
             {
-                if (entity.feeTypeId == 1)
+                if (ent.feeTypeId == 1)
                 {
                     feeAmount = 0;
                 }
                 fee.Add(new tbl_Loan_Fee
                 {
-                    ChargeFeeId = entity.chargeFeeId,
+                    ChargeFeeId =  ent.chargeFeeId,
                     FeeAmount = feeAmount,
-                    FeeDependentAmount = entity.feeDependentAmount,
-                    FeeRateValue = entity.feeRateValue,
-                    IsIntegralFee = entity.isIntegralFee,
-                    LoanId = entity.loanId
+                    FeeDependentAmount = ent.feeDependentAmount,
+                    FeeRateValue = ent.feeRateValue,
+                    IsIntegralFee = ent.isIntegralFee,
+                    LoanId = ent.loanId, CreatedBy = ent.createdBy, DateTimeCreated= DateTime.Now.Date
+
                 });
             }
                 
@@ -730,7 +750,7 @@ namespace FintrakBanking.Repositories.Credit
                             interestRate = l.InterestRate,
                             effectiveDate = l.EffectiveDate,
                             maturityDate = l.MaturityDate,
-                            bookingDate = l.DateCreated,
+                            bookingDate = (DateTime)l.BookingDate,
                             principalAmount = l.PrincipalAmount,
                             principalInstallmentLeft = l.PrincipalInstallmentLeft,
                             interestInstallmentLeft = l.InterestInstallmentLeft,
@@ -842,7 +862,7 @@ namespace FintrakBanking.Repositories.Credit
                         interestRate = data.InterestRate,
                         effectiveDate = data.EffectiveDate,
                         maturityDate = data.MaturityDate,
-                        bookingDate = data.DateCreated,
+                        bookingDate = (DateTime)data.BookingDate,
                         principalAmount = data.PrincipalAmount,
                         principalInstallmentLeft = data.PrincipalInstallmentLeft,
                         interestInstallmentLeft = data.InterestInstallmentLeft,
@@ -906,7 +926,7 @@ namespace FintrakBanking.Repositories.Credit
                         interestRate = data.InterestRate,
                         effectiveDate = data.EffectiveDate,
                         maturityDate = data.MaturityDate,
-                        bookingDate = data.DateCreated,
+                        bookingDate = (DateTime)data.BookingDate,
                         principalAmount = data.PrincipalAmount,
                         principalInstallmentLeft = data.PrincipalInstallmentLeft,
                         interestInstallmentLeft = data.InterestInstallmentLeft,
@@ -967,7 +987,7 @@ namespace FintrakBanking.Repositories.Credit
                     interestRate = o.InterestRate,
                     effectiveDate = o.EffectiveDate,
                     maturityDate = o.MaturityDate,
-                    bookingDate = o.DateCreated,
+                    bookingDate = (DateTime)o.BookingDate,
                     principalAmount = o.PrincipalAmount,
                     principalInstallmentLeft = o.PrincipalInstallmentLeft,
                     interestInstallmentLeft = o.InterestInstallmentLeft,
@@ -1180,6 +1200,8 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = a.CompanyId,
                             branchId = a.BranchId,
                             branchName = a.tbl_Branch.BranchName,
+                            subSectorId = a.SubSectorId,
+                           
                             tenor = a.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
@@ -1191,7 +1213,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeId = a.LoanTypeId,
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
                             loanStatusId = a.LoanStatusId,
-                            //loanStatusName = a.tbl_Loan_Status.AccountStatus,
+                            //loanStatusName = a.tbl_Loan_Type.AccountStatus,
                             camReference = c.CAMRef,
                             loanDetails = c.LoanDetails,
                             productId = (short)a.ProductId,

@@ -15,7 +15,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Customer;
 using System.ServiceModel;
-using FintrakBanking.Repositories.WorkFlow;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -28,19 +27,17 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository genSetup;
         private IWorkFlowRepository workFlow;
         private IApprovalLevelStaffRepository level;
-        private IWorkflow workflow;
+
 
         public LoanPreliminaryEvaluationRepository(IAuditTrailRepository _auditTrail,
                                     IGeneralSetupRepository _genSetup, IWorkFlowRepository _workFlow,
-        FinTrakBankingContext _context, IApprovalLevelStaffRepository _level,
-        IWorkflow _workflow)
+        FinTrakBankingContext _context, IApprovalLevelStaffRepository _level)
         {
             context = _context;
             auditTrail = _auditTrail;
             genSetup = _genSetup;
             workFlow = _workFlow;
             level = _level;
-            workflow = _workflow;
         }
 
         private async Task<bool> SaveAllAsync()
@@ -176,7 +173,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = pen.CompanyId,
                             companyName = pen.tbl_Company.Name,
                             loanPreliminaryEvaluationId = pen.LoanPreliminaryEvaluationId,
-                            preliminaryEvaluationCode = pen.PreliminaryEvaluationCode, 
+                            preliminaryEvaluationCode = pen.PreliminaryEvaluationCode,
                             bankRole = pen.BankRole,
                             branchId = br.BranchId,
                             branchName = br.BranchName,
@@ -289,8 +286,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from p in context.tbl_Loan_Preliminary_Evaluation
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
-                        where p.IsCurrent == false && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved 
-                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending 
+                        where p.IsCurrent == false && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
@@ -427,24 +424,14 @@ namespace FintrakBanking.Repositories.Credit
 
             };
 
+
             this.auditTrail.AddAuditTrail(audit);
             // Audit Section ---------------------------
 
-            output = await context.SaveChangesAsync() > 0;
+            output = await SaveAllAsync();
 
             if (model.sentForEvaluation)
             {
-                //var operationId = (int)OperationsEnum.LoanPreliminaryEvaluation;
-
-                //workflow.StaffId = model.createdBy;
-                //workflow.OperationId = operationId;
-                //workflow.TargetId = model.loanPreliminaryEvaluationId;
-                //workflow.CompanyId = model.companyId;
-                //workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                //workflow.ProductClassId = 
-
-                //await workflow.LogActivity();
-
                 var entity = new ApprovalViewModel
                 {
                     staffId = penRecord.CreatedBy,
@@ -457,6 +444,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 var response = workFlow.LogForApproval(entity);
             }
+
+
 
             return output;
 
