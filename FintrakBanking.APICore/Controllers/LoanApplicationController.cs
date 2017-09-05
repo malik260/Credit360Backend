@@ -381,7 +381,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("loan/preliminary-evaluation/{loanPenId}")]
-        public HttpResponseMessage UpdateLoanPreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
+        public async Task<HttpResponseMessage> UpdateLoanPreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
         {
             try
             {
@@ -406,7 +406,7 @@ namespace FintrakBanking.APICore.Controllers
                     model.isCurrent = false;
                 }
 
-                var response = repoLoanPEN.UpdatePreliminaryEvaluation(loanPenId, model);
+                var response = await repoLoanPEN.UpdatePreliminaryEvaluation(loanPenId, model);
 
                 if (response)
                 {

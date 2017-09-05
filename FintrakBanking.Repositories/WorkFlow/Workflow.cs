@@ -44,6 +44,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private DateTime applicationDate;
         private int requestStaffId;
         private int neededNumberOfApproval;
+        private bool externalInitialization = false;
 
         public int StaffId { set { staffId = value; } }
         public int TargetId { set { targetId = value; } }
@@ -56,6 +57,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int? ProductClassId { set { productClassId = value; } }
         public bool EmailNotification { set { emailNotification = value; } }
         public bool SmsNotification { set { smsNotification = value; } }
+        public bool ExternalInitialization { set { externalInitialization = value; } }
         public string Message { get { return message; } }
         public bool Saved { get { return saved; } }
 
@@ -74,7 +76,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 this.currentStateId = request.ApprovalStateId;
                 this.requestStaffId = request.RequestStaffId;
-                if (LastActionIsByStaff()) { return false; }
+                //if (LastActionIsByStaff()) { return false; }
                 this.fromLevelId = request.ToApprovalLevelId;
             } else
             {
@@ -170,7 +172,24 @@ namespace FintrakBanking.Repositories.WorkFlow
                             .OrderBy(x => x.tbl_Approval_Group_Mapping.Position)
                             .ThenBy(x => x.Position);
 
-            if (this.fromLevelId == null) // resolve user level
+            tbl_Approval_Level next;
+
+            if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
+            {
+                next = approvalLevels.FirstOrDefault();
+                if (next != null)
+                {
+                    this.smsNotification = next.CanRecieveSMS;
+                    this.emailNotification = next.CanRecieveEmail;
+                    this.nextLevelId = next.ApprovalLevelId;
+                    this.useOrganogram = next.RouteViaStaffOrganogram;
+                    return true;
+                }
+                this.message = "Unable to resolve initiating level. No setup for the specified operation!";
+                return false;
+            }
+
+            if (this.fromLevelId == null) 
             {
                 var levelStaff = approvalLevels.SelectMany(x => x.tbl_Approval_Level_Staff).Where(x => x.StaffId == this.staffId).FirstOrDefault();
                 if (levelStaff == null)
@@ -182,7 +201,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.neededNumberOfApproval = levelStaff.tbl_Approval_Level.NumberOfApprovals;
             }
 
-            tbl_Approval_Level next;
             if (this.nextLevelId == null)
             {
                 var currentLevel = context.tbl_Approval_Level.Find(this.fromLevelId);
@@ -289,7 +307,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool Validation()
         {
-            if (this.staffId > 0 && this.operationId > 0 && this.targetId > 0 && this.companyId > 0 && this.statusId > 0)
+            if (this.staffId > 0 && this.operationId > 0 && this.targetId > 0 && this.companyId > 0 && this.statusId >= 0)
             {
                 if (this.nextLevelId < 1) { this.nextLevelId = null; }
                 return true;

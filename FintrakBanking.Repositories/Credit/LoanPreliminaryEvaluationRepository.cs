@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Customer;
 using System.ServiceModel;
+using FintrakBanking.Repositories.WorkFlow;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -27,17 +28,19 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository genSetup;
         private IWorkFlowRepository workFlow;
         private IApprovalLevelStaffRepository level;
-
+        private IWorkflow workflow;
 
         public LoanPreliminaryEvaluationRepository(IAuditTrailRepository _auditTrail,
                                     IGeneralSetupRepository _genSetup, IWorkFlowRepository _workFlow,
-        FinTrakBankingContext _context, IApprovalLevelStaffRepository _level)
+        FinTrakBankingContext _context, IApprovalLevelStaffRepository _level,
+        IWorkflow _workflow)
         {
             context = _context;
             auditTrail = _auditTrail;
             genSetup = _genSetup;
             workFlow = _workFlow;
             level = _level;
+            workflow = _workflow;
         }
 
         private async Task<bool> SaveAllAsync()
@@ -360,8 +363,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        [OperationBehavior(TransactionScopeRequired = true)]
-        public bool UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
+        public async Task<bool> UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
         {
             if (model == null)
             {
@@ -428,10 +430,21 @@ namespace FintrakBanking.Repositories.Credit
             this.auditTrail.AddAuditTrail(audit);
             // Audit Section ---------------------------
 
-            output = context.SaveChanges() > 0;
+            output = await context.SaveChangesAsync() > 0;
 
             if (model.sentForEvaluation)
             {
+                //var operationId = (int)OperationsEnum.LoanPreliminaryEvaluation;
+
+                //workflow.StaffId = model.createdBy;
+                //workflow.OperationId = operationId;
+                //workflow.TargetId = model.loanPreliminaryEvaluationId;
+                //workflow.CompanyId = model.companyId;
+                //workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                //workflow.ProductClassId = 
+
+                //await workflow.LogActivity();
+
                 var entity = new ApprovalViewModel
                 {
                     staffId = penRecord.CreatedBy,

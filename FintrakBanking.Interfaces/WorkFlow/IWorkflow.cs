@@ -32,6 +32,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         bool SmsNotification { set; }
 
+        bool ExternalInitialization { set; }
+
         string Message { get; }
 
         bool Saved { get; }
