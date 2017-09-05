@@ -107,6 +107,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string camReference { get; set; }
         public string customerCode { get; set; }
         public string loanStatusName { get; set; }
+        public int casaAccountId { get; set; }
     }
 
     public class LoanChargeFeeViewModel : ChargeRangeViewModel
