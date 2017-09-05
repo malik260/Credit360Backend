@@ -61,7 +61,7 @@ namespace FintrakBanking.Entities.Models
 
         public short? DealClassificationId { get; set; }
 
-        public short? DayCountId { get; set; }
+        public short? DayCountConventionId { get; set; }
 
         public short? ScheduleTypeId { get; set; }
 
@@ -114,7 +114,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Company tbl_Company { get; set; }
 
-        public virtual tbl_Day_Count tbl_Day_Count { get; set; }
+        public virtual tbl_Day_Count_Convention tbl_Day_Count_Convention { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_KYC_Item> tbl_KYC_Item { get; set; }

@@ -105,6 +105,10 @@ namespace FintrakBanking.Entities.Models
 
         public short ScheduleTypeId { get; set; }
 
+        public short ScheduleDayCountConventionId { get; set; }
+
+        public short ScheduleDayInterestTypeId { get; set; }
+
         public bool IsDisbursed { get; set; }
 
         [StringLength(50)]
@@ -189,6 +193,10 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
 
         public virtual tbl_Customer_Sensitivity_Level tbl_Customer_Sensitivity_Level { get; set; }
+
+        public virtual tbl_Day_Count_Convention tbl_Day_Count_Convention { get; set; }
+
+        public virtual tbl_Day_Interest_Type tbl_Day_Interest_Type { get; set; }
 
         public virtual tbl_Frequency_Type tbl_Frequency_Type { get; set; }
 

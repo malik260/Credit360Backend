@@ -1103,7 +1103,7 @@ namespace FintrakBanking.Repositories.Credit
                 return Convert.ToInt32(difference);
             }
 
-            var value = context.tbl_Day_Count.FirstOrDefault(x => x.DayCountId == (short) dayCountId).DaysInAYear;
+            var value = context.tbl_Day_Count_Convention.FirstOrDefault(x => x.DayCountConventionId == (short) dayCountId).DaysInAYear;
 
             return value;
         }
