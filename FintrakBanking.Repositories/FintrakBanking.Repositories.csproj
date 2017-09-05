@@ -124,6 +124,7 @@
     <Compile Include="Setups\General\StaffRepository.cs" />
     <Compile Include="Setups\Risk\RiskRepository.cs" />
     <Compile Include="WorkFlow\JobRequestRepository.cs" />
+    <Compile Include="WorkFlow\Workflow.cs" />
     <Compile Include="WorkFlow\WorkFlowRepository.cs" />
   </ItemGroup>
   <ItemGroup>

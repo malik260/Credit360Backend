@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Fee = new HashSet<tbl_Loan_Fee>();
             tbl_Loan_Guarantor = new HashSet<tbl_Loan_Guarantor>();
             tbl_Loan_Schedule_Daily = new HashSet<tbl_Loan_Schedule_Daily>();
+            tbl_Loan_Schedule_Irregular_Input = new HashSet<tbl_Loan_Schedule_Irregular_Input>();
             tbl_Loan_Schedule_Periodic = new HashSet<tbl_Loan_Schedule_Periodic>();
         }
 
@@ -76,10 +77,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime MaturityDate { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime DateCreated { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? BookingDate { get; set; }
+        public DateTime BookingDate { get; set; }
 
         [Column(TypeName = "money")]
         public decimal PrincipalAmount { get; set; }
@@ -234,6 +232,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Schedule_Irregular_Input> tbl_Loan_Schedule_Irregular_Input { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Periodic> tbl_Loan_Schedule_Periodic { get; set; }

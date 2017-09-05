@@ -179,6 +179,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Category> tbl_Loan_Schedule_Category { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
+        public virtual DbSet<tbl_Loan_Schedule_Irregular_Input> tbl_Loan_Schedule_Irregular_Input { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Periodic> tbl_Loan_Schedule_Periodic { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Type> tbl_Loan_Schedule_Type { get; set; }
         public virtual DbSet<tbl_Loan_Status> tbl_Loan_Status { get; set; }
@@ -2051,6 +2052,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan>()
+                .HasMany(e => e.tbl_Loan_Schedule_Irregular_Input)
+                .WithRequired(e => e.tbl_Loan)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan>()
                 .HasMany(e => e.tbl_Loan_Schedule_Periodic)
                 .WithRequired(e => e.tbl_Loan)
                 .WillCascadeOnDelete(false);
@@ -2210,6 +2216,10 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Loan_Schedule_Daily>()
                 .Property(e => e.BallonAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Schedule_Irregular_Input>()
+                .Property(e => e.PaymentAmount)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan_Schedule_Periodic>()

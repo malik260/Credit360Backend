@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -10,14 +11,14 @@ namespace FintrakBanking.Interfaces.Credit
 
         AppraisalMemorandumViewModel AddAppraisalMemorandum(AppraisalMemorandumViewModel model);
 
-        ForwardViewModel ForwardAppraisalMemorandum(ForwardViewModel model);
+        Task<bool> ForwardAppraisalMemorandum(ForwardViewModel model);
 
         IEnumerable<AppraisalMemorandumViewModel> GetAllAppraisalMemorandum();
 
-        bool AppendTemplate(AppraisalMemorandumViewModel model, int appraisalMemorandumId, int userId);
-
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 
-        IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int companyId);
+        IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId);
+
+        PrivilegeViewModel GetUserPrivilege(int staffId,int applicationId);
     }
 }

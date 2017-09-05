@@ -24,6 +24,8 @@ namespace FintrakBanking.Entities.Models
 
         public short? ProductClassId { get; set; }
 
+        public short? ProductId { get; set; }
+
         public int Position { get; set; }
 
         public int CreatedBy { get; set; }
@@ -43,6 +45,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Approval_Group tbl_Approval_Group { get; set; }
 
         public virtual tbl_Operations tbl_Operations { get; set; }
+
+        public virtual tbl_Product tbl_Product { get; set; }
 
         public virtual tbl_Product_Class tbl_Product_Class { get; set; }
 

@@ -39,6 +39,15 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             groupId = a.tbl_Approval_Level.tbl_Approval_Group_Mapping.GroupId,
                             operationId = a.tbl_Approval_Level.tbl_Approval_Group_Mapping.OperationId,
                             maximumAmount = a.MaximumAmount,
+                            processViewScope = a.ProcessViewScopeId,
+                            canViewDocument = a.CanViewCAMDocument,
+                            canViewUploadedFile = a.CanViewUploadedFile,
+                            canViewApproval = a.CanViewApproval,
+                            canApprove = a.CanApprove,
+                            canUploadFile = a.CanUploadFile,
+                            canSendRequest = a.CanSendJobRequest,
+                            canEdit = a.CanEdit,
+                            vetoPower = a.VetoPower,
                             minimumAmount = a.tbl_Approval_Level.MinimumAmount,
                             position = a.tbl_Approval_Level.Position,
                             approvalLevelId = a.ApprovalLevelId,
@@ -80,6 +89,15 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 MaximumAmount = model.maximumAmount,
                 StaffId = model.staffId,
                 ApprovalLevelId = model.approvalLevelId,
+                ProcessViewScopeId = (short)model.processViewScope,
+                CanViewCAMDocument = model.canViewDocument,
+                CanViewUploadedFile = model.canViewUploadedFile,
+                CanViewApproval = model.canViewApproval,
+                CanApprove = model.canApprove,
+                CanUploadFile = model.canUploadFile,
+                CanSendJobRequest = model.canSendRequest,
+                CanEdit = model.canEdit,
+                VetoPower = model.vetoPower,
                 DateTimeCreated = _genSetup.GetApplicationDate(),
                 CreatedBy = (int)model.createdBy
             };
@@ -116,6 +134,15 @@ namespace FintrakBanking.Repositories.Setups.Approval
             data.StaffId = model.staffId;
             data.ApprovalLevelId = model.approvalLevelId;
             data.MaximumAmount = model.maximumAmount;
+            data.ProcessViewScopeId = (short)model.processViewScope;
+            data.CanViewCAMDocument = model.canViewDocument;
+            data.CanViewUploadedFile = model.canViewUploadedFile;
+            data.CanViewApproval = model.canViewApproval;
+            data.CanApprove = model.canApprove;
+            data.CanUploadFile = model.canUploadFile;
+            data.CanSendJobRequest = model.canSendRequest;
+            data.CanEdit = model.canEdit;
+            data.VetoPower = model.vetoPower;
             data.DateTimeUpdated = _genSetup.GetApplicationDate();
             data.LastUpdatedBy = (int)model.createdBy;
 
@@ -242,9 +269,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var result = GetApprovalTrail(operationId, companyId).Where(c => c.TargetId == targetId).OrderByDescending(c => c.systemArrivalDate).ToList();
             return result;
         }
-
-
-
 
     }
 }
