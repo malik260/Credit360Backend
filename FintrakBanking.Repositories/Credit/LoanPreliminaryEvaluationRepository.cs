@@ -446,7 +446,7 @@ namespace FintrakBanking.Repositories.Credit
                             BranchId = model.userBranchId
                         };
 
-                        var response = workFlow.LogForApproval(entity);
+                        await workFlow.LogForApproval(entity);
                     }
 
                     trans.Commit();

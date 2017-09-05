@@ -1059,15 +1059,15 @@ namespace FintrakBanking.Repositories.Credit
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
             LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum) loanInput.scheduleMethodId;
 
-            if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
-                output = GenerateIrregularLoanPeriodicScheduleWithAmortisedCost(loanInput).ToList();
-            else if (scheduleMethod == LoanScheduleTypeEnum.Annuity)
-            {
-                if (loanInput.interestFirstpaymentDate == loanInput.principalFirstpaymentDate && loanInput.interestFrequency == loanInput.principalFrequency)
-                    output = GenerateNormalAnnuityPeriodicLoanSchedule(loanInput);
-                else
-                    output = GenerateMoratoriumAnnuityPeriodicLoanSchedule(loanInput);
-            }
+            //if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+            //    output = GenerateIrregularLoanPeriodicScheduleWithAmortisedCost(loanInput).ToList();
+            //else if (scheduleMethod == LoanScheduleTypeEnum.Annuity)
+            //{
+            //    if (loanInput.interestFirstpaymentDate == loanInput.principalFirstpaymentDate && loanInput.interestFrequency == loanInput.principalFrequency)
+            //        output = GenerateNormalAnnuityPeriodicLoanSchedule(loanInput);
+            //    else
+            //        output = GenerateMoratoriumAnnuityPeriodicLoanSchedule(loanInput);
+            //}
 
             return output;
         }

@@ -263,7 +263,7 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy = (int)loan.createdBy,
                 DateTimeCreated = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,              
-                 SubSectorId = (short)loan.subSectorId ,
+                SubSectorId = (short)loan.subSectorId ,
                   
                 ExchangeRate = loan.exchangeRate,
                 LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,              
@@ -329,7 +329,7 @@ namespace FintrakBanking.Repositories.Credit
                                 targetId = data.LoanApplicationId,
                                 approvalStatusId = (short)ApprovalStatusEnum.Pending,
                             };
-                            var result = workFlow.LogForApproval(wf);
+                            var result = await workFlow.LogForApproval(wf);
                             if (result.Item1)
                             {
                                 return response > 0;
