@@ -30,11 +30,12 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerId { get; set; }
 
         public short branchId { get; set; }
+        public short subSectorId { get; set; }
         public short? productClassId { get; set; }
         public string productClassName { get; set; }
         public short productId { get; set; }
         public int? customerGroupId { get; set; }
-        public string customerGroupCode { get; set; }
+        public string customerGroupCode { get; set; } 
         public short loanTypeId { get; set; }
 
         public short currencyId { get; set; }
@@ -58,6 +59,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalStatusId { get; set; }
 
         public int approvalLevelId { get; set; }
+
+
+        public int sectorId { get; set; }
+        public int subSectorId { get; set; }
 
         public string customerName { get; set; }
         public string branchName { get; set; }

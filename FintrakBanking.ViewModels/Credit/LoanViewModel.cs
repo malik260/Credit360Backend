@@ -25,8 +25,10 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int loanId { get; set; }
         public int customerId { get; set; }
-        public short productId { get; set; }
+        public short productId { get; set; } 
         public int casaAccountId { get; set; }
+        public int loanApplicationId { get; set; }
+        
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public int tenor { get; set; }
@@ -63,6 +65,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short loanTypeId { get; set; }
         public string trancheBatchCode { get; set; }
         public decimal  equityContribution { get; set; }
+        public short subSectorId { get; set; }
 
         public DateTime? firstPrincipalPaymentDate { get; set; }
         public DateTime? firstInterestPaymentDate { get; set; }
@@ -90,6 +93,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string customerName { get; set; }
+        public int currencyId { get; set; }
 
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
 
@@ -106,8 +110,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanDetails { get; set; }
         public string camReference { get; set; }
         public string customerCode { get; set; }
+        public int  casaAccountId { get; set; }
         public string loanStatusName { get; set; }
-        public int casaAccountId { get; set; }
+
     }
 
     public class LoanChargeFeeViewModel : ChargeRangeViewModel
