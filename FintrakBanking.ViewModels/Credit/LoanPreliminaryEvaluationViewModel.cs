@@ -52,5 +52,13 @@ namespace FintrakBanking.ViewModels.Credit
         public List<CustomerCompanyShareholdersViewModels> customerCompanyShareholders { get; set; }
         public List<CustomerCompanyDirectorsViewModels> customerCompanyDirectors { get; set; }
         public string customerCode { get; set; }
+        public short productClassId { get; set; }
+        public string productClassName { get; set; }
+        public decimal loanAmount { get; set; }
+        public short subSectorId { get; set; }
+        public string subSectorName { get; set; }
+        public short sectorId { get; set; }
+        public short loanTypeId { get; set; }
+        public string loanTypeName { get; set; }
     }
 }

@@ -52,8 +52,6 @@ namespace FintrakBanking.Entities.Models
 
         public int RelationshipManagerId { get; set; }
 
-        public short LoanStatusId { get; set; }
-
         [Column(TypeName = "date")]
         public DateTime ApplicationDate { get; set; }
 

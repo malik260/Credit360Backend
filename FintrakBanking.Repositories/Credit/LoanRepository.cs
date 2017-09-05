@@ -1266,7 +1266,7 @@ namespace FintrakBanking.Repositories.Credit
                             currencyCode = a.tbl_Currency.CurrencyCode,
                             loanTypeId = a.LoanTypeId,
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
-                            loanStatusId = a.LoanStatusId,
+                            //loanStatusId = a.LoanStatusId,
                             //loanStatusName = a.tbl_Loan_Type.AccountStatus,
                             camReference = c.CAMRef,
                             loanDetails = c.LoanDetails,
