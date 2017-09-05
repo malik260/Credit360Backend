@@ -6,10 +6,12 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,7 @@ using System.Data;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -28,25 +31,27 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
-        private ILoanScheduleRepository loanSchedule;
+        private IWorkFlowRepository workFlow;
+        private ILoanScheduleRepository loanSchedule; 
         private ILoanCovenantRepository loanCovenant;
         private IFinanceTransactionRepository financeTransaction;
 
 
         public LoanRepository(FinTrakBankingContext _context,IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
+                                        IWorkFlowRepository _workFlow,
                                         ILoanCovenantRepository _loanCovenant, IFinanceTransactionRepository _financeTransaction)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
             this.auditTrail = _auditTrail;
             this.loanSchedule = _loanSchedule;
+            this.workFlow = _workFlow;
             this.loanCovenant = _loanCovenant;
             this.financeTransaction = _financeTransaction;
         }
 
   
-
         public IEnumerable<LookupViewModel> GetAllLoanTypes()
         {
             return (from data in context.tbl_Loan_Type
@@ -137,9 +142,9 @@ namespace FintrakBanking.Repositories.Credit
 
         //}
 
-     
 
- 
+
+
 
         //private int GetLoanTypeBatchId(LoanTypeEnum loanTypeId, int customerId, int customerGroupId, decimal groupAmount)
         //{
@@ -201,17 +206,16 @@ namespace FintrakBanking.Repositories.Credit
 
         //}
 
-            public string AddLoanBooking(LoanViewModel entity)
+        public string AddLoanBooking(LoanViewModel entity)
         {
             if (entity.maturityDate <= entity.effectiveDate)
                 throw new Exception("Loan terminal date should be more than effective date");
 
-
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
-
+            int output;
             var data = new tbl_Loan
             {
-                LoanApplicationId =entity.loanApplicationId,
+                LoanApplicationId = entity.loanApplicationId,
                 LoanReferenceNumber = loanReferenceNumber,
                 LoanStatusId = (short)LoanStatusEnum.Inactive,
                 IsDisbursed = false,
@@ -285,48 +289,77 @@ namespace FintrakBanking.Repositories.Credit
 
                 tbl_Loan_Covenant_Detail = AddLoanCovenantDetail(entity.loanCovenant),
                 tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
-                tbl_Loan_Collateral_Mapping = AddLoanCollateralMapping(entity.loanCollateral,entity.loanApplicationId),
+                tbl_Loan_Collateral_Mapping = AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId),
                 tbl_Loan_Fee = AddLoanFees(entity.loanChargeFee),
-                 
+
             };
-                context.tbl_Loan.Add(data);
-
-            //PostLoanDisbursment(entity);
-            //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-
-            //    inputTransactions.Add(BuildLoanDisbursmentPosting(entity));
-
-            //    inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
-
-            //    financeTransaction.PostTransaction(inputTransactions);
 
             //Audit Section ---------------------------
-               var audit = new tbl_Audit
-               {
-                   AuditTypeId = (short)AuditTypeEnum.LoanApplication,
-                   StaffId = entity.createdBy,
-                   BranchId = (short)entity.userBranchId,
-                   Detail = $"Applied for loan with reference number: {loanReferenceNumber}",
-                   IPAddress = entity.userIPAddress,
-                   Url = entity.applicationUrl,
-                   ApplicationDate = generalSetup.GetApplicationDate(),
-                   SystemDateTime = DateTime.Now
-               };
-                this.auditTrail.AddAuditTrail(audit);
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.LoanApplication,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = $"Applied for loan with reference number: {loanReferenceNumber}",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = generalSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
 
-                var dataCount = context.SaveChanges();
-                if (dataCount > 0)
-                    return loanReferenceNumber;
-                else
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.LoanBooking, entity.companyId))
+            {
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var loan = context.tbl_Loan.Add(data);
 
-                    return "";
-            
-            
-            
+                        var dataCount = context.SaveChanges();
+                        // this.loanSchedule.AddLoanSchedule(loan.LoanId, entity.loanScheduleInput, entity.createdBy);
 
-            
+
+                        var approvalModel = new ApprovalViewModel
+                        {
+                            staffId = entity.createdBy,
+                            companyId = entity.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = loan.LoanId,
+                            operationId = (int)OperationsEnum.LoanBooking,
+                            BranchId = entity.userBranchId
+                        };
+                        var response = workFlow.LogForApproval(approvalModel);
+                        trans.Commit();
+
+
+                        if (dataCount > 0)
+                            return loanReferenceNumber;
+                        else
+
+                            return "";
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new Exception(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Approval route have not been defined for this operation");
+            }
+            //PostLoanDisbursment(entity);
+            //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            //inputTransactions.Add(BuildLoanDisbursmentPosting(entity));
+
+            //inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
+
+            //financeTransaction.PostTransaction(inputTransactions);
         }
 
 
@@ -476,7 +509,7 @@ namespace FintrakBanking.Repositories.Credit
 
         //}
 
-       
+
 
 
         public FinanceTransactionViewModel BuildLoanDisbursmentPosting(LoanViewModel model)
