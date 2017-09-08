@@ -1,17 +1,14 @@
 using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.Common;
-using FintrakBanking.Common.Enum;
-using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.ViewModels.Credit;
 using System;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.APICore.core;
 using System.Web;
-using System.Collections.Generic;
+using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -67,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
 
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.RuningLoans( id, token.GetCompanyId);
+                var data = repo.RunningLoans( id, token.GetCompanyId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -168,6 +165,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         {
             try
             {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 entity.userBranchId = (short)token.GetBranchId;
                 // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -545,7 +543,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //}
         #endregion
 
-        #region CAM Approved Loan Applications
+        #region (Loan Application Date) Pre - Loan booking
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum")]
         public HttpResponseMessage GetCamProcessedLoanApplications()
@@ -589,12 +587,12 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("loan-application/charge-fee/product/{productId}")]
-        public HttpResponseMessage GetLoanProductChargeFeesByProductId(int productId)
+        [Route("loan-application/charge-fee/{chargeFeeId}/product/{productId}")]
+        public HttpResponseMessage GetLoanProductChargeFee(int chargeFeeId, int productId)
         {
             try
             {
-                var response = repo.GetLoanProductChargeFeesByProductId(productId);
+                var response = repo.GetLoanProductChargeFee(chargeFeeId, productId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -608,7 +606,26 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+        [HttpGet]
+        [Route("loan-product-fees/{productId}")]
+        public HttpResponseMessage GetProductFees(int productId)
+        {
+            try
+            {
+                var response = repo.GetProductFees(productId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         #endregion
+
     }
 }

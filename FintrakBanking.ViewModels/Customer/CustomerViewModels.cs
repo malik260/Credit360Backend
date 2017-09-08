@@ -27,6 +27,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string middleName { get; set; }
         public string customerTypeName { get; set; }
         public string customerName { get { return this.firstName + " " + this.middleName + " " + this.lastName; } }
+         public string fullName { get; set; }
         public string searchItem { get { return this.firstName + " " + this.middleName + " " + this.lastName + " " + this.customerCode; } }
         public string lastName { get; set; }
         public string gender { get; set; }

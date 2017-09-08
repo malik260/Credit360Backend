@@ -18,6 +18,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? valuationCycle { get; set; }
         public double hairCut { get; set; }
         public int customerId { get; set; }
+        public string customerName { get; set; }
         public string camRefNumber { get; set; }
         public int approvalStatus { get; set; }
         public DateTime? dateActedOn { get; set; }

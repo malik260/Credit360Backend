@@ -18,5 +18,14 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         public string staffLevelName {get; set; }
         public string approvalLevelName{ get; set; }
 
+        public int processViewScope { get; set; }
+        public bool canViewDocument { get; set; }
+        public bool canViewUploadedFile { get; set; }
+        public bool canViewApproval { get; set; }
+        public bool canApprove { get; set; }
+        public bool canUploadFile { get; set; }
+        public bool canSendRequest { get; set; }
+        public bool canEdit { get; set; }
+        public bool vetoPower { get; set; }
     }
 }

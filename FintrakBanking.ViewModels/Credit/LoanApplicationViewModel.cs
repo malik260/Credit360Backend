@@ -19,35 +19,52 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationViewModel : GeneralEntity
     {
+
+        public LoanApplicationViewModel()
+        {
+            LoanApplicationCollateral = new List<LoanApplicationCollateralViewModel>();
+        }
+
         public int loanApplicationId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
-        public short? branchId { get; set; }
+
+        public short branchId { get; set; }
+        public short subSectorId { get; set; }
         public short? productClassId { get; set; }
+        public string productClassName { get; set; }
+        public short productId { get; set; }
         public int? customerGroupId { get; set; }
+        public string customerGroupCode { get; set; }
         public short loanTypeId { get; set; }
+
         public short currencyId { get; set; }
+        public string currencyCode { get; set; }
         public short loanStatusId { get; set; }
+        public string loanStatus { get; set; }
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
         public DateTime applicationDate { get; set; }
         public decimal principalAmount { get; set; }
         public double interestRate { get; set; }
         public int tenor { get; set; }
+        public string customerAccount { get; set; }
         public short tenorModeId { get; set; }
         public string loanInformation { get; set; }
         public string misCode { get; set; }
-        public string teamMiscode { get; set; }
+        public string teamMisCode { get; set; }
         public bool submittedForAppraisal { get; set; }
         public bool isRealatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public int approvalStatusId { get; set; }
+
         public int approvalLevelId { get; set; }
 
         public string customerName { get; set; }
         public string branchName { get; set; }
-        public string productClassName { get; set; }
+        public string productName { get; set; }
         public string customerGroupName { get; set; }
+
         public string loanTypeName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
@@ -58,7 +75,26 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int? loanPreliminaryEvaluationId { get; set; } 
         public double exchangeRate { get; set; }
-        
+        public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
+
+    }
+    public partial class LoanApplicationCollateralViewModel : GeneralEntity
+    { 
+        public int customerCollateralId { get; set; }
+        public string certificateOfOwnership { get; set; }
+        public int? cityId { get; set; }
+        public string city { get; set; }
+        public int collateralTypeId { get; set; }
+        public string collateralType  { get; set; }
+        public string documentTitle { get; set; }
+        public double? latitude { get; set; }
+        public double? longitude { get; set; }
+        public string locationAddress { get; set; }
+        public string nearestBusStop { get; set; }
+        public string nearestLandmark { get; set; }
+        public string otherInformations { get; set; }
+        public int loanApplicationId { get; set; }
+        public int ApplicationReferanceNumber{ get; set; }
     }
 
 
@@ -66,7 +102,7 @@ namespace FintrakBanking.ViewModels.Credit
 
 
 
-    public class ProductClassViewModel
+        public class ProductClassViewModel
     {
         public short productClassId { get; set; }
         public string productClassName { get; set; }

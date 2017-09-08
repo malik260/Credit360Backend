@@ -114,11 +114,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<LookupViewModel> GetAllDayCount()
         {
-            return (from data in context.tbl_Day_Count
+            return (from data in context.tbl_Day_Count_Convention
                     select new LookupViewModel()
                     {
-                        lookupId = data.DayCountId,
-                        lookupName = data.DayCountName
+                        lookupId = data.DayCountConventionId,
+                        lookupName = data.DayCountConventionName
                     });
         }
 

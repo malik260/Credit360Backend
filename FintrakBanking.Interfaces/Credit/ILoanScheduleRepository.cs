@@ -24,5 +24,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanSchedule(LoanPaymentScheduleInputViewModel loanInput);
 
         List<LoanPaymentScheduleDailyViewModel> GenerateDailyLoanSchedule(LoanPaymentScheduleInputViewModel loanInput);
+
+        bool AddLoanSchedule(int loanId, LoanPaymentScheduleInputViewModel loanInput, int staffId);
     }
 }
