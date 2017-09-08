@@ -103,12 +103,12 @@ namespace FintrakBanking.Repositories.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-        private List<CollateralCustomerViewModel> CollateralCustomer(int customerId, int companyId)
+        private IQueryable<CollateralCustomerViewModel> CollateralCustomer( int companyId)
         {
             tbl_Collateral_Type_Sub sub = new tbl_Collateral_Type_Sub();
             return (from c in context.tbl_Collateral_Customer
                     join t in context.tbl_Collateral_Type on c.CollateralTypeId equals t.CollateralTypeId
-                    where c.Deleted == false && c.CompanyId == companyId && c.CustomerId == customerId
+                    where c.Deleted == false && c.CompanyId == companyId
                     select new CollateralCustomerViewModel
                     {
                         collateralTypeId = c.CollateralTypeId,
@@ -129,12 +129,17 @@ namespace FintrakBanking.Repositories.Credit
                         camRefNumber = c.CamRefNumber,
                         dateTimeCreated = c.DateTimeCreated,
                         createdBy = c.CreatedBy,
-                    }).ToList();
+                    });
         }
 
+        public IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int companyId)
+        {
+            var data = CollateralCustomer(companyId);
+            return data;
+        }
         public IEnumerable<CollateralCustomerViewModel> GetCollateralCustomerByCustomerId(int customerId, int companyId)
         {
-            return CollateralCustomer(customerId, companyId);
+            return CollateralCustomer(companyId).Where(c=> c.customerId == customerId).ToList();
         }
 
         public async Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity)

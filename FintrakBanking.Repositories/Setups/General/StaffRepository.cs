@@ -774,7 +774,8 @@ on c.DepartmentId equals dept.DepartmentId
                        staffCode = st.StaffCode,
                        firstName = st.FirstName,
                        middleName = st.MiddleName,
-                       lastName = st.LastName
+                       lastName = st.LastName,
+                       departmentId =(short)st.DepartmentId
                    };
         }
 

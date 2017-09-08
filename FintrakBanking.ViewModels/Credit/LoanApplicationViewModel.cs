@@ -4,18 +4,6 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class ExistingLoanApplicationViewModel{
-
-        public string applicationReferenceNumber { get; set; }
-        public DateTime applicationDate { get; set; }
-        public decimal   principalAmount { get; set; }
-        public double interestRate { get; set; }
-        public double exchangeRate { get; set; }
-        public string loanTypeName { get; set; }
-        public int tenor { get; set; }
-        public string  branch { get; set; }
-
-    }
 
     public class LoanApplicationViewModel : GeneralEntity
     {
@@ -81,31 +69,19 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
 
     }
-    public partial class LoanApplicationCollateralViewModel : GeneralEntity
-    { 
-        public int customerCollateralId { get; set; }
-        public string certificateOfOwnership { get; set; }
-        public int? cityId { get; set; }
-        public string city { get; set; }
+    public class CollateralLenPlacementViewModel : GeneralEntity
+    {
+        public string acountNumber { get; set; }
+        public int cityId { get; set; }
+        public int stateId { get; set; }
         public int collateralTypeId { get; set; }
-        public string collateralType  { get; set; }
-        public string documentTitle { get; set; }
-        public double? latitude { get; set; }
-        public double? longitude { get; set; }
-        public string locationAddress { get; set; }
-        public string nearestBusStop { get; set; }
-        public string nearestLandmark { get; set; }
-        public string otherInformations { get; set; }
-        public int loanApplicationId { get; set; }
-        public int ApplicationReferanceNumber{ get; set; }
+        public string certificateOfOccupancy { get; set; }
+        public string loanApplicationRefrence { get; set; }
+        //public string loanApplicationRefrence { get; set; }
+        public string customerName { get; set; }
     }
 
-
-
-
-
-
-        public class ProductClassViewModel
+    public class ProductClassViewModel
     {
         public short productClassId { get; set; }
         public string productClassName { get; set; }

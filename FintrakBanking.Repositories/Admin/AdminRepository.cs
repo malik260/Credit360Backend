@@ -196,7 +196,7 @@ namespace FintrakBanking.Repositories.Admin
                             operationId = (int)OperationsEnum.UserCreation,
                             BranchId = user.userBranchId
                         };
-                        var response = workFlow.LogForApproval(entity);
+                        var response =  await workFlow.LogForApproval(entity);
                         trans.Commit();
                     }
                     catch (Exception ex)

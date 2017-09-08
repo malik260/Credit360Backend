@@ -5,7 +5,6 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
-using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -142,6 +141,64 @@ namespace FintrakBanking.Repositories.Customer
 
             }
         }
+        public bool AddCustomerAddresses(CustomerAddressViewModels entity)
+        {
+            tbl_Customer_Address address;
+            if (entity.addressId != 0 || entity.addressId < 0)
+            {
+                address = context.tbl_Customer_Address.Find(entity.addressId);
+                address.Active = entity.active;
+                address.Address = entity.address;
+                address.AddressTypeId = entity.addressTypeId;
+                address.CityId = entity.cityId;
+                address.StateId = entity.stateId;
+                address.HomeTown = entity.homeTown;
+                address.POBox = entity.pobox;
+                address.StateId = entity.stateId;
+                address.ElectricMeterNumber = entity.electricMeterNumber;
+                address.NearestLandmark = entity.nearestLandmark;
+            }
+            else
+            {
+                address = new tbl_Customer_Address();
+                address.Active = entity.active;
+                address.Address = entity.address;
+                address.AddressTypeId = entity.addressTypeId;
+                address.CityId = entity.cityId;
+                address.CustomerId = entity.customerId;
+                address.StateId = entity.stateId;
+                address.HomeTown = entity.homeTown;
+                address.POBox = entity.pobox;
+                address.StateId = entity.stateId;
+                address.ElectricMeterNumber = entity.electricMeterNumber;
+                address.NearestLandmark = entity.nearestLandmark;
+                context.tbl_Customer_Address.Add(address);
+            }
+
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CustomerUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = "Added new tbl_Customer_Address for customer ID: + (" + entity.customerId + ") ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            try
+            {
+                var response = context.SaveChanges() != 0;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
 
         private void AddCustomerBvn(List<CustomerBvnViewModels> entity, int status)
         {
@@ -159,25 +216,63 @@ namespace FintrakBanking.Repositories.Customer
                 customerBvn.DateTimeCreated = bvn.dateTimeCreated;
 
                 context.tbl_Customer_BVN.Add(customerBvn);
-
-                // Audit Section ---------------------------
-                //var audit = new tbl_Audit
-                //{
-                //    AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
-                //    StaffId = user.staffId,
-                //    BranchId = (short) user.BranchId,
-                //    Detail = status == 1 ? "Added tbl_Customer BVN: ": "Updated tbl_Customer BVN: " + bvn.bankVerificationNumber  + " to customer: " + bvn.customerId + " (" + bvn.surname + ")",
-                //    IPAddress = user.userIPAddress,
-                //    Url = user.applicationUrl,
-                //    ApplicationDate = _genSetup.GetApplicaionDate(),
-                //    SystemDateTime = DateTime.Now
-                //};
-
-                //this.auditTrail.AddAuditTrail(audit);
-                //end of Audit section -------------------------------
             }
         }
+        public bool AddCustomerBvn(CustomerBvnViewModels entity)
+        {
+            tbl_Customer_BVN customerBvn;
+            if (entity.customerBvnid != 0 || entity.customerBvnid < 0)
+            {
+                customerBvn = context.tbl_Customer_BVN.Find(entity.customerBvnid);
 
+                customerBvn.BankVerificationNumber = entity.bankVerificationNumber;
+                customerBvn.CustomerId = entity.customerId;
+                customerBvn.CreatedBy = entity.createdBy;
+                customerBvn.Firstname = entity.firstname;
+                customerBvn.Surname = entity.surname;
+                customerBvn.IsValidBVN = entity.isValidBvn;
+                customerBvn.IsPoliticallyExposed = entity.isPoliticallyExposed;
+            }
+            else
+            {
+                customerBvn = new tbl_Customer_BVN();
+
+                customerBvn.BankVerificationNumber = entity.bankVerificationNumber;
+                customerBvn.CustomerId = entity.customerId;
+                customerBvn.CreatedBy = entity.createdBy;
+                customerBvn.Firstname = entity.firstname;
+                customerBvn.Surname = entity.surname;
+                customerBvn.IsValidBVN = entity.isValidBvn;
+                customerBvn.DateTimeCreated = DateTime.Now;
+                customerBvn.IsPoliticallyExposed = entity.isPoliticallyExposed;
+                context.tbl_Customer_BVN.Add(customerBvn);
+            }
+
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CustomerUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = "Added new tbl_Customer_BVN for customer ID: + (" + entity.customerId + ") ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            try
+            {
+                var response = context.SaveChanges() != 0;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
         private void AddCustomerPhoneContact(List<CustomerPhoneContactViewModels> entity,
            int status)
         {
@@ -189,25 +284,52 @@ namespace FintrakBanking.Repositories.Customer
                 phone.Phone = ent.phone;
                 phone.PhoneNumber = ent.phoneNumber;
                 context.tbl_Customer_PhoneContact.Add(phone);
-                // Audit Section ---------------------------
-                //var CustomerCode = this.context.tbl_Customer.FirstOrDefault(x => x.CustomerId == ent.customerId).CustomerCode;
-                //var audit = new tbl_Audit
-                //{
-                //    AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
-                //    StaffId = user.staffId,
-                //    BranchId = (short) user.BranchId,
-                //    Detail = status == 1 ? "Added tbl_Customer Phone Contact: " : "Updated tbl_Customer Phone Contact: " + ent.phone + " to customer:  (" + CustomerCode + ")",
-                //    IPAddress = user.userIPAddress,
-                //    Url = user.applicationUrl,
-                //    ApplicationDate = _genSetup.GetApplicaionDate(),
-                //    SystemDateTime = DateTime.Now
-                //};
-
-                //this.auditTrail.AddAuditTrail(audit);
-                //end of Audit section -------------------------------
             }
         }
+        public bool AddCustomerPhoneContact(CustomerPhoneContactViewModels entity)
+        {
+            tbl_Customer_PhoneContact phone;
+            if (entity.phoneContactId != 0 || entity.phoneContactId < 0)
+            {
+                phone = context.tbl_Customer_PhoneContact.Find(entity.phoneContactId);
+                phone.Active = entity.active;
+                phone.Phone = entity.phone;
+                phone.PhoneNumber = entity.phoneNumber;
+            }
+            else
+            {
+                phone = new tbl_Customer_PhoneContact();
+                phone.Active = entity.active;
+                phone.CustomerId = entity.customerId;
+                phone.Phone = entity.phone;
+                phone.PhoneNumber = entity.phoneNumber;
+                context.tbl_Customer_PhoneContact.Add(phone);
+            }
 
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CustomerUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = "Added new tbl_Customer_Identification for customer ID: + (" + entity.customerId + ") ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            try
+            {
+                var response = context.SaveChanges() != 0;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         private void AddCustomerCompanyInfomation(List<CustomerCompanyInfomationViewModels> entity,
            int status)
         {
@@ -224,6 +346,8 @@ namespace FintrakBanking.Repositories.Customer
                 info.PreviousCreditRating = ent.previousCreditRating;
                 info.RegisteredOffice = ent.registeredOffice;
                 info.RegistrationNumber = ent.registrationNumber;
+               // info.paidUpCapital = ent.PaidUpCapital;
+                //info.authorizedCapital = ent.AuthorisedCapital;
                 context.tbl_Customer_CompanyInfomation.Add(info);
 
                 // Audit Section ---------------------------
@@ -246,7 +370,29 @@ namespace FintrakBanking.Repositories.Customer
             }
 
         }
+        public void UpdateCustomerCompanyInfomation(List<CustomerCompanyInfomationViewModels> entity)
+        {
 
+            foreach (var ent in entity)
+            {
+                if (ent.companyInfomationId != 0 && ent.customerId != 0)
+                {
+                    var info = context.tbl_Customer_CompanyInfomation.Find(ent.companyInfomationId);
+                    info.AnnualTurnOver = ent.annualTurnOver;
+                    info.CompanyEmail = ent.companyEmail;
+                    info.CompanyName = ent.companyName;
+                    info.CompanyWebsite = ent.companyWebsite;
+                    info.CorporateBusinessCategory = ent.corporateBusinessCategory;
+                    info.CreditRating = ent.creditRating;
+                    info.CustomerId = ent.customerId;
+                    info.PreviousCreditRating = ent.previousCreditRating;
+                    info.RegisteredOffice = ent.registeredOffice;
+                    info.RegistrationNumber = ent.registrationNumber;
+                }
+            }
+               
+        }
+        
         private void AddCustomerIdentification(List<CustomerIdentificationViewModels> entity,
            int status)
         {
@@ -263,6 +409,117 @@ namespace FintrakBanking.Repositories.Customer
 
         }
 
+        public bool AddCustomerCompanyDiector(CustomerCompanyDirectorsViewModels entity)
+        {
+            tbl_Customer_Company_Director directors;
+            if (entity.companyDirectorId != 0 || entity.companyDirectorId < 0)
+            {
+                directors = context.tbl_Customer_Company_Director.Find(entity.companyDirectorId);
+                directors.CustomerId = entity.customerId;
+                directors.Surname = entity.surname;
+                directors.Firstname = entity.firstname;
+                directors.CompanyDirectorTypeId = entity.companyDirectorTypeId;
+                directors.CustomerBVN = entity.bankVerificationNumber;
+                directors.NumberOfShares = entity.numberOfShares;
+                directors.IsPoliticallyExposed = entity.isPoliticallyExposed;
+                directors.Address = entity.address;
+                directors.PhoneNumber = entity.phoneNumber;
+                directors.EmailAddress = entity.email;
+            }
+            else
+            {
+                directors = new tbl_Customer_Company_Director();
+
+                directors.CustomerId = entity.customerId;
+                directors.Surname = entity.surname;
+                directors.Firstname = entity.firstname;
+                directors.CompanyDirectorTypeId = entity.companyDirectorTypeId;
+                directors.CustomerBVN = entity.bankVerificationNumber;
+                directors.NumberOfShares = entity.numberOfShares;
+                directors.IsPoliticallyExposed = entity.isPoliticallyExposed;
+                directors.Address = entity.address;
+                directors.PhoneNumber = entity.phoneNumber;
+                directors.EmailAddress = entity.email;
+                directors.CreatedBy = entity.createdBy;
+                directors.DateCreated = DateTime.Now;
+
+                context.tbl_Customer_Company_Director.Add(directors);
+            }
+
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CustomerUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = "Added new tbl_Customer_Identification for customer ID: + (" + entity.customerId + ") ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            try
+            {
+                var response = context.SaveChanges() != 0;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+        public bool AddCustomerIdentification(CustomerIdentificationViewModels entity)
+        {
+            tbl_Customer_Identification identity;
+            if (entity.identificationId != 0 || entity.identificationId < 0)
+            {
+                identity = context.tbl_Customer_Identification.Find(entity.identificationId);
+                identity.CustomerId = entity.customerId;
+                identity.IdentificationModeId = entity.identificationModeId;
+                identity.IdentificationNo = entity.identificationNo;
+                identity.IssueAuthority = entity.issueAuthority;
+                identity.IssuePlace = entity.issuePlace;
+            }
+            else
+            {
+                identity = new tbl_Customer_Identification();
+                identity.CustomerId = entity.customerId;
+                identity.IdentificationModeId = entity.identificationModeId;
+                identity.IdentificationNo = entity.identificationNo;
+                identity.IssueAuthority = entity.issueAuthority;
+                identity.IssuePlace = entity.issuePlace;
+
+                context.tbl_Customer_Identification.Add(identity);
+            }
+
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CustomerUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = "Added new tbl_Customer_Identification for customer ID: + (" + entity.customerId + ") ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            try
+            {
+                var response = context.SaveChanges() != 0;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
         private void AddCustomerEmploymentHistory(List<CustomerEmploymentHistoryViewModels> entity,
            int status)
         {
@@ -279,27 +536,126 @@ namespace FintrakBanking.Repositories.Customer
                 history.OfficePhone = ent.officePhone;
                 history.PreviousEmployer = ent.previousEmployer;
                 context.tbl_Customer_EmploymentHistory.Add(history);
-
-                // Audit Section ----------------------------
-                //var customer = this.context.tbl_Customer.FirstOrDefault(x => x.CustomerId == history.CustomerId);
-                //var audit = new tbl_Audit
-                //{
-                //    AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
-                //    StaffId = user.staffId,
-                //    BranchId = (short) user.BranchId,
-                //    Detail = status == 1 ? "Deleted tbl_Customer: " : "Updated tbl_Customer: " + customer.LastName + " with code: " + customer.CustomerCode,
-                //    IPAddress = user.userIPAddress,
-                //    Url = ent.applicationUrl,
-                //    ApplicationDate = _genSetup.GetApplicaionDate(),
-                //    SystemDateTime = DateTime.Now
-                //};
-
-                //this.auditTrail.AddAuditTrail(audit);
-
-                //end of Audit section -----------------------
             }
         }
 
+        public bool AddCustomerClientSupplier(CustomerClientOrSupplierViewModels entity)
+        {
+            tbl_Customer_Client_Supplier clientSupplier;
+            if (entity.client_SupplierId != 0 || entity.client_SupplierId < 0)
+            {
+                clientSupplier = context.tbl_Customer_Client_Supplier.Find(entity.client_SupplierId);
+                clientSupplier.CustomerId = entity.customerId;
+                clientSupplier.CustomerTypeId = entity.customerTypeId;
+                clientSupplier.FirstName = entity.firstName;
+                clientSupplier.MiddleName = entity.middleName;
+                clientSupplier.LastName = entity.lastName;
+                clientSupplier.Address = entity.client_SupplierAddress;
+                clientSupplier.PhoneNumber = entity.client_SupplierPhoneNumber;
+                clientSupplier.EmailAddress = entity.client_SupplierEmail;
+                clientSupplier.Client_SupplierTypeId = entity.client_SupplierTypeId;
+                clientSupplier.CreatedBy = entity.createdBy;
+            }
+            else
+            {
+                clientSupplier = new tbl_Customer_Client_Supplier();
+
+                clientSupplier.CustomerId = entity.customerId;
+                clientSupplier.CustomerTypeId = entity.customerTypeId;
+                clientSupplier.FirstName = entity.firstName;
+                clientSupplier.MiddleName = entity.middleName;
+                clientSupplier.LastName = entity.lastName;
+                clientSupplier.Address = entity.client_SupplierAddress;
+                clientSupplier.PhoneNumber = entity.client_SupplierPhoneNumber;
+                clientSupplier.EmailAddress = entity.client_SupplierEmail;
+                clientSupplier.Client_SupplierTypeId = entity.client_SupplierTypeId;
+                clientSupplier.CreatedBy = entity.createdBy;
+                clientSupplier.DateCreated = DateTime.Now;
+                context.tbl_Customer_Client_Supplier.Add(clientSupplier);
+            }
+
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CustomerUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = "Added new tbl_Customer_Client_Supplier for customer ID: + (" + entity.customerId + ") ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            try
+            {
+                var response = context.SaveChanges() != 0;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public bool AddCustomerEmploymentHistory(CustomerEmploymentHistoryViewModels entity)
+        {
+            tbl_Customer_EmploymentHistory history;
+            if (entity.placeOfWorkId != 0 || entity.placeOfWorkId < 0)
+            {
+                history = context.tbl_Customer_EmploymentHistory.Find(entity.placeOfWorkId);
+
+                history.Active = entity.active;
+                history.CustomerId = entity.customerId;
+                history.EmployDate = entity.employDate;
+                history.EmployerAddress = entity.employerAddress;
+                history.EmployerCountryId = entity.employerCountryId;
+                history.EmployerStateId = entity.employerStateId;
+                history.EmployerName = entity.employerName;
+                history.OfficePhone = entity.officePhone;
+                history.PreviousEmployer = entity.previousEmployer;
+
+            }
+            else
+            {
+                history = new tbl_Customer_EmploymentHistory();
+
+                history.Active = entity.active;
+                history.CustomerId = entity.customerId;
+                history.EmployDate = entity.employDate;
+                history.EmployerAddress = entity.employerAddress;
+                history.EmployerCountryId = entity.employerCountryId;
+                history.EmployerStateId = entity.employerStateId;
+                history.EmployerName = entity.employerName;
+                history.OfficePhone = entity.officePhone;
+                history.PreviousEmployer = entity.previousEmployer;
+                context.tbl_Customer_EmploymentHistory.Add(history);
+            }
+
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CustomerUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = "Added new tbl_Customer_EmploymentHistory for customer ID: + (" + entity.customerId + ") ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            try
+            {
+                var response = context.SaveChanges() != 0;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         public async Task<bool> DeleteCustomer(int customerId, UserInfo user)
         {
             var customer = context.tbl_Customer.Find(customerId);
@@ -340,9 +696,9 @@ namespace FintrakBanking.Repositories.Customer
                    {
                        accountCreationComplete = a.AccountCreationComplete,
                        branchId = a.BranchId,
-                       //branchName = a.tbl_Branch.BranchName,
+                       branchName = a.tbl_Branch.BranchName,
                        childDateOfBirth = a.ChildDateOfBirth.Value,
-                       companyId = a.CompanyId,
+                       companyMainId = a.CompanyId,
                        createdBy = a.CreatedBy,
                        creationMailSent = a.CreationMailSent,
                        customerCode = a.CustomerCode,
@@ -418,9 +774,8 @@ namespace FintrakBanking.Repositories.Customer
                            registeredOffice = d.RegisteredOffice,
                            previousCreditRating = d.PreviousCreditRating,
                            registrationNumber = d.RegistrationNumber,
-                           paidUpCapital = (int)d.PaidUpCapital,
-                           authorizedCapital = (int) d.AuthorisedCapital
-
+                           paidUpCapital = d.PaidUpCapital,
+                           authorizedCapital = d.AuthorisedCapital
 
                        }).ToList(),
                        CustomerIdentification = context.tbl_Customer_Identification.Where(e => e.CustomerId == a.CustomerId).Select(e => new CustomerIdentificationViewModels()
@@ -445,8 +800,14 @@ namespace FintrakBanking.Repositories.Customer
                            officePhone = s.OfficePhone,
                            employerStateId = s.EmployerStateId
                        }).ToList(),
-                       CustomerCompanyDirectors = context.tbl_Customer_Company_Director.Where(s => s.CustomerId == a.CustomerId).Select(s => new CustomerCompanyDirectorsViewModels()
+                       CustomerCompanyDirectors = context.tbl_Customer_Company_Director.Where(s => s.CustomerId == a.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
+                       .Select(s => new CustomerCompanyDirectorsViewModels()
                        {
+                           companyDirectorId = s.CompanyDirectorId,
+                           surname = s.Surname,
+                           firstname = s.Firstname,
+                           numberOfShares = s.NumberOfShares,
+                           isPoliticallyExposed = s.IsPoliticallyExposed,
                            bankVerificationNumber = s.CustomerBVN,
                            companyDirectorTypeId = s.CompanyDirectorTypeId,
                            companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
@@ -456,19 +817,51 @@ namespace FintrakBanking.Repositories.Customer
                            phoneNumber = s.PhoneNumber,
                            email = s.EmailAddress
                        }).ToList(),
-   //                    CustomerClientOrSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId).Select(cs => new CustomerClientOrSupplierViewModels()
-   //                    {
-   //client_SupplierId = cs.Client_SupplierId,
-   //clientOrSupplierName = cs.FirstName +" "+ cs.LastName,
-   //     firstName  = cs.FirstName, 
-   //    middleName = cs.MiddleName,
-   //    lastName = cs.LastName,
-   //    client_SupplierAddress = cs.Client_SupplierAddress,
-   //    client_SupplierPhoneNumber = cs.Client_SupplierPhoneNumber,
-   //    client_SupplierEmail = cs.Client_SupplierEmail,
-   //    client_SupplierTypeId = cs.Client_SupplierTypeId,
-   //    client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
-   // }).ToList()
+                       CustomerCompanyShareholder = context.tbl_Customer_Company_Director.Where(s => s.CustomerId == a.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
+                       .Select(s => new CustomerCompanyShareholderViewModels()
+                       {
+                           companyDirectorId = s.CompanyDirectorId,
+                           surname = s.Surname,
+                           firstname = s.Firstname,
+                           numberOfShares = s.NumberOfShares,
+                           isPoliticallyExposed = s.IsPoliticallyExposed,
+                           bankVerificationNumber = s.CustomerBVN,
+                           companyDirectorTypeId = s.CompanyDirectorTypeId,
+                           companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                           customerId = s.CustomerId,
+                           customerName = s.Firstname + " " + s.Surname,
+                           address = s.Address,
+                           phoneNumber = s.PhoneNumber,
+                           email = s.EmailAddress
+                       }).ToList(),
+                       CustomerClientOrSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId && cs.Client_SupplierTypeId ==(short)CompanyClientOrSupplierTypeEnum.Client)
+                       .Select(cs => new CustomerClientOrSupplierViewModels()
+                       {
+                           client_SupplierId = cs.Client_SupplierId,
+                           clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                           firstName = cs.FirstName,
+                           middleName = cs.MiddleName,
+                           lastName = cs.LastName,
+                           client_SupplierAddress = cs.Address,
+                           client_SupplierPhoneNumber = cs.PhoneNumber,
+                           client_SupplierEmail = cs.EmailAddress,
+                           client_SupplierTypeId = cs.Client_SupplierTypeId,
+                           client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                       }).ToList(),
+                       CustomerSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                       .Select(cs => new CustomerSupplierViewModels()
+                       {
+                           client_SupplierId = cs.Client_SupplierId,
+                           clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                           firstName = cs.FirstName,
+                           middleName = cs.MiddleName,
+                           lastName = cs.LastName,
+                           client_SupplierAddress = cs.Address,
+                           client_SupplierPhoneNumber = cs.PhoneNumber,
+                           client_SupplierEmail = cs.EmailAddress,
+                           client_SupplierTypeId = cs.Client_SupplierTypeId,
+                           client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                       }).ToList()
                    };
 
         }
@@ -487,7 +880,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerViewModels> GetCustomerByCompanyId(int companyId)
         {
-            return GetCustomers().Where(a => a.companyId == companyId);
+            return GetCustomers().Where(a => a.companyMainId == companyId);
         }
 
         public IEnumerable<CustomerViewModels> GetCustomerByTypeId(int customerTypeId)
@@ -505,31 +898,46 @@ namespace FintrakBanking.Repositories.Customer
                        };
             return type;
         }
-
-        public IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId)
+        public IEnumerable<CustomerSupplierTypeViewModels> GetClientSupplierType()
         {
-            var data = (from cs in context.tbl_Customer_Group_Mapping
-                        where cs.CustomerGroupId == groupId
-                        select new CustomerViewModels()
-                        {
-                            customerId = cs.CustomerId,
-                            fullName = cs.tbl_Customer.LastName + " " + cs.tbl_Customer.FirstName + "(" + cs.tbl_Customer.CustomerCode +")",
-                            firstName = cs.tbl_Customer.FirstName,
-                            lastName = cs.tbl_Customer.LastName,
-                            customerCode = cs.tbl_Customer.CustomerCode,
-                        });
-
-            return data;
+            var type = from a in context.tbl_Customer_Client_Supplier_Type
+                       select new CustomerSupplierTypeViewModels
+                       {
+                           name = a.Client_SupplierTypeName,
+                           client_SupplierTypeId = a.Client_SupplierTypeId
+                       };
+            return type;
         }
 
-        public async Task<bool> UpdateCustomer(int customerId, CustomerViewModels entity)
+        public IEnumerable<CustomerIdentificationModeTypeViewModels> GetIdentificationMode()
+        {
+            var type = from a in context.tbl_Customer_IdentificationModeType
+                       select new CustomerIdentificationModeTypeViewModels
+                       {
+                           name = a.IdentificationMode,
+                           identificationModeId = a.IdentificationModeId
+                       };
+            return type;
+        }
+        public IEnumerable<CompanyDirectorTypeViewModels> GetDirectorsTypes()
+        {
+            var type = from a in context.tbl_Customer_Company_DirectorType
+                       select new CompanyDirectorTypeViewModels
+                       {
+                           name = a.CompanyDirectoryTypeName,
+                           companyDirectorTypeId = a.CompanyDirectoryTypeId
+                       };
+            return type;
+        }
+
+        public bool UpdateCustomer(int customerId, CustomerViewModels entity)
         {
             var customer = context.tbl_Customer.Find(customerId);
 
             customer.AccountCreationComplete = entity.accountCreationComplete;
             customer.BranchId = entity.branchId;
             customer.ChildDateOfBirth = entity.childDateOfBirth;
-            customer.CompanyId = entity.companyId;
+            customer.CompanyId = entity.companyMainId;
             customer.CreatedBy = (int)entity.createdBy;
             customer.CreationMailSent = entity.creationMailSent;
             customer.CustomerCode = entity.customerCode;
@@ -558,7 +966,10 @@ namespace FintrakBanking.Repositories.Customer
             customer.DateTimeUpdated = DateTime.Now;
             customer.LastUpdatedBy = entity.deletedBy;
 
-
+            if (entity.CustomerCompanyInfomation.Count > 0)
+            {
+                UpdateCustomerCompanyInfomation(entity.CustomerCompanyInfomation);
+            }
             // Audit Section ----------------------------
             var audit = new tbl_Audit
             {
@@ -574,7 +985,7 @@ namespace FintrakBanking.Repositories.Customer
 
             this.auditTrail.AddAuditTrail(audit);
 
-            return await context.SaveChangesAsync() != 0;
+            return  context.SaveChanges() != 0;
 
         }
 
@@ -663,11 +1074,10 @@ namespace FintrakBanking.Repositories.Customer
             return customers;
         }
 
-
-        public IEnumerable<SectorViewModel> GetCustomerSectors()
+        public IEnumerable<CustomerSectorViewModel> GetCustomerSectors()
         {
             var data = (from cs in context.tbl_Sector
-                        select new SectorViewModel()
+                        select new CustomerSectorViewModel()
                         {
                             sectorId = cs.SectorId,
                             sectorName = cs.Name,
@@ -677,12 +1087,11 @@ namespace FintrakBanking.Repositories.Customer
             return data;
         }
 
-
-        public IEnumerable<SectorViewModel> GetCustomerSectorBySubSectorId(short ssId)
+        public IEnumerable<CustomerSectorViewModel> GetCustomerSectorBySubSectorId(short ssId)
         {
             var data = (from s in context.tbl_Sub_Sector
                         where s.SubSectorId == ssId
-                        select new SectorViewModel()
+                        select new CustomerSectorViewModel()
                         {
                             subSectorId = s.SubSectorId,
                             sectorId = s.tbl_Sector.SectorId,
