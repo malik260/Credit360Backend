@@ -20,6 +20,12 @@ namespace FintrakBanking.Repositories.Admin
             this.context = _contex;
             
         }
+        public void AddAllAuditTrail(List<tbl_Audit> auditInput)
+        {
+
+            context.tbl_Audit.AddRange(auditInput);
+
+        }
         public void AddAuditTrail(tbl_Audit  auditInput)
         {
                       

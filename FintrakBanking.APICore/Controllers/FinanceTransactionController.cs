@@ -65,7 +65,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("addcollateralsearchlien")]
-        public HttpResponseMessage AddCollateralSearchLien(HttpResponseMessage request, [FromBody] CasaLienViewModel model)
+        public HttpResponseMessage AddCollateralSearchLien(HttpResponseMessage request, [FromBody] List<CasaLienViewModel> model)
         {
             try
             {
