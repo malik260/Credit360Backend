@@ -21,6 +21,7 @@ namespace FintrakBanking.ViewModels.Customer
         public int customerId { get; set; }
         public string customerCode { get; set; }
         public short branchId { get; set; }
+        public int companyMainId { get; set; }
         public string branchName { get; set; }
         public string title { get; set; }
         public string firstName { get; set; }
@@ -66,7 +67,10 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerIdentificationViewModels> CustomerIdentification { get; set; }
         public List<CustomerPhoneContactViewModels> CustomerPhoneContact { get; set; }
         public List<CustomerCompanyDirectorsViewModels> CustomerCompanyDirectors { get; set; }
+        public List<CustomerCompanyShareholderViewModels> CustomerCompanyShareholder { get; set; }
         public List<CustomerClientOrSupplierViewModels> CustomerClientOrSupplier { get; set; }
+        public List<CustomerSupplierViewModels> CustomerSupplier { get; set; }
+        
     }
 
     public class CustomerSearchItemViewModels

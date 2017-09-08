@@ -12,8 +12,8 @@
         public string corporateBusinessCategory { get; set; }
         public string creditRating { get; set; }
         public string previousCreditRating { get; set; }
-        public int paidUpCapital { get; set; }
-        public int authorizedCapital { get; set; }
+        public int? paidUpCapital { get; set; }
+        public int? authorizedCapital { get; set; }
 
        
     }
@@ -26,7 +26,23 @@
         public string surname { get; set; }
         public string firstname { get; set; }
         public string bankVerificationNumber { get; set; }
-        public int companyDirectorTypeId { get; set; }
+        public short companyDirectorTypeId { get; set; }
+        public string companyDirectorTypeName { get; set; }
+        public int numberOfShares { get; set; }
+        public bool isPoliticallyExposed { get; set; }
+        public string address { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+    }
+    public class CustomerCompanyShareholderViewModels
+    {
+        public int companyDirectorId { get; set; }
+        public int customerId { get; set; }
+        public string customerName { get; set; }
+        public string surname { get; set; }
+        public string firstname { get; set; }
+        public string bankVerificationNumber { get; set; }
+        public short companyDirectorTypeId { get; set; }
         public string companyDirectorTypeName { get; set; }
         public int numberOfShares { get; set; }
         public bool isPoliticallyExposed { get; set; }
@@ -44,6 +60,21 @@
         public string middleName { get; set; }
         public string lastName { get; set; }
         public string client_SupplierAddress { get; set; } 
+        public string client_SupplierPhoneNumber { get; set; }
+        public string client_SupplierEmail { get; set; }
+        public short client_SupplierTypeId { get; set; }
+        public string client_SupplierTypeName { get; set; }
+    }
+    public class CustomerSupplierViewModels
+    {
+        public int client_SupplierId { get; set; }
+        public int customerId { get; set; }
+        public short customerTypeId { get; set; }
+        public string clientOrSupplierName { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string client_SupplierAddress { get; set; }
         public string client_SupplierPhoneNumber { get; set; }
         public string client_SupplierEmail { get; set; }
         public short client_SupplierTypeId { get; set; }
