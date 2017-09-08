@@ -72,15 +72,7 @@ namespace FintrakBanking.Repositories.Credit
             return $"{customerCode}-{productCode}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
         }
 
-        //private string GenerateLoanTypeBatchCode()
-        //{
-        //    var data = this.context.tbl_Loan_Type_Batch.Count();
-        //    int counter = data + 1;
-
-        //    var numberCode = string.Format("{0}", counter.ToString().PadLeft(9, '0'));
-
-        //    return numberCode;
-        //}
+       
 
         //private int GetLoanTypeBatchId(LoanTypeEnum loanTypeId, int customerId, int customerGroupId, decimal groupAmount)
         //{
