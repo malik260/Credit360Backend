@@ -162,7 +162,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [Route("loan-booking")]
-        public HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
+        public async Task<HttpResponseMessage> AddLoanBooking([FromBody] LoanViewModel entity)
         {
             try
             {
@@ -175,10 +175,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 entity.companyId = token.GetCompanyId;
 
 
-                var data = repo.AddLoanBooking(entity);
-                if (data != "")
+                var data = await repo.AddLoanBooking(entity);
+                if (data !="")
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The Loan booking was successful and and is waiting for approval" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
