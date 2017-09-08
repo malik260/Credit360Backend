@@ -21,7 +21,7 @@ namespace FintrakBanking.Repositories.Finance
         private IAuditTrailRepository auditTrail;
         private ICreditOperationsRepository creditOperations;
 
-        public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail,
+        public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, 
                                             ICreditOperationsRepository _creditOperations, FinTrakBankingContext _context)
         {
             this.context = _context;
@@ -32,46 +32,45 @@ namespace FintrakBanking.Repositories.Finance
 
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public CasaLienViewModel AddCollateralSearchLien(CasaLienViewModel model)
+        public bool AddCollateralSearchLien(IEnumerable<CasaLienViewModel> model)
         {
 
-            var data = new tbl_CASA_Lien
+            var data = model.Select(c =>  new tbl_CASA_Lien
             {
-                ProductAccountNumber = model.productAccountNumber,
+                ProductAccountNumber = c.productAccountNumber,
                 LienReferenceNumber = CommonHelpers.GenerateRandomDigitCode(10),
-                SourceReferenceNumber = model.sourceReferenceNumber,
-                BranchId = model.branchId,
-                CompanyId = model.companyId,
-                LienCreditAmount = creditOperations.GetCollateralSearchChargeAmount(model.stateId),
+                SourceReferenceNumber = c.sourceReferenceNumber,
+                BranchId = c.branchId,
+                CompanyId = c.companyId,
+                LienCreditAmount = creditOperations.GetCollateralSearchChargeAmount(c.stateId),
                 LienDebitAmount = 0,
                 LienTypeId = (short) LienTypeEnum.CollateralSearch,
-                CreatedBy = model.createdBy,
+                CreatedBy = c.createdBy,
                 Description = "lien placed due to loan application collateral search", // model.description,
                 DateCreated = generalSetup.GetApplicationDate()
                 
-            };
+            });
 
-            context.tbl_CASA_Lien.Add(data);
+            context.tbl_CASA_Lien.AddRange(data);
 
             // Audit Section ---------------------------            
-
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.LienAdded,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Applied for lien with reference number: {data.LienReferenceNumber}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
-
-            this.auditTrail.AddAuditTrail(audit);
-
+         
+                var audit = new tbl_Audit
+                {
+                    AuditTypeId = (short)AuditTypeEnum.LienAdded,
+                    StaffId = model.Select(c=> c.createdBy).FirstOrDefault(),
+                    BranchId = model.Select(c => c.branchId).FirstOrDefault(),
+                    Detail = $"Applied for lien with reference number: { model.Select(c => c.sourceReferenceNumber).FirstOrDefault()}",
+                    IPAddress = model.Select(c => c.userIPAddress).FirstOrDefault(),
+                    Url = model.Select(c => c.applicationUrl).FirstOrDefault(),
+                    ApplicationDate = generalSetup.GetApplicationDate(),
+                    SystemDateTime = DateTime.Now
+                };
+                this.auditTrail.AddAuditTrail(audit);
+          
             //end of Audit section -------------------------------
-            context.SaveChanges();
-            return model;
+           return  context.SaveChanges() != 0;
+             
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
@@ -255,8 +254,9 @@ namespace FintrakBanking.Repositories.Finance
             }
             else
             {
+                DateTime date = generalSetup.GetApplicationDate().Date;
                 var rate = this.context.tbl_Currency_Rate.FirstOrDefault(x => x.BaseCurrencyId ==
-                baseCurrency && x.CurrencyId == currencyId && x.Date == generalSetup.GetApplicationDate()).SellingRate;
+                baseCurrency && x.CurrencyId == currencyId && x.Date == date).SellingRate;
 
                 return rate;
             }           

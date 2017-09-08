@@ -60,6 +60,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string firstName { get; set; }
         public string middleName { get; set; }
         public string lastName { get; set; }
+        public short departmentId { get; set; }
         public string fullName { get { return $"{this.firstName} {this.middleName.Trim()} {this.lastName} - {this.staffCode}"; } }
     }
 

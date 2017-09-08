@@ -78,6 +78,22 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("check-exiting-certificate-of-ownership/{certificateofownership}")]
+        public HttpResponseMessage CheckExitingCertificateOfOwnership(string certificateofownership)
+        {
+            try
+            {
+                var response = repoApply.CheckExitingCertificateOfOwnership(certificateofownership, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+        [HttpGet]
         [Route("loan-application/{id}")]
         public HttpResponseMessage GetLoanApplicationById(int id)
         {
@@ -205,7 +221,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error Occured =>  {e.Message}" });
             }
         }
 

@@ -58,7 +58,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         /// </summary>
         /// <param name="Approval entity"> </param>
         /// <returns></returns>
-        public Tuple<bool, ApprovalViewModel> LogForApproval(ApprovalViewModel entity)
+        public async Task<Tuple<bool, ApprovalViewModel>> LogForApproval(ApprovalViewModel entity)
         {
             var nextLevel = new ApprovalLevelViewModel();
             int? fromApprovalLevelId = null;
@@ -72,7 +72,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             trail = new tbl_Approval_Trail
             {
                 ArrivalDate = genSetup.GetApplicationDate(),
-                ToApprovalLevelId = entity.nextLevelId == 0 ? nextLevel.approvalLevelId /**/ : entity.nextLevelId,
+                ToApprovalLevelId = GetStatingApprovalLevel(entity.operationId, entity.companyId),
                 TargetId = entity.targetId,
                 ApprovalStatusId = entity.approvalStatusId,
                 CompanyId = entity.companyId,
@@ -93,8 +93,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 trail.FromApprovalLevelId = null;
             }
 
-            approvelRepo.AddApprovalTrail(trail);
+            await approvelRepo.AddApprovalTrail(trail);
+
             decimal amount = GetAmount(entity);
+
             if (IsWithinMyLimit(entity, currentStaffLevel))
             {
                 return ApproveOperation(entity);
@@ -288,9 +290,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             return group.isCommittee;
         }
 
-        private int GetStatingApprovalLevel(int opereationId, int companyId)
+        private int GetStatingApprovalLevel(int operationId, int companyId)
         {
-            ApprovalLevelViewModel[] allLevels = GetAllLevels(opereationId, companyId).ToArray();
+            ApprovalLevelViewModel[] allLevels = GetAllLevels(operationId, companyId).ToArray();
 
             tbl_Approval_Group_Mapping[] allGroups = (from a in context.tbl_Approval_Group join
                                                   b in context.tbl_Approval_Group_Mapping on a.GroupId equals b.GroupId
@@ -299,7 +301,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                                    select b).ToArray();//.ToList().ToArray();
 
 
-            var group = allGroups.Where(c => c.OperationId == opereationId).OrderBy(c => c.Position).FirstOrDefault();
+            var group = allGroups.Where(c => c.OperationId == operationId).OrderBy(c => c.Position).FirstOrDefault();
             var levels = allLevels.Where(c => c.groupOperationMappingId == group.GroupOperationMappingId).OrderBy(c => c.position).FirstOrDefault();
             return levels.approvalLevelId;
         }

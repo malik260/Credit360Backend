@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
         { 
                 try
                 {
-                    var data = repo.GetExchangeRate(1, 1);
+                    var data = repo.GetExchangeRate(currencyId, token.GetCompanyId);
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (Exception ex)
@@ -65,7 +65,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("addcollateralsearchlien")]
-        public HttpResponseMessage AddCollateralSearchLien(HttpResponseMessage request, [FromBody] CasaLienViewModel model)
+        public HttpResponseMessage AddCollateralSearchLien(HttpResponseMessage request, [FromBody] List<CasaLienViewModel> model)
         {
             try
             {

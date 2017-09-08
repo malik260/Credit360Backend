@@ -10,6 +10,6 @@ namespace FintrakBanking.Interfaces.WorkFlow
     {
         Task<Tuple<bool, ApprovalViewModel>> GoForApproval(ApprovalViewModel entity);
         bool CheckRouteForOperation(int operationId, int companyId);
-        Tuple<bool, ApprovalViewModel> LogForApproval(ApprovalViewModel entity);
+        Task<Tuple<bool, ApprovalViewModel>> LogForApproval(ApprovalViewModel entity);
     }
 }
