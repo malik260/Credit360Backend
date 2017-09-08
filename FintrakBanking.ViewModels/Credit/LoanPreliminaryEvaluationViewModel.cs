@@ -60,5 +60,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short sectorId { get; set; }
         public short loanTypeId { get; set; }
         public string loanTypeName { get; set; }
+        public string customerAccountNumber { get; set; }
+        public short? customerTypeId { get; set; }
     }
 }

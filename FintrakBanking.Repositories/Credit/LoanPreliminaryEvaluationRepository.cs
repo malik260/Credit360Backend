@@ -316,6 +316,8 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = p.CustomerId,
                             customerName = p.tbl_Customer.FirstName + " " + p.tbl_Customer.LastName,
                             customerCode = p.tbl_Customer.CustomerCode,
+                            customerAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == p.CustomerId).ProductAccountNumber,
+                            customerTypeId = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == p.CustomerId).CustomerTypeId,
                             environmentalImpact = p.EnvironmentalImpact,
                             existingExposure = p.ExistingExposure,
                             implementationArrangements = p.ImplementationArrangements,
