@@ -94,6 +94,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string branchName { get; set; }
         public string customerName { get; set; }
         public int currencyId { get; set; }
+        public short accurialBasis { get; set; }
+        public double integralFeeAmount { get; set; }
+        public short firstDayType { get; set; }
 
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
 
