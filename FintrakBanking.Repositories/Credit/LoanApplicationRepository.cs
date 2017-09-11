@@ -187,7 +187,7 @@ namespace FintrakBanking.Repositories.Credit
                             principalAmount = a.PrincipalAmount,
                             customerGroupId = a.CustomerGroupId.Value,
                             loanTypeId = a.LoanTypeId,
-                            loanStatusId = a.LoanStatusId,
+                            //loanStatusId = a.LoanStatusId,
                             createdBy = a.CreatedBy,
                             applicationDate = a.ApplicationDate,
                             dateTimeCreated = a.DateTimeCreated
@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = this.context.tbl_Loan_Application.Find(entity.targetId);
             {
-                data.LoanStatusId = (short)entity.approvalStatusId;
+                //data.LoanStatusId = (short)entity.approvalStatusId;
                 //data.ActedOnaBy = entity.staffId;
                 //data.DateActedOn = genSetup.GetApplicaionDate();
                 data.LoanApplicationId = (short)entity.approvalStatusId;
@@ -249,7 +249,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 ApplicationReferenceNumber = loan.applicationReferenceNumber,
                 LoanTypeId = loan.loanTypeId,
-                LoanStatusId = loanStatusId,
+                //LoanStatusId = loanStatusId,
                 CompanyId = loan.companyId,
                 BranchId = (short)loan.branchId,
                 Tenor = loan.tenor,
@@ -495,7 +495,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerGroupId = x.a.CustomerGroupId,
                 loanTypeId = x.a.LoanTypeId,
                 currencyId = x.a.CurrencyId,
-                loanStatusId = x.a.LoanStatusId,
+                //loanStatusId = x.a.LoanStatusId,
                 relationshipOfficerId = x.a.RelationshipOfficerId,
                 relationshipManagerId = x.a.RelationshipManagerId,
                 applicationDate = x.a.ApplicationDate,

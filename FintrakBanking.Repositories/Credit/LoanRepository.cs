@@ -72,15 +72,7 @@ namespace FintrakBanking.Repositories.Credit
             return $"{customerCode}-{productCode}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
         }
 
-        //private string GenerateLoanTypeBatchCode()
-        //{
-        //    var data = this.context.tbl_Loan_Type_Batch.Count();
-        //    int counter = data + 1;
-
-        //    var numberCode = string.Format("{0}", counter.ToString().PadLeft(9, '0'));
-
-        //    return numberCode;
-        //}
+       
 
         //private int GetLoanTypeBatchId(LoanTypeEnum loanTypeId, int customerId, int customerGroupId, decimal groupAmount)
         //{
@@ -206,13 +198,13 @@ namespace FintrakBanking.Repositories.Credit
 
         //}
 
-        public string AddLoanBooking(LoanViewModel entity)
+        public async Task<string> AddLoanBooking(LoanViewModel entity)
         {
             if (entity.maturityDate <= entity.effectiveDate)
                 throw new Exception("Loan terminal date should be more than effective date");
 
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
-            int output;
+            
             var data = new tbl_Loan
             {
                 LoanApplicationId = entity.loanApplicationId,
@@ -229,8 +221,6 @@ namespace FintrakBanking.Repositories.Credit
                 LoanTypeId = entity.loanTypeId,
                 SubSectorId = entity.subSectorId,
                 CurrencyId = (short)entity.currencyId,
-
-                //LoanTypeBatchId = GetLoanTypeBatchId((LoanTypeEnum)entity.loanTypeId, entity.customerId, entity.customerGroupId ?? -1, entity.groupAmount ?? 0),
 
                 DischargeLetter = false,
                 SuspendInterest = false,
@@ -306,7 +296,6 @@ namespace FintrakBanking.Repositories.Credit
                 ApplicationDate = generalSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
-            this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
 
@@ -316,10 +305,12 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     try
                     {
+
                         var loan = context.tbl_Loan.Add(data);
+                            context.tbl_Audit.Add(audit);
 
                         var dataCount = context.SaveChanges();
-                        // this.loanSchedule.AddLoanSchedule(loan.LoanId, entity.loanScheduleInput, entity.createdBy);
+                        //this.loanSchedule.AddLoanSchedule(loan.LoanId, entity.loanScheduleInput, entity.createdBy);
 
 
                         var approvalModel = new ApprovalViewModel
@@ -331,7 +322,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = (int)OperationsEnum.LoanBooking,
                             BranchId = entity.userBranchId
                         };
-                        var response = workFlow.LogForApproval(approvalModel);
+                        var response = await workFlow.LogForApproval(approvalModel);
                         trans.Commit();
 
 
@@ -1257,8 +1248,8 @@ namespace FintrakBanking.Repositories.Credit
                             currencyCode = a.tbl_Currency.CurrencyCode,
                             loanTypeId = a.LoanTypeId,
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
-                            loanStatusId = a.LoanStatusId,
-                            // loanStatusName = a.tbl_Loan_Type.AccountStatus,
+                            //loanStatusId = a.LoanStatusId,
+                            //loanStatusName = a.tbl_Loan_Type.AccountStatus,
                             camReference = c.CAMRef,
                             loanDetails = c.LoanDetails,
                             productId = (short)a.ProductId,

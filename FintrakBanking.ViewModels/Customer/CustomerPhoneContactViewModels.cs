@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Customer
 {
-    public class CustomerPhoneContactViewModels
+    public class CustomerPhoneContactViewModels : GeneralEntity
     {
         public int phoneContactId { get; set; }
         public string phone { get; set; }

@@ -16,5 +16,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId);
 
+        IEnumerable<LoanDocumentViewModel> GetLoanDocumentByReferenceNumber(string referenceNumber);
+
     }
 }
