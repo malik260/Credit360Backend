@@ -32,37 +32,37 @@ namespace FintrakBanking.Repositories.Finance
 
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool AddCollateralSearchLien(IEnumerable<CasaLienViewModel> model)
+        public bool AddCollateralSearchLien(CasaLienViewModel model)
         {
 
-            var data = model.Select(c =>  new tbl_CASA_Lien
+            var data =   new tbl_CASA_Lien
             {
-                ProductAccountNumber = c.productAccountNumber,
+                ProductAccountNumber = model.productAccountNumber,
                 LienReferenceNumber = CommonHelpers.GenerateRandomDigitCode(10),
-                SourceReferenceNumber = c.sourceReferenceNumber,
-                BranchId = c.branchId,
-                CompanyId = c.companyId,
-                LienCreditAmount = creditOperations.GetCollateralSearchChargeAmount(c.stateId),
+                SourceReferenceNumber = model.sourceReferenceNumber,
+                BranchId = model.userBranchId,
+                CompanyId = model.companyId,
+                LienCreditAmount = creditOperations.GetCollateralSearchChargeAmount(model.stateId),
                 LienDebitAmount = 0,
                 LienTypeId = (short) LienTypeEnum.CollateralSearch,
-                CreatedBy = c.createdBy,
+                CreatedBy = model.createdBy,
                 Description = "lien placed due to loan application collateral search", // model.description,
                 DateCreated = generalSetup.GetApplicationDate()
-                
-            });
+                 
+            };
 
-            context.tbl_CASA_Lien.AddRange(data);
+            context.tbl_CASA_Lien.Add(data);
 
             // Audit Section ---------------------------            
          
                 var audit = new tbl_Audit
                 {
                     AuditTypeId = (short)AuditTypeEnum.LienAdded,
-                    StaffId = model.Select(c=> c.createdBy).FirstOrDefault(),
-                    BranchId = model.Select(c => c.branchId).FirstOrDefault(),
-                    Detail = $"Applied for lien with reference number: { model.Select(c => c.sourceReferenceNumber).FirstOrDefault()}",
-                    IPAddress = model.Select(c => c.userIPAddress).FirstOrDefault(),
-                    Url = model.Select(c => c.applicationUrl).FirstOrDefault(),
+                    StaffId = model.createdBy,
+                    BranchId = model.branchId,
+                    Detail = $"Applied for lien with reference number: { model.sourceReferenceNumber}",
+                    IPAddress = model.userIPAddress ,
+                    Url = model.applicationUrl,
                     ApplicationDate = generalSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };

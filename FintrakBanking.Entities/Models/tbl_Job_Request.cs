@@ -70,11 +70,7 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Job_Request_Document_Mapping> tbl_Job_Request_Document_Mapping { get; set; }
-
-        public virtual tbl_Job_Request tbl_Job_Request1 { get; set; }
-
-        public virtual tbl_Job_Request tbl_Job_Request2 { get; set; }
-
+         
         public virtual tbl_Job_Request_Status tbl_Job_Request_Status { get; set; }
 
         public virtual tbl_Job_Type tbl_Job_Type { get; set; }

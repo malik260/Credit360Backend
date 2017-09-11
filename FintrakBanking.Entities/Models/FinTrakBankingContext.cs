@@ -1130,10 +1130,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Job_Request_Document_Mapping)
                 .WithRequired(e => e.tbl_Job_Request)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Job_Request>()
-                .HasOptional(e => e.tbl_Job_Request1)
-                .WithRequired(e => e.tbl_Job_Request2);
+             
 
             modelBuilder.Entity<tbl_Job_Request_Status>()
                 .HasMany(e => e.tbl_Job_Request)
