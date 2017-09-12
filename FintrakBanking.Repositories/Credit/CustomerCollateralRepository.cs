@@ -232,7 +232,6 @@ namespace FintrakBanking.Repositories.Credit
                 collateralCasa.AccountNumber = entity.collateralCasa.accountNumber;
                 collateralCasa.CollateralSubTypeId = entity.collateralCasa.collateralSubTypeId;
                 collateralCasa.IsOwnedByCustomer = entity.collateralCasa.isOwnedByCustomer;
-                collateralCasa.CashTypeId = entity.collateralCasa.cashTypeId;
                 collateralCasa.AvailableBalance = entity.collateralCasa.availableBalance;
                 collateralCasa.ExistingLienAmount = entity.collateralCasa.existingLienAmount;
                 collateralCasa.LienAmount = entity.collateralCasa.lienAmount;
@@ -267,7 +266,6 @@ namespace FintrakBanking.Repositories.Credit
                 collateralPreciousMetal.CollateralCustomerId = entity.collateralPreciousMetal.collateralCustomerId;
                 collateralPreciousMetal.IsOwnedByCustomer = entity.collateralPreciousMetal.isOwnedByCustomer;
                 collateralPreciousMetal.PreciousMetalName = entity.collateralPreciousMetal.preciousMetalName;
-                collateralPreciousMetal.MetalType = entity.collateralPreciousMetal.metalType;
                 collateralPreciousMetal.WeightInGrammes = entity.collateralPreciousMetal.weightInGrammes;
                 collateralPreciousMetal.ValuationAmount = entity.collateralPreciousMetal.valuationAmount;
                 collateralPreciousMetal.UnitRate = entity.collateralPreciousMetal.unitRate;
@@ -299,7 +297,6 @@ namespace FintrakBanking.Repositories.Credit
                 tbl_Collateral_Gaurantee collateralGaurantee = collateral.tbl_Collateral_Gaurantee.Where(x => x.CollateralGauranteeId == entity.collateralTypeId)
                     .FirstOrDefault();
 
-                collateralGaurantee.GuaranteeType = entity.collateralGaurantee.guaranteeType;
                 collateralGaurantee.CollateralSubTypeId = entity.collateralGaurantee.collateralSubTypeId;
                 collateralGaurantee.IsOwnedByCustomer = entity.collateralGaurantee.isOwnedByCustomer;
                 collateralGaurantee.InstitutionName = entity.collateralGaurantee.institutionName;
@@ -547,7 +544,6 @@ namespace FintrakBanking.Repositories.Credit
                 CollateralSubTypeId = entity.collateralSubTypeId,
                 AccountNumber = entity.accountNumber,
                 IsOwnedByCustomer = entity.isOwnedByCustomer,
-                CashTypeId = entity.cashTypeId,
                 AvailableBalance = entity.availableBalance,
                 ExistingLienAmount = entity.existingLienAmount,
                 LienAmount = entity.lienAmount,
@@ -570,7 +566,6 @@ namespace FintrakBanking.Repositories.Credit
                         collateralSubTypeId = m.CollateralSubTypeId,
                         accountNumber = m.AccountNumber,
                         isOwnedByCustomer = m.IsOwnedByCustomer,
-                        cashTypeId = m.CashTypeId,
                         availableBalance = m.AvailableBalance,
                         existingLienAmount = m.ExistingLienAmount,
                         lienAmount = m.LienAmount,
@@ -740,7 +735,6 @@ namespace FintrakBanking.Repositories.Credit
                 CollateralSubTypeId = entity.collateralSubTypeId,
                 IsOwnedByCustomer = entity.isOwnedByCustomer,
                 PreciousMetalName = entity.preciousMetalName,
-                MetalType = entity.metalType,
                 WeightInGrammes = entity.weightInGrammes,
                 ValuationAmount = entity.valuationAmount,
                 UnitRate = entity.unitRate,
@@ -764,7 +758,6 @@ namespace FintrakBanking.Repositories.Credit
                         collateralSubTypeId = m.CollateralSubTypeId,
                         isOwnedByCustomer = m.IsOwnedByCustomer,
                         preciousMetalName = m.PreciousMetalName,
-                        metalType = m.MetalType,
                         weightInGrammes = m.WeightInGrammes,
                         valuationAmount = m.ValuationAmount,
                         unitRate = m.UnitRate,
@@ -863,7 +856,6 @@ namespace FintrakBanking.Repositories.Credit
                 InstitutionName = entity.institutionName,
                 GuarantorAddress = entity.guarantorAddress,
                 GuarantorReferenceNumber = entity.guarantorReferenceNumber,
-                GuaranteeType = entity.guaranteeType,
                 GuaranteeValue = entity.guaranteeValue,
                 StartDate = entity.startDate,
                 EndDate = entity.endDate,
@@ -888,7 +880,6 @@ namespace FintrakBanking.Repositories.Credit
                         institutionName = m.InstitutionName,
                         guarantorAddress = m.GuarantorAddress,
                         guarantorReferenceNumber = m.GuarantorReferenceNumber,
-                        guaranteeType = m.GuaranteeType,
                         guaranteeValue = m.GuaranteeValue,
                         startDate = m.StartDate,
                         endDate = m.EndDate,

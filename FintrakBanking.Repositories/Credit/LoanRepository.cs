@@ -235,7 +235,6 @@ namespace FintrakBanking.Repositories.Credit
                 CompanyId = entity.companyId,
                 CasaAccountId = entity.casaAccountId,
                 BranchId = entity.branchId,
-                Tenor = entity.tenor,
 
                 PrincipalFrequencyTypeId = entity.loanScheduleInput.principalFrequency,
                 InterestFrequencyTypeId = entity.loanScheduleInput.interestFrequency,
@@ -531,7 +530,7 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.tbl_Company on ln.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on ln.BranchId equals br.BranchId
                         join atrail in context.tbl_Approval_Trail on ln.LoanId equals atrail.TargetId
-                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
+                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending  
                               && atrail.OperationId == (int)OperationsEnum.LoanBooking && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new LoanViewModel()
                         {
@@ -545,7 +544,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanReferenceNumber =ln.LoanReferenceNumber,
                             applicationReferenceNumber =ln.tbl_Loan_Application.ApplicationReferenceNumber,
 
-                            tenor = ln.Tenor,
+                            tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
                             //principalFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
                             pricipalFrequencyTypeName = ln.tbl_Frequency_Type.Description,
                             //interestFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
@@ -930,7 +929,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchId = l.BranchId,
                             branchName = l.tbl_Branch.BranchName,
                             loanReferenceNumber = l.LoanReferenceNumber,
-                            tenor = l.Tenor,
+                            tenor = (l.MaturityDate - l.EffectiveDate).Days,
                             principalFrequencyTypeId = (short)l.PrincipalFrequencyTypeId,
                             interestFrequencyTypeId = (short)l.InterestFrequencyTypeId,
 
@@ -1039,7 +1038,7 @@ namespace FintrakBanking.Repositories.Credit
                         casaAccountId = data.CasaAccountId,
                         branchId = data.BranchId,
                         loanReferenceNumber = data.LoanReferenceNumber,
-                        tenor = data.Tenor,
+                        tenor = (data.MaturityDate - data.EffectiveDate).Days,
                         principalFrequencyTypeId = (short)data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = (short)data.InterestFrequencyTypeId,
 
@@ -1102,7 +1101,7 @@ namespace FintrakBanking.Repositories.Credit
                         casaAccountId = data.CasaAccountId,
                         branchId = data.BranchId,
                         loanReferenceNumber = data.LoanReferenceNumber,
-                        tenor = data.Tenor,
+                        tenor = (data.MaturityDate - data.EffectiveDate).Days,
                         //tenorModeId = data.TenorModeId,
                         principalFrequencyTypeId = (short)data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = (short)data.InterestFrequencyTypeId,
@@ -1163,8 +1162,7 @@ namespace FintrakBanking.Repositories.Credit
                     casaAccountId = o.CasaAccountId,
                     branchId = o.BranchId,
                     loanReferenceNumber = o.LoanReferenceNumber,
-                    tenor = o.Tenor,
-                    //tenorModeId = o.TenorModeId,
+                    tenor = (o.MaturityDate - o.EffectiveDate).Days,
                     principalFrequencyTypeId = (short)o.PrincipalFrequencyTypeId,
                     interestFrequencyTypeId = (short)o.InterestFrequencyTypeId,
 

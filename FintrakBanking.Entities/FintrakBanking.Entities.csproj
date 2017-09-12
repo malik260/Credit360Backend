@@ -58,6 +58,7 @@
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\sysdiagram.cs" />
+    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Models\tbl_Charge_Fee.cs" />
     <Compile Include="Models\tbl_Charge_Range.cs" />
     <Compile Include="Models\tbl_Chart_Of_Account.cs" />
+    <Compile Include="Models\tbl_Chart_Of_Account_Class.cs" />
     <Compile Include="Models\tbl_Chart_Of_Account_Currency.cs" />
     <Compile Include="Models\tbl_Checklist_Definition.cs" />
     <Compile Include="Models\tbl_Checklist_Detail.cs" />
@@ -196,6 +198,7 @@
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
     <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
+    <Compile Include="Models\tbl_Loan_Contingent.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Detail.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Type.cs" />
     <Compile Include="Models\tbl_Loan_Document_Type.cs" />
@@ -205,6 +208,7 @@
     <Compile Include="Models\tbl_Loan_Preliminary_Evaluation.cs" />
     <Compile Include="Models\tbl_Loan_PrudentialGuideline.cs" />
     <Compile Include="Models\tbl_Loan_Relationship_Officer_History.cs" />
+    <Compile Include="Models\tbl_Loan_Revolving.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Category.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Daily.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Irregular_Input.cs" />
@@ -239,6 +243,7 @@
     <Compile Include="Models\tbl_Profile_Priviledge_Activity.cs" />
     <Compile Include="Models\tbl_Profile_User.cs" />
     <Compile Include="Models\tbl_Profile_UserGroup.cs" />
+    <Compile Include="Models\tbl_Public_Holiday.cs" />
     <Compile Include="Models\tbl_Region.cs" />
     <Compile Include="Models\tbl_Risk_Assessment.cs" />
     <Compile Include="Models\tbl_Risk_Assessment_Index.cs" />

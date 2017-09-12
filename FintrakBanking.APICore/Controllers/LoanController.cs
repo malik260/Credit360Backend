@@ -241,9 +241,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+
         [HttpPost]
         [Route("loan-booking/approval")]
-        public async Task<HttpResponseMessage> ApprovePreliminaryEvaluation(ApprovalViewModel model)
+        public async Task<HttpResponseMessage> ApproveLoanBooking(ApprovalViewModel model)
         {
             try
             {
@@ -273,6 +274,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                     new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
 
         [HttpGet]
         [Route("customer/{customerId}")]
