@@ -212,9 +212,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var collateralDeposit = context.tbl_Collateral_Deposit.Find(entity.collateralDeposit.collateralDepositId);
 
-                collateralDeposit.AccountType = entity.collateralDeposit.accountType;
+                //collateralDeposit.AccountType = entity.collateralDeposit.accountType;
                 collateralDeposit.AccountNumber = entity.collateralDeposit.accountNumber;
-                collateralDeposit.CollateralSubTypeId = entity.collateralDeposit.collateralSubTypeId;
+                //collateralDeposit.CollateralSubTypeId = entity.collateralDeposit.collateralSubTypeId;
                 collateralDeposit.DealReferenceNumber = entity.collateralDeposit.dealReferenceNumber;
                 collateralDeposit.ExistingLienAmount = entity.collateralDeposit.existingLienAmount;
                 collateralDeposit.LienAmount = entity.collateralDeposit.lienAmount;
@@ -481,9 +481,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 //CollateralDepositId = entity.collateralDepositId,
                 //CollateralCustomerId = entity.collateralCustomerId,
-                CollateralSubTypeId = entity.collateralSubTypeId,
+                //CollateralSubTypeId = entity.collateralSubTypeId,
                 DealReferenceNumber = entity.dealReferenceNumber,
-                AccountType = entity.accountType,
+               // AccountType = entity.accountType,
                 AccountNumber = entity.accountNumber,
                 ExistingLienAmount = entity.existingLienAmount,
                 LienAmount = entity.lienAmount,
@@ -506,9 +506,9 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         collateralDepositId = m.CollateralDepositId,
                         collateralCustomerId = m.CollateralCustomerId,
-                        collateralSubTypeId = m.CollateralSubTypeId,
+                        //collateralSubTypeId = m.CollateralSubTypeId,
                         dealReferenceNumber = m.DealReferenceNumber,
-                        accountType = m.AccountType,
+                        //accountType = m.AccountType,
                         accountNumber = m.AccountNumber,
                         existingLienAmount = m.ExistingLienAmount,
                         lienAmount = m.LienAmount,

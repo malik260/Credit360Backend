@@ -185,6 +185,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Schedule_Irregular_Input> tbl_Loan_Schedule_Irregular_Input { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Periodic> tbl_Loan_Schedule_Periodic { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Type> tbl_Loan_Schedule_Type { get; set; }
+        public virtual DbSet<tbl_Loan_Schedule_Type_Product_Type_Mapping> tbl_Loan_Schedule_Type_Product_Type_Mapping { get; set; }
         public virtual DbSet<tbl_Loan_Status> tbl_Loan_Status { get; set; }
         public virtual DbSet<tbl_Loan_Type> tbl_Loan_Type { get; set; }
         public virtual DbSet<tbl_LoanApplication_Collateral_Mapping> tbl_LoanApplication_Collateral_Mapping { get; set; }
@@ -758,6 +759,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Country>()
                 .HasMany(e => e.tbl_State)
+                .WithRequired(e => e.tbl_Country)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Country>()
+                .HasMany(e => e.tbl_Public_Holiday)
                 .WithRequired(e => e.tbl_Country)
                 .WillCascadeOnDelete(false);
 
@@ -1355,6 +1361,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Product_Type>()
                 .HasMany(e => e.tbl_Temp_Product)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Loan_Schedule_Type_Product_Type_Mapping)
                 .WithRequired(e => e.tbl_Product_Type)
                 .WillCascadeOnDelete(false);
 
@@ -2426,6 +2437,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Loan_Schedule_Type>()
                 .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Loan_Schedule_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Schedule_Type>()
+                .HasMany(e => e.tbl_Loan_Schedule_Type_Product_Type_Mapping)
                 .WithRequired(e => e.tbl_Loan_Schedule_Type)
                 .WillCascadeOnDelete(false);
 
