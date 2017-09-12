@@ -4,6 +4,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,5 +44,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId );
 
         IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId);
+
+        IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId);
+        Task<bool> GoForApproval(ApprovalViewModel entity);
     }
 }
