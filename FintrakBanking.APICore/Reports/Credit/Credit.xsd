@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Credit" targetNamespace="http://tempuri.org/Credit.xsd" xmlns:mstns="http://tempuri.org/Credit.xsd" xmlns="http://tempuri.org/Credit.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="Credit" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="Credit" msprop:Generator_UserDSName="Credit">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Branch" msprop:Generator_TableClassName="BranchDataTable" msprop:Generator_TableVarName="tableBranch" msprop:Generator_RowChangedName="BranchRowChanged" msprop:Generator_TablePropName="Branch" msprop:Generator_RowDeletingName="BranchRowDeleting" msprop:Generator_RowChangingName="BranchRowChanging" msprop:Generator_RowEvHandlerName="BranchRowChangeEventHandler" msprop:Generator_RowDeletedName="BranchRowDeleted" msprop:Generator_RowClassName="BranchRow" msprop:Generator_UserTableName="Branch" msprop:Generator_RowEvArgName="BranchRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="branchId" msprop:Generator_ColumnVarNameInTable="columnbranchId" msprop:Generator_ColumnPropNameInRow="branchId" msprop:Generator_ColumnPropNameInTable="branchIdColumn" msprop:Generator_UserColumnName="branchId" type="xs:int" minOccurs="0" />
+              <xs:element name="branchName" msprop:Generator_ColumnVarNameInTable="columnbranchName" msprop:Generator_ColumnPropNameInRow="branchName" msprop:Generator_ColumnPropNameInTable="branchNameColumn" msprop:Generator_UserColumnName="branchName" type="xs:string" minOccurs="0" />
+              <xs:element name="branchCode" msprop:Generator_ColumnVarNameInTable="columnbranchCode" msprop:Generator_ColumnPropNameInRow="branchCode" msprop:Generator_ColumnPropNameInTable="branchCodeColumn" msprop:Generator_UserColumnName="branchCode" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="OfferLetter" msprop:Generator_TableClassName="OfferLetterDataTable" msprop:Generator_TableVarName="tableOfferLetter" msprop:Generator_TablePropName="OfferLetter" msprop:Generator_RowDeletingName="OfferLetterRowDeleting" msprop:Generator_RowChangingName="OfferLetterRowChanging" msprop:Generator_RowEvHandlerName="OfferLetterRowChangeEventHandler" msprop:Generator_RowDeletedName="OfferLetterRowDeleted" msprop:Generator_UserTableName="OfferLetter" msprop:Generator_RowChangedName="OfferLetterRowChanged" msprop:Generator_RowEvArgName="OfferLetterRowChangeEvent" msprop:Generator_RowClassName="OfferLetterRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="customerName" msprop:Generator_ColumnVarNameInTable="columncustomerName" msprop:Generator_ColumnPropNameInRow="customerName" msprop:Generator_ColumnPropNameInTable="customerNameColumn" msprop:Generator_UserColumnName="customerName" type="xs:string" minOccurs="0" />
+              <xs:element name="customerAddress" msprop:Generator_ColumnVarNameInTable="columncustomerAddress" msprop:Generator_ColumnPropNameInRow="customerAddress" msprop:Generator_ColumnPropNameInTable="customerAddressColumn" msprop:Generator_UserColumnName="customerAddress" type="xs:string" minOccurs="0" />
+              <xs:element name="loanAmount" msprop:Generator_ColumnVarNameInTable="columnloanAmount" msprop:Generator_ColumnPropNameInRow="loanAmount" msprop:Generator_ColumnPropNameInTable="loanAmountColumn" msprop:Generator_UserColumnName="loanAmount" type="xs:string" minOccurs="0" />
+              <xs:element name="tenor" msprop:Generator_ColumnVarNameInTable="columntenor" msprop:Generator_ColumnPropNameInRow="tenor" msprop:Generator_ColumnPropNameInTable="tenorColumn" msprop:Generator_UserColumnName="tenor" type="xs:string" minOccurs="0" />
+              <xs:element name="interestRate" msprop:Generator_ColumnVarNameInTable="columninterestRate" msprop:Generator_ColumnPropNameInRow="interestRate" msprop:Generator_ColumnPropNameInTable="interestRateColumn" msprop:Generator_UserColumnName="interestRate" type="xs:string" minOccurs="0" />
+              <xs:element name="maturityDate" msprop:Generator_ColumnVarNameInTable="columnmaturityDate" msprop:Generator_ColumnPropNameInRow="maturityDate" msprop:Generator_ColumnPropNameInTable="maturityDateColumn" msprop:Generator_UserColumnName="maturityDate" type="xs:string" minOccurs="0" />
+              <xs:element name="customerId" msprop:Generator_ColumnVarNameInTable="columncustomerId" msprop:Generator_ColumnPropNameInRow="customerId" msprop:Generator_ColumnPropNameInTable="customerIdColumn" msprop:Generator_UserColumnName="customerId" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
