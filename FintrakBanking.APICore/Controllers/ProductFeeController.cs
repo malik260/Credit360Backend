@@ -164,7 +164,7 @@ namespace FintrakBanking.APICore.Controllers
                     model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
-                    var recordId = repo.AddTempProductFee(model);
+                    var recordId = repo.AddProductFee(model);
                     if (recordId >= 1)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,

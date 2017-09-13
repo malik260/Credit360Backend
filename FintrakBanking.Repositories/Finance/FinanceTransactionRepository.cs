@@ -21,7 +21,7 @@ namespace FintrakBanking.Repositories.Finance
         private IAuditTrailRepository auditTrail;
         private ICreditOperationsRepository creditOperations;
 
-        public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail,
+        public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, 
                                             ICreditOperationsRepository _creditOperations, FinTrakBankingContext _context)
         {
             this.context = _context;
@@ -32,15 +32,15 @@ namespace FintrakBanking.Repositories.Finance
 
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public CasaLienViewModel AddCollateralSearchLien(CasaLienViewModel model)
+        public bool AddCollateralSearchLien(CasaLienViewModel model)
         {
 
-            var data = new tbl_CASA_Lien
+            var data =   new tbl_CASA_Lien
             {
                 ProductAccountNumber = model.productAccountNumber,
                 LienReferenceNumber = CommonHelpers.GenerateRandomDigitCode(10),
                 SourceReferenceNumber = model.sourceReferenceNumber,
-                BranchId = model.branchId,
+                BranchId = model.userBranchId,
                 CompanyId = model.companyId,
                 LienCreditAmount = creditOperations.GetCollateralSearchChargeAmount(model.stateId),
                 LienDebitAmount = 0,
@@ -48,30 +48,29 @@ namespace FintrakBanking.Repositories.Finance
                 CreatedBy = model.createdBy,
                 Description = "lien placed due to loan application collateral search", // model.description,
                 DateCreated = generalSetup.GetApplicationDate()
-                
+                 
             };
 
             context.tbl_CASA_Lien.Add(data);
 
             // Audit Section ---------------------------            
-
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.LienAdded,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Applied for lien with reference number: {data.LienReferenceNumber}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
-
-            this.auditTrail.AddAuditTrail(audit);
-
+         
+                var audit = new tbl_Audit
+                {
+                    AuditTypeId = (short)AuditTypeEnum.LienAdded,
+                    StaffId = model.createdBy,
+                    BranchId = model.branchId,
+                    Detail = $"Applied for lien with reference number: { model.sourceReferenceNumber}",
+                    IPAddress = model.userIPAddress ,
+                    Url = model.applicationUrl,
+                    ApplicationDate = generalSetup.GetApplicationDate(),
+                    SystemDateTime = DateTime.Now
+                };
+                this.auditTrail.AddAuditTrail(audit);
+          
             //end of Audit section -------------------------------
-            context.SaveChanges();
-            return model;
+           return  context.SaveChanges() != 0;
+             
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
@@ -120,7 +119,7 @@ namespace FintrakBanking.Repositories.Finance
                     trans.OperationId = mainItem.operationId;
                     trans.Description = mainItem.description;
                     trans.ValueDate = mainItem.valueDate;
-                    trans.TransactionDate = mainItem.transactionDate;
+                    trans.PostedDate = mainItem.transactionDate;
                     trans.CurrencyId = mainItem.currencyId;
                     trans.CurrencyRate = mainItem.currencyRate;
                     trans.PostedDateTime = DateTime.Now;

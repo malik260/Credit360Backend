@@ -28,7 +28,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool IsProductCodeAlreadyExist(string productCode);
         bool IsProductExist(string productCode);
         Task<bool> GoForApproval(ApprovalViewModel entity);
-        ProductViewModel AddTempProduct(ProductViewModel product);
+        Task<ProductViewModel> AddTempProduct(ProductViewModel product);
 
         bool UpdateProduct(int productId, ProductViewModel product);
 

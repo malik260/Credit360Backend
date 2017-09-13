@@ -52,6 +52,8 @@ namespace FintrakBanking.Entities.Models
 
         public short BranchId { get; set; }
 
+        public short GLClassId { get; set; }
+
         public bool SystemUse { get; set; }
 
         public int? AccountStatusId { get; set; }
@@ -121,6 +123,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Chart_Of_Account_Currency> tbl_Chart_Of_Account_Currency { get; set; }
+
+        public virtual tbl_Chart_Of_Account_Class tbl_Chart_Of_Account_Class { get; set; }
 
         public virtual tbl_Financial_Statement_Caption tbl_Financial_Statement_Caption { get; set; }
 

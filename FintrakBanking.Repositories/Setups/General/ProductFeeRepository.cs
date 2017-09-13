@@ -117,7 +117,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductFeeEntity = new tbl_Temp_Product_Fee()
                 {
                     ProductId = productFee.productId,
-                    ProductFeeId = productFee.feeId,
+                    FeeId = productFee.feeId,
                     CompanyId = productFee.companyId,
 
                     RateValue = productFee.rateValue,

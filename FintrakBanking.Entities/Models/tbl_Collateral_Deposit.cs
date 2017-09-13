@@ -14,8 +14,6 @@ namespace FintrakBanking.Entities.Models
 
         public int CollateralCustomerId { get; set; }
 
-        public short? CollateralSubTypeId { get; set; }
-
         [StringLength(50)]
         public string DealReferenceNumber { get; set; }
 
@@ -44,7 +42,5 @@ namespace FintrakBanking.Entities.Models
         public string Remark { get; set; }
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
-
-        public virtual tbl_Collateral_Type_Sub tbl_Collateral_Type_Sub { get; set; }
     }
 }

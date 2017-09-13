@@ -120,6 +120,7 @@
     <Compile Include="Setups\General\ProductCollateralTypeRepository.cs" />
     <Compile Include="Setups\General\ProductFeeRepository.cs" />
     <Compile Include="Setups\General\ProductRepository.cs" />
+    <Compile Include="Setups\General\PublicHolidayRepository.cs" />
     <Compile Include="Setups\General\RankRepository.cs" />
     <Compile Include="Setups\General\StaffRepository.cs" />
     <Compile Include="Setups\Risk\RiskRepository.cs" />

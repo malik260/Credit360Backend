@@ -30,6 +30,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CompanyId { get; set; }
 
+        public bool Selected { get; set; }
+
         public DateTime? DateTimeDeleted { get; set; }
 
         public int CreatedBy { get; set; }

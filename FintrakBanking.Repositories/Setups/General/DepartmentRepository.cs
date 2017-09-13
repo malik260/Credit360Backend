@@ -1,6 +1,9 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -11,11 +14,16 @@ namespace FintrakBanking.Repositories.Setups.General
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public class DepartmentRepository : IDepartmentRepository
     {
+        private IAuditTrailRepository auditTrail;
+        private IGeneralSetupRepository _genSetup;
         private FinTrakBankingContext context;
 
-        public DepartmentRepository(FinTrakBankingContext _context)
+        public DepartmentRepository(IAuditTrailRepository _auditTrail,
+                                    IGeneralSetupRepository genSetup, FinTrakBankingContext _context)
         {
-            context = _context;
+            this.context = _context;
+            auditTrail = _auditTrail;
+            this._genSetup = genSetup;
         }
 
         private bool SaveAll()
@@ -25,16 +33,30 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddDepartment(DepartmentViewModel entity)
         {
+           
             var department = new tbl_Department
             {
                 BranchId = entity.BranchId,
                 CreatedBy = entity.createdBy,
-                DateTimeCreated = entity.dateTimeCreated,
-                DepartmentCode = entity.DepartmentCode,
+                DateTimeCreated = DateTime.Now,
                 DepartmentName = entity.DepartmentName,
                 Description = entity.Description
             };
             this.context.tbl_Department.Add(department);
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.DepartmentAdded,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = "Added new tbl_Department ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime =DateTime.Now
+            };
+
+            auditTrail.AddAuditTrail(audit);
             return SaveAll();
         }
 
@@ -61,7 +83,9 @@ namespace FintrakBanking.Repositories.Setups.General
                               {
                                   createdBy = d.CreatedBy.Value,
                                   BranchId = d.BranchId,
+                                  BranchName = context.tbl_Branch.FirstOrDefault(x=> x.BranchId == (short)d.BranchId).BranchName,
                                   DepartmentName = d.DepartmentName,
+                                  DepartmentCode = d.DepartmentCode,
                                   Description = d.Description,
                                   DepartmentId = d.DepartmentId
                               });
@@ -81,6 +105,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               {
                                   createdBy = d.CreatedBy.Value,
                                   BranchId = d.BranchId,
+                                  BranchName = context.tbl_Branch.FirstOrDefault(x => x.BranchId == (short)d.BranchId).BranchName,
                                   DepartmentName = d.DepartmentName,
                                   Description = d.Description,
                                   DepartmentId = d.DepartmentId
@@ -92,13 +117,23 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var department = context.tbl_Department.Find(departmentId);
 
-            department.CreatedBy = entity.createdBy;
             department.BranchId = entity.BranchId;
             department.DepartmentName = entity.DepartmentName;
             department.Description = entity.Description;
-            department.DepartmentId = entity.DepartmentId;
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.DepartmentUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = $"Updated tbl_Department with Id: {entity.DepartmentId} ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now,
+            };
 
-            this.context.tbl_Department.Add(department);
+            auditTrail.AddAuditTrail(audit);
             return SaveAll();
         }
     }

@@ -165,5 +165,19 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan-document/applicationRefNum/{referenceNumber}")]
+        public HttpResponseMessage GetLoanDocumentByApplicationReferenceNum(string referenceNumber)
+        {
+            try
+            {
+                var data = repo.GetLoanDocumentByReferenceNumber(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }

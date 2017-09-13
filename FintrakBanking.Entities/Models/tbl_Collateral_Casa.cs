@@ -22,8 +22,6 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsOwnedByCustomer { get; set; }
 
-        public short? CashTypeId { get; set; }
-
         [Column(TypeName = "money")]
         public decimal AvailableBalance { get; set; }
 

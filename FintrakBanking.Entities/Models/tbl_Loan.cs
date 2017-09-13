@@ -46,8 +46,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string LoanReferenceNumber { get; set; }
 
-        public int Tenor { get; set; }
-
         public short SubSectorId { get; set; }
 
         public short? PrincipalFrequencyTypeId { get; set; }
@@ -172,6 +170,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? ExternalPrudentialGuidelineStatusId { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime? NPLDate { get; set; }
+
         public int CreatedBy { get; set; }
 
         public DateTime DateTimeCreated { get; set; }
@@ -228,8 +229,6 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Guarantor> tbl_Loan_Guarantor { get; set; }
 
-        public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
 
@@ -246,6 +245,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline1 { get; set; }
 
         public virtual tbl_Loan_Schedule_Type tbl_Loan_Schedule_Type { get; set; }
+
+        public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
     }

@@ -83,7 +83,11 @@ namespace FintrakBanking.Repositories.Credit
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                 IsCurrent = model.isCurrent,
                 DateTimeCreated = genSetup.GetApplicationDate(),
-                CreatedBy = model.createdBy
+                CreatedBy = model.createdBy,
+                LoanAmount = model.loanAmount,
+                LoanTypeId = model.loanTypeId,
+                SubSectorId = model.subSectorId,
+                ProductClassId = model.productClassId
             };
 
             var customerRecord = context.tbl_Customer.FirstOrDefault(c => c.CustomerId == model.customerId);
@@ -122,7 +126,7 @@ namespace FintrakBanking.Repositories.Credit
                                 operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
                                 BranchId = model.userBranchId
                             };
-                            var response = workFlow.LogForApproval(entity);
+                            var response = await workFlow.LogForApproval(entity);
                         }
 
                         trans.Commit();
@@ -231,7 +235,15 @@ namespace FintrakBanking.Repositories.Credit
                                 customerId = s.CustomerId,
                                 firstname = s.Firstname,
                                 surname = s.Surname
-                            }).ToList()
+                            }).ToList(),
+                            loanAmount = pen.LoanAmount,
+                            loanTypeId = pen.LoanTypeId,
+                            loanTypeName = pen.tbl_Loan_Type.LoanTypeName,
+                            productClassId = pen.ProductClassId,
+                            productClassName = pen.tbl_Product_Class.ProductClassName,
+                            subSectorId = pen.SubSectorId,
+                            subSectorName = pen.tbl_Sub_Sector.Name,
+                            sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == pen.SubSectorId).SectorId ?? 0,
                         });
             return data;
         }
@@ -304,6 +316,8 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = p.CustomerId,
                             customerName = p.tbl_Customer.FirstName + " " + p.tbl_Customer.LastName,
                             customerCode = p.tbl_Customer.CustomerCode,
+                            customerAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == p.CustomerId).ProductAccountNumber,
+                            customerTypeId = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == p.CustomerId).CustomerTypeId,
                             environmentalImpact = p.EnvironmentalImpact,
                             existingExposure = p.ExistingExposure,
                             implementationArrangements = p.ImplementationArrangements,
@@ -353,7 +367,15 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatusId = p.ApprovalStatusId,
                             dateTimeCreated = p.DateTimeCreated,
                             sentForLoanApplication = p.SentForLoanApplication,
-                            sentForEvaluation = p.SentForEvaluation
+                            sentForEvaluation = p.SentForEvaluation,
+                            loanAmount = p.LoanAmount,
+                            loanTypeId = p.LoanTypeId,
+                            loanTypeName = p.tbl_Loan_Type.LoanTypeName,
+                            productClassId = p.ProductClassId,
+                            productClassName = p.tbl_Product_Class.ProductClassName,
+                            subSectorId = p.SubSectorId,
+                            subSectorName = p.tbl_Sub_Sector.Name,
+                            sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == p.SubSectorId).SectorId ?? 0,
                         });
 
             return data;
@@ -404,13 +426,17 @@ namespace FintrakBanking.Repositories.Credit
                 penRecord.SentForLoanApplication = model.sentForLoanApplication;
                 penRecord.DateTimeUpdated = DateTime.Now;
                 penRecord.CreatedBy = model.createdBy;
+                penRecord.LoanAmount = model.loanAmount;
+                penRecord.LoanTypeId = model.loanTypeId;
+                penRecord.SubSectorId = model.subSectorId;
+                penRecord.ProductClassId = model.productClassId;
             }
             else
             {
                 return false;
             }
 
-            var audit = new tbl_Audit
+            var auditRecord = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LoanPreliminaryEvaluationUpdated,
                 StaffId = model.createdBy,
@@ -425,27 +451,38 @@ namespace FintrakBanking.Repositories.Credit
             };
 
 
-            this.auditTrail.AddAuditTrail(audit);
-            // Audit Section ---------------------------
-
-            output = await SaveAllAsync();
-
-            if (model.sentForEvaluation)
+            using (var trans = context.Database.BeginTransaction())
             {
-                var entity = new ApprovalViewModel
+                try
                 {
-                    staffId = penRecord.CreatedBy,
-                    companyId = penRecord.CompanyId,
-                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                    targetId = loanPenId,
-                    operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
-                    BranchId = model.userBranchId
-                };
+                    context.tbl_Audit.Add(auditRecord);
+                    // Audit Section ---------------------------
 
-                var response = workFlow.LogForApproval(entity);
+                    output = await SaveAllAsync();
+
+                    if (model.sentForEvaluation)
+                    {
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = penRecord.CreatedBy,
+                            companyId = penRecord.CompanyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = loanPenId,
+                            operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
+                            BranchId = model.userBranchId
+                        };
+
+                        await workFlow.LogForApproval(entity);
+                    }
+
+                    trans.Commit();
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
-
-
 
             return output;
 
