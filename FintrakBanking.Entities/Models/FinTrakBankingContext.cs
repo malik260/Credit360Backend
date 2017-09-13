@@ -185,6 +185,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Schedule_Irregular_Input> tbl_Loan_Schedule_Irregular_Input { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Periodic> tbl_Loan_Schedule_Periodic { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Type> tbl_Loan_Schedule_Type { get; set; }
+        public virtual DbSet<tbl_Loan_Schedule_Type_Product_Type_Mapping> tbl_Loan_Schedule_Type_Product_Type_Mapping { get; set; }
         public virtual DbSet<tbl_Loan_Status> tbl_Loan_Status { get; set; }
         public virtual DbSet<tbl_Loan_Type> tbl_Loan_Type { get; set; }
         public virtual DbSet<tbl_LoanApplication_Collateral_Mapping> tbl_LoanApplication_Collateral_Mapping { get; set; }
@@ -198,7 +199,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Solicitor> tbl_Solicitor { get; set; }
         public virtual DbSet<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
         public virtual DbSet<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
@@ -1364,6 +1365,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Loan_Schedule_Type_Product_Type_Mapping)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
                 .HasMany(e => e.tbl_Temp_Charge_Fee)
                 .WithRequired(e => e.tbl_Product_Type)
                 .WillCascadeOnDelete(false);
@@ -2431,6 +2437,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Loan_Schedule_Type>()
                 .HasMany(e => e.tbl_Loan)
+                .WithRequired(e => e.tbl_Loan_Schedule_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Schedule_Type>()
+                .HasMany(e => e.tbl_Loan_Schedule_Type_Product_Type_Mapping)
                 .WithRequired(e => e.tbl_Loan_Schedule_Type)
                 .WillCascadeOnDelete(false);
 

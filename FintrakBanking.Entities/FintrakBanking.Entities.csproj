@@ -58,6 +58,7 @@
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\sysdiagram.cs" />
+    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -213,6 +214,7 @@
     <Compile Include="Models\tbl_Loan_Schedule_Irregular_Input.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Periodic.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Type.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Type_Product_Type_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Status.cs" />
     <Compile Include="Models\tbl_Loan_Type.cs" />
     <Compile Include="Models\tbl_MachineValue_Base.cs" />
