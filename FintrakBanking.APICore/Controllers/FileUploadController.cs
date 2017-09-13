@@ -34,12 +34,12 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { result = _uploadService.GetDocumentById(id) });
         }
 
-        [HttpGet]
-        [Route("document-viewer")]
-        public HttpResponseMessage GetDocumentToViewById(int id)
-        {
-            return Request.CreateResponse(HttpStatusCode.OK, new { result = _uploadService.GetDocumentToViewById(id) });
-        }
+        //[HttpGet]
+        //[Route("document-viewer")]
+        //public HttpResponseMessage GetDocumentToViewById(int id)
+        //{
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { result = _uploadService.GetDocumentToViewById(id) });
+        //}
 
         //[HttpPost, Route("upload-filesystem-async")]
         //public async Task<HttpResponseMessage> PostFile()

@@ -146,6 +146,8 @@ namespace FintrakBanking.Common.Enum
         UserGroupUpdated = 140,
         DepartmentAdded = 141,
         DepartmentUpdated = 142,
+        PublicHolidayAdded = 143,
+        PublicHolidayUpdated = 144,
     };
 
 

@@ -12,6 +12,6 @@ namespace FintrakBanking.Interfaces.media
 
         DocumentViewModel GetDocumentById(int id);
 
-        string GetDocumentToViewById(int id);
+       // string GetDocumentToViewById(int id);
     }
 }

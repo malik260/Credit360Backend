@@ -36,9 +36,6 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="GroupDocs.Viewer, Version=17.8.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
-      <HintPath>..\packages\groupdocs-viewer-dotnet.17.8.0\lib\GroupDocs.Viewer.dll</HintPath>
-    </Reference>
     <Reference Include="NodaTime, Version=2.2.0.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
       <HintPath>..\packages\NodaTime.2.2.0\lib\net45\NodaTime.dll</HintPath>
     </Reference>
@@ -123,6 +120,7 @@
     <Compile Include="Setups\General\ProductCollateralTypeRepository.cs" />
     <Compile Include="Setups\General\ProductFeeRepository.cs" />
     <Compile Include="Setups\General\ProductRepository.cs" />
+    <Compile Include="Setups\General\PublicHolidayRepository.cs" />
     <Compile Include="Setups\General\RankRepository.cs" />
     <Compile Include="Setups\General\StaffRepository.cs" />
     <Compile Include="Setups\Risk\RiskRepository.cs" />
