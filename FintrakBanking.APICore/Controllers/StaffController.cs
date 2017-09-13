@@ -16,8 +16,6 @@ using System.Threading.Tasks;
 namespace FintrakBanking.APICore.Controllers
 {
 
-    [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
-
     [RoutePrefix("api/v1/setup")]
     public class StaffController : ApiControllerBase
     {
