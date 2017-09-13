@@ -8,39 +8,41 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    //[EnableCors("AllDomain")]
     [RoutePrefix("api/v1/setups/risk")]
     public class RiskController : ApiControllerBase
     {
-        IErrorLogRepository errorLogger;
+        //IErrorLogRepository errorLogger;
         private IRiskSetupRepository repo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
-        public RiskController(IRiskSetupRepository _repo, IErrorLogRepository _errorLogger)
+
+        public RiskController(IRiskSetupRepository _repo
+            //, IErrorLogRepository _errorLogger
+            )
         {
             this.repo = _repo;
-            errorLogger = _errorLogger;
+            //errorLogger = _errorLogger;
         }
 
         #region Risk Assessment Index
 
         [HttpPost][Route("risk-assessment-index")]
-        public HttpResponseMessage AddRiskAssessmentIndex([FromBody]  RiskAssessmentIndexViewModels entity)
+        public async Task<HttpResponseMessage> AddRiskAssessmentIndex([FromBody]  RiskAssessmentIndexViewModels entity)
         {
             try
             {
-                token = new TokenDecryptionHelper();
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
-                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                //entity.applicationUrl = Request.Path.Value;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddRiskAssessmentIndexs(entity).IsCompleted;
+                var data = await repo.AddRiskAssessmentIndexs(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
@@ -50,29 +52,25 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
             }
         }
 
         [HttpDelete]
         [Route("risk-assessment-index/{id}")]
-        public HttpResponseMessage DeleteForeHeader(int id)
+        public async Task<HttpResponseMessage> DeleteForeHeader(int id)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 UserInfo user = new UserInfo()
                 {
                     BranchId = token.GetBranchId,
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.ApplicationPath,
-                   // userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
                 };
 
-                var data = repo.DeleteRiskAssessmentIndex(id, user).IsCompleted;
+                var data = await repo.DeleteRiskAssessmentIndex(id, user);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Deleted successfully" });
@@ -82,25 +80,23 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
         [HttpPut]
         [Route("risk-assessment-index/{id}")]
-        public HttpResponseMessage UpdateRiskAssessmentIndex(int id, [FromBody]  RiskAssessmentIndexViewModels entity)
+        public async Task<HttpResponseMessage> UpdateRiskAssessmentIndex(int id, [FromBody]  RiskAssessmentIndexViewModels entity)
         {
             try
             {
-                // token = new TokenDecryptionHelper(HttpContext);
-                // entity.userBranchId = (short)token.GetBranchId;
-                // entity.companyId = token.GetCompanyId;
-                // entity.lastUpdatedBy = token.GetStaffId;
-                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.UpdateRiskAssessmentIndex(id, entity).IsCompleted;
+                var data = await repo.UpdateRiskAssessmentIndex(id, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been Update successfully" });
@@ -110,7 +106,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
             }
         }
@@ -121,8 +116,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetRiskAssessmentIndexById(id, token.GetCompanyId);
                 if (data == null)
                 {
@@ -132,7 +125,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -143,8 +135,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetRiskAssessmentIndexByRiskTitle(id, token.GetCompanyId);
                 if (data == null)
                 {
@@ -154,7 +144,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -165,8 +154,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetRiskAssessmentIndexByParent(id, token.GetCompanyId);
                 if (data == null)
                 {
@@ -176,7 +163,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -189,8 +175,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetRiskAssessmentIndexByItemLevel(id, token.GetCompanyId);
                 if (data == null)
                 {
@@ -200,7 +184,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -211,11 +194,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("risk-rating")]
-        public HttpResponseMessage AddRiskRating([FromBody] RiskRatingViewModel entity)
+        public async Task<HttpResponseMessage> AddRiskRating([FromBody] RiskRatingViewModel entity)
         {
             try
             {
-                var data = repo.AddRiskRating(entity).IsCompleted;
+                var data = await repo.AddRiskRating(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
@@ -231,11 +214,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [Route("risk-rating/{ratingId}")]
-        public HttpResponseMessage DeleteRiskRating(int ratingId, [FromBody] RiskRatingViewModel entity)
+        public async Task<HttpResponseMessage> DeleteRiskRating(int ratingId, [FromBody] RiskRatingViewModel entity)
         {
             try
             {
-                var data = repo.DeleteRiskRating(ratingId, entity).IsCompleted;
+                var data = await repo.DeleteRiskRating(ratingId, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
@@ -291,11 +274,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("risk-rating/{ratingId}")]
-        public HttpResponseMessage UpdateRiskRating(int ratingId, [FromBody]  RiskRatingViewModel entity)
+        public async Task<HttpResponseMessage> UpdateRiskRating(int ratingId, [FromBody]  RiskRatingViewModel entity)
         {
             try
             {
-                var data = repo.UpdateRiskRating(ratingId, entity).IsCompleted;
+                var data = await repo.UpdateRiskRating(ratingId, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
@@ -315,18 +298,17 @@ namespace FintrakBanking.APICore.Controllers
         #region Risk Assessment title
         [HttpPost]
         [Route("risk-assessment-title")]
-        public HttpResponseMessage AddRiskAssessmentTitle([FromBody]RiskAssessmentTitleViewModels entity)
+        public async Task<HttpResponseMessage> AddRiskAssessmentTitleAsync([FromBody]RiskAssessmentTitleViewModels entity)
         {
             try
             {
-                // token = new TokenDecryptionHelper(HttpContext);
-                // entity.userBranchId = (short)token.GetBranchId;
-                // entity.companyId = token.GetCompanyId;
-                // entity.createdBy = token.GetStaffId;
-                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddRiskAssessmentTitle(entity).IsCompleted;
+                var data = await repo.AddRiskAssessmentTitle(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
@@ -336,7 +318,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
             }
 
@@ -344,18 +325,17 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("risk-assessment-title/{id}")]
-        public HttpResponseMessage UpdateRiskAssessmentTitle(int id, [FromBody] RiskAssessmentTitleViewModels entity)
+        public async Task<HttpResponseMessage> UpdateRiskAssessmentTitle(int id, [FromBody] RiskAssessmentTitleViewModels entity)
         {
             try
             {
-                // token = new TokenDecryptionHelper(HttpContext);
-                // entity.userBranchId = (short)token.GetBranchId;
-                // entity.companyId = token.GetCompanyId;
-                // entity.lastUpdatedBy = token.GetStaffId;
-                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.UpdateRiskAssessmentTitle(id, entity).IsCompleted;
+                var data = await repo.UpdateRiskAssessmentTitle(id, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
@@ -365,29 +345,26 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
             }
         }
 
         [HttpDelete]
         [Route("risk-assessment-title/{id}")]
-        public HttpResponseMessage DeleteRiskAssessmentTitle(int id)
+        public async Task<HttpResponseMessage> DeleteRiskAssessmentTitle(int id)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 UserInfo user = new UserInfo()
                 {
-                    // BranchId = token.GetBranchId,
-                    // companyId = token.GetCompanyId,
-                    // staffId = token.GetStaffId,
-                    // applicationUrl = Request.Path.Value,
-                    // userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress,
                 };
 
-                var data = repo.DeleteRiskAssessmentTitle(id, user).IsCompleted;
+                var data = await repo.DeleteRiskAssessmentTitle(id, user);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Deleted successfully" });
@@ -397,7 +374,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -407,8 +383,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetRiskAssessmentTitleById(id, token.GetCompanyId);
                 if (data == null)
                 {
@@ -418,11 +392,9 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
 
         [HttpGet]
         [Route("risk-assessment-title/product/{id}")]
@@ -431,8 +403,6 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetRiskAssessmentTitleByProductId(id, token.GetCompanyId);
                 if (data == null)
                 {
@@ -442,7 +412,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -464,11 +433,9 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
 
         [HttpGet]
         [Route("risk-assessment-title")]
@@ -477,8 +444,6 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 var data = repo.GetRiskAssessmentTitle(token.GetCompanyId);
                 if (data == null)
                 {
@@ -488,7 +453,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                // this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
 

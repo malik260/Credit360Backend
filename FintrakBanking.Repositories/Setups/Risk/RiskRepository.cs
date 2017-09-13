@@ -13,13 +13,12 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.Risk
 {
-    [Export(typeof(IRiskSetupRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class RiskSetupRepository : IRiskSetupRepository
     {
         private FinTrakBankingContext context;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
+
         public RiskSetupRepository(FinTrakBankingContext _context,
             IGeneralSetupRepository _genSetup,
             IAuditTrailRepository _auditTrail)
@@ -42,11 +41,11 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 CompanyId = entity.companyId,
                 CreatedBy = entity.createdBy,
                 ParentId = entity.parentId,
-                ItemLevel =entity.itemLevel ,
-                 IndexTypeId = entity.indexTypeId ,
+                ItemLevel = entity.itemLevel,
+                IndexTypeId = entity.indexTypeId,
                 RiskAssessmentTitleId = entity.riskAssessmentTitleId
 
-                  
+
 
             };
             this.context.tbl_Risk_Assessment_Index.Add(index);
@@ -72,7 +71,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> DeleteRiskAssessmentIndex(int riskId, UserInfo user)
         {
-            var index = context.tbl_Risk_Assessment_Index.SingleOrDefault(c => c.RiskId == riskId);
+            var index = context.tbl_Risk_Assessment_Index.FirstOrDefault(c => c.RiskId == riskId);
             index.Deleted = true;
             index.DateTimeDeleted = genSetup.GetApplicationDate();
             index.DeletedBy = (int)user.staffId;
@@ -106,12 +105,12 @@ namespace FintrakBanking.Repositories.Setups.Risk
                 dateTimeCreated = a.DateTimeCreated,
                 description = a.Description,
                 name = a.Name,
-                 indexTypeId = a.IndexTypeId ,
+                indexTypeId = a.IndexTypeId,
                 riskAssessmentTitleId = a.RiskAssessmentTitleId,
                 itemLevel = a.ItemLevel,
                 weight = a.Weight,
                 riskAssessmentTitle = context.tbl_Risk_Assessment_Title
-                                    .SingleOrDefault(c => c.RiskAssessmentTitleId == a.RiskAssessmentTitleId).RiskTitle,
+                                    .FirstOrDefault(c => c.RiskAssessmentTitleId == a.RiskAssessmentTitleId).RiskTitle,
 
                 riskId = a.RiskId,
 
@@ -122,7 +121,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public RiskAssessmentIndexViewModels GetRiskAssessmentIndexById(int riskId, int companyId)
         {
-            return GetRiskAssessmentIndex(companyId).SingleOrDefault(c => c.riskId == riskId);
+            return GetRiskAssessmentIndex(companyId).FirstOrDefault(c => c.riskId == riskId);
         }
 
         public IEnumerable<RiskAssessmentIndexViewModels> GetRiskAssessmentIndexByRiskTitle(int riskTitleId, int companyId)
@@ -195,7 +194,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> DeleteRiskRating(int ratingId, RiskRatingViewModel entity)
         {
-            var rating = (from a in context.tbl_Risk_Rating where a.RiskRatingId == ratingId select a).SingleOrDefault();
+            var rating = (from a in context.tbl_Risk_Rating where a.RiskRatingId == ratingId select a).FirstOrDefault();
             rating.DateTimeDeleted = DateTime.Now.Date;
             rating.DeletedBy = entity.deletedBy;
             rating.Deleted = true;
@@ -214,7 +213,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                               minRange = a.MinRange,
                               rates = a.Rates,
                               ratesDescription = a.RatesDescription,
-                              productId = (short) a.RiskRatingId
+                              productId = (short)a.RiskRatingId
                           }).ToList();
             return rating;
         }
@@ -236,7 +235,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
                               minRange = a.MinRange,
                               rates = a.Rates,
                               ratesDescription = a.RatesDescription,
-                              productId = (short) a.RiskRatingId
+                              productId = (short)a.RiskRatingId
                           }).ToList();
             return rating;
         }
@@ -265,7 +264,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> UpdateRiskRating(int ratingId, RiskRatingViewModel entity)
         {
-            var rating = (from a in context.tbl_Risk_Rating where a.RiskRatingId == ratingId select a).SingleOrDefault();
+            var rating = (from a in context.tbl_Risk_Rating where a.RiskRatingId == ratingId select a).FirstOrDefault();
             rating.AdvicedRate = entity.advicedRate;
             rating.CompanyId = (short)entity.companyId;
             rating.MaxRange = entity.maxRange;
@@ -314,7 +313,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> UpdateRiskAssessmentTitle(int riskAssessmentTitleId, RiskAssessmentTitleViewModels entity)
         {
-            var title = context.tbl_Risk_Assessment_Title.SingleOrDefault(c => c.RiskAssessmentTitleId == riskAssessmentTitleId);
+            var title = context.tbl_Risk_Assessment_Title.FirstOrDefault(c => c.RiskAssessmentTitleId == riskAssessmentTitleId);
             title.RiskTitle = entity.riskTitle;
             title.DateTimeUpdated = genSetup.GetApplicationDate();
             title.RiskTypeId = entity.riskTypeId;
@@ -342,7 +341,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> DeleteRiskAssessmentTitle(int riskAssessmentTitleId, UserInfo user)
         {
-            var title = context.tbl_Risk_Assessment_Title.SingleOrDefault(c => c.RiskAssessmentTitleId == riskAssessmentTitleId);
+            var title = context.tbl_Risk_Assessment_Title.FirstOrDefault(c => c.RiskAssessmentTitleId == riskAssessmentTitleId);
             title.Deleted = true;
             title.DateTimeDeleted = genSetup.GetApplicationDate();
             title.DeletedBy = user.staffId;
@@ -369,7 +368,7 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public RiskAssessmentTitleViewModels GetRiskAssessmentTitleById(int riskAssessmentTitleId, int companyId)
         {
-            return RiskAssessmentTitle(companyId).SingleOrDefault(c => c.riskAssessmentTitleId == riskAssessmentTitleId);
+            return RiskAssessmentTitle(companyId).FirstOrDefault(c => c.riskAssessmentTitleId == riskAssessmentTitleId);
         }
 
         public IEnumerable<RiskAssessmentTitleViewModels> GetRiskAssessmentTitle(int companyId)

@@ -209,9 +209,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateChargeFee(ChargeFeeViewModel model, int chargeProductFeeId)
+        public bool UpdateChargeFee(ChargeFeeViewModel model, int chargeFeeId)
         {
-            var data = this.context.tbl_Charge_Fee.Find(chargeProductFeeId);
+            var data = this.context.tbl_Charge_Fee.Find(chargeFeeId);
             if (data == null)
             {
                 return false;
@@ -241,7 +241,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             var notRemoved = model.ranges.Select(range => range.chargeRangeId).ToArray();
             context.tbl_Charge_Range.RemoveRange(
-                context.tbl_Charge_Range.Where(range => !notRemoved.Contains(range.ChargeRangeId) && range.ChargeFeeId == chargeProductFeeId)
+                context.tbl_Charge_Range.Where(range => !notRemoved.Contains(range.ChargeRangeId) && range.ChargeFeeId == chargeFeeId)
             );
 
             var count = model.ranges.Count();
@@ -252,7 +252,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 {
                     context.tbl_Charge_Range.Add(new tbl_Charge_Range
                     {
-                        ChargeFeeId = chargeProductFeeId,
+                        ChargeFeeId = chargeFeeId,
                         Minimum = range.minimum,
                         Maximum = range.maximum,
                         Rate = range.rate,
