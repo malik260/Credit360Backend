@@ -719,10 +719,10 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.SaveAll();
         }
 
-        public ProductViewModel AddTempProduct(ProductViewModel productModel)
+        public async Task<ProductViewModel> AddTempProduct(ProductViewModel productModel)
         {
             if (productModel.currencies.Count < 1)
-                throw new Exception("Product Currency must be specified");
+                throw new Exception("Product Currency must be specified. Please select a principal GL with mapped currencies");
 
             bool output = false;
             var existStingTempProduct = context.tbl_Temp_Product.Where(x => x.ProductCode.ToLower() == productModel.productCode.ToLower()
@@ -815,7 +815,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         auditTrail.AddAuditTrail(audit);
                         this.context.tbl_Temp_Product.Add(product);
-                        output = this.SaveAll();
+                        output = await context.SaveChangesAsync() > 0;
 
                         var entity = new ApprovalViewModel
                         {
@@ -826,7 +826,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             operationId = (int)OperationsEnum.ProductCreation,
                             BranchId = productModel.userBranchId
                         };
-                        var response = workFlow.LogForApproval(entity);
+                        var response = await workFlow.LogForApproval(entity);
                         trans.Commit();
                     }
                     catch (Exception ex)

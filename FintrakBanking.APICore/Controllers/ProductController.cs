@@ -512,7 +512,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("product")]
-        public HttpResponseMessage AddTempProduct([FromBody] ProductViewModel model)
+        public async Task<HttpResponseMessage> AddTempProduct([FromBody] ProductViewModel model)
         {
             try
             {
@@ -536,7 +536,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                var product = repo.AddTempProduct(model);
+                var product = await repo.AddTempProduct(model);
 
                 if (product != null)
                 {
