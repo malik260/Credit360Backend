@@ -273,6 +273,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("staff/{staffid}")]
         public HttpResponseMessage UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
         {
+            string  username = string.Empty;
             try
             {
                 var token = new TokenDecryptionHelper();
@@ -281,7 +282,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
-
+                username = token.GetUsername;
                 var staff = repo.UpdateStaff(staffid, model);
                 if (staff)
                 {
@@ -294,7 +295,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, username);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
