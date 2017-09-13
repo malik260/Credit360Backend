@@ -1,26 +1,20 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.Interfaces.Setups.Credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.APICore.JWTAuth;
-using System.Web.Http;
-using System.Net.Http;
-using System.Web;
-using FintrakBanking.APICore.core;
+using System;
 using System.Net;
-using FintrakBanking.Interfaces.Setups.Finance;
-using System.Web.Http.Cors;
-using FintrakBanking.Interfaces.ErrorLogger;
-using System.Linq;
-using FintrakBanking.Interfaces.Setups.Credit;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    // GET: CustomerCollateral
-    [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
-
-    [System.Web.Http.RoutePrefix("api/v1/credit")]
+    [RoutePrefix("api/v1/credit")]
     public class CustomerCollateralController : ApiControllerBase
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
