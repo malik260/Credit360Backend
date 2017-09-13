@@ -24,8 +24,6 @@ namespace FintrakBanking.Entities.Models
 
         public int RiskAssessmentTitleId { get; set; }
 
-        public bool Selected { get; set; }
-
         public decimal IndexScore { get; set; }
 
         public int CompanyId { get; set; }

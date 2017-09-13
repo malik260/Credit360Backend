@@ -1406,7 +1406,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = a.CompanyId,
                             branchId = a.BranchId,
                             branchName = a.tbl_Branch.BranchName,
-                            subSectorId = a.SubSectorId,
+                            //subSectorId = a.SubSectorId,
 
                             tenor = a.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
