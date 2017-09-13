@@ -10,7 +10,6 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Risk_Assessment
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int RiskAssessmentId { get; set; }
 
         public int RiskIndexId { get; set; }
@@ -28,6 +27,8 @@ namespace FintrakBanking.Entities.Models
         public decimal IndexScore { get; set; }
 
         public int CompanyId { get; set; }
+
+        public bool Selected { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
 

@@ -15,7 +15,8 @@ using System.Web.Http.Filters;
 namespace FintrakBanking.APICore.core
 {
     [JWTAuthorize]
-    [EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
+    //[EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class ApiControllerBase : ApiController
     {
         protected void ValidateAuthorizedUser(string userRequested)

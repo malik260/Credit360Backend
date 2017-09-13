@@ -866,6 +866,22 @@ namespace FintrakBanking.Repositories.Customer
 
         }
 
+        public IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId)
+        {
+            var data = (from cs in context.tbl_Customer_Group_Mapping
+                        where cs.CustomerGroupId == groupId
+                        select new CustomerViewModels()
+                        {
+                            customerId = cs.CustomerId,
+                            fullName = cs.tbl_Customer.LastName + " " + cs.tbl_Customer.FirstName + "(" + cs.tbl_Customer.CustomerCode + ")",
+                            firstName = cs.tbl_Customer.FirstName,
+                            lastName = cs.tbl_Customer.LastName,
+                            customerCode = cs.tbl_Customer.CustomerCode,
+                        });
+
+            return data;
+        }
+
         public CustomerViewModels GetCustomer(int custormerId)
         {
 

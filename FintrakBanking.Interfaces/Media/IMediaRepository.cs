@@ -11,5 +11,7 @@ namespace FintrakBanking.Interfaces.media
         Task<bool> AddFile(byte[] imgContent, string fileName, string extention);
 
         DocumentViewModel GetDocumentById(int id);
+
+        string GetDocumentToViewById(int id);
     }
 }

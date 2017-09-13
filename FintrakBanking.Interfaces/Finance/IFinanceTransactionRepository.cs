@@ -6,7 +6,7 @@ namespace FintrakBanking.Interfaces.Finance
 {
     public interface IFinanceTransactionRepository
     {
-        bool AddCollateralSearchLien(IEnumerable<CasaLienViewModel> model);
+        bool AddCollateralSearchLien(CasaLienViewModel model);
 
         FinanceTransactionViewModel PostCollateralSearch(CasaLienViewModel model);
 

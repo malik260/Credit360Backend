@@ -267,7 +267,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.LoanId == entity.targetId);
                 if (loan.Any())
                 {
-                    tenor = loan.SingleOrDefault().Tenor ;
+                    tenor = (loan.SingleOrDefault().MaturityDate - loan.SingleOrDefault().EffectiveDate).Days;
                 }
             }
             return tenor;
