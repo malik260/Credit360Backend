@@ -21,10 +21,6 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(50)]
-        public string AccountType { get; set; }
-
-        [Required]
-        [StringLength(50)]
         public string AccountNumber { get; set; }
 
         [Column(TypeName = "money")]

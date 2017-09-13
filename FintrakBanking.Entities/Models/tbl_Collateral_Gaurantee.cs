@@ -29,10 +29,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string GuarantorReferenceNumber { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string GuaranteeType { get; set; }
-
         [Column(TypeName = "money")]
         public decimal GuaranteeValue { get; set; }
 

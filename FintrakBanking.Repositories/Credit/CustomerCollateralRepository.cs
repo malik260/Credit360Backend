@@ -212,7 +212,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var collateralDeposit = context.tbl_Collateral_Deposit.Find(entity.collateralDeposit.collateralDepositId);
 
-                collateralDeposit.AccountType = entity.collateralDeposit.accountType;
+               collateralDeposit.AccountType = entity.collateralDeposit.accountType;
                 collateralDeposit.AccountNumber = entity.collateralDeposit.accountNumber;
                 collateralDeposit.CollateralSubTypeId = entity.collateralDeposit.collateralSubTypeId;
                 collateralDeposit.DealReferenceNumber = entity.collateralDeposit.dealReferenceNumber;

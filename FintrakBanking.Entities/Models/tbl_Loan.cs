@@ -46,8 +46,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string LoanReferenceNumber { get; set; }
 
-        public int Tenor { get; set; }
-
         public short SubSectorId { get; set; }
 
         public short? PrincipalFrequencyTypeId { get; set; }
@@ -171,6 +169,9 @@ namespace FintrakBanking.Entities.Models
         public int? InternalPrudentialGuidelineStatusId { get; set; }
 
         public int? ExternalPrudentialGuidelineStatusId { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? NPLDate { get; set; }
 
         public int CreatedBy { get; set; }
 

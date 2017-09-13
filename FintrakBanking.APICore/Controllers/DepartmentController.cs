@@ -1,10 +1,12 @@
 ﻿using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
@@ -14,7 +16,7 @@ namespace FintrakBanking.APICore.Controllers
     public class DepartmentController : ApiControllerBase
     {
         private IDepartmentRepository repo;
-
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
         public DepartmentController(IDepartmentRepository _repo)
         {
             repo = _repo;
@@ -26,13 +28,16 @@ namespace FintrakBanking.APICore.Controllers
         { 
                 if (entity == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,  new { success = false, message = "empty record" });
+                    return Request.CreateResponse(HttpStatusCode.OK,  new { success = false, message = "Empty Record" });
                 }
 
                 try
                 {
-                    var department = repo.AddDepartment(entity);
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = department });
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                   var department = repo.AddDepartment(entity);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = department, message = "The record has been created successfully" });
                 }
                 catch (System.Exception ex)
                 {
@@ -107,15 +112,18 @@ namespace FintrakBanking.APICore.Controllers
                 } 
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("department/{departmentId}")]
         public HttpResponseMessage UpdateDepartment(  int departmentId, DepartmentViewModel entity)
         {  try
                 {
-                    var data = repo.UpdateDepartment(departmentId, entity);
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                var data = repo.UpdateDepartment(departmentId, entity);
                     if (data)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully" });
                     }
 
                     return Request.CreateResponse(HttpStatusCode.OK,
