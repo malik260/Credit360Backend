@@ -322,7 +322,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
 
-                var data = repo.UpdateCustomer(customerId, entity).IsCompleted;
+                var data = repo.UpdateCustomer(customerId, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
