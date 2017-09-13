@@ -373,7 +373,7 @@ namespace FintrakBanking.Repositories.Customer
                        subSectorId = a.SubSectorId,
                        subSectorName = a.tbl_Sub_Sector.Name,
                        taxNumber = a.TaxNumber
-                       ,
+                 ,
                        CustomerAddresses = context.tbl_Customer_Address.Where(x => x.CustomerId == a.CustomerId).Select(x => new CustomerAddressViewModels()
                        {
                            address = x.Address,
@@ -387,6 +387,7 @@ namespace FintrakBanking.Repositories.Customer
                            stateId = x.StateId,
                            addressId = x.AddressId
                        }).ToList(),
+
                        CustomerBvn = context.tbl_Customer_BVN.Where(b => b.CustomerId == a.CustomerId).Select(b => new CustomerBvnViewModels()
                        {
                            bankVerificationNumber = b.BankVerificationNumber,
@@ -403,26 +404,26 @@ namespace FintrakBanking.Repositories.Customer
                            phone = c.Phone,
                            phoneContactId = c.PhoneContactId,
                            phoneNumber = c.PhoneNumber
-                       }).ToList(),
-                       CustomerCompanyInfomation = context.tbl_Customer_CompanyInfomation.Where(d => d.CustomerId == a.CustomerId).Select(d => new CustomerCompanyInfomationViewModels()
-                       {
-                           annualTurnOver = d.AnnualTurnOver,
-                           companyEmail = d.CompanyEmail,
-                           companyId = d.CustomerId,
-                           companyName = d.CompanyName,
-                           companyWebsite = d.CompanyWebsite,
-                           companyInfomationId = d.CompanyInfomationId,
-                           corporateBusinessCategory = d.CorporateBusinessCategory,
-                           createdBy = a.CreatedBy,
-                           creditRating = d.CreditRating,
-                           registeredOffice = d.RegisteredOffice,
-                           previousCreditRating = d.PreviousCreditRating,
-                           registrationNumber = d.RegistrationNumber,
-                           paidUpCapital = (int)d.PaidUpCapital,
-                           authorizedCapital = (int) d.AuthorisedCapital
-
-
-                       }).ToList(),
+                       }).ToList()
+                       //,
+                       //CustomerCompanyInfomation = context.tbl_Customer_CompanyInfomation.Where(d => d.CustomerId == a.CustomerId).Select(d => new CustomerCompanyInfomationViewModels()
+                       //{
+                       //    annualTurnOver = d.AnnualTurnOver,
+                       //    companyEmail = d.CompanyEmail,
+                       //    companyId = d.CustomerId,
+                       //    companyName = d.CompanyName,
+                       //    companyWebsite = d.CompanyWebsite,
+                       //    companyInfomationId = d.CompanyInfomationId,
+                       //    corporateBusinessCategory = d.CorporateBusinessCategory,
+                       //    createdBy = a.CreatedBy,
+                       //    creditRating = d.CreditRating,
+                       //    registeredOffice = d.RegisteredOffice,
+                       //    previousCreditRating = d.PreviousCreditRating,
+                       //    registrationNumber = d.RegistrationNumber,
+                       //    paidUpCapital = (int)d.PaidUpCapital,
+                       //    authorizedCapital = (int)d.AuthorisedCapital
+                       //}).ToList()
+                       ,
                        CustomerIdentification = context.tbl_Customer_Identification.Where(e => e.CustomerId == a.CustomerId).Select(e => new CustomerIdentificationViewModels()
                        {
                            identificationId = e.IdentificationId,
@@ -456,19 +457,19 @@ namespace FintrakBanking.Repositories.Customer
                            phoneNumber = s.PhoneNumber,
                            email = s.EmailAddress
                        }).ToList(),
-   //                    CustomerClientOrSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId).Select(cs => new CustomerClientOrSupplierViewModels()
-   //                    {
-   //client_SupplierId = cs.Client_SupplierId,
-   //clientOrSupplierName = cs.FirstName +" "+ cs.LastName,
-   //     firstName  = cs.FirstName, 
-   //    middleName = cs.MiddleName,
-   //    lastName = cs.LastName,
-   //    client_SupplierAddress = cs.Client_SupplierAddress,
-   //    client_SupplierPhoneNumber = cs.Client_SupplierPhoneNumber,
-   //    client_SupplierEmail = cs.Client_SupplierEmail,
-   //    client_SupplierTypeId = cs.Client_SupplierTypeId,
-   //    client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
-   // }).ToList()
+                       CustomerClientOrSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId).Select(cs => new CustomerClientOrSupplierViewModels()
+                       {
+                           client_SupplierId = cs.Client_SupplierId,
+                           clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                           firstName = cs.FirstName,
+                           middleName = cs.MiddleName,
+                           lastName = cs.LastName,
+                           //client_SupplierAddress = cs.Client_SupplierAddress,
+                           //client_SupplierPhoneNumber = cs.Client_SupplierPhoneNumber,
+                           //client_SupplierEmail = cs.Client_SupplierEmail,
+                           client_SupplierTypeId = cs.Client_SupplierTypeId,
+                           client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                       }).ToList()
                    };
 
         }
@@ -483,7 +484,7 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerViewModels> GetCustomerByBranchId(int branchId)
         {
             return GetCustomers().Where(a => a.branchId == branchId);
-        }
+        } 
 
         public IEnumerable<CustomerViewModels> GetCustomerByCompanyId(int companyId)
         {

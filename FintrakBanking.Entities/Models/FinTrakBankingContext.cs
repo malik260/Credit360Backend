@@ -1644,11 +1644,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Temp_Collateral_Stock)
                 .WithRequired(e => e.tbl_Collateral_Customer)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Collateral_Deposit>()
-                .Property(e => e.ExistingLienAmount)
-                .HasPrecision(19, 4);
-
+            
             modelBuilder.Entity<tbl_Collateral_Deposit>()
                 .Property(e => e.LienAmount)
                 .HasPrecision(19, 4);
