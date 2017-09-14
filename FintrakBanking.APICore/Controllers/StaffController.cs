@@ -216,7 +216,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("staff")]
-        public HttpResponseMessage AddTempStaff([FromBody] StaffInfoViewModel model)
+        public async Task<HttpResponseMessage> AddTempStaff([FromBody] StaffInfoViewModel model)
         {
             try
             {
@@ -251,7 +251,7 @@ namespace FintrakBanking.APICore.Controllers
                 //We can now use staffId extracted from the token as the created by
                 //We ca also get companyId too
 
-                var staff = repo.AddTempStaff(model);
+                var staff = await repo.AddTempStaff(model);
 
                 if (staff)
                 {
@@ -271,7 +271,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("staff/{staffid}")]
-        public HttpResponseMessage UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
+        public async Task<HttpResponseMessage> UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
         {
             string  username = string.Empty;
             try
@@ -283,7 +283,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
 
                 username = token.GetUsername;
-                var staff = repo.UpdateStaff(staffid, model);
+                var staff = await repo.UpdateStaff(staffid, model);
                 if (staff)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

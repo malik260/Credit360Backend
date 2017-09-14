@@ -1,5 +1,5 @@
 ﻿using FintrakBanking.Entities.Models;
-//using Microsoft.Reporting.WebForms;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +16,10 @@ namespace FintrakBanking.APICore.Reports.Credit
             if (!IsPostBack)
             {
 
-                //ReportParameter date = new ReportParameter("currentDate", DateTime.Now.ToString());
+                ReportParameter date = new ReportParameter("currentDate", DateTime.Now.ToString());
 
-                //offerLetter.LocalReport.SetParameters(new ReportParameter[] { date });
-                //offerLetter.LocalReport.Refresh();
+                offerLetter.LocalReport.SetParameters(new ReportParameter[] { date });
+                offerLetter.LocalReport.Refresh();
             }
         }
     }
