@@ -10,12 +10,10 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
-using System.Web.Http.Cors;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.APICore.Controllers
 {
-
     [RoutePrefix("api/v1/setup")]
     public class StaffController : ApiControllerBase
     {
@@ -218,7 +216,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("staff")]
-        public HttpResponseMessage AddTempStaff([FromBody] StaffInfoViewModel model)
+        public async Task<HttpResponseMessage> AddTempStaff([FromBody] StaffInfoViewModel model)
         {
             try
             {
@@ -253,7 +251,7 @@ namespace FintrakBanking.APICore.Controllers
                 //We can now use staffId extracted from the token as the created by
                 //We ca also get companyId too
 
-                var staff = repo.AddTempStaff(model);
+                var staff = await repo.AddTempStaff(model);
 
                 if (staff)
                 {
@@ -273,8 +271,9 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("staff/{staffid}")]
-        public HttpResponseMessage UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
+        public async Task<HttpResponseMessage> UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
         {
+            string  username = string.Empty;
             try
             {
                 var token = new TokenDecryptionHelper();
@@ -283,8 +282,8 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
-
-                var staff = repo.UpdateStaff(staffid, model);
+                username = token.GetUsername;
+                var staff = await repo.UpdateStaff(staffid, model);
                 if (staff)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -296,7 +295,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, username);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }

@@ -50,6 +50,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Interfaces.Finance;
     using FintrakBanking.Interfaces.Credit;
     using FintrakBanking.Repositories.CreditOperations;
+    using FintrakBanking.Interfaces.Risk;
+    using FintrakBanking.Repositories.Risk;
 
     public static class NinjectWebCommon 
     {
@@ -114,6 +116,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICompanyRepository>().To<CompanyRepository>();
             kernel.Bind<IBranchRepository>().To<BranchRepository>();
             kernel.Bind<IRiskSetupRepository>().To<RiskSetupRepository>();
+            kernel.Bind<IRiskImplementation>().To<RiskImplementation>();
             kernel.Bind<IStaffRepository>().To<StaffRepository>();
             kernel.Bind<IDepartmentRepository>().To<DepartmentRepository>();
             kernel.Bind<IMisInfoRepository>().To<MisInfoRepository>();

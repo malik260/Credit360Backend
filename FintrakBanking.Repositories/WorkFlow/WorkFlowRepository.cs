@@ -80,7 +80,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 Comment = entity.comment,
                 ApprovalStateId = (int)ApprovalState.Initiation,
                 OperationId = entity.operationId,
-                FromApprovalLevelId = fromApprovalLevelId ,//= null ? GetStatingApprovalLevel(entity.operationId, entity.companyId),
+                //FromApprovalLevelId = fromApprovalLevelId ,//= null ? GetStatingApprovalLevel(entity.operationId, entity.companyId),
                 SystemArrivalDateTime = DateTime.Now
             };
 
@@ -88,10 +88,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 trail.FromApprovalLevelId = fromApprovalLevelId.Value;
             }
-            else
-            {
-                trail.FromApprovalLevelId = null;
-            }
+             
 
             await approvelRepo.AddApprovalTrail(trail);
 

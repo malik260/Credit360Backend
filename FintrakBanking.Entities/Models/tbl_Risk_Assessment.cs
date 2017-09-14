@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int RiskIndexId { get; set; }
 
-        public int ParentId { get; set; }
+        public int? ParentId { get; set; }
 
         [Required]
         [StringLength(50)]

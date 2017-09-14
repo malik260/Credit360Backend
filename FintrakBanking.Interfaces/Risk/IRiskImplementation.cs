@@ -1,12 +1,17 @@
 ﻿using FintrakBanking.ViewModels.Risk;
+using FintrakBanking.ViewModels.Setups;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace FintrakBanking.Interfaces.Risk
 {
-  public   interface IRiskImplementation
+    public interface IRiskImplementation
     {
-        List<TreeNode> GetRiskIndexByRiskTitle(int companyId, int productId, int riskTypeId);
+        IEnumerable<AssessmentResultViewModel> GetAllAssessmentResultByApplicationId(int companyId, int applicationId);
+
+        IEnumerable<AssessmentFormViewModel> GetRiskFormElements(int companyId, int titleId, int applicationId);
+
+        IEnumerable<AssessmentFormViewModel> SaveFormElements(AssessmentFormSaveViewModel entity);
     }
 }
