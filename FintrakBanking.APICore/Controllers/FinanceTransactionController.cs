@@ -81,10 +81,10 @@ namespace FintrakBanking.APICore.Controllers
                 model.userBranchId = (short)token.GetBranchId;
 
 
-                var data = repo.AddCollateralSearchLien(model);
-                if (data != null)
+                var response = repo.AddCollateralSearchLien(model);
+                if (response == false)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });

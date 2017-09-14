@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         public int LoanId { get; set; }
 
+        public short ProductTypeId { get; set; }
+
         public int ChargeFeeId { get; set; }
 
         [Column(TypeName = "money")]
@@ -42,6 +44,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateTimeDeleted { get; set; }
 
         public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
+
+        public virtual tbl_Product_Type tbl_Product_Type { get; set; }
 
         public virtual tbl_Loan tbl_Loan { get; set; }
     }

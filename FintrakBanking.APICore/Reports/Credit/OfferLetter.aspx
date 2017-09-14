@@ -16,8 +16,7 @@
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-
-        <rsweb:ReportViewer ID="offerLetter" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="485px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="644px">
+        <rsweb:ReportViewer ID="offerLetterReport" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="485px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="644px">
             <LocalReport ReportPath="Reports\Credit\OfferLetter.rdlc">
                 <DataSources>
                     <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="OfferLetterDetails" />
