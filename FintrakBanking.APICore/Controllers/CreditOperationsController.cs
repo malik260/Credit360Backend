@@ -4,19 +4,19 @@ using System.Web.Http;
 using System.Net.Http;
 using System.Net;
 using FintrakBanking.APICore.core;
-using FintrakBanking.Interfaces.CreditOperations;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
 
     [RoutePrefix("api/v1/creditoperations")]
-    public class CreditOperationsController : ApiControllerBase
+    public class LoanOperationsController : ApiControllerBase
     {
-        private ICreditOperationsRepository repo;
+        private ILoanOperationsRepository repo;
 
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public CreditOperationsController(ICreditOperationsRepository _repo)
+        public LoanOperationsController(ILoanOperationsRepository _repo)
         {
             this.repo = _repo;
         }
