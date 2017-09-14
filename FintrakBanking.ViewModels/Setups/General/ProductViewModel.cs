@@ -59,13 +59,19 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int approvalStatusId { get; set; }
         public int operationId { get; set; }
         public string comment { get; set; }
-
+        public bool allowScheduleTypeOverride { get; set; }
+        public bool? allowMoratorium { get; set; }
+        public bool? allowCustomerAccountForceDebit { get; set; }
+        public int? defaultGracePeriod { get; set; }
+        public int? cleanupPeriod { get; set; }
+        public int? expiryPeriod { get; set; }
+        public double? equityContribution { get; set; }
         public List<ProductCurrencyViewModel> currencies { get; set; }
 
         public List<ProductFeeViewModel> fees { get; set; }
 
         public List<ProductCollateralTypeViewModel> collateral { get; set; }
-
+        public short? scheduleTypeId { get; set; }
     }
 
     public class ProductCurrencyViewModel : GeneralEntity

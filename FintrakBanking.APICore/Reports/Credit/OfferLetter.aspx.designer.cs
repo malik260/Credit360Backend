@@ -31,13 +31,13 @@ namespace FintrakBanking.APICore.Reports.Credit {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// offerLetter control.
+        /// offerLetterReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer offerLetter;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer offerLetterReport;
         
         /// <summary>
         /// ObjectDataSource1 control.

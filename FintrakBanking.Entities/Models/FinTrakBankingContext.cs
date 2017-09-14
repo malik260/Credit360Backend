@@ -199,7 +199,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Solicitor> tbl_Solicitor { get; set; }
         public virtual DbSet<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
         public virtual DbSet<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
@@ -1361,6 +1361,26 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Product_Type>()
                 .HasMany(e => e.tbl_Temp_Product)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Loan_Collateral_Mapping)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Loan_Covenant_Detail)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Loan_Fee)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Loan_Guarantor)
                 .WithRequired(e => e.tbl_Product_Type)
                 .WillCascadeOnDelete(false);
 

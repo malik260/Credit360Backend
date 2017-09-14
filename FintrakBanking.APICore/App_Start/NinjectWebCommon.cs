@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Interfaces.media;
     using FintrakBanking.Repositories.media;
     using FintrakBanking.Interfaces.Finance;
-    using FintrakBanking.Interfaces.CreditOperations;
+    using FintrakBanking.Interfaces.Credit;
     using FintrakBanking.Repositories.CreditOperations;
     using FintrakBanking.Interfaces.Risk;
     using FintrakBanking.Repositories.Risk;
@@ -168,8 +168,9 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
             kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IFinanceTransactionRepository>().To<FinanceTransactionRepository>();
-            kernel.Bind<ICreditOperationsRepository>().To<CreditOperationsRepository>();
+            kernel.Bind<ILoanOperationsRepository>().To<LoanOperationsRepository>();
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
+            kernel.Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
         }        
     }
     

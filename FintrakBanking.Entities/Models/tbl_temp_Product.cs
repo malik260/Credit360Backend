@@ -82,6 +82,18 @@ namespace FintrakBanking.Entities.Models
 
         public bool? AllowTenor { get; set; }
 
+        public bool? AllowMoratorium { get; set; }
+
+        public bool? AllowCustomerAccountForceDebit { get; set; }
+
+        public int? DefaultGracePeriod { get; set; }
+
+        public int? CleanupPeriod { get; set; }
+
+        public int? ExpiryPeriod { get; set; }
+
+        public double? EquityContribution { get; set; }
+
         public int? ApprovedBy { get; set; }
 
         public bool? Completed { get; set; }

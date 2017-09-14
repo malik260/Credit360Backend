@@ -78,7 +78,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return holidays;
         }
-        public async Task<bool> AddPublicHoliday(PublicHolidayViewModel model)
+        public bool isHolidayExist(string description)
+        {
+            return context.tbl_Public_Holiday.Any(x => x.Description.ToLower() == description.ToLower());
+        }
+        public bool AddPublicHoliday(PublicHolidayViewModel model)
         {
             var holiday = new tbl_Public_Holiday()
             {
@@ -101,12 +105,13 @@ namespace FintrakBanking.Repositories.Setups.General
                 ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
+            this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
-            var response = await context.SaveChangesAsync();
+            var response = context.SaveChanges();
             return response != 0;
         }
 
-        public async Task<bool> UpdatePublicHoliday(PublicHolidayViewModel model, int id)
+        public bool UpdatePublicHoliday(PublicHolidayViewModel model, int id)
         {
             var response = 0;
             var holiday = context.tbl_Public_Holiday.Find(id);
@@ -128,8 +133,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     ApplicationDate = genSetup.GetApplicationDate(),
                     SystemDateTime = DateTime.Now
                 };
+                this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -------------------------------
-                response = await context.SaveChangesAsync();
+                response = context.SaveChanges();
             }
 
             return response != 0;

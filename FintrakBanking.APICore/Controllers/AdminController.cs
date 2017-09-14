@@ -103,7 +103,6 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-
         [HttpPost]
         [Route("user")]
         public async Task<HttpResponseMessage> AddUserAsync([FromBody]AppUserViewModel user)
@@ -116,7 +115,7 @@ namespace FintrakBanking.APICore.Controllers
                     if (repo.isUserExist(user.username))
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
-                           new { suucess = false, message = "A user with this username already exit" });
+                           new { suucess = false, message = "A user with this username already exist" });
                     }
 
                     user.createdBy = token.GetStaffId;
