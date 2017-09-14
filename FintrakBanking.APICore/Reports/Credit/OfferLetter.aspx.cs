@@ -18,8 +18,8 @@ namespace FintrakBanking.APICore.Reports.Credit
 
                 ReportParameter date = new ReportParameter("currentDate", DateTime.Now.ToString());
 
-                offerLetter.LocalReport.SetParameters(new ReportParameter[] { date });
-                offerLetter.LocalReport.Refresh();
+                offerLetterReport.LocalReport.SetParameters(new ReportParameter[] { date });
+                offerLetterReport.LocalReport.Refresh();
             }
         }
     }

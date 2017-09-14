@@ -280,7 +280,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //end of Audit section ------------------------------- 
             return this.SaveAll();
         }
-        
+
         #region tbl_Product Region
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {
@@ -479,8 +479,20 @@ namespace FintrakBanking.Repositories.Setups.General
                         dateTimeUpdated = c.DateTimeUpdated,
                         deleted = c.Deleted,
                         deletedBy = c.DeletedBy,
-                        dateTimeDeleted = c.DateTimeDeleted
+                        dateTimeDeleted = c.DateTimeDeleted,
 
+                        allowCustomerAccountForceDebit = c.AllowCustomerAccountForceDebit,
+                        allowMoratorium = c.AllowMoratorium,
+                        allowScheduleTypeOverride = c.AllowScheduleTypeOverride,
+                        allowTenor = c.AllowTenor,
+                        allowRate = c.AllowOverdrawn,
+                        allowOverdrawn = c.AllowOverdrawn,
+
+                        cleanupPeriod = c.CleanupPeriod,
+                        defaultGracePeriod = c.DefaultGracePeriod,
+                        equityContribution = c.EquityContribution,
+                        expiryPeriod = c.ExpiryPeriod,
+                        scheduleTypeId = c.ScheduleTypeId
                     });
         }
 
@@ -626,6 +638,16 @@ namespace FintrakBanking.Repositories.Setups.General
                 existingProduct.AllowRate = productModel.AllowRate;
                 existingProduct.AllowTenor = productModel.AllowTenor;
                 existingProduct.AllowOverdrawn = productModel.AllowOverdrawn;
+                existingProduct.AllowCustomerAccountForceDebit = productModel.AllowCustomerAccountForceDebit;
+                existingProduct.AllowMoratorium = productModel.AllowMoratorium;
+                existingProduct.AllowScheduleTypeOverride = productModel.AllowScheduleTypeOverride;
+
+                existingProduct.CleanupPeriod = productModel.CleanupPeriod;
+                existingProduct.DefaultGracePeriod = productModel.DefaultGracePeriod;
+                existingProduct.EquityContribution = productModel.EquityContribution;
+                existingProduct.ExpiryPeriod = productModel.ExpiryPeriod;
+                existingProduct.IsMultipleCurency = productModel.IsMultipleCurency;
+                existingProduct.ScheduleTypeId = productModel.ScheduleTypeId;
 
                 foreach (var c in currListToUpdate)
                 {
@@ -678,6 +700,17 @@ namespace FintrakBanking.Repositories.Setups.General
                     CreatedBy = productModel.CreatedBy,
                     DateTimeCreated = genSetup.GetApplicationDate(),
 
+                    IsMultipleCurency = productModel.IsMultipleCurency,
+                    DefaultGracePeriod = productModel.DefaultGracePeriod,
+                    EquityContribution = productModel.EquityContribution,
+                    ExpiryPeriod = productModel.ExpiryPeriod,
+
+                    AllowMoratorium = productModel.AllowMoratorium,
+                    AllowCustomerAccountForceDebit = productModel.AllowCustomerAccountForceDebit,
+                    CleanupPeriod = productModel.CleanupPeriod,
+                    AllowScheduleTypeOverride = productModel.AllowScheduleTypeOverride,
+                    ScheduleTypeId = productModel.ScheduleTypeId
+                    
                 };
                 context.tbl_Product.Add(product);
 
@@ -685,7 +718,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     var curr = new tbl_Product_Currency()
                     {
-                       ProductId = c.ProductId,
+                        ProductId = c.ProductId,
                         CurrencyId = c.CurrencyId,
                         DateTimeCreated = genSetup.GetApplicationDate(),
                     };
@@ -790,8 +823,18 @@ namespace FintrakBanking.Repositories.Setups.General
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                 IsCurrent = true,
 
-                tbl_Temp_Product_Currency = currencies
+                tbl_Temp_Product_Currency = currencies,
 
+                IsMultipleCurency = productModel.currencies.Any(),
+                AllowCustomerAccountForceDebit = productModel.allowCustomerAccountForceDebit,
+                AllowMoratorium = productModel.allowMoratorium,
+                AllowScheduleTypeOverride = productModel.allowScheduleTypeOverride,
+                ScheduleTypeId = productModel.scheduleTypeId,
+                DefaultGracePeriod = productModel.defaultGracePeriod,
+                CleanupPeriod = productModel.cleanupPeriod,
+                EquityContribution = productModel.equityContribution,
+                ExpiryPeriod = productModel.expiryPeriod,
+                
             };
 
             // Audit Section ---------------------------
@@ -1026,6 +1069,15 @@ namespace FintrakBanking.Repositories.Setups.General
                     DateTimeCreated = DateTime.Now,
                     ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                     IsCurrent = true,
+
+                    AllowCustomerAccountForceDebit = productModel.allowCustomerAccountForceDebit,
+                    AllowScheduleTypeOverride = productModel.allowScheduleTypeOverride,
+                    AllowMoratorium = productModel.allowMoratorium,
+                    CleanupPeriod = productModel.cleanupPeriod,
+                    DefaultGracePeriod = productModel.defaultGracePeriod,
+                    EquityContribution = productModel.equityContribution,
+                    ExpiryPeriod = productModel.expiryPeriod,
+                    IsMultipleCurency = productModel.currencies.Any()
                 };
                 context.tbl_Temp_Product.Add(tempProduct);
             }
