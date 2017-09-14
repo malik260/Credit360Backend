@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Admin
         }
 
         #region Users
-        public bool iSUserExit(string username)
+        public bool isUserExist(string username)
         {
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
         }
@@ -95,7 +95,11 @@ namespace FintrakBanking.Repositories.Admin
 
         public async Task<bool> CreateUser(AppUserViewModel user)
         {
-            int output;
+            if (user == null)
+            {
+                return false;
+            }
+            bool output = false;
 
             List<tbl_Profile_UserGroup> userGroups = new List<tbl_Profile_UserGroup>();
             List<tbl_Profile_AdditionalActivity> userActivities = new List<tbl_Profile_AdditionalActivity>();
@@ -132,6 +136,48 @@ namespace FintrakBanking.Repositories.Admin
                 SystemDateTime = DateTime.Now
             };
 
+            if (user.activities.Any())
+            {
+                foreach (var item in user.activities)
+                {
+                    var userActivity = new tbl_Profile_AdditionalActivity()
+                    {
+                        ActivityId = item.activityId,
+                        //UserId = _user.UserId,
+                        CanAdd = false,
+                        CanEdit = false,
+                        CanApprove = false,
+                        CanDelete = false,
+                        CanView = false,
+                        CreatedBy = user.createdBy,
+                        DateTimeCreated = DateTime.Now
+                    };
+
+                    userActivities.Add(userActivity);
+                }
+            }
+
+            if (user.group.Count > 0)
+            {
+                foreach (var item in user.group)
+                {
+                    var grpItem = new tbl_Profile_UserGroup()
+                    {
+                        GroupId = item.groupId,
+                        //UserId = _user.UserId,
+                        DateTimeCreated = DateTime.Now,
+                        CreatedBy = user.createdBy
+                    };
+
+                    var targetGroupName = context.tbl_Profile_Group.Where(x => x.GroupId == grpItem.GroupId).FirstOrDefault();
+
+                    audit.Detail = audit.Detail + $" added to group: '{targetGroupName.GroupName}' ";
+                    //end of Audit section -------------------------------
+                    auditTrail.AddAuditTrail(audit);
+
+                    userGroups.Add(grpItem);
+                }
+            }
 
             if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
             {
@@ -142,57 +188,14 @@ namespace FintrakBanking.Repositories.Admin
                         context.tbl_Profile_User.Add(_user);
                         auditTrail.AddAuditTrail(audit);
 
-                        if (user.group.Count > 0)
-                        {
-                            foreach (var item in user.group)
-                            {
-                                var grpItem = new tbl_Profile_UserGroup()
-                                {
-                                    GroupId = item.groupId,
-                                    UserId = _user.UserId,
-                                    DateTimeCreated = DateTime.Now,
-                                    CreatedBy = user.createdBy
-                                };
-
-                                var targetGroupName = context.tbl_Profile_Group.Where(x => x.GroupId == grpItem.GroupId).FirstOrDefault();
-
-                                audit.Detail = audit.Detail + $" added to group: '{targetGroupName.GroupName}' ";
-                                //end of Audit section -------------------------------
-                                auditTrail.AddAuditTrail(audit);
-
-                                context.tbl_Profile_UserGroup.Add(grpItem);
-                            }
-                        }
-
-                        if (user.activities.Any())
-                        {
-                            foreach (var item in user.activities)
-                            {
-                                var userActivity = new tbl_Profile_AdditionalActivity()
-                                {
-                                    ActivityId = item.activityId,
-                                    UserId = _user.UserId,
-                                    CanAdd = false,
-                                    CanEdit = false,
-                                    CanApprove = false,
-                                    CanDelete = false,
-                                    CanView = false,
-                                    CreatedBy = user.createdBy,
-                                    DateTimeCreated = DateTime.Now
-                                };
-
-                                context.tbl_Profile_AdditionalActivity.Add(userActivity);
-                            }
-                        }
-
-                        output = await context.SaveChangesAsync();
+                        output = await context.SaveChangesAsync() > 0;
 
                         var entity = new ApprovalViewModel
                         {
                             staffId = user.createdBy,
                             companyId = user.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = _user.StaffId,
+                            targetId = _user.UserId,
                             operationId = (int)OperationsEnum.UserCreation,
                             BranchId = user.userBranchId
                         };
@@ -211,7 +214,7 @@ namespace FintrakBanking.Repositories.Admin
                 throw new Exception("Approval route have not been defined for this operation");
             }
 
-            return output != 0;
+            return output;
         }
 
         public IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId)

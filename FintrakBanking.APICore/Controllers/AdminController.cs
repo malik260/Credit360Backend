@@ -71,7 +71,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation successful, request has been routed to the next approving office" });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -103,7 +103,6 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-
         [HttpPost]
         [Route("user")]
         public async Task<HttpResponseMessage> AddUserAsync([FromBody]AppUserViewModel user)
@@ -113,10 +112,10 @@ namespace FintrakBanking.APICore.Controllers
                 var token = new TokenDecryptionHelper();
                 if (I.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
                 {
-                    if (repo.iSUserExit(user.username))
+                    if (repo.isUserExist(user.username))
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
-                           new { suucess = false, message = "A user with this username already exit" });
+                           new { suucess = false, message = "A user with this username already exist" });
                     }
 
                     user.createdBy = token.GetStaffId;

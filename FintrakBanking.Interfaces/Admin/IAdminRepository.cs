@@ -21,7 +21,7 @@ namespace FintrakBanking.Interfaces.Admin
 
         UserViewModel GetSingleUserByUserName(string userName);
 
-        bool iSUserExit(string username);
+        bool isUserExist(string username);
 
         Task<bool> GoForApproval(ApprovalViewModel entity);
 
