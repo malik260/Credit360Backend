@@ -2,7 +2,7 @@
 using FintrakBanking.Interfaces.Credit;
 using System.Linq;
 
-namespace FintrakBanking.Repositories.CreditOperations
+namespace FintrakBanking.Repositories.Credit
 
 {
     public class LoanOperationsRepository : ILoanOperationsRepository
