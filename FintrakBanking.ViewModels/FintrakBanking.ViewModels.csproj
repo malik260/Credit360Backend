@@ -91,7 +91,7 @@
     <Compile Include="Media\DocumentViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Risk\RiskLoanApplicationViewModel.cs" />
-    <Compile Include="Risk\TreeNode.cs" />
+    <Compile Include="Risk\RiskAssessmentViewModels.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupMappingViewModel.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupViewModel.cs" />
     <Compile Include="Setups\Approval\ApprovalLevelStaffViewModel.cs" />

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 //using FintrakBanking.ViewModels.Operations;
 
-namespace FintrakBanking.Interfaces.CreditOperations
+namespace FintrakBanking.Interfaces.Credit
 {
-    public interface ICreditOperationsRepository
+    public interface ILoanOperationsRepository
     {
         decimal GetCollateralSearchChargeAmount(int stateId);
     }

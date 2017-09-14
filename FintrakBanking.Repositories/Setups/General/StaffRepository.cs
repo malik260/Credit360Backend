@@ -189,7 +189,7 @@ on c.DepartmentId equals dept.DepartmentId
         /// </summary>
         /// <param name="StafffViewModel"></param>
         /// <returns></returns>
-        public bool UpdateStaff(int staffid, StaffInfoViewModel staffModel)
+        public async Task<bool> UpdateStaff(int staffid, StaffInfoViewModel staffModel)
         {
             var existStingTempStaff = context.tbl_Temp_Staff.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower() && x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
 
@@ -270,7 +270,7 @@ on c.DepartmentId equals dept.DepartmentId
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------  
 
-            var output = this.SaveAll();
+            var output = await context.SaveChangesAsync() > 0;
 
             var entity = new ApprovalViewModel
             {
@@ -281,7 +281,7 @@ on c.DepartmentId equals dept.DepartmentId
                 operationId = (int)OperationsEnum.StaffCreation,
                 BranchId = staffModel.userBranchId
             };
-            var response = workFlow.LogForApproval(entity);
+            var response = await workFlow.LogForApproval(entity);
 
             return output;
         }
@@ -447,7 +447,7 @@ on c.DepartmentId equals dept.DepartmentId
             return this.SaveAll();
         }
 
-        public bool AddTempStaff(StaffInfoViewModel staffModel)
+        public async Task<bool> AddTempStaff(StaffInfoViewModel staffModel)
         {
             bool output = false;
             var existStingTempStaff = context.tbl_Temp_Staff.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower()
@@ -515,7 +515,7 @@ on c.DepartmentId equals dept.DepartmentId
                     {
                         auditTrail.AddAuditTrail(audit);
                         this.context.tbl_Temp_Staff.Add(staff);
-                        output = this.SaveAll();
+                        output = await context.SaveChangesAsync() > 0 ;
 
                         var entity = new ApprovalViewModel
                         {
@@ -526,7 +526,7 @@ on c.DepartmentId equals dept.DepartmentId
                             operationId = (int)OperationsEnum.StaffCreation,
                             BranchId = staffModel.userBranchId
                         };
-                        var response = workFlow.LogForApproval(entity);
+                        var response = await workFlow.LogForApproval(entity);
                         trans.Commit();
                     }
                     catch (Exception)

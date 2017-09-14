@@ -15,7 +15,6 @@ namespace FintrakBanking.ReportObjects
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
 
-            //var loanApplicant = context.tbl_Loan_Application.Where(x => x.CustomerId == customerId).FirstOrDefault();
             var targetCustomer = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == customerId);
 
             if (targetCustomer != null)

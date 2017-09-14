@@ -38,7 +38,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CollateralTypeId { get; set; }
 
-        public short CollateralSubTypeId { get; set; }
+        public int? CollateralSubTypeId { get; set; }
 
         [Required]
         [StringLength(50)]
