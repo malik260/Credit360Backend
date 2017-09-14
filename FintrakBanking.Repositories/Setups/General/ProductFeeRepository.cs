@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 this.context.tbl_Product_Charge_Fee.Add(productFeeEntity);
                 // Audit Section ---------------------------
-                var product = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
+                var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
                 var audit = new tbl_Audit
                 {
                     AuditTypeId = (short)AuditTypeEnum.CollateralCategoryAdded,
@@ -139,7 +139,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 this.context.tbl_Temp_Product_Fee.Add(tempProductFeeEntity);
                 // Audit Section ---------------------------
-                var productName = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
+                var productName = this.context.tbl_Temp_Product.FirstOrDefault(x => x.ProductId == productFee.productId).ProductName;
                 var audit = new tbl_Audit
                 {
                     AuditTypeId = (short)AuditTypeEnum.ProductFeeAdded,
@@ -164,7 +164,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductFeeEntity.Deleted = false;
             }
 
-            var status = this.SaveAll();
+            var status = context.SaveChanges() > 0;
 
             if (status)
                 return tempProductFeeEntity.ProductFeeId;

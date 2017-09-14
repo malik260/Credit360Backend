@@ -89,7 +89,7 @@ namespace FintrakBanking.APICore.Controllers
                 var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetUsersAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
-                if (staffinfo == null)
+                if (!staffinfo.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }

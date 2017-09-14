@@ -199,7 +199,7 @@ namespace FintrakBanking.Repositories.Admin
                             operationId = (int)OperationsEnum.UserCreation,
                             BranchId = user.userBranchId
                         };
-                        var response =  await workFlow.LogForApproval(entity);
+                        var response = await workFlow.LogForApproval(entity);
                         trans.Commit();
                     }
                     catch (Exception ex)
@@ -229,7 +229,7 @@ namespace FintrakBanking.Repositories.Admin
                         join st in context.tbl_Staff on c.StaffId equals st.StaffId
                         join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
                         join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
-                        join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
+                        join atrail in context.tbl_Approval_Trail on c.UserId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
                               && atrail.OperationId == (int)OperationsEnum.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new UserViewModel()
@@ -255,17 +255,17 @@ namespace FintrakBanking.Repositories.Admin
                             approvalStatus = c.ApprovalStatus,
                             approvalStatusId = atrail.ApprovalStatusId,
                             operationId = atrail.OperationId,
-                            groupId = c.tbl_Profile_UserGroup.Where(x => x.UserId == c.UserId).Select(x => new UserGroupId
-                            {
-                                groupId = x.GroupId,
-                                groupKey = x.tbl_Profile_Group.GroupName
-                            }).ToList(),
-                            activities = c.tbl_Profile_AdditionalActivity.Where(x => x.UserId == c.UserId).Select(a => new UserActivities
-                            {
-                                activityId = a.ActivityId,
-                                userId = a.UserId,
-                                activityName = a.tbl_Profile_Activity.ActivityName
-                            }).ToList()
+                            //groupId = c.tbl_Profile_UserGroup.Where(x => x.UserId == c.UserId).Select(x => new UserGroupId
+                            //{
+                            //    groupId = x.GroupId,
+                            //    groupKey = x.tbl_Profile_Group.GroupName
+                            //}).ToList(),
+                            //activities = c.tbl_Profile_AdditionalActivity.Where(x => x.UserId == c.UserId).Select(a => new UserActivities
+                            //{
+                            //    activityId = a.ActivityId,
+                            //    userId = a.UserId,
+                            //    activityName = a.tbl_Profile_Activity.ActivityName
+                            //}).ToList()
                         });
 
             return data;
