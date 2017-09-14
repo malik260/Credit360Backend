@@ -18,7 +18,7 @@ using FintrakBanking.Interfaces.Setups.Credit;
 namespace FintrakBanking.APICore.Controllers
 {
 
-    [System.Web.Http.RoutePrefix("api/v1/credit")]
+    [RoutePrefix("api/v1/credit")]
     public class CustomerCollateralController : ApiControllerBase
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
