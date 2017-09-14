@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Admin
         }
 
         #region Users
-        public bool iSUserExit(string username)
+        public bool isUserExist(string username)
         {
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
         }
@@ -192,7 +192,7 @@ namespace FintrakBanking.Repositories.Admin
                             staffId = user.createdBy,
                             companyId = user.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = _user.StaffId,
+                            targetId = _user.UserId,
                             operationId = (int)OperationsEnum.UserCreation,
                             BranchId = user.userBranchId
                         };
