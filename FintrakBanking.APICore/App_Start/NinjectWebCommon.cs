@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Interfaces.media;
     using FintrakBanking.Repositories.media;
     using FintrakBanking.Interfaces.Finance;
-    using FintrakBanking.Repositories.CreditOperations;
+    //using FintrakBanking.Repositories.CreditOperations;
     using FintrakBanking.Interfaces.Risk;
     using FintrakBanking.Repositories.Risk;
 

@@ -70,7 +70,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public List<ProductFeeViewModel> fees { get; set; }
 
-        public List<ProductCollateralTypeViewModel> collateral { get; set; }
+        public List<ProductCollateralTypeViewModel> collaterals { get; set; }
         public short? scheduleTypeId { get; set; }
     }
 
