@@ -84,6 +84,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool? AllowMoratorium { get; set; }
 
+        public int? ApprovedBy { get; set; }
+
         public bool? AllowCustomerAccountForceDebit { get; set; }
 
         public int? DefaultGracePeriod { get; set; }
@@ -93,8 +95,6 @@ namespace FintrakBanking.Entities.Models
         public int? ExpiryPeriod { get; set; }
 
         public double? EquityContribution { get; set; }
-
-        public int? ApprovedBy { get; set; }
 
         public bool? Completed { get; set; }
 

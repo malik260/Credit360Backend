@@ -6,11 +6,13 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Contingent")]
-    public partial class tbl_Loan_Contingent
+    [Table("credit.tbl_Loan_Archive")]
+    public partial class tbl_Loan_Archive
     {
         [Key]
-        public int ContingentLoanId { get; set; }
+        public int LoanArchiveId { get; set; }
+
+        public int LoanId { get; set; }
 
         public int CustomerId { get; set; }
 
@@ -34,6 +36,14 @@ namespace FintrakBanking.Entities.Models
 
         public short SubSectorId { get; set; }
 
+        public short? PrincipalFrequencyTypeId { get; set; }
+
+        public short? InterestFrequencyTypeId { get; set; }
+
+        public int PrincipalNumberOfInstallment { get; set; }
+
+        public int InterestNumberOfInstallment { get; set; }
+
         public int RelationshipOfficerId { get; set; }
 
         public int RelationshipManagerId { get; set; }
@@ -43,6 +53,8 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(50)]
         public string TeamMISCode { get; set; }
+
+        public double InterestRate { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime EffectiveDate { get; set; }
@@ -54,10 +66,14 @@ namespace FintrakBanking.Entities.Models
         public DateTime BookingDate { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal ContingentAmount { get; set; }
+        public decimal PrincipalAmount { get; set; }
 
         [Column(TypeName = "money")]
         public decimal ApprovedAmount { get; set; }
+
+        public int PrincipalInstallmentLeft { get; set; }
+
+        public int InterestInstallmentLeft { get; set; }
 
         public int ApprovalStatusId { get; set; }
 
@@ -70,6 +86,12 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateApproved { get; set; }
 
         public short LoanStatusId { get; set; }
+
+        public short ScheduleTypeId { get; set; }
+
+        public short ScheduleDayCountConventionId { get; set; }
+
+        public short ScheduleDayInterestTypeId { get; set; }
 
         public bool IsDisbursed { get; set; }
 
@@ -91,9 +113,53 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string TrancheBatchCode { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal EquityContribution { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? FirstPrincipalPaymentDate { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? FirstInterestPaymentDate { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal OutstandingPrincipal { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal OutstandingInterest { get; set; }
+
+        public int? PrincipalAdditionCount { get; set; }
+
+        public int? PrincipalReductionCount { get; set; }
+
+        public bool FixedPrincipal { get; set; }
+
+        public bool ProfileLoan { get; set; }
+
         public bool DischargeLetter { get; set; }
 
+        public bool SuspendInterest { get; set; }
+
+        public bool? IsScheduledPrepayment { get; set; }
+
+        public bool AllowForceDebitRepayment { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? ScheduledPrepaymentAmount { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? ScheduledPrepaymentDate { get; set; }
+
+        public short? ScheduledPrepaymentFrequencyTypeId { get; set; }
+
         public short CustomerSensitivityLevelId { get; set; }
+
+        public int? InternalPrudentialGuidelineStatusId { get; set; }
+
+        public int? ExternalPrudentialGuidelineStatusId { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? NPLDate { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -102,6 +168,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Branch tbl_Branch { get; set; }
 
         public virtual tbl_CASA tbl_CASA { get; set; }
+
+        public virtual tbl_CASA tbl_CASA1 { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
 
@@ -113,6 +181,16 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Customer_Sensitivity_Level tbl_Customer_Sensitivity_Level { get; set; }
 
+        public virtual tbl_Day_Count_Convention tbl_Day_Count_Convention { get; set; }
+
+        public virtual tbl_Day_Interest_Type tbl_Day_Interest_Type { get; set; }
+
+        public virtual tbl_Frequency_Type tbl_Frequency_Type { get; set; }
+
+        public virtual tbl_Frequency_Type tbl_Frequency_Type1 { get; set; }
+
+        public virtual tbl_Frequency_Type tbl_Frequency_Type2 { get; set; }
+
         public virtual tbl_Product tbl_Product { get; set; }
 
         public virtual tbl_Staff tbl_Staff { get; set; }
@@ -121,7 +199,15 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
 
+        public virtual tbl_Loan tbl_Loan { get; set; }
+
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+
+        public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline { get; set; }
+
+        public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline1 { get; set; }
+
+        public virtual tbl_Loan_Schedule_Type tbl_Loan_Schedule_Type { get; set; }
 
         public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
 
