@@ -207,6 +207,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Charge_Range> tbl_Charge_Range { get; set; }
         public virtual DbSet<tbl_Charges> tbl_Charges { get; set; }
         public virtual DbSet<tbl_Chart_Of_Account> tbl_Chart_Of_Account { get; set; }
+        public virtual DbSet<tbl_Chart_Of_Account_Class> tbl_Chart_Of_Account_Class { get; set; }
         public virtual DbSet<tbl_Chart_Of_Account_Currency> tbl_Chart_Of_Account_Currency { get; set; }
         public virtual DbSet<tbl_Financial_Statement_Caption> tbl_Financial_Statement_Caption { get; set; }
         public virtual DbSet<tbl_Financial_Statement_Type> tbl_Financial_Statement_Type { get; set; }
@@ -1849,10 +1850,6 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<tbl_Collateral_PreciousMetal>()
-                .Property(e => e.MetalType)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<tbl_Collateral_PreciousMetal>()
                 .Property(e => e.ValuationAmount)
                 .HasPrecision(19, 4);
 
@@ -2522,6 +2519,11 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Chart_Of_Account>()
                 .HasMany(e => e.tbl_Temp_Fee)
                 .WithRequired(e => e.tbl_Chart_Of_Account)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Chart_Of_Account_Class>()
+                .HasMany(e => e.tbl_Chart_Of_Account)
+                .WithRequired(e => e.tbl_Chart_Of_Account_Class)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Financial_Statement_Caption>()

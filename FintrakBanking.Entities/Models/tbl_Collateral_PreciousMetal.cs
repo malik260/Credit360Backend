@@ -23,10 +23,6 @@ namespace FintrakBanking.Entities.Models
         public string PreciousMetalName { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string MetalType { get; set; }
-
-        [Required]
         [StringLength(10)]
         public string WeightInGrammes { get; set; }
 

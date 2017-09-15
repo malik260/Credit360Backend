@@ -83,6 +83,7 @@
     <Compile Include="Models\tbl_Charge_Fee.cs" />
     <Compile Include="Models\tbl_Charge_Range.cs" />
     <Compile Include="Models\tbl_Chart_Of_Account.cs" />
+    <Compile Include="Models\tbl_Chart_Of_Account_Class.cs" />
     <Compile Include="Models\tbl_Chart_Of_Account_Currency.cs" />
     <Compile Include="Models\tbl_Checklist_Definition.cs" />
     <Compile Include="Models\tbl_Checklist_Detail.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Models\tbl_Custom_Field_Data_Upload.cs" />
     <Compile Include="Models\tbl_Custom_Field_Option.cs" />
     <Compile Include="Models\tbl_Custom_HostPage.cs" />
+    <Compile Include="Models\tbl_Day_Count.cs" />
     <Compile Include="Models\tbl_Day_Count_Convention.cs" />
     <Compile Include="Models\tbl_Day_Interest_Type.cs" />
     <Compile Include="Models\tbl_Deal_Classification.cs" />
@@ -212,6 +214,7 @@
     <Compile Include="Models\tbl_Loan_Schedule_Type.cs" />
     <Compile Include="Models\tbl_Loan_Status.cs" />
     <Compile Include="Models\tbl_Loan_Type.cs" />
+    <Compile Include="Models\tbl_Loan_Type_Batch.cs" />
     <Compile Include="Models\tbl_MachineValue_Base.cs" />
     <Compile Include="Models\tbl_Management_Type.cs" />
     <Compile Include="Models\tbl_MIS_Info.cs" />
@@ -227,6 +230,7 @@
     <Compile Include="Models\tbl_Product_Class_Type.cs" />
     <Compile Include="Models\tbl_Product_CollateralType.cs" />
     <Compile Include="Models\tbl_Product_Currency.cs" />
+    <Compile Include="Models\tbl_Product_Fee.cs" />
     <Compile Include="Models\tbl_Product_Group.cs" />
     <Compile Include="Models\tbl_Product_Price_Index.cs" />
     <Compile Include="Models\tbl_Product_Type.cs" />
