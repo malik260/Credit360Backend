@@ -806,7 +806,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     //ProductId = item.productId,
                     FeeId = item.feeId,
-                    CompanyId = item.companyId,
+                    CompanyId = productModel.companyId,
 
                     RateValue = item.rateValue,
                     DependentAmount = item.dependentAmount,
@@ -825,7 +825,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     //ProductId = item.productId,
                     CollateralTypeId = item.collateralTypeId,
-                    CompanyId = item.companyId,
+                    CompanyId = productModel.companyId,
                     CreatedBy = item.createdBy,
                     DateTimeCreated = genSetup.GetApplicationDate()
                 };
