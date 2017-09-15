@@ -520,6 +520,7 @@ namespace FintrakBanking.Repositories.Customer
             }
 
         }
+
         private void AddCustomerEmploymentHistory(List<CustomerEmploymentHistoryViewModels> entity,
            int status)
         {

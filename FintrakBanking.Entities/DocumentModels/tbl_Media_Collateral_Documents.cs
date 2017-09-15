@@ -9,8 +9,9 @@ namespace FintrakBanking.Entities.DocumentModels
     public partial class tbl_Media_Collateral_Documents
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int DocumentId { get; set; }
+
+        public int CollateralCustomerId { get; set; }
 
         [Required]
         [StringLength(400)]
@@ -28,5 +29,8 @@ namespace FintrakBanking.Entities.DocumentModels
         [Required]
         [StringLength(100)]
         public string DocumentCode { get; set; }
+
+        public int CreatedBy { get; set; }
+
     }
 }

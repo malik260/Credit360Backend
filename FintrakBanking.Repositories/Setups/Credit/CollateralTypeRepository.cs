@@ -184,10 +184,11 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 CollateralSubTypeName = entity.collateralSubTypeName,
                 CollateralTypeId = entity.collateralTypeId,
                 Haircut = entity.haircut,
-                RevaluationDuration = entity.revaluationDuration
+                RevaluationDuration = entity.revaluationDuration,
+                CreatedBy = entity.createdBy,
+                DateTimeCreated = DateTime.Now,
             };
             context.tbl_Collateral_Type_Sub.Add(type);
-            var respose = await context.SaveChangesAsync() != 0;
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -201,12 +202,14 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 ApplicationDate = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
-
             this.auditTrail.AddAuditTrail(audit);
-
             //end of Audit section -------------------------------
+
+            var respose = await context.SaveChangesAsync() != 0;
+
             return respose;
         }
+
         #endregion End od Collateral SubType
 
 

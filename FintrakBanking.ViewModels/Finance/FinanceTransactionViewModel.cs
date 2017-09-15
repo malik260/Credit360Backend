@@ -38,4 +38,10 @@ namespace FintrakBanking.ViewModels.Finance
         public short sourceBranchId { get; set; }
         public short destinationBranchId { get; set; }
     }
+
+    public class CasaBalanceViewModel
+    {
+        public decimal availableBalance { get; set; }
+        public decimal ledgerBalance { get; set; }
+    }
 }
