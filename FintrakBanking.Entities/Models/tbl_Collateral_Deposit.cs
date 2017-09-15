@@ -14,8 +14,6 @@ namespace FintrakBanking.Entities.Models
 
         public int CollateralCustomerId { get; set; }
 
-        public short? CollateralSubTypeId { get; set; }
-
         [StringLength(50)]
         public string DealReferenceNumber { get; set; }
 
@@ -23,7 +21,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string AccountNumber { get; set; }
 
-        //[Column(TypeName = "money")]
         public bool ExistingLienAmount { get; set; }
 
         [Column(TypeName = "money")]

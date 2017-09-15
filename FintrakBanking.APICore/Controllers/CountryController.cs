@@ -22,11 +22,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("city")]
-        public HttpResponseMessage AddCity([FromBody] CityViewModel entity)
+        public async System.Threading.Tasks.Task<HttpResponseMessage> AddCityAsync([FromBody] CityViewModel entity)
         {
             try
             {
-                var data = repo.AddCity(entity).IsCompleted;
+                var data = await repo.AddCity(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

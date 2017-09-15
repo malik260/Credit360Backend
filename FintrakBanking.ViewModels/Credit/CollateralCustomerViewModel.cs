@@ -18,9 +18,17 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isLocationBased { get; set; }
         public int? valuationCycle { get; set; }
         public double haircut { get; set; }
+        public bool hasInsurance { get; set; }
 
         // presentation
         public int approvalStatus { get; set; }
+
+        // insurance
+        public string referenceNumber { get; set; }
+        public decimal coverageAmount { get; set; }
+        public string insuranceCompany { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime expiryDate { get; set; }
 
         // deposit
         public int collateralDepositId { get; set; }
@@ -33,6 +41,34 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime maturityDate { get; set; }
         public decimal maturityAmount { get; set; }
         public string remark { get; set; }
+
+        // equipment
+        public string machineName { get; set; }
+        public string description { get; set; }
+        public string machineNumber { get; set; }
+        public string manufacturerName { get; set; }
+        public string yearOfManufacture { get; set; }
+        public string yearOfPurchase { get; set; }
+        public int valueBaseTypeId { get; set; }
+        public string machineCondition { get; set; }
+        public string machineryLocation { get; set; }
+        public decimal replacementValue { get; set; }
+        public string equipmentSize { get; set; }
+        public string intendedUse { get; set; }
+
+        // miscellaneous
+        public int units { get; set; }
+        public decimal unitValue { get; set; }
+        public List<MiscellaneousNote> notes { get; set; }
+
+
+    }
+
+    public class MiscellaneousNote
+    {
+        public string labelName { get; set; }
+        public string labelValue { get; set; }
+        public string controlName { get; set; }
     }
 
     public class CollateralCustomerViewModel : GeneralEntity
@@ -276,17 +312,17 @@ namespace FintrakBanking.ViewModels.Credit
         public string columnValue { get; set; }
     }
 
-    public class CollateralDocumentViewModel
-    {
-        public long documentId { get; set; }
-        public int collateralCustomerId { get; set; }
-        public string documentCategory { get; set; }
-        public string documentRef { get; set; }
-        public string documentCode { get; set; }
-        public string documentType { get; set; }
-        public bool isMandatory { get; set; }
-        public string remark { get; set; }
-    }
+    //public class CollateralDocumentViewModel
+    //{
+    //    public long documentId { get; set; }
+    //    public int collateralCustomerId { get; set; }
+    //    public string documentCategory { get; set; }
+    //    public string documentRef { get; set; }
+    //    public string documentCode { get; set; }
+    //    public string documentType { get; set; }
+    //    public bool isMandatory { get; set; }
+    //    public string remark { get; set; }
+    //}
 
     public class CollateralValueBaseTypeViewModel : GeneralEntity
     {

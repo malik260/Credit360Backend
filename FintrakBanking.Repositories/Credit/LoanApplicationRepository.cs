@@ -522,7 +522,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public int GetStaffWorkflowViewScope(int operationId, int staffId)
         {
-            int scope = 1; // default @Level
+            int scope = (int)ProcessViewScopeEnum.Level; // default @Level
             var staffWorkflow = context.tbl_Approval_Group_Mapping.Where(x => x.OperationId == operationId)
                 .SelectMany(g => g.tbl_Approval_Level)
                 .SelectMany(l => l.tbl_Approval_Level_Staff).Where(x => x.StaffId == staffId);
