@@ -99,42 +99,11 @@ namespace FintrakBanking.Repositories.Admin
             {
                 return false;
             }
+
             bool output = false;
 
             List<tbl_Profile_UserGroup> userGroups = new List<tbl_Profile_UserGroup>();
             List<tbl_Profile_AdditionalActivity> userActivities = new List<tbl_Profile_AdditionalActivity>();
-
-            var _user = new tbl_Profile_User()
-            {
-                StaffId = user.staffId,
-                Username = user.username,
-                Password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey),
-                IsFirstLoginAttempt = false,
-                IsActive = false,
-                IsLocked = true,
-                FailedLogonAttempt = 0,
-                SecurityQuestion = user.securityQuestion,
-                SecurityAnswer = user.securityAnswer,
-                NextPasswordChangeDate = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
-                CreatedBy = user.createdBy,
-                LastUpdatedBy = user.createdBy,
-                DateTimeCreated = DateTime.Now,
-                ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-                ApprovalStatus = false,
-            };
-
-            // Audit Section ---------------------------
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.UserAdded,
-                StaffId = (int)user.createdBy,
-                BranchId = (short)user.userBranchId,
-                Detail = $"Added User with username: '{user.username}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
 
             if (user.activities.Any())
             {
@@ -169,15 +138,44 @@ namespace FintrakBanking.Repositories.Admin
                         CreatedBy = user.createdBy
                     };
 
-                    var targetGroupName = context.tbl_Profile_Group.Where(x => x.GroupId == grpItem.GroupId).FirstOrDefault();
-
-                    audit.Detail = audit.Detail + $" added to group: '{targetGroupName.GroupName}' ";
-                    //end of Audit section -------------------------------
-                    auditTrail.AddAuditTrail(audit);
-
                     userGroups.Add(grpItem);
                 }
             }
+
+            var _user = new tbl_Profile_User()
+            {
+                StaffId = user.staffId,
+                Username = user.username,
+                Password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey),
+                IsFirstLoginAttempt = false,
+                IsActive = false,
+                IsLocked = true,
+                FailedLogonAttempt = 0,
+                SecurityQuestion = user.securityQuestion,
+                SecurityAnswer = user.securityAnswer,
+                NextPasswordChangeDate = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                CreatedBy = user.createdBy,
+                LastUpdatedBy = user.createdBy,
+                DateTimeCreated = DateTime.Now,
+                ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
+                ApprovalStatus = false,
+
+                tbl_Profile_AdditionalActivity = userActivities,
+                tbl_Profile_UserGroup = userGroups
+            };
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.UserAdded,
+                StaffId = (int)user.createdBy,
+                BranchId = (short)user.userBranchId,
+                Detail = $"Added User with username: '{user.username}'",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
 
             if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
             {
@@ -499,32 +497,6 @@ namespace FintrakBanking.Repositories.Admin
                     }
                 }
 
-                // Updating the target user
-                targetUser.StaffId = user.staffId;
-                targetUser.Username = user.username;
-                targetUser.IsFirstLoginAttempt = false;
-                targetUser.IsActive = false;
-                targetUser.IsLocked = true;
-                targetUser.FailedLogonAttempt = 0;
-                targetUser.CreatedBy = user.createdBy;
-                targetUser.LastUpdatedBy = user.createdBy;
-                targetUser.DateTimeUpdated = DateTime.Now;
-                targetUser.ApprovalStatusId = (int)ApprovalStatusEnum.Pending;
-                targetUser.ApprovalStatus = false;
-
-                // Audit Section ---------------------------
-                var audit = new tbl_Audit
-                {
-                    AuditTypeId = (short)AuditTypeEnum.UserUpdated,
-                    StaffId = user.createdBy,
-                    BranchId = user.userBranchId,
-                    Detail = $"Updated User with username: '{user.username}'",
-                    IPAddress = user.userIPAddress,
-                    Url = user.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
-                };
-
                 List<tbl_Profile_UserGroup> userGroups = new List<tbl_Profile_UserGroup>();
                 List<tbl_Profile_AdditionalActivity> userActivities = new List<tbl_Profile_AdditionalActivity>();
 
@@ -564,6 +536,34 @@ namespace FintrakBanking.Repositories.Admin
                         userActivities.Add(userActivity);
                     }
                 }
+
+                // Updating the target user
+                targetUser.StaffId = user.staffId;
+                targetUser.Username = user.username;
+                targetUser.IsFirstLoginAttempt = false;
+                targetUser.IsActive = false;
+                targetUser.IsLocked = true;
+                targetUser.FailedLogonAttempt = 0;
+                targetUser.CreatedBy = user.createdBy;
+                targetUser.LastUpdatedBy = user.createdBy;
+                targetUser.DateTimeUpdated = DateTime.Now;
+                targetUser.ApprovalStatusId = (int)ApprovalStatusEnum.Pending;
+                targetUser.ApprovalStatus = false;
+                targetUser.tbl_Profile_UserGroup = userGroups;
+                targetUser.tbl_Profile_AdditionalActivity = userActivities;
+
+                // Audit Section ---------------------------
+                var audit = new tbl_Audit
+                {
+                    AuditTypeId = (short)AuditTypeEnum.UserUpdated,
+                    StaffId = user.createdBy,
+                    BranchId = user.userBranchId,
+                    Detail = $"Updated User with username: '{user.username}'",
+                    IPAddress = user.userIPAddress,
+                    Url = user.applicationUrl,
+                    ApplicationDate = genSetup.GetApplicationDate(),
+                    SystemDateTime = DateTime.Now
+                };
 
                 if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
                 {
