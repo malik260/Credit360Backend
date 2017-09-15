@@ -89,7 +89,7 @@ namespace FintrakBanking.APICore.Controllers
                 var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetUsersAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
-                if (staffinfo == null)
+                if (!staffinfo.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
@@ -151,26 +151,28 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpPut]
         [Route("user/{id}")]
-        public HttpResponseMessage UpdateUser(int id, [FromBody]AppUserViewModel user)
+        public async Task<HttpResponseMessage> UpdateUser(int id, [FromBody]AppUserViewModel user)
         {
-            var token = new TokenDecryptionHelper();
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
 
                 user.createdBy = token.GetStaffId;
                 user.userBranchId = (short)token.GetBranchId;
-                // user.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                user.userIPAddress = HttpContext.Current.Request.Url.AbsoluteUri;
                 user.applicationUrl = HttpContext.Current.Request.Path;
                 user.companyId = token.GetCompanyId;
-                var data = repo.UpdateUser(id, user);
-                if (data != null)
+                var data = await repo.UpdateUser(id, user);
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                         new { success = true, result = user, message = "User has been created successfully" });
+                       new { success = true, result = user, message = "User has been created successfully, now awaiting approval" });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "An unknown error has occured" });
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, result = user, message = "User not created successfully" });
+                }
             }
             catch (Exception ex)
             {

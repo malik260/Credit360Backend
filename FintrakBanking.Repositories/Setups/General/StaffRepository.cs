@@ -204,7 +204,8 @@ on c.DepartmentId equals dept.DepartmentId
 
             var targetStaff = context.tbl_Staff.Find(staffid);
 
-            var unApprovedStaffEdit = context.tbl_Temp_Staff.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
+            var unApprovedStaffEdit = context.tbl_Temp_Staff.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && 
+            x.StaffCode.ToLower() == staffModel.StaffCode.ToLower());
 
             tbl_Temp_Staff tempStaff;
 

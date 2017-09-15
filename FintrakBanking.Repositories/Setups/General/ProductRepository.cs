@@ -865,6 +865,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffId = productModel.createdBy,
                             companyId = productModel.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            comment = "Please approve this product",
                             targetId = product.ProductId,
                             operationId = (int)OperationsEnum.ProductCreation,
                             BranchId = productModel.userBranchId

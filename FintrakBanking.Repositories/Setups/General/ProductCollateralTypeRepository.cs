@@ -122,7 +122,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                 this.context.tbl_Temp_Product_CollateralType.Add(tempProductCollateralEntity);
                 // Audit Section ---------------------------
-                var product = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productCollateral.productId);
+                var product = this.context.tbl_Temp_Product.FirstOrDefault(x => x.ProductId == productCollateral.productId);
                 var collateralInfo = this.context.tbl_Collateral_Type.FirstOrDefault(x => x.CollateralTypeId == productCollateral.collateralTypeId);
                 var audit = new tbl_Audit
                 {
