@@ -69,9 +69,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_Fee> tbl_Temp_Product_Fee { get; set; }
-
         public virtual tbl_Fee_Interval tbl_Fee_Interval { get; set; }
 
         public virtual tbl_Fee_Target tbl_Fee_Target { get; set; }
@@ -79,5 +76,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Fee_Type tbl_Fee_Type { get; set; }
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_Fee> tbl_Temp_Product_Fee { get; set; }
     }
 }

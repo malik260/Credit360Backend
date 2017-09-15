@@ -19,7 +19,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         Task<bool> UpdateUser(int userId, UserViewModel user);
 
-        List<UserViewModel> FindUserByUserNameAndPassword(string username, string password);
+        Task<List<UserViewModel>> FindUserByUserNameAndPassword(string username, string password);
 
         bool IsUserExit(string username);
 

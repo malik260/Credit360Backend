@@ -15,10 +15,10 @@ namespace FintrakBanking.APICore.Reports.Credit
         {
             if (!IsPostBack)
             {
-                //authCtrl.ValidateAuthorizedUser(token.GetUsername);
                 ReportParameter date = new ReportParameter("branchName", Request.QueryString["branchName"]);
                 rvBranchReport.LocalReport.SetParameters(new ReportParameter[] { date });
                 rvBranchReport.LocalReport.Refresh();
+
             }
         }
 

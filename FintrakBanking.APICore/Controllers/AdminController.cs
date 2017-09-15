@@ -71,7 +71,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation successful, request has been routed to the next approving office" });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -89,7 +89,7 @@ namespace FintrakBanking.APICore.Controllers
                 var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetUsersAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
-                if (staffinfo == null)
+                if (!staffinfo.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
@@ -103,7 +103,6 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-
         [HttpPost]
         [Route("user")]
         public async Task<HttpResponseMessage> AddUserAsync([FromBody]AppUserViewModel user)
@@ -113,10 +112,10 @@ namespace FintrakBanking.APICore.Controllers
                 var token = new TokenDecryptionHelper();
                 if (I.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
                 {
-                    if (repo.iSUserExit(user.username))
+                    if (repo.isUserExist(user.username))
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
-                           new { suucess = false, message = "A user with this username already exit" });
+                           new { suucess = false, message = "A user with this username already exist" });
                     }
 
                     user.createdBy = token.GetStaffId;
@@ -152,26 +151,28 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpPut]
         [Route("user/{id}")]
-        public HttpResponseMessage UpdateUser(int id, [FromBody]AppUserViewModel user)
+        public async Task<HttpResponseMessage> UpdateUser(int id, [FromBody]AppUserViewModel user)
         {
-            var token = new TokenDecryptionHelper();
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
 
                 user.createdBy = token.GetStaffId;
                 user.userBranchId = (short)token.GetBranchId;
-                // user.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                user.userIPAddress = HttpContext.Current.Request.Url.AbsoluteUri;
                 user.applicationUrl = HttpContext.Current.Request.Path;
                 user.companyId = token.GetCompanyId;
-                var data = repo.UpdateUser(id, user);
-                if (data != null)
+                var data = await repo.UpdateUser(id, user);
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                         new { success = true, result = user, message = "User has been created successfully" });
+                       new { success = true, result = user, message = "User has been created successfully, now awaiting approval" });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "An unknown error has occured" });
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, result = user, message = "User not created successfully" });
+                }
             }
             catch (Exception ex)
             {

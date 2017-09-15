@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Admin
         }
 
         #region Users
-        public bool iSUserExit(string username)
+        public bool isUserExist(string username)
         {
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
         }
@@ -95,10 +95,52 @@ namespace FintrakBanking.Repositories.Admin
 
         public async Task<bool> CreateUser(AppUserViewModel user)
         {
-            int output;
+            if (user == null)
+            {
+                return false;
+            }
+
+            bool output = false;
 
             List<tbl_Profile_UserGroup> userGroups = new List<tbl_Profile_UserGroup>();
             List<tbl_Profile_AdditionalActivity> userActivities = new List<tbl_Profile_AdditionalActivity>();
+
+            if (user.activities.Any())
+            {
+                foreach (var item in user.activities)
+                {
+                    var userActivity = new tbl_Profile_AdditionalActivity()
+                    {
+                        ActivityId = item.activityId,
+                        //UserId = _user.UserId,
+                        CanAdd = false,
+                        CanEdit = false,
+                        CanApprove = false,
+                        CanDelete = false,
+                        CanView = false,
+                        CreatedBy = user.createdBy,
+                        DateTimeCreated = DateTime.Now
+                    };
+
+                    userActivities.Add(userActivity);
+                }
+            }
+
+            if (user.group.Count > 0)
+            {
+                foreach (var item in user.group)
+                {
+                    var grpItem = new tbl_Profile_UserGroup()
+                    {
+                        GroupId = item.groupId,
+                        //UserId = _user.UserId,
+                        DateTimeCreated = DateTime.Now,
+                        CreatedBy = user.createdBy
+                    };
+
+                    userGroups.Add(grpItem);
+                }
+            }
 
             var _user = new tbl_Profile_User()
             {
@@ -117,6 +159,9 @@ namespace FintrakBanking.Repositories.Admin
                 DateTimeCreated = DateTime.Now,
                 ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
                 ApprovalStatus = false,
+
+                tbl_Profile_AdditionalActivity = userActivities,
+                tbl_Profile_UserGroup = userGroups
             };
 
             // Audit Section ---------------------------
@@ -132,7 +177,6 @@ namespace FintrakBanking.Repositories.Admin
                 SystemDateTime = DateTime.Now
             };
 
-
             if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
@@ -142,61 +186,18 @@ namespace FintrakBanking.Repositories.Admin
                         context.tbl_Profile_User.Add(_user);
                         auditTrail.AddAuditTrail(audit);
 
-                        if (user.group.Count > 0)
-                        {
-                            foreach (var item in user.group)
-                            {
-                                var grpItem = new tbl_Profile_UserGroup()
-                                {
-                                    GroupId = item.groupId,
-                                    UserId = _user.UserId,
-                                    DateTimeCreated = DateTime.Now,
-                                    CreatedBy = user.createdBy
-                                };
-
-                                var targetGroupName = context.tbl_Profile_Group.Where(x => x.GroupId == grpItem.GroupId).FirstOrDefault();
-
-                                audit.Detail = audit.Detail + $" added to group: '{targetGroupName.GroupName}' ";
-                                //end of Audit section -------------------------------
-                                auditTrail.AddAuditTrail(audit);
-
-                                context.tbl_Profile_UserGroup.Add(grpItem);
-                            }
-                        }
-
-                        if (user.activities.Any())
-                        {
-                            foreach (var item in user.activities)
-                            {
-                                var userActivity = new tbl_Profile_AdditionalActivity()
-                                {
-                                    ActivityId = item.activityId,
-                                    UserId = _user.UserId,
-                                    CanAdd = false,
-                                    CanEdit = false,
-                                    CanApprove = false,
-                                    CanDelete = false,
-                                    CanView = false,
-                                    CreatedBy = user.createdBy,
-                                    DateTimeCreated = DateTime.Now
-                                };
-
-                                context.tbl_Profile_AdditionalActivity.Add(userActivity);
-                            }
-                        }
-
-                        output = await context.SaveChangesAsync();
+                        output = await context.SaveChangesAsync() > 0;
 
                         var entity = new ApprovalViewModel
                         {
                             staffId = user.createdBy,
                             companyId = user.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = _user.StaffId,
+                            targetId = _user.UserId,
                             operationId = (int)OperationsEnum.UserCreation,
                             BranchId = user.userBranchId
                         };
-                        var response =  await workFlow.LogForApproval(entity);
+                        var response = await workFlow.LogForApproval(entity);
                         trans.Commit();
                     }
                     catch (Exception ex)
@@ -211,7 +212,7 @@ namespace FintrakBanking.Repositories.Admin
                 throw new Exception("Approval route have not been defined for this operation");
             }
 
-            return output != 0;
+            return output;
         }
 
         public IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId)
@@ -226,7 +227,7 @@ namespace FintrakBanking.Repositories.Admin
                         join st in context.tbl_Staff on c.StaffId equals st.StaffId
                         join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
                         join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
-                        join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
+                        join atrail in context.tbl_Approval_Trail on c.UserId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
                               && atrail.OperationId == (int)OperationsEnum.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new UserViewModel()
@@ -473,9 +474,11 @@ namespace FintrakBanking.Repositories.Admin
 
         public async Task<bool> UpdateUser(int userId, AppUserViewModel user)
         {
+            bool output = false;
             var targetUser = context.tbl_Profile_User.Find(userId);
-            if (targetUser.ApprovalStatus == true)
+            if (targetUser != null)
             {
+                // Removing existing groups and activities
                 var targetGroups = context.tbl_Profile_UserGroup.Where(x => x.UserId == userId).ToList();
                 var targetActivities = context.tbl_Profile_AdditionalActivity.Where(x => x.UserId == userId).ToList();
                 if (targetGroups.Any())
@@ -494,6 +497,9 @@ namespace FintrakBanking.Repositories.Admin
                     }
                 }
 
+                List<tbl_Profile_UserGroup> userGroups = new List<tbl_Profile_UserGroup>();
+                List<tbl_Profile_AdditionalActivity> userActivities = new List<tbl_Profile_AdditionalActivity>();
+
                 if (user.group.Count > 0)
                 {
                     foreach (var item in user.group)
@@ -501,12 +507,12 @@ namespace FintrakBanking.Repositories.Admin
                         var grpItem = new tbl_Profile_UserGroup()
                         {
                             GroupId = item.groupId,
-                            UserId = userId,
+                            //UserId = userId,
                             DateTimeCreated = DateTime.Now,
                             CreatedBy = user.createdBy
                         };
 
-                        context.tbl_Profile_UserGroup.Add(grpItem);
+                        userGroups.Add(grpItem);
                     }
                 }
 
@@ -517,16 +523,83 @@ namespace FintrakBanking.Repositories.Admin
                         var userActivity = new tbl_Profile_AdditionalActivity()
                         {
                             ActivityId = item.activityId,
-                            UserId = userId,
+                            //UserId = _user.UserId,
+                            CanAdd = false,
+                            CanEdit = false,
+                            CanApprove = false,
+                            CanDelete = false,
+                            CanView = false,
                             CreatedBy = user.createdBy,
                             DateTimeCreated = DateTime.Now
                         };
 
-                        context.tbl_Profile_AdditionalActivity.Add(userActivity);
+                        userActivities.Add(userActivity);
                     }
                 }
-                var response = await context.SaveChangesAsync();
-                return response != 0;
+
+                // Updating the target user
+                targetUser.StaffId = user.staffId;
+                targetUser.Username = user.username;
+                targetUser.IsFirstLoginAttempt = false;
+                targetUser.IsActive = false;
+                targetUser.IsLocked = true;
+                targetUser.FailedLogonAttempt = 0;
+                targetUser.CreatedBy = user.createdBy;
+                targetUser.LastUpdatedBy = user.createdBy;
+                targetUser.DateTimeUpdated = DateTime.Now;
+                targetUser.ApprovalStatusId = (int)ApprovalStatusEnum.Pending;
+                targetUser.ApprovalStatus = false;
+                targetUser.tbl_Profile_UserGroup = userGroups;
+                targetUser.tbl_Profile_AdditionalActivity = userActivities;
+
+                // Audit Section ---------------------------
+                var audit = new tbl_Audit
+                {
+                    AuditTypeId = (short)AuditTypeEnum.UserUpdated,
+                    StaffId = user.createdBy,
+                    BranchId = user.userBranchId,
+                    Detail = $"Updated User with username: '{user.username}'",
+                    IPAddress = user.userIPAddress,
+                    Url = user.applicationUrl,
+                    ApplicationDate = genSetup.GetApplicationDate(),
+                    SystemDateTime = DateTime.Now
+                };
+
+                if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
+                {
+                    using (var trans = context.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            auditTrail.AddAuditTrail(audit);
+
+                            output = await context.SaveChangesAsync() > 0;
+
+                            var entity = new ApprovalViewModel
+                            {
+                                staffId = user.createdBy,
+                                companyId = user.companyId,
+                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                                targetId = userId,
+                                operationId = (int)OperationsEnum.UserCreation,
+                                BranchId = user.userBranchId
+                            };
+                            var response = await workFlow.LogForApproval(entity);
+                            trans.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            trans.Rollback();
+                            throw new Exception(ex.Message);
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Approval route have not been defined for this operation");
+                }
+
+                return output;
             }
             else
             {

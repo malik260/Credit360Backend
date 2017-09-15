@@ -1,15 +1,15 @@
 ﻿using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.CreditOperations;
+using FintrakBanking.Interfaces.Credit;
 using System.Linq;
 
-namespace FintrakBanking.Repositories.CreditOperations
+namespace FintrakBanking.Repositories.Credit
 
 {
-    public class CreditOperationsRepository : ICreditOperationsRepository
+    public class LoanOperationsRepository : ILoanOperationsRepository
     {
         private FinTrakBankingContext context;
 
-        public CreditOperationsRepository(
+        public LoanOperationsRepository(
 
         FinTrakBankingContext _context)
         {

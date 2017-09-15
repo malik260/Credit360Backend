@@ -34,7 +34,7 @@ namespace FintrakBanking.APICore.Providers
             userVM.password = StaticHelpers.EncryptSha512(context.Password, StaticHelpers.EncryptionKey);
             userVM.username = context.UserName;
             var _authRepo = new AuthenticationRepository(repo);
-            var user = _authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password);
+            var user = await _authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password);
             if (user == null)
             {
                 context.SetError("invalid_grant", "The user name or password is incorrect.");
@@ -52,8 +52,8 @@ namespace FintrakBanking.APICore.Providers
             currIdentity.AddClaim(new Claim("countryId", currUser.countryId.ToString()));
             currIdentity.AddClaim(new Claim("userId", currUser.user_id.ToString()));
 
-            var today = System.DateTime.Now;
-            System.TimeSpan duration = new System.TimeSpan(exipredHr, 0, 0);
+            var today = DateTime.Now;
+            TimeSpan duration = new TimeSpan(exipredHr, 0, 0);
 
             var props = new AuthenticationProperties(new Dictionary<string, string>
                 {

@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Loan = new HashSet<tbl_Loan>();
+            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
+            tbl_Loan_Schedule_Type_Product_Type_Mapping = new HashSet<tbl_Loan_Schedule_Type_Product_Type_Mapping>();
             tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
         }
 
@@ -33,7 +35,13 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+
         public virtual tbl_Loan_Schedule_Category tbl_Loan_Schedule_Category { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Schedule_Type_Product_Type_Mapping> tbl_Loan_Schedule_Type_Product_Type_Mapping { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }

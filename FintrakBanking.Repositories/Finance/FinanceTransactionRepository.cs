@@ -9,7 +9,7 @@ using System.Linq;
 using System;
 using System.ServiceModel;
 using System.Collections.Generic;
-using FintrakBanking.Interfaces.CreditOperations;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -19,10 +19,10 @@ namespace FintrakBanking.Repositories.Finance
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
-        private ICreditOperationsRepository creditOperations;
+        private ILoanOperationsRepository creditOperations;
 
         public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, 
-                                            ICreditOperationsRepository _creditOperations, FinTrakBankingContext _context)
+                                            ILoanOperationsRepository _creditOperations, FinTrakBankingContext _context)
         {
             this.context = _context;
             this.generalSetup = _genSetup;

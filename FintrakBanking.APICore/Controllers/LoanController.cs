@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
 
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.RunningLoans( id, token.GetCompanyId);
+                var data = repo.RunningLoans(id, token.GetCompanyId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -177,7 +177,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
 
                 var data = await repo.AddLoanBooking(entity);
-                if (data !="")
+                if (data != "")
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The Loan booking was successful and and is waiting for approval.\r\n Loan Reference Number: " + data });
                 }
@@ -213,7 +213,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         {
             try
             {
-
                 var data = repo.GetLoan(loanId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
@@ -233,7 +232,11 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.GetLoanBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
             catch (Exception e)
             {
@@ -626,7 +629,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repoCollateral.GetCollateralCustomer(customerId,token.GetCompanyId);
+                var response = repoCollateral.GetCollateralCustomer(customerId, token.GetCompanyId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
