@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
         public string ValuerLicenceNumber { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string Name { get; set; }
 
         public short? ValuerTypeId { get; set; }
@@ -27,6 +27,15 @@ namespace FintrakBanking.Entities.Models
         public short? CityId { get; set; }
 
         public short? CountryId { get; set; }
+
+        [StringLength(50)]
+        public string EmailAddress { get; set; }
+
+        [StringLength(50)]
+        public string PhoneNumber { get; set; }
+
+        [StringLength(500)]
+        public string Address { get; set; }
 
         public int CreatedBy { get; set; }
 

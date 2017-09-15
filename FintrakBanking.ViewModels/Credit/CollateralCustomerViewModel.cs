@@ -9,7 +9,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int collateralId { get; set; }
         public int collateralTypeId { get; set; }
-        public int? collateralSubTypeId { get; set; }
+        public short collateralSubTypeId { get; set; }
         public int customerId { get; set; }
         public short currencyId { get; set; }
         public string collateralCode { get; set; }
@@ -306,11 +306,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string cityName { get; set; }
         public short? countryId { get; set; }
         public string countryName { get; set; }
+        public string emailAddress { get; set; }
+        public string phoneNumber { get; set; }
+        public string address { get; set; }
     }
 
     public class CollateralValuerTypeViewModel : GeneralEntity
     {
-        public short collateralValuerTypeId { get; set; }
+        public short valuerTypeId { get; set; }
         public string valuerTypeName { get; set; }
     }
 

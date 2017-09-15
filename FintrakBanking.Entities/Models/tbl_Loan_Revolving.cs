@@ -10,7 +10,7 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Loan_Revolving
     {
         [Key]
-        public int LoanId { get; set; }
+        public int RevolvingLoanId { get; set; }
 
         public int CustomerId { get; set; }
 

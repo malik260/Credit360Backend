@@ -21,6 +21,8 @@ namespace FintrakBanking.Interfaces.Credit
         Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity);
         IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId);
         bool IsCollateralDocExists(string docName);
+        Task<bool> AddCollateralValuer(CollateralValuersViewModel entity);
+        Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id);
         #endregion Collateral
 
         #region Collateral Type

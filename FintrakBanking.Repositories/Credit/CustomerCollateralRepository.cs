@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Credit
             var collateral = context.tbl_Collateral_Customer.Add(new tbl_Collateral_Customer
             {
                 CollateralTypeId = model.collateralTypeId,
-                CollateralSubTypeId = model.collateralSubTypeId,
+              //  CollateralSubTypeId = model.collateralSubTypeId,
                 CollateralCode = model.collateralCode,
                 CompanyId = model.companyId,
                 AllowSharing = model.allowSharing,
@@ -141,7 +141,7 @@ namespace FintrakBanking.Repositories.Credit
                 CollateralCustomerId = collateralId,
                 DealReferenceNumber = entity.dealReferenceNumber,
                 AccountNumber = entity.accountNumber,
-                ExistingLienAmount = entity.existingLienAmount,
+              //  ExistingLienAmount = entity.existingLienAmount,
                 LienAmount = entity.lienAmount,
                 AvailableBalance = entity.availableBalance,
                 SecurityValue = entity.securityValue,
@@ -159,7 +159,7 @@ namespace FintrakBanking.Repositories.Credit
 
             collateral.DealReferenceNumber = entity.dealReferenceNumber;
             collateral.AccountNumber = entity.accountNumber;
-            collateral.ExistingLienAmount = entity.existingLienAmount;
+           // collateral.ExistingLienAmount = entity.existingLienAmount;
             collateral.LienAmount = entity.lienAmount;
             collateral.AvailableBalance = entity.availableBalance;
             collateral.SecurityValue = entity.securityValue;
@@ -216,10 +216,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 collateralId = o.CollateralCustomerId,
                 collateralDepositId = o.CollateralDepositId,
-                collateralSubTypeId = o.CollateralSubTypeId,
+              // collateralSubTypeId = o.CollateralSubTypeId,
                 dealReferenceNumber = o.DealReferenceNumber,
                 accountNumber = o.AccountNumber,
-                existingLienAmount = o.ExistingLienAmount,
+              //  existingLienAmount = o.ExistingLienAmount,
                 lienAmount = o.LienAmount,
                 availableBalance = o.AvailableBalance,
                 securityValue = o.SecurityValue,
@@ -298,7 +298,7 @@ namespace FintrakBanking.Repositories.Credit
                 tbl_Collateral_Gaurantee = AddCollateralGaurantee((CollateralTypeEnum)entity.collateralTypeId, entity.collateralGaurantee),
                 tbl_Collateral_Vehicle = AddCollateralVehicle((CollateralTypeEnum)entity.collateralTypeId, entity.collateralVehicle),
                 tbl_Collateral_Miscellaneous = AddCollateralMiscellaneous((CollateralTypeEnum)entity.collateralTypeId, entity.collateralMiscellaneous),
-                tbl_Collateral_Customer_Policy = AddCollateralCustomerPolicy(entity.collateralTypeId, entity.collateralCustomerPolicy)
+                tbl_Collateral_Item_Policy = AddCollateralCustomerPolicy(entity.collateralTypeId, entity.collateralCustomerPolicy)
             };
 
             context.tbl_Collateral_Customer.Add(collateral);
@@ -420,9 +420,9 @@ namespace FintrakBanking.Repositories.Credit
                 var collateralDeposit = context.tbl_Collateral_Deposit.Find(entity.collateralDeposit.collateralDepositId);
 
                 collateralDeposit.AccountNumber = entity.collateralDeposit.accountNumber;
-                collateralDeposit.CollateralSubTypeId = entity.collateralDeposit.collateralSubTypeId;
+                //collateralDeposit.CollateralSubTypeId = entity.collateralDeposit.collateralSubTypeId;
                 collateralDeposit.DealReferenceNumber = entity.collateralDeposit.dealReferenceNumber;
-                collateralDeposit.ExistingLienAmount = entity.collateralDeposit.existingLienAmount;
+                //collateralDeposit.ExistingLienAmount = entity.collateralDeposit.existingLienAmount;
                 collateralDeposit.LienAmount = entity.collateralDeposit.lienAmount;
                 collateralDeposit.AvailableBalance = entity.collateralDeposit.availableBalance;
                 collateralDeposit.SecurityValue = entity.collateralDeposit.securityValue;
@@ -560,7 +560,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.collateralCustomerPolicy != null)
             {
-                tbl_Collateral_Customer_Policy collateralCustomerPolicy = collateral.tbl_Collateral_Customer_Policy.Where(x => x.PolicyId == entity.collateralCustomerPolicy.policyId)
+                tbl_Collateral_Item_Policy collateralCustomerPolicy = collateral.tbl_Collateral_Item_Policy.Where(x => x.PolicyId == entity.collateralCustomerPolicy.policyId)
                     .FirstOrDefault();
 
                 collateralCustomerPolicy.PolicyReferenceNumber = entity.collateralCustomerPolicy.policyReferenceNumber;
@@ -687,10 +687,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 //CollateralDepositId = entity.collateralDepositId,
                 //CollateralCustomerId = entity.collateralCustomerId,
-                CollateralSubTypeId = entity.collateralSubTypeId,
+               // CollateralSubTypeId = entity.collateralSubTypeId,
                 DealReferenceNumber = entity.dealReferenceNumber,
                 AccountNumber = entity.accountNumber,
-                ExistingLienAmount = entity.existingLienAmount,
+               // ExistingLienAmount = entity.existingLienAmount,
                 LienAmount = entity.lienAmount,
                 AvailableBalance = entity.availableBalance,
                 SecurityValue = entity.securityValue,
@@ -711,10 +711,10 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         collateralDepositId = m.CollateralDepositId,
                         collateralCustomerId = m.CollateralCustomerId,
-                        collateralSubTypeId = m.CollateralSubTypeId,
+                       // collateralSubTypeId = m.CollateralSubTypeId,
                         dealReferenceNumber = m.DealReferenceNumber,
                         accountNumber = m.AccountNumber,
-                        existingLienAmount = m.ExistingLienAmount,
+                       // existingLienAmount = m.ExistingLienAmount,
                         lienAmount = m.LienAmount,
                         availableBalance = m.AvailableBalance,
                         securityValue = m.SecurityValue,
@@ -1266,19 +1266,19 @@ namespace FintrakBanking.Repositories.Credit
         #endregion Miscellaneous Notes
 
         #region Collateral Customer Policy
-        private ICollection<tbl_Collateral_Customer_Policy> AddCollateralCustomerPolicy(int collateralTypeId, CollateralCustomerPolicyViewModel entity)
+        private ICollection<tbl_Collateral_Item_Policy> AddCollateralCustomerPolicy(int collateralTypeId, CollateralCustomerPolicyViewModel entity)
         {
             var type = context.tbl_Collateral_Type.Where(x => x.CollateralTypeId == collateralTypeId).FirstOrDefault();
-            ICollection<tbl_Collateral_Customer_Policy> customerPolicy;
+            ICollection<tbl_Collateral_Item_Policy> customerPolicy;
 
             if (!type.RequireInsurancePolicy)
                 return null;
             if (entity == null)
                 throw new InvalidOperationException("This collateral type requires insurance policy which was not submitted");
 
-            customerPolicy = new List<tbl_Collateral_Customer_Policy>();
+            customerPolicy = new List<tbl_Collateral_Item_Policy>();
 
-            customerPolicy.Add(new tbl_Collateral_Customer_Policy
+            customerPolicy.Add(new tbl_Collateral_Item_Policy
             {
                 //PolicyId = entity.policyId,
                 // CollateralCustomerId = entity.collateralCustomerId,
@@ -1294,7 +1294,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private CollateralCustomerPolicyViewModel GetCollateralCustomerPolicyByCollateralCustomerId(int collateralCustomerId)
         {
-            return (from m in context.tbl_Collateral_Customer_Policy
+            return (from m in context.tbl_Collateral_Item_Policy
                     where m.CollateralCustomerId == collateralCustomerId
                     select new CollateralCustomerPolicyViewModel
                     {
@@ -1412,15 +1412,89 @@ namespace FintrakBanking.Repositories.Credit
                         cityId = m.CityId,
                         name = m.Name,
                         valuerLicenceNumber = m.ValuerLicenceNumber,
-                    });
+                        valuerTypeId = m.ValuerTypeId,
+                        countryId = m.CountryId,
+                        emailAddress = m.EmailAddress,
+                        phoneNumber = m.PhoneNumber,
+                        address = m.Address
+            });
         }
 
+        public async Task<bool> AddCollateralValuer(CollateralValuersViewModel entity)
+        {
+            var valuer = new tbl_Collateral_Valuer
+            {
+                CityId = entity.cityId,
+                Name = entity.name,
+                ValuerLicenceNumber = entity.valuerLicenceNumber,
+                ValuerTypeId = entity.valuerTypeId,
+                CountryId = entity.countryId,
+                EmailAddress = entity.emailAddress,
+                PhoneNumber = entity.phoneNumber,
+                Address = entity.address,
+                CompanyId = entity.companyId,
+                CreatedBy = entity.createdBy,
+                DateTimeCreated = DateTime.Now,
+                Deleted = false
+            };
+            context.tbl_Collateral_Valuer.Add(valuer);
+            
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CollateralTypeAdded,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = $"Added tbl_Collateral_Valuer with Id: {entity.collateralValuerId} ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now,
+            };
+
+            auditTrail.AddAuditTrail(audit);
+            var response = await context.SaveChangesAsync() != 0;
+            return response;
+        }
+        public async Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id)
+        {
+            var valuer = context.tbl_Collateral_Valuer.Find(id);
+                if (valuer != null)
+            {
+                valuer.CityId = entity.cityId;
+                valuer.Name = entity.name;
+                valuer.ValuerLicenceNumber = entity.valuerLicenceNumber;
+                valuer.ValuerTypeId = entity.valuerTypeId;
+                valuer.CountryId = entity.countryId;
+                valuer.EmailAddress = entity.emailAddress;
+                valuer.PhoneNumber = entity.phoneNumber;
+                valuer.Address = entity.address;
+                valuer.CompanyId = entity.companyId;
+            };
+           
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CollateralTypeAdded,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = $"Updated tbl_Collateral_Valuer with Id: {entity.collateralValuerId} ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now,
+            };
+
+            auditTrail.AddAuditTrail(audit);
+            var response = await context.SaveChangesAsync() != 0;
+            return response;
+        }
         public IEnumerable<CollateralValuerTypeViewModel> GetCollateralValuerType()
         {
             return (from m in context.tbl_Collateral_Valuer_Type
                     select new CollateralValuerTypeViewModel
                     {
-                        collateralValuerTypeId = m.CollateralValuerTypeId,
+                        valuerTypeId = m.CollateralValuerTypeId,
                         valuerTypeName = m.ValuerTypeName
                     });
         }

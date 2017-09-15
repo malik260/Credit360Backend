@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Day_Interest_Type()
         {
+            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Loan = new HashSet<tbl_Loan>();
         }
 
@@ -22,6 +23,9 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(100)]
         public string DayInterestTypeName { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }

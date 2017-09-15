@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Customer_Policy")]
-    public partial class tbl_Collateral_Customer_Policy
+    [Table("credit.tbl_Collateral_Item_Policy")]
+    public partial class tbl_Collateral_Item_Policy
     {
         [Key]
         public int PolicyId { get; set; }
