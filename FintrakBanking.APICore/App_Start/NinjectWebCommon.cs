@@ -48,8 +48,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Interfaces.media;
     using FintrakBanking.Repositories.media;
     using FintrakBanking.Interfaces.Finance;
-    using FintrakBanking.Interfaces.CreditOperations;
-    using FintrakBanking.Repositories.CreditOperations;
+    using FintrakBanking.Interfaces.Risk;
+    using FintrakBanking.Repositories.Risk;
 
     public static class NinjectWebCommon 
     {
@@ -114,6 +114,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICompanyRepository>().To<CompanyRepository>();
             kernel.Bind<IBranchRepository>().To<BranchRepository>();
             kernel.Bind<IRiskSetupRepository>().To<RiskSetupRepository>();
+            kernel.Bind<IRiskImplementation>().To<RiskImplementation>();
             kernel.Bind<IStaffRepository>().To<StaffRepository>();
             kernel.Bind<IDepartmentRepository>().To<DepartmentRepository>();
             kernel.Bind<IMisInfoRepository>().To<MisInfoRepository>();
@@ -161,12 +162,14 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IAppraisalMemorandumRepository>().To<AppraisalMemorandumRepository>();
             kernel.Bind<ICreditTemplateRepository>().To<CreditTemplateRepository>();
             kernel.Bind<ILoanDocumentRepository>().To<LoanDocumentRepository>();
+            kernel.Bind<ICollateralDocumentRepository>().To<CollateralDocumentRepository>();
             kernel.Bind<IJobRequestRepository>().To<JobRequestRepository>();
             kernel.Bind<ILoanPreliminaryEvaluationRepository>().To<LoanPreliminaryEvaluationRepository>();
             kernel.Bind<ILimitRepository>().To<LimitRepository>();
             kernel.Bind<IFinanceTransactionRepository>().To<FinanceTransactionRepository>();
-            kernel.Bind<ICreditOperationsRepository>().To<CreditOperationsRepository>();
+            kernel.Bind<ILoanOperationsRepository>().To<LoanOperationsRepository>();
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
+            kernel.Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
         }        
     }
     

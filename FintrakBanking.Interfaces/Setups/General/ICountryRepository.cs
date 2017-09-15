@@ -19,7 +19,9 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<Object> GetAllCitiesByContryId(int countryId);
 
-        Task<bool> AddCity(CityViewModel entity);        
+       bool AddCity(CityViewModel entity);
+
+        bool UpdateCity(CityViewModel entity, int id);
 
         IEnumerable<StateViewModel> GetState();
 
@@ -28,6 +30,9 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<CountryViewModel> GetCountry(int countryId);
 
         IEnumerable<CountryViewModel> GetCountry();
-         
+
+        IEnumerable<StateViewModel> GetStateByCompanyId(int companyId);
+
+        bool UpdateState(StateViewModel entity, int stateId);
     }
 }

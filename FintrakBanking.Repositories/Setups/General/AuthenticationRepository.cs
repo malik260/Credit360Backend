@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return result;
         }
 
-        public List<UserViewModel> FindUserByUserNameAndPassword(string username,string password)
+        public async Task<List<UserViewModel>> FindUserByUserNameAndPassword(string username,string password)
         {
             var _user = context.tbl_Profile_User.Where(x => x.Username == username && x.Password == password).ToList();
 

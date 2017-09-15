@@ -7,6 +7,8 @@ using FintrakBanking.APICore.core;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.ViewModels.Finance;
 using System.Collections.Generic;
+using System.Web;
+using System.Linq;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -44,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("Posttransaction")]
-        public HttpResponseMessage PostTransaction(HttpResponseMessage request, [FromBody] List<FinanceTransactionViewModel> transaction)
+        public HttpResponseMessage PostTransaction( [FromBody] List<FinanceTransactionViewModel> transaction)
         {
             try
             {
@@ -65,14 +67,24 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("addcollateralsearchlien")]
-        public HttpResponseMessage AddCollateralSearchLien(HttpResponseMessage request, [FromBody] List<CasaLienViewModel> model)
+        public HttpResponseMessage AddCollateralSearchLien([FromBody] CasaLienViewModel model)
         {
             try
             {
-                var data = repo.AddCollateralSearchLien(model);
-                if (data != null)
+
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.branchId = (short)token.GetBranchId;
+                model.userBranchId = (short)token.GetBranchId;
+
+
+                var response = repo.AddCollateralSearchLien(model);
+                if (response == false)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
@@ -86,7 +98,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("Posttransaction")]
-        public HttpResponseMessage PostCollateralSearch(HttpResponseMessage request, [FromBody] CasaLienViewModel model)
+        public HttpResponseMessage PostCollateralSearch( [FromBody] CasaLienViewModel model)
         {
             try
             {

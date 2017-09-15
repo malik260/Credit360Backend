@@ -43,12 +43,12 @@ namespace FintrakBanking.Repositories.ErrorLogger
             this.context.tbl_ErrorLog.Add(errorDetails);
             context.SaveChanges();
 
-            bool sendMail = bool.Parse(CommonHelpers.SendErrorMail);//  _config["AppConstants:sendErrorMail"]);
-            if (sendMail)
-            {
-                var messageBody = $"<p>Fintrak Credit Management API Error:</p><p>{errorMsg}<br/>{errorDetails.AllXml}</p><p>API Url: {errorDetails.APIEndpoint}</p>";
-                this._emailRepo.sendMail("corebankingteam@fintraksoftware.com", "corebankingteam@fintraksoftware.com", "", "", "Error Log", messageBody);
-            }
+            //bool sendMail = bool.Parse(CommonHelpers.SendErrorMail);//  _config["AppConstants:sendErrorMail"]);
+            //if (sendMail)
+            //{
+            //    var messageBody = $"<p>Fintrak Credit Management API Error:</p><p>{errorMsg}<br/>{errorDetails.AllXml}</p><p>API Url: {errorDetails.APIEndpoint}</p>";
+            //    this._emailRepo.sendMail("corebankingteam@fintraksoftware.com", "corebankingteam@fintraksoftware.com", "", "", "Error Log", messageBody);
+            //}
         }
     }
 }

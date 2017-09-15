@@ -48,6 +48,7 @@
     <Compile Include="CASA\ICasaRepository.cs" />
     <Compile Include="CreditLimitValidations\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IAppraisalMemorandumRepository.cs" />
+    <Compile Include="Credit\ICollateralDocumentRepository.cs" />
     <Compile Include="Credit\ICreditTemplateRepository.cs" />
     <Compile Include="Credit\ICustomerCollateralRepository.cs" />
     <Compile Include="Credit\ILimitRepository.cs" />
@@ -68,7 +69,7 @@
     <Compile Include="Helper\ICultureHelper.cs" />
     <Compile Include="Notification\INotificationRepository.cs" />
     <Compile Include="Media\IMediaRepository.cs" />
-    <Compile Include="Operations\ICreditOperationsRepository.cs" />
+    <Compile Include="Credit\ILoanOperationsRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Risk\IRiskImplementation.cs" />
     <Compile Include="Setups\Approval\IApprovalGroupMappingRepository.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Setups\General\IProductCollateralTypeRepository.cs" />
     <Compile Include="Setups\General\IProductFeeRepository.cs" />
     <Compile Include="Setups\General\IProductRepository.cs" />
+    <Compile Include="Setups\General\IPublicHolidayRepository.cs" />
     <Compile Include="Setups\General\IRankRepository.cs" />
     <Compile Include="Setups\General\IStaffRepository.cs" />
     <Compile Include="Setups\Risk\IRiskSetupRepository.cs" />
@@ -117,6 +119,9 @@
       <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
       <Name>FintrakBanking.ViewModels</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Operations\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

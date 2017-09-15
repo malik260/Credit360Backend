@@ -18,8 +18,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string VehicleType { get; set; }
 
-        public short CollateralSubTypeId { get; set; }
-
         [StringLength(10)]
         public string VehicleStatus { get; set; }
 

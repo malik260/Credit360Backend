@@ -10,12 +10,19 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ICustomerCollateralRepository
     {
+        Task<bool> AddCollateral(CollateralViewModel entity);
+        Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
+        IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int companyId);
+        CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId);
+
         #region Collateral
         Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity);
         Task<bool> DeleteCollateralCustomer(int collateralCustomerId, UserInfo user);
         Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity);
         IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId);
         bool IsCollateralDocExists(string docName);
+        Task<bool> AddCollateralValuer(CollateralValuersViewModel entity);
+        Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id);
         #endregion Collateral
 
         #region Collateral Type
@@ -41,8 +48,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CollateralValuerTypeViewModel> GetCollateralValuerType();
 
-        IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int companyId);
-        
         //CollateralCustomerPolicyViewModel GetCollateralCustomerPolicyByCollateralCustomerId(short collateralCustomerId);
 
         // IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes();

@@ -10,12 +10,11 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Risk_Assessment
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int RiskAssessmentId { get; set; }
 
         public int RiskIndexId { get; set; }
 
-        public int ParentId { get; set; }
+        public int? ParentId { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -42,6 +41,8 @@ namespace FintrakBanking.Entities.Models
         public bool Deleted { get; set; }
 
         public int? DeletedBy { get; set; }
+
+        public bool Selected { get; set; }
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
 

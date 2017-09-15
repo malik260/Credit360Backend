@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
@@ -15,6 +16,7 @@ namespace FintrakBanking.APICore.Controllers
     public class CountryController : ApiControllerBase
     {
         private ICountryRepository repo;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
         public CountryController(ICountryRepository _repo)
         {
             this.repo = _repo;
@@ -22,11 +24,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("city")]
-        public HttpResponseMessage AddCity([FromBody] CityViewModel entity)
+        public async System.Threading.Tasks.Task<HttpResponseMessage> AddCityAsync([FromBody] CityViewModel entity)
         {
             try
             {
-                var data = repo.AddCity(entity).IsCompleted;
+                var data = await repo.AddCity(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -42,6 +44,27 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("city/{id}")]
+        public HttpResponseMessage UpdateCity([FromBody] CityViewModel entity, int id)
+        {
+            try
+            {
+                var data = repo.UpdateCity(entity ,id);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [Route("city-class")]
         public HttpResponseMessage GetAllCityClass()
@@ -150,12 +173,56 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpPut]
+        [Route("state/{id}")]
+        public HttpResponseMessage UpdateStates([FromBody] StateViewModel entity, int id)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
 
+                var data = repo.UpdateState(entity, id);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "An unknown error has occured" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("statebyCompanyId")]
+        public HttpResponseMessage GetStateByCompanyId()
+        {
+            
+            try
+            {
+                var state = repo.GetStateByCompanyId(token.GetCompanyId).OrderBy(x => x.StateName).ToList();
+
+                if (state == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = state });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [Route("state/country")]
         public HttpResponseMessage GetStateByCountryId()
         {
-            var token = new TokenDecryptionHelper();
             try
             {
                 var state = repo.GetStateByCountryId(token.GetCountryId).OrderBy(x => x.StateName).ToList();
@@ -177,7 +244,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("city/country")]
         public HttpResponseMessage GetAllCityByCountryId()
         {
-            var token = new TokenDecryptionHelper();
             try
             {
                 var cities = repo.GetAllCitiesByContryId(token.GetCountryId).ToList();

@@ -2,11 +2,11 @@
 //using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.media;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Media;
 using System.Linq;
+using System.IO;
+using System.Collections.Generic;
 
 namespace FintrakBanking.Repositories.media
 {
@@ -44,5 +44,36 @@ namespace FintrakBanking.Repositories.media
                     }).FirstOrDefault();
 
         }
+    //    public string GetDocumentToViewById(int id)
+    //    {
+    //        var viewdoc = (from doc in context.tbl_Media_Loan_Documents
+    //                where doc.DocumentId == id
+    //                select new DocumentViewModel()
+    //                {
+    //                    documentId = doc.DocumentId,
+    //                    fileData = doc.FileData,
+    //                    fileExtension = doc.FileExtension,
+    //                    fileName = doc.FileName
+    //                }).FirstOrDefault();
+
+    //        String HtmlContent = "";
+    //        if (viewdoc != null)
+    //        {
+    //            ViewerConfig config = new ViewerConfig();
+    //            Stream stream = new MemoryStream(viewdoc.fileData);
+    //            HtmlOptions options = new HtmlOptions();
+    //            options.IsResourcesEmbedded = true;
+    //            ViewerHtmlHandler handler = new ViewerHtmlHandler(config);
+    //            List<PageHtml> AllPages = handler.GetPages(stream, options);
+
+    //            foreach (PageHtml html in AllPages)
+    //            {
+    //                HtmlContent += html.HtmlContent;
+    //            }
+
+    //            return HtmlContent;
+    //        }
+    //        return null;
+    //    }
     }
 }

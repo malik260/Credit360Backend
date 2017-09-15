@@ -137,8 +137,11 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public List<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanSchedule(LoanPaymentScheduleInputViewModel loanInput)
-        {            
-
+        {
+            if (loanInput.principalAmount <= 0)
+                throw new Exception("Please Enter Loan Amount");
+            if (loanInput.interestRate < 0)
+                throw new Exception("Please Enter Loan Interest Amount");
             List<LoanPaymentSchedulePeriodicViewModel> output = null; // new List<LoanPaymentSchedulePeriodicViewModel>();
             LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
 
@@ -256,8 +259,26 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>         
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateNormalAnnuityPeriodicSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
+            if (loanInput.effectiveDate == null)
+                throw new Exception("Please Enter Effective Date");
+            if (loanInput.maturityDate == null)
+                throw new Exception("Please Enter Maturity Date");
+            if (loanInput.interestFirstpaymentDate == null)
+                throw new Exception("Please Enter First Interest Payment Date");
+            if (loanInput.principalFirstpaymentDate == null)
+                throw new Exception("Please Enter First Principal Payment Date");
+            if (loanInput.principalAmount <= 0)
+                throw new Exception("Please Enter Loan Amount");
             if (loanInput.effectiveDate >= loanInput.maturityDate)
-                throw new Exception("Effective Date should be less than the maturity date");
+                throw new Exception("Effective Date must be less than the maturity date");
+            if (loanInput.interestFirstpaymentDate >= loanInput.maturityDate)
+                throw new Exception("First Interest Payment Date must be less than the maturity date");
+            if (loanInput.principalFirstpaymentDate >= loanInput.maturityDate)
+                throw new Exception("First Principal Payment Date must be less than the maturity date");
+            if (loanInput.effectiveDate >= loanInput.principalFirstpaymentDate)
+                throw new Exception("First Principal Payment Date cannot be less than the effective date");
+            if (loanInput.effectiveDate >= loanInput.interestFirstpaymentDate)
+                throw new Exception("First Interest Payment Date cannot be less than the effective date");
 
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
 
@@ -327,9 +348,30 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>         
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateMoratoriumAnnuityPeriodicSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
+            if (loanInput.effectiveDate == null)
+                throw new Exception("Please Enter Effective Date");
+            if (loanInput.maturityDate == null)
+                throw new Exception("Please Enter Maturity Date");
+            if (loanInput.interestFirstpaymentDate == null)
+                throw new Exception("Please Enter First Interest Payment Date");
+            if (loanInput.principalFirstpaymentDate == null)
+                throw new Exception("Please Enter First Principal Payment Date");
+            if (loanInput.principalAmount <= 0)
+                throw new Exception("Please Enter Loan Amount");
+            if (loanInput.principalFrequency <= 0)
+                throw new Exception("Please Select Principal Frequency");
+            if (loanInput.interestFrequency <= 0)
+                throw new Exception("Please Select Interest Frequency");
             if (loanInput.effectiveDate >= loanInput.maturityDate)
-                throw new Exception("Effective Date should be less than the maturity date");
-
+                throw new Exception("Effective Date must be less than the maturity date");
+            if (loanInput.interestFirstpaymentDate >= loanInput.maturityDate)
+                throw new Exception("First Interest Payment Date must be less than the maturity date");
+            if (loanInput.principalFirstpaymentDate >= loanInput.maturityDate)
+                throw new Exception("First Principal Payment Date must be less than the maturity date");
+            if (loanInput.effectiveDate >= loanInput.principalFirstpaymentDate)
+                throw new Exception("First Principal Payment Date cannot be less than the effective date");
+            if (loanInput.effectiveDate >= loanInput.interestFirstpaymentDate)
+                throw new Exception("First Interest Payment Date cannot be less than the effective date");
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
 
             int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
@@ -401,9 +443,22 @@ namespace FintrakBanking.Repositories.Credit
 
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateBallonPeriodicSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
+            if(loanInput.effectiveDate == null )
+                throw new Exception("Please Enter Effective Date");
+            if (loanInput.maturityDate == null)
+                throw new Exception("Please Enter Maturity Date");
+            if (loanInput.principalFirstpaymentDate == null)
+                throw new Exception("Please Enter First Principal Payment Date");
+            if (loanInput.principalAmount <= 0)
+                throw new Exception("Please Enter Loan Amount");
+            if (loanInput.interestFrequency <= 0)
+                throw new Exception("Please Select Interest Frequency");
             if (loanInput.effectiveDate >= loanInput.maturityDate)
-                throw new Exception("Effective Date should be less than the maturity date");
-
+                throw new Exception("Effective Date must be less than the maturity date");
+            if (loanInput.principalFirstpaymentDate >= loanInput.maturityDate)
+                throw new Exception("First Principal Payment Date must be less than the maturity date");
+            if (loanInput.effectiveDate >= loanInput.principalFirstpaymentDate)
+                throw new Exception("First Principal Payment Date cannot be less than the effective date");
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
 
             int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
@@ -473,6 +528,30 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>         
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateReducingBalancePeriodicSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
+            if (loanInput.effectiveDate == null)
+                throw new Exception("Please Enter Effective Date");
+            if (loanInput.maturityDate == null)
+                throw new Exception("Please Enter Maturity Date");
+            if (loanInput.interestFirstpaymentDate == null)
+                throw new Exception("Please Enter First Interest Payment Date");
+            if (loanInput.principalFirstpaymentDate == null)
+                throw new Exception("Please Enter First Principal Payment Date");
+            if (loanInput.principalAmount <= 0)
+                throw new Exception("Please Enter Loan Amount");
+            if (loanInput.principalFrequency <= 0)
+                throw new Exception("Please Select Principal Frequency");
+            if (loanInput.interestFrequency <= 0)
+                throw new Exception("Please Select Interest Frequency");
+            if (loanInput.effectiveDate >= loanInput.maturityDate)
+                throw new Exception("Effective Date must be less than the maturity date");
+            if (loanInput.interestFirstpaymentDate >= loanInput.maturityDate)
+                throw new Exception("First Interest Payment Date must be less than the maturity date");
+            if (loanInput.principalFirstpaymentDate >= loanInput.maturityDate)
+                throw new Exception("First Principal Payment Date must be less than the maturity date");
+            if (loanInput.effectiveDate >= loanInput.principalFirstpaymentDate)
+                throw new Exception("First Principal Payment Date cannot be less than the effective date");
+            if (loanInput.effectiveDate >= loanInput.interestFirstpaymentDate)
+                throw new Exception("First Interest Payment Date cannot be less than the effective date");
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
 
             int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
@@ -842,8 +921,14 @@ namespace FintrakBanking.Repositories.Credit
 
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateBulletPeriodicScheduleWithAmortisedCost(LoanPaymentScheduleInputViewModel loanInput)
         {
+            if (loanInput.effectiveDate == null)
+                throw new Exception("Please Enter Effective Date");
+            if (loanInput.maturityDate == null)
+                throw new Exception("Please Enter Maturity Date");
+            if (loanInput.principalAmount <= 0 )
+                throw new Exception("Please Enter Loan Amount");
             if (loanInput.effectiveDate >= loanInput.maturityDate)
-                throw new Exception("Effective Date should be less than the maturity date");
+                throw new Exception("Effective Date must be less than the maturity date");
 
             List<LoanPaymentSchedulePeriodicViewModel> paymentSchedule = GenerateBulletPeriodicSchedule(loanInput);
 
@@ -941,8 +1026,26 @@ namespace FintrakBanking.Repositories.Credit
 
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateConstantPrincipalAndInterestPeriodicScheduleWithAmortisedCost(LoanPaymentScheduleInputViewModel loanInput)
         {
+            if (loanInput.effectiveDate == null)
+                throw new Exception("Please Enter Effective Date");
+            if (loanInput.maturityDate == null)
+                throw new Exception("Please Enter Maturity Date");
+            if (loanInput.interestFirstpaymentDate == null)
+                throw new Exception("Please Enter First Interest Payment Date");
+            if (loanInput.principalFirstpaymentDate == null)
+                throw new Exception("Please Enter First Principal Payment Date");
+            if (loanInput.principalAmount <= 0)
+                throw new Exception("Please Enter Loan Amount");
             if (loanInput.effectiveDate >= loanInput.maturityDate)
-                throw new Exception("Effective Date should be less than the maturity date");
+                throw new Exception("Effective Date must be less than the maturity date");
+            if (loanInput.interestFirstpaymentDate >= loanInput.maturityDate)
+                throw new Exception("First Interest Payment Date must be less than the maturity date");
+            if (loanInput.principalFirstpaymentDate >= loanInput.maturityDate)
+                throw new Exception("First Principal Payment Date must be less than the maturity date");
+            if (loanInput.effectiveDate >= loanInput.principalFirstpaymentDate)
+                throw new Exception("First Principal Payment Date cannot be less than the effective date");
+            if (loanInput.effectiveDate >= loanInput.interestFirstpaymentDate)
+                throw new Exception("First Interest Payment Date cannot be less than the effective date");
 
             List<LoanPaymentSchedulePeriodicViewModel> paymentSchedule = GenerateConstantPrincipalAndInterestPeriodicSchedule(loanInput);
 

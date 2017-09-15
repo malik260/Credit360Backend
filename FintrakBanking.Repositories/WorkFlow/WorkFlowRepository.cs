@@ -66,7 +66,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (currentStaffLevel != null)
             {
                 fromApprovalLevelId = currentStaffLevel.approvalLevelId;
-                  nextLevel = GetNextApprovalLevel(entity.operationId, currentStaffLevel.approvalLevelId, entity.companyId); //get next level
+                nextLevel = GetNextApprovalLevel(entity.operationId, currentStaffLevel.approvalLevelId, entity.companyId); //get next level
             }
 
             trail = new tbl_Approval_Trail
@@ -80,24 +80,23 @@ namespace FintrakBanking.Repositories.WorkFlow
                 Comment = entity.comment,
                 ApprovalStateId = (int)ApprovalState.Initiation,
                 OperationId = entity.operationId,
-                FromApprovalLevelId = fromApprovalLevelId ,//= null ? GetStatingApprovalLevel(entity.operationId, entity.companyId),
-                SystemArrivalDateTime = DateTime.Now
+                //FromApprovalLevelId = nextLevel.approvalLevelId,//= null ? GetStatingApprovalLevel(entity.operationId, entity.companyId),
+                SystemArrivalDateTime = DateTime.Now,
+                
+
             };
 
             if (fromApprovalLevelId.HasValue)
             {
                 trail.FromApprovalLevelId = fromApprovalLevelId.Value;
             }
-            else
-            {
-                trail.FromApprovalLevelId = null;
-            }
+             
 
             await approvelRepo.AddApprovalTrail(trail);
 
             decimal amount = GetAmount(entity);
 
-            if (IsWithinMyLimit(entity, currentStaffLevel))
+            if (await IsWithinMyLimit(entity, currentStaffLevel))
             {
                 return ApproveOperation(entity);
             }
@@ -169,7 +168,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         }
                     }
                     else
-                    if (IsWithinMyLimit(entity, currentStaffLevel))
+                    if (await IsWithinMyLimit(entity, currentStaffLevel))
                     {
                         return ApproveOperation(entity);
                     }
@@ -190,7 +189,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 else
                 {//use continue from approval levels 
-                    if (NextApprovingLine(entity, nextLevel,out terminate))
+                    if (await NextApprovingLine(entity, nextLevel,terminate))
                     {
                         if (!terminate)
                         {
@@ -267,7 +266,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.LoanId == entity.targetId);
                 if (loan.Any())
                 {
-                    tenor = loan.SingleOrDefault().Tenor ;
+                    tenor = (loan.SingleOrDefault().MaturityDate - loan.SingleOrDefault().EffectiveDate).Days;
                 }
             }
             return tenor;
@@ -395,17 +394,17 @@ namespace FintrakBanking.Repositories.WorkFlow
             return approvelRepo.UpdateApprovalTrail(trail);
         }
 
-        private bool NextApprovingLine(ApprovalViewModel approval, ApprovalLevelViewModel entity,  out bool   treminate )
+        private async Task<bool> NextApprovingLine(ApprovalViewModel approval, ApprovalLevelViewModel entity,  bool terminate )
         {
             bool result = false;
             int currentLevel = 0;
             int nextLevelId = 0;
-            treminate = false;
+            terminate = false;
             var action = context.tbl_Operations.Where(c => c.OperationId == approval.operationId).FirstOrDefault();
             // terminate proccess when this condition is met
             if (approval.approvalStatusId == (int)ApprovalStatusEnum.Disapproved && action.TerminateIfDisapproved)
             {
-                treminate = true;
+                terminate = true;
                 return UpdateCurrentTransitionState(approval);
             }
 
@@ -433,7 +432,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                          ,Comment = approval.comment 
                     };
 
-                    result = approvelRepo.AddApprovalTrail(trail).IsCompleted;
+                    result = await approvelRepo.AddApprovalTrail(trail);
 
                 }
             }
@@ -445,7 +444,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             return result;
         }
     
-        private bool IsWithinMyLimit(ApprovalViewModel approval, ApprovalLevelStaffViewModel entity)
+        private async Task<bool> IsWithinMyLimit(ApprovalViewModel approval, ApprovalLevelStaffViewModel entity)
         {
             bool terminate = false;
             bool result = false;
@@ -461,7 +460,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 else
                 {
                     var levelentity = GetAllLevels(approval.operationId , approval.companyId).Where(c=> c.approvalLevelId == approval.myLevelId ).FirstOrDefault();
-                    result = NextApprovingLine(approval, levelentity, out terminate);
+                    result = await NextApprovingLine(approval, levelentity, terminate);
                     
                 }
                

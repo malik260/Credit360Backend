@@ -124,7 +124,7 @@ namespace FintrakBanking.APICore.Controllers
                     model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
-                    var recordId = repo.AddProductCollateralType(model);
+                    var recordId = repo.AddTempProductCollateralType(model);
                     if (recordId >= 1)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,

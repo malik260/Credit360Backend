@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System;
 using FintrakBanking.ViewModels;
 using System.ComponentModel.Composition;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Interfaces.Admin;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -15,12 +17,20 @@ namespace FintrakBanking.Repositories.Setups.General
     public class CountryRepository : ICountryRepository
     {
         private FinTrakBankingContext context;
+        private IAuditTrailRepository auditTrail;
+        private IGeneralSetupRepository _genSetup;
 
-        public CountryRepository(FinTrakBankingContext _context)
+        public CountryRepository(IAuditTrailRepository _auditTrail,
+                                    IGeneralSetupRepository genSetup, FinTrakBankingContext _context)
         {
             this.context = _context;
+            this.auditTrail = _auditTrail;
+            this._genSetup = genSetup;
         }
-
+        private bool SaveAll()
+        {
+            return this.context.SaveChanges() > 0;
+        }
         public IEnumerable<LookupViewModel> GetAllCityClass()
         {
             var data = (from a in context.tbl_City_Class
@@ -32,7 +42,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
-        public async Task<bool> AddCity(CityViewModel entity)
+        public bool AddCity(CityViewModel entity)
         {
             var cityEntity = new tbl_City
             {
@@ -43,7 +53,20 @@ namespace FintrakBanking.Repositories.Setups.General
 
             };
             context.tbl_City.Add(cityEntity);
-            return await context.SaveChangesAsync() != 0;
+            return context.SaveChanges() != 0;
+        }
+        public bool UpdateCity(CityViewModel entity, int id)
+        {
+            var cityEntity = context.tbl_City.Find(id);
+            {
+                cityEntity.CityName = entity.cityName;
+                cityEntity.StateId = entity.stateId;
+                cityEntity.CityClassId = entity.cityClassId;
+                cityEntity.AllowedForCollateral = entity.allowedForCollateral;
+
+            }
+          
+            return context.SaveChanges() != 0;
         }
 
         public IEnumerable<CityViewModel> GetCity()
@@ -128,7 +151,51 @@ namespace FintrakBanking.Repositories.Setups.General
                                });
             return stateEntity;
         }
+        public IEnumerable<StateViewModel> GetStateByCompanyId(int companyId)
+        {
+            var countryId = context.tbl_Company.Find(companyId).CompanyId;
+            if (countryId != 0)
+            {
+                var stateEntity = (from a in context.tbl_State
+                                   where a.CountryId == countryId
+                                   select new StateViewModel
+                                   {
+                                       CountryId = a.CountryId,
+                                       StateName = a.StateName,
+                                       StateId = a.StateId,
+                                       CountryName = context.tbl_Country.FirstOrDefault(j => j.CountryId == a.CountryId).Name ?? string.Empty,
+                                       CollateralSearchChargeAmount = a.CollateralSearchChargeAmount
+                                       
+                                   });
+                return stateEntity;
+            }
+            return null;
+        }
+        public bool UpdateState(StateViewModel entity, int stateId)
+        {
+            var state = context.tbl_State.Find(stateId);
+            if (state != null)
+            {
+                state.CollateralSearchChargeAmount = entity.CollateralSearchChargeAmount;
+                state.StateName = entity.StateName;
+            }
+           
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.DepartmentUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = $"Updated tbl_State with Id: {entity.StateId} ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now,
+            };
 
+            auditTrail.AddAuditTrail(audit);
+            return SaveAll();
+        }
         public IEnumerable<CountryViewModel> GetCountry(int countryId)
         {
             var countryEntity = (from a in context.tbl_Country where a.CountryId == countryId 

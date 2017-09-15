@@ -153,15 +153,15 @@ namespace FintrakBanking.Repositories.Setups.General
                 branch.AddressLine2 = model.addressLine2;
                 branch.Comment = model.comment;
                 branch.LastUpdatedBy = model.lastUpdatedBy;
-                branch.DateTimeUpdated = model.dateTimeUpdated;
-                branch.Deleted = model.deleted;
+                branch.DateTimeUpdated = DateTime.Now;
 
                 response = await context.SaveChangesAsync();
+
                 // Audit Section ---------------------------
                 var audit = new tbl_Audit
                 {
-                    AuditTypeId = (short)AuditTypeEnum.BranchAdded,
-                    StaffId = (int)model.createdBy,
+                    AuditTypeId = (short)AuditTypeEnum.BranchUpdated,
+                    StaffId = (int)model.lastUpdatedBy,
                     BranchId = (short)model.userBranchId,
                     Detail = $"Updated branch: '{model.branchName}' with code: {model.branchCode} ",
                     IPAddress = model.userIPAddress,
