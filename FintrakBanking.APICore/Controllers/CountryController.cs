@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
@@ -24,11 +25,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("city")]
-        public async System.Threading.Tasks.Task<HttpResponseMessage> AddCityAsync([FromBody] CityViewModel entity)
+        public HttpResponseMessage AddCity([FromBody] CityViewModel entity)
         {
             try
             {
-                var data = await repo.AddCity(entity);
+                var data = repo.AddCity(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

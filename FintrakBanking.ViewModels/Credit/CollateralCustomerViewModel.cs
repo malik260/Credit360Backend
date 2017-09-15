@@ -34,7 +34,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralDepositId { get; set; }
         public string dealReferenceNumber { get; set; }
         public string accountNumber { get; set; }
-        public bool existingLienAmount { get; set; }
+        public decimal existingLienAmount { get; set; }
         public decimal lienAmount { get; set; }
         public decimal availableBalance { get; set; }
         public decimal securityValue { get; set; }

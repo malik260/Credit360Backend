@@ -562,7 +562,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 collateralDeposit.AccountNumber = entity.collateralDeposit.accountNumber;
                 collateralDeposit.DealReferenceNumber = entity.collateralDeposit.dealReferenceNumber;
-                collateralDeposit.ExistingLienAmount = entity.collateralDeposit.existingLienAmount;
+                //collateralDeposit.ExistingLienAmount = entity.collateralDeposit.existingLienAmount;
                 collateralDeposit.LienAmount = entity.collateralDeposit.lienAmount;
                 collateralDeposit.AvailableBalance = entity.collateralDeposit.availableBalance;
                 collateralDeposit.SecurityValue = entity.collateralDeposit.securityValue;
@@ -824,7 +824,7 @@ namespace FintrakBanking.Repositories.Credit
                 //CollateralCustomerId = entity.collateralCustomerId,
                 DealReferenceNumber = entity.dealReferenceNumber,
                 AccountNumber = entity.accountNumber,
-                ExistingLienAmount = entity.existingLienAmount,
+                //ExistingLienAmount = entity.existingLienAmount,
                 LienAmount = entity.lienAmount,
                 AvailableBalance = entity.availableBalance,
                 SecurityValue = entity.securityValue,
@@ -847,7 +847,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralCustomerId = m.CollateralCustomerId,
                         dealReferenceNumber = m.DealReferenceNumber,
                         accountNumber = m.AccountNumber,
-                        existingLienAmount = m.ExistingLienAmount,
+                        //existingLienAmount = m.ExistingLienAmount,
                         lienAmount = m.LienAmount,
                         availableBalance = m.AvailableBalance,
                         securityValue = m.SecurityValue,
@@ -1469,6 +1469,77 @@ namespace FintrakBanking.Repositories.Credit
 
         //#endregion End of Collateral Documents
 
+
+        public async Task<bool> AddCollateralValuer(CollateralValuersViewModel entity)
+        {
+            var valuer = new tbl_Collateral_Valuer
+            {
+                CityId = entity.cityId,
+                Name = entity.name,
+                ValuerLicenceNumber = entity.valuerLicenceNumber,
+                ValuerTypeId = entity.valuerTypeId,
+                CountryId = entity.countryId,
+                EmailAddress = entity.emailAddress,
+                PhoneNumber = entity.phoneNumber,
+                Address = entity.address,
+                CompanyId = entity.companyId,
+                CreatedBy = entity.createdBy,
+                DateTimeCreated = DateTime.Now,
+                Deleted = false
+            };
+            context.tbl_Collateral_Valuer.Add(valuer);
+
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CollateralTypeAdded,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = $"Added tbl_Collateral_Valuer with Id: {entity.collateralValuerId} ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now,
+            };
+
+            auditTrail.AddAuditTrail(audit);
+            var response = await context.SaveChangesAsync() != 0;
+            return response;
+        }
+        public async Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id)
+        {
+            var valuer = context.tbl_Collateral_Valuer.Find(id);
+            if (valuer != null)
+            {
+                valuer.CityId = entity.cityId;
+                valuer.Name = entity.name;
+                valuer.ValuerLicenceNumber = entity.valuerLicenceNumber;
+                valuer.ValuerTypeId = entity.valuerTypeId;
+                valuer.CountryId = entity.countryId;
+                valuer.EmailAddress = entity.emailAddress;
+                valuer.PhoneNumber = entity.phoneNumber;
+                valuer.Address = entity.address;
+                valuer.CompanyId = entity.companyId;
+            };
+
+            // Audit Section ----------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CollateralTypeAdded,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = $"Updated tbl_Collateral_Valuer with Id: {entity.collateralValuerId} ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now,
+            };
+
+            auditTrail.AddAuditTrail(audit);
+            var response = await context.SaveChangesAsync() != 0;
+            return response;
+        }
+
         #region Seniority Of Claims
         //This CRUD function should be moved to setup in the collateralType repository and the get function will depend on the its setup Get function 
         public Task<bool> AddCollateralSeniorityOfClaims(CollateralSeniorityOfClaimsViewModel entity)
@@ -1529,7 +1600,7 @@ namespace FintrakBanking.Repositories.Credit
             return (from m in context.tbl_Collateral_Valuer_Type
                     select new CollateralValuerTypeViewModel
                     {
-                        collateralValuerTypeId = m.CollateralValuerTypeId,
+                        valuerTypeId = m.CollateralValuerTypeId,
                         valuerTypeName = m.ValuerTypeName
                     });
         }
