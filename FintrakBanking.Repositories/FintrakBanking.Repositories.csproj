@@ -91,7 +91,7 @@
     <Compile Include="Helper\CultureHelper.cs" />
     <Compile Include="Notification\NotificationRepository.cs" />
     <Compile Include="Media\MediaRepository.cs" />
-    <Compile Include="Operations\CreditOperationsRepository.cs" />
+    <Compile Include="Credit\LoanOperationsRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Risk\RiskImplementation.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupMappingRepository.cs" />
@@ -150,6 +150,8 @@
       <Name>FintrakBanking.ViewModels</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Operations\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
