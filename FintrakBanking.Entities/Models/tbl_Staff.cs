@@ -29,15 +29,15 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Application1 = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Loan_Archive1 = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
-            tbl_Loan_Contingent1 = new HashSet<tbl_Loan_Contingent>();
+            //tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
+            //tbl_Loan_Contingent1 = new HashSet<tbl_Loan_Contingent>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Loan1 = new HashSet<tbl_Loan>();
             tbl_Loan_Preliminary_Evaluation = new HashSet<tbl_Loan_Preliminary_Evaluation>();
             tbl_Loan_Preliminary_Evaluation1 = new HashSet<tbl_Loan_Preliminary_Evaluation>();
             tbl_Loan_Relationship_Officer_History = new HashSet<tbl_Loan_Relationship_Officer_History>();
-            tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
-            tbl_Loan_Revolving1 = new HashSet<tbl_Loan_Revolving>();
+            //tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
+            //tbl_Loan_Revolving1 = new HashSet<tbl_Loan_Revolving>();
         }
 
         [Key]
@@ -184,10 +184,10 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
+        //public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent1 { get; set; }
+        //public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
@@ -205,10 +205,10 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
+        //public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving1 { get; set; }
+        //public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving1 { get; set; }
 
         public virtual tbl_Staff_JobTitle tbl_Staff_JobTitle { get; set; }
 

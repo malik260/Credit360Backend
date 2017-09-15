@@ -148,6 +148,8 @@ namespace FintrakBanking.Common.Enum
         DepartmentUpdated = 142,
         PublicHolidayAdded = 143,
         PublicHolidayUpdated = 144,
+        CollateralDocumentAdded = 145,
+        CollateralDocumentUpdated = 146,
     };
 
 

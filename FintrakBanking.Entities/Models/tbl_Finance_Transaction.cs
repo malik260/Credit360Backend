@@ -40,7 +40,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime ValueDate { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime PostedDate { get; set; }
+        public DateTime TransactionDate { get; set; }
 
         public int CompanyId { get; set; }
 
@@ -55,10 +55,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime PostedDateTime { get; set; }
 
         public bool IsApproved { get; set; }
-
-        public bool IsReversal { get; set; }
-
-        public bool IsSystemTransaction { get; set; }
 
         public int PostedBy { get; set; }
 

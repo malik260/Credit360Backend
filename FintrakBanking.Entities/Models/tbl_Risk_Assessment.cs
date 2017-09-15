@@ -28,8 +28,6 @@ namespace FintrakBanking.Entities.Models
 
         public int CompanyId { get; set; }
 
-        public bool Selected { get; set; }
-
         public DateTime? DateTimeDeleted { get; set; }
 
         public int CreatedBy { get; set; }
@@ -43,6 +41,8 @@ namespace FintrakBanking.Entities.Models
         public bool Deleted { get; set; }
 
         public int? DeletedBy { get; set; }
+
+        public bool Selected { get; set; }
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
 
