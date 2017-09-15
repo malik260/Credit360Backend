@@ -73,6 +73,43 @@ namespace FintrakBanking.Repositories.Finance
              
         }
 
+        private void UpdateCASABalances(int casaAccountId, decimal debitAmount, decimal creditAmount)
+        {
+            var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
+
+            if (debitAmount > 0)
+            {
+                account.LedgerBalance = account.LedgerBalance - debitAmount;
+                account.AvailableBalance = account.AvailableBalance - debitAmount;
+            }
+            else
+            {
+                account.LedgerBalance = account.LedgerBalance + creditAmount;
+                account.AvailableBalance = account.AvailableBalance +  creditAmount;
+            }
+        }
+
+        public CasaBalanceViewModel GetCASABalances(int casaAccountId)
+        {
+            var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
+
+            return new CasaBalanceViewModel {availableBalance = account.AvailableBalance, ledgerBalance = account.LedgerBalance };
+        }
+
+        public CasaBalanceViewModel GetCASABalancesFromTransactions(int casaAccountId)
+        {
+            CasaBalanceViewModel balance = new CasaBalanceViewModel();
+
+            var trans = (from data in context.tbl_Finance_Transaction
+                         where data.CasaAccountId == casaAccountId
+                         select data.CreditAmount - data.DebitAmount).Sum();
+
+
+            balance.ledgerBalance = trans;
+
+            return balance;
+        }
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions)
         {
@@ -112,6 +149,17 @@ namespace FintrakBanking.Repositories.Finance
                     if (item.creditAmount < 0)
                         throw new Exception("Credit Amount should NOT be less than 0");
 
+                    var glInfo = context.tbl_Chart_Of_Account.FirstOrDefault(x => x.GLAccountId == item.glAccountId);
+
+                    GLClassEnum glClass = (GLClassEnum) glInfo.GLClassId;
+
+                    if (glClass == GLClassEnum.CASA)
+                    {
+                        if (item.casaAccountId == null)
+                            throw new Exception($"Specify the CASA Account Number in this transaction for GL Code {glInfo.AccountCode}");
+
+                        UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
+                    }
 
                     tbl_Finance_Transaction trans = new tbl_Finance_Transaction();
 
