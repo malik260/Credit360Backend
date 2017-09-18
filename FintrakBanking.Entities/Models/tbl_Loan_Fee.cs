@@ -46,7 +46,5 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
-
-        public virtual tbl_Loan tbl_Loan { get; set; }
     }
 }

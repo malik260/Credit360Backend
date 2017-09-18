@@ -269,7 +269,7 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy = (int)loan.createdBy,
                 DateTimeCreated = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
-                //SubSectorId = (short)loan.subSectorId,
+                SubSectorId = loan.subSectorId,
 
                 ExchangeRate = loan.exchangeRate,
                 LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,

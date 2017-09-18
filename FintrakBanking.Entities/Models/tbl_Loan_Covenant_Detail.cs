@@ -50,8 +50,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
 
-        public virtual tbl_Loan tbl_Loan { get; set; }
-
         public virtual tbl_Loan_Covenant_Type tbl_Loan_Covenant_Type { get; set; }
     }
 }

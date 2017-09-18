@@ -251,7 +251,7 @@ namespace FintrakBanking.Repositories.Credit
                 CollateralCustomerId = collateralId,
                 PolicyReferenceNumber = entity.referenceNumber,
                 InsuranceCompanyName = entity.insuranceCompany,
-                CoverageAmount = entity.coverageAmount,
+                SumInsured = entity.coverageAmount,
                 StartDate = entity.startDate,
                 EndDate = entity.expiryDate,
             });
@@ -265,7 +265,7 @@ namespace FintrakBanking.Repositories.Credit
 
             collateral.PolicyReferenceNumber = entity.referenceNumber;
             collateral.InsuranceCompanyName = entity.insuranceCompany;
-            collateral.CoverageAmount = entity.coverageAmount;
+            collateral.SumInsured = entity.coverageAmount;
             collateral.StartDate = entity.startDate;
             collateral.EndDate = entity.expiryDate;
         }
@@ -365,7 +365,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 details.referenceNumber = insurance.PolicyReferenceNumber;
                 details.insuranceCompany = insurance.InsuranceCompanyName;
-                details.coverageAmount = insurance.CoverageAmount;
+                details.coverageAmount = insurance.SumInsured;
                 details.startDate = insurance.StartDate;
                 details.expiryDate = insurance.EndDate;
             }

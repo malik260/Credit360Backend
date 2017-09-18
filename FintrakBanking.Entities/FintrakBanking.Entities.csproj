@@ -36,6 +36,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -47,9 +50,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="XLeratorDLL-financial, Version=1.15.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +60,7 @@
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\sysdiagram.cs" />
+    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -161,6 +164,8 @@
     <Compile Include="Models\tbl_Custom_Field_Data_Upload.cs" />
     <Compile Include="Models\tbl_Custom_Field_Option.cs" />
     <Compile Include="Models\tbl_Custom_HostPage.cs" />
+    <Compile Include="Models\tbl_Daily_Accrual.cs" />
+    <Compile Include="Models\tbl_Daily_Accrual_Category.cs" />
     <Compile Include="Models\tbl_Daily_Accural.cs" />
     <Compile Include="Models\tbl_Daily_Accural_Category.cs" />
     <Compile Include="Models\tbl_Day_Count_Convention.cs" />
@@ -198,8 +203,10 @@
     <Compile Include="Models\tbl_Loan_Application_Collateral.cs" />
     <Compile Include="Models\tbl_Loan_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
+    <Compile Include="Models\tbl_Loan_Change_Type.cs" />
     <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
+    <Compile Include="Models\tbl_Loan_Contingent.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Detail.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Type.cs" />
     <Compile Include="Models\tbl_Loan_Document_Type.cs" />
@@ -211,11 +218,15 @@
     <Compile Include="Models\tbl_Loan_Preliminary_Evaluation.cs" />
     <Compile Include="Models\tbl_Loan_PrudentialGuideline.cs" />
     <Compile Include="Models\tbl_Loan_Relationship_Officer_History.cs" />
+    <Compile Include="Models\tbl_Loan_Revolving.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Category.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Daily.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Daily_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Irregular_Input.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Periodic.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Periodic_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Type.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Type_Product_Type_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Status.cs" />
     <Compile Include="Models\tbl_Loan_Transaction_Type.cs" />
     <Compile Include="Models\tbl_Loan_Type.cs" />
@@ -246,6 +257,7 @@
     <Compile Include="Models\tbl_Profile_Priviledge_Activity.cs" />
     <Compile Include="Models\tbl_Profile_User.cs" />
     <Compile Include="Models\tbl_Profile_UserGroup.cs" />
+    <Compile Include="Models\tbl_Public_Holiday.cs" />
     <Compile Include="Models\tbl_Region.cs" />
     <Compile Include="Models\tbl_Risk_Assessment.cs" />
     <Compile Include="Models\tbl_Risk_Assessment_Index.cs" />
@@ -298,6 +310,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <Fakes Include="Fakes\EntityFramework.SqlServer.fakes" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

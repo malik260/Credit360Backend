@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CollateralCustomerId { get; set; }
 
+        public short CollateralSubTypeId { get; set; }
+
         [Required]
         [StringLength(200)]
         public string MachineName { get; set; }
@@ -56,6 +58,8 @@ namespace FintrakBanking.Entities.Models
         public string IntendedUse { get; set; }
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+
+        public virtual tbl_Collateral_Type_Sub tbl_Collateral_Type_Sub { get; set; }
 
         public virtual tbl_Collateral_Valuebase_Type tbl_Collateral_Valuebase_Type { get; set; }
     }
