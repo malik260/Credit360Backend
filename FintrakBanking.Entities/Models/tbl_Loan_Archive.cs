@@ -12,6 +12,21 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int LoanArchiveId { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime ChangeEffectiveDate { get; set; }
+
+        public short ChangeTypeId { get; set; }
+
+        public bool IsApplied { get; set; }
+
+        [Required]
+        [StringLength(500)]
+        public string ChangeReason { get; set; }
+
+        public double ProductPriceIndexRate { get; set; }
+
+        public int CustomerRiskRatingId { get; set; }
+
         public int LoanId { get; set; }
 
         public int CustomerId { get; set; }
@@ -210,6 +225,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Loan_Schedule_Type tbl_Loan_Schedule_Type { get; set; }
 
         public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
+
+        public virtual tbl_Loan_Change_Type tbl_Loan_Change_Type { get; set; }
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
     }

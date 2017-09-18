@@ -10,7 +10,6 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Public_Holiday
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int PublicHolidayId { get; set; }
 
         public int CountryId { get; set; }

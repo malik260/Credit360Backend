@@ -21,13 +21,15 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Force_Debit = new HashSet<tbl_Loan_Force_Debit>();
             tbl_Loan_Guarantor = new HashSet<tbl_Loan_Guarantor>();
             tbl_Loan_Past_Due = new HashSet<tbl_Loan_Past_Due>();
+            tbl_Loan_Schedule_Daily_Archive = new HashSet<tbl_Loan_Schedule_Daily_Archive>();
             tbl_Loan_Schedule_Daily = new HashSet<tbl_Loan_Schedule_Daily>();
             tbl_Loan_Schedule_Irregular_Input = new HashSet<tbl_Loan_Schedule_Irregular_Input>();
+            tbl_Loan_Schedule_Periodic_Archive = new HashSet<tbl_Loan_Schedule_Periodic_Archive>();
             tbl_Loan_Schedule_Periodic = new HashSet<tbl_Loan_Schedule_Periodic>();
         }
 
         [Key]
-        public int LoanId { get; set; }
+        public int TermLoanId { get; set; }
 
         public double ProductPriceIndexRate { get; set; }
 
@@ -246,10 +248,16 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Loan_Past_Due> tbl_Loan_Past_Due { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Schedule_Daily_Archive> tbl_Loan_Schedule_Daily_Archive { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Irregular_Input> tbl_Loan_Schedule_Irregular_Input { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Schedule_Periodic_Archive> tbl_Loan_Schedule_Periodic_Archive { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Periodic> tbl_Loan_Schedule_Periodic { get; set; }

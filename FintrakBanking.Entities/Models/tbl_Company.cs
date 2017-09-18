@@ -33,7 +33,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Customer_FS_Caption_Group = new HashSet<tbl_Customer_FS_Caption_Group>();
             tbl_Customer_FS_Ratio_Caption = new HashSet<tbl_Customer_FS_Ratio_Caption>();
             tbl_Customer = new HashSet<tbl_Customer>();
-            tbl_Daily_Accural = new HashSet<tbl_Daily_Accural>();
+            tbl_Daily_Accrual = new HashSet<tbl_Daily_Accrual>();
             tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
             tbl_Limit = new HashSet<tbl_Limit>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
@@ -48,6 +48,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Fee = new HashSet<tbl_Fee>();
             tbl_Product_Charge_Fee = new HashSet<tbl_Product_Charge_Fee>();
             tbl_Product_Price_Index = new HashSet<tbl_Product_Price_Index>();
+            tbl_Setup_Global = new HashSet<tbl_Setup_Global>();
             tbl_Solicitor = new HashSet<tbl_Solicitor>();
             tbl_Staff_Organogram = new HashSet<tbl_Staff_Organogram>();
             tbl_Staff = new HashSet<tbl_Staff>();
@@ -77,6 +78,12 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(100)]
         public string Email { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? ShareHoldersFund { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? PreliminaryEvaluation_Limit { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? DateOfIncorporation { get; set; }
@@ -233,7 +240,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Customer> tbl_Customer { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Daily_Accural> tbl_Daily_Accural { get; set; }
+        public virtual ICollection<tbl_Daily_Accrual> tbl_Daily_Accrual { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
@@ -276,6 +283,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Product_Price_Index> tbl_Product_Price_Index { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Setup_Global> tbl_Setup_Global { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Solicitor> tbl_Solicitor { get; set; }
