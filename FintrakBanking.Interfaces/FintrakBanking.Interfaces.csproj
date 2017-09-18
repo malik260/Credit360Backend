@@ -48,6 +48,7 @@
     <Compile Include="CASA\ICasaRepository.cs" />
     <Compile Include="CreditLimitValidations\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IAppraisalMemorandumRepository.cs" />
+    <Compile Include="Credit\ICollateralDocumentRepository.cs" />
     <Compile Include="Credit\ICreditTemplateRepository.cs" />
     <Compile Include="Credit\ICustomerCollateralRepository.cs" />
     <Compile Include="Credit\ILimitRepository.cs" />

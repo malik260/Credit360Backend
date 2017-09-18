@@ -593,7 +593,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("product/{productId}")]
-        public HttpResponseMessage UpdateProduct(int productId, [FromBody] ProductViewModel model)
+        public async Task<HttpResponseMessage> UpdateProduct(int productId, [FromBody] ProductViewModel model)
         {
             try
             {
@@ -603,12 +603,12 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
+                var staff = await repo.UpdateProduct(productId, model);
 
-                var staff = repo.UpdateProduct(productId, model);
                 if (staff)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = staff, message = "Product has been updated successfully, now waiting for approval" });
+                        new { success = true, result = staff, message = "Product has been updated successfully, now awaiting approval" });
                 }
                 else
                     return Request.CreateResponse(HttpStatusCode.OK,
