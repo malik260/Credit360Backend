@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Daily_Accural_Category")]
-    public partial class tbl_Daily_Accural_Category
+    [Table("credit.tbl_Loan_Change_Type")]
+    public partial class tbl_Loan_Change_Type
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Daily_Accural_Category()
+        public tbl_Loan_Change_Type()
         {
-            tbl_Daily_Accural = new HashSet<tbl_Daily_Accural>();
+            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short CategoryId { get; set; }
+        public short ChangeTypeId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string CategoryName { get; set; }
+        public string ChangeTypeName { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Daily_Accural> tbl_Daily_Accural { get; set; }
+        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
     }
 }

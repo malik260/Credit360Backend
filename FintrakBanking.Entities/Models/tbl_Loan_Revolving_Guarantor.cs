@@ -6,19 +6,13 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Guarantor")]
-    public partial class tbl_Loan_Guarantor
+    [Table("credit.tbl_Loan_Revolving_Guarantor")]
+    public partial class tbl_Loan_Revolving_Guarantor
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Guarantor()
-        {
-            tbl_Guarantor_Document = new HashSet<tbl_Guarantor_Document>();
-        }
-
         [Key]
         public short LoanGuarantorId { get; set; }
 
-        public int TermLoanId { get; set; }
+        public int RevolvingLoanId { get; set; }
 
         [StringLength(50)]
         public string BVN { get; set; }
@@ -63,9 +57,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Guarantor_Document> tbl_Guarantor_Document { get; set; }
-
-        public virtual tbl_Loan tbl_Loan { get; set; }
+        public virtual tbl_Loan_Revolving tbl_Loan_Revolving { get; set; }
     }
 }

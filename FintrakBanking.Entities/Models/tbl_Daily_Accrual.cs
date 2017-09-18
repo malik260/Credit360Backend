@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Daily_Accural")]
-    public partial class tbl_Daily_Accural
+    [Table("core.tbl_Daily_Accrual")]
+    public partial class tbl_Daily_Accrual
     {
         [Key]
         public int DailyAccuralId { get; set; }
@@ -55,7 +55,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Currency tbl_Currency { get; set; }
 
-        public virtual tbl_Daily_Accural_Category tbl_Daily_Accural_Category { get; set; }
+        public virtual tbl_Daily_Accrual_Category tbl_Daily_Accrual_Category { get; set; }
 
         public virtual tbl_Day_Count_Convention tbl_Day_Count_Convention { get; set; }
 

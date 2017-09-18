@@ -50,6 +50,7 @@ namespace FintrakBanking.ViewModels.Credit
 
 
         public int sectorId { get; set; }
+        public int subSectorId { get; set; }
 
         public string customerName { get; set; }
         public string branchName { get; set; }

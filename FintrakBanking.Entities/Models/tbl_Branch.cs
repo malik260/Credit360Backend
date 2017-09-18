@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
             tbl_CASA_Lien = new HashSet<tbl_CASA_Lien>();
             tbl_CASA = new HashSet<tbl_CASA>();
             tbl_Customer = new HashSet<tbl_Customer>();
-            tbl_Daily_Accural = new HashSet<tbl_Daily_Accural>();
+            tbl_Daily_Accrual = new HashSet<tbl_Daily_Accrual>();
             tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
             tbl_Finance_Transaction1 = new HashSet<tbl_Finance_Transaction>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
@@ -102,7 +102,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Customer> tbl_Customer { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Daily_Accural> tbl_Daily_Accural { get; set; }
+        public virtual ICollection<tbl_Daily_Accrual> tbl_Daily_Accrual { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
