@@ -54,14 +54,22 @@ namespace FintrakBanking.Repositories.Credit
                     case (int)CollateralTypeEnum.TermDeposit: AddDepositCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.PlantAndMachinery: AddEquipmentCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Miscellaneous: AddMiscellaneousCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.Gaurantee: AddGuaranteeCollateral(collateralId, entity); break;
 
                     default: break;
                 }
 
                 if (entity.hasInsurance) { AddItemInsurancePolicy(collateralId, entity); }
 
-                bool saved = await context.SaveChangesAsync() != 0;
-
+                bool saved;
+                try
+                {
+                    saved = await context.SaveChangesAsync() != 0;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.InnerException.ToString());
+                }
                 if (saved) { return true; } // audit here
 
                 DeleteCollateral(collateralId);
@@ -81,6 +89,7 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)CollateralTypeEnum.TermDeposit: UpdateDepositCollateral(entity); break;
                 case (int)CollateralTypeEnum.PlantAndMachinery: UpdateEquipmentCollateral(entity); break;
                 case (int)CollateralTypeEnum.Miscellaneous: UpdateMiscellaneousCollateral(entity); break;
+                case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(entity); break;
 
                 default: break;
             }
@@ -234,12 +243,55 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddMiscellaneousCollateral(int collateralId, CollateralViewModel entity)
         {
-            throw new NotImplementedException();
+            var collateral = context.tbl_Collateral_Miscellaneous.Add(new tbl_Collateral_Miscellaneous
+            {
+                CollateralCustomerId = collateralId,
+                NameOfSecurity = entity.securityName,
+                SecurityValue = entity.securityValue,
+            });
+
+            //if (context.SaveChanges() > 0) // EF will take care of this
+            AddMiscellaneousNotes(entity, collateral.CollateralMiscellaneousId);
+        }
+
+        private void AddMiscellaneousNotes(CollateralViewModel entity, int miscellaneousId)
+        {
+            if (entity.notes != null)
+            {
+                foreach (var note in entity.notes)
+                {
+                    context.tbl_Collateral_Miscellaneous_Notes.Add(new tbl_Collateral_Miscellaneous_Notes
+                    {
+                        MiscellaneousId = miscellaneousId,
+                        ColumnName = note.labelName,
+                        ColumnValue = note.labelValue,
+                        CreatedBy = entity.createdBy,
+                        DateTimeCreated = DateTime.Now
+                    });
+                }
+                //context.SaveChanges();
+            }
         }
 
         private void UpdateMiscellaneousCollateral(CollateralViewModel entity)
         {
-            throw new NotImplementedException();
+            var collateral = context.tbl_Collateral_Miscellaneous
+                .Where(x => x.CollateralCustomerId == entity.collateralId)
+                .FirstOrDefault();
+
+            collateral.NameOfSecurity = entity.securityName;
+            collateral.SecurityValue = entity.securityValue;
+
+            UpdateMiscellaneousNotes(entity, collateral.CollateralMiscellaneousId);
+        }
+
+        private void UpdateMiscellaneousNotes(CollateralViewModel entity, int miscellaneousId)
+        {
+            var notes = context.tbl_Collateral_Miscellaneous_Notes.Where(x => x.MiscellaneousId == miscellaneousId);
+            foreach (var note in notes)
+            {
+                note.ColumnValue = entity.notes.FirstOrDefault(x => x.labelName == note.ColumnName).labelValue;
+            }
         }
 
         // ITEM INSURANCE
@@ -251,7 +303,7 @@ namespace FintrakBanking.Repositories.Credit
                 CollateralCustomerId = collateralId,
                 PolicyReferenceNumber = entity.referenceNumber,
                 InsuranceCompanyName = entity.insuranceCompany,
-                CoverageAmount = entity.coverageAmount,
+                SumInsured = entity.coverageAmount,
                 StartDate = entity.startDate,
                 EndDate = entity.expiryDate,
             });
@@ -265,7 +317,7 @@ namespace FintrakBanking.Repositories.Credit
 
             collateral.PolicyReferenceNumber = entity.referenceNumber;
             collateral.InsuranceCompanyName = entity.insuranceCompany;
-            collateral.CoverageAmount = entity.coverageAmount;
+            collateral.SumInsured = entity.coverageAmount;
             collateral.StartDate = entity.startDate;
             collateral.EndDate = entity.expiryDate;
         }
@@ -292,7 +344,35 @@ namespace FintrakBanking.Repositories.Credit
                 valuationCycle = x.ValuationCycle,
                 haircut = x.HairCut,
                 approvalStatus = x.ApprovalStatus,
-            }).ToList();
+            })
+            .OrderByDescending(x => x.collateralId)
+            .ToList();
+
+            return collateral;
+        }
+
+        public IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId)
+        {
+            var collateral = context.tbl_Collateral_Customer.Where(x => x.Deleted == false
+                && x.CompanyId == companyId
+            )
+            .Select(x => new CollateralViewModel
+            {
+                collateralId = x.CollateralCustomerId,
+                collateralTypeId = x.CollateralTypeId,
+                collateralSubTypeId = x.CollateralSubTypeId,
+                customerId = x.CustomerId,
+                currencyId = x.CurrencyId,
+                collateralCode = x.CollateralCode,
+                camRefNumber = x.CamRefNumber,
+                allowSharing = x.AllowSharing,
+                isLocationBased = x.IsLocationBased,
+                valuationCycle = x.ValuationCycle,
+                haircut = x.HairCut,
+                approvalStatus = x.ApprovalStatus,
+            })
+            .OrderByDescending(x => x.collateralId)
+            .ToList();
 
             return collateral;
         }
@@ -306,12 +386,46 @@ namespace FintrakBanking.Repositories.Credit
             {
                 case (int)CollateralTypeEnum.TermDeposit: data = GetCollateralDeposit(collateralId); break;
                 case (int)CollateralTypeEnum.PlantAndMachinery: data = GetCollateralMachinery(collateralId); break;
+                case (int)CollateralTypeEnum.Miscellaneous: data = GetCollateralMiscellaneous(collateralId); break;
+                case (int)CollateralTypeEnum.Gaurantee: data = GetCollateralGuarantee(collateralId); break;
 
                 default:
                     break;
             }
 
             return data;
+        }
+
+        private CollateralViewModel GetCollateralMiscellaneous(int collateralId)
+        {
+            var specifics = context.tbl_Collateral_Miscellaneous.FirstOrDefault(x => x.CollateralCustomerId == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.CollateralCustomerId,
+                detailId = specifics.CollateralMiscellaneousId,
+                securityName = specifics.NameOfSecurity,
+                securityValue = specifics.SecurityValue,
+            };
+            details = GetMiscellaneousNotes(details);
+            details = GetCollateralInsurancePolicy(details);
+            return details;
+        }
+
+        private CollateralViewModel GetMiscellaneousNotes(CollateralViewModel details)
+        {
+            var notes = context.tbl_Collateral_Miscellaneous_Notes.Where(x => x.MiscellaneousId == details.detailId);
+            var list = new List<MiscellaneousNote>();
+            foreach (var note in notes)
+            {
+                list.Add(new MiscellaneousNote
+                {
+                    labelName = note.ColumnName,
+                    labelValue = note.ColumnValue,
+                    controlName = note.ColumnName,
+                });
+            }
+            details.notes = list;
+            return details;
         }
 
         private CollateralViewModel GetCollateralMachinery(int collateralId)
@@ -365,10 +479,66 @@ namespace FintrakBanking.Repositories.Credit
             {
                 details.referenceNumber = insurance.PolicyReferenceNumber;
                 details.insuranceCompany = insurance.InsuranceCompanyName;
-                details.coverageAmount = insurance.CoverageAmount;
+                details.coverageAmount = insurance.SumInsured;
                 details.startDate = insurance.StartDate;
                 details.expiryDate = insurance.EndDate;
             }
+            return details;
+        }
+
+        // guarantee collateral
+
+        private void AddGuaranteeCollateral(int collateralId, CollateralViewModel entity)
+        {
+            context.tbl_Collateral_Gaurantee.Add(new tbl_Collateral_Gaurantee
+            {
+                CollateralCustomerId = collateralId,
+                IsOwnedByCustomer = entity.isOwnedByCustomer,
+                InstitutionName = entity.institutionName,
+                GuarantorAddress = entity.guarantorAddress,
+                GuarantorReferenceNumber = entity.guarantorReferenceNumber,
+                GuaranteeValue = entity.guaranteeValue,
+                StartDate = entity.startDate,
+                EndDate = entity.endDate,
+                Remark = entity.remark,
+            });
+        }
+
+        private void UpdateGuaranteeCollateral(CollateralViewModel entity)
+        {
+            var collateral = context.tbl_Collateral_Gaurantee
+                .Where(x => x.CollateralCustomerId == entity.collateralId)
+                .FirstOrDefault();
+
+            collateral.CollateralCustomerId = entity.collateralCustomerId;
+            collateral.IsOwnedByCustomer = entity.isOwnedByCustomer;
+            collateral.InstitutionName = entity.institutionName;
+            collateral.GuarantorAddress = entity.guarantorAddress;
+            collateral.GuarantorReferenceNumber = entity.guarantorReferenceNumber;
+            collateral.GuaranteeValue = entity.guaranteeValue;
+            collateral.StartDate = entity.startDate;
+            collateral.EndDate = entity.endDate;
+            collateral.Remark = entity.remark;
+        }
+
+        private CollateralViewModel GetCollateralGuarantee(int collateralId)
+        {
+            var specifics = context.tbl_Collateral_Gaurantee.FirstOrDefault(x => x.CollateralCustomerId == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.CollateralCustomerId,
+                collateralGauranteeId = specifics.CollateralGauranteeId,
+                collateralCustomerId = specifics.CollateralCustomerId,
+                isOwnedByCustomer = specifics.IsOwnedByCustomer,
+                institutionName = specifics.InstitutionName,
+                guarantorAddress = specifics.GuarantorAddress,
+                guarantorReferenceNumber = specifics.GuarantorReferenceNumber,
+                guaranteeValue = specifics.GuaranteeValue,
+                startDate = specifics.StartDate,
+                endDate = specifics.EndDate,
+                remark = specifics.Remark,
+            };
+            details = GetCollateralInsurancePolicy(details);
             return details;
         }
 
@@ -392,25 +562,12 @@ namespace FintrakBanking.Repositories.Credit
 
         #region Collateral Customer 
 
-        public IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId)
-        {
-            var collateral = GetCollateralCustomerByCustomerId(customerId, companyId).Where(x => x.deleted == false);
+        //public IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId)
+        //{
+        //    var collateral = GetCollateralCustomerByCustomerId(customerId, companyId).Where(x => x.deleted == false);
 
-            foreach (var c in collateral)
-            {
-                c.collateralProperty = GetCollateralPropertyByCollateralCustomerId(c.collateralCustomerId);
-                c.collateralMachineDetail = GetCollateralMachineDetailByCollateralCustomerId(c.collateralCustomerId);
-                c.collateralMarketableSecurity = GetCollateralMarketableSecurityByCollateralCustomerId(c.collateralCustomerId);
-                c.collateralPreciousMetal = GetCollateralPreciousMetalByCollateralCustomerId(c.collateralCustomerId);
-                c.collateralInsurancePolicy = GetCollateralInsurancePolicyByCollateralCustomerId(c.collateralCustomerId);
-                c.collateralGaurantee = GetCollateralGauranteeByCollateralCustomerId(c.collateralCustomerId);
-                c.collateralVehicle = GetCollateralVehicleByCollateralCustomerId(c.collateralCustomerId);
-                //c.collateralMiscellaneous = GetCollateralMiscellaneousByCollateralCustomerId(c.collateralCustomerId);
-                c.collateralCustomerPolicy = GetCollateralCustomerPolicyByCollateralCustomerId(c.collateralCustomerId);
-            }
-
-            return collateral;
-        }
+        //    return collateral;
+        //}
 
         public async Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity)
         {
@@ -457,272 +614,272 @@ namespace FintrakBanking.Repositories.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-        private List<CollateralCustomerViewModel> CollateralCustomer(int customerId, int companyId)
-        {
-            tbl_Collateral_Type_Sub sub = new tbl_Collateral_Type_Sub();
-            return (from c in context.tbl_Collateral_Customer
-                    join t in context.tbl_Collateral_Type on c.CollateralTypeId equals t.CollateralTypeId
-                    where c.Deleted == false && c.CompanyId == companyId && c.CustomerId == customerId
-                    select new CollateralCustomerViewModel
-                    {
-                        collateralTypeId = c.CollateralTypeId,
-                        collateralType = c.tbl_Collateral_Type.CollateralTypeName,
-                        collateralCustomerId = c.CollateralCustomerId,
-                        collateralCode = c.CollateralCode,
-                        currencyId = c.CurrencyId,
-                        currency = c.tbl_Currency.CurrencyName,
-                        allowSharing = c.AllowSharing,
-                        isLocationBased = c.IsLocationBased,
-                        valuationCycle = c.ValuationCycle,
-                        hairCut = c.HairCut,
-                        customerId = c.CustomerId,
-                        customerName = c.tbl_Customer.LastName + " " + c.tbl_Customer.FirstName,
-                        approvalStatus = c.ApprovalStatus,
-                        dateActedOn = c.DateActedOn,
-                        actedOnBy = c.ActedOnBy,
-                        camRefNumber = c.CamRefNumber,
-                        dateTimeCreated = c.DateTimeCreated,
-                        createdBy = c.CreatedBy,
-                    }).ToList();
-        }
+        //private List<CollateralCustomerViewModel> CollateralCustomer(int customerId, int companyId)
+        //{
+        //    tbl_Collateral_Type_Sub sub = new tbl_Collateral_Type_Sub();
+        //    return (from c in context.tbl_Collateral_Customer
+        //            join t in context.tbl_Collateral_Type on c.CollateralTypeId equals t.CollateralTypeId
+        //            where c.Deleted == false && c.CompanyId == companyId && c.CustomerId == customerId
+        //            select new CollateralCustomerViewModel
+        //            {
+        //                collateralTypeId = c.CollateralTypeId,
+        //                collateralType = c.tbl_Collateral_Type.CollateralTypeName,
+        //                collateralCustomerId = c.CollateralCustomerId,
+        //                collateralCode = c.CollateralCode,
+        //                currencyId = c.CurrencyId,
+        //                currency = c.tbl_Currency.CurrencyName,
+        //                allowSharing = c.AllowSharing,
+        //                isLocationBased = c.IsLocationBased,
+        //                valuationCycle = c.ValuationCycle,
+        //                hairCut = c.HairCut,
+        //                customerId = c.CustomerId,
+        //                customerName = c.tbl_Customer.LastName + " " + c.tbl_Customer.FirstName,
+        //                approvalStatus = c.ApprovalStatus,
+        //                dateActedOn = c.DateActedOn,
+        //                actedOnBy = c.ActedOnBy,
+        //                camRefNumber = c.CamRefNumber,
+        //                dateTimeCreated = c.DateTimeCreated,
+        //                createdBy = c.CreatedBy,
+        //            })
+        //            .OrderByDescending(x => x.collateralCustomerId)
+        //            .ToList();
+        //}
 
-        public IEnumerable<CollateralCustomerViewModel> GetCollateralCustomerByCustomerId(int customerId, int companyId)
-        {
-            return CollateralCustomer(customerId, companyId);
-        }
+        //public IEnumerable<CollateralCustomerViewModel> GetCollateralCustomerByCustomerId(int customerId, int companyId)
+        //{
+        //    return CollateralCustomer(customerId, companyId);
+        //}
 
-        public async Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity)
-        {
-            var collateral = context.tbl_Collateral_Customer.Find(collateralCustomerId);
-            collateral.CollateralCode = entity.collateralCode;
-            collateral.CurrencyId = entity.currencyId;
-            collateral.AllowSharing = entity.allowSharing;
-            collateral.IsLocationBased = entity.isLocationBased;
-            collateral.ValuationCycle = entity.valuationCycle;
-            collateral.HairCut = entity.hairCut;
-            collateral.CustomerId = entity.customerId;
-            collateral.ApprovalStatus = entity.approvalStatus;
-            collateral.DateActedOn = entity.dateActedOn;
-            collateral.ActedOnBy = entity.actedOnBy;
-            collateral.CamRefNumber = entity.camRefNumber;
-            collateral.DateTimeUpdated = entity.dateTimeCreated;
-            collateral.LastUpdatedBy = entity.lastUpdatedBy;
+        //public async Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity)
+        //{
+        //    var collateral = context.tbl_Collateral_Customer.Find(collateralCustomerId);
+        //    collateral.CollateralCode = entity.collateralCode;
+        //    collateral.CurrencyId = entity.currencyId;
+        //    collateral.AllowSharing = entity.allowSharing;
+        //    collateral.IsLocationBased = entity.isLocationBased;
+        //    collateral.ValuationCycle = entity.valuationCycle;
+        //    collateral.HairCut = entity.hairCut;
+        //    collateral.CustomerId = entity.customerId;
+        //    collateral.ApprovalStatus = entity.approvalStatus;
+        //    collateral.DateActedOn = entity.dateActedOn;
+        //    collateral.ActedOnBy = entity.actedOnBy;
+        //    collateral.CamRefNumber = entity.camRefNumber;
+        //    collateral.DateTimeUpdated = entity.dateTimeCreated;
+        //    collateral.LastUpdatedBy = entity.lastUpdatedBy;
 
-            //TblCollateralMachineDetail collateralMachineDetail = collateral.TblCollateralMachineDetail.FirstOrDefault();
+        //    //TblCollateralMachineDetail collateralMachineDetail = collateral.TblCollateralMachineDetail.FirstOrDefault();
 
-            if (entity.collateralTypeId == (int)CollateralTypeEnum.Property)
-            {
-                var collateralProperty = context.tbl_Collateral_Immovable_Property.Find(entity.collateralProperty.collateralPropertyId);
+        //    if (entity.collateralTypeId == (int)CollateralTypeEnum.Property)
+        //    {
+        //        var collateralProperty = context.tbl_Collateral_Immovable_Property.Find(entity.collateralProperty.collateralPropertyId);
 
-                collateralProperty.PropertyName = entity.collateralProperty.propertyName;
-                collateralProperty.CityId = entity.collateralProperty.cityId;
-                collateralProperty.CountryId = entity.collateralProperty.countryId;
-                collateralProperty.PropertyAddress = entity.collateralProperty.propertyAddress;
-                collateralProperty.ConstructionDate = entity.collateralProperty.constructionDate;
-                collateralProperty.DateOfAcquisition = entity.collateralProperty.dateOfAcquisition;
-                collateralProperty.LastValuationDate = entity.collateralProperty.lastValuationDate;
-                collateralProperty.ValuerId = entity.collateralProperty.valuerId;
-                collateralProperty.ValuerReferenceNumber = entity.collateralProperty.valuerReferenceNumber;
-                collateralProperty.OpenMarketValue = entity.collateralProperty.openMarketValue;
-                collateralProperty.CollateralValue = entity.collateralProperty.collateralValue;
-                collateralProperty.ForcedSaleValue = entity.collateralProperty.forcedSaleValue;
-                collateralProperty.StampToCover = entity.collateralProperty.stampToCover;
-                collateralProperty.ValuationSource = entity.collateralProperty.valuationSource;
-                collateralProperty.OriginalValue = entity.collateralProperty.originalValue;
-                collateralProperty.AvailableValue = entity.collateralProperty.availableValue;
-                collateralProperty.SecurityValue = entity.collateralProperty.securityValue;
-                collateralProperty.CollateralUsableAmount = entity.collateralProperty.collateralUsableAmount;
-                collateralProperty.PropertyValueBaseTypeId = entity.collateralProperty.propertyValueBaseTypeId;
-                collateralProperty.Remark = entity.collateralProperty.remark;
-            }
+        //        collateralProperty.PropertyName = entity.collateralProperty.propertyName;
+        //        collateralProperty.CityId = entity.collateralProperty.cityId;
+        //        collateralProperty.CountryId = entity.collateralProperty.countryId;
+        //        collateralProperty.PropertyAddress = entity.collateralProperty.propertyAddress;
+        //        collateralProperty.ConstructionDate = entity.collateralProperty.constructionDate;
+        //        collateralProperty.DateOfAcquisition = entity.collateralProperty.dateOfAcquisition;
+        //        collateralProperty.LastValuationDate = entity.collateralProperty.lastValuationDate;
+        //        collateralProperty.ValuerId = entity.collateralProperty.valuerId;
+        //        collateralProperty.ValuerReferenceNumber = entity.collateralProperty.valuerReferenceNumber;
+        //        collateralProperty.OpenMarketValue = entity.collateralProperty.openMarketValue;
+        //        collateralProperty.CollateralValue = entity.collateralProperty.collateralValue;
+        //        collateralProperty.ForcedSaleValue = entity.collateralProperty.forcedSaleValue;
+        //        collateralProperty.StampToCover = entity.collateralProperty.stampToCover;
+        //        collateralProperty.ValuationSource = entity.collateralProperty.valuationSource;
+        //        collateralProperty.OriginalValue = entity.collateralProperty.originalValue;
+        //        collateralProperty.AvailableValue = entity.collateralProperty.availableValue;
+        //        collateralProperty.SecurityValue = entity.collateralProperty.securityValue;
+        //        collateralProperty.CollateralUsableAmount = entity.collateralProperty.collateralUsableAmount;
+        //        collateralProperty.PropertyValueBaseTypeId = entity.collateralProperty.propertyValueBaseTypeId;
+        //        collateralProperty.Remark = entity.collateralProperty.remark;
+        //    }
 
-            if (entity.collateralTypeId == (int)CollateralTypeEnum.MarketableSecurities)
-            {
-                var collateralMarketableSecurity = context.tbl_Collateral_Marketable_Security.Find(entity.collateralMarketableSecurity.collateralMarketableSecurityId);
+        //    if (entity.collateralTypeId == (int)CollateralTypeEnum.MarketableSecurities)
+        //    {
+        //        var collateralMarketableSecurity = context.tbl_Collateral_Marketable_Security.Find(entity.collateralMarketableSecurity.collateralMarketableSecurityId);
 
-                collateralMarketableSecurity.SecurityType = entity.collateralMarketableSecurity.securityType;
-                collateralMarketableSecurity.DealReferenceNumber = entity.collateralMarketableSecurity.dealReferenceNumber;
-                collateralMarketableSecurity.EffectiveDate = entity.collateralMarketableSecurity.effectiveDate;
-                collateralMarketableSecurity.MaturityDate = entity.collateralMarketableSecurity.maturityDate;
-                collateralMarketableSecurity.DealAmount = entity.collateralMarketableSecurity.dealAmount;
-                collateralMarketableSecurity.SecurityValue = entity.collateralMarketableSecurity.securityValue;
-                collateralMarketableSecurity.LienUsableAmount = entity.collateralMarketableSecurity.lienUsableAmount;
-                collateralMarketableSecurity.Rating = entity.collateralMarketableSecurity.rating;
-                collateralMarketableSecurity.PercentageInterest = entity.collateralMarketableSecurity.percentageInterest;
-                collateralMarketableSecurity.InterestPaymentFrequency = entity.collateralMarketableSecurity.interestPaymentFrequency;
-                collateralMarketableSecurity.IssuerName = entity.collateralMarketableSecurity.issuerName;
-                collateralMarketableSecurity.IssuerReferenceNumber = entity.collateralMarketableSecurity.issuerReferenceNumber;
-                collateralMarketableSecurity.UnitValue = entity.collateralMarketableSecurity.unitValue;
-                collateralMarketableSecurity.NumberOfUnits = entity.collateralMarketableSecurity.numberOfUnits;
-                collateralMarketableSecurity.Remark = entity.collateralMarketableSecurity.remark;
-            }
-            if (entity.collateralTypeId == (int)CollateralTypeEnum.TermDeposit)
-            {
-                var collateralDeposit = context.tbl_Collateral_Deposit.Find(entity.collateralDeposit.collateralDepositId);
+        //        collateralMarketableSecurity.SecurityType = entity.collateralMarketableSecurity.securityType;
+        //        collateralMarketableSecurity.DealReferenceNumber = entity.collateralMarketableSecurity.dealReferenceNumber;
+        //        collateralMarketableSecurity.EffectiveDate = entity.collateralMarketableSecurity.effectiveDate;
+        //        collateralMarketableSecurity.MaturityDate = entity.collateralMarketableSecurity.maturityDate;
+        //        collateralMarketableSecurity.DealAmount = entity.collateralMarketableSecurity.dealAmount;
+        //        collateralMarketableSecurity.SecurityValue = entity.collateralMarketableSecurity.securityValue;
+        //        collateralMarketableSecurity.LienUsableAmount = entity.collateralMarketableSecurity.lienUsableAmount;
+        //        collateralMarketableSecurity.Rating = entity.collateralMarketableSecurity.rating;
+        //        collateralMarketableSecurity.PercentageInterest = entity.collateralMarketableSecurity.percentageInterest;
+        //        collateralMarketableSecurity.InterestPaymentFrequency = entity.collateralMarketableSecurity.interestPaymentFrequency;
+        //        collateralMarketableSecurity.IssuerName = entity.collateralMarketableSecurity.issuerName;
+        //        collateralMarketableSecurity.IssuerReferenceNumber = entity.collateralMarketableSecurity.issuerReferenceNumber;
+        //        collateralMarketableSecurity.UnitValue = entity.collateralMarketableSecurity.unitValue;
+        //        collateralMarketableSecurity.NumberOfUnits = entity.collateralMarketableSecurity.numberOfUnits;
+        //        collateralMarketableSecurity.Remark = entity.collateralMarketableSecurity.remark;
+        //    }
+        //    if (entity.collateralTypeId == (int)CollateralTypeEnum.TermDeposit)
+        //    {
+        //        var collateralDeposit = context.tbl_Collateral_Deposit.Find(entity.collateralDeposit.collateralDepositId);
 
-                collateralDeposit.AccountNumber = entity.collateralDeposit.accountNumber;
-                collateralDeposit.DealReferenceNumber = entity.collateralDeposit.dealReferenceNumber;
-                //collateralDeposit.ExistingLienAmount = entity.collateralDeposit.existingLienAmount;
-                collateralDeposit.LienAmount = entity.collateralDeposit.lienAmount;
-                collateralDeposit.AvailableBalance = entity.collateralDeposit.availableBalance;
-                collateralDeposit.SecurityValue = entity.collateralDeposit.securityValue;
-                collateralDeposit.MaturityDate = entity.collateralDeposit.maturityDate;
-                collateralDeposit.MaturityAmount = entity.collateralDeposit.maturityAmount;
-                collateralDeposit.Remark = entity.collateralDeposit.remark;
-            }
+        //        collateralDeposit.AccountNumber = entity.collateralDeposit.accountNumber;
+        //        collateralDeposit.DealReferenceNumber = entity.collateralDeposit.dealReferenceNumber;
+        //        //collateralDeposit.ExistingLienAmount = entity.collateralDeposit.existingLienAmount;
+        //        collateralDeposit.LienAmount = entity.collateralDeposit.lienAmount;
+        //        collateralDeposit.AvailableBalance = entity.collateralDeposit.availableBalance;
+        //        collateralDeposit.SecurityValue = entity.collateralDeposit.securityValue;
+        //        collateralDeposit.MaturityDate = entity.collateralDeposit.maturityDate;
+        //        collateralDeposit.MaturityAmount = entity.collateralDeposit.maturityAmount;
+        //        collateralDeposit.Remark = entity.collateralDeposit.remark;
+        //    }
 
-            if (entity.collateralTypeId == (int)CollateralTypeEnum.CASA)
-            {
-                var collateralCasa = context.tbl_Collateral_Casa.Find(entity.collateralCasa.collateralCasaId);
+        //    if (entity.collateralTypeId == (int)CollateralTypeEnum.CASA)
+        //    {
+        //        var collateralCasa = context.tbl_Collateral_Casa.Find(entity.collateralCasa.collateralCasaId);
 
-                collateralCasa.AccountNumber = entity.collateralCasa.accountNumber;
-                collateralCasa.IsOwnedByCustomer = entity.collateralCasa.isOwnedByCustomer;
-                collateralCasa.AvailableBalance = entity.collateralCasa.availableBalance;
-                collateralCasa.ExistingLienAmount = entity.collateralCasa.existingLienAmount;
-                collateralCasa.LienAmount = entity.collateralCasa.lienAmount;
-                collateralCasa.SecurityValue = entity.collateralCasa.securityValue;
-                collateralCasa.Remark = entity.collateralCasa.remark;
-            }
+        //        collateralCasa.AccountNumber = entity.collateralCasa.accountNumber;
+        //        collateralCasa.IsOwnedByCustomer = entity.collateralCasa.isOwnedByCustomer;
+        //        collateralCasa.AvailableBalance = entity.collateralCasa.availableBalance;
+        //        collateralCasa.ExistingLienAmount = entity.collateralCasa.existingLienAmount;
+        //        collateralCasa.LienAmount = entity.collateralCasa.lienAmount;
+        //        collateralCasa.SecurityValue = entity.collateralCasa.securityValue;
+        //        collateralCasa.Remark = entity.collateralCasa.remark;
+        //    }
 
-            if (entity.collateralTypeId == (int)CollateralTypeEnum.PlantAndMachinery)
-            {
-                var collateralMachineDetail = context.tbl_Collateral_Plant_And_Equipment.Find(entity.collateralMachineDetail.collateralMachineDetailId);
+        //    if (entity.collateralTypeId == (int)CollateralTypeEnum.PlantAndMachinery)
+        //    {
+        //        var collateralMachineDetail = context.tbl_Collateral_Plant_And_Equipment.Find(entity.collateralMachineDetail.collateralMachineDetailId);
 
-                collateralMachineDetail.MachineName = entity.collateralMachineDetail.machineName;
-                collateralMachineDetail.Description = entity.collateralMachineDetail.description;
-                collateralMachineDetail.MachineNumber = entity.collateralMachineDetail.machineNumber;
-                collateralMachineDetail.ManufacturerName = entity.collateralMachineDetail.manufacturerName;
-                collateralMachineDetail.YearOfManufacture = entity.collateralMachineDetail.yearOfManufacture;
-                collateralMachineDetail.YearOfPurchase = entity.collateralMachineDetail.yearOfManufacture;
-                collateralMachineDetail.ValueBaseTypeId = entity.collateralMachineDetail.valueBaseTypeId;
-                collateralMachineDetail.MachineCondition = entity.collateralMachineDetail.machineCondition;
-                collateralMachineDetail.MachineryLocation = entity.collateralMachineDetail.machineryLocation;
-                collateralMachineDetail.EquipmentSize = entity.collateralMachineDetail.equipmentSize;
-                collateralMachineDetail.ReplacementValue = entity.collateralMachineDetail.replacementValue;
-                collateralMachineDetail.IntendedUse = entity.collateralMachineDetail.intendedUse;
+        //        collateralMachineDetail.MachineName = entity.collateralMachineDetail.machineName;
+        //        collateralMachineDetail.Description = entity.collateralMachineDetail.description;
+        //        collateralMachineDetail.MachineNumber = entity.collateralMachineDetail.machineNumber;
+        //        collateralMachineDetail.ManufacturerName = entity.collateralMachineDetail.manufacturerName;
+        //        collateralMachineDetail.YearOfManufacture = entity.collateralMachineDetail.yearOfManufacture;
+        //        collateralMachineDetail.YearOfPurchase = entity.collateralMachineDetail.yearOfManufacture;
+        //        collateralMachineDetail.ValueBaseTypeId = entity.collateralMachineDetail.valueBaseTypeId;
+        //        collateralMachineDetail.MachineCondition = entity.collateralMachineDetail.machineCondition;
+        //        collateralMachineDetail.MachineryLocation = entity.collateralMachineDetail.machineryLocation;
+        //        collateralMachineDetail.EquipmentSize = entity.collateralMachineDetail.equipmentSize;
+        //        collateralMachineDetail.ReplacementValue = entity.collateralMachineDetail.replacementValue;
+        //        collateralMachineDetail.IntendedUse = entity.collateralMachineDetail.intendedUse;
 
-            }
+        //    }
 
-            if (entity.collateralTypeId == (int)CollateralTypeEnum.PreciousMetal)
-            {
-                var collateralPreciousMetal = context.tbl_Collateral_PreciousMetal.Find(entity.collateralPreciousMetal.collateralPreciousMetalId);
+        //    if (entity.collateralTypeId == (int)CollateralTypeEnum.PreciousMetal)
+        //    {
+        //        var collateralPreciousMetal = context.tbl_Collateral_PreciousMetal.Find(entity.collateralPreciousMetal.collateralPreciousMetalId);
 
-                collateralPreciousMetal.CollateralCustomerId = entity.collateralPreciousMetal.collateralCustomerId;
-                collateralPreciousMetal.IsOwnedByCustomer = entity.collateralPreciousMetal.isOwnedByCustomer;
-                collateralPreciousMetal.PreciousMetalName = entity.collateralPreciousMetal.preciousMetalName;
-                collateralPreciousMetal.WeightInGrammes = entity.collateralPreciousMetal.weightInGrammes;
-                collateralPreciousMetal.ValuationAmount = entity.collateralPreciousMetal.valuationAmount;
-                collateralPreciousMetal.UnitRate = entity.collateralPreciousMetal.unitRate;
-                collateralPreciousMetal.PreciousMetalForm = entity.collateralPreciousMetal.preciousMetalForm;
-                collateralPreciousMetal.Remark = entity.collateralPreciousMetal.remark;
-            }
+        //        collateralPreciousMetal.CollateralCustomerId = entity.collateralPreciousMetal.collateralCustomerId;
+        //        collateralPreciousMetal.IsOwnedByCustomer = entity.collateralPreciousMetal.isOwnedByCustomer;
+        //        collateralPreciousMetal.PreciousMetalName = entity.collateralPreciousMetal.preciousMetalName;
+        //        collateralPreciousMetal.WeightInGrammes = entity.collateralPreciousMetal.weightInGrammes;
+        //        collateralPreciousMetal.ValuationAmount = entity.collateralPreciousMetal.valuationAmount;
+        //        collateralPreciousMetal.UnitRate = entity.collateralPreciousMetal.unitRate;
+        //        collateralPreciousMetal.PreciousMetalForm = entity.collateralPreciousMetal.preciousMetalForm;
+        //        collateralPreciousMetal.Remark = entity.collateralPreciousMetal.remark;
+        //    }
 
-            if (entity.collateralTypeId == (int)CollateralTypeEnum.InsurancePolicy)
-            {
-                tbl_Collateral_Policy collateralInsurancePolicy = collateral.tbl_Collateral_Policy.Where(x => x.CollateralInsurancePolicyId == entity.collateralTypeId)
-                    .FirstOrDefault();
+        //    if (entity.collateralTypeId == (int)CollateralTypeEnum.InsurancePolicy)
+        //    {
+        //        tbl_Collateral_Policy collateralInsurancePolicy = collateral.tbl_Collateral_Policy.Where(x => x.CollateralInsurancePolicyId == entity.collateralTypeId)
+        //            .FirstOrDefault();
 
-                collateralInsurancePolicy.PremiumAmount = entity.collateralInsurancePolicy.premiumAmount;
-                collateralInsurancePolicy.IsOwnedByCustomer = entity.collateralInsurancePolicy.isOwnedByCustomer;
-                collateralInsurancePolicy.InsurancePolicyNumber = entity.collateralInsurancePolicy.insurancePolicyNumber;
-                collateralInsurancePolicy.PolicyAmount = entity.collateralInsurancePolicy.policyAmount;
-                collateralInsurancePolicy.InsuranceCompanyName = entity.collateralInsurancePolicy.insuranceCompanyName;
-                collateralInsurancePolicy.PolicyStartDate = entity.collateralInsurancePolicy.policyStartDate;
-                collateralInsurancePolicy.AssignDate = entity.collateralInsurancePolicy.assignDate;
-                collateralInsurancePolicy.PolicyRenewalDate = entity.collateralInsurancePolicy.policyRenewalDate;
-                collateralInsurancePolicy.InsurerAddress = entity.collateralInsurancePolicy.insurerAddress;
-                collateralInsurancePolicy.InsurerDetails = entity.collateralInsurancePolicy.insurerDetails;
-                collateralInsurancePolicy.RenewalFrequencyTypeId = entity.collateralInsurancePolicy.renewalFrequencyTypeId;
-                collateralInsurancePolicy.Remark = entity.collateralInsurancePolicy.remark;
-            }
+        //        collateralInsurancePolicy.PremiumAmount = entity.collateralInsurancePolicy.premiumAmount;
+        //        collateralInsurancePolicy.IsOwnedByCustomer = entity.collateralInsurancePolicy.isOwnedByCustomer;
+        //        collateralInsurancePolicy.InsurancePolicyNumber = entity.collateralInsurancePolicy.insurancePolicyNumber;
+        //        collateralInsurancePolicy.PolicyAmount = entity.collateralInsurancePolicy.policyAmount;
+        //        collateralInsurancePolicy.InsuranceCompanyName = entity.collateralInsurancePolicy.insuranceCompanyName;
+        //        collateralInsurancePolicy.PolicyStartDate = entity.collateralInsurancePolicy.policyStartDate;
+        //        collateralInsurancePolicy.AssignDate = entity.collateralInsurancePolicy.assignDate;
+        //        collateralInsurancePolicy.PolicyRenewalDate = entity.collateralInsurancePolicy.policyRenewalDate;
+        //        collateralInsurancePolicy.InsurerAddress = entity.collateralInsurancePolicy.insurerAddress;
+        //        collateralInsurancePolicy.InsurerDetails = entity.collateralInsurancePolicy.insurerDetails;
+        //        collateralInsurancePolicy.RenewalFrequencyTypeId = entity.collateralInsurancePolicy.renewalFrequencyTypeId;
+        //        collateralInsurancePolicy.Remark = entity.collateralInsurancePolicy.remark;
+        //    }
 
-            if (entity.collateralTypeId == (int)CollateralTypeEnum.Gaurantee)
-            {
-                tbl_Collateral_Gaurantee collateralGaurantee = collateral.tbl_Collateral_Gaurantee.Where(x => x.CollateralGauranteeId == entity.collateralTypeId)
-                    .FirstOrDefault();
+        //    if (entity.collateralTypeId == (int)CollateralTypeEnum.Gaurantee)
+        //    {
+        //        tbl_Collateral_Gaurantee collateralGaurantee = collateral.tbl_Collateral_Gaurantee.Where(x => x.CollateralGauranteeId == entity.collateralTypeId)
+        //            .FirstOrDefault();
 
-                collateralGaurantee.IsOwnedByCustomer = entity.collateralGaurantee.isOwnedByCustomer;
-                collateralGaurantee.InstitutionName = entity.collateralGaurantee.institutionName;
-                collateralGaurantee.GuarantorReferenceNumber = entity.collateralGaurantee.guarantorReferenceNumber;
-                collateralGaurantee.GuaranteeValue = entity.collateralGaurantee.guaranteeValue;
-                collateralGaurantee.StartDate = entity.collateralGaurantee.startDate;
-                collateralGaurantee.EndDate = entity.collateralGaurantee.endDate;
-                collateralGaurantee.GuarantorAddress = entity.collateralGaurantee.guarantorAddress;
-                collateralGaurantee.Remark = entity.collateralGaurantee.remark;
-            }
+        //        collateralGaurantee.IsOwnedByCustomer = entity.collateralGaurantee.isOwnedByCustomer;
+        //        collateralGaurantee.InstitutionName = entity.collateralGaurantee.institutionName;
+        //        collateralGaurantee.GuarantorReferenceNumber = entity.collateralGaurantee.guarantorReferenceNumber;
+        //        collateralGaurantee.GuaranteeValue = entity.collateralGaurantee.guaranteeValue;
+        //        collateralGaurantee.StartDate = entity.collateralGaurantee.startDate;
+        //        collateralGaurantee.EndDate = entity.collateralGaurantee.endDate;
+        //        collateralGaurantee.GuarantorAddress = entity.collateralGaurantee.guarantorAddress;
+        //        collateralGaurantee.Remark = entity.collateralGaurantee.remark;
+        //    }
 
-            if (entity.collateralTypeId == (int)CollateralTypeEnum.Vehicle)
-            {
-                tbl_Collateral_Vehicle collateralVehicle = collateral.tbl_Collateral_Vehicle.Where(x => x.CollateralVehicleId == entity.collateralTypeId)
-                    .FirstOrDefault();
+        //    if (entity.collateralTypeId == (int)CollateralTypeEnum.Vehicle)
+        //    {
+        //        tbl_Collateral_Vehicle collateralVehicle = collateral.tbl_Collateral_Vehicle.Where(x => x.CollateralVehicleId == entity.collateralTypeId)
+        //            .FirstOrDefault();
 
-                collateralVehicle.VehicleType = entity.collateralVehicle.vehicleType;
-                collateralVehicle.VehicleStatus = entity.collateralVehicle.vehicleStatus;
-                collateralVehicle.VehicleMake = entity.collateralVehicle.vehicleMake;
-                collateralVehicle.ModelName = entity.collateralVehicle.modelName;
-                collateralVehicle.ManufacturedDate = entity.collateralVehicle.manufacturedDate;
-                collateralVehicle.SerialNumber = entity.collateralVehicle.serialNumber;
-                collateralVehicle.NameOfOwner = entity.collateralVehicle.nameOfOwner;
-                collateralVehicle.RegistrationCompany = entity.collateralVehicle.registrationCompany;
-                collateralVehicle.LastValuationAmount = entity.collateralVehicle.lastValuationAmount;
-                collateralVehicle.RegistrationNumber = entity.collateralVehicle.registrationNumber;
-                collateralVehicle.ChasisNumber = entity.collateralVehicle.chasisNumber;
-                collateralVehicle.EngineNumber = entity.collateralVehicle.engineNumber;
-                collateralVehicle.ResaleValue = entity.collateralVehicle.resaleValue;
-                collateralVehicle.ValuationDate = entity.collateralVehicle.valuationDate;
-                collateralVehicle.InvoiceValue = entity.collateralVehicle.invoiceValue;
-                collateralVehicle.Remark = entity.collateralVehicle.remark;
-            }
+        //        collateralVehicle.VehicleType = entity.collateralVehicle.vehicleType;
+        //        collateralVehicle.VehicleStatus = entity.collateralVehicle.vehicleStatus;
+        //        collateralVehicle.VehicleMake = entity.collateralVehicle.vehicleMake;
+        //        collateralVehicle.ModelName = entity.collateralVehicle.modelName;
+        //        collateralVehicle.ManufacturedDate = entity.collateralVehicle.manufacturedDate;
+        //        collateralVehicle.SerialNumber = entity.collateralVehicle.serialNumber;
+        //        collateralVehicle.NameOfOwner = entity.collateralVehicle.nameOfOwner;
+        //        collateralVehicle.RegistrationCompany = entity.collateralVehicle.registrationCompany;
+        //        collateralVehicle.LastValuationAmount = entity.collateralVehicle.lastValuationAmount;
+        //        collateralVehicle.RegistrationNumber = entity.collateralVehicle.registrationNumber;
+        //        collateralVehicle.ChasisNumber = entity.collateralVehicle.chasisNumber;
+        //        collateralVehicle.EngineNumber = entity.collateralVehicle.engineNumber;
+        //        collateralVehicle.ResaleValue = entity.collateralVehicle.resaleValue;
+        //        collateralVehicle.ValuationDate = entity.collateralVehicle.valuationDate;
+        //        collateralVehicle.InvoiceValue = entity.collateralVehicle.invoiceValue;
+        //        collateralVehicle.Remark = entity.collateralVehicle.remark;
+        //    }
 
-            if (entity.collateralTypeId == (int)CollateralTypeEnum.Miscellaneous)
-            {
-                tbl_Collateral_Miscellaneous collateralMiscellaneous = collateral.tbl_Collateral_Miscellaneous.Where(x => x.CollateralMiscellaneousId == entity.collateralTypeId)
-                    .FirstOrDefault();
+        //    if (entity.collateralTypeId == (int)CollateralTypeEnum.Miscellaneous)
+        //    {
+        //        tbl_Collateral_Miscellaneous collateralMiscellaneous = collateral.tbl_Collateral_Miscellaneous.Where(x => x.CollateralMiscellaneousId == entity.collateralTypeId)
+        //            .FirstOrDefault();
 
-                collateralMiscellaneous.IsOwnedByCustomer = entity.collateralMiscellaneous.isOwnedByCustomer;
-                collateralMiscellaneous.NameOfSecurity = entity.collateralMiscellaneous.nameOfSecurity;
-                collateralMiscellaneous.SecurityValue = entity.collateralMiscellaneous.securityValue;
-                collateralMiscellaneous.Note = entity.collateralMiscellaneous.note;
-                //if (entity.collateralMiscellaneous.collateralMiscellaneousNotes != null)
-                //{
-                //    tbl_Collateral_Miscellaneous_Notes collateralMiscellaneousNote = context.tbl_Collateral_Miscellaneous_Notes.Where(x => x.MiscellaneousId == entity.collateralMiscellaneous.collateralMiscellaneousId)
-                //    .FirstOrDefault();
+        //        collateralMiscellaneous.NameOfSecurity = entity.collateralMiscellaneous.nameOfSecurity;
+        //        collateralMiscellaneous.SecurityValue = entity.collateralMiscellaneous.securityValue;
+        //        //if (entity.collateralMiscellaneous.collateralMiscellaneousNotes != null)
+        //        //{
+        //        //    tbl_Collateral_Miscellaneous_Notes collateralMiscellaneousNote = context.tbl_Collateral_Miscellaneous_Notes.Where(x => x.MiscellaneousId == entity.collateralMiscellaneous.collateralMiscellaneousId)
+        //        //    .FirstOrDefault();
 
-                //    collateralMiscellaneousNote.ColumnName = entity.collateralMiscellaneous.collateralMiscellaneousNotes.;
-                //    collateralMiscellaneous.NameOfSecurity = entity.collateralMiscellaneous.nameOfSecurity;
-                //    collateralMiscellaneous.SecurityValue = entity.collateralMiscellaneous.securityValue;
-                //    collateralMiscellaneous.Note = entity.collateralMiscellaneous.note;
-                //}
-            }
+        //        //    collateralMiscellaneousNote.ColumnName = entity.collateralMiscellaneous.collateralMiscellaneousNotes.;
+        //        //    collateralMiscellaneous.NameOfSecurity = entity.collateralMiscellaneous.nameOfSecurity;
+        //        //    collateralMiscellaneous.SecurityValue = entity.collateralMiscellaneous.securityValue;
+        //        //    collateralMiscellaneous.Note = entity.collateralMiscellaneous.note;
+        //        //}
+        //    }
 
-            //if (entity.collateralCustomerPolicy != null)
-            //{
-            //    tbl_Collateral_Item_Policy collateralCustomerPolicy = collateral.tbl_Collateral_Customer_Policy.Where(x => x.PolicyId == entity.collateralCustomerPolicy.policyId)
-            //        .FirstOrDefault();
+        //    //if (entity.collateralCustomerPolicy != null)
+        //    //{
+        //    //    tbl_Collateral_Item_Policy collateralCustomerPolicy = collateral.tbl_Collateral_Customer_Policy.Where(x => x.PolicyId == entity.collateralCustomerPolicy.policyId)
+        //    //        .FirstOrDefault();
 
-            //    collateralCustomerPolicy.PolicyReferenceNumber = entity.collateralCustomerPolicy.policyReferenceNumber;
-            //    collateralCustomerPolicy.InsuranceCompanyName = entity.collateralCustomerPolicy.insuranceCompanyName;
-            //    collateralCustomerPolicy.StartDate = entity.collateralCustomerPolicy.startDate;
-            //    collateralCustomerPolicy.EndDate = entity.collateralCustomerPolicy.endDate;
-            //}
+        //    //    collateralCustomerPolicy.PolicyReferenceNumber = entity.collateralCustomerPolicy.policyReferenceNumber;
+        //    //    collateralCustomerPolicy.InsuranceCompanyName = entity.collateralCustomerPolicy.insuranceCompanyName;
+        //    //    collateralCustomerPolicy.StartDate = entity.collateralCustomerPolicy.startDate;
+        //    //    collateralCustomerPolicy.EndDate = entity.collateralCustomerPolicy.endDate;
+        //    //}
 
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupDeleted,
-                StaffId = (int)entity.lastUpdatedBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Update collateral with code: { entity.collateralCode} of { entity.valuationCycle} valuation cycle",
-                //Ipaddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
+        //    var audit = new tbl_Audit
+        //    {
+        //        AuditTypeId = (short)AuditTypeEnum.CustomerGroupDeleted,
+        //        StaffId = (int)entity.lastUpdatedBy,
+        //        BranchId = (short)entity.userBranchId,
+        //        Detail = $"Update collateral with code: { entity.collateralCode} of { entity.valuationCycle} valuation cycle",
+        //        //Ipaddress = entity.userIPAddress,
+        //        Url = entity.applicationUrl,
+        //        ApplicationDate = genSetup.GetApplicationDate(),
+        //        SystemDateTime = DateTime.Now
+        //    };
 
-            this.auditTrail.AddAuditTrail(audit);
+        //    this.auditTrail.AddAuditTrail(audit);
 
 
-            return await context.SaveChangesAsync() != 0;
-        }
+        //    return await context.SaveChangesAsync() != 0;
+        //}
 
         public bool IsCollateralDocExists(string docName)
         {
@@ -1291,10 +1448,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 //CollateralMiscellaneousId = entity.collateralMiscellaneousId,
                 //CollateralCustomerId = entity.collateralCustomerId,
-                IsOwnedByCustomer = entity.isOwnedByCustomer,
                 NameOfSecurity = entity.nameOfSecurity,
                 SecurityValue = entity.securityValue,
-                Note = entity.note,
                 tbl_Collateral_Miscellaneous_Notes = AddCollateralMiscNotes(entity.collateralMiscellaneousNotes)
             });
 
@@ -1310,10 +1465,8 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         collateralMiscellaneousId = m.CollateralMiscellaneousId,
                         collateralCustomerId = m.CollateralCustomerId,
-                        isOwnedByCustomer = m.IsOwnedByCustomer,
                         nameOfSecurity = m.NameOfSecurity,
                         securityValue = m.SecurityValue,
-                        note = m.Note,
                         collateralMiscellaneousNotes = GetCollateralMiscellaneousNotesByMiscellaneousId(m.CollateralMiscellaneousId)
 
                     }).FirstOrDefault();
@@ -1468,7 +1621,6 @@ namespace FintrakBanking.Repositories.Credit
         //}
 
         //#endregion End of Collateral Documents
-
 
         public async Task<bool> AddCollateralValuer(CollateralValuersViewModel entity)
         {

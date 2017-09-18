@@ -8,6 +8,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralViewModel : GeneralEntity
     {
         public int collateralId { get; set; }
+        public int detailId { get; set; }
         public int collateralTypeId { get; set; }
         public short collateralSubTypeId { get; set; }
         public int customerId { get; set; }
@@ -57,11 +58,18 @@ namespace FintrakBanking.ViewModels.Credit
         public string intendedUse { get; set; }
 
         // miscellaneous
-        public int units { get; set; }
-        public decimal unitValue { get; set; }
+        public string securityName { get; set; }
         public List<MiscellaneousNote> notes { get; set; }
 
-
+        // guarantee
+        public int collateralGauranteeId { get; set; }
+        public int collateralCustomerId { get; set; }
+        public bool? isOwnedByCustomer { get; set; }
+        public string institutionName { get; set; }
+        public string guarantorAddress { get; set; }
+        public string guarantorReferenceNumber { get; set; }
+        public decimal guaranteeValue { get; set; }
+        public DateTime? endDate { get; set; }
     }
 
     public class MiscellaneousNote
