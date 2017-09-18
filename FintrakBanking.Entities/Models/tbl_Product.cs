@@ -18,8 +18,8 @@ namespace FintrakBanking.Entities.Models
             tbl_KYC_Item = new HashSet<tbl_KYC_Item>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
-            tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
+            //tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
+            //tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
             tbl_Product_CollateralType = new HashSet<tbl_Product_CollateralType>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Product_Currency = new HashSet<tbl_Product_Currency>();
@@ -148,10 +148,10 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
+        //public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
+        //public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
 
         public virtual tbl_Deal_Classification tbl_Deal_Classification { get; set; }
 

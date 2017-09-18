@@ -14,6 +14,8 @@ using System.Web.Http.Cors;
 using FintrakBanking.Interfaces.ErrorLogger;
 using System.Linq;
 using FintrakBanking.Interfaces.Setups.Credit;
+using System.Data.SqlClient;
+using System.IO;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -22,18 +24,23 @@ namespace FintrakBanking.APICore.Controllers
     public class CustomerCollateralController : ApiControllerBase
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
+
         private ICustomerCollateralRepository repo;
-        private ICollateralTypeRepository repo_type;
-        IErrorLogRepository errorLogger;
+        private ICollateralDocumentRepository document;
+        private ICollateralTypeRepository type;
+        //IErrorLogRepository errorLogger;
 
         public CustomerCollateralController(
-            ICustomerCollateralRepository _repo, 
-            ICollateralTypeRepository _repo_type,
-            IErrorLogRepository _errorLogger)
+            ICustomerCollateralRepository repo,
+            ICollateralTypeRepository type,
+            ICollateralDocumentRepository document
+            //IErrorLogRepository _errorLogger
+            )
         {
-            repo = _repo;
-            repo_type = _repo_type;
-            errorLogger = _errorLogger;
+            this.repo = repo;
+            this.type = type;
+            this.document = document;
+            //errorLogger = _errorLogger;
         }
 
         #region New
@@ -75,7 +82,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response = await repo.UpdateCollateral(entity, collateralId);
                 if (response)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Updated successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
@@ -113,6 +120,74 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+        [HttpGet, Route("collateral-document/{collateralId}")]
+        public HttpResponseMessage GetCollateralDocumentByCollateral(int collateralId)
+        {
+            try
+            {
+                var data = document.GetCustomerCollateralDocument(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost, Route("collateral-document")]
+        public async Task<HttpResponseMessage> AddCollateralDocument()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                int collateralId;
+                if (!Int32.TryParse(provider.FormData["collateralId"], out collateralId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                }
+
+                var entity = new CollateralDocumentViewModel
+                {
+                    documentTitle = provider.FormData["documentTitle"], // document code
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.collateralId = collateralId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = document.AddCollateralDocument(entity, buffer);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
+        }
+
 
         #endregion New
 
@@ -174,44 +249,18 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpDelete]
-        [Route("customer-collateral/{collateralCustomerId}")]
-        public async Task<HttpResponseMessage> DeleteCollateralCustomer(int collateralCustomerId)
-        {
-            try
-            {
-                UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                };
-
-                var response = await repo.DeleteCollateralCustomer(collateralCustomerId, user);
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
 
         #endregion
 
         #region Collatera Types
+
         [HttpGet]
         [Route("collateral-type")]
         public HttpResponseMessage GetCollateralType()
         {
             try
             {
-                var response = repo_type.GetCollateralTypes();
+                var response = type.GetCollateralTypes();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
@@ -226,7 +275,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo_type.GetCollateralSubTypes();
+                var response = type.GetCollateralSubTypes();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
@@ -241,7 +290,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo_type.GetCollateralSubTypeByCollateralTypeId(collateralTypeId);
+                var response = type.GetCollateralSubTypeByCollateralTypeId(collateralTypeId);
                 if (response == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -265,7 +314,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.companyId = token.GetCompanyId;
 
-                var response = await repo_type.AddCollateralSubTypes(entity);
+                var response = await type.AddCollateralSubTypes(entity);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
@@ -275,7 +324,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 
@@ -289,12 +338,12 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userBranchId = (short)token.GetBranchId;
 
-                var response = await repo_type.UpdateCollateralTypes(collateralTypeId, entity);
+                var response = await type.UpdateCollateralTypes(collateralTypeId, entity);
                 if (!response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Record created sussessfully", result = response });
             }
             catch (Exception ex)
             {
@@ -312,12 +361,12 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userBranchId = (short)token.GetBranchId;
 
-                var response = await repo_type.UpdateCollateralSubTypes(collateralSubTypeId, entity);
+                var response = await type.UpdateCollateralSubTypes(collateralSubTypeId, entity);
                 if (!response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Update successful", result = response });
             }
             catch (Exception ex)
             {
@@ -325,33 +374,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("collateral-sub-type/{collateralSubTypeId}")]
-        public async Task<HttpResponseMessage> DeleteCollateralSubType(int collateralSubTypeId)
-        {
-            try
-            {
-                UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                };
-
-                var response = await repo.DeleteCollateralCustomer(collateralSubTypeId, user);
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
         #endregion  End of Collateral Types
 
 
@@ -423,6 +445,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         [HttpPost, Route("collateral-valuer")]
         public async Task<HttpResponseMessage> AddCollateralValuer([FromBody] CollateralValuersViewModel entity)
         {
@@ -446,8 +469,9 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+
         [HttpPut, Route("collateral-valuer/{id}")]
-        public async Task<HttpResponseMessage> AddCollateralValuer([FromBody] CollateralValuersViewModel entity, int id)
+        public async Task<HttpResponseMessage> UpdateCollateralValuer([FromBody] CollateralValuersViewModel entity, int id)
         {
             try
             {
@@ -456,7 +480,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.companyId = token.GetCompanyId;
 
-                var response = await repo.UpdateCollateralValuer(entity ,id);
+                var response = await repo.UpdateCollateralValuer(entity, id);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Updated successfully" });

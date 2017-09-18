@@ -54,25 +54,25 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpPost]
         [Route("public-holiday")]
-        public HttpResponseMessage AddPublicHoliday([FromBody] PublicHolidayViewModel enitity)
+        public HttpResponseMessage AddPublicHoliday([FromBody] PublicHolidayViewModel entity)
         {
             try
             {
-                if (repo.isHolidayExist(enitity.Description))
+                if (repo.isHolidayExist(entity.Description))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { suucess = false, message = $"{enitity.Description} already exit" });
+                       new { suucess = false, message = $"{entity.Description} already exit" });
                 }
-                enitity.createdBy = token.GetStaffId;
-                enitity.userBranchId = (short)token.GetBranchId;
-                enitity.applicationUrl = HttpContext.Current.Request.Path;
-                enitity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
 
-                var data = repo.AddPublicHoliday(enitity);
+                var data = repo.AddPublicHoliday(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = enitity, message = "Public Holiday has been created successfully" });
+                        new { success = true, result = entity, message = "Public Holiday has been created successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,

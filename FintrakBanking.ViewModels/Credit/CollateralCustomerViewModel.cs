@@ -8,6 +8,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralViewModel : GeneralEntity
     {
         public int collateralId { get; set; }
+        public int detailId { get; set; }
         public int collateralTypeId { get; set; }
         public short collateralSubTypeId { get; set; }
         public int customerId { get; set; }
@@ -18,21 +19,64 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isLocationBased { get; set; }
         public int? valuationCycle { get; set; }
         public double haircut { get; set; }
+        public bool hasInsurance { get; set; }
 
         // presentation
         public int approvalStatus { get; set; }
+
+        // insurance
+        public string referenceNumber { get; set; }
+        public decimal coverageAmount { get; set; }
+        public string insuranceCompany { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime expiryDate { get; set; }
 
         // deposit
         public int collateralDepositId { get; set; }
         public string dealReferenceNumber { get; set; }
         public string accountNumber { get; set; }
-        public bool existingLienAmount { get; set; }
+        public decimal existingLienAmount { get; set; }
         public decimal lienAmount { get; set; }
         public decimal availableBalance { get; set; }
         public decimal securityValue { get; set; }
         public DateTime maturityDate { get; set; }
         public decimal maturityAmount { get; set; }
         public string remark { get; set; }
+
+        // equipment
+        public string machineName { get; set; }
+        public string description { get; set; }
+        public string machineNumber { get; set; }
+        public string manufacturerName { get; set; }
+        public string yearOfManufacture { get; set; }
+        public string yearOfPurchase { get; set; }
+        public int valueBaseTypeId { get; set; }
+        public string machineCondition { get; set; }
+        public string machineryLocation { get; set; }
+        public decimal replacementValue { get; set; }
+        public string equipmentSize { get; set; }
+        public string intendedUse { get; set; }
+
+        // miscellaneous
+        public string securityName { get; set; }
+        public List<MiscellaneousNote> notes { get; set; }
+
+        // guarantee
+        public int collateralGauranteeId { get; set; }
+        public int collateralCustomerId { get; set; }
+        public bool? isOwnedByCustomer { get; set; }
+        public string institutionName { get; set; }
+        public string guarantorAddress { get; set; }
+        public string guarantorReferenceNumber { get; set; }
+        public decimal guaranteeValue { get; set; }
+        public DateTime? endDate { get; set; }
+    }
+
+    public class MiscellaneousNote
+    {
+        public string labelName { get; set; }
+        public string labelValue { get; set; }
+        public string controlName { get; set; }
     }
 
     public class CollateralCustomerViewModel : GeneralEntity
@@ -276,17 +320,17 @@ namespace FintrakBanking.ViewModels.Credit
         public string columnValue { get; set; }
     }
 
-    public class CollateralDocumentViewModel
-    {
-        public long documentId { get; set; }
-        public int collateralCustomerId { get; set; }
-        public string documentCategory { get; set; }
-        public string documentRef { get; set; }
-        public string documentCode { get; set; }
-        public string documentType { get; set; }
-        public bool isMandatory { get; set; }
-        public string remark { get; set; }
-    }
+    //public class CollateralDocumentViewModel
+    //{
+    //    public long documentId { get; set; }
+    //    public int collateralCustomerId { get; set; }
+    //    public string documentCategory { get; set; }
+    //    public string documentRef { get; set; }
+    //    public string documentCode { get; set; }
+    //    public string documentType { get; set; }
+    //    public bool isMandatory { get; set; }
+    //    public string remark { get; set; }
+    //}
 
     public class CollateralValueBaseTypeViewModel : GeneralEntity
     {

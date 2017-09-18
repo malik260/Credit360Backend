@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<LookupViewModel> GetAllProductClass();
 
-        #region product
+        #region Product
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
         ProductViewModel GetProductDetail(string productCode, int companyId);
         IEnumerable<ProductViewModel> GetProductAwaitingApprovals(int staffId, int companyId);
@@ -30,13 +30,13 @@ namespace FintrakBanking.Interfaces.Setups.General
         Task<bool> GoForApproval(ApprovalViewModel entity);
         Task<ProductViewModel> AddTempProduct(ProductViewModel product);
 
-        bool UpdateProduct(int productId, ProductViewModel product);
+        Task<bool> UpdateProduct(int productId, ProductViewModel product);
 
         //bool DeleteProduct(int productId);
 
-        #endregion product
+        #endregion Product
 
-        #region product Price Index
+        #region Product Price Index
         IEnumerable<ProductPriceIndexViewModel> GetProductPriceIndex(int companyId);
 
         ProductPriceIndexViewModel GetProductPriceIndexById(int productPriceIndexId, int companyId);
@@ -47,20 +47,17 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool DeleteProductPriceIndex(int productPriceIndexId, UserInfo user);
 
-        #endregion product Price Index
+        #endregion Product Price Index
 
-
-
-        #region product group
+        #region Product Group
         IEnumerable<ProductGroupViewModel> GetAllProductGroup();
 
         ProductGroupViewModel GetProductGroupById(short productGroupId);
 
         bool UpdateProductGroup(int productGroupId, ProductGroupViewModel productGroup);
-        # endregion product group
+        # endregion Product Group
 
-
-        //-----------------product type---------------------
+        #region Product Type
         IEnumerable<ProductTypeViewModel> GetAllProductType();
 
         ProductTypeViewModel GetProductTypeById(short productTypeId);
@@ -70,6 +67,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         short AddProductType(ProductTypeViewModel productType);
 
         bool UpdateProductType(int productTypeId, ProductTypeViewModel productType);
-        //-----------------end product type---------------------
+        #endregion
     }
 }
