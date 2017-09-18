@@ -123,6 +123,38 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
+        public IEnumerable<LookupViewModel> GetAllLoanScheduleType(short? productTypeId)
+        {
+            if (productTypeId == null || productTypeId <= 0)
+            {
+                return (from data in context.tbl_Loan_Schedule_Type
+                        select new LookupViewModel()
+                        {
+                            lookupId = data.ScheduleTypeId,
+                            lookupName = data.ScheduleTypeName,
+                            lookupTypeId = data.ScheduleCategoryId,
+                            lookupTypeName = data.tbl_Loan_Schedule_Category.ScheduleCategoryName
+                        });
+
+            }
+            else
+            {
+                return (from data in context.tbl_Loan_Schedule_Type
+                        join t in context.tbl_Loan_Schedule_Type_Product_Type_Mapping
+                        on data.ScheduleTypeId equals t.ScheduleTypeId
+                        where t.ProductTypeId == productTypeId
+                        select new LookupViewModel()
+                        {
+                            lookupId = data.ScheduleTypeId,
+                            lookupName = data.ScheduleTypeName,
+                            lookupTypeId = data.ScheduleCategoryId,
+                            lookupTypeName = data.tbl_Loan_Schedule_Category.ScheduleCategoryName
+                        });
+            }
+        }
+
+
+
         public IEnumerable<LookupViewModel> GetLoanScheduleTypeByCategory(short categoryId)
         {
             return (from data in context.tbl_Loan_Schedule_Type

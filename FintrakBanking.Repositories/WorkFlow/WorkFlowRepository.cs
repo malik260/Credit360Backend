@@ -239,7 +239,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     amount = loan.SingleOrDefault().PrincipalAmount;
                 }
             }
-            if (entity.operationId == (int)OperationsEnum.LoanBooking)
+            if (entity.operationId == (int)OperationsEnum .TermLoanBooking)
             { 
                 var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.TermLoanId == entity.targetId);
                 if (loan.Any())
@@ -261,7 +261,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     tenor = loan.SingleOrDefault().Tenor;
                 }
             }
-            if (entity.operationId == (int)OperationsEnum.LoanBooking)
+            if (entity.operationId == (int)OperationsEnum.TermLoanBooking)
             {
                 var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.TermLoanId == entity.targetId);
                 if (loan.Any())
@@ -475,7 +475,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return Tuple.Create(true, entity);
             }
 
-            if (entity.operationId == int.Parse(OperationsEnum.LoanBooking.ToString()))
+            if (entity.operationId == int.Parse(OperationsEnum.TermLoanBooking.ToString()))
             {
                 return Tuple.Create(true, entity);
             }

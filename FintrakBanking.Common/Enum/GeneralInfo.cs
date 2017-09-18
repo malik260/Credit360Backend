@@ -144,12 +144,13 @@ namespace FintrakBanking.Common.Enum
         UserAdded = 138,
         UserGroupAdded = 139,
         UserGroupUpdated = 140,
-        DepartmentAdded = 141,
-        DepartmentUpdated = 142,
-        PublicHolidayAdded = 143,
-        PublicHolidayUpdated = 144,
-        CollateralDocumentAdded = 145,
-        CollateralDocumentUpdated = 146,
+        LoanBookingApproved = 141,
+        DepartmentAdded = 142,
+        DepartmentUpdated = 143,
+        PublicHolidayAdded = 144,
+        PublicHolidayUpdated = 145,
+        CollateralDocumentAdded = 146,
+        CollateralDocumentUpdated = 147,
     };
 
 
