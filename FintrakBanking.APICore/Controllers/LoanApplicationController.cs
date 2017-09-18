@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.CheckExitingCertificateOfOwnership(certificateofownership, token.GetCompanyId);
+                var response = repoApply.CheckExistingCertificateOfOwnership(certificateofownership, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception e)

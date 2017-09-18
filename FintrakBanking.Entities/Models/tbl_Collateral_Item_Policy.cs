@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int CollateralCustomerId { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal CoverageAmount { get; set; }
+        public decimal SumInsured { get; set; }
 
         [Required]
         [StringLength(50)]

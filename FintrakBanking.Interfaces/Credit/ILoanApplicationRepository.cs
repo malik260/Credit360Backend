@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
-        bool CheckExitingCertificateOfOwnership(string certificateOfOwnership, int companyId);
+        bool CheckExistingCertificateOfOwnership(string certificateOfOwnership, int companyId);
 
         IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId);
 
