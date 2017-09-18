@@ -14,6 +14,12 @@ namespace FintrakBanking.Entities.Models
 
         public int CollateralCustomerId { get; set; }
 
+<<<<<<< HEAD
+=======
+        [Column(TypeName = "money")]
+        public decimal SumInsured { get; set; }
+
+>>>>>>> 68cbb529932abeba6893c5306c87e679fa0c36a8
         [Required]
         [StringLength(50)]
         public string PolicyReferenceNumber { get; set; }

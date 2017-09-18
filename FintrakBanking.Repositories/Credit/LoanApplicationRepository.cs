@@ -535,10 +535,10 @@ namespace FintrakBanking.Repositories.Credit
             return scope;
         }
 
-        public bool CheckExitingCertificateOfOwnership(string certificateOfOwnership, int companyId)
+        public bool CheckExistingCertificateOfOwnership(string certificateOfOwnership, int companyId)
         {
             bool isExisting = false;
-            var collate = collateral.GetCollateralCustomer(companyId,companyId).Where(c => c.collateralCode == certificateOfOwnership).ToList();
+            var collate = collateral.GetCustomerCollateral(companyId).Where(c => c.collateralCode == certificateOfOwnership);
             if (collate.Any())
             {
                 return isExisting = true;

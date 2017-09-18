@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.tbl_Loan_Revolving")]
     public partial class tbl_Loan_Revolving
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Loan_Revolving()
+        {
+            tbl_Loan_Revolving_Guarantor = new HashSet<tbl_Loan_Revolving_Guarantor>();
+        }
+
         [Key]
         public int RevolvingLoanId { get; set; }
 
@@ -141,6 +147,9 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline { get; set; }
 
         public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Revolving_Guarantor> tbl_Loan_Revolving_Guarantor { get; set; }
 
         public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
 

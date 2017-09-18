@@ -568,16 +568,14 @@ namespace FintrakBanking.Repositories.Credit
                     {
 
                         var loan = context.tbl_Loan.Add(data);
-                        
-                        AddLoanCovenantDetail(entity.loanCovenant, entity.loanId, (short)entity.productTypeId);
-                        AddLoanGuarantor(entity.loanGuarantor, entity.loanId, (short)entity.productTypeId);
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, entity.loanId, (short)entity.productTypeId);
-                        AddLoanFees(entity.loanChargeFee, entity.loanId, (short)entity.productTypeId);
-
                         context.tbl_Audit.Add(audit);
 
                         var dataCount = context.SaveChanges();
 
+                        AddLoanCovenantDetail(entity.loanCovenant, loan.TermLoanId, (short)entity.productTypeId);
+                        AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
+                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
+                        AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
 
                         this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
@@ -589,7 +587,6 @@ namespace FintrakBanking.Repositories.Credit
                             targetId = loan.TermLoanId,
                             operationId = (int)OperationsEnum.TermLoanBooking,
                             BranchId = entity.userBranchId,
-
                         };
                         trans.Commit();
                         //var response = await workFlow.LogForApproval(approvalModel);
@@ -1117,8 +1114,8 @@ namespace FintrakBanking.Repositories.Credit
             foreach (LoanGuarantorViewModel entity in guarantorModel)
                 guarantor.Add(new tbl_Loan_Guarantor
                 {
-                    LoanId = loanId,
                     ProductTypeId = productTypeId,
+                    LoanId = entity.loanId,
                     Firstname = entity.firstname,
                     Lastname = entity.lastname,
                     Middlename = entity.middlename,
@@ -1771,8 +1768,6 @@ namespace FintrakBanking.Repositories.Credit
             return loans;
         }
 
-
-        #region CAM Approved Loan Applications
         public IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId)
         {
             var data = (from c in context.tbl_Charge_Fee
@@ -1798,7 +1793,6 @@ namespace FintrakBanking.Repositories.Credit
         
 
 
-        #endregion End of CAM Approved Loan Applications
 
     }
 
