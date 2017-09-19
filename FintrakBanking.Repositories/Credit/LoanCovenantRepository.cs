@@ -61,7 +61,9 @@ namespace FintrakBanking.Repositories.Customer
                 LoanId = entity.loanId
             };
             context.tbl_Loan_Covenant_Detail.Add(convenant);
-            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.TermLoanId  == entity.loanId).LoanReferenceNumber;
+
+            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.TermLoanId == entity.loanId).LoanReferenceNumber;
+
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LoanCovenantDetailAdd,
@@ -115,9 +117,9 @@ namespace FintrakBanking.Repositories.Customer
                 frequencyTypeId = c.FrequencyTypeId,
                 frequencyTypeName = c.tbl_Frequency_Type.Mode,
                 loanCovenantDetailId = c.LoanCovenantDetailId,
-                loanId = c.LoanId
+                loanId = c.LoanId,
                 //loanRef = c.tbl_Loan.LoanReferenceNumber,
-                //productName = c.tbl_Loan.tbl_Product.ProductName
+               // productName = c.tbl_Loan.tbl_Product.ProductName
             });
         }
 

@@ -150,6 +150,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Collateral_Policy> tbl_Collateral_Policy { get; set; }
         public virtual DbSet<tbl_Collateral_PreciousMetal> tbl_Collateral_PreciousMetal { get; set; }
         public virtual DbSet<tbl_Collateral_SeniorityOfClaims> tbl_Collateral_SeniorityOfClaims { get; set; }
+        public virtual DbSet<tbl_Collateral_Stock> tbl_Collateral_Stock { get; set; }
         public virtual DbSet<tbl_Collateral_Type> tbl_Collateral_Type { get; set; }
         public virtual DbSet<tbl_Collateral_Type_Sub> tbl_Collateral_Type_Sub { get; set; }
         public virtual DbSet<tbl_Collateral_Valuebase_Type> tbl_Collateral_Valuebase_Type { get; set; }
@@ -207,7 +208,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Solicitor> tbl_Solicitor { get; set; }
         public virtual DbSet<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
         public virtual DbSet<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
@@ -250,7 +251,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Deal_Classification> tbl_Deal_Classification { get; set; }
         public virtual DbSet<tbl_Deal_Type> tbl_Deal_Type { get; set; }
         public virtual DbSet<tbl_Stock> tbl_Stock { get; set; }
-        public virtual DbSet<tbl_Collateral_Stock> tbl_Collateral_Stock { get; set; }
         public virtual DbSet<tbl_Temp_Collateral_Stock> tbl_Temp_Collateral_Stock { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -2160,6 +2160,22 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.Description)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<tbl_Collateral_Stock>()
+                .Property(e => e.MarketPrice)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Stock>()
+                .Property(e => e.Amount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Stock>()
+                .Property(e => e.SharesSecurityValue)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Collateral_Stock>()
+                .Property(e => e.ShareValueAmountToUse)
+                .HasPrecision(19, 4);
+
             modelBuilder.Entity<tbl_Collateral_Type>()
                 .HasMany(e => e.tbl_Collateral_Customer)
                 .WithRequired(e => e.tbl_Collateral_Type)
@@ -2200,11 +2216,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Temp_Product_CollateralType1)
                 .WithRequired(e => e.tbl_Collateral_Type1)
                 .HasForeignKey(e => e.CollateralTypeId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Collateral_Type_Sub>()
-                .HasMany(e => e.tbl_Collateral_Immovable_Property)
-                .WithRequired(e => e.tbl_Collateral_Type_Sub)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Collateral_Type_Sub>()
@@ -3475,22 +3486,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Product_Type)
                 .WithRequired(e => e.tbl_Deal_Classification)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Collateral_Stock>()
-                .Property(e => e.MarketPrice)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<tbl_Collateral_Stock>()
-                .Property(e => e.Amount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<tbl_Collateral_Stock>()
-                .Property(e => e.SharesSecurityValue)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<tbl_Collateral_Stock>()
-                .Property(e => e.ShareValueAmountToUse)
-                .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Temp_Collateral_Stock>()
                 .Property(e => e.MarketPrice)
