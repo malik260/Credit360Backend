@@ -14,9 +14,6 @@ namespace FintrakBanking.Entities.Models
 
         public int CollateralCustomerId { get; set; }
 
-        [Column(TypeName = "money")]
-        public decimal SumInsured { get; set; }
-
         [Required]
         [StringLength(50)]
         public string PolicyReferenceNumber { get; set; }
@@ -31,5 +28,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
+
+        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
     }
 }

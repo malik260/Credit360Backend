@@ -273,10 +273,10 @@ namespace FintrakBanking.Repositories.Credit
                 FirstInterestPaymentDate = entity.loanScheduleInput.interestFirstpaymentDate,
                 AllowForceDebitRepayment = false,
 
-                tbl_Loan_Covenant_Detail = AddLoanCovenantDetail(entity.loanCovenant),
-                tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
-                tbl_Loan_Collateral_Mapping = AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId),
-                tbl_Loan_Fee = AddLoanFees(entity.loanChargeFee),
+                //tbl_Loan_Covenant_Detail = AddLoanCovenantDetail(entity.loanCovenant),
+                //tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
+                //tbl_Loan_Collateral_Mapping = AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId),
+                //tbl_Loan_Fee = AddLoanFees(entity.loanChargeFee),
             };
 
             //try
@@ -852,7 +852,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (LoanGuarantorViewModel entity in guarantorModel)
                 guarantor.Add(new tbl_Loan_Guarantor
                 {
-                    TermLoanId = entity.loanId,
+                    //TermLoanId = entity.loanId,
                     Firstname = entity.firstname,
                     Lastname = entity.lastname,
                     Middlename = entity.middlename,
@@ -1344,11 +1344,11 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanGuarantorViewModel> GetLoanGuarantors(int loanId)
         {
             var data = (from c in context.tbl_Loan_Guarantor
-                        where c.TermLoanId == loanId 
+                        where c.LoanId  == loanId 
                         select new LoanGuarantorViewModel
                         {
                             loanGuarantorId = c.LoanGuarantorId,
-                            loanId = (int)c.TermLoanId,
+                           // loanId = (int)c.TermLoanId,
                             firstname = c.Firstname,
                             lastname = c.Lastname,
                             middlename = c.Middlename,

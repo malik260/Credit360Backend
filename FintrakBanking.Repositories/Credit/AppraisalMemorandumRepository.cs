@@ -52,6 +52,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = new tbl_Credit_Appraisal_Memorandum
             {
+                CompanyId = model.companyId,
                 LoanApplicationId = model.loanApplicationId,
                 CAMRef = this.GetUniqueReferenceNumber(2),
                 IsCompleted = model.isCompleted,

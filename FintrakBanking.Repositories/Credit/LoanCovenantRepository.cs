@@ -115,9 +115,9 @@ namespace FintrakBanking.Repositories.Customer
                 frequencyTypeId = c.FrequencyTypeId,
                 frequencyTypeName = c.tbl_Frequency_Type.Mode,
                 loanCovenantDetailId = c.LoanCovenantDetailId,
-                loanId = c.LoanId,
-                loanRef = c.tbl_Loan.LoanReferenceNumber,
-                productName = c.tbl_Loan.tbl_Product.ProductName
+                loanId = c.LoanId
+                //loanRef = c.tbl_Loan.LoanReferenceNumber,
+                //productName = c.tbl_Loan.tbl_Product.ProductName
             });
         }
 

@@ -159,7 +159,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Credit_Appraisal_Memorandum> tbl_Credit_Appraisal_Memorandum { get; set; }
         public virtual DbSet<tbl_Credit_Appraisal_Memorandum_Loan_Detail> tbl_Credit_Appraisal_Memorandum_Loan_Detail { get; set; }
         public virtual DbSet<tbl_Credit_Template> tbl_Credit_Template { get; set; }
-        public virtual DbSet<tbl_Guarantor_Document> tbl_Guarantor_Document { get; set; }
         public virtual DbSet<tbl_Limit> tbl_Limit { get; set; }
         public virtual DbSet<tbl_Limit_Detail> tbl_Limit_Detail { get; set; }
         public virtual DbSet<tbl_Limit_Metric> tbl_Limit_Metric { get; set; }
@@ -186,7 +185,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_PrudentialGuideline> tbl_Loan_PrudentialGuideline { get; set; }
         public virtual DbSet<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
         public virtual DbSet<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
-        public virtual DbSet<tbl_Loan_Revolving_Guarantor> tbl_Loan_Revolving_Guarantor { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Category> tbl_Loan_Schedule_Category { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Daily_Archive> tbl_Loan_Schedule_Daily_Archive { get; set; }
@@ -1514,6 +1512,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Loan_Guarantor)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
                 .HasMany(e => e.tbl_Loan_Schedule_Type_Product_Type_Mapping)
                 .WithRequired(e => e.tbl_Product_Type)
                 .WillCascadeOnDelete(false);
@@ -2339,31 +2342,9 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan>()
-                .HasMany(e => e.tbl_Loan_Collateral_Mapping)
-                .WithOptional(e => e.tbl_Loan)
-                .HasForeignKey(e => e.LoanId);
-
-            modelBuilder.Entity<tbl_Loan>()
-                .HasMany(e => e.tbl_Loan_Covenant_Detail)
-                .WithRequired(e => e.tbl_Loan)
-                .HasForeignKey(e => e.LoanId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Loan>()
-                .HasMany(e => e.tbl_Loan_Fee)
-                .WithRequired(e => e.tbl_Loan)
-                .HasForeignKey(e => e.LoanId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Loan>()
                 .HasMany(e => e.tbl_Loan_Force_Debit)
                 .WithRequired(e => e.tbl_Loan)
                 .HasForeignKey(e => e.LoanId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Loan>()
-                .HasMany(e => e.tbl_Loan_Guarantor)
-                .WithRequired(e => e.tbl_Loan)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan>()
@@ -2577,11 +2558,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Loan_Revolving>()
                 .Property(e => e.ApprovedAmount)
                 .HasPrecision(19, 4);
-
-            modelBuilder.Entity<tbl_Loan_Revolving>()
-                .HasMany(e => e.tbl_Loan_Revolving_Guarantor)
-                .WithRequired(e => e.tbl_Loan_Revolving)
-                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan_Schedule_Category>()
                 .HasMany(e => e.tbl_Loan_Schedule_Type)
