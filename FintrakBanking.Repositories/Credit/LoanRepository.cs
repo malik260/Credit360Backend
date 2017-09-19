@@ -1615,7 +1615,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanGuarantorViewModel
                         {
                             loanGuarantorId = c.LoanGuarantorId,
-                            loanId = (int)c.LoanId,
+                            //loanId = (int)c.LoanId,
                             firstname = c.Firstname,
                             lastname = c.Lastname,
                             middlename = c.Middlename,

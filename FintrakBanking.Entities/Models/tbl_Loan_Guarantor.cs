@@ -12,7 +12,9 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public short LoanGuarantorId { get; set; }
 
-        public int TermLoanId { get; set; }
+        public int LoanId { get; set; }
+
+        public short ProductTypeId { get; set; }
 
         [StringLength(50)]
         public string BVN { get; set; }
@@ -57,13 +59,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-<<<<<<< HEAD
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
-=======
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Guarantor_Document> tbl_Guarantor_Document { get; set; }
-
-        public virtual tbl_Loan tbl_Loan { get; set; }
->>>>>>> 68cbb529932abeba6893c5306c87e679fa0c36a8
     }
 }

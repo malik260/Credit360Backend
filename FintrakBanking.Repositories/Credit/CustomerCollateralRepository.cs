@@ -493,7 +493,7 @@ namespace FintrakBanking.Repositories.Credit
             context.tbl_Collateral_Gaurantee.Add(new tbl_Collateral_Gaurantee
             {
                 CollateralCustomerId = collateralId,
-                IsOwnedByCustomer = entity.isOwnedByCustomer,
+                IsOwnedByCustomer = (bool)entity.isOwnedByCustomer,
                 InstitutionName = entity.institutionName,
                 GuarantorAddress = entity.guarantorAddress,
                 GuarantorReferenceNumber = entity.guarantorReferenceNumber,
@@ -511,7 +511,7 @@ namespace FintrakBanking.Repositories.Credit
                 .FirstOrDefault();
 
             collateral.CollateralCustomerId = entity.collateralCustomerId;
-            collateral.IsOwnedByCustomer = entity.isOwnedByCustomer;
+            collateral.IsOwnedByCustomer = (bool)entity.isOwnedByCustomer;
             collateral.InstitutionName = entity.institutionName;
             collateral.GuarantorAddress = entity.guarantorAddress;
             collateral.GuarantorReferenceNumber = entity.guarantorReferenceNumber;
@@ -1327,7 +1327,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 //CollateralGauranteeId = entity.collateralGauranteeId,
                 //CollateralCustomerId = entity.collateralCustomerId,
-                IsOwnedByCustomer = entity.isOwnedByCustomer,
+                IsOwnedByCustomer = (bool)entity.isOwnedByCustomer,
                 InstitutionName = entity.institutionName,
                 GuarantorAddress = entity.guarantorAddress,
                 GuarantorReferenceNumber = entity.guarantorReferenceNumber,
