@@ -27,7 +27,7 @@ namespace FintrakBanking.Entities.Models
         }
 
         [Key]
-        public int LoanId { get; set; }
+        public int TermLoanId { get; set; }
 
         public double ProductPriceIndexRate { get; set; }
 

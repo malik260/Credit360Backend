@@ -300,8 +300,9 @@ namespace FintrakBanking.APICore.Controllers
 
                 var response = await repoLoanPEN.AddPreliminaryEvaluation(model);
 
-                if (response)
+                if (response != null)
                 {
+                    responseMessage = $"Preliminary evaluation note ({response.preliminaryEvaluationCode}) created successfully, now awaiting approval";
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = $"{responseMessage}" });
                 }
