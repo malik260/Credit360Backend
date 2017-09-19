@@ -184,7 +184,6 @@
     <Compile Include="Models\tbl_Financial_Statement_Caption.cs" />
     <Compile Include="Models\tbl_Financial_Statement_Type.cs" />
     <Compile Include="Models\tbl_Frequency_Type.cs" />
-    <Compile Include="Models\tbl_Guarantor_Document.cs" />
     <Compile Include="Models\tbl_Job_Request.cs" />
     <Compile Include="Models\tbl_Job_Request_Document_Mapping.cs" />
     <Compile Include="Models\tbl_Job_Request_Status.cs" />
