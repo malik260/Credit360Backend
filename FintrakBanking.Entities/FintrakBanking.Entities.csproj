@@ -98,7 +98,6 @@
     <Compile Include="Models\tbl_Collateral_Casa.cs" />
     <Compile Include="Models\tbl_Collateral_Customer.cs" />
     <Compile Include="Models\tbl_Collateral_Deposit.cs" />
-    <Compile Include="Models\tbl_Collateral_Deposit_Cash_Type.cs" />
     <Compile Include="Models\tbl_Collateral_Documents.cs" />
     <Compile Include="Models\tbl_Collateral_Gaurantee.cs" />
     <Compile Include="Models\tbl_Collateral_Immovable_Property.cs" />
@@ -166,8 +165,6 @@
     <Compile Include="Models\tbl_Custom_HostPage.cs" />
     <Compile Include="Models\tbl_Daily_Accrual.cs" />
     <Compile Include="Models\tbl_Daily_Accrual_Category.cs" />
-    <Compile Include="Models\tbl_Daily_Accural.cs" />
-    <Compile Include="Models\tbl_Daily_Accural_Category.cs" />
     <Compile Include="Models\tbl_Day_Count_Convention.cs" />
     <Compile Include="Models\tbl_Day_Interest_Type.cs" />
     <Compile Include="Models\tbl_Deal_Classification.cs" />
@@ -313,8 +310,5 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
