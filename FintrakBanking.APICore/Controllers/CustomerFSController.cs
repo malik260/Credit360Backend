@@ -15,28 +15,28 @@ namespace FintrakBanking.APICore.Controllers
 {
     //[EnableCors("AllDomain")]
     [RoutePrefix("api/v1/customers")]
-    public class CustomerFSController : ApiControllerBase
+    public class CustomerFsController : ApiControllerBase
     {
-        private ICustomerFSCaptionGroupRepository fsGroupRepo;
-        private ICustomerFSCaptionRepository fsCaptionRepo;
-        private ICustomerFSCaptionDetailRepository fsDetailRepo;
-        private ICustomerFSRatioRepository fsRepo;
+        private ICustomerFSCaptionGroupRepository _fsGroupRepo;
+        private ICustomerFSCaptionRepository _fsCaptionRepo;
+        private ICustomerFSCaptionDetailRepository _fsDetailRepo;
+        private ICustomerFSRatioRepository _fsRepo;
 
-        public CustomerFSController(ICustomerFSCaptionGroupRepository _fsGroupRepo,
-                                    ICustomerFSCaptionRepository _fsCaptionRepo,
-                                    ICustomerFSCaptionDetailRepository _fsDetailRepo,
-                                    ICustomerFSRatioRepository _fsRepo)
+        public CustomerFsController(ICustomerFSCaptionGroupRepository fsGroupRepo,
+                                    ICustomerFSCaptionRepository fsCaptionRepo,
+                                    ICustomerFSCaptionDetailRepository fsDetailRepo,
+                                    ICustomerFSRatioRepository fsRepo)
         {
-            this.fsGroupRepo = _fsGroupRepo;
-            this.fsCaptionRepo = _fsCaptionRepo;
-            this.fsDetailRepo = _fsDetailRepo;
-            this.fsRepo = _fsRepo;
+            this._fsGroupRepo = fsGroupRepo;
+            this._fsCaptionRepo = fsCaptionRepo;
+            this._fsDetailRepo = fsDetailRepo;
+            this._fsRepo = fsRepo;
         }
 
         #region Customer FS Caption Group
         [HttpPost]
         [Route("customer-fs-caption-group")]
-        public HttpResponseMessage AddCustomerFSCaptionGroup(  [FromBody] CustomerFSCaptionGroupViewModel entity)
+        public HttpResponseMessage AddCustomerFsCaptionGroup(  [FromBody] CustomerFSCaptionGroupViewModel entity)
         { 
                 try
                 {
@@ -48,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
                     entity.createdBy = token.GetStaffId;
                     entity.companyId = token.GetCompanyId;
 
-                    var data = fsGroupRepo.AddCustomerFSCaptionGroup(entity);
+                    var data = _fsGroupRepo.AddCustomerFSCaptionGroup(entity);
                     if (data)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -68,13 +68,13 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-fs-caption-group")]
-        public HttpResponseMessage GetCustomerFSCaptionGroup( )
+        public HttpResponseMessage GetCustomerFsCaptionGroup( )
         { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
 
-                    var data = fsGroupRepo.GetCustomerFSCaptionGroup(token.GetCompanyId);
+                    var data = _fsGroupRepo.GetCustomerFSCaptionGroup(token.GetCompanyId);
                     if (!data.Any())
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -94,11 +94,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-fs-caption-group/{fsCaptionGroupId}")]
-        public HttpResponseMessage GetCustomerFSCaptionGroupById(  short fsCaptionGroupId)
+        public HttpResponseMessage GetCustomerFsCaptionGroupById(  short fsCaptionGroupId)
         { 
                 try
                 {
-                    var data = fsGroupRepo.GetCustomerFSCaptionGroupById(fsCaptionGroupId);
+                    var data = _fsGroupRepo.GetCustomerFSCaptionGroupById(fsCaptionGroupId);
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = data, count = 1 });
                 }
@@ -114,7 +114,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("customer-fs-caption-group/{fsCaptionGroupId}")]
-        public HttpResponseMessage UpdateCustomerFSCaptionGroup(  short fsCaptionGroupId, [FromBody] CustomerFSCaptionGroupViewModel entity)
+        public HttpResponseMessage UpdateCustomerFsCaptionGroup(  short fsCaptionGroupId, [FromBody] CustomerFSCaptionGroupViewModel entity)
         { 
                 try
                 {
@@ -126,7 +126,7 @@ namespace FintrakBanking.APICore.Controllers
                     entity.createdBy = token.GetStaffId;
                     entity.companyId = token.GetCompanyId;
 
-                    var data = fsGroupRepo.UpdateCustomerFSCaptionGroup(fsCaptionGroupId, entity);
+                    var data = _fsGroupRepo.UpdateCustomerFSCaptionGroup(fsCaptionGroupId, entity);
 
                     if (data)
                     {
@@ -150,7 +150,7 @@ namespace FintrakBanking.APICore.Controllers
         #region Customer FS Caption
         [HttpPost]
         [Route("customer-fs-caption")]
-        public HttpResponseMessage AddCustomerFSCaption(  [FromBody] CustomerFSCaptionViewModel entity)
+        public HttpResponseMessage AddCustomerFsCaption(  [FromBody] CustomerFSCaptionViewModel entity)
         { 
                 try
                 {
@@ -162,7 +162,7 @@ namespace FintrakBanking.APICore.Controllers
                     entity.createdBy = token.GetStaffId;
                     entity.companyId = token.GetCompanyId;
 
-                    var data = fsCaptionRepo.AddCustomerFSCaption(entity);
+                    var data = _fsCaptionRepo.AddCustomerFSCaption(entity);
                     if (data)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -181,12 +181,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-fs-caption/group/{fsCaptionGroupId}")]
-        public HttpResponseMessage GetCustomerFSCaption(  short fsCaptionGroupId)
+        public HttpResponseMessage GetCustomerFsCaption(  short fsCaptionGroupId)
         {  try
                 {
                     var token = new TokenDecryptionHelper();
 
-                    var data = fsCaptionRepo.GetCustomerFSCaption(fsCaptionGroupId);
+                    var data = _fsCaptionRepo.GetCustomerFSCaption(fsCaptionGroupId);
                     if (!data.Any())
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -205,10 +205,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-fs-caption/{fsCaptionId}")]
-        public HttpResponseMessage GetCustomerFSCaptionById(  short fsCaptionId)
+        public HttpResponseMessage GetCustomerFsCaptionById(  short fsCaptionId)
         {  try
                 {
-                    var data = fsCaptionRepo.GetCustomerFSCaptionById(fsCaptionId);
+                    var data = _fsCaptionRepo.GetCustomerFSCaptionById(fsCaptionId);
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = data, count = 1 });
                 }
@@ -225,12 +225,12 @@ namespace FintrakBanking.APICore.Controllers
         //[HttpGet("customer-fs-caption/unmapped/{fsCaptionGroupId}/customer/{customerId}/date/{fsDate}")]
         [HttpGet]
         [Route("customer-fs-caption/unmapped")]
-        public HttpResponseMessage GetUnmappedCustomerFSCaption(  short fsCaptionGroupId, int customerId, DateTime fsDate)
+        public HttpResponseMessage GetUnmappedCustomerFsCaption(  short fsCaptionGroupId, int customerId, DateTime fsDate)
         {   try
                 {
                     var token = new TokenDecryptionHelper();
 
-                    var data = fsCaptionRepo.GetUnmappedCustomerFSCaption(fsCaptionGroupId, customerId, fsDate);
+                    var data = _fsCaptionRepo.GetUnmappedCustomerFSCaption(fsCaptionGroupId, customerId, fsDate);
                     if (!data.Any())
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -249,7 +249,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("customer-fs-caption/{fsCaptionId}")]
-        public HttpResponseMessage UpdateCustomerFSCaption(  int fsCaptionId, [FromBody] CustomerFSCaptionViewModel entity)
+        public HttpResponseMessage UpdateCustomerFsCaption(  int fsCaptionId, [FromBody] CustomerFSCaptionViewModel entity)
         {  try
                 {
                     var token = new TokenDecryptionHelper();
@@ -260,7 +260,7 @@ namespace FintrakBanking.APICore.Controllers
                     entity.createdBy = token.GetStaffId;
                     entity.companyId = token.GetCompanyId;
 
-                    var data = fsCaptionRepo.UpdateCustomerFSCaption(fsCaptionId, entity);
+                    var data = _fsCaptionRepo.UpdateCustomerFSCaption(fsCaptionId, entity);
 
                     if (data)
                     {
@@ -281,7 +281,7 @@ namespace FintrakBanking.APICore.Controllers
         #region Customer FS Caption Detail
         [HttpPost]
         [Route("customer-fs-caption-detail")]
-        public HttpResponseMessage AddCustomerFSCaptionDetail(  [FromBody] CustomerFSCaptionDetailViewModel entity)
+        public HttpResponseMessage AddCustomerFsCaptionDetail(  [FromBody] CustomerFSCaptionDetailViewModel entity)
         { 
                 try
                 {
@@ -293,7 +293,7 @@ namespace FintrakBanking.APICore.Controllers
                     entity.createdBy = token.GetStaffId;
                     entity.companyId = token.GetCompanyId;
 
-                    var data = fsDetailRepo.AddCustomerFSCaptionDetail(entity);
+                    var data = _fsDetailRepo.AddCustomerFSCaptionDetail(entity);
                     if (data)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -312,26 +312,26 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("customer-fs-caption-detail/multiple")]
-        public HttpResponseMessage AddMultipleCustomerFSCaptionDetail(  [FromBody] List<CustomerFSCaptionDetailViewModel> entities)
+        public HttpResponseMessage AddMultipleCustomerFsCaptionDetail(  [FromBody] List<CustomerFSCaptionDetailViewModel> entities)
         { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
 
                     var userBranch = (short)token.GetBranchId;
-                    var userIPAddress = Request.RequestUri.Host;
+                    var userIpAddress = Request.RequestUri.Host;
                     var applicationUrl = HttpContext.Current.Request.Path;
                     var createdBy = token.GetStaffId;
 
                     foreach (CustomerFSCaptionDetailViewModel entity in entities)
                     {
                         entity.userBranchId = userBranch;
-                        entity.userIPAddress = userIPAddress;
+                        entity.userIPAddress = userIpAddress;
                         entity.applicationUrl = applicationUrl;
                         entity.createdBy = createdBy;
                     }
 
-                    var data = fsDetailRepo.AddMultipleCustomerFSCaptionDetail(entities);
+                    var data = _fsDetailRepo.AddMultipleCustomerFSCaptionDetail(entities);
                     if (data)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -350,12 +350,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-fs-caption-detail/customer/{customerId}")]
-        public HttpResponseMessage GetCustomerFSCaptionDetail(  int customerId)
+        public HttpResponseMessage GetCustomerFsCaptionDetail(  int customerId)
         { try
                 {
                     var token = new TokenDecryptionHelper();
 
-                    var data = fsDetailRepo.GetCustomerFSCaptionDetail(customerId);
+                    var data = _fsDetailRepo.GetCustomerFSCaptionDetail(customerId);
                     if (!data.Any())
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -374,11 +374,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-fs-caption-detail/{fsDetailId}")]
-        public HttpResponseMessage GetCustomerFSCaptionById(  int fsDetailId)
+        public HttpResponseMessage GetCustomerFsCaptionById(  int fsDetailId)
         { 
                 try
                 {
-                    var data = fsDetailRepo.GetCustomerFSCaptionDetailById(fsDetailId);
+                    var data = _fsDetailRepo.GetCustomerFSCaptionDetailById(fsDetailId);
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = data, count = 1 });
                 }
@@ -393,7 +393,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("customer-fs-caption-detail/{fsDetailId}")]
-        public HttpResponseMessage UpdateCustomerFSCaptionDetail(  int fsDetailId, [FromBody] CustomerFSCaptionDetailViewModel entity)
+        public HttpResponseMessage UpdateCustomerFsCaptionDetail(  int fsDetailId, [FromBody] CustomerFSCaptionDetailViewModel entity)
         { 
                 try
                 {
@@ -405,7 +405,7 @@ namespace FintrakBanking.APICore.Controllers
                     entity.createdBy = token.GetStaffId;
                     entity.companyId = token.GetCompanyId;
 
-                    var data = fsDetailRepo.UpdateCustomerFSCaptionDetail(fsDetailId, entity);
+                    var data = _fsDetailRepo.UpdateCustomerFSCaptionDetail(fsDetailId, entity);
 
                     if (data)
                     {
@@ -424,22 +424,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [Route("customer-fs-caption-detail/{fsdetailId}")]
-        public HttpResponseMessage DeleteCustomerFSCaptionDetail(  int fsdetailId)
+        public HttpResponseMessage DeleteCustomerFsCaptionDetail(  int fsdetailId)
         { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
 
-                    UserInfo user = new UserInfo()
+                    var user = new UserInfo()
                     {
                         BranchId = token.GetBranchId,
                         companyId = token.GetCompanyId,
                         staffId = token.GetStaffId,
                         applicationUrl = HttpContext.Current.Request.Path,
-                        userIPAddress = Request.RequestUri.Host
+                        userIPAddress = Request.RequestUri.Host,
+                        createdBy = token.GetStaffId
                     };
 
-                    fsDetailRepo.DeleteCustomerFSCaptionDetail(fsdetailId, user);
+                    _fsDetailRepo.DeleteCustomerFSCaptionDetail(fsdetailId, user);
 
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = fsdetailId, message = "record has been deleted successfully" });
@@ -452,7 +453,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [Route("customer-fs-caption-detail/multiple/{fsdetailIds}")]
-        public HttpResponseMessage DeleteMultileCustomerFSCaptionDetail(  List<int> fsdetailIds)
+        public HttpResponseMessage DeleteMultileCustomerFsCaptionDetail(  List<int> fsdetailIds)
         { try
                 {
                     var token = new TokenDecryptionHelper();
@@ -466,7 +467,7 @@ namespace FintrakBanking.APICore.Controllers
                         userIPAddress = Request.RequestUri.Host
                     };
 
-                    fsDetailRepo.DeleteMultileCustomerFSCaptionDetail(fsdetailIds, user);
+                    _fsDetailRepo.DeleteMultileCustomerFSCaptionDetail(fsdetailIds, user);
 
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = 1, message = "record(s) has been deleted successfully" });
@@ -482,7 +483,7 @@ namespace FintrakBanking.APICore.Controllers
         #region Customer FS Ratio Caption
         [HttpPost]
         [Route("customer-fs-ratio-caption")]
-        public HttpResponseMessage AddFSRatioCaption(  [FromBody] CustomerFSRatioCaptionViewModel model)
+        public HttpResponseMessage AddFsRatioCaption(  [FromBody] CustomerFSRatioCaptionViewModel model)
         { 
                 try
                 {
@@ -494,7 +495,7 @@ namespace FintrakBanking.APICore.Controllers
                     model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
-                    var data = fsRepo.AddFSRatioCaption(model);
+                    var data = _fsRepo.AddFSRatioCaption(model);
                     if (data)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -513,12 +514,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-fs-ratio-caption")]
-        public HttpResponseMessage GetFSRatioCaption( )
+        public HttpResponseMessage GetFsRatioCaption( )
         {  try
                 {
                     var token = new TokenDecryptionHelper();
 
-                    var data = fsRepo.GetFSRatioCaption(token.GetCompanyId);
+                    var data = _fsRepo.GetFSRatioCaption(token.GetCompanyId);
                     if (!data.Any())
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -537,11 +538,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
-        public HttpResponseMessage GetFSRatioCaptionById(  short ratioCaptionId)
+        public HttpResponseMessage GetFsRatioCaptionById(  short ratioCaptionId)
         { 
                 try
                 {
-                    var data = fsRepo.GetFSRatioCaptionById(ratioCaptionId);
+                    var data = _fsRepo.GetFSRatioCaptionById(ratioCaptionId);
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
                 }
                 catch (System.Exception ex)
@@ -554,7 +555,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
-        public HttpResponseMessage UpdateFSRatioCaption(  short ratioCaptionId, [FromBody] CustomerFSRatioCaptionViewModel model)
+        public HttpResponseMessage UpdateFsRatioCaption(  short ratioCaptionId, [FromBody] CustomerFSRatioCaptionViewModel model)
         { 
                 try
                 {
@@ -566,7 +567,7 @@ namespace FintrakBanking.APICore.Controllers
                     model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
-                    var data = fsRepo.UpdateFSRatioCaption(ratioCaptionId, model);
+                    var data = _fsRepo.UpdateFSRatioCaption(ratioCaptionId, model);
 
                     if (data)
                     {
@@ -586,7 +587,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
-        public HttpResponseMessage DeleteFSRatioCaption(  short ratioCaptionId)
+        public HttpResponseMessage DeleteFsRatioCaption(  short ratioCaptionId)
         { 
                 try
                 {
@@ -601,7 +602,7 @@ namespace FintrakBanking.APICore.Controllers
                         userIPAddress = Request.RequestUri.Host
                     };
 
-                    fsRepo.DeleteFSRatioCaption(ratioCaptionId, user);
+                    _fsRepo.DeleteFSRatioCaption(ratioCaptionId, user);
 
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = ratioCaptionId, message = "record has been deleted successfully" });
@@ -618,7 +619,7 @@ namespace FintrakBanking.APICore.Controllers
         #region FS Ratio Detail
         [HttpPost]
         [Route("customer-fs-ratio-detail")]
-        public HttpResponseMessage AddFSRatioDetail(  [FromBody] CustomerFSRatioDetailViewModel model)
+        public HttpResponseMessage AddFsRatioDetail(  [FromBody] CustomerFSRatioDetailViewModel model)
         { 
                 try
                 {
@@ -630,7 +631,7 @@ namespace FintrakBanking.APICore.Controllers
                     model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
-                    var data = fsRepo.AddFSRatioDetail(model);
+                    var data = _fsRepo.AddFSRatioDetail(model);
                     if (data)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -649,27 +650,27 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("customer-fs-ratio-detail/multiple")]
-        public HttpResponseMessage AddMultipleFSRatioDetail(  [FromBody] List<CustomerFSRatioDetailViewModel> models)
+        public HttpResponseMessage AddMultipleFsRatioDetail(  [FromBody] List<CustomerFSRatioDetailViewModel> models)
         { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
 
                     var userBranch = (short)token.GetBranchId;
-                    var userIPAddress = Request.RequestUri.Host;
+                    var userIpAddress = Request.RequestUri.Host;
                     var applicationUrl = HttpContext.Current.Request.Path;
                     var createdBy = token.GetStaffId;
 
                     foreach (CustomerFSRatioDetailViewModel model in models)
                     {
                         model.userBranchId = userBranch;
-                        model.userIPAddress = userIPAddress;
+                        model.userIPAddress = userIpAddress;
                         model.applicationUrl = applicationUrl;
                         model.createdBy = createdBy;
                         model.companyId = token.GetCompanyId;
                     }
 
-                    var data = fsRepo.AddMultipleFSRatioDetail(models);
+                    var data = _fsRepo.AddMultipleFSRatioDetail(models);
                     if (data)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -688,13 +689,13 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-fs-ratio-detail/ratio-caption/{ratioCaptionId}/caption-group/{fsCaptionGroupId}")]
-        public HttpResponseMessage GetFSRatioDetail(  short ratioCaptionId, short fsCaptionGroupId)
+        public HttpResponseMessage GetFsRatioDetail(  short ratioCaptionId, short fsCaptionGroupId)
         { 
                 try
                 {
                     var token = new TokenDecryptionHelper();
 
-                    var data = fsRepo.GetFSRatioDetail(ratioCaptionId, fsCaptionGroupId, token.GetCompanyId);
+                    var data = _fsRepo.GetFSRatioDetail(ratioCaptionId, fsCaptionGroupId, token.GetCompanyId);
                     if (!data.Any())
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -712,11 +713,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-fs-ratio-detail/{ratioDetailId}")]
-        public HttpResponseMessage GetFSRatioDetailById(  int ratioDetailId)
+        public HttpResponseMessage GetFsRatioDetailById(  int ratioDetailId)
         { 
                 try
                 {
-                    var data = fsRepo.GetFSRatioDetailById(ratioDetailId);
+                    var data = _fsRepo.GetFSRatioDetailById(ratioDetailId);
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
                 }
                 catch (System.Exception ex)
@@ -729,7 +730,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("customer-fs-ratio-detail/{ratioDetailId}")]
-        public HttpResponseMessage UpdateFSRatioDetail(  int ratioDetailId, [FromBody] CustomerFSRatioDetailViewModel model)
+        public HttpResponseMessage UpdateFsRatioDetail(  int ratioDetailId, [FromBody] CustomerFSRatioDetailViewModel model)
         {  try
                 {
                     var token = new TokenDecryptionHelper();
@@ -740,7 +741,7 @@ namespace FintrakBanking.APICore.Controllers
                     model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
-                    var data = fsRepo.UpdateFSRatioDetail(ratioDetailId, model);
+                    var data = _fsRepo.UpdateFSRatioDetail(ratioDetailId, model);
 
                     if (data)
                     {
@@ -759,7 +760,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [Route("customer-fs-ratio-detail/{ratioDetailId}")]
-        public HttpResponseMessage DeleteFSRatioDetail(  int ratioDetailId)
+        public HttpResponseMessage DeleteFsRatioDetail(  int ratioDetailId)
         {   try
                 {
                     var token = new TokenDecryptionHelper();
@@ -773,7 +774,7 @@ namespace FintrakBanking.APICore.Controllers
                         userIPAddress = Request.RequestUri.Host
                     };
 
-                    fsRepo.DeleteFSRatioDetail(ratioDetailId, user);
+                    _fsRepo.DeleteFSRatioDetail(ratioDetailId, user);
 
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = ratioDetailId, message = "record has been deleted successfully" });
@@ -787,7 +788,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [Route("customer-fs-ratio-detail/multiple/{ratioDetailId}")]
-        public HttpResponseMessage DeleteMultileFSRatioDetail(  List<int> ratioDetailIds)
+        public HttpResponseMessage DeleteMultileFsRatioDetail(  List<int> ratioDetailIds)
         { try
                 {
                     var token = new TokenDecryptionHelper();
@@ -801,7 +802,7 @@ namespace FintrakBanking.APICore.Controllers
                         userIPAddress = Request.RequestUri.Host
                     };
 
-                    fsRepo.DeleteMultipleFSRatioDetail(ratioDetailIds, user);
+                    _fsRepo.DeleteMultipleFSRatioDetail(ratioDetailIds, user);
 
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = 1, message = "record(s) has been deleted successfully" });
@@ -818,9 +819,8 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetAllDivisorType( )
         {   try
                 {
-                    var token = new TokenDecryptionHelper();
 
-                    var data = fsRepo.GetAllDivisorType();
+                    var data = _fsRepo.GetAllDivisorType();
                     if (!data.Any())
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -844,7 +844,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     var token = new TokenDecryptionHelper();
 
-                    var data = fsRepo.GetAllValueType();
+                    var data = _fsRepo.GetAllValueType();
                     if (!data.Any())
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,

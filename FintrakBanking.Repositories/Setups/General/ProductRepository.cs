@@ -788,7 +788,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //Storing the product currencies
             foreach (var item in productModel.currencies)
             {
-                var productCurrency = new tbl_Temp_Product_Currency()
+                var productCurrency = new tbl_Temp_Product_Currency
                 {
                     //ProductId = (short)item.productId,
                     CurrencyId = item.currencyId,

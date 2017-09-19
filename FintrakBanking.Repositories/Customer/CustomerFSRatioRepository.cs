@@ -348,7 +348,7 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             divisorTypeId = a.DivisorTypeId,
                             divisorTypeName = a.DivisorTypeName,
-                            createdBy = (int)a.CreatedBy,
+                            //createdBy = a.CreatedBy.Value,
                             dateTimeCreated = a.DateTimeCreated
                         }).ToList();
             return data;
@@ -366,7 +366,7 @@ namespace FintrakBanking.Repositories.Customer
                             valueTypeId = a.ValueTypeId,
                             valueTypeName = a.ValueTypeName,
                             dateTimeCreated = a.DateTimeCreated,
-                            createdBy = (int)a.CreatedBy
+                            //createdBy = (int)a.CreatedBy
                         }).ToList();
             return data;
         }
