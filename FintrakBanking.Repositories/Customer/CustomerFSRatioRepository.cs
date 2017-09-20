@@ -166,37 +166,40 @@ namespace FintrakBanking.Repositories.Customer
         #region tbl_Customer FS-Ratio-Detail
         public bool AddFSRatioDetail(CustomerFSRatioDetailViewModel model)
         {
-            var data = new tbl_Customer_FS_Ratio_Detail
+            if (model != null)
             {
-                RatioCaptionId = model.ratioCaptionId,
-                DivisorTypeId = (short)model.divisorTypeId,
-                FSCaptionId = (int)model.fscaptionId,
-                Multiplier = (double)model.multiplier,
-                ValueTypeId = (short)model.valueTypeId,
+                var data = new tbl_Customer_FS_Ratio_Detail
+                {
+                    RatioCaptionId = model.ratioCaptionId,
+                    DivisorTypeId = (short)model.divisorTypeId,
+                    FSCaptionId = (int)model.fscaptionId,
+                    Multiplier = (double)model.multiplier,
+                    ValueTypeId = (short)model.valueTypeId,
 
-                CreatedBy = (int)model.createdBy,
-                DateTimeCreated = _genSetup.GetApplicationDate()
-            };
+                    CreatedBy = (int)model.createdBy,
+                    DateTimeCreated = _genSetup.GetApplicationDate()
+                };
 
-            context.tbl_Customer_FS_Ratio_Detail.Add(data);
+                context.tbl_Customer_FS_Ratio_Detail.Add(data);
 
-            // Audit Section ---------------------------
-            var audit_divisor = (context.tbl_Customer_FS_Ratio_DivisorType.FirstOrDefault(x => x.DivisorTypeId == data.DivisorTypeId)).DivisorTypeName;
-            var audit_value = (context.tbl_Customer_FS_Ratio_ValueType.FirstOrDefault(x => x.ValueTypeId == data.ValueTypeId)).ValueTypeName;
+                // Audit Section ---------------------------
+                var auditDivisor = context.tbl_Customer_FS_Ratio_DivisorType.FirstOrDefault(x => x.DivisorTypeId == data.DivisorTypeId)?.DivisorTypeName;
+                var auditValue = context.tbl_Customer_FS_Ratio_ValueType.FirstOrDefault(x => x.ValueTypeId == data.ValueTypeId)?.ValueTypeName;
 
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.CustomerFSRatioDetailAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added FS Ratio Detail {data.tbl_Customer_FS_Ratio_Caption} with divisor type '{audit_divisor}' and value typ '{audit_value }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
+                var audit = new tbl_Audit
+                {
+                    AuditTypeId = (short)AuditTypeEnum.CustomerFSRatioDetailAdded,
+                    StaffId = model.createdBy,
+                    BranchId = (short)model.userBranchId,
+                    Detail = $"Added FS Ratio Detail {data.tbl_Customer_FS_Ratio_Caption} with divisor type '{auditDivisor}' and value typ '{auditValue }' ",
+                    IPAddress = model.userIPAddress,
+                    Url = model.applicationUrl,
+                    ApplicationDate = _genSetup.GetApplicationDate(),
+                    SystemDateTime = DateTime.Now
+                };
 
-            this.auditTrail.AddAuditTrail(audit);
+                this.auditTrail.AddAuditTrail(audit);
+            }
 
             //end of Audit section -------------------------------
 
