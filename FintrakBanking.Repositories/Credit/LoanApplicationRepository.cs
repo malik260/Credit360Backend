@@ -258,6 +258,7 @@ namespace FintrakBanking.Repositories.Credit
                 RelationshipManagerId = loan.relationshipManagerId,
                 MISCode = loan.misCode,
                 CurrencyId = loan.currencyId,
+                SubSectorId = (short)loan.subSectorId,
                 TeamMISCode = loan.teamMisCode,
                 InterestRate = loan.interestRate,
                 ProductId = loan.productId,
@@ -269,7 +270,6 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy = (int)loan.createdBy,
                 DateTimeCreated = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
-                //SubSectorId = (short)loan.subSectorId,
 
                 ExchangeRate = loan.exchangeRate,
                 LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,
@@ -411,7 +411,7 @@ namespace FintrakBanking.Repositories.Credit
             return $"{code}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
         }
 
-       
+
 
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int companyId, int branchId, int staffId)
         {
@@ -535,10 +535,10 @@ namespace FintrakBanking.Repositories.Credit
             return scope;
         }
 
-        public bool CheckExitingCertificateOfOwnership(string certificateOfOwnership, int companyId)
+        public bool CheckExistingCertificateOfOwnership(string certificateOfOwnership, int companyId)
         {
             bool isExisting = false;
-            var collate = collateral.GetCollateralCustomer(companyId,companyId).Where(c => c.collateralCode == certificateOfOwnership).ToList();
+            var collate = collateral.GetCustomerCollateral(companyId).Where(c => c.collateralCode == certificateOfOwnership);
             if (collate.Any())
             {
                 return isExisting = true;

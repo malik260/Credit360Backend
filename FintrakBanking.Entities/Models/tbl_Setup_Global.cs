@@ -13,10 +13,14 @@ namespace FintrakBanking.Entities.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short GlobalSetupId { get; set; }
 
+        public int CompanyId { get; set; }
+
         public double AuthorisedOverdraft_InterestRate { get; set; }
 
         public double DefaultPastDue_InterestRate { get; set; }
 
         public int RepaymentGracePeriod { get; set; }
+
+        public virtual tbl_Company tbl_Company { get; set; }
     }
 }

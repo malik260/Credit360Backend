@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.CheckExitingCertificateOfOwnership(certificateofownership, token.GetCompanyId);
+                var response = repoApply.CheckExistingCertificateOfOwnership(certificateofownership, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception e)
@@ -182,6 +182,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                //FinTrakBankingContext
 
                 if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
                 {
@@ -300,8 +301,9 @@ namespace FintrakBanking.APICore.Controllers
 
                 var response = await repoLoanPEN.AddPreliminaryEvaluation(model);
 
-                if (response)
+                if (response != null)
                 {
+                    responseMessage = $"Preliminary evaluation note ({response.preliminaryEvaluationCode}) created successfully, now awaiting approval";
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = $"{responseMessage}" });
                 }

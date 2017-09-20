@@ -6,30 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Day_Count")]
-    public partial class tbl_Day_Count
+    [Table("core.tbl_Daily_Accrual_Category")]
+    public partial class tbl_Daily_Accrual_Category
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Day_Count()
+        public tbl_Daily_Accrual_Category()
         {
-            tbl_Product = new HashSet<tbl_Product>();
-            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
+            tbl_Daily_Accrual = new HashSet<tbl_Daily_Accrual>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short DayCountId { get; set; }
+        public short CategoryId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string DayCountName { get; set; }
-
-        public int DaysInAYear { get; set; }
+        public string CategoryName { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
+        public virtual ICollection<tbl_Daily_Accrual> tbl_Daily_Accrual { get; set; }
     }
 }

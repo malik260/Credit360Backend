@@ -171,8 +171,12 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetLoanDocumentByReferenceNumber(referenceNumber);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                var data = repo.GetLoanDocumentByReferenceNumber(referenceNumber).ToList();
+                if (data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "No record found" });
             }
             catch (Exception ex)
             {

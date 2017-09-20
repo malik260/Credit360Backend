@@ -13,26 +13,27 @@ namespace FintrakBanking.Interfaces.Credit
         Task<bool> AddCollateral(CollateralViewModel entity);
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int companyId);
+        IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId);
         CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId);
 
-        #region Collateral
-        Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity);
-        Task<bool> DeleteCollateralCustomer(int collateralCustomerId, UserInfo user);
-        Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity);
-        IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId);
-        bool IsCollateralDocExists(string docName);
+        //#region Collateral
+        //Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity);
+        //Task<bool> DeleteCollateralCustomer(int collateralCustomerId, UserInfo user);
+        //Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity);
+        //IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId);
+        //bool IsCollateralDocExists(string docName);
         Task<bool> AddCollateralValuer(CollateralValuersViewModel entity);
         Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id);
-        #endregion Collateral
+        //#endregion Collateral
 
         #region Collateral Type
         IEnumerable<CollateralTypeViewModel> GetCollateralType();
         #endregion End of Collateral Type 
 
-        #region Miscellaneous Notes
-        Task<bool> DeleteCollateralMiscellaneousNotes(int miscNoteId, UserInfo user);
-        Task<bool> UpdateCollateralMiscellaneousNotes(int miscNoteId, CollateralMiscellaneousNotesViewModel entity);
-        #endregion Miscellaneous Notes
+        //#region Miscellaneous Notes
+        //Task<bool> DeleteCollateralMiscellaneousNotes(int miscNoteId, UserInfo user);
+        //Task<bool> UpdateCollateralMiscellaneousNotes(int miscNoteId, CollateralMiscellaneousNotesViewModel entity);
+        //#endregion Miscellaneous Notes
 
         #region Seniority Of Claims
         Task<bool> AddCollateralSeniorityOfClaims(CollateralSeniorityOfClaimsViewModel entity);

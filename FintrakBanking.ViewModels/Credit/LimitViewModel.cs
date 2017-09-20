@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FintrakBanking.ViewModels.Credit
+﻿namespace FintrakBanking.ViewModels.Credit
 {
     public class LimitViewModel : GeneralEntity
     {
@@ -10,8 +6,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string limitName { get; set; }
         public int limitValueTypeId { get; set; }
         public int limitMetricId { get; set; }
-        public String limitValueType { get; set; }
-        public String limitMetric { get; set; }
+        public string limitValueType { get; set; }
+        public string limitMetric { get; set; }
     }
 
     public class LimitDetailViewModel : GeneralEntity
@@ -21,7 +17,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int limitId { get; set; }
         public int targetId { get; set; }
         public short limitFrequencyTypeId { get; set; }
-        public String limitFrequencyTypeName { get; set; }
+        public string limitFrequencyTypeName { get; set; }
         public decimal minimumValue { get; set; }
         public decimal maximumValue { get; set; }
         public string limitName { get; set; }
@@ -33,21 +29,18 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int limitMetricId { get; set; }
         public string limitMetricName { get; set; }
-
     }
 
     public class LimitTypeViewModel
     {
         public int limitTypeId { get; set; }
         public string limitTypeName { get; set; }
-
     }
 
     public class LimitValueTypeViewModel 
     {
         public int limitValueTypeId { get; set; }
         public string limitValueTypeName { get; set; }
-
     }
 
     public class FrequencyTypeViewModel
