@@ -14,8 +14,8 @@ namespace FintrakBanking.Interfaces.Finance
 
         double GetExchangeRate(short currencyId,   int companyId);
 
-        CasaBalanceViewModel GetCASABalances(int casaAccountId);
+        CasaBalanceViewModel GetCASABalance(int casaAccountId);
 
-        CasaBalanceViewModel GetCASABalancesFromTransactions(int casaAccountId);
+        CasaBalanceViewModel GetCASABalanceFromTransactions(int casaAccountId);
     }
 }
