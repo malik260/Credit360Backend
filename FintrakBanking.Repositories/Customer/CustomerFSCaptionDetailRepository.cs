@@ -32,14 +32,22 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool AddCustomerFSCaptionDetail(CustomerFSCaptionDetailViewModel entity)
         {
-            if (entity != null)
+            var targetEntity = context.tbl_Customer_FS_Caption_Detail.FirstOrDefault(x => x.FSCaptionId == entity.fsCaptionId);
+
+            if (targetEntity != null)
+            {
+                targetEntity.Deleted = false;
+                targetEntity.LastUpdatedBy = entity.createdBy;
+                targetEntity.DateTimeUpdated = DateTime.Now;
+            }
+            else
             {
                 var data = new tbl_Customer_FS_Caption_Detail
                 {
                     CustomerId = entity.customerId,
                     FSCaptionId = entity.fsCaptionId,
                     FSDate = entity.fsDate,
-                    Amount = entity.amount,                            
+                    Amount = entity.amount,
 
                     CreatedBy = entity.createdBy,
                     DateTimeCreated = _genSetup.GetApplicationDate()
@@ -51,14 +59,14 @@ namespace FintrakBanking.Repositories.Customer
                 var captionInfo = context.tbl_Customer_FS_Caption.FirstOrDefault(x => x.FSCaptionId == data.FSCaptionId);
                 var caption = $"{captionInfo?.FSCaptionName} ({captionInfo?.FSCaptionCode})";
                 var customerInfo = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == data.CustomerId);
-                var customer = $"Cutomer with code: {customerInfo?.CustomerCode} ({customerInfo?.FirstName}  {customerInfo?.LastName})";            
+                var customer = $"Cutomer with code: {customerInfo?.CustomerCode} ({customerInfo?.FirstName}  {customerInfo?.LastName})";
 
                 var audit = new tbl_Audit
                 {
                     AuditTypeId = (short)AuditTypeEnum.CustomerFSCaptionDetailAdded,
                     StaffId = entity.createdBy,
                     BranchId = entity.userBranchId,
-                    Detail = $"Added FS Caption Detail for customer {customer} and caption {caption} . Amount is { data.Amount :#,##0} with date {data.FSDate:dd/MM/yyyy}",
+                    Detail = $"Added FS Caption Detail for customer {customer} and caption {caption} . Amount is { data.Amount:#,##0} with date {data.FSDate:dd/MM/yyyy}",
                     IPAddress = entity.userIPAddress,
                     Url = entity.applicationUrl,
                     ApplicationDate = _genSetup.GetApplicationDate(),
@@ -66,9 +74,8 @@ namespace FintrakBanking.Repositories.Customer
                 };
 
                 auditTrail.AddAuditTrail(audit);
+                //end of Audit section -------------------------------
             }
-
-            //end of Audit section -------------------------------
 
             return context.SaveChanges() != 0;
         }
