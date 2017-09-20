@@ -82,4 +82,40 @@ namespace FintrakBanking.ViewModels.Credit
         public double deferredInterestAmount { get; set; }
         public double endPrincipalAmount { get; set; }
     }
+    
+    public class LoanRepaymentViewModel: GeneralEntity 
+    {
+        public int loanId { get; set; }
+        public string loanRefNo { get; set; }
+        public DateTime paymentDate { get; set; }
+        public decimal periodInterestAmount { get; set; }
+        public decimal periodPrincipalAmount { get; set; }
+        public double interestRate { get; set; }
+        public short productId { get; set; }
+        public short categoryId { get; set; }
+        public double exchangeRate { get; set; }
+        public short branchId { get; set; }
+        public short currencyId { get; set; }
+        public decimal totalAmount { get; set; }
+        public int casaAccountId { get; set; }
+        public byte transactionTypeId { get; set; }
+
+    }
+
+
+    public class LoanPastDueViewModel : GeneralEntity
+
+    {
+        public int loanId { get; set; }
+        public DateTime date { get; set; }
+        public byte transactionTypeId { get; set; }
+        public string pastDueCode { get; set; }
+        public string parent_PastDueCode { get; set; }
+        public string description { get; set; }
+        public decimal debitAmount { get; set; }
+        public decimal creditAmount { get; set; }
+        public decimal totalAmount { get; set; }
+
+
+    }
 }
