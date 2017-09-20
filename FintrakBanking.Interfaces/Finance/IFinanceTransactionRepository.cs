@@ -17,8 +17,6 @@ namespace FintrakBanking.Interfaces.Finance
 
         CasaBalanceViewModel GetCASABalance(int casaAccountId);
 
-        CasaBalanceViewModel GetCASABalancesFromTransactions(int casaAccountId);
-
         FinanceTransactionViewModel PostDailyLoansInterestAccrual(DailyInterestAccrualViewModel model);
 
         FinanceTransactionViewModel PostDailyAuthorisedOverdraftInterestAccrual(DailyInterestAccrualViewModel model);
@@ -34,5 +32,7 @@ namespace FintrakBanking.Interfaces.Finance
         FinanceTransactionViewModel PostBuildAuthorisedOverdraftRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description);
 
         CasaBalanceViewModel GetCASABalanceFromTransactions(int casaAccountId);
+
+        decimal GetLienBalance(string productAccountNumber);
     }
 }
