@@ -571,12 +571,6 @@ namespace FintrakBanking.Repositories.Credit
                         context.tbl_Audit.Add(audit);
 
                         var dataCount = context.SaveChanges();
-
-                        AddLoanCovenantDetail(entity.loanCovenant, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
-
                         this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
                         var approvalModel = new ApprovalViewModel
@@ -1188,7 +1182,7 @@ namespace FintrakBanking.Repositories.Credit
         private IQueryable<LoanViewModel> GetAllLoans()
         {
             var data = (from l in context.tbl_Loan
-                        select new LoanViewModel()
+                        select new LoanViewModel
                         {
                             loanId = l.TermLoanId,
                             customerId = l.CustomerId,
@@ -1199,7 +1193,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchId = l.BranchId,
                             branchName = l.tbl_Branch.BranchName,
                             loanReferenceNumber = l.LoanReferenceNumber,
-                            tenor = (l.MaturityDate - l.EffectiveDate).Days,
+                            //tenor = (l.MaturityDate - l.EffectiveDate).Days, // returning error
                             principalFrequencyTypeId = (short)l.PrincipalFrequencyTypeId,
                             interestFrequencyTypeId = (short)l.InterestFrequencyTypeId,
 
@@ -1212,7 +1206,7 @@ namespace FintrakBanking.Repositories.Credit
                             interestRate = l.InterestRate,
                             effectiveDate = l.EffectiveDate,
                             maturityDate = l.MaturityDate,
-                            bookingDate = (DateTime)l.BookingDate,
+                            bookingDate = l.BookingDate,
                             principalAmount = l.PrincipalAmount,
                             principalInstallmentLeft = l.PrincipalInstallmentLeft,
                             interestInstallmentLeft = l.InterestInstallmentLeft,
@@ -1253,7 +1247,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public bool validateCamsol(int loanId)
+        public bool ValidateCamsol(int loanId)
         {
             var check = context.tbl_Loan_Camsol.Where(x => x.LoanId == loanId);
 
@@ -1263,6 +1257,13 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return false;
+        }
+
+        public int CalculateTenorValue(DateTime maturityDate, DateTime effectiveDate)
+        {
+            var result = (maturityDate - effectiveDate).Days;
+
+            return result;
         }
 
         public IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId)

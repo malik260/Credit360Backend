@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         double GetExchangeRate(short currencyId, int companyId);
 
-        CasaBalanceViewModel GetCASABalances(int casaAccountId);
+        CasaBalanceViewModel GetCASABalance(int casaAccountId);
 
         CasaBalanceViewModel GetCASABalancesFromTransactions(int casaAccountId);
 
@@ -33,5 +33,6 @@ namespace FintrakBanking.Interfaces.Finance
 
         FinanceTransactionViewModel PostBuildAuthorisedOverdraftRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description);
 
+        CasaBalanceViewModel GetCASABalanceFromTransactions(int casaAccountId);
     }
 }

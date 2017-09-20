@@ -90,14 +90,14 @@ namespace FintrakBanking.Repositories.Finance
             }
         }
 
-        public CasaBalanceViewModel GetCASABalances(int casaAccountId)
+        public CasaBalanceViewModel GetCASABalance(int casaAccountId)
         {
             var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
 
             return new CasaBalanceViewModel {availableBalance = account.AvailableBalance, ledgerBalance = account.LedgerBalance };
         }
 
-        public CasaBalanceViewModel GetCASABalancesFromTransactions(int casaAccountId)
+        public CasaBalanceViewModel GetCASABalanceFromTransactions(int casaAccountId)
         {
             CasaBalanceViewModel balance = new CasaBalanceViewModel();
 
@@ -105,8 +105,21 @@ namespace FintrakBanking.Repositories.Finance
                          where data.CasaAccountId == casaAccountId
                          select data.CreditAmount - data.DebitAmount).Sum();
 
+            var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
+
+            var lienBalance = GetLienBalance(account.ProductAccountNumber);
 
             balance.ledgerBalance = trans;
+            balance.availableBalance = trans - lienBalance;
+
+            return balance;
+        }
+
+        public decimal GetLienBalance(string productAccountNumber)
+        {            
+            var balance = (from data in context.tbl_CASA_Lien
+                         where data.ProductAccountNumber == productAccountNumber
+                         select data.LienCreditAmount - data.LienDebitAmount).Sum();
 
             return balance;
         }
@@ -161,6 +174,8 @@ namespace FintrakBanking.Repositories.Finance
 
                         UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
                     }
+                    else
+                    { item.casaAccountId = null; }
 
                     tbl_Finance_Transaction trans = new tbl_Finance_Transaction();
 
