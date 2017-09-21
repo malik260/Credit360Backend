@@ -248,7 +248,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
 
-            var loanStatusId = (short)LoanStatusEnum.Inactive;
+            //var loanStatusId = (short)LoanStatusEnum.Inactive;
 
             var data = new tbl_Loan_Application
             {
@@ -298,68 +298,95 @@ namespace FintrakBanking.Repositories.Credit
                 data.CustomerGroupId = null;
             }
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.LoanApplication, loan.companyId))
+            context.tbl_Loan_Application.Add(data);
+
+            // Audit Section ---------------------------            
+            var audit = new tbl_Audit
             {
-                using (var trans = context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        context.tbl_Loan_Application.Add(data);
+                AuditTypeId = (short)AuditTypeEnum.LoanApplication,
+                StaffId = loan.createdBy,
+                BranchId = (short)loan.userBranchId,
+                Detail = $"Applied for loan with reference number: {loan.applicationReferenceNumber}",
+                IPAddress = loan.userIPAddress,
+                Url = loan.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now,
+                TargetId = loan.loanApplicationId
 
-                        // Audit Section ---------------------------            
-                        var audit = new tbl_Audit
-                        {
-                            AuditTypeId = (short)AuditTypeEnum.LoanApplication,
-                            StaffId = loan.createdBy,
-                            BranchId = (short)loan.userBranchId,
-                            Detail = $"Applied for loan with reference number: {loan.applicationReferenceNumber}",
-                            IPAddress = loan.userIPAddress,
-                            Url = loan.applicationUrl,
-                            ApplicationDate = genSetup.GetApplicationDate(),
-                            SystemDateTime = DateTime.Now,
-                            TargetId = loan.loanApplicationId
+            };
 
-                        };
+            this.auditTrail.AddAuditTrail(audit);
 
-                        this.auditTrail.AddAuditTrail(audit);
-
-                        //end of Audit section -------------------------------
+            //end of Audit section -------------------------------
 
 
-                        response = await context.SaveChangesAsync();
+            response = await context.SaveChangesAsync();
 
-                        // send for approval
 
-                        if (response > 0)
-                        {
-                            var wf = new ApprovalViewModel
-                            {
-                                companyId = data.CompanyId,
-                                operationId = (int)OperationsEnum.LoanApplication,
-                                staffId = data.CreatedBy,
-                                targetId = data.LoanApplicationId,
-                                approvalStatusId = (short)ApprovalStatusEnum.Pending,
-                            };
-                            var result = await workFlow.LogForApproval(wf);
-                            if (result.Item1)
-                            {
-                                return response > 0;
-                            }
-                        }
-                        trans.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw new Exception(ex.Message);
-                    }
-                }
 
-            }
-            else
-            {
-                throw new MyException("Approval path has not been defined for this request");
-            }
+
+            //if (workFlow.CheckRouteForOperation((int)OperationsEnum.LoanApplication, loan.companyId))
+            //{
+            //    using (var trans = context.Database.BeginTransaction())
+            //    {
+            //        try
+            //        {
+            //            context.tbl_Loan_Application.Add(data);
+
+            //            // Audit Section ---------------------------            
+            //            var audit = new tbl_Audit
+            //            {
+            //                AuditTypeId = (short)AuditTypeEnum.LoanApplication,
+            //                StaffId = loan.createdBy,
+            //                BranchId = (short)loan.userBranchId,
+            //                Detail = $"Applied for loan with reference number: {loan.applicationReferenceNumber}",
+            //                IPAddress = loan.userIPAddress,
+            //                Url = loan.applicationUrl,
+            //                ApplicationDate = genSetup.GetApplicationDate(),
+            //                SystemDateTime = DateTime.Now,
+            //                TargetId = loan.loanApplicationId
+
+            //            };
+
+            //            this.auditTrail.AddAuditTrail(audit);
+
+            //            //end of Audit section -------------------------------
+
+
+            //            response = await context.SaveChangesAsync();
+
+            //            // send for approval
+
+            //            if (response > 0)
+            //            {
+            //                var wf = new ApprovalViewModel
+            //                {
+            //                    companyId = data.CompanyId,
+            //                    operationId = (int)OperationsEnum.LoanApplication,
+            //                    staffId = data.CreatedBy,
+            //                    targetId = data.LoanApplicationId,
+            //                    approvalStatusId = (short)ApprovalStatusEnum.Pending,
+            //                };
+            //                var result = await workFlow.LogForApproval(wf);
+            //                if (result.Item1)
+            //                {
+            //                    return response > 0;
+            //                }
+            //            }
+            //            trans.Commit();
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            trans.Rollback();
+            //            throw new Exception(ex.Message);
+            //        }
+            //    }
+
+            //}
+            //else
+            //{
+            //    throw new MyException("Approval path has not been defined for this request");
+            //}
             return response > 0;
         }
 
@@ -487,12 +514,12 @@ namespace FintrakBanking.Repositories.Credit
                     .SelectMany(x => x.tbl_Approval_Level)
                     .Select(x => x.ApprovalLevelId);
 
-                pendingApplications = pendingApplications.Where(x => groupApprovalLevelIds.Contains(x.b.ToApprovalLevelId));
+                pendingApplications = pendingApplications.Where(x => groupApprovalLevelIds.Contains((int)x.b.ToApprovalLevelId));
             }
 
             if (scope == (int)ProcessViewScopeEnum.Level) // 1
             {
-                pendingApplications = pendingApplications.Where(x => staffApprovalLevelIds.Contains(x.b.ToApprovalLevelId));
+                pendingApplications = pendingApplications.Where(x => staffApprovalLevelIds.Contains((int)x.b.ToApprovalLevelId));
             }
 
             return pendingApplications.Select(x => new LoanApplicationViewModel

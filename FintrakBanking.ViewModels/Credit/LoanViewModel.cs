@@ -361,7 +361,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short productId { get; set; }
 
-        public int companyId { get; set; }
+        //public int companyId { get; set; }
 
         public short branchId { get; set; }
 

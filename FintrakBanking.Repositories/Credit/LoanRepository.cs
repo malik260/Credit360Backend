@@ -573,7 +573,7 @@ namespace FintrakBanking.Repositories.Credit
                         var loan = context.tbl_Loan.Add(data);
                         context.tbl_Audit.Add(audit);
 
-                        var dataCount = context.SaveChanges();
+                        var dataCount = await context.SaveChangesAsync();
                         this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
                         var approvalModel = new ApprovalViewModel
