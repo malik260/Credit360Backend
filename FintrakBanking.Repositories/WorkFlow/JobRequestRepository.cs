@@ -18,17 +18,18 @@ namespace FintrakBanking.Repositories.WorkFlow
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
 
-        public JobRequestRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+        public JobRequestRepository(FinTrakBankingContext _context, IGeneralSetupRepository _general, IAuditTrailRepository _audit)
         {
-            this.context = context;
-            this.general = general;
-            this.audit = audit;
+            this.context = _context;
+            this.general = _general;
+            this.audit = _audit;
         }
 
         public bool AddJobRequest(JobRequestViewModel model)
         {
             var date = DateTime.Now;
             var applicationDate = general.GetApplicationDate();
+            model.departmentId = (short)context.tbl_Staff.Where(x => x.StaffId == model.createdBy).FirstOrDefault().DepartmentId;
             var data = new tbl_Job_Request
             {
                 JobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
@@ -44,12 +45,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 RequestStatusId = model.requestStatusId, // status enum
                 SenderComment = model.senderComment,
                 ResponseComment = model.responseComment,
-               // TargetId = model.targetId,
-                //OperationsId = (int)OperationsEnum.CAM, // cam for now
-               // RequestStatusId = 1, // status enum
-                //SenderComment = model.senderComment,
-                //IsReassigned = false,
-                //IsAcknowledged = false,
                 ArrivalDate = applicationDate,
                 SystemArrivalDate = date,
             };
