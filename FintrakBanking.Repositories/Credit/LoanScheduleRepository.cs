@@ -123,6 +123,38 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
+        public IEnumerable<LookupViewModel> GetAllLoanScheduleType(short? productTypeId)
+        {
+            if (productTypeId == null || productTypeId <= 0)
+            {
+                return (from data in context.tbl_Loan_Schedule_Type
+                        select new LookupViewModel()
+                        {
+                            lookupId = data.ScheduleTypeId,
+                            lookupName = data.ScheduleTypeName,
+                            lookupTypeId = data.ScheduleCategoryId,
+                            lookupTypeName = data.tbl_Loan_Schedule_Category.ScheduleCategoryName
+                        });
+
+            }
+            else
+            {
+                return (from data in context.tbl_Loan_Schedule_Type
+                        join t in context.tbl_Loan_Schedule_Type_Product_Type_Mapping
+                        on data.ScheduleTypeId equals t.ScheduleTypeId
+                        where t.ProductTypeId == productTypeId
+                        select new LookupViewModel()
+                        {
+                            lookupId = data.ScheduleTypeId,
+                            lookupName = data.ScheduleTypeName,
+                            lookupTypeId = data.ScheduleCategoryId,
+                            lookupTypeName = data.tbl_Loan_Schedule_Category.ScheduleCategoryName
+                        });
+            }
+        }
+
+
+
         public IEnumerable<LookupViewModel> GetLoanScheduleTypeByCategory(short categoryId)
         {
             return (from data in context.tbl_Loan_Schedule_Type
@@ -1200,7 +1232,7 @@ namespace FintrakBanking.Repositories.Credit
             this.context.tbl_Loan_Schedule_Daily.AddRange(tblDailySchedule);
 
             //----------update loan details -----------------------------------
-            var loan = this.context.tbl_Loan.FirstOrDefault(x => x.LoanId == loanId);
+            var loan = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == loanId);
             loan.MaturityDate = periodicSchedule.Max(x => x.paymentDate);
             loan.PrincipalNumberOfInstallment = periodicSchedule.Count() -1;
             loan.InterestNumberOfInstallment = loan.PrincipalNumberOfInstallment;

@@ -11,7 +11,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<JobRequestViewModel> GetAllJobRequest();
 
         IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId);
-        //IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int groupId);
+
+        IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId);
 
         bool AddJobRequest(JobRequestViewModel model);
 

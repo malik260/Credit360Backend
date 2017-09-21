@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
         //IErrorLogRepository errorLogger;
 
         public CustomerCollateralController(
-            ICustomerCollateralRepository repo, 
+            ICustomerCollateralRepository repo,
             ICollateralTypeRepository type,
             ICollateralDocumentRepository document
             //IErrorLogRepository _errorLogger
@@ -249,33 +249,6 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        [HttpDelete]
-        [Route("customer-collateral/{collateralCustomerId}")]
-        public async Task<HttpResponseMessage> DeleteCollateralCustomer(int collateralCustomerId)
-        {
-            try
-            {
-                UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                };
-
-                var response = await repo.DeleteCollateralCustomer(collateralCustomerId, user);
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
 
         #endregion
 
@@ -401,34 +374,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("collateral-sub-type/{collateralSubTypeId}")]
-        public async Task<HttpResponseMessage> DeleteCollateralSubType(int collateralSubTypeId)
-        {
-            try
-            {
-                UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                };
-
-                var response = await repo.DeleteCollateralCustomer(collateralSubTypeId, user);
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
         #endregion  End of Collateral Types
 
 
@@ -500,6 +445,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         [HttpPost, Route("collateral-valuer")]
         public async Task<HttpResponseMessage> AddCollateralValuer([FromBody] CollateralValuersViewModel entity)
         {
@@ -523,8 +469,9 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+
         [HttpPut, Route("collateral-valuer/{id}")]
-        public async Task<HttpResponseMessage> AddCollateralValuer([FromBody] CollateralValuersViewModel entity, int id)
+        public async Task<HttpResponseMessage> UpdateCollateralValuer([FromBody] CollateralValuersViewModel entity, int id)
         {
             try
             {
@@ -533,7 +480,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.companyId = token.GetCompanyId;
 
-                var response = await repo.UpdateCollateralValuer(entity ,id);
+                var response = await repo.UpdateCollateralValuer(entity, id);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Updated successfully" });

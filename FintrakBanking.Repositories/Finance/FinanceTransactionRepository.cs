@@ -10,6 +10,7 @@ using System;
 using System.ServiceModel;
 using System.Collections.Generic;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -19,58 +20,16 @@ namespace FintrakBanking.Repositories.Finance
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
-        private ILoanOperationsRepository creditOperations;
+        //private ILoanOperationsRepository creditOperations;
 
         public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, 
-                                            ILoanOperationsRepository _creditOperations, FinTrakBankingContext _context)
+                                            //ILoanOperationsRepository _creditOperations, 
+                                            FinTrakBankingContext _context)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
             auditTrail = _auditTrail;
-            this.creditOperations = _creditOperations;
-        }
-
-
-        [OperationBehavior(TransactionScopeRequired = true)]
-        public bool AddCollateralSearchLien(CasaLienViewModel model)
-        {
-
-            var data =   new tbl_CASA_Lien
-            {
-                ProductAccountNumber = model.productAccountNumber,
-                LienReferenceNumber = CommonHelpers.GenerateRandomDigitCode(10),
-                SourceReferenceNumber = model.sourceReferenceNumber,
-                BranchId = model.userBranchId,
-                CompanyId = model.companyId,
-                LienCreditAmount = creditOperations.GetCollateralSearchChargeAmount(model.stateId),
-                LienDebitAmount = 0,
-                LienTypeId = (short) LienTypeEnum.CollateralSearch,
-                CreatedBy = model.createdBy,
-                Description = "lien placed due to loan application collateral search", // model.description,
-                DateCreated = generalSetup.GetApplicationDate()
-                 
-            };
-
-            context.tbl_CASA_Lien.Add(data);
-
-            // Audit Section ---------------------------            
-         
-                var audit = new tbl_Audit
-                {
-                    AuditTypeId = (short)AuditTypeEnum.LienAdded,
-                    StaffId = model.createdBy,
-                    BranchId = model.branchId,
-                    Detail = $"Applied for lien with reference number: { model.sourceReferenceNumber}",
-                    IPAddress = model.userIPAddress ,
-                    Url = model.applicationUrl,
-                    ApplicationDate = generalSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
-                };
-                this.auditTrail.AddAuditTrail(audit);
-          
-            //end of Audit section -------------------------------
-           return  context.SaveChanges() != 0;
-             
+            //this.creditOperations = _creditOperations;
         }
 
         private void UpdateCASABalances(int casaAccountId, decimal debitAmount, decimal creditAmount)
@@ -89,14 +48,14 @@ namespace FintrakBanking.Repositories.Finance
             }
         }
 
-        public CasaBalanceViewModel GetCASABalances(int casaAccountId)
+        public CasaBalanceViewModel GetCASABalance(int casaAccountId)
         {
             var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
 
             return new CasaBalanceViewModel {availableBalance = account.AvailableBalance, ledgerBalance = account.LedgerBalance };
         }
 
-        public CasaBalanceViewModel GetCASABalancesFromTransactions(int casaAccountId)
+        public CasaBalanceViewModel GetCASABalanceFromTransactions(int casaAccountId)
         {
             CasaBalanceViewModel balance = new CasaBalanceViewModel();
 
@@ -104,8 +63,21 @@ namespace FintrakBanking.Repositories.Finance
                          where data.CasaAccountId == casaAccountId
                          select data.CreditAmount - data.DebitAmount).Sum();
 
+            var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
+
+            var lienBalance = GetLienBalance(account.ProductAccountNumber);
 
             balance.ledgerBalance = trans;
+            balance.availableBalance = trans - lienBalance;
+
+            return balance;
+        }
+
+        public decimal GetLienBalance(string productAccountNumber)
+        {            
+            var balance = (from data in context.tbl_CASA_Lien
+                         where data.ProductAccountNumber == productAccountNumber
+                         select data.LienCreditAmount - data.LienDebitAmount).Sum();
 
             return balance;
         }
@@ -160,6 +132,8 @@ namespace FintrakBanking.Repositories.Finance
 
                         UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
                     }
+                    else
+                    { item.casaAccountId = null; }
 
                     tbl_Finance_Transaction trans = new tbl_Finance_Transaction();
 
@@ -310,5 +284,466 @@ namespace FintrakBanking.Repositories.Finance
             }           
             
         }
+
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public FinanceTransactionViewModel PostDailyLoansInterestAccrual(DailyInterestAccrualViewModel model)
+
+        {
+
+            FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
+
+            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.CreditDailyInterestAccural;
+            dailyInterestAccrualTransaction.description = "Loan Daily Interest Accrual Posting";
+            dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
+            dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
+            dailyInterestAccrualTransaction.currencyId = model.currencyId;
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.isApproved = true;
+            dailyInterestAccrualTransaction.postedBy = (int)SystemStaff.System;
+            dailyInterestAccrualTransaction.approvedBy = (int)SystemStaff.System;
+            dailyInterestAccrualTransaction.approvedDate = dailyInterestAccrualTransaction.transactionDate;
+            dailyInterestAccrualTransaction.approvedDateTime = DateTime.Now;
+            dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            dailyInterestAccrualTransaction.companyId = model.companyId;
+
+            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            debit.glAccountId = product.InterestReceivablePayableGL.Value;
+            debit.sourceReferenceNumber = product.ProductCode;
+            debit.casaAccountId = null;
+            debit.debitAmount = model.dailyAccuralAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = model.branchId;
+
+            FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+
+            credit.sourceReferenceNumber = product.ProductCode;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = model.dailyAccuralAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+
+
+            dailyInterestAccrualTransaction.transactionDetails.Add(debit);
+            dailyInterestAccrualTransaction.transactionDetails.Add(credit);
+
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(dailyInterestAccrualTransaction);
+            PostTransaction(inputTransactions);
+
+            // Audit Section ---------------------------            
+
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                StaffId = model.createdBy,
+                BranchId = model.branchId,
+                Detail = $"Loan Daily Interest Accrual Posting: {product.ProductCode}",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = generalSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            context.SaveChanges();
+            return dailyInterestAccrualTransaction;
+
+        }
+
+        public FinanceTransactionViewModel PostDailyAuthorisedOverdraftInterestAccrual(DailyInterestAccrualViewModel model)
+
+        {
+
+            FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
+
+            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.CreditDailyInterestAccural;
+            dailyInterestAccrualTransaction.description = "Authorised Overdraft Daily Interest Accrual Posting";
+            dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
+            dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
+            dailyInterestAccrualTransaction.currencyId = model.currencyId;
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.isApproved = true;
+            dailyInterestAccrualTransaction.postedBy = (int)SystemStaff.System;
+            dailyInterestAccrualTransaction.approvedBy = (int)SystemStaff.System;
+            dailyInterestAccrualTransaction.approvedDate = dailyInterestAccrualTransaction.transactionDate;
+            dailyInterestAccrualTransaction.approvedDateTime = DateTime.Now;
+            dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            dailyInterestAccrualTransaction.companyId = model.companyId;
+
+            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            debit.glAccountId = product.InterestReceivablePayableGL.Value;
+            debit.sourceReferenceNumber = product.ProductCode;
+            debit.casaAccountId = null;
+            debit.debitAmount = model.dailyAccuralAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = model.branchId;
+
+            FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+
+            credit.sourceReferenceNumber = product.ProductCode;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = model.dailyAccuralAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+
+
+            dailyInterestAccrualTransaction.transactionDetails.Add(debit);
+            dailyInterestAccrualTransaction.transactionDetails.Add(credit);
+
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(dailyInterestAccrualTransaction);
+            PostTransaction(inputTransactions);
+
+            // Audit Section ---------------------------            
+
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                StaffId = model.createdBy,
+                BranchId = model.branchId,
+                Detail = $"Authorised Overdraft Daily Interest Accrual Posting: {product.ProductCode}",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = generalSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            context.SaveChanges();
+            return dailyInterestAccrualTransaction;
+
+        }
+
+        public FinanceTransactionViewModel PostDailyUnauthorisedOverdraftInterestAccrual(DailyInterestAccrualViewModel model)
+        {
+
+            FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
+
+            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.CreditDailyInterestAccural;
+            dailyInterestAccrualTransaction.description = "Unauthorised Overdraft Daily Interest Accrual Posting";
+            dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
+            dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
+            dailyInterestAccrualTransaction.currencyId = model.currencyId;
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.isApproved = true;
+            dailyInterestAccrualTransaction.postedBy = (int)SystemStaff.System;
+            dailyInterestAccrualTransaction.approvedBy = (int)SystemStaff.System;
+            dailyInterestAccrualTransaction.approvedDate = dailyInterestAccrualTransaction.transactionDate;
+            dailyInterestAccrualTransaction.approvedDateTime = DateTime.Now;
+            dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            dailyInterestAccrualTransaction.companyId = model.companyId;
+
+            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            debit.glAccountId = product.InterestReceivablePayableGL.Value;
+            debit.sourceReferenceNumber = product.ProductCode;
+            debit.casaAccountId = null;
+            debit.debitAmount = model.dailyAccuralAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = model.branchId;
+
+            FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+
+            credit.sourceReferenceNumber = product.ProductCode;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = model.dailyAccuralAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+
+
+            dailyInterestAccrualTransaction.transactionDetails.Add(debit);
+            dailyInterestAccrualTransaction.transactionDetails.Add(credit);
+
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(dailyInterestAccrualTransaction);
+            PostTransaction(inputTransactions);
+
+            // Audit Section ---------------------------            
+
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                StaffId = model.createdBy,
+                BranchId = model.branchId,
+                Detail = $"Unauthorised Overdraft Daily Interest Accrual Posting: {product.ProductCode}",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = generalSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            context.SaveChanges();
+            return dailyInterestAccrualTransaction;
+
+        }
+
+        public FinanceTransactionViewModel PostDailyPastDueInterestAccrual(DailyInterestAccrualViewModel model)
+        {
+
+            FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
+
+            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.CreditDailyInterestAccural;
+            dailyInterestAccrualTransaction.description = "Past Due Daily Interest Accrual Posting";
+            dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
+            dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
+            dailyInterestAccrualTransaction.currencyId = model.currencyId;
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.isApproved = true;
+            dailyInterestAccrualTransaction.postedBy = (int)SystemStaff.System;
+            dailyInterestAccrualTransaction.approvedBy = (int)SystemStaff.System;
+            dailyInterestAccrualTransaction.approvedDate = dailyInterestAccrualTransaction.transactionDate;
+            dailyInterestAccrualTransaction.approvedDateTime = DateTime.Now;
+            dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            dailyInterestAccrualTransaction.companyId = model.companyId;
+
+            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            debit.glAccountId = product.InterestReceivablePayableGL.Value;
+            debit.sourceReferenceNumber = product.ProductCode;
+            debit.casaAccountId = null;
+            debit.debitAmount = model.dailyAccuralAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = model.branchId;
+
+            FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+
+            credit.sourceReferenceNumber = product.ProductCode;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = model.dailyAccuralAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+
+
+            dailyInterestAccrualTransaction.transactionDetails.Add(debit);
+            dailyInterestAccrualTransaction.transactionDetails.Add(credit);
+
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(dailyInterestAccrualTransaction);
+            PostTransaction(inputTransactions);
+
+            // Audit Section ---------------------------            
+
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                StaffId = model.createdBy,
+                BranchId = model.branchId,
+                Detail = $"Past Due Daily Interest Accrual Posting: {product.ProductCode}",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = generalSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            context.SaveChanges();
+            return dailyInterestAccrualTransaction;
+
+        }
+
+        public FinanceTransactionViewModel PostDailyPastDuePrincipalAccrual(DailyInterestAccrualViewModel model)
+
+        {
+
+            FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
+
+            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.CreditDailyInterestAccural;
+            dailyInterestAccrualTransaction.description = "Past Due Daily Principal Accrual Posting";
+            dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
+            dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
+            dailyInterestAccrualTransaction.currencyId = model.currencyId;
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.isApproved = true;
+            dailyInterestAccrualTransaction.postedBy = (int)SystemStaff.System;
+            dailyInterestAccrualTransaction.approvedBy = (int)SystemStaff.System;
+            dailyInterestAccrualTransaction.approvedDate = dailyInterestAccrualTransaction.transactionDate;
+            dailyInterestAccrualTransaction.approvedDateTime = DateTime.Now;
+            dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            dailyInterestAccrualTransaction.companyId = model.companyId;
+
+            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            debit.glAccountId = product.InterestReceivablePayableGL.Value;
+            debit.sourceReferenceNumber = product.ProductCode;
+            debit.casaAccountId = null;
+            debit.debitAmount = model.dailyAccuralAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = model.branchId;
+
+            FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+
+            credit.sourceReferenceNumber = product.ProductCode;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = model.dailyAccuralAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+
+
+            dailyInterestAccrualTransaction.transactionDetails.Add(debit);
+            dailyInterestAccrualTransaction.transactionDetails.Add(credit);
+
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(dailyInterestAccrualTransaction);
+            PostTransaction(inputTransactions);
+
+            // Audit Section ---------------------------            
+
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.LoanDailyPrincipalAccrual,
+                StaffId = model.createdBy,
+                BranchId = model.branchId,
+                Detail = $"Past Due Daily Principal Accrual Posting: {product.ProductCode}",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = generalSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            context.SaveChanges();
+            return dailyInterestAccrualTransaction;
+
+        }
+
+        public FinanceTransactionViewModel PostBuildLoanRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description)
+        {
+            FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
+
+            var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
+
+            loanTransaction.operationId = (int)OperationsEnum.LoanRepayment;
+            loanTransaction.description = description; // "Loan Disbursment Amount";
+            loanTransaction.valueDate = generalSetup.GetApplicationDate();
+            loanTransaction.transactionDate = loanTransaction.valueDate;
+            loanTransaction.currencyId = casa.CurrencyId;
+            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.currencyId, model.companyId);
+            loanTransaction.isApproved = true;
+            loanTransaction.postedBy = model.createdBy;
+            loanTransaction.approvedBy = model.createdBy;
+            loanTransaction.approvedDate = loanTransaction.transactionDate;
+            loanTransaction.approvedDateTime = DateTime.Now;
+            loanTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            loanTransaction.companyId = model.companyId;
+
+            FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            debit.sourceReferenceNumber = model.loanRefNo;
+            debit.casaAccountId = casa.CasaAccountId;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = casa.BranchId;
+
+
+            FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+            credit.glAccountId = creditGL;
+
+            credit.sourceReferenceNumber = model.loanRefNo;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+
+
+            loanTransaction.transactionDetails.Add(debit);
+            loanTransaction.transactionDetails.Add(credit);
+
+            //financeTransaction.PostTransaction(loanTransaction);
+
+            // Audit Section ---------------------------            
+
+
+            return loanTransaction;
+
+        }
+
+        public FinanceTransactionViewModel PostBuildAuthorisedOverdraftRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description)
+        {
+            FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
+
+            var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
+
+            loanTransaction.operationId = (int)OperationsEnum.LoanRepayment;
+            loanTransaction.description = description; // "Loan Disbursment Amount";
+            loanTransaction.valueDate = generalSetup.GetApplicationDate();
+            loanTransaction.transactionDate = loanTransaction.valueDate;
+            loanTransaction.currencyId = casa.CurrencyId;
+            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.currencyId, model.companyId);
+            loanTransaction.isApproved = true;
+            loanTransaction.postedBy = model.createdBy;
+            loanTransaction.approvedBy = model.createdBy;
+            loanTransaction.approvedDate = loanTransaction.transactionDate;
+            loanTransaction.approvedDateTime = DateTime.Now;
+            loanTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            loanTransaction.companyId = model.companyId;
+
+            FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
+            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            debit.sourceReferenceNumber = model.loanRefNo;
+            debit.casaAccountId = casa.CasaAccountId;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = casa.BranchId;
+
+
+            FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
+            credit.glAccountId = creditGL;
+
+            credit.sourceReferenceNumber = model.loanRefNo;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+
+
+            loanTransaction.transactionDetails.Add(debit);
+            loanTransaction.transactionDetails.Add(credit);
+
+            //financeTransaction.PostTransaction(loanTransaction);
+
+            // Audit Section ---------------------------            
+
+
+            return loanTransaction;
+
+        }
+
     }
 }

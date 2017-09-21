@@ -26,13 +26,16 @@ namespace FintrakBanking.APICore.Controllers
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public LoanApplicationController(ILoanApplicationRepository _repoApply, ILoanRepository _loanRepository,
-            ICreditLimitValidationsRepository _creditLimitValidationsRepository, 
-            ILoanPreliminaryEvaluationRepository _repoLoanPEN)
+        public LoanApplicationController(
+            ILoanApplicationRepository _repoApply,
+            ILoanRepository _loanRepository,
+            ICreditLimitValidationsRepository _creditLimitValidationsRepository,
+            ILoanPreliminaryEvaluationRepository _repoLoanPEN
+            )
         {
             this.repoApply = _repoApply;
             this.loanRepository = _loanRepository;
-          this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
+            this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
         }
 
@@ -83,7 +86,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.CheckExitingCertificateOfOwnership(certificateofownership, token.GetCompanyId);
+                var response = repoApply.CheckExistingCertificateOfOwnership(certificateofownership, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception e)
@@ -182,6 +185,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                //FinTrakBankingContext
 
                 if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
                 {
@@ -230,14 +234,14 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repoApply.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId)
-                    .OrderByDescending(x => x.applicationDate)
+                var items = repoApply.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId);
+
+                var data = items.OrderByDescending(x => x.applicationDate)
                     .ThenByDescending(x => x.loanApplicationId)
-                    .Where(x => x.approvalStatusId == (int)ApprovalStatusEnum.Pending)
                     .Skip(page).Take(itemsPerPage)
                     .ToList();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
             }
             catch (System.Exception ex)
             {
@@ -300,8 +304,9 @@ namespace FintrakBanking.APICore.Controllers
 
                 var response = await repoLoanPEN.AddPreliminaryEvaluation(model);
 
-                if (response)
+                if (response != null)
                 {
+                    responseMessage = $"Preliminary evaluation note ({response.preliminaryEvaluationCode}) created successfully, now awaiting approval";
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = $"{responseMessage}" });
                 }

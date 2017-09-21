@@ -14,6 +14,7 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Daily_Accrual = new HashSet<tbl_Daily_Accrual>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
+            tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
@@ -34,6 +35,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }

@@ -40,7 +40,7 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool AddCustomerClientSupplier(CustomerClientOrSupplierViewModels entity);
 
-        bool AddCustomerCompanyDiector(CustomerCompanyDirectorsViewModels entity);
+        bool AddCustomerCompanyDirector(CustomerCompanyDirectorsViewModels entity);
 
         bool AddCustomerAddresses(CustomerAddressViewModels entity);
 

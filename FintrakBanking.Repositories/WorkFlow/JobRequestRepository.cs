@@ -18,32 +18,33 @@ namespace FintrakBanking.Repositories.WorkFlow
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
 
-        public JobRequestRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+        public JobRequestRepository(FinTrakBankingContext _context, IGeneralSetupRepository _general, IAuditTrailRepository _audit)
         {
-            this.context = context;
-            this.general = general;
-            this.audit = audit;
+            this.context = _context;
+            this.general = _general;
+            this.audit = _audit;
         }
 
         public bool AddJobRequest(JobRequestViewModel model)
         {
             var date = DateTime.Now;
             var applicationDate = general.GetApplicationDate();
+            model.departmentId = (short)context.tbl_Staff.Where(x => x.StaffId == model.createdBy).FirstOrDefault().DepartmentId;
             var data = new tbl_Job_Request
             {
-                JobRequestCode = this.RequestCode(),
+                JobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
                 JobTypeId = model.jobTypeId,
                 SenderStaffId = model.createdBy,
                 ReceiverStaffId = model.receiverStaffId,
-                //StaffApprovalGroupId=model.staffApprovalGroupId,
-                //ReassignedTo = model.reassignedTo,
-                //IsReassigned = model.isReassigned,
-                //IsAcknowledged = model.isAcknowledged,
-                //TargetId = model.targetId,
-                OperationsId = 6, // cam enum
-                RequestStatusId = 1, // status enum
+                DepartmentId = model.departmentId,
+                ReassignedTo = model.reassignedTo,
+                IsReassigned = model.isReassigned,
+                IsAcknowledged = model.isAcknowledged,
+                TargetId = model.targetId,
+                OperationsId = model.operationsId, // cam enum
+                RequestStatusId = model.requestStatusId, // status enum
                 SenderComment = model.senderComment,
-                //ResponseComment = model.responseComment,
+                ResponseComment = model.responseComment,
                 ArrivalDate = applicationDate,
                 SystemArrivalDate = date,
             };
@@ -71,7 +72,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private string RequestCode()
         {
             Random random = new Random();
-            return random.Next().ToString();
+            return random.Next(1000, 9999).ToString();
         }
 
         public bool ReplyJobRequest(JobRequestViewModel model, int jobRequestId)
@@ -242,7 +243,51 @@ namespace FintrakBanking.Repositories.WorkFlow
                 .Where(x => x.c.a.OperationId == operationId && x.d.StaffId == staffId)
                     .Select(x => x.c.b.GroupOperationMappingId);
 
-            return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.staffApprovalGroupId)).OrderByDescending(x => x.jobRequestId).ToList();
+            return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.departmentId)).OrderByDescending(x => x.jobRequestId).ToList();
+        }
+
+        public IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId)
+        {
+            var operationId = (int)OperationsEnum.CAM;
+            var departmentId = 0;
+            var staff = context.tbl_Staff.Find(staffId);
+            if (staff != null) { departmentId = (int)staff.DepartmentId;  }
+
+            var allstaff = this.context.tbl_Staff.Select(s => new
+            {
+                id = s.StaffId,
+                name = s.LastName + " " + s.FirstName
+            });
+
+            return context.tbl_Department.Where(x => x.DepartmentId == departmentId)
+                .Join(context.tbl_Job_Request.Where(x => x.OperationsId == operationId),
+                a => a.DepartmentId, b => b.DepartmentId, (a, b) => new { a, b })
+                .Select(x => new JobRequestViewModel
+                {
+                    jobRequestId = x.b.JobRequestId,
+                    jobRequestCode = x.b.JobRequestCode,
+                    jobTypeId = x.b.JobTypeId,
+                    senderStaffId = x.b.SenderStaffId,
+                    receiverStaffId = x.b.ReceiverStaffId,
+                    reassignedTo = x.b.ReassignedTo,
+                    isReassigned = x.b.IsReassigned,
+                    isAcknowledged = x.b.IsAcknowledged,
+                    operationsId = x.b.OperationsId,
+                    requestStatusId = x.b.RequestStatusId,
+                    senderComment = x.b.SenderComment,
+                    responseComment = x.b.ResponseComment,
+                    arrivalDate = x.b.ArrivalDate,
+                    systemArrivalDate = x.b.SystemArrivalDate,
+                    reassignedDate = x.b.ReassignedDate,
+                    systemReassignedDate = x.b.SystemReassignedDate,
+                    responseDate = x.b.ResponseDate,
+                    systemResponseDate = x.b.SystemResponseDate,
+                    acknowledgementDate = x.b.AcknowledgementDate,
+                    systemAcknowledgementDate = x.b.SystemAcknowledgementDate,
+                    from = allstaff.FirstOrDefault(s => s.id == x.b.SenderStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.SenderStaffId).name,
+                    to = allstaff.FirstOrDefault(s => s.id == x.b.ReceiverStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.ReceiverStaffId).name,
+                    assignee = allstaff.FirstOrDefault(s => s.id == x.b.ReassignedTo) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.ReassignedTo).name,
+                });
         }
 
         #region job-type
