@@ -6,33 +6,41 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Valuer")]
-    public partial class tbl_Collateral_Valuer
+    [Table("core.tbl_AccreditedConsultant")]
+    public partial class tbl_AccreditedConsultant
     {
-        [Key]
-        public short CollateralValuerId { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_AccreditedConsultant()
+        {
+            tbl_AccreditedConsultant_State = new HashSet<tbl_AccreditedConsultant_State>();
+        }
 
-        [Required]
+        [Key]
+        public int AccreditedConsultantId { get; set; }
+
         [StringLength(50)]
-        public string ValuerLicenceNumber { get; set; }
+        public string RegistrationNumber { get; set; }
 
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
 
-        public short? ValuerTypeId { get; set; }
+        [StringLength(100)]
+        public string FirmName { get; set; }
+
+        public int? AccreditedConsultantTypeId { get; set; }
 
         public int? CompanyId { get; set; }
 
         public short? CityId { get; set; }
 
-        public short? CountryId { get; set; }
-
         [StringLength(50)]
         public string AccountNumber { get; set; }
 
         [StringLength(50)]
-        public string ValuerBVN { get; set; }
+        public string SolicitorBVN { get; set; }
+
+        public short? CountryId { get; set; }
 
         [StringLength(50)]
         public string EmailAddress { get; set; }
@@ -42,6 +50,9 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(500)]
         public string Address { get; set; }
+
+        [StringLength(500)]
+        public string CoreCompetence { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -57,6 +68,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public virtual tbl_Collateral_Valuer_Type tbl_Collateral_Valuer_Type { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_AccreditedConsultant_State> tbl_AccreditedConsultant_State { get; set; }
+
+        public virtual tbl_AccreditedConsultant_Type tbl_AccreditedConsultant_Type { get; set; }
     }
 }

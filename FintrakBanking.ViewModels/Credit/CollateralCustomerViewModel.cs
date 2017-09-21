@@ -28,7 +28,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         // insurance
         public string referenceNumber { get; set; }
-        public decimal coverageAmount { get; set; }
+        public decimal sumInsured { get; set; }
         public string insuranceCompany { get; set; }
         public DateTime startDate { get; set; }
         public DateTime expiryDate { get; set; }
@@ -442,6 +442,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string cityName { get; set; }
         public short? countryId { get; set; }
         public string countryName { get; set; }
+        public string accountNumber { get; set; }
+        public string valuerBVN { get; set; }
         public string emailAddress { get; set; }
         public string phoneNumber { get; set; }
         public string address { get; set; }

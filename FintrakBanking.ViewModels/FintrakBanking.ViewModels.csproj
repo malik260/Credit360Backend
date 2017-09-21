@@ -108,6 +108,7 @@
     <Compile Include="Setups\Finance\ChargeFeeViewModel.cs" />
     <Compile Include="Setups\Finance\ChartOfAccountViewModel.cs" />
     <Compile Include="Setups\General\AccountSensitivityViewModel.cs" />
+    <Compile Include="Setups\General\AccreditedConsultantsViewModel.cs" />
     <Compile Include="Setups\General\ActivityViewModel.cs" />
     <Compile Include="Setups\General\BranchLimitViewModel.cs" />
     <Compile Include="Setups\General\BranchViewModel.cs" />

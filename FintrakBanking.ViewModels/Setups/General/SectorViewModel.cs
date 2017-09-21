@@ -12,6 +12,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short sectorId { get; set; }
         public string sectorName { get; set; }
         public string sectorCode { get; set; }
-
+        public decimal sectorLimit { get; set; }
+        public bool allowOverride { get; set; }
     }
 }
