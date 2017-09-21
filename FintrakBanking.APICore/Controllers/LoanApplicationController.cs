@@ -234,7 +234,6 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repoApply.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId)
                     .OrderByDescending(x => x.applicationDate)
                     .ThenByDescending(x => x.loanApplicationId)
-                    .Where(x => x.approvalStatusId == (int)ApprovalStatusEnum.Pending)
                     .Skip(page).Take(itemsPerPage)
                     .ToList();
 

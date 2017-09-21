@@ -420,7 +420,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (scope == (int)ProcessViewScopeEnum.Process) // 3
             {
-                return context.tbl_Loan_Application.Where(x => x.CompanyId == companyId && x.Deleted == false && x.BranchId == branchId)
+                var appl = context.tbl_Loan_Application//.Where(x => x.CompanyId == companyId && x.Deleted == false && x.BranchId == branchId)
                     .Select(a => new LoanApplicationViewModel
                     {
                         approvalStatusId = a.ApprovalStatusId,
@@ -453,6 +453,10 @@ namespace FintrakBanking.Repositories.Credit
                         applicationDate = a.ApplicationDate,
                         dateTimeCreated = a.DateTimeCreated,
                     });
+
+                var count = appl.Count();
+
+                return appl;
             }
 
             var staffApprovalLevelIds = context.tbl_Approval_Level_Staff.Where(x => x.Deleted == false && x.StaffId == staffId).Select(x => x.ApprovalLevelId);
