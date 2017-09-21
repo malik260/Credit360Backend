@@ -29,7 +29,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var date = DateTime.Now;
             var applicationDate = general.GetApplicationDate();
-            model.departmentId = (short)context.tbl_Staff.Where(x => x.StaffId == model.createdBy).FirstOrDefault().DepartmentId;
+
             var data = new tbl_Job_Request
             {
                 JobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
