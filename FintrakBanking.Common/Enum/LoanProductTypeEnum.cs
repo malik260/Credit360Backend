@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.Common.Enum
 {
-    public enum ScheduleTypeEnum
+    public enum LoanProductTypeEnum
     {
         TermLoan = 1,
         SelfLiquidating = 2,

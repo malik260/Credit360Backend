@@ -35,14 +35,21 @@ namespace FintrakBanking.Repositories.WorkFlow
                 JobTypeId = model.jobTypeId,
                 SenderStaffId = model.createdBy,
                 ReceiverStaffId = model.receiverStaffId,
-                DepartmentId = (short)model.departmentId,
+                DepartmentId = model.departmentId,
+                ReassignedTo = model.reassignedTo,
+                IsReassigned = model.isReassigned,
+                IsAcknowledged = model.isAcknowledged,
                 TargetId = model.targetId,
-                OperationsId = (int)OperationsEnum.CAM, // cam for now
-                RequestStatusId = 1, // status enum
+                OperationsId = model.operationsId, // cam enum
+                RequestStatusId = model.requestStatusId, // status enum
                 SenderComment = model.senderComment,
-                IsReassigned = false,
-                IsAcknowledged = false,
-                //ResponseComment = model.responseComment,
+                ResponseComment = model.responseComment,
+               // TargetId = model.targetId,
+                //OperationsId = (int)OperationsEnum.CAM, // cam for now
+               // RequestStatusId = 1, // status enum
+                //SenderComment = model.senderComment,
+                //IsReassigned = false,
+                //IsAcknowledged = false,
                 ArrivalDate = applicationDate,
                 SystemArrivalDate = date,
             };
@@ -241,7 +248,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 .Where(x => x.c.a.OperationId == operationId && x.d.StaffId == staffId)
                     .Select(x => x.c.b.GroupOperationMappingId);
 
-            return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.staffApprovalGroupId)).OrderByDescending(x => x.jobRequestId).ToList();
+            return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.departmentId)).OrderByDescending(x => x.jobRequestId).ToList();
         }
 
         public IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId)
