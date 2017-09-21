@@ -57,7 +57,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial">
-      <HintPath>..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -86,7 +86,7 @@
     <Compile Include="Customer\CustomerFSRatioRepository.cs" />
     <Compile Include="Customer\CustomerGroupRepository.cs" />
     <Compile Include="Customer\CustomerRepository.cs" />
-    <Compile Include="ErrorLogger\ErrorLogRepository.cs" />
+    <Compile Include="Helper\ErrorLogger\ErrorLogRepository.cs" />
     <Compile Include="Finance\FinanceTransactionRepository.cs" />
     <Compile Include="GenericSaveChanges.cs" />
     <Compile Include="Helper\CultureHelper.cs" />

@@ -31,6 +31,18 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal amount { get; set; }
         public bool politicallyExposed { get; set; }
         public string comment { get; set; }
+        public decimal principal { get; set; }
+        public double rate { get; set; }
+        public int tenor { get; set; }
+    }
+
+    public class ApprovedLoanDetailViewModel : GeneralEntity
+    {
+        public int applicationId { get; set; }
+        public decimal principal { get; set; }
+        public double rate { get; set; }
+        public int tenor { get; set; }
+        public string approver { get; set; }
     }
 
     public class PrivilegeViewModel : GeneralEntity

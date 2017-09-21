@@ -45,11 +45,11 @@ namespace FintrakBanking.Repositories.Credit
             return await context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> AddPreliminaryEvaluation(LoanPreliminaryEvaluationViewModel model)
+        public async Task<LoanPreliminaryEvaluationViewModel> AddPreliminaryEvaluation(LoanPreliminaryEvaluationViewModel model)
         {
             if (model == null)
             {
-                return false;
+                throw new Exception("The data submitted in the form is invalid. Please try again");
             }
 
             bool output = false;
@@ -145,7 +145,17 @@ namespace FintrakBanking.Repositories.Credit
                 throw new Exception("Approval route have not been defined for this operation");
             }
 
-            return output;
+            if (output)
+            {
+                return new LoanPreliminaryEvaluationViewModel
+                {
+                    preliminaryEvaluationCode = penRecord.PreliminaryEvaluationCode
+                };
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private string GeneratePENCode()

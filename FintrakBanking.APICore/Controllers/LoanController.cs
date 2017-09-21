@@ -349,7 +349,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 var data = repo.GetLoanByCustomer(customerId);
 
-                if (!data.Any())
+                if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
                 }

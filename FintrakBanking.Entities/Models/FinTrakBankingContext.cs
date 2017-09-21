@@ -1204,6 +1204,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.ScheduleDayInterestTypeId)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<tbl_Department>()
+                .HasMany(e => e.tbl_Job_Request)
+                .WithRequired(e => e.tbl_Department)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<tbl_Fee>()
                 .HasMany(e => e.tbl_Temp_Product_Fee)
                 .WithRequired(e => e.tbl_Fee)

@@ -258,6 +258,7 @@ namespace FintrakBanking.Repositories.Credit
                 RelationshipManagerId = loan.relationshipManagerId,
                 MISCode = loan.misCode,
                 CurrencyId = loan.currencyId,
+                SubSectorId = (short)loan.subSectorId,
                 TeamMISCode = loan.teamMisCode,
                 InterestRate = loan.interestRate,
                 ProductId = loan.productId,
@@ -269,7 +270,6 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy = (int)loan.createdBy,
                 DateTimeCreated = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
-                SubSectorId = loan.subSectorId,
 
                 ExchangeRate = loan.exchangeRate,
                 LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,
@@ -411,7 +411,7 @@ namespace FintrakBanking.Repositories.Credit
             return $"{code}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
         }
 
-       
+
 
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int companyId, int branchId, int staffId)
         {
@@ -420,7 +420,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (scope == (int)ProcessViewScopeEnum.Process) // 3
             {
-                return context.tbl_Loan_Application.Where(x => x.CompanyId == companyId && x.Deleted == false && x.BranchId == branchId)
+                var appl = context.tbl_Loan_Application//.Where(x => x.CompanyId == companyId && x.Deleted == false && x.BranchId == branchId)
                     .Select(a => new LoanApplicationViewModel
                     {
                         approvalStatusId = a.ApprovalStatusId,
@@ -453,6 +453,10 @@ namespace FintrakBanking.Repositories.Credit
                         applicationDate = a.ApplicationDate,
                         dateTimeCreated = a.DateTimeCreated,
                     });
+
+                var count = appl.Count();
+
+                return appl;
             }
 
             var staffApprovalLevelIds = context.tbl_Approval_Level_Staff.Where(x => x.Deleted == false && x.StaffId == staffId).Select(x => x.ApprovalLevelId);
@@ -460,7 +464,8 @@ namespace FintrakBanking.Repositories.Credit
             var pendingApplications = context.tbl_Loan_Application
                     .Join(context.tbl_Approval_Trail,
                         a => a.LoanApplicationId, b => b.TargetId, (a, b) => new { a, b })
-                    .Where(x => x.b.OperationId == operationId && x.a.BranchId == branchId);
+                    .Where(x => x.b.OperationId == operationId //&& x.a.BranchId == branchId
+                    );
 
             if (scope == (int)ProcessViewScopeEnum.Group) // 2
             {
@@ -517,7 +522,8 @@ namespace FintrakBanking.Repositories.Credit
                 loanPreliminaryEvaluationId = x.a.LoanPreliminaryEvaluationId,
                 customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
             })
-            .OrderBy(x => x.applicationDate);
+            .OrderByDescending(x => x.applicationDate)
+            .ThenByDescending(x => x.loanApplicationId);
         }
 
         public int GetStaffWorkflowViewScope(int operationId, int staffId)

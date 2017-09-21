@@ -574,12 +574,6 @@ namespace FintrakBanking.Repositories.Credit
                         context.tbl_Audit.Add(audit);
 
                         var dataCount = context.SaveChanges();
-
-                        AddLoanCovenantDetail(entity.loanCovenant, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
-
                         this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
                         var approvalModel = new ApprovalViewModel
@@ -622,18 +616,21 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new Exception("Approval route have not been defined for this operation");
             }
-            //PostLoanDisbursment(entity);
-            //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            //inputTransactions.Add(BuildLoanDisbursmentPosting(entity));
-
-            //inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
-
-            //financeTransaction.PostTransaction(inputTransactions);
         }
 
 
+        private void DisburseLoan(LoanViewModel entity)
+        {
+            //PostLoanDisbursment(entity);
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
+            inputTransactions.Add(BuildLoanDisbursmentPosting(entity));
+
+            inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
+
+            financeTransaction.PostTransaction(inputTransactions);
+        }
 
 
 
@@ -959,17 +956,17 @@ namespace FintrakBanking.Repositories.Credit
             loanTransaction.companyId = model.companyId;
 
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = model.casaAccountId;  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
             debit.sourceReferenceNumber = model.loanReferenceNumber;
-            debit.casaAccountId = casa.CasaAccountId;
+            debit.casaAccountId = null;
             debit.debitAmount = model.principalAmount;
             debit.creditAmount = 0;
             debit.sourceBranchId = model.branchId;
             debit.destinationBranchId = casa.BranchId;
 
-            var repaymentGL = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            var repaymentAccountGL = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = repaymentGL;
+            credit.glAccountId = repaymentAccountGL;
 
             credit.sourceReferenceNumber = model.loanReferenceNumber;
             credit.casaAccountId = casa.CasaAccountId;
@@ -1037,7 +1034,7 @@ namespace FintrakBanking.Repositories.Credit
                 FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
                 credit.glAccountId = feeGL;
                 credit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
-                credit.casaAccountId = casa.CasaAccountId;
+                credit.casaAccountId = null;
                 credit.debitAmount = 0;
                 credit.creditAmount = (decimal)item.amount;
                 credit.sourceBranchId = loanDetails.branchId;
@@ -1188,7 +1185,7 @@ namespace FintrakBanking.Repositories.Credit
         private IQueryable<LoanViewModel> GetAllLoans()
         {
             var data = (from l in context.tbl_Loan
-                        select new LoanViewModel()
+                        select new LoanViewModel
                         {
                             loanId = l.TermLoanId,
                             customerId = l.CustomerId,
@@ -1199,7 +1196,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchId = l.BranchId,
                             branchName = l.tbl_Branch.BranchName,
                             loanReferenceNumber = l.LoanReferenceNumber,
-                            tenor = (l.MaturityDate - l.EffectiveDate).Days,
+                            //tenor = (l.MaturityDate - l.EffectiveDate).Days, // returning error
                             principalFrequencyTypeId = (short)l.PrincipalFrequencyTypeId,
                             interestFrequencyTypeId = (short)l.InterestFrequencyTypeId,
 
@@ -1212,7 +1209,7 @@ namespace FintrakBanking.Repositories.Credit
                             interestRate = l.InterestRate,
                             effectiveDate = l.EffectiveDate,
                             maturityDate = l.MaturityDate,
-                            bookingDate = (DateTime)l.BookingDate,
+                            bookingDate = l.BookingDate,
                             principalAmount = l.PrincipalAmount,
                             principalInstallmentLeft = l.PrincipalInstallmentLeft,
                             interestInstallmentLeft = l.InterestInstallmentLeft,
@@ -1253,7 +1250,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public bool validateCamsol(int loanId)
+        public bool ValidateCamsol(int loanId)
         {
             var check = context.tbl_Loan_Camsol.Where(x => x.LoanId == loanId);
 
@@ -1263,6 +1260,13 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return false;
+        }
+
+        public int CalculateTenorValue(DateTime maturityDate, DateTime effectiveDate)
+        {
+            var result = (maturityDate - effectiveDate).Days;
+
+            return result;
         }
 
         public IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId)

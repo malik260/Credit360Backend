@@ -34,6 +34,7 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? NextFeePaymentDate { get; set; }
 
+
         public int CreatedBy { get; set; }
 
         public DateTime DateTimeCreated { get; set; }

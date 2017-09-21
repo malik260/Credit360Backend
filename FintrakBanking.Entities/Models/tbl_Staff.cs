@@ -115,6 +115,8 @@ namespace FintrakBanking.Entities.Models
 
         public short CustomerSensitivityLevel { get; set; }
 
+        public bool NPL_LimitExceeded { get; set; }
+
         public int? CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
