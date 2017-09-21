@@ -14,8 +14,6 @@ namespace FintrakBanking.Entities.Models
 
         public int CollateralCustomerId { get; set; }
 
-        public short CollateralSubTypeId { get; set; }
-
         [Required]
         [StringLength(50)]
         public string PropertyName { get; set; }
@@ -63,7 +61,7 @@ namespace FintrakBanking.Entities.Models
         public decimal AvailableValue { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal SecurityValue { get; set; }
+        public decimal? SecurityValue { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? CollateralUsableAmount { get; set; }
@@ -88,7 +86,5 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Collateral_Immovable_Property tbl_Collateral_Immovable_Property1 { get; set; }
 
         public virtual tbl_Collateral_Immovable_Property tbl_Collateral_Immovable_Property2 { get; set; }
-
-        public virtual tbl_Collateral_Type_Sub tbl_Collateral_Type_Sub { get; set; }
     }
 }

@@ -13,6 +13,9 @@ namespace FintrakBanking.Entities.Models
         }
 
         public virtual DbSet<tbl_Accounting_Standard> tbl_Accounting_Standard { get; set; }
+        public virtual DbSet<tbl_AccreditedConsultant> tbl_AccreditedConsultant { get; set; }
+        public virtual DbSet<tbl_AccreditedConsultant_State> tbl_AccreditedConsultant_State { get; set; }
+        public virtual DbSet<tbl_AccreditedConsultant_Type> tbl_AccreditedConsultant_Type { get; set; }
         public virtual DbSet<tbl_Application_Setup> tbl_Application_Setup { get; set; }
         public virtual DbSet<tbl_Approval_Group> tbl_Approval_Group { get; set; }
         public virtual DbSet<tbl_Approval_Group_Mapping> tbl_Approval_Group_Mapping { get; set; }
@@ -149,6 +152,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Collateral_Plant_And_Equipment> tbl_Collateral_Plant_And_Equipment { get; set; }
         public virtual DbSet<tbl_Collateral_Policy> tbl_Collateral_Policy { get; set; }
         public virtual DbSet<tbl_Collateral_PreciousMetal> tbl_Collateral_PreciousMetal { get; set; }
+        public virtual DbSet<tbl_Collateral_Principals> tbl_Collateral_Principals { get; set; }
         public virtual DbSet<tbl_Collateral_SeniorityOfClaims> tbl_Collateral_SeniorityOfClaims { get; set; }
         public virtual DbSet<tbl_Collateral_Stock> tbl_Collateral_Stock { get; set; }
         public virtual DbSet<tbl_Collateral_Type> tbl_Collateral_Type { get; set; }
@@ -178,6 +182,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Covenant_Detail> tbl_Loan_Covenant_Detail { get; set; }
         public virtual DbSet<tbl_Loan_Covenant_Type> tbl_Loan_Covenant_Type { get; set; }
         public virtual DbSet<tbl_Loan_Fee> tbl_Loan_Fee { get; set; }
+        public virtual DbSet<tbl_Loan_Fee_Schedule> tbl_Loan_Fee_Schedule { get; set; }
         public virtual DbSet<tbl_Loan_Force_Debit> tbl_Loan_Force_Debit { get; set; }
         public virtual DbSet<tbl_Loan_Guarantor> tbl_Loan_Guarantor { get; set; }
         public virtual DbSet<tbl_Loan_Operation> tbl_Loan_Operation { get; set; }
@@ -208,7 +213,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Solicitor> tbl_Solicitor { get; set; }
         public virtual DbSet<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
         public virtual DbSet<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
@@ -254,6 +259,16 @@ namespace FintrakBanking.Entities.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<tbl_AccreditedConsultant>()
+                .HasMany(e => e.tbl_AccreditedConsultant_State)
+                .WithRequired(e => e.tbl_AccreditedConsultant)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_AccreditedConsultant_Type>()
+                .HasMany(e => e.tbl_AccreditedConsultant)
+                .WithOptional(e => e.tbl_AccreditedConsultant_Type)
+                .HasForeignKey(e => e.AccreditedConsultantTypeId);
+
             modelBuilder.Entity<tbl_Approval_Group>()
                 .HasMany(e => e.tbl_Approval_Group_Mapping)
                 .WithRequired(e => e.tbl_Approval_Group)
@@ -280,9 +295,8 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Approval_Level>()
                 .HasMany(e => e.tbl_Approval_Trail1)
-                .WithRequired(e => e.tbl_Approval_Level1)
-                .HasForeignKey(e => e.ToApprovalLevelId)
-                .WillCascadeOnDelete(false);
+                .WithOptional(e => e.tbl_Approval_Level1)
+                .HasForeignKey(e => e.ToApprovalLevelId);
 
             modelBuilder.Entity<tbl_Approval_Level>()
                 .HasMany(e => e.tbl_Credit_Template)
@@ -2510,6 +2524,15 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan_Fee>()
+                .Property(e => e.FeeAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Fee>()
+                .HasMany(e => e.tbl_Loan_Fee_Schedule)
+                .WithRequired(e => e.tbl_Loan_Fee)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Fee_Schedule>()
                 .Property(e => e.FeeAmount)
                 .HasPrecision(19, 4);
 
