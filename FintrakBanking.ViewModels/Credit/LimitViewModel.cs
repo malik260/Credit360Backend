@@ -22,7 +22,7 @@
         public decimal maximumValue { get; set; }
         public string limitName { get; set; }
         public string limitTypeName { get; set; }
-
+        public bool allowOverride { get; set; }
     }
 
     public class LimitMetricViewModel
