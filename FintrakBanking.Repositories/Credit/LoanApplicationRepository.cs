@@ -42,7 +42,7 @@ namespace FintrakBanking.Repositories.Credit
             this.genSetup = _genSetup;
             this.casa = _casa;
             this.collateral = _collateral;
-            this.finance = _finance;
+            //this.finance = _finance;
             workFlow = _workFlow;
         }
 
