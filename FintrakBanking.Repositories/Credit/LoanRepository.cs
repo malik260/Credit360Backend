@@ -273,10 +273,10 @@ namespace FintrakBanking.Repositories.Credit
                 FirstInterestPaymentDate = entity.loanScheduleInput.interestFirstpaymentDate,
                 AllowForceDebitRepayment = false,
 
-                tbl_Loan_Covenant_Detail = AddLoanCovenantDetail(entity.loanCovenant),
-                tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
-                tbl_Loan_Collateral_Mapping = AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId),
-                tbl_Loan_Fee = AddLoanFees(entity.loanChargeFee),
+                //tbl_Loan_Covenant_Detail = AddLoanCovenantDetail(entity.loanCovenant),
+                //tbl_Loan_Guarantor = AddLoanGuarantor(entity.loanGuarantor),
+                //tbl_Loan_Collateral_Mapping = AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId),
+                //tbl_Loan_Fee = AddLoanFees(entity.loanChargeFee),
             };
 
             //try
@@ -330,14 +330,14 @@ namespace FintrakBanking.Repositories.Credit
                             context.tbl_Audit.Add(audit);
 
                         var dataCount = context.SaveChanges();
-                        this.loanSchedule.AddLoanSchedule(loan.LoanId, entity.loanScheduleInput, entity.createdBy);
+                        this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
                         var approvalModel = new ApprovalViewModel
                         {
                             staffId = entity.createdBy,
                             companyId = entity.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = loan.LoanId,
+                            targetId = loan.TermLoanId,
                             operationId = (int)OperationsEnum.LoanBooking,
                             BranchId = entity.userBranchId
                         };
@@ -529,12 +529,12 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from ln in context.tbl_Loan
                         join coy in context.tbl_Company on ln.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on ln.BranchId equals br.BranchId
-                        join atrail in context.tbl_Approval_Trail on ln.LoanId equals atrail.TargetId
+                        join atrail in context.tbl_Approval_Trail on ln.TermLoanId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending  
                               && atrail.OperationId == (int)OperationsEnum.LoanBooking && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new LoanViewModel()
                         {
-                            loanId = ln.LoanId,
+                            loanId = ln.TermLoanId,
                             customerId  = ln.CustomerId,
                             productId = ln.ProductId,
                             casaAccountId =ln.CasaAccountId,
@@ -879,7 +879,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (LoanCollateralMappingViewModel entity in collateralModel)
                 collateral.Add(new tbl_Loan_Collateral_Mapping
                 {
-                    LoanId = entity.loanId,
+                    LoanId = (int)entity.loanId,
                     CollateralCustomerId =entity.collateralCustomerId,
                     LoanApplicationId = loanApplicationId,
                 });
@@ -920,7 +920,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from l in context.tbl_Loan
                         select new LoanViewModel()
                         {
-                            loanId = l.LoanId,
+                            loanId = l.TermLoanId,
                             customerId = l.CustomerId,
                             customerName = l.tbl_Customer.FirstName + " " + l.tbl_Customer.LastName,
                             productId = l.ProductId,
@@ -978,7 +978,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerSensitivityLevelId = l.CustomerSensitivityLevelId,
                             createdBy = l.CreatedBy,
                             dateTimeCreated = l.DateTimeCreated,
-                            isCamsol = context.tbl_Loan_Camsol.Where(x => x.LoanId == l.LoanId).Any()
+                            isCamsol = context.tbl_Loan_Camsol.Where(x => x.LoanId == l.TermLoanId).Any()
                         });
             return data;
         }
@@ -1028,10 +1028,10 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel GetLoan(int loanId)
         {
             return (from data in context.tbl_Loan
-                    where data.LoanId == loanId
+                    where data.TermLoanId == loanId
                     select new LoanViewModel()
                     {
-                        loanId = data.LoanId,
+                        loanId = data.TermLoanId,
                         customerId = data.CustomerId,
                         productId = data.ProductId,
                         companyId = data.CompanyId,
@@ -1094,7 +1094,7 @@ namespace FintrakBanking.Repositories.Credit
                       $"{data.tbl_Customer.FirstName} {data.tbl_Customer.MiddleName} {data.tbl_Customer.LastName} {data.tbl_Customer.CustomerCode} {data.tbl_CASA.ProductAccountNumber}".Contains(referenceNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
                     select new LoanViewModel()
                     {
-                        loanId = data.LoanId,
+                        loanId = data.TermLoanId,
                         customerId = data.CustomerId,
                         productId = data.ProductId,
                         companyId = data.CompanyId,
@@ -1156,7 +1156,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.CompanyId == companyId)
                 .Select(o => new LoanViewModel
                 {
-                    loanId = o.LoanId,
+                    loanId = o.TermLoanId,
                     customerId = o.CustomerId,
                     productId = o.ProductId,
                     casaAccountId = o.CasaAccountId,

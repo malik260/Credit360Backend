@@ -23,21 +23,22 @@ namespace FintrakBanking.Entities.Models
             tbl_Finance_Transaction1 = new HashSet<tbl_Finance_Transaction>();
             tbl_Job_Request = new HashSet<tbl_Job_Request>();
             tbl_Job_Request1 = new HashSet<tbl_Job_Request>();
+            tbl_Job_Request2 = new HashSet<tbl_Job_Request>();
             tbl_Notification_Log = new HashSet<tbl_Notification_Log>();
             tbl_Profile_User = new HashSet<tbl_Profile_User>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Application1 = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Loan_Archive1 = new HashSet<tbl_Loan_Archive>();
-            //tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
-            //tbl_Loan_Contingent1 = new HashSet<tbl_Loan_Contingent>();
+            tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
+            tbl_Loan_Contingent1 = new HashSet<tbl_Loan_Contingent>();
             tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Loan1 = new HashSet<tbl_Loan>();
             tbl_Loan_Preliminary_Evaluation = new HashSet<tbl_Loan_Preliminary_Evaluation>();
             tbl_Loan_Preliminary_Evaluation1 = new HashSet<tbl_Loan_Preliminary_Evaluation>();
             tbl_Loan_Relationship_Officer_History = new HashSet<tbl_Loan_Relationship_Officer_History>();
-            //tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
-            //tbl_Loan_Revolving1 = new HashSet<tbl_Loan_Revolving>();
+            tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
+            tbl_Loan_Revolving1 = new HashSet<tbl_Loan_Revolving>();
         }
 
         [Key]
@@ -114,6 +115,8 @@ namespace FintrakBanking.Entities.Models
 
         public short CustomerSensitivityLevel { get; set; }
 
+        public bool NPL_LimitExceeded { get; set; }
+
         public int? CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
@@ -166,6 +169,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Job_Request> tbl_Job_Request1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Job_Request> tbl_Job_Request2 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Notification_Log> tbl_Notification_Log { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -184,10 +190,10 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        //public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
+        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        //public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent1 { get; set; }
+        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
@@ -205,10 +211,10 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        //public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
+        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        //public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving1 { get; set; }
+        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving1 { get; set; }
 
         public virtual tbl_Staff_JobTitle tbl_Staff_JobTitle { get; set; }
 

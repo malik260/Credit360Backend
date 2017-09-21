@@ -61,7 +61,7 @@ namespace FintrakBanking.Repositories.Customer
                 LoanId = entity.loanId
             };
             context.tbl_Loan_Covenant_Detail.Add(convenant);
-            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.LoanId == entity.loanId).LoanReferenceNumber;
+            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.TermLoanId == entity.loanId).LoanReferenceNumber;
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LoanCovenantDetailAdd,
@@ -85,7 +85,7 @@ namespace FintrakBanking.Repositories.Customer
             convenant.DeletedBy = user.staffId;
             convenant.DateTimeDeleted = this.genSetup.GetApplicationDate().Date; 
 
-            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.LoanId == loanCovenantDetailId).LoanReferenceNumber;
+            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.TermLoanId == loanCovenantDetailId).LoanReferenceNumber;
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LoanCovenantDetailDelete,
@@ -116,8 +116,8 @@ namespace FintrakBanking.Repositories.Customer
                 frequencyTypeName = c.tbl_Frequency_Type.Mode,
                 loanCovenantDetailId = c.LoanCovenantDetailId,
                 loanId = c.LoanId,
-                loanRef = c.tbl_Loan.LoanReferenceNumber,
-                productName = c.tbl_Loan.tbl_Product.ProductName
+                //loanRef = c.tbl_Loan.LoanReferenceNumber,
+                //productName = c.tbl_Loan.tbl_Product.ProductName
             });
         }
 
@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.Customer
             convenant.FrequencyTypeId = entity.frequencyTypeId;
             convenant.LoanId = entity.loanId;
 
-            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.LoanId == entity.loanId).LoanReferenceNumber;
+            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.TermLoanId == entity.loanId).LoanReferenceNumber;
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LoanCovenantDetailUpdate,

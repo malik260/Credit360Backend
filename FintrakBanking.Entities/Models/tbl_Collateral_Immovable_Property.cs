@@ -61,7 +61,7 @@ namespace FintrakBanking.Entities.Models
         public decimal AvailableValue { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? SecurityValue { get; set; }
+        public decimal SecurityValue { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? CollateralUsableAmount { get; set; }

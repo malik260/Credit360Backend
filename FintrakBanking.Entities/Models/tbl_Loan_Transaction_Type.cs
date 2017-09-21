@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Loan_Transaction_Type()
         {
-            tbl_Daily_Accural = new HashSet<tbl_Daily_Accural>();
+            tbl_Daily_Accrual = new HashSet<tbl_Daily_Accrual>();
             tbl_Loan_Force_Debit = new HashSet<tbl_Loan_Force_Debit>();
             tbl_Loan_Past_Due = new HashSet<tbl_Loan_Past_Due>();
         }
@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         public string TransactionTypeName { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Daily_Accural> tbl_Daily_Accural { get; set; }
+        public virtual ICollection<tbl_Daily_Accrual> tbl_Daily_Accrual { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Force_Debit> tbl_Loan_Force_Debit { get; set; }

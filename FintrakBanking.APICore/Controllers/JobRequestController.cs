@@ -79,12 +79,26 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("job-request/group")]
-        //[Route("job-request/group/{groupId}")]
         public HttpResponseMessage GetJobRequestByGroupId()
         {
             try
             {
                 var data = repo.GetJobRequestByGroupId(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+        [HttpGet]
+        [Route("job-request/department")]
+        public HttpResponseMessage GetJobRequestByDepartment()
+        {
+            try
+            {
+                var data = repo.GetJobRequestByDepartment(token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)

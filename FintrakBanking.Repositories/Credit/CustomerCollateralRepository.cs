@@ -55,6 +55,13 @@ namespace FintrakBanking.Repositories.Credit
                     case (int)CollateralTypeEnum.PlantAndMachinery: AddEquipmentCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Miscellaneous: AddMiscellaneousCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Gaurantee: AddGuaranteeCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.CASA: AddCasaCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.Property: AddImmovablePropertyCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.MarketableSecurities: AddMarketableSecuritiesCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.InsurancePolicy: AddPolicyCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.PreciousMetal: AddPreciousMetalCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.Stock: AddStockCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.Vehicle: AddVehicleCollateral(collateralId, entity); break;
 
                     default: break;
                 }
@@ -90,6 +97,13 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)CollateralTypeEnum.PlantAndMachinery: UpdateEquipmentCollateral(entity); break;
                 case (int)CollateralTypeEnum.Miscellaneous: UpdateMiscellaneousCollateral(entity); break;
                 case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(entity); break;
+                case (int)CollateralTypeEnum.CASA: UpdateCasaCollateral(entity); break;
+                case (int)CollateralTypeEnum.Property: UpdateImmovablePropertyCollateral(entity); break;
+                case (int)CollateralTypeEnum.MarketableSecurities: UpdateMarketableSecuritiesCollateral(entity); break;
+                case (int)CollateralTypeEnum.InsurancePolicy: UpdatePolicyCollateral(entity); break;
+                case (int)CollateralTypeEnum.PreciousMetal: UpdatePreciousMetalCollateral(entity); break;
+                case (int)CollateralTypeEnum.Stock: UpdateStockCollateral(entity); break;
+                case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(entity); break;
 
                 default: break;
             }
@@ -388,6 +402,13 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)CollateralTypeEnum.PlantAndMachinery: data = GetCollateralMachinery(collateralId); break;
                 case (int)CollateralTypeEnum.Miscellaneous: data = GetCollateralMiscellaneous(collateralId); break;
                 case (int)CollateralTypeEnum.Gaurantee: data = GetCollateralGuarantee(collateralId); break;
+                case (int)CollateralTypeEnum.CASA: data = GetCollateralCasa(collateralId); break;
+                case (int)CollateralTypeEnum.Property: data = GetCollateralImmovableProperty(collateralId); break;
+                case (int)CollateralTypeEnum.MarketableSecurities: data = GetCollateralMarketableSecurities(collateralId); break;
+                case (int)CollateralTypeEnum.InsurancePolicy: data = GetCollateralPolicy(collateralId); break;
+                case (int)CollateralTypeEnum.PreciousMetal: data = GetCollateralPreciousMetal(collateralId); break;
+                case (int)CollateralTypeEnum.Stock: data = GetCollateralStock(collateralId); break;
+                case (int)CollateralTypeEnum.Vehicle: data = GetCollateralVehicle(collateralId); break;
 
                 default:
                     break;
@@ -486,6 +507,238 @@ namespace FintrakBanking.Repositories.Credit
             return details;
         }
 
+        // stock collateral
+
+        private void AddStockCollateral(int collateralId, CollateralViewModel entity)
+        {
+            context.tbl_Collateral_Stock.Add(new tbl_Collateral_Stock
+            {
+                CollateralCustomerId = collateralId,
+                CompanyName = entity.companyName,
+                ShareQuantity = entity.shareQuantity,
+                MarketPrice = entity.marketPrice,
+                Amount = entity.amount,
+                SharesSecurityValue = entity.sharesSecurityValue,
+                ShareValueAmountToUse = entity.shareValueAmountToUse,
+            });
+        }
+
+        private void UpdateStockCollateral(CollateralViewModel entity)
+        {
+            var collateral = context.tbl_Collateral_Stock
+                .Where(x => x.CollateralCustomerId == entity.collateralId)
+                .FirstOrDefault();
+
+            collateral.CompanyName = entity.companyName;
+            collateral.ShareQuantity = entity.shareQuantity;
+            collateral.MarketPrice = entity.marketPrice;
+            collateral.Amount = entity.amount;
+            collateral.SharesSecurityValue = entity.sharesSecurityValue;
+            collateral.ShareValueAmountToUse = entity.shareValueAmountToUse;
+        }
+
+        private CollateralViewModel GetCollateralStock(int collateralId)
+        {
+            var specifics = context.tbl_Collateral_Stock.FirstOrDefault(x => x.CollateralCustomerId == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.CollateralCustomerId,
+                collateralStockId = specifics.CollateralStockId,
+                collateralCustomerId = specifics.CollateralCustomerId,
+                companyName = specifics.CompanyName,
+                shareQuantity = specifics.ShareQuantity,
+                marketPrice = specifics.MarketPrice,
+                amount = specifics.Amount,
+                sharesSecurityValue = specifics.SharesSecurityValue,
+                shareValueAmountToUse = specifics.ShareValueAmountToUse,
+            };
+            details = GetCollateralInsurancePolicy(details);
+            return details;
+        }
+
+
+        // vehicle collateral
+
+        private void AddVehicleCollateral(int collateralId, CollateralViewModel entity)
+        {
+            context.tbl_Collateral_Vehicle.Add(new tbl_Collateral_Vehicle
+            {
+                CollateralCustomerId = collateralId,
+                VehicleType = entity.vehicleType,
+                VehicleStatus = entity.vehicleStatus,
+                VehicleMake = entity.vehicleMake,
+                ModelName = entity.modelName,
+                ManufacturedDate = entity.manufacturedDate,
+                RegistrationNumber = entity.registrationNumber,
+                SerialNumber = entity.serialNumber,
+                ChasisNumber = entity.chasisNumber,
+                EngineNumber = entity.engineNumber,
+                NameOfOwner = entity.nameOfOwner,
+                RegistrationCompany = entity.registrationCompany,
+                ResaleValue = entity.resaleValue,
+                ValuationDate = entity.valuationDate,
+                LastValuationAmount = entity.lastValuationAmount,
+                InvoiceValue = entity.invoiceValue,
+                Remark = entity.remark,
+            });
+        }
+
+        private void UpdateVehicleCollateral(CollateralViewModel entity)
+        {
+            var collateral = context.tbl_Collateral_Vehicle
+                .Where(x => x.CollateralCustomerId == entity.collateralId)
+                .FirstOrDefault();
+
+            collateral.VehicleType = entity.vehicleType;
+            collateral.VehicleStatus = entity.vehicleStatus;
+            collateral.VehicleMake = entity.vehicleMake;
+            collateral.ModelName = entity.modelName;
+            collateral.ManufacturedDate = entity.manufacturedDate;
+            collateral.RegistrationNumber = entity.registrationNumber;
+            collateral.SerialNumber = entity.serialNumber;
+            collateral.ChasisNumber = entity.chasisNumber;
+            collateral.EngineNumber = entity.engineNumber;
+            collateral.NameOfOwner = entity.nameOfOwner;
+            collateral.RegistrationCompany = entity.registrationCompany;
+            collateral.ResaleValue = entity.resaleValue;
+            collateral.ValuationDate = entity.valuationDate;
+            collateral.LastValuationAmount = entity.lastValuationAmount;
+            collateral.InvoiceValue = entity.invoiceValue;
+            collateral.Remark = entity.remark;
+        }
+
+        private CollateralViewModel GetCollateralVehicle(int collateralId)
+        {
+            var specifics = context.tbl_Collateral_Vehicle.FirstOrDefault(x => x.CollateralCustomerId == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.CollateralCustomerId,
+                collateralVehicleId = specifics.CollateralVehicleId,
+                collateralCustomerId = specifics.CollateralCustomerId,
+                vehicleType = specifics.VehicleType,
+                vehicleStatus = specifics.VehicleStatus,
+                vehicleMake = specifics.VehicleMake,
+                modelName = specifics.ModelName,
+                manufacturedDate = specifics.ManufacturedDate,
+                registrationNumber = specifics.RegistrationNumber,
+                serialNumber = specifics.SerialNumber,
+                chasisNumber = specifics.ChasisNumber,
+                engineNumber = specifics.EngineNumber,
+                nameOfOwner = specifics.NameOfOwner,
+                registrationCompany = specifics.RegistrationCompany,
+                resaleValue = specifics.ResaleValue,
+                valuationDate = specifics.ValuationDate,
+                lastValuationAmount = specifics.LastValuationAmount,
+                invoiceValue = specifics.InvoiceValue,
+                remark = specifics.Remark,
+            };
+            details = GetCollateralInsurancePolicy(details);
+            return details;
+        }
+
+        // preciousMetal collateral
+
+        private void AddPreciousMetalCollateral(int collateralId, CollateralViewModel entity)
+        {
+            context.tbl_Collateral_PreciousMetal.Add(new tbl_Collateral_PreciousMetal
+            {
+                CollateralCustomerId = collateralId,
+                IsOwnedByCustomer = entity.isOwnedByCustomer,
+                PreciousMetalName = entity.preciousMetalName,
+                WeightInGrammes = entity.weightInGrammes,
+                ValuationAmount = entity.valuationAmount,
+                UnitRate = entity.unitRate,
+                PreciousMetalForm = entity.preciousMetalForm,
+                Remark = entity.remark,
+            });
+        }
+
+        private void UpdatePreciousMetalCollateral(CollateralViewModel entity)
+        {
+            var collateral = context.tbl_Collateral_PreciousMetal
+                .Where(x => x.CollateralCustomerId == entity.collateralId)
+                .FirstOrDefault();
+
+            collateral.IsOwnedByCustomer = entity.isOwnedByCustomer;
+            collateral.PreciousMetalName = entity.preciousMetalName;
+            collateral.WeightInGrammes = entity.weightInGrammes;
+            collateral.ValuationAmount = entity.valuationAmount;
+            collateral.UnitRate = entity.unitRate;
+            collateral.PreciousMetalForm = entity.preciousMetalForm;
+            collateral.Remark = entity.remark;
+        }
+
+        private CollateralViewModel GetCollateralPreciousMetal(int collateralId)
+        {
+            var specifics = context.tbl_Collateral_PreciousMetal.FirstOrDefault(x => x.CollateralCustomerId == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.CollateralCustomerId,
+                collateralPreciousMetalId = specifics.CollateralPreciousMetalId,
+                collateralCustomerId = specifics.CollateralCustomerId,
+                isOwnedByCustomer = specifics.IsOwnedByCustomer,
+                preciousMetalName = specifics.PreciousMetalName,
+                weightInGrammes = specifics.WeightInGrammes,
+                valuationAmount = specifics.ValuationAmount,
+                unitRate = specifics.UnitRate,
+                preciousMetalForm = specifics.PreciousMetalForm,
+                remark = specifics.Remark,
+            };
+            details = GetCollateralInsurancePolicy(details);
+            return details;
+        }
+
+        // casa collateral
+
+        private void AddCasaCollateral(int collateralId, CollateralViewModel entity)
+        {
+            context.tbl_Collateral_Casa.Add(new tbl_Collateral_Casa
+            {
+                CollateralCustomerId = collateralId,
+                AccountNumber = entity.accountNumber,
+                IsOwnedByCustomer = entity.isOwnedByCustomer,
+                AvailableBalance = entity.availableBalance,
+                ExistingLienAmount = entity.existingLienAmount,
+                LienAmount = entity.lienAmount,
+                SecurityValue = entity.securityValue,
+                Remark = entity.remark,
+            });
+        }
+
+        private void UpdateCasaCollateral(CollateralViewModel entity)
+        {
+            var collateral = context.tbl_Collateral_Casa
+                .Where(x => x.CollateralCustomerId == entity.collateralId)
+                .FirstOrDefault();
+
+            collateral.AccountNumber = entity.accountNumber;
+            collateral.IsOwnedByCustomer = entity.isOwnedByCustomer;
+            collateral.AvailableBalance = entity.availableBalance;
+            collateral.ExistingLienAmount = entity.existingLienAmount;
+            collateral.LienAmount = entity.lienAmount;
+            collateral.SecurityValue = entity.securityValue;
+            collateral.Remark = entity.remark;
+        }
+
+        private CollateralViewModel GetCollateralCasa(int collateralId)
+        {
+            var specifics = context.tbl_Collateral_Casa.FirstOrDefault(x => x.CollateralCustomerId == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.CollateralCustomerId,
+                collateralCustomerId = specifics.CollateralCustomerId,
+                accountNumber = specifics.AccountNumber,
+                isOwnedByCustomer = specifics.IsOwnedByCustomer,
+                availableBalance = specifics.AvailableBalance,
+                existingLienAmount = specifics.ExistingLienAmount,
+                lienAmount = specifics.LienAmount,
+                securityValue = specifics.SecurityValue,
+                remark = specifics.Remark,
+            };
+            details = GetCollateralInsurancePolicy(details);
+            return details;
+        }
+
         // guarantee collateral
 
         private void AddGuaranteeCollateral(int collateralId, CollateralViewModel entity)
@@ -510,7 +763,6 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.CollateralCustomerId == entity.collateralId)
                 .FirstOrDefault();
 
-            collateral.CollateralCustomerId = entity.collateralCustomerId;
             collateral.IsOwnedByCustomer = entity.isOwnedByCustomer;
             collateral.InstitutionName = entity.institutionName;
             collateral.GuarantorAddress = entity.guarantorAddress;
@@ -536,6 +788,253 @@ namespace FintrakBanking.Repositories.Credit
                 guaranteeValue = specifics.GuaranteeValue,
                 startDate = specifics.StartDate,
                 endDate = specifics.EndDate,
+                remark = specifics.Remark,
+            };
+            details = GetCollateralInsurancePolicy(details);
+            return details;
+        }
+
+        // immovableProperty collateral
+
+        private void AddImmovablePropertyCollateral(int collateralId, CollateralViewModel entity)
+        {
+            context.tbl_Collateral_Immovable_Property.Add(new tbl_Collateral_Immovable_Property
+            {
+                CollateralCustomerId = collateralId,
+                PropertyName = entity.propertyName,
+                CityId = entity.cityId,
+                CountryId = entity.countryId,
+                ConstructionDate = entity.constructionDate,
+                PropertyAddress = entity.propertyAddress,
+                DateOfAcquisition = entity.dateOfAcquisition,
+                LastValuationDate = entity.lastValuationDate,
+                ValuerId = entity.valuerId,
+                ValuerReferenceNumber = entity.valuerReferenceNumber,
+                PropertyValueBaseTypeId = entity.propertyValueBaseTypeId,
+                OpenMarketValue = entity.openMarketValue,
+                CollateralValue = entity.collateralValue,
+                ForcedSaleValue = entity.forcedSaleValue,
+                StampToCover = entity.stampToCover,
+                ValuationSource = entity.valuationSource,
+                OriginalValue = entity.originalValue,
+                AvailableValue = entity.availableValue,
+                SecurityValue = entity.securityValue,
+                CollateralUsableAmount = entity.collateralUsableAmount,
+                Remark = entity.remark,
+                NearestLandMark = entity.nearestLandMark,
+                NearestBusStop = entity.nearestBusStop,
+                Longitude = entity.longitude,
+                Latitude = entity.latitude,
+            });
+        }
+
+        private void UpdateImmovablePropertyCollateral(CollateralViewModel entity)
+        {
+            var collateral = context.tbl_Collateral_Immovable_Property
+                .Where(x => x.CollateralCustomerId == entity.collateralId)
+                .FirstOrDefault();
+
+            collateral.PropertyName = entity.propertyName;
+            collateral.CityId = entity.cityId;
+            collateral.CountryId = entity.countryId;
+            collateral.ConstructionDate = entity.constructionDate;
+            collateral.PropertyAddress = entity.propertyAddress;
+            collateral.DateOfAcquisition = entity.dateOfAcquisition;
+            collateral.LastValuationDate = entity.lastValuationDate;
+            collateral.ValuerId = entity.valuerId;
+            collateral.ValuerReferenceNumber = entity.valuerReferenceNumber;
+            collateral.PropertyValueBaseTypeId = entity.propertyValueBaseTypeId;
+            collateral.OpenMarketValue = entity.openMarketValue;
+            collateral.CollateralValue = entity.collateralValue;
+            collateral.ForcedSaleValue = entity.forcedSaleValue;
+            collateral.StampToCover = entity.stampToCover;
+            collateral.ValuationSource = entity.valuationSource;
+            collateral.OriginalValue = entity.originalValue;
+            collateral.AvailableValue = entity.availableValue;
+            collateral.SecurityValue = entity.securityValue;
+            collateral.CollateralUsableAmount = entity.collateralUsableAmount;
+            collateral.Remark = entity.remark;
+            collateral.NearestLandMark = entity.nearestLandMark;
+            collateral.NearestBusStop = entity.nearestBusStop;
+            collateral.Longitude = entity.longitude;
+            collateral.Latitude = entity.latitude;
+        }
+
+        private CollateralViewModel GetCollateralImmovableProperty(int collateralId)
+        {
+            var specifics = context.tbl_Collateral_Immovable_Property.FirstOrDefault(x => x.CollateralCustomerId == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.CollateralCustomerId,
+                collateralPropertyId = specifics.CollateralPropertyId,
+                collateralCustomerId = specifics.CollateralCustomerId,
+                propertyName = specifics.PropertyName,
+                cityId = specifics.CityId,
+                countryId = specifics.CountryId,
+                constructionDate = specifics.ConstructionDate,
+                propertyAddress = specifics.PropertyAddress,
+                dateOfAcquisition = specifics.DateOfAcquisition,
+                lastValuationDate = specifics.LastValuationDate,
+                valuerId = specifics.ValuerId,
+                valuerReferenceNumber = specifics.ValuerReferenceNumber,
+                propertyValueBaseTypeId = specifics.PropertyValueBaseTypeId,
+                openMarketValue = specifics.OpenMarketValue,
+                collateralValue = specifics.CollateralValue,
+                forcedSaleValue = specifics.ForcedSaleValue,
+                stampToCover = specifics.StampToCover,
+                valuationSource = specifics.ValuationSource,
+                originalValue = specifics.OriginalValue,
+                availableValue = specifics.AvailableValue,
+                securityValue = specifics.SecurityValue,
+                collateralUsableAmount = specifics.CollateralUsableAmount,
+                remark = specifics.Remark,
+                nearestLandMark = specifics.NearestLandMark,
+                nearestBusStop = specifics.NearestBusStop,
+                longitude = specifics.Longitude,
+                latitude = specifics.Latitude,
+            };
+            details = GetCollateralInsurancePolicy(details);
+            return details;
+        }
+
+        // marketableSecurities collateral
+
+        private void AddMarketableSecuritiesCollateral(int collateralId, CollateralViewModel entity)
+        {
+            context.tbl_Collateral_Marketable_Security.Add(new tbl_Collateral_Marketable_Security
+            {
+                CollateralCustomerId = collateralId,
+                SecurityType = entity.securityType,
+                DealReferenceNumber = entity.dealReferenceNumber,
+                EffectiveDate = entity.effectiveDate,
+                MaturityDate = entity.maturityDate,
+                DealAmount = entity.dealAmount,
+                SecurityValue = entity.securityValue,
+                LienUsableAmount = entity.lienUsableAmount,
+                IssuerName = entity.issuerName,
+                IssuerReferenceNumber = entity.issuerReferenceNumber,
+                UnitValue = entity.unitValue,
+                NumberOfUnits = entity.numberOfUnits,
+                Rating = entity.rating,
+                PercentageInterest = entity.percentageInterest,
+                InterestPaymentFrequency = entity.interestPaymentFrequency,
+                Remark = entity.remark,
+            });
+        }
+
+        private void UpdateMarketableSecuritiesCollateral(CollateralViewModel entity)
+        {
+            var collateral = context.tbl_Collateral_Marketable_Security
+                .Where(x => x.CollateralCustomerId == entity.collateralId)
+                .FirstOrDefault();
+
+            collateral.SecurityType = entity.securityType;
+            collateral.DealReferenceNumber = entity.dealReferenceNumber;
+            collateral.EffectiveDate = entity.effectiveDate;
+            collateral.MaturityDate = entity.maturityDate;
+            collateral.DealAmount = entity.dealAmount;
+            collateral.SecurityValue = entity.securityValue;
+            collateral.LienUsableAmount = entity.lienUsableAmount;
+            collateral.IssuerName = entity.issuerName;
+            collateral.IssuerReferenceNumber = entity.issuerReferenceNumber;
+            collateral.UnitValue = entity.unitValue;
+            collateral.NumberOfUnits = entity.numberOfUnits;
+            collateral.Rating = entity.rating;
+            collateral.PercentageInterest = entity.percentageInterest;
+            collateral.InterestPaymentFrequency = entity.interestPaymentFrequency;
+            collateral.Remark = entity.remark;
+        }
+
+        private CollateralViewModel GetCollateralMarketableSecurities(int collateralId)
+        {
+            var specifics = context.tbl_Collateral_Marketable_Security.FirstOrDefault(x => x.CollateralCustomerId == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.CollateralCustomerId,
+                collateralMarketableSecurityId = specifics.CollateralMarketableSecurityId,
+                collateralCustomerId = specifics.CollateralCustomerId,
+                securityType = specifics.SecurityType,
+                dealReferenceNumber = specifics.DealReferenceNumber,
+                effectiveDate = specifics.EffectiveDate,
+                maturityDate = specifics.MaturityDate,
+                dealAmount = specifics.DealAmount,
+                securityValue = specifics.SecurityValue,
+                lienUsableAmount = specifics.LienUsableAmount,
+                issuerName = specifics.IssuerName,
+                issuerReferenceNumber = specifics.IssuerReferenceNumber,
+                unitValue = specifics.UnitValue,
+                numberOfUnits = specifics.NumberOfUnits,
+                rating = specifics.Rating,
+                percentageInterest = specifics.PercentageInterest,
+                interestPaymentFrequency = specifics.InterestPaymentFrequency,
+                remark = specifics.Remark,
+            };
+            details = GetCollateralInsurancePolicy(details);
+            return details;
+        }
+
+
+        // policy collateral
+
+        private void AddPolicyCollateral(int collateralId, CollateralViewModel entity)
+        {
+            context.tbl_Collateral_Policy.Add(new tbl_Collateral_Policy
+            {
+                CollateralCustomerId = collateralId,
+                IsOwnedByCustomer = entity.isOwnedByCustomer,
+                InsurancePolicyNumber = entity.insurancePolicyNumber,
+                PremiumAmount = entity.premiumAmount,
+                PolicyAmount = entity.policyAmount,
+                InsuranceCompanyName = entity.insuranceCompanyName,
+                InsurerAddress = entity.insurerAddress,
+                PolicyStartDate = entity.policyStartDate,
+                AssignDate = entity.assignDate,
+                RenewalFrequencyTypeId = entity.renewalFrequencyTypeId,
+                InsurerDetails = entity.insurerDetails,
+                PolicyRenewalDate = entity.policyRenewalDate,
+                Remark = entity.remark,
+            });
+        }
+
+        private void UpdatePolicyCollateral(CollateralViewModel entity)
+        {
+            var collateral = context.tbl_Collateral_Policy
+                .Where(x => x.CollateralCustomerId == entity.collateralId)
+                .FirstOrDefault();
+
+            collateral.IsOwnedByCustomer = entity.isOwnedByCustomer;
+            collateral.InsurancePolicyNumber = entity.insurancePolicyNumber;
+            collateral.PremiumAmount = entity.premiumAmount;
+            collateral.PolicyAmount = entity.policyAmount;
+            collateral.InsuranceCompanyName = entity.insuranceCompanyName;
+            collateral.InsurerAddress = entity.insurerAddress;
+            collateral.PolicyStartDate = entity.policyStartDate;
+            collateral.AssignDate = entity.assignDate;
+            collateral.RenewalFrequencyTypeId = entity.renewalFrequencyTypeId;
+            collateral.InsurerDetails = entity.insurerDetails;
+            collateral.PolicyRenewalDate = entity.policyRenewalDate;
+            collateral.Remark = entity.remark;
+        }
+
+        private CollateralViewModel GetCollateralPolicy(int collateralId)
+        {
+            var specifics = context.tbl_Collateral_Policy.FirstOrDefault(x => x.CollateralCustomerId == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.CollateralCustomerId,
+                collateralInsurancePolicyId = specifics.CollateralInsurancePolicyId,
+                collateralCustomerId = specifics.CollateralCustomerId,
+                isOwnedByCustomer = specifics.IsOwnedByCustomer,
+                insurancePolicyNumber = specifics.InsurancePolicyNumber,
+                premiumAmount = specifics.PremiumAmount,
+                policyAmount = specifics.PolicyAmount,
+                insuranceCompanyName = specifics.InsuranceCompanyName,
+                insurerAddress = specifics.InsurerAddress,
+                policyStartDate = specifics.PolicyStartDate,
+                assignDate = specifics.AssignDate,
+                renewalFrequencyTypeId = specifics.RenewalFrequencyTypeId,
+                insurerDetails = specifics.InsurerDetails,
+                policyRenewalDate = specifics.PolicyRenewalDate,
                 remark = specifics.Remark,
             };
             details = GetCollateralInsurancePolicy(details);
@@ -569,40 +1068,40 @@ namespace FintrakBanking.Repositories.Credit
         //    return collateral;
         //}
 
-        public async Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity)
-        {
-            var collateral = new tbl_Collateral_Customer
-            {
-                CompanyId = entity.companyId,
-                CollateralTypeId = entity.collateralTypeId,
-                CollateralCode = entity.collateralCode,
-                CurrencyId = entity.currencyId,
-                AllowSharing = entity.allowSharing,
-                IsLocationBased = entity.isLocationBased,
-                ValuationCycle = entity.valuationCycle,
-                HairCut = entity.hairCut,
-                CustomerId = entity.customerId,
+        //public async Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity)
+        //{
+        //    var collateral = new tbl_Collateral_Customer
+        //    {
+        //        CompanyId = entity.companyId,
+        //        CollateralTypeId = entity.collateralTypeId,
+        //        CollateralCode = entity.collateralCode,
+        //        CurrencyId = entity.currencyId,
+        //        AllowSharing = entity.allowSharing,
+        //        IsLocationBased = entity.isLocationBased,
+        //        ValuationCycle = entity.valuationCycle,
+        //        HairCut = entity.hairCut,
+        //        CustomerId = entity.customerId,
 
-                ApprovalStatus = entity.approvalStatus,
-                DateActedOn = entity.dateActedOn,
-                ActedOnBy = entity.actedOnBy,
-                CamRefNumber = entity.camRefNumber,
-                DateTimeCreated = genSetup.GetApplicationDate().Date,
-                CreatedBy = entity.createdBy,
-                tbl_Collateral_Immovable_Property = AddCollateralProperty((CollateralTypeEnum)entity.collateralTypeId, entity.collateralProperty),
-                tbl_Collateral_Deposit = AddCollateralDeposit((CollateralTypeEnum)entity.collateralTypeId, entity.collateralDeposit),
-                tbl_Collateral_Plant_And_Equipment = AddCollateralMachineDetail((CollateralTypeEnum)entity.collateralTypeId, entity.collateralMachineDetail),
-                tbl_Collateral_Marketable_Security = AddCollateralMarketableSecurity((CollateralTypeEnum)entity.collateralTypeId, entity.collateralMarketableSecurity),
-                tbl_Collateral_Policy = AddCollateralInsurancePolicy((CollateralTypeEnum)entity.collateralTypeId, entity.collateralInsurancePolicy),
-                tbl_Collateral_PreciousMetal = AddCollateralPreciousMetal((CollateralTypeEnum)entity.collateralTypeId, entity.collateralPreciousMetal),
-                tbl_Collateral_Gaurantee = AddCollateralGaurantee((CollateralTypeEnum)entity.collateralTypeId, entity.collateralGaurantee),
-                tbl_Collateral_Vehicle = AddCollateralVehicle((CollateralTypeEnum)entity.collateralTypeId, entity.collateralVehicle),
-                tbl_Collateral_Miscellaneous = AddCollateralMiscellaneous((CollateralTypeEnum)entity.collateralTypeId, entity.collateralMiscellaneous),
-            };
+        //        ApprovalStatus = entity.approvalStatus,
+        //        DateActedOn = entity.dateActedOn,
+        //        ActedOnBy = entity.actedOnBy,
+        //        CamRefNumber = entity.camRefNumber,
+        //        DateTimeCreated = genSetup.GetApplicationDate().Date,
+        //        CreatedBy = entity.createdBy,
+        //        tbl_Collateral_Immovable_Property = AddCollateralProperty((CollateralTypeEnum)entity.collateralTypeId, entity.collateralProperty),
+        //        tbl_Collateral_Deposit = AddCollateralDeposit((CollateralTypeEnum)entity.collateralTypeId, entity.collateralDeposit),
+        //        tbl_Collateral_Plant_And_Equipment = AddCollateralMachineDetail((CollateralTypeEnum)entity.collateralTypeId, entity.collateralMachineDetail),
+        //        tbl_Collateral_Marketable_Security = AddCollateralMarketableSecurity((CollateralTypeEnum)entity.collateralTypeId, entity.collateralMarketableSecurity),
+        //        tbl_Collateral_Policy = AddCollateralInsurancePolicy((CollateralTypeEnum)entity.collateralTypeId, entity.collateralInsurancePolicy),
+        //        tbl_Collateral_PreciousMetal = AddCollateralPreciousMetal((CollateralTypeEnum)entity.collateralTypeId, entity.collateralPreciousMetal),
+        //        tbl_Collateral_Gaurantee = AddCollateralGaurantee((CollateralTypeEnum)entity.collateralTypeId, entity.collateralGaurantee),
+        //        tbl_Collateral_Vehicle = AddCollateralVehicle((CollateralTypeEnum)entity.collateralTypeId, entity.collateralVehicle),
+        //        tbl_Collateral_Miscellaneous = AddCollateralMiscellaneous((CollateralTypeEnum)entity.collateralTypeId, entity.collateralMiscellaneous),
+        //    };
 
-            context.tbl_Collateral_Customer.Add(collateral);
-            return await context.SaveChangesAsync() != 0;
-        }
+        //    context.tbl_Collateral_Customer.Add(collateral);
+        //    return await context.SaveChangesAsync() != 0;
+        //}
 
         public async Task<bool> DeleteCollateralCustomer(int colleralCustomerId, UserInfo user)
         {
@@ -953,7 +1452,6 @@ namespace FintrakBanking.Repositories.Credit
                         valuationSource = m.ValuationSource,
                         originalValue = m.OriginalValue,
                         availableValue = m.AvailableValue,
-                        securityValue = m.SecurityValue,
                         collateralUsableAmount = m.CollateralUsableAmount,
                         remark = m.Remark
                     }).FirstOrDefault();
@@ -1313,33 +1811,6 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion Insurance Policy
 
-        #region Gaurantee
-        private ICollection<tbl_Collateral_Gaurantee> AddCollateralGaurantee(CollateralTypeEnum collateralType, CollateralGauranteeViewModel entity)
-        {
-            ICollection<tbl_Collateral_Gaurantee> collateral;
-
-            if (collateralType != CollateralTypeEnum.Gaurantee)
-                return null;
-
-            collateral = new List<tbl_Collateral_Gaurantee>();
-
-            collateral.Add(new tbl_Collateral_Gaurantee
-            {
-                //CollateralGauranteeId = entity.collateralGauranteeId,
-                //CollateralCustomerId = entity.collateralCustomerId,
-                IsOwnedByCustomer = entity.isOwnedByCustomer,
-                InstitutionName = entity.institutionName,
-                GuarantorAddress = entity.guarantorAddress,
-                GuarantorReferenceNumber = entity.guarantorReferenceNumber,
-                GuaranteeValue = entity.guaranteeValue,
-                StartDate = entity.startDate,
-                EndDate = entity.endDate,
-                Remark = entity.remark
-
-            });
-
-            return collateral;
-        }
 
         private CollateralGauranteeViewModel CollateralGaurantee(int collateralCustomerId)
         {
@@ -1360,12 +1831,6 @@ namespace FintrakBanking.Repositories.Credit
                         remark = m.Remark
                     }).FirstOrDefault();
         }
-
-        private CollateralGauranteeViewModel GetCollateralGauranteeByCollateralCustomerId(int collateralCustomerId)
-        {
-            return CollateralGaurantee(collateralCustomerId);
-        }
-        #endregion Gaurantee
 
         #region Vehicle
         private ICollection<tbl_Collateral_Vehicle> AddCollateralVehicle(CollateralTypeEnum collateralType, CollateralVehicleViewModel entity)

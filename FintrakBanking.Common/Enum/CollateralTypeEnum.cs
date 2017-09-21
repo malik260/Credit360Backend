@@ -16,5 +16,6 @@ namespace FintrakBanking.Common.Enum
         CASA = 8,
         Gaurantee = 9,
         Miscellaneous = 10,
+        Stock = 14,
     }
 }

@@ -126,6 +126,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             return context.SaveChanges() != 0;
         }
+
         public bool UpdateApprovalLevelStaff(int StaffLevelId, ApprovalLevelStaffViewModel model)
         {
             var data = this.context.tbl_Approval_Level_Staff.Find(StaffLevelId);
@@ -169,6 +170,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             return context.SaveChanges() != 0;
         }
+
         public async Task<bool> DeleteApprovalLevelStaff(int StaffLevelId, UserInfo user)
         {
             var data = this.context.tbl_Approval_Level_Staff.Find(StaffLevelId);
