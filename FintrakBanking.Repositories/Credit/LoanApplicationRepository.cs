@@ -28,17 +28,15 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkFlowRepository workFlow;
         private ICasaRepository casa;
         private ICustomerCollateralRepository collateral;
-        private IFinanceTransactionRepository finance;
+        //private IFinanceTransactionRepository finance;
 
-        public LoanApplicationRepository(
-            IAuditTrailRepository _auditTrail,
-            IGeneralSetupRepository _genSetup,
-        ICasaRepository _casa,
-        ICustomerCollateralRepository _collateral,
-        IWorkFlowRepository _workFlow,
-        IFinanceTransactionRepository _finance,
+        public LoanApplicationRepository(IAuditTrailRepository _auditTrail, ICasaRepository _casa, ICustomerCollateralRepository _collateral,
+                                    IGeneralSetupRepository _genSetup, IWorkFlowRepository _workFlow, 
+                                    //IFinanceTransactionRepository _finance,
         FinTrakBankingContext _context)
         {
+            this.collateral = _collateral;
+            //this.finance = _finance;
             this.context = _context;
             auditTrail = _auditTrail;
             this.genSetup = _genSetup;
@@ -453,7 +451,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (scope == (int)ProcessViewScopeEnum.Process) // 3
             {
-                var appl = context.tbl_Loan_Application//.Where(x => x.CompanyId == companyId && x.Deleted == false && x.BranchId == branchId)
+                return context.tbl_Loan_Application.Where(x => x.CompanyId == companyId && x.Deleted == false //&& x.BranchId == branchId
+                )
                     .Select(a => new LoanApplicationViewModel
                     {
                         approvalStatusId = a.ApprovalStatusId,
@@ -486,10 +485,6 @@ namespace FintrakBanking.Repositories.Credit
                         applicationDate = a.ApplicationDate,
                         dateTimeCreated = a.DateTimeCreated,
                     });
-
-                var count = appl.Count();
-
-                return appl;
             }
 
             var staffApprovalLevelIds = context.tbl_Approval_Level_Staff.Where(x => x.Deleted == false && x.StaffId == staffId).Select(x => x.ApprovalLevelId);
