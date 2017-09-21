@@ -66,7 +66,7 @@
     <Compile Include="Enum\FrequencyTypeEnum.cs" />
     <Compile Include="Enum\LienTypeEnum.cs" />
     <Compile Include="Enum\PenEvaluationStatusEnum.cs" />
-    <Compile Include="Enum\ScheduleTypeEnum.cs" />
+    <Compile Include="Enum\LoanProductTypeEnum.cs" />
     <Compile Include="Enum\SourceApplicationEnum.cs" />
     <Compile Include="Enum\ProcessViewScopeEnum.cs" />
     <Compile Include="Enum\GLClassEnum.cs" />

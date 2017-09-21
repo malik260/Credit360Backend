@@ -13,7 +13,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public short jobTypeId { get; set; }
         public int senderStaffId { get; set; }
         public int receiverStaffId { get; set; }
-        public int staffApprovalGroupId { get; set; }
+        public int departmentId { get; set; }
+        public int targetId { get; set; }
         public int? reassignedTo { get; set; }
         public bool isReassigned { get; set; }
         public bool isAcknowledged { get; set; }

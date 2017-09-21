@@ -29,6 +29,11 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsIntegralFee { get; set; }
 
+        public bool IsRecurringFee { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? NextFeePaymentDate { get; set; }
+
         public int CreatedBy { get; set; }
 
         public DateTime DateTimeCreated { get; set; }
