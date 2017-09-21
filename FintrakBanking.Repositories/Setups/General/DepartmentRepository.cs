@@ -3,6 +3,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -10,16 +11,17 @@ using System.Linq;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    [Export(typeof(IDepartmentRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class DepartmentRepository : IDepartmentRepository
     {
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository _genSetup;
         private FinTrakBankingContext context;
 
-        public DepartmentRepository(IAuditTrailRepository _auditTrail,
-                                    IGeneralSetupRepository genSetup, FinTrakBankingContext _context)
+        public DepartmentRepository(
+            IAuditTrailRepository _auditTrail,
+            IGeneralSetupRepository genSetup, 
+            FinTrakBankingContext _context
+            )
         {
             this.context = _context;
             auditTrail = _auditTrail;
@@ -113,6 +115,29 @@ namespace FintrakBanking.Repositories.Setups.General
             return department;
         }
 
+        public DepartmentViewModel GetStaffDepartment(int staffId)
+        {
+            DepartmentViewModel result = new DepartmentViewModel();
+
+            var department = context.tbl_Staff.Where(x => x.StaffId == staffId)
+                .Join(context.tbl_Department,
+                a => a.DepartmentId, b => b.DepartmentId, (a, b) => new { a, b })
+                .Select(x => new DepartmentViewModel
+                {
+                    BranchId = x.b.BranchId,
+                    DepartmentName = x.b.DepartmentName,
+                    Description = x.b.Description,
+                    DepartmentId = x.b.DepartmentId
+                })
+                .FirstOrDefault();
+            if (department != null)
+            {
+                return department;
+            }
+
+            return result;
+        }
+
         public bool UpdateDepartment(int departmentId, DepartmentViewModel entity)
         {
             var department = context.tbl_Department.Find(departmentId);
@@ -135,6 +160,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
             auditTrail.AddAuditTrail(audit);
             return SaveAll();
+        }
+
+        public IEnumerable<OperationStaffViewModel> GetAllDepartmentStaff(int departmentId)
+        {
+            return context.tbl_Staff.Where(x=> x.Deleted == false && x.DepartmentId == departmentId).Select(x=> new OperationStaffViewModel
+            {
+                id = x.StaffId,
+                name = x.FirstName + " " + x.MiddleName + " " + x.LastName,
+                groupId = departmentId,
+            });
         }
     }
 }

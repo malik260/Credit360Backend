@@ -464,7 +464,8 @@ namespace FintrakBanking.Repositories.Credit
             var pendingApplications = context.tbl_Loan_Application
                     .Join(context.tbl_Approval_Trail,
                         a => a.LoanApplicationId, b => b.TargetId, (a, b) => new { a, b })
-                    .Where(x => x.b.OperationId == operationId && x.a.BranchId == branchId);
+                    .Where(x => x.b.OperationId == operationId //&& x.a.BranchId == branchId
+                    );
 
             if (scope == (int)ProcessViewScopeEnum.Group) // 2
             {
@@ -521,7 +522,8 @@ namespace FintrakBanking.Repositories.Credit
                 loanPreliminaryEvaluationId = x.a.LoanPreliminaryEvaluationId,
                 customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
             })
-            .OrderBy(x => x.applicationDate);
+            .OrderByDescending(x => x.applicationDate)
+            .ThenByDescending(x => x.loanApplicationId);
         }
 
         public int GetStaffWorkflowViewScope(int operationId, int staffId)

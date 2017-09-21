@@ -8,6 +8,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
+        public int targetId { get; set; }
+        public int departmentId { get; set; }
         public int jobRequestId { get; set; }
         public string jobRequestCode { get; set; }
         public short jobTypeId { get; set; }

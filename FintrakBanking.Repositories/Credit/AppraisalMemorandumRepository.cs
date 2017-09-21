@@ -181,6 +181,22 @@ namespace FintrakBanking.Repositories.Credit
                 var appl = context.tbl_Loan_Application.Find(model.applicationId);
                 appl.ApprovalStatusId = workflow.StatusId;
 
+                //update approved loan details change!
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                {
+                    var memo = context.tbl_Credit_Appraisal_Memorandum.FirstOrDefault(x => x.LoanApplicationId == model.applicationId);
+                    context.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Add(new tbl_Credit_Appraisal_Memorandum_Loan_Detail
+                    {
+                        AppraisalMemorandumId = memo == null ? 0 : memo.AppraisalMemorandumId,
+                        PrincipalAmount = model.principal,
+                        InterestRate = model.rate,
+                        Tenor = model.tenor,
+                        CreatedBy = model.createdBy,
+                        DateTimeCreated = general.GetApplicationDate(),
+                        SystemDateTime = DateTime.Now,
+                    });
+                }
+
                 context.SaveChanges();
             }
 
@@ -255,6 +271,33 @@ namespace FintrakBanking.Repositories.Credit
             var trail = context.tbl_Approval_Trail.FirstOrDefault(x => x.OperationId == operationId && x.TargetId == targetId);
             if (trail == null) { return false; }
             return true;
+        }
+
+        public ApprovedLoanDetailViewModel GetApprovedLoanDetail(int applicationId)
+        {
+            var detail = new ApprovedLoanDetailViewModel { principal = 0, tenor = 0, rate = 0, approver = "n/a" };
+
+            var memo = context.tbl_Credit_Appraisal_Memorandum
+                .Join(context.tbl_Credit_Appraisal_Memorandum_Loan_Detail,
+                    a => a.AppraisalMemorandumId, b => b.AppraisalMemorandumId, (a, b) => new { a, b })
+                    .OrderByDescending(x => x.b.AppraisalMemorandumLoanDetailId)
+                .FirstOrDefault(x => x.a.LoanApplicationId == applicationId);
+
+            if (memo != null)
+            {
+                detail.principal = memo.b.PrincipalAmount;
+                detail.rate = memo.b.InterestRate;
+                detail.tenor = memo.b.Tenor;
+            }
+            else
+            {
+                var appl = context.tbl_Loan_Application.Find(applicationId);
+                detail.principal = appl.PrincipalAmount;
+                detail.rate = appl.InterestRate;
+                detail.tenor = appl.Tenor;
+            }
+
+            return detail;
         }
     }
 }

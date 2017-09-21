@@ -30,6 +30,9 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime CovenantDate { get; set; }
 
+        [Column(TypeName = "date")]
+        public DateTime? NextCovenantDate { get; set; }
+
         public int CompanyId { get; set; }
 
         public int CreatedBy { get; set; }

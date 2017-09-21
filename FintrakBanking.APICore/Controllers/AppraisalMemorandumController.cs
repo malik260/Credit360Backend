@@ -144,5 +144,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("appraisal-memorandum/loan-detail/{loanApplicationId}")]
+        public HttpResponseMessage GetApprovedLoanDetail(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetApprovedLoanDetail(loanApplicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

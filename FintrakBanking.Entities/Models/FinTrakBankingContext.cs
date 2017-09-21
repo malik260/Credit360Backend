@@ -214,7 +214,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
         public virtual DbSet<tbl_COT> tbl_COT { get; set; }
         public virtual DbSet<tbl_Loan_Document_Type> tbl_Loan_Document_Type { get; set; }
-        public virtual DbSet<tbl_LoanDetails> tbl_LoanDetails { get; set; }
         public virtual DbSet<tbl_Account_Category> tbl_Account_Category { get; set; }
         public virtual DbSet<tbl_Account_Type> tbl_Account_Type { get; set; }
         public virtual DbSet<tbl_Charge_Range> tbl_Charge_Range { get; set; }
@@ -1205,6 +1204,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.ScheduleDayInterestTypeId)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<tbl_Department>()
+                .HasMany(e => e.tbl_Job_Request)
+                .WithRequired(e => e.tbl_Department)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<tbl_Fee>()
                 .HasMany(e => e.tbl_Temp_Product_Fee)
                 .WithRequired(e => e.tbl_Fee)
@@ -1327,10 +1331,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Job_Request_Document_Mapping)
                 .WithRequired(e => e.tbl_Job_Request)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Job_Request>()
-                .HasOptional(e => e.tbl_Job_Request1)
-                .WithRequired(e => e.tbl_Job_Request2);
 
             modelBuilder.Entity<tbl_Job_Request_Status>()
                 .HasMany(e => e.tbl_Job_Request)
@@ -1648,6 +1648,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Staff1)
                 .HasForeignKey(e => e.ReceiverStaffId)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Staff>()
+                .HasMany(e => e.tbl_Job_Request2)
+                .WithOptional(e => e.tbl_Staff2)
+                .HasForeignKey(e => e.ReassignedTo);
 
             modelBuilder.Entity<tbl_Staff>()
                 .HasMany(e => e.tbl_Notification_Log)
@@ -2974,22 +2979,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_COT>()
                 .Property(e => e.COTCreatedBy)
                 .IsUnicode(false);
-
-            modelBuilder.Entity<tbl_LoanDetails>()
-                .Property(e => e.PrincipalAmount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<tbl_LoanDetails>()
-                .Property(e => e.EquityContribution)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<tbl_LoanDetails>()
-                .Property(e => e.OutstandingPrincipal)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<tbl_LoanDetails>()
-                .Property(e => e.ScheduledPrepaymentAmount)
-                .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Account_Category>()
                 .HasMany(e => e.tbl_Charge_Fee)

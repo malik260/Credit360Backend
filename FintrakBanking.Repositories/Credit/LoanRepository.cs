@@ -613,18 +613,21 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new Exception("Approval route have not been defined for this operation");
             }
-            //PostLoanDisbursment(entity);
-            //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            //inputTransactions.Add(BuildLoanDisbursmentPosting(entity));
-
-            //inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
-
-            //financeTransaction.PostTransaction(inputTransactions);
         }
 
 
+        private void DisburseLoan(LoanViewModel entity)
+        {
+            //PostLoanDisbursment(entity);
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
+            inputTransactions.Add(BuildLoanDisbursmentPosting(entity));
+
+            inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
+
+            financeTransaction.PostTransaction(inputTransactions);
+        }
 
 
 
@@ -950,17 +953,17 @@ namespace FintrakBanking.Repositories.Credit
             loanTransaction.companyId = model.companyId;
 
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = model.casaAccountId;  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
             debit.sourceReferenceNumber = model.loanReferenceNumber;
-            debit.casaAccountId = casa.CasaAccountId;
+            debit.casaAccountId = null;
             debit.debitAmount = model.principalAmount;
             debit.creditAmount = 0;
             debit.sourceBranchId = model.branchId;
             debit.destinationBranchId = casa.BranchId;
 
-            var repaymentGL = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            var repaymentAccountGL = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = repaymentGL;
+            credit.glAccountId = repaymentAccountGL;
 
             credit.sourceReferenceNumber = model.loanReferenceNumber;
             credit.casaAccountId = casa.CasaAccountId;
@@ -1028,7 +1031,7 @@ namespace FintrakBanking.Repositories.Credit
                 FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
                 credit.glAccountId = feeGL;
                 credit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
-                credit.casaAccountId = casa.CasaAccountId;
+                credit.casaAccountId = null;
                 credit.debitAmount = 0;
                 credit.creditAmount = (decimal)item.amount;
                 credit.sourceBranchId = loanDetails.branchId;

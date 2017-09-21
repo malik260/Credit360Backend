@@ -76,7 +76,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 this.currentStateId = request.ApprovalStateId;
                 this.requestStaffId = request.RequestStaffId;
-                if (LastActionIsByStaff()) { return false; }
+                //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
                 this.fromLevelId = request.ToApprovalLevelId;
             } else
             {
