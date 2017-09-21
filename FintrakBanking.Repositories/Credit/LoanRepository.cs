@@ -1837,7 +1837,6 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.tbl_Loan_Application
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
-                        //join custgrp in context.tbl_Customer_Group on a.CustomerGroupId equals custgrp.CustomerGroupId
                         where a.CompanyId == companyId && a.Deleted == false && c.IsCompleted == true 
                             && a.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
@@ -1861,7 +1860,6 @@ namespace FintrakBanking.Repositories.Credit
                             branchName = a.tbl_Branch.BranchName,
                             subSectorId = a.SubSectorId,
 
-                            //tenor = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().Tenor,
                             tenor = a.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
@@ -1885,12 +1883,10 @@ namespace FintrakBanking.Repositories.Credit
                             misCode = a.MISCode,
                             teamMisCode = a.TeamMISCode,
 
-                            //interestRate = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().InterestRate,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
                             submittedForAppraisal = a.SubmittedForAppraisal,
-                            //principalAmount = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().PrincipalAmount,
                             principalAmount = a.PrincipalAmount,
 
                             createdBy = a.CreatedBy,
