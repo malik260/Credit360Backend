@@ -21,12 +21,12 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using XLeratorDLL_financial;
+//using XLeratorDLL_financial;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    using FinancialTypes = XLeratorDLL_financial.FinancialTypes;
-    using wct = XLeratorDLL_financial.XLeratorDLL_financial;
+    //using FinancialTypes = XLeratorDLL_financial.FinancialTypes;
+    //using wct = XLeratorDLL_financial.XLeratorDLL_financial;
 
     public class LoanRepository : ILoanRepository
     {
@@ -202,16 +202,18 @@ namespace FintrakBanking.Repositories.Credit
 
         //}
 
+        
+
 
         public async Task<string> AddLoanBooking(LoanViewModel entity)
         {
             //...................CHECK IF THE LOAN RECORD IS A SCHEDULED LOAN..................//
-            if (entity.productTypeId == (int)ScheduleTypeEnum.TermLoan || entity.productTypeId == (int)ScheduleTypeEnum.SelfLiquidating)
+            if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating)
             {
                 return this.AddTermLoan(entity).Result;
             }
             // ...............CHECK IF THE LOAN RECORD IS ANON SCHEDULED LOAN....................//
-            else if (entity.productTypeId != (int)ScheduleTypeEnum.RevolvingLoan)
+            else if (entity.productTypeId != (int)LoanProductTypeEnum.RevolvingLoan)
             {
                 var revolvingLoanInput = entity.revolvingLoanInput;
 
@@ -221,7 +223,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 return await addRevolvingLoan(revolvingLoanInput);
             }
-            else if (entity.productTypeId != (int)ScheduleTypeEnum.ContingentLiability)
+            else if (entity.productTypeId != (int)LoanProductTypeEnum.ContingentLiability)
             {
                 var contingentLoanInput = entity.contingentLoanInput;
 
@@ -293,7 +295,7 @@ namespace FintrakBanking.Repositories.Credit
             };
             //end of Audit section -------------------------------
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.TermLoanBooking, entity.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.RevolvingLoanBooking, entity.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -394,7 +396,7 @@ namespace FintrakBanking.Repositories.Credit
             };
             //end of Audit section -------------------------------
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.TermLoanBooking, entity.companyId))
+            if (workFlow.CheckRouteForOperation((int)OperationsEnum.ContigentLoanBooking, entity.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -402,13 +404,14 @@ namespace FintrakBanking.Repositories.Credit
                     {
 
                         var loan = context.tbl_Loan_Contingent.Add(data);
+                        context.tbl_Audit.Add(audit);
+                        var dataCount = context.SaveChanges();
+
                         AddLoanCovenantDetail(entity.loanCovenant, loan.ContingentLoanId, (short)entity.productTypeId);
                         AddLoanGuarantor(entity.loanGuarantor, loan.ContingentLoanId, (short)entity.productTypeId);
                         AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.ContingentLoanId, (short)entity.productTypeId);
                         AddLoanFees(entity.loanChargeFee, loan.ContingentLoanId, (short)entity.productTypeId);
-                        context.tbl_Audit.Add(audit);
-
-                        var dataCount = context.SaveChanges();
+                        
 
                         var approvalModel = new ApprovalViewModel
                         {
@@ -570,7 +573,7 @@ namespace FintrakBanking.Repositories.Credit
                         var loan = context.tbl_Loan.Add(data);
                         context.tbl_Audit.Add(audit);
 
-                        var dataCount = context.SaveChanges();
+                        var dataCount = await context.SaveChangesAsync();
                         this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
                         var approvalModel = new ApprovalViewModel
@@ -1651,7 +1654,38 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId)
+        public IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
+        {
+            return (from data in context.tbl_Loan_Application_Collateral
+                    where data.LoanApplicationId == loanApplicationId && data.Deleted == false
+                    select new LoanApplicationCollateralViewModel()
+                    {
+                        customerCollateralId = data.CustomerCollateralId,
+                        latitude = data.Latitude,
+                        longitude = data.Longitude,
+                        nearestBusStop = data.NearestBusStop,
+                        nearestLandmark = data.NearestLandmark,
+                        locationAddress = data.LocationAddress,
+                        documentTitle = data.DocumentTitle,
+                        otherInformations = data.OtherInformations
+                    });
+        }
+
+        public AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId)
+        {
+             return (from data in context.tbl_Credit_Appraisal_Memorandum_Loan_Detail
+                          where data.AppraisalMemorandumId == appraisalMemorandumId
+                     orderby data.AppraisalMemorandumLoanDetailId descending
+                          select new AppraisalMemorandumLoanDetailViewModel()
+                          {
+                              interestRate = data.InterestRate,
+                              principalAmount = data.PrincipalAmount,
+                              tenor = data.Tenor,
+                          }).FirstOrDefault();
+        }
+
+
+        public IEnumerable<CamProcessedLoanViewModel> GetAppraisalMemorandumProcessedLoanApplications(int companyId)
         {
             var data = (from a in context.tbl_Loan_Application
                         join c in context.tbl_Credit_Appraisal_Memorandum
@@ -1680,6 +1714,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchName = a.tbl_Branch.BranchName,
                             subSectorId = a.SubSectorId,
 
+                            //tenor = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().Tenor,
                             tenor = a.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
@@ -1693,6 +1728,7 @@ namespace FintrakBanking.Repositories.Credit
                             //loanStatusId = a.LoanStatusId,
                             //loanStatusName = a.tbl_Loan_Type.AccountStatus,
                             camReference = c.CAMRef,
+                            appraisalMemorandumId = c.AppraisalMemorandumId,
                             loanDetails = c.LoanDetails,
                             productId = (short)a.ProductId,
                             productTypeId = a.tbl_Product.ProductTypeId,
@@ -1702,10 +1738,12 @@ namespace FintrakBanking.Repositories.Credit
                             misCode = a.MISCode,
                             teamMisCode = a.TeamMISCode,
 
+                            //interestRate = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().InterestRate,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
                             submittedForAppraisal = a.SubmittedForAppraisal,
+                            //principalAmount = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().PrincipalAmount,
                             principalAmount = a.PrincipalAmount,
 
                             createdBy = a.CreatedBy,

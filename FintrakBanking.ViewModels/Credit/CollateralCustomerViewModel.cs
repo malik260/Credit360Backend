@@ -10,9 +10,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralId { get; set; }
         public int detailId { get; set; }
         public int collateralTypeId { get; set; }
+        public string collateralTypeName { get; set; }
         public short collateralSubTypeId { get; set; }
         public int customerId { get; set; }
         public short currencyId { get; set; }
+        public string currency { get; set; }
         public string collateralCode { get; set; }
         public string camRefNumber { get; set; }
         public bool allowSharing { get; set; }
@@ -26,7 +28,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         // insurance
         public string referenceNumber { get; set; }
-        public decimal coverageAmount { get; set; }
+        public decimal sumInsured { get; set; }
         public string insuranceCompany { get; set; }
         public DateTime startDate { get; set; }
         public DateTime expiryDate { get; set; }
@@ -136,7 +138,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         // stock
         public int? collateralStockId { get; set; }
-        public string companyName { get; set; }
+        //public string companyName { get; set; }
         public int shareQuantity { get; set; }
         public decimal marketPrice { get; set; }
         public decimal amount { get; set; }
@@ -440,6 +442,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string cityName { get; set; }
         public short? countryId { get; set; }
         public string countryName { get; set; }
+        public string accountNumber { get; set; }
+        public string valuerBVN { get; set; }
         public string emailAddress { get; set; }
         public string phoneNumber { get; set; }
         public string address { get; set; }

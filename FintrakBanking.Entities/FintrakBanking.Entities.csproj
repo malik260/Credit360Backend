@@ -61,6 +61,9 @@
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
+    <Compile Include="Models\tbl_AccreditedConsultant.cs" />
+    <Compile Include="Models\tbl_AccreditedConsultant_State.cs" />
+    <Compile Include="Models\tbl_AccreditedConsultant_Type.cs" />
     <Compile Include="Models\tbl_Application_Setup.cs" />
     <Compile Include="Models\tbl_Approval.cs" />
     <Compile Include="Models\tbl_Approval_Group.cs" />
@@ -92,6 +95,7 @@
     <Compile Include="Models\tbl_Checklist_TargetType.cs" />
     <Compile Include="Models\tbl_City.cs" />
     <Compile Include="Models\tbl_City_Class.cs" />
+    <Compile Include="Models\tbl_Collateral_Auditors.cs" />
     <Compile Include="Models\tbl_Collateral_Casa.cs" />
     <Compile Include="Models\tbl_Collateral_Customer.cs" />
     <Compile Include="Models\tbl_Collateral_Deposit.cs" />
@@ -105,6 +109,8 @@
     <Compile Include="Models\tbl_Collateral_Plant_And_Equipment.cs" />
     <Compile Include="Models\tbl_Collateral_Policy.cs" />
     <Compile Include="Models\tbl_Collateral_PreciousMetal.cs" />
+    <Compile Include="Models\tbl_Collateral_Principals.cs" />
+    <Compile Include="Models\tbl_Collateral_RecoveryAgents.cs" />
     <Compile Include="Models\tbl_Collateral_SeniorityOfClaims.cs" />
     <Compile Include="Models\tbl_Collateral_Stock.cs" />
     <Compile Include="Models\tbl_Collateral_Type.cs" />

@@ -207,7 +207,7 @@
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
-                      <Format>0.00;(0.00)</Format>
+                      <Format>0.00;(0.00) %</Format>
                       <TextDecoration>None</TextDecoration>
                       <Color>#000000</Color>
                     </Style>
@@ -255,7 +255,7 @@
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
-                      <Format>0.00;(0.00)</Format>
+                      <Format>0.00;(0.00) %</Format>
                     </Style>
                   </TextRun>
                 </TextRuns>

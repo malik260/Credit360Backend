@@ -351,6 +351,8 @@ namespace FintrakBanking.Repositories.Credit
                 collateralSubTypeId = x.CollateralSubTypeId,
                 customerId = x.CustomerId,
                 currencyId = x.CurrencyId,
+                currency = x.tbl_Currency.CurrencyName,
+                collateralTypeName = x.tbl_Collateral_Type.CollateralTypeName,
                 collateralCode = x.CollateralCode,
                 camRefNumber = x.CamRefNumber,
                 allowSharing = x.AllowSharing,

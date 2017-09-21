@@ -9,6 +9,7 @@ using FintrakBanking.ViewModels.Finance;
 using System.Collections.Generic;
 using System.Web;
 using System.Linq;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -17,14 +18,19 @@ namespace FintrakBanking.APICore.Controllers
     public class FinanceTransactionController : ApiControllerBase
     {
         private IFinanceTransactionRepository repo;
+        private ILoanOperationsRepository repoLoan;
 
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
          
 
-        public FinanceTransactionController(IFinanceTransactionRepository _repo)
+        public FinanceTransactionController(
+            IFinanceTransactionRepository _repo,
+            ILoanOperationsRepository _repoLoan
+            )
         {
             this.repo = _repo;
+            this.repoLoan = _repoLoan;
         }
 
         [HttpGet]
@@ -81,7 +87,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.userBranchId = (short)token.GetBranchId;
 
 
-                var response = repo.AddCollateralSearchLien(model);
+                var response = repoLoan.AddCollateralSearchLien(model);
                 if (response == false)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });

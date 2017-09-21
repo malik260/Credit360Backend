@@ -6,33 +6,31 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Valuer")]
-    public partial class tbl_Collateral_Valuer
+    [Table("credit.tbl_Collateral_Principals")]
+    public partial class tbl_Collateral_Principals
     {
         [Key]
-        public short CollateralValuerId { get; set; }
+        public short PrincipalsId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ValuerLicenceNumber { get; set; }
+        public string PrincipalsRegNumber { get; set; }
 
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
 
-        public short? ValuerTypeId { get; set; }
-
         public int? CompanyId { get; set; }
 
         public short? CityId { get; set; }
-
-        public short? CountryId { get; set; }
 
         [StringLength(50)]
         public string AccountNumber { get; set; }
 
         [StringLength(50)]
-        public string ValuerBVN { get; set; }
+        public string PrincipalsBVN { get; set; }
+
+        public short? CountryId { get; set; }
 
         [StringLength(50)]
         public string EmailAddress { get; set; }
@@ -56,7 +54,5 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        public virtual tbl_Collateral_Valuer_Type tbl_Collateral_Valuer_Type { get; set; }
     }
 }

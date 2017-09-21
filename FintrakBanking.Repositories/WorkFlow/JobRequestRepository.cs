@@ -18,31 +18,33 @@ namespace FintrakBanking.Repositories.WorkFlow
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
 
-        public JobRequestRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+        public JobRequestRepository(FinTrakBankingContext _context, IGeneralSetupRepository _general, IAuditTrailRepository _audit)
         {
-            this.context = context;
-            this.general = general;
-            this.audit = audit;
+            this.context = _context;
+            this.general = _general;
+            this.audit = _audit;
         }
 
         public bool AddJobRequest(JobRequestViewModel model)
         {
             var date = DateTime.Now;
             var applicationDate = general.GetApplicationDate();
+            model.departmentId = (short)context.tbl_Staff.Where(x => x.StaffId == model.createdBy).FirstOrDefault().DepartmentId;
             var data = new tbl_Job_Request
             {
                 JobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
                 JobTypeId = model.jobTypeId,
                 SenderStaffId = model.createdBy,
                 ReceiverStaffId = model.receiverStaffId,
-                DepartmentId = (short)model.departmentId,
+                DepartmentId = model.departmentId,
+                ReassignedTo = model.reassignedTo,
+                IsReassigned = model.isReassigned,
+                IsAcknowledged = model.isAcknowledged,
                 TargetId = model.targetId,
-                OperationsId = (int)OperationsEnum.CAM, // cam for now
-                RequestStatusId = 1, // status enum
+                OperationsId = model.operationsId, // cam enum
+                RequestStatusId = model.requestStatusId, // status enum
                 SenderComment = model.senderComment,
-                IsReassigned = false,
-                IsAcknowledged = false,
-                //ResponseComment = model.responseComment,
+                ResponseComment = model.responseComment,
                 ArrivalDate = applicationDate,
                 SystemArrivalDate = date,
             };
@@ -241,7 +243,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 .Where(x => x.c.a.OperationId == operationId && x.d.StaffId == staffId)
                     .Select(x => x.c.b.GroupOperationMappingId);
 
-            return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.staffApprovalGroupId)).OrderByDescending(x => x.jobRequestId).ToList();
+            return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.departmentId)).OrderByDescending(x => x.jobRequestId).ToList();
         }
 
         public IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId)

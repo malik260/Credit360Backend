@@ -15,11 +15,9 @@ namespace FintrakBanking.Entities.Models
 
         public int CompanyId { get; set; }
 
-        public double AuthorisedOverdraft_InterestRate { get; set; }
+        public double UnauthorisedOverdraft_InterestRate { get; set; }
 
-        public double DefaultPastDue_InterestRate { get; set; }
-
-        public int RepaymentGracePeriod { get; set; }
+        public double PastDueInDefault_InterestRate { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
     }

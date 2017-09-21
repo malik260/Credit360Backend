@@ -267,6 +267,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string loanDetails { get; set; }
         public string camReference { get; set; }
+        public int appraisalMemorandumId { get; set; }
         public string customerCode { get; set; }
         public int casaAccountId { get; set; }
         public string loanStatusName { get; set; }
@@ -274,6 +275,22 @@ namespace FintrakBanking.ViewModels.Credit
         public string productTypeName { get; set; }
         public int customerSensitivityLevelId { get; set; }
     }
+
+    public class AppraisalMemorandumLoanDetailViewModel
+    {
+        public int appraisalMemorandumLoanDetailId { get; set; }
+
+        public int appraisalMemorandumId { get; set; }
+
+        public decimal principalAmount { get; set; }
+
+        public double interestRate { get; set; }
+
+        public int tenor { get; set; }
+
+    }
+
+    
     public class LoanChargeFeeViewModel : ChargeRangeViewModel
 
     {
@@ -344,7 +361,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short productId { get; set; }
 
-        public int companyId { get; set; }
+        //public int companyId { get; set; }
 
         public short branchId { get; set; }
 
