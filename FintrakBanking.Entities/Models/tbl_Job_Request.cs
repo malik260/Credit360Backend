@@ -38,7 +38,6 @@ namespace FintrakBanking.Entities.Models
 
         public short DepartmentId { get; set; }
 
-
         public int OperationsId { get; set; }
 
         public short RequestStatusId { get; set; }

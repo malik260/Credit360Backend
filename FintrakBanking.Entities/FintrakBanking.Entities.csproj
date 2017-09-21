@@ -57,6 +57,7 @@
     <Compile Include="DocumentModels\tbl_Media_Collateral_Documents.cs" />
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
+    <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
@@ -209,6 +210,7 @@
     <Compile Include="Models\tbl_Loan_Covenant_Type.cs" />
     <Compile Include="Models\tbl_Loan_Document_Type.cs" />
     <Compile Include="Models\tbl_Loan_Fee.cs" />
+    <Compile Include="Models\tbl_Loan_Fee_Schedule.cs" />
     <Compile Include="Models\tbl_Loan_Force_Debit.cs" />
     <Compile Include="Models\tbl_Loan_Guarantor.cs" />
     <Compile Include="Models\tbl_Loan_Operation.cs" />
