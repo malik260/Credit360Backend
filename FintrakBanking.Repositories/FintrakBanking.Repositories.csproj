@@ -107,6 +107,7 @@
     <Compile Include="Setups\Finance\ChartOfAccountRepository.cs" />
     <Compile Include="Setups\Finance\TaxRepository.cs" />
     <Compile Include="Setups\General\AccountSensitivityRepository.cs" />
+    <Compile Include="Setups\General\AccreditedConsultantsRepository.cs" />
     <Compile Include="Setups\General\AuthenticationRepository.cs" />
     <Compile Include="Setups\General\AuthorizationRepository.cs" />
     <Compile Include="Setups\General\BranchRepository.cs" />

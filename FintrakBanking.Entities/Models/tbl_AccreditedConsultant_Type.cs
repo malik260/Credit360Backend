@@ -6,24 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Daily_Accural_Category")]
-    public partial class tbl_Daily_Accural_Category
+    [Table("core.tbl_AccreditedConsultant_Type")]
+    public partial class tbl_AccreditedConsultant_Type
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Daily_Accural_Category()
+        public tbl_AccreditedConsultant_Type()
         {
-            tbl_Daily_Accural = new HashSet<tbl_Daily_Accural>();
+            tbl_AccreditedConsultant = new HashSet<tbl_AccreditedConsultant>();
         }
 
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short CategoryId { get; set; }
+        public int AccreditedConsultantId { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string CategoryName { get; set; }
+        [StringLength(100)]
+        public string Name { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Daily_Accural> tbl_Daily_Accural { get; set; }
+        public virtual ICollection<tbl_AccreditedConsultant> tbl_AccreditedConsultant { get; set; }
     }
 }

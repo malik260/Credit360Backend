@@ -251,7 +251,7 @@ namespace FintrakBanking.Repositories.Credit
                 CollateralCustomerId = collateralId,
                 PolicyReferenceNumber = entity.referenceNumber,
                 InsuranceCompanyName = entity.insuranceCompany,
-                CoverageAmount = entity.coverageAmount,
+                SumInsured = entity.sumInsured,
                 StartDate = entity.startDate,
                 EndDate = entity.expiryDate,
             });
@@ -265,7 +265,7 @@ namespace FintrakBanking.Repositories.Credit
 
             collateral.PolicyReferenceNumber = entity.referenceNumber;
             collateral.InsuranceCompanyName = entity.insuranceCompany;
-            collateral.CoverageAmount = entity.coverageAmount;
+            collateral.SumInsured = entity.sumInsured;
             collateral.StartDate = entity.startDate;
             collateral.EndDate = entity.expiryDate;
         }
@@ -365,7 +365,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 details.referenceNumber = insurance.PolicyReferenceNumber;
                 details.insuranceCompany = insurance.InsuranceCompanyName;
-                details.coverageAmount = insurance.CoverageAmount;
+               details.sumInsured = insurance.SumInsured;
                 details.startDate = insurance.StartDate;
                 details.expiryDate = insurance.EndDate;
             }
@@ -1479,6 +1479,8 @@ namespace FintrakBanking.Repositories.Credit
                 ValuerLicenceNumber = entity.valuerLicenceNumber,
                 ValuerTypeId = entity.valuerTypeId,
                 CountryId = entity.countryId,
+                AccountNumber = entity.accountNumber,
+                ValuerBVN = entity.valuerBVN,
                 EmailAddress = entity.emailAddress,
                 PhoneNumber = entity.phoneNumber,
                 Address = entity.address,
@@ -1492,7 +1494,7 @@ namespace FintrakBanking.Repositories.Credit
             // Audit Section ----------------------------
             var audit = new tbl_Audit
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralTypeAdded,
+                AuditTypeId = (short)AuditTypeEnum.CollateralValuerAdded,
                 StaffId = entity.createdBy,
                 BranchId = (short)entity.userBranchId,
                 Detail = $"Added tbl_Collateral_Valuer with Id: {entity.collateralValuerId} ",
@@ -1516,6 +1518,9 @@ namespace FintrakBanking.Repositories.Credit
                 valuer.ValuerLicenceNumber = entity.valuerLicenceNumber;
                 valuer.ValuerTypeId = entity.valuerTypeId;
                 valuer.CountryId = entity.countryId;
+                valuer.AccountNumber = entity.accountNumber;
+                valuer.ValuerBVN = entity.valuerBVN;
+                valuer.EmailAddress = entity.emailAddress;
                 valuer.EmailAddress = entity.emailAddress;
                 valuer.PhoneNumber = entity.phoneNumber;
                 valuer.Address = entity.address;
@@ -1592,6 +1597,13 @@ namespace FintrakBanking.Repositories.Credit
                         cityId = m.CityId,
                         name = m.Name,
                         valuerLicenceNumber = m.ValuerLicenceNumber,
+                        valuerTypeId = m.ValuerTypeId,
+                        countryId = m.CountryId,
+                        valuerBVN = m.ValuerBVN,
+                        accountNumber = m.AccountNumber,
+                        emailAddress = m.EmailAddress,
+                        phoneNumber = m.PhoneNumber,
+                        address = m.Address
                     });
         }
 

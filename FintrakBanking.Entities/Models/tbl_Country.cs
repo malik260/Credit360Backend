@@ -14,6 +14,7 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Company = new HashSet<tbl_Company>();
             tbl_State = new HashSet<tbl_State>();
+            tbl_Public_Holiday = new HashSet<tbl_Public_Holiday>();
             tbl_Region = new HashSet<tbl_Region>();
         }
 
@@ -24,11 +25,17 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string Name { get; set; }
 
+        [StringLength(10)]
+        public string CountryCode { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Company> tbl_Company { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_State> tbl_State { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Public_Holiday> tbl_Public_Holiday { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Region> tbl_Region { get; set; }

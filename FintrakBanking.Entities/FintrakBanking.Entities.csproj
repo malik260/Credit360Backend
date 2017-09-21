@@ -61,6 +61,9 @@
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
+    <Compile Include="Models\tbl_AccreditedConsultant.cs" />
+    <Compile Include="Models\tbl_AccreditedConsultant_State.cs" />
+    <Compile Include="Models\tbl_AccreditedConsultant_Type.cs" />
     <Compile Include="Models\tbl_Application_Setup.cs" />
     <Compile Include="Models\tbl_Approval.cs" />
     <Compile Include="Models\tbl_Approval_Group.cs" />
@@ -92,10 +95,10 @@
     <Compile Include="Models\tbl_Checklist_TargetType.cs" />
     <Compile Include="Models\tbl_City.cs" />
     <Compile Include="Models\tbl_City_Class.cs" />
+    <Compile Include="Models\tbl_Collateral_Auditors.cs" />
     <Compile Include="Models\tbl_Collateral_Casa.cs" />
     <Compile Include="Models\tbl_Collateral_Customer.cs" />
     <Compile Include="Models\tbl_Collateral_Deposit.cs" />
-    <Compile Include="Models\tbl_Collateral_Deposit_Cash_Type.cs" />
     <Compile Include="Models\tbl_Collateral_Documents.cs" />
     <Compile Include="Models\tbl_Collateral_Gaurantee.cs" />
     <Compile Include="Models\tbl_Collateral_Immovable_Property.cs" />
@@ -106,6 +109,8 @@
     <Compile Include="Models\tbl_Collateral_Plant_And_Equipment.cs" />
     <Compile Include="Models\tbl_Collateral_Policy.cs" />
     <Compile Include="Models\tbl_Collateral_PreciousMetal.cs" />
+    <Compile Include="Models\tbl_Collateral_Principals.cs" />
+    <Compile Include="Models\tbl_Collateral_RecoveryAgents.cs" />
     <Compile Include="Models\tbl_Collateral_SeniorityOfClaims.cs" />
     <Compile Include="Models\tbl_Collateral_Stock.cs" />
     <Compile Include="Models\tbl_Collateral_Type.cs" />
@@ -161,8 +166,8 @@
     <Compile Include="Models\tbl_Custom_Field_Data_Upload.cs" />
     <Compile Include="Models\tbl_Custom_Field_Option.cs" />
     <Compile Include="Models\tbl_Custom_HostPage.cs" />
-    <Compile Include="Models\tbl_Daily_Accural.cs" />
-    <Compile Include="Models\tbl_Daily_Accural_Category.cs" />
+    <Compile Include="Models\tbl_Daily_Accrual.cs" />
+    <Compile Include="Models\tbl_Daily_Accrual_Category.cs" />
     <Compile Include="Models\tbl_Day_Count_Convention.cs" />
     <Compile Include="Models\tbl_Day_Interest_Type.cs" />
     <Compile Include="Models\tbl_Deal_Classification.cs" />
@@ -198,8 +203,10 @@
     <Compile Include="Models\tbl_Loan_Application_Collateral.cs" />
     <Compile Include="Models\tbl_Loan_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
+    <Compile Include="Models\tbl_Loan_Change_Type.cs" />
     <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
+    <Compile Include="Models\tbl_Loan_Contingent.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Detail.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Type.cs" />
     <Compile Include="Models\tbl_Loan_Document_Type.cs" />
@@ -211,11 +218,15 @@
     <Compile Include="Models\tbl_Loan_Preliminary_Evaluation.cs" />
     <Compile Include="Models\tbl_Loan_PrudentialGuideline.cs" />
     <Compile Include="Models\tbl_Loan_Relationship_Officer_History.cs" />
+    <Compile Include="Models\tbl_Loan_Revolving.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Category.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Daily.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Daily_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Irregular_Input.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Periodic.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Periodic_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Type.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Type_Product_Type_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Status.cs" />
     <Compile Include="Models\tbl_Loan_Transaction_Type.cs" />
     <Compile Include="Models\tbl_Loan_Type.cs" />
@@ -246,6 +257,7 @@
     <Compile Include="Models\tbl_Profile_Priviledge_Activity.cs" />
     <Compile Include="Models\tbl_Profile_User.cs" />
     <Compile Include="Models\tbl_Profile_UserGroup.cs" />
+    <Compile Include="Models\tbl_Public_Holiday.cs" />
     <Compile Include="Models\tbl_Region.cs" />
     <Compile Include="Models\tbl_Risk_Assessment.cs" />
     <Compile Include="Models\tbl_Risk_Assessment_Index.cs" />
