@@ -20,15 +20,16 @@ namespace FintrakBanking.Repositories.Finance
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
-        private ILoanOperationsRepository creditOperations;
+        //private ILoanOperationsRepository creditOperations;
 
         public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, 
-                                            ILoanOperationsRepository _creditOperations, FinTrakBankingContext _context)
+                                            //ILoanOperationsRepository _creditOperations, 
+                                            FinTrakBankingContext _context)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
             auditTrail = _auditTrail;
-            this.creditOperations = _creditOperations;
+            //this.creditOperations = _creditOperations;
         }
 
 
@@ -43,7 +44,7 @@ namespace FintrakBanking.Repositories.Finance
                 SourceReferenceNumber = model.sourceReferenceNumber,
                 BranchId = model.userBranchId,
                 CompanyId = model.companyId,
-                LienCreditAmount = creditOperations.GetCollateralSearchChargeAmount(model.stateId),
+                LienCreditAmount = 1000000,
                 LienDebitAmount = 0,
                 LienTypeId = (short) LienTypeEnum.CollateralSearch,
                 CreatedBy = model.createdBy,

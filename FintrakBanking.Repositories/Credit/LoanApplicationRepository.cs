@@ -28,14 +28,15 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkFlowRepository workFlow;
         private ICasaRepository casa;
         private ICustomerCollateralRepository collateral;
-        private IFinanceTransactionRepository finance;
+        //private IFinanceTransactionRepository finance;
 
         public LoanApplicationRepository(IAuditTrailRepository _auditTrail, ICasaRepository _casa, ICustomerCollateralRepository _collateral,
-                                    IGeneralSetupRepository _genSetup, IWorkFlowRepository _workFlow, IFinanceTransactionRepository _finance,
+                                    IGeneralSetupRepository _genSetup, IWorkFlowRepository _workFlow, 
+                                    //IFinanceTransactionRepository _finance,
         FinTrakBankingContext _context)
         {
             this.collateral = _collateral;
-            this.finance = _finance;
+            //this.finance = _finance;
             this.context = _context;
             this.casa = _casa;
             auditTrail = _auditTrail;
