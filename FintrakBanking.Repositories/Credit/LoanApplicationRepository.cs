@@ -30,16 +30,21 @@ namespace FintrakBanking.Repositories.Credit
         private ICustomerCollateralRepository collateral;
         private IFinanceTransactionRepository finance;
 
-        public LoanApplicationRepository(IAuditTrailRepository _auditTrail, ICasaRepository _casa, ICustomerCollateralRepository _collateral,
-                                    IGeneralSetupRepository _genSetup, IWorkFlowRepository _workFlow, IFinanceTransactionRepository _finance,
+        public LoanApplicationRepository(
+            IAuditTrailRepository _auditTrail,
+            IGeneralSetupRepository _genSetup,
+        ICasaRepository _casa,
+        ICustomerCollateralRepository _collateral,
+        IWorkFlowRepository _workFlow,
+        IFinanceTransactionRepository _finance,
         FinTrakBankingContext _context)
         {
-            this.collateral = _collateral;
-            this.finance = _finance;
             this.context = _context;
-            this.casa = _casa;
             auditTrail = _auditTrail;
             this.genSetup = _genSetup;
+            this.casa = _casa;
+            this.collateral = _collateral;
+            this.finance = _finance;
             workFlow = _workFlow;
         }
 
@@ -357,6 +362,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return response > 0;
         }
+
         private void LoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity)
         {
             foreach (var item in entity)

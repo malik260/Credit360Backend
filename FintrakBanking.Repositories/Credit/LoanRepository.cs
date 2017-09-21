@@ -21,12 +21,12 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using XLeratorDLL_financial;
+//using XLeratorDLL_financial;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    using FinancialTypes = XLeratorDLL_financial.FinancialTypes;
-    using wct = XLeratorDLL_financial.XLeratorDLL_financial;
+    //using FinancialTypes = XLeratorDLL_financial.FinancialTypes;
+    //using wct = XLeratorDLL_financial.XLeratorDLL_financial;
 
     public class LoanRepository : ILoanRepository
     {
