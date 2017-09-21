@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CollateralCustomerId { get; set; }
 
+        public short CollateralSubTypeId { get; set; }
+
         public bool IsOwnedByCustomer { get; set; }
 
         [Required]

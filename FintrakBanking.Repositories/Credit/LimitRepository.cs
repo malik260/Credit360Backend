@@ -6,7 +6,6 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
@@ -17,23 +16,22 @@ namespace FintrakBanking.Repositories.Credit
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public class LimitRepository : ILimitRepository
     {
-        private FinTrakBankingContext context;
-        private IGeneralSetupRepository _genSetup;
-        private IAuditTrailRepository auditTrail;
+        private readonly FinTrakBankingContext _context;
+        private readonly IGeneralSetupRepository _genSetup;
+        private readonly IAuditTrailRepository _auditTrail;
 
-        public LimitRepository(FinTrakBankingContext _context,
-                                IGeneralSetupRepository genSetup, 
-                                IAuditTrailRepository _auditTrail)
+        public LimitRepository(FinTrakBankingContext context, IGeneralSetupRepository genSetup,
+                                IAuditTrailRepository auditTrail)
         {
-            this.context = _context;
-            this._genSetup = genSetup;
-            auditTrail = _auditTrail;
+            _context = context;
+            _genSetup = genSetup;
+            _auditTrail = auditTrail;
         }
 
         #region Limits
         public IEnumerable<LimitViewModel> GetAllLimit(int companyId)
         {
-            var data = (from a in context.tbl_Limit
+            var data = (from a in _context.tbl_Limit
                         where a.Deleted == false && a.CompanyId == companyId
                         orderby a.LimitValueTypeId
                         select new LimitViewModel
@@ -54,7 +52,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<LimitViewModel> GetLimitById(int limitId)
         {
-            var data = (from a in context.tbl_Limit
+            var data = (from a in _context.tbl_Limit
                         where a.Deleted == false && a.LimitId == limitId
                         orderby a.LimitValueTypeId
                         select new LimitViewModel
@@ -81,19 +79,19 @@ namespace FintrakBanking.Repositories.Credit
                 LimitValueTypeId = model.limitValueTypeId,
                 LimitMetricId = model.limitMetricId,
                 CompanyId = model.companyId,
-                CreatedBy = (int)model.createdBy,
+                CreatedBy = model.createdBy,
                 DateTimeCreated = _genSetup.GetApplicationDate()
             };
 
-            context.tbl_Limit.Add(data);
+            _context.tbl_Limit.Add(data);
 
             // Audit Section ---------------------------
-            
+
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LimitAdded,
                 StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
+                BranchId = model.userBranchId,
                 Detail = $"Added Limit '{ data.LimitName }' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
@@ -101,31 +99,31 @@ namespace FintrakBanking.Repositories.Credit
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            _auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -----------------------
-            return context.SaveChanges() != 0;
+            return _context.SaveChanges() != 0;
         }
 
         public bool UpdateLimit(int limitId, LimitViewModel model)
         {
-            var data = this.context.tbl_Limit.Find(limitId);
+            var data = _context.tbl_Limit.Find(limitId);
             if (data == null) return false;
 
             data.LimitName = model.limitName;
             data.LimitValueTypeId = model.limitValueTypeId;
             data.LimitMetricId = model.limitMetricId;
             data.CompanyId = model.companyId;
-            data.LastUpdatedBy = (int)model.createdBy;
+            data.LastUpdatedBy = model.createdBy;
             data.DateTimeUpdated = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            
+
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LimitUpdated,
                 StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
+                BranchId = model.userBranchId,
                 Detail = $"Updated Limit : '{ data.LimitName }' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
@@ -133,37 +131,40 @@ namespace FintrakBanking.Repositories.Credit
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            _auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -----------------------
-            return context.SaveChanges() != 0;
+            return _context.SaveChanges() != 0;
         }
 
         public bool DeleteLimit(int limitId, UserInfo user)
         {
-            var data = context.tbl_Limit.Find(limitId);
-            data.Deleted = true;
-            data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicationDate();
+            var data = _context.tbl_Limit.Find(limitId);
+            if (data != null)
+            {
+                data.Deleted = true;
+                data.DeletedBy = user.staffId;
+                data.DateTimeDeleted = _genSetup.GetApplicationDate();
+            }
 
             // Audit Section ---------------------------
-            var limit = this.context.tbl_Limit.SingleOrDefault(x => x.LimitId == limitId);
+            var limit = _context.tbl_Limit.SingleOrDefault(x => x.LimitId == limitId);
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LimitDeleted,
                 StaffId = user.staffId,
                 BranchId = (short)user.BranchId,
-                Detail = $"Deleted Limit : '{ limit.LimitName }' ",
+                Detail = $"Deleted Limit : '{ limit?.LimitName }' ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
                 ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            _auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -----------------------
-            return context.SaveChanges() != 0;
+            return _context.SaveChanges() != 0;
         }
         #endregion
 
@@ -171,8 +172,8 @@ namespace FintrakBanking.Repositories.Credit
         #region Limits Details
         public IEnumerable<LimitDetailViewModel> GetAllLimitDetail()
         {
-            var data = (from a in context.tbl_Limit_Detail
-                        where a.Deleted == false 
+            var data = (from a in _context.tbl_Limit_Detail
+                        where a.Deleted == false
                         orderby a.LimitDetailId
                         select new LimitDetailViewModel
                         {
@@ -194,7 +195,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<LimitDetailViewModel> GetLimitDetailById(int limitDetailId)
         {
-            var data = (from a in context.tbl_Limit_Detail
+            var data = (from a in _context.tbl_Limit_Detail
                         where a.Deleted == false && a.LimitDetailId == limitDetailId
                         orderby a.MinimumValue
                         select new LimitDetailViewModel
@@ -225,36 +226,85 @@ namespace FintrakBanking.Repositories.Credit
                 MinimumValue = model.minimumValue,
                 TargetId = model.targetId,
                 LimitFrequencyTypeId = model.limitFrequencyTypeId,
-                CreatedBy = (int)model.createdBy,
+                CreatedBy = model.createdBy,
                 DateTimeCreated = _genSetup.GetApplicationDate()
-        };
+            };
 
-            context.tbl_Limit_Detail.Add(data);
+            _context.tbl_Limit_Detail.Add(data);
 
             // Audit Section ---------------------------
-            var audit_limit_detail = (context.tbl_Limit.FirstOrDefault(x => x.LimitId == model.limitId));
-            var audit_limit_type = (context.tbl_Limit_Type.FirstOrDefault(x => x.LimitTypeId == model.limitTypeId));
+            var auditLimitDetail = _context.tbl_Limit.FirstOrDefault(x => x.LimitId == model.limitId);
+            var auditLimitType = _context.tbl_Limit_Type.FirstOrDefault(x => x.LimitTypeId == model.limitTypeId);
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LimitDetailAdded,
                 StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Limit Deatil for limit: '{ audit_limit_detail.LimitName }' with type: '{audit_limit_type.LimitTypeName}' and values between: '{model.minimumValue} - {model.maximumValue}'",
+                BranchId = model.userBranchId,
+                Detail = $"Added Limit Deatil for limit: '{ auditLimitDetail?.LimitName }' with type: '{auditLimitType?.LimitTypeName}' and values between: '{model.minimumValue} - {model.maximumValue}'",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
                 ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            _auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -----------------------
-            return context.SaveChanges() != 0;
+            return _context.SaveChanges() != 0;
+        }
+
+        public bool AddMultipleLimitDetail(List<LimitDetailViewModel> model)
+        {
+            if (model != null)
+            {
+                foreach (var item in model)
+                {
+                    var data = new tbl_Limit_Detail
+                    {
+                        LimitTypeId = item.limitTypeId,
+                        LimitId = item.limitId,
+                        MaximumValue = item.maximumValue,
+                        MinimumValue = item.minimumValue,
+                        TargetId = item.targetId,
+                        LimitFrequencyTypeId = item.limitFrequencyTypeId,
+                        CreatedBy = item.createdBy,
+                        DateTimeCreated = _genSetup.GetApplicationDate()
+                    };
+
+                    _context.tbl_Limit_Detail.Add(data);
+
+                    // Audit Section ---------------------------
+                    var auditLimitDetail = _context.tbl_Limit.FirstOrDefault(x => x.LimitId == item.limitId);
+                    var auditLimitType = _context.tbl_Limit_Type.FirstOrDefault(x => x.LimitTypeId == item.limitTypeId);
+                    var audit = new tbl_Audit
+                    {
+                        AuditTypeId = (short)AuditTypeEnum.LimitDetailAdded,
+                        StaffId = item.createdBy,
+                        BranchId = item.userBranchId,
+                        Detail =
+                            $"Added Limit Deatil for limit: '{auditLimitDetail?.LimitName}' with type: '{auditLimitType?.LimitTypeName}' and values between: '{item.minimumValue} - {item.maximumValue}'",
+                        IPAddress = item.userIPAddress,
+                        Url = item.applicationUrl,
+                        ApplicationDate = _genSetup.GetApplicationDate(),
+                        SystemDateTime = DateTime.Now
+                    };
+
+                    _auditTrail.AddAuditTrail(audit);
+
+                    //end of Audit section -----------------------
+                }
+
+                return _context.SaveChanges() != 0;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public bool UpdateLimitDetail(int limitDetailId, LimitDetailViewModel model)
         {
-            var data = this.context.tbl_Limit_Detail.Find(limitDetailId);
+            var data = _context.tbl_Limit_Detail.Find(limitDetailId);
             if (data == null) return false;
 
             data.LimitTypeId = model.limitTypeId;
@@ -263,62 +313,63 @@ namespace FintrakBanking.Repositories.Credit
             data.MinimumValue = model.minimumValue;
             data.TargetId = model.targetId;
             data.LimitFrequencyTypeId = model.limitFrequencyTypeId;
-            data.LastUpdatedBy = (int)model.createdBy;
+            data.LastUpdatedBy = model.createdBy;
             data.DateTimeUpdated = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit_limit_detail = (context.tbl_Limit.FirstOrDefault(x => x.LimitId == data.LimitId));
-            var audit_limit_type = (context.tbl_Limit_Type.FirstOrDefault(x => x.LimitTypeId == data.LimitTypeId));
+            var auditLimitDetail = _context.tbl_Limit.FirstOrDefault(x => x.LimitId == data.LimitId);
+            var auditLimitType = _context.tbl_Limit_Type.FirstOrDefault(x => x.LimitTypeId == data.LimitTypeId);
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LimitDetailUpdated,
                 StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated '{ audit_limit_detail.LimitName }' limit on type: '{audit_limit_type.LimitTypeName}' ",
+                BranchId = model.userBranchId,
+                Detail = $"Updated '{ auditLimitDetail?.LimitName }' limit on type: '{auditLimitType?.LimitTypeName}' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
                 ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            _auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -----------------------
-            return context.SaveChanges() != 0;
+            return _context.SaveChanges() != 0;
         }
 
         public bool DeleteLimitDetail(int limitDetailId, UserInfo user)
         {
-            var data = context.tbl_Limit_Detail.Find(limitDetailId);
+            var data = _context.tbl_Limit_Detail.Find(limitDetailId);
+            if (data == null) return _context.SaveChanges() != 0;
             data.Deleted = true;
-            data.DeletedBy = (int)user.staffId;
+            data.DeletedBy = user.staffId;
             data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit_limit_detail = (context.tbl_Limit.FirstOrDefault(x => x.LimitId == data.LimitId));
+            var auditLimitDetail = _context.tbl_Limit.FirstOrDefault(x => x.LimitId == data.LimitId);
             var audit = new tbl_Audit
             {
-                AuditTypeId = (short)AuditTypeEnum.LimitDetailDeleted,
+                AuditTypeId = (short) AuditTypeEnum.LimitDetailDeleted,
                 StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Limit detail '{ audit_limit_detail.LimitName }'. ",
+                BranchId = (short) user.BranchId,
+                Detail = $"Deleted Limit detail '{auditLimitDetail?.LimitName}'. ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
                 ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            _auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -----------------------
-            return context.SaveChanges() != 0;
+            return _context.SaveChanges() != 0;
         }
         #endregion
 
         #region Limits Metric
         public IEnumerable<LimitMetricViewModel> GetAllLimitMetric()
         {
-            var data = (from a in context.tbl_Limit_Metric
+            var data = (from a in _context.tbl_Limit_Metric
                             //where a.Deleted == false
                         orderby a.LimitMetricId
                         select new LimitMetricViewModel
@@ -335,7 +386,7 @@ namespace FintrakBanking.Repositories.Credit
         #region Limits Type
         public IEnumerable<LimitTypeViewModel> GetAllLimitType()
         {
-            var data = (from a in context.tbl_Limit_Type
+            var data = (from a in _context.tbl_Limit_Type
                             //where a.Deleted == false
                         orderby a.LimitTypeId
                         select new LimitTypeViewModel
@@ -348,12 +399,12 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
         #endregion
-        
+
         #region Limits Value Type
         public IEnumerable<LimitValueTypeViewModel> GetAllLimitValueType()
         {
-            var data = (from a in context.tbl_Limit_Value_Type
-                        //where a.Deleted == false
+            var data = (from a in _context.tbl_Limit_Value_Type
+                            //where a.Deleted == false
                         orderby a.LimitValueTypeId
                         select new LimitValueTypeViewModel
                         {
@@ -369,16 +420,16 @@ namespace FintrakBanking.Repositories.Credit
         #region Frequency Type
         public IEnumerable<FrequencyTypeViewModel> GetAllFrequencyType()
         {
-            var data = (from a in context.tbl_Frequency_Type 
+            var data = (from a in _context.tbl_Frequency_Type
                             //where a.Deleted == false
                         orderby a.Mode
                         select new FrequencyTypeViewModel
                         {
-                             frequencyTypeId = a.FrequencyTypeId,
-                             mode = a.Mode,
-                             description = a.Description,
-                             value = a.Value,
-                             isVisible = a.IsVisible 
+                            frequencyTypeId = a.FrequencyTypeId,
+                            mode = a.Mode,
+                            description = a.Description,
+                            value = a.Value,
+                            isVisible = a.IsVisible
                         }).ToList();
             return data;
         }

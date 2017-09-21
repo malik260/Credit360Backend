@@ -149,7 +149,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanDocumentViewModel> GetLoanDocumentByReferenceNumber(string referenceNumber)
         {
-            return this.GetAllLoanDocument().Where(x => x.loanReferenceNumber == referenceNumber);
+            return this.GetAllLoanDocument().Where(x =>
+                string.Equals(x.loanReferenceNumber.ToLower(), referenceNumber.ToLower(), StringComparison.Ordinal));
         }
     }
 }

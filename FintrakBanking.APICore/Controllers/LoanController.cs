@@ -139,6 +139,26 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+        [HttpGet]
+        [Route("loan-schedule-types/{productTypeId}")]
+        public HttpResponseMessage GetAllLoanScheduleType(short? productTypeId)
+        {
+            try
+            {
+                var data = scheduleRepo.GetAllLoanScheduleType(productTypeId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
 
         [HttpGet]
         [Route("loan-schedule-types/category/{categoryId}")]
@@ -287,7 +307,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 var data = repo.GetLoanByCustomer(customerId);
 
-                if (!data.Any())
+                if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
                 }

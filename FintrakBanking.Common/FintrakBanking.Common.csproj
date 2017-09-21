@@ -54,11 +54,13 @@
     <Compile Include="Enum\ApprovalStatusEnum.cs" />
     <Compile Include="Enum\CollateralTypeEnum.cs" />
     <Compile Include="Enum\CompanyDirectorTypeEnum.cs" />
+    <Compile Include="Enum\DailyAccuralCategory.cs" />
     <Compile Include="Enum\DayCountConventionEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />
     <Compile Include="Enum\LimitValueTypeEnum.cs" />
     <Compile Include="Enum\LoanScheduleTypeEnum.cs" />
     <Compile Include="Enum\LoanStatusEnum.cs" />
+    <Compile Include="Enum\LoanTransactionTypeEnum.cs" />
     <Compile Include="Enum\LoanTypeEnum.cs" />
     <Compile Include="Enum\LimitMatricEnum.cs" />
     <Compile Include="Enum\LimitType.cs" />
@@ -66,9 +68,11 @@
     <Compile Include="Enum\FrequencyTypeEnum.cs" />
     <Compile Include="Enum\LienTypeEnum.cs" />
     <Compile Include="Enum\PenEvaluationStatusEnum.cs" />
+    <Compile Include="Enum\ScheduleTypeEnum.cs" />
     <Compile Include="Enum\SourceApplicationEnum.cs" />
     <Compile Include="Enum\ProcessViewScopeEnum.cs" />
     <Compile Include="Enum\GLClassEnum.cs" />
+    <Compile Include="Enum\SystemStaff.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />
     <Compile Include="Extensions\DataExtensions.cs" />
     <Compile Include="Extensions\MefExtensions.cs" />

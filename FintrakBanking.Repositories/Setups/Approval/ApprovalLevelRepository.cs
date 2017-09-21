@@ -245,7 +245,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 update.ApprovalStatusId = model.ApprovalStatusId;
                 update.ResponseDate = genSetup.GetApplicationDate();
                 update.ResponseStaffId = model.RequestStaffId;
-
+                update.SystemResponseDateTime = DateTime.Now;
                 result = context.SaveChanges() != 0;
             }
             return result;
