@@ -1656,19 +1656,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
         {
-            return (from data in context.tbl_Loan_Application_Collateral
-                    where data.LoanApplicationId == loanApplicationId && data.Deleted == false
+            var data = (from lac in context.tbl_Loan_Application_Collateral
+                    where lac.LoanApplicationId == loanApplicationId && lac.Deleted == false
                     select new LoanApplicationCollateralViewModel()
                     {
-                        customerCollateralId = data.CustomerCollateralId,
-                        latitude = data.Latitude,
-                        longitude = data.Longitude,
-                        nearestBusStop = data.NearestBusStop,
-                        nearestLandmark = data.NearestLandmark,
-                        locationAddress = data.LocationAddress,
-                        documentTitle = data.DocumentTitle,
-                        otherInformations = data.OtherInformations
+                        customerCollateralId = lac.CustomerCollateralId,
+                        latitude = lac.Latitude,
+                        longitude = lac.Longitude,
+                        nearestBusStop = lac.NearestBusStop,
+                        nearestLandmark = lac.NearestLandmark,
+                        locationAddress = lac.LocationAddress,
+                        documentTitle = lac.DocumentTitle,
+                        otherInformations = lac.OtherInformations
                     });
+            return data;
         }
 
         public AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId)
