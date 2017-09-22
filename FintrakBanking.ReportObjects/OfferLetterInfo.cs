@@ -24,7 +24,7 @@ namespace FintrakBanking.ReportObjects
                                           customerId = (int)a.CustomerId,
                                           customerName = b.Title + ". " + b.FirstName + " " + b.LastName,
                                           customerAddress = context.tbl_Customer_Address.FirstOrDefault(cAddr => cAddr.CustomerId == b.CustomerId).Address ?? string.Empty,
-                                          loanAmount = context.tbl_Loan_Preliminary_Evaluation.FirstOrDefault(pen => pen.CustomerId == b.CustomerId).LoanAmount,
+                                          loanAmount = a.PrincipalAmount,
                                           interestRate = a.InterestRate,
                                           tenor = a.Tenor,
                                           maturityDate = a.ApplicationDate

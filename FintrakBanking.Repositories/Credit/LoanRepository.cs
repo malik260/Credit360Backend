@@ -1837,7 +1837,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.tbl_Loan_Application
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
-                        where a.CompanyId == companyId && a.Deleted == false && c.IsCompleted == true 
+                        where a.CompanyId == companyId && a.Deleted == false
                             && a.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
                         {
