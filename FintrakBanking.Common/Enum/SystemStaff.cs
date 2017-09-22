@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace FintrakBanking.Common.Enum
+{
+    public enum SystemStaff
+    {
+        System  = -1
+
+    }
+}

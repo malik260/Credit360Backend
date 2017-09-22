@@ -58,16 +58,16 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                if (repo.isHolidayExist(entity.Description))
+                if (repo.isHolidayExist(entity.Date))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { suucess = false, message = $"{entity.Description} already exit" });
+                       new { suucess = false, message = $"{entity.Description} with {entity.Date.ToString("dd/mm/yy")} already exists" });
                 }
                 entity.createdBy = token.GetStaffId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.companyId = token.GetCompanyId;
-
+                entity.CountryId = token.GetCountryId;
                 var data = repo.AddPublicHoliday(entity);
                 if (data)
                 {

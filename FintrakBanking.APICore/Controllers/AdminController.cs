@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Controllers
         private readonly IErrorLogRepository errorLogger;
         private readonly ICanAuthorizationRepository I;
         private readonly IAuditTrailRepository audit;
-
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
         public AdminController(IAdminRepository _repo,
                                 IErrorLogRepository _errorLogger,
                                 ICanAuthorizationRepository _I,
@@ -53,7 +53,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 entity.BranchId = token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.staffId = token.GetStaffId;
@@ -86,7 +85,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetUsersAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (!staffinfo.Any())
@@ -109,7 +107,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 if (I.CanPerformActionOnResource(token.GetUserId, 2, UserActions.Add))
                 {
                     if (repo.isUserExist(user.username))
@@ -153,7 +150,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("user/{id}")]
         public async Task<HttpResponseMessage> UpdateUser(int id, [FromBody]AppUserViewModel user)
         {
-            TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
 
@@ -201,7 +197,6 @@ namespace FintrakBanking.APICore.Controllers
                        new { suucess = false, message = $"{group.groupName} already exit" });
                 }
 
-                var token = new TokenDecryptionHelper();
                 group.createdBy = token.GetStaffId;
                 group.userBranchId = (short)token.GetBranchId;
                 //group.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
@@ -236,11 +231,8 @@ namespace FintrakBanking.APICore.Controllers
         {
             //[FromBody]
             var req = this.Request;
-            TokenDecryptionHelper token = null;
             try
             {
-
-                //   token = new TokenDecryptionHelper(this.HttpContext);
                 group.createdBy = token.GetStaffId;
                 group.userBranchId = (short)token.GetBranchId;
                 //group.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
@@ -260,7 +252,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
             }
@@ -274,10 +266,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("groups")]
         public HttpResponseMessage GetAllGroups( )
         {
-            TokenDecryptionHelper token = null;
             try
             {
-                token = new TokenDecryptionHelper();
                 var groups = repo.GetAllGroups().ToList();
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = groups });
             }
@@ -295,10 +285,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("group/{id}")]
         public HttpResponseMessage GetGroupById(  int id)
         {
-            TokenDecryptionHelper token = null;
             try
             {
-                token = new TokenDecryptionHelper();
                 var group = repo.GetSingleGroup(id);
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = group });
             }
@@ -318,10 +306,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("activities/parents")]
         public HttpResponseMessage GetAllActivities( )
         {
-            TokenDecryptionHelper token = null;
             try
             {
-                token = new TokenDecryptionHelper();
                 var groups = repo.GetActivities().ToList();
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = true, result = groups });
@@ -341,11 +327,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("group/activities/mapped")]
         public HttpResponseMessage GetGroupActivities( )
         {
-
-            TokenDecryptionHelper token = null;
             try
             {
-                token = new TokenDecryptionHelper();
                 var groups = repo.GetGroupActivities().ToList();
                 return Request.CreateResponse(HttpStatusCode.OK,
                 new { success = true, result = groups });
@@ -368,10 +351,8 @@ namespace FintrakBanking.APICore.Controllers
 
             //[FromBody]
             var req = this.Request;
-            TokenDecryptionHelper token = null;
             try
             {
-                token = new TokenDecryptionHelper();
                 var data = repo.AddAccessToActivity(id, model);
                 if (data)
                 {

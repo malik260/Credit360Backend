@@ -160,6 +160,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
 
+
         [HttpGet]
         [Route("loan-schedule-types/category/{categoryId}")]
         public HttpResponseMessage GetLoanScheduleTypeByCategory(short categoryId)
@@ -207,6 +208,47 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("appraisal-loan-details-updates/{appraisalMemorandumId}")]
+        public HttpResponseMessage GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId)
+        {
+            try
+            {
+                var data = repo.GetAppraisalMemorandumLoanUpdates(appraisalMemorandumId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("application-collateral-valuation/details/{loanApplicationId}")]
+        public HttpResponseMessage GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetAppraisalMemorandumCollateralChanges(loanApplicationId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
 
@@ -623,12 +665,12 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         #region (Loan Application Date) Pre - Loan booking
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum")]
-        public HttpResponseMessage GetCamProcessedLoanApplications()
+        public HttpResponseMessage GetAppraisalMemorandumProcessedLoanApplications()
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repo.GetCamProcessedLoanApplications(token.GetCompanyId);
+                var response = repo.GetAppraisalMemorandumProcessedLoanApplications(token.GetCompanyId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -702,6 +744,28 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/approved-loans")]
+        public HttpResponseMessage GetCamProcessedLoanApplications()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetCamProcessedLoanApplications(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         #endregion
 
     }
