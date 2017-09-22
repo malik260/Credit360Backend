@@ -1114,6 +1114,7 @@ namespace FintrakBanking.Repositories.Credit
             return paymentSchedule;
         }
 
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool AddLoanSchedule(int loanId, LoanPaymentScheduleInputViewModel loanInput, int staffId)
         {
@@ -1244,6 +1245,160 @@ namespace FintrakBanking.Repositories.Credit
             output = true;
 
             return output;
+        }
+
+
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool AddLoanFeeSchedule(int loanId, decimal amount, DateTime feeDate, DateTime loanMaturityDate, int feeDay, FrequencyTypeEnum frequency)
+        {
+
+            //-----------save recurring fee schedule----------------------------
+            var recurringFees = context.tbl_Loan_Fee.Where(x => x.LoanId == loanId && x.IsRecurring == true);
+            foreach (tbl_Loan_Fee item in recurringFees)
+            {
+                var feeInfo = context.tbl_Charge_Fee.Where(x => x.ChargeFeeId == item.ChargeFeeId).FirstOrDefault();
+
+                var feeSchedule = GenerateFeeSchedule(item.FeeAmount, feeDate, loanMaturityDate, item.RecurringPaymentDay, (FrequencyTypeEnum) feeInfo.FeeIntervalId);
+
+                //tbl_loan_fee
+
+                foreach (var fee in feeSchedule)
+                {
+
+                }
+            }
+            //------------------------------------------------------------------
+
+            return true;
+        }
+
+
+        private List<FeePaymentScheduleViewModel> GenerateFeeSchedule(decimal amount, DateTime feeDate, DateTime loanMaturityDate, int feeDay, FrequencyTypeEnum frequency)
+        {
+
+            List<FeePaymentScheduleViewModel> output = new List<FeePaymentScheduleViewModel>();
+
+            int duration = 0;
+
+            if (frequency == FrequencyTypeEnum.Monthly)
+                duration = 1;
+            else if (frequency == FrequencyTypeEnum.Quarterly)
+                duration = 3;
+            else if (frequency == FrequencyTypeEnum.ThriceYearly)
+                duration = 4;
+            else if (frequency == FrequencyTypeEnum.SixTimesYearly)
+                duration = 2;
+            else if (frequency == FrequencyTypeEnum.TwiceYearly)
+                duration = 6;
+            else if (frequency == FrequencyTypeEnum.Yearly)
+                duration = 12;
+
+            int paymentNumberCount = 1;
+  
+            var nextPeriodDate = feeDate.AddMonths(duration);
+
+            var nextPayment = new DateTime(nextPeriodDate.Year, nextPeriodDate.Month, feeDay);
+
+                while (nextPayment <= loanMaturityDate)
+                {
+                    output.Add(new FeePaymentScheduleViewModel
+                    {
+                        feeAmount = amount,
+                        feeDate = nextPayment,
+                        paymentNumber = paymentNumberCount
+                    });
+
+                    paymentNumberCount += 1;
+
+                    nextPeriodDate = nextPayment.AddMonths(duration);
+                    nextPayment = new DateTime(nextPeriodDate.Year, nextPeriodDate.Month, feeDay);
+                }
+ 
+
+            //var startdate = LocalDateTime.FromDateTime(firstPaymentDate);
+            //var endDate = LocalDateTime.FromDateTime(maturityDate);
+
+            ////Period period = Period.Between(startdate, endDate, PeriodUnits.Months);
+
+            //double numberOfpayments = 0;
+
+            //if (frequencyType == FrequencyTypeEnum.Daily)
+            //    numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Days).Days;
+            //else if (frequencyType == FrequencyTypeEnum.Monthly)
+            //    numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months;
+            //else if (frequencyType == FrequencyTypeEnum.Quarterly)
+            //    numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 3.0;
+            //else if (frequencyType == FrequencyTypeEnum.SixTimesYearly)
+            //    numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 6.0;
+            //else if (frequencyType == FrequencyTypeEnum.ThriceYearly)
+            //    numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 4.0;
+            //else if (frequencyType == FrequencyTypeEnum.TwiceMonthly)
+            //    numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months * 2.0;
+            //else if (frequencyType == FrequencyTypeEnum.TwiceYearly)
+            //    numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Months).Months / 6.0;
+            //else if (frequencyType == FrequencyTypeEnum.Weekly)
+            //    numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Weeks).Weeks;
+            //else if (frequencyType == FrequencyTypeEnum.Yearly)
+            //    numberOfpayments = Period.Between(startdate, endDate, PeriodUnits.Years).Years;
+
+
+            //output.Add(new LoanPaymentSchedulePeriodicViewModel
+            //{
+            //    paymentNumber = 0,
+            //    paymentDate = loanInput.effectiveDate,
+            //    startPrincipalAmount = 0,
+            //    periodPrincipalAmount = 0,
+            //    amortisedPeriodInterestAmount = 0,
+            //    periodPaymentAmount = 0,
+            //    endPrincipalAmount = loanInput.principalAmount
+            //});
+
+
+            //var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
+
+
+            //double previousPrincipalAmount = loanInput.principalAmount;
+            //DateTime previousPaymentDate = loanInput.effectiveDate;
+            //int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accurialBasis);
+
+            //int paymentNumber = 1;
+            //foreach (var item in data)
+            //{
+            //    LoanPaymentSchedulePeriodicViewModel loanPeriod = new LoanPaymentSchedulePeriodicViewModel();
+            //    loanPeriod.paymentNumber = paymentNumber;
+            //    loanPeriod.paymentDate = item.paymentDate;
+            //    loanPeriod.startPrincipalAmount = previousPrincipalAmount;
+
+            //    if (isArmotisedSchedule == false)
+            //    { loanPeriod.periodPrincipalAmount = item.paymentAmount; }
+            //    else
+            //    {
+            //        if (loanInput.integralFeeAmount > 0)
+            //        {
+            //            var feeDifferential = loanInput.principalAmount / (loanInput.principalAmount + loanInput.integralFeeAmount);
+            //            loanPeriod.periodPrincipalAmount = item.paymentAmount * feeDifferential;
+            //        }
+            //        else
+            //            loanPeriod.periodPrincipalAmount = item.paymentAmount;
+
+            //    }
+
+            //    var dateDifferenceCount = (item.paymentDate - previousPaymentDate).TotalDays;
+
+            //    loanPeriod.periodInterestAmount = (previousPrincipalAmount * (loanInput.interestRate / 100.0)) * (dateDifferenceCount / daysInAYear);
+            //    loanPeriod.periodPaymentAmount = loanPeriod.periodPrincipalAmount + loanPeriod.periodInterestAmount;
+            //    loanPeriod.endPrincipalAmount = loanPeriod.startPrincipalAmount - loanPeriod.periodPrincipalAmount;
+
+            //    output.Add(loanPeriod);
+
+            //    previousPrincipalAmount = loanPeriod.endPrincipalAmount;
+            //    previousPaymentDate = loanPeriod.paymentDate;
+            //    paymentNumber += 1;
+
+            //}
+
+            return output;
+
         }
     }
 }

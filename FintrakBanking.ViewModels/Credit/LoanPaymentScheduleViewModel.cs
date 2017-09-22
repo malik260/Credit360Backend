@@ -74,4 +74,12 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class FeePaymentScheduleViewModel
+    {
+        public int paymentNumber { get; set; }
+        public DateTime feeDate { get; set; }
+        public decimal feeAmount { get; set; }
+  
+    }
+
 }
