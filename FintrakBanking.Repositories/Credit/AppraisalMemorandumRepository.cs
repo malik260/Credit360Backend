@@ -159,6 +159,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.NextLevelId = model.receiverLevelId; //?status eror if not provided & error if assign but used
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
+            workflow.Amount = model.amount;
             await workflow.LogActivity();
 
             if (workflow.Saved)

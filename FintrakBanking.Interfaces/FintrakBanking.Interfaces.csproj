@@ -84,6 +84,7 @@
     <Compile Include="Setups\Finance\IChartOfAccountRepository.cs" />
     <Compile Include="Setups\Finance\ITaxRepository.cs" />
     <Compile Include="Setups\General\IAccountSensitivityRepository.cs" />
+    <Compile Include="Setups\General\IAccreditedConsultantsRepository.cs" />
     <Compile Include="Setups\General\IAuthenticationRepository.cs" />
     <Compile Include="Setups\General\IAuthorizationRepository.cs" />
     <Compile Include="Setups\General\IBranchRepository.cs" />

@@ -9,7 +9,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IPublicHolidayRepository
     {
-        bool isHolidayExist(string description);
+        bool isHolidayExist(DateTime description);
         PublicHolidayViewModel GetPublicHoliday(int id);
         IEnumerable<PublicHolidayViewModel> GetAllPublicHoliday();
         IEnumerable<PublicHolidayViewModel> GetAllPublicHolidayByCompanyId(int id);

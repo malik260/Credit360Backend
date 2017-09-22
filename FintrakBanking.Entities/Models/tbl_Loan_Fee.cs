@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.tbl_Loan_Fee")]
     public partial class tbl_Loan_Fee
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Loan_Fee()
+        {
+            tbl_Loan_Fee_Schedule = new HashSet<tbl_Loan_Fee_Schedule>();
+        }
+
         [Key]
         public int LoanChargeFeeId { get; set; }
 
@@ -29,11 +35,9 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsIntegralFee { get; set; }
 
-        public bool IsRecurringFee { get; set; }
+        public bool IsRecurring { get; set; }
 
-        [Column(TypeName = "date")]
-        public DateTime? NextFeePaymentDate { get; set; }
-
+        public short RecurringPaymentDay { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -52,5 +56,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Fee_Schedule> tbl_Loan_Fee_Schedule { get; set; }
     }
 }

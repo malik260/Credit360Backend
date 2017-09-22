@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? FromApprovalLevelId { get; set; }
 
-        public int ToApprovalLevelId { get; set; }
+        public int? ToApprovalLevelId { get; set; }
 
         public short ApprovalStateId { get; set; }
 

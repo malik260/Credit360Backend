@@ -50,6 +50,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int TargetId { set { targetId = value; } }
         public int CompanyId { set { companyId = value; } }
         public int OperationId { set { operationId = value; } }
+        public decimal Amount { set { amount = value; } }
         public string Comment { set { comment = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int NextLevelId { set { nextLevelId = value; } }
@@ -95,6 +96,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             CheckApprovalLimits();
+
             SetState(); 
 
             this.applicationDate = GetApplicationDate();
@@ -109,7 +111,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var trail = new tbl_Approval_Trail
             {
                 FromApprovalLevelId = this.fromLevelId,
-                ToApprovalLevelId = (int)this.nextLevelId,
+                ToApprovalLevelId = this.nextLevelId,
                 TargetId = this.targetId,
                 CompanyId = this.companyId,
                 RequestStaffId = this.staffId,
@@ -364,6 +366,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (this.amount > staffCeiling)
                 {
                     this.statusId = (int)ApprovalStatusEnum.Authorised;
+                }
+
+                if (this.amount <= staffCeiling)
+                {
+                    this.EndProcess((int)ApprovalStatusEnum.Approved);
                 }
             }
         }

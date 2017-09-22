@@ -1,7 +1,9 @@
 ﻿namespace FintrakBanking.Common.Enum
 {
     public enum FrequencyTypeEnum { Yearly = 1, TwiceYearly = 2, Quarterly = 3, SixTimesYearly = 4, Monthly = 5,
-                                    TwiceMonthly = 6, Weekly = 7, Daily = 8, ThriceYearly = 9};
+                                    TwiceMonthly = 6, Weekly = 7, Daily = 8, ThriceYearly = 9,
+                                    EOD = 22, EOM = 23, EOY = 24, OneOff = 21, Transaction = 25
+                                  };
 
 }
 
