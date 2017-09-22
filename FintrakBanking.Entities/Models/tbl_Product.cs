@@ -105,6 +105,8 @@ namespace FintrakBanking.Entities.Models
 
         public double? EquityContribution { get; set; }
 
+        public int? MaximumDrawDownDuration { get; set; }
+
         public int? ApprovedBy { get; set; }
 
         public bool? Completed { get; set; }

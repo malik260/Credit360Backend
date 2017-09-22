@@ -1260,20 +1260,30 @@ namespace FintrakBanking.Repositories.Credit
 
                 var feeSchedule = GenerateFeeSchedule(item.FeeAmount, feeDate, loanMaturityDate, item.RecurringPaymentDay, (FrequencyTypeEnum) feeInfo.FeeIntervalId);
 
-                //tbl_loan_fee
+                List<tbl_Loan_Fee_Schedule> feeScheduleInfo = new List<tbl_Loan_Fee_Schedule>();
 
                 foreach (var fee in feeSchedule)
-                {
-
+                {                    
+                    feeScheduleInfo.Add(new tbl_Loan_Fee_Schedule
+                    {
+                        FeeAmount = fee.feeAmount,
+                        FeeDate = fee.feeDate,
+                        FeeNumber = fee.paymentNumber
+                    });
                 }
+
+                this.context.tbl_Loan_Fee_Schedule.AddRange(feeScheduleInfo);
+
+                context.SaveChanges();
             }
             //------------------------------------------------------------------
+            
 
             return true;
         }
 
 
-        private List<FeePaymentScheduleViewModel> GenerateFeeSchedule(decimal amount, DateTime feeDate, DateTime loanMaturityDate, int feeDay, FrequencyTypeEnum frequency)
+        public List<FeePaymentScheduleViewModel> GenerateFeeSchedule(decimal amount, DateTime feeDate, DateTime loanMaturityDate, int feeDay, FrequencyTypeEnum frequency)
         {
 
             List<FeePaymentScheduleViewModel> output = new List<FeePaymentScheduleViewModel>();

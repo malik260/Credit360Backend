@@ -37,7 +37,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsRecurring { get; set; }
 
-        public short RecurringPaymentDay { get; set; }        
+        public short RecurringPaymentDay { get; set; }
 
         public int CreatedBy { get; set; }
 

@@ -8,7 +8,7 @@ namespace FintrakBanking.Entities.Models
     public partial class FinTrakBankingContext : DbContext
     {
         public FinTrakBankingContext()
-            : base("name=FinTrakBankingContext")
+            : base("name=FinTrakBankingContext1")
         {
         }
 
