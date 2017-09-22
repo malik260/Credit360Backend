@@ -12,8 +12,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public string customerName { get; set; }
         public int tenor { get; set; }
-        public DateTime maturityDate { get; set; }
+        public DateTime maturityDate { get { return this.applicationDate.AddDays(this.tenor);  } }
         public double interestRate { get; set; }
         public string customerAddress { get; set; }
+
+        public DateTime applicationDate { get; set; }
     }
 }

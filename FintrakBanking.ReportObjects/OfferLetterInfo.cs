@@ -27,8 +27,8 @@ namespace FintrakBanking.ReportObjects
                                           loanAmount = a.PrincipalAmount,
                                           interestRate = a.InterestRate,
                                           tenor = a.Tenor,
-                                          maturityDate = a.ApplicationDate
-                                     }).FirstOrDefault();
+                                          applicationDate = a.ApplicationDate
+                                      }).FirstOrDefault();
 
             if (offerLetterDetails != null)
             {

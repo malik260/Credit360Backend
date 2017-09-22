@@ -804,7 +804,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanReferenceNumber =ln.LoanReferenceNumber,
                             applicationReferenceNumber =ln.tbl_Loan_Application.ApplicationReferenceNumber,
 
-                            tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
+                            //tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
                             //principalFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
                             pricipalFrequencyTypeName = ln.tbl_Frequency_Type.Description,
                             //interestFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
@@ -1312,7 +1312,7 @@ namespace FintrakBanking.Repositories.Credit
                         casaAccountId = data.CasaAccountId,
                         branchId = data.BranchId,
                         loanReferenceNumber = data.LoanReferenceNumber,
-                        tenor = (data.MaturityDate - data.EffectiveDate).Days,
+                        //tenor = (data.MaturityDate - data.EffectiveDate).Days,
                         principalFrequencyTypeId = (short)data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = (short)data.InterestFrequencyTypeId,
 
@@ -1375,7 +1375,7 @@ namespace FintrakBanking.Repositories.Credit
                         casaAccountId = data.CasaAccountId,
                         branchId = data.BranchId,
                         loanReferenceNumber = data.LoanReferenceNumber,
-                        tenor = (data.MaturityDate - data.EffectiveDate).Days,
+                        //tenor = (data.MaturityDate - data.EffectiveDate).Days,
                         //tenorModeId = data.TenorModeId,
                         principalFrequencyTypeId = (short)data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = (short)data.InterestFrequencyTypeId,
@@ -1436,7 +1436,7 @@ namespace FintrakBanking.Repositories.Credit
                     casaAccountId = o.CasaAccountId,
                     branchId = o.BranchId,
                     loanReferenceNumber = o.LoanReferenceNumber,
-                    tenor = (o.MaturityDate - o.EffectiveDate).Days,
+                    //tenor = (o.MaturityDate - o.EffectiveDate).Days,
                     principalFrequencyTypeId = (short)o.PrincipalFrequencyTypeId,
                     interestFrequencyTypeId = (short)o.InterestFrequencyTypeId,
 
