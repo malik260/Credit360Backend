@@ -29,14 +29,14 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var date = DateTime.Now;
             var applicationDate = general.GetApplicationDate();
-            model.departmentId = (short)context.tbl_Staff.Where(x => x.StaffId == model.createdBy).FirstOrDefault().DepartmentId;
+
             var data = new tbl_Job_Request
             {
                 JobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
                 JobTypeId = model.jobTypeId,
                 SenderStaffId = model.createdBy,
                 ReceiverStaffId = model.receiverStaffId,
-               // DepartmentId = model.departmentId,
+                DepartmentId = model.departmentId,
                 ReassignedTo = model.reassignedTo,
                 IsReassigned = model.isReassigned,
                 IsAcknowledged = model.isAcknowledged,
@@ -259,9 +259,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                 name = s.LastName + " " + s.FirstName
             });
 
-            return context.tbl_Department.Where(x => x.DepartmentId == departmentId)
+            return context.tbl_Department
                 .Join(context.tbl_Job_Request.Where(x => x.OperationsId == operationId),
-                a => a.DepartmentId, b => b.TargetId, (a, b) => new { a, b })
+                a => a.DepartmentId, b => b.DepartmentId, (a, b) => new { a, b })
+                .Where(x => 
+                    x.b.SenderStaffId == staffId 
+                    || x.b.DepartmentId == departmentId
+                    || x.b.ReassignedTo == staffId
+                )
                 .Select(x => new JobRequestViewModel
                 {
                     jobRequestId = x.b.JobRequestId,
@@ -287,7 +292,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                     from = allstaff.FirstOrDefault(s => s.id == x.b.SenderStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.SenderStaffId).name,
                     to = allstaff.FirstOrDefault(s => s.id == x.b.ReceiverStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.ReceiverStaffId).name,
                     assignee = allstaff.FirstOrDefault(s => s.id == x.b.ReassignedTo) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.ReassignedTo).name,
-                });
+                })
+                .OrderByDescending(x=>x.jobRequestId)
+                .Take(100);
         }
 
         #region job-type

@@ -54,7 +54,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 CompanyId = model.companyId,
                 LoanApplicationId = model.loanApplicationId,
-                CAMRef = this.GetUniqueReferenceNumber(2),
+                CAMRef = model.camRef,
                 IsCompleted = model.isCompleted,
                 RiskRated = model.riskRated,
                 CAMDocumentation = model.camDocumentation,
@@ -107,15 +107,6 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
 
-        private string GetUniqueReferenceNumber(int type)
-        {
-            int size = 16;
-            byte[] data = new byte[size];
-            System.Security.Cryptography.RNGCryptoServiceProvider crypto = new System.Security.Cryptography.RNGCryptoServiceProvider();
-            crypto.GetBytes(data);
-            return BitConverter.ToString(data).Replace("-", String.Empty);
-        }
-
         public bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId)
         {
             var data = this.context.tbl_Credit_Appraisal_Memorandum.Find(appraisalMemorandumId);
@@ -154,11 +145,13 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = operationId;
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
+            workflow.Vote = model.vote;
             workflow.ProductClassId = model.productClassId;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.receiverLevelId; //?status eror if not provided & error if assign but used
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
+            workflow.Amount = model.amount;
             await workflow.LogActivity();
 
             if (workflow.Saved)
@@ -180,21 +173,33 @@ namespace FintrakBanking.Repositories.Credit
 
                 var appl = context.tbl_Loan_Application.Find(model.applicationId);
                 appl.ApprovalStatusId = workflow.StatusId;
-
-                //update approved loan details change!
-                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                if (appl.ApprovalStatusId == (int)ApprovalStatusEnum.Pending) // redundant block
                 {
-                    var memo = context.tbl_Credit_Appraisal_Memorandum.FirstOrDefault(x => x.LoanApplicationId == model.applicationId);
-                    context.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Add(new tbl_Credit_Appraisal_Memorandum_Loan_Detail
+                    appl.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
+                }
+
+                var memo = this.context.tbl_Credit_Appraisal_Memorandum.Find(model.appraisalMemorandumId);
+
+                if (memo != null)
+                {
+                    if (workflow.NewState == (int)ApprovalState.Ended) // cam status
                     {
-                        AppraisalMemorandumId = memo == null ? 0 : memo.AppraisalMemorandumId,
-                        PrincipalAmount = model.principal,
-                        InterestRate = model.rate,
-                        Tenor = model.tenor,
-                        CreatedBy = model.createdBy,
-                        DateTimeCreated = general.GetApplicationDate(),
-                        SystemDateTime = DateTime.Now,
-                    });
+                        memo.IsCompleted = true;
+                    }
+
+                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Authorised) // loan details
+                    {
+                        context.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Add(new tbl_Credit_Appraisal_Memorandum_Loan_Detail
+                        {
+                            AppraisalMemorandumId = memo == null ? 0 : memo.AppraisalMemorandumId,
+                            PrincipalAmount = model.principal,
+                            InterestRate = model.rate,
+                            Tenor = model.tenor,
+                            CreatedBy = model.createdBy,
+                            DateTimeCreated = general.GetApplicationDate(),
+                            SystemDateTime = DateTime.Now,
+                        });
+                    }
                 }
 
                 context.SaveChanges();
@@ -228,17 +233,20 @@ namespace FintrakBanking.Repositories.Credit
                 }).OrderByDescending(x => x.approvalTrailId);
         }
 
-        public PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId)
+        public PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId) // PRIVILEGES
         {
             var privilege = new PrivilegeViewModel();
 
             var application = this.context.tbl_Loan_Application.Find(applicationId);
-            var grant = context.tbl_Approval_Group_Mapping
+            var grants = context.tbl_Approval_Group_Mapping
                                     .Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.tbl_Product.ProductClassId)
                                 .SelectMany(x => x.tbl_Approval_Level)
                                 .SelectMany(x => x.tbl_Approval_Level_Staff)
-                                    .Where(x => x.StaffId == staffId)
-                                    .SingleOrDefault();
+                                    .Where(x => x.StaffId == staffId);
+
+            var grant = grants.FirstOrDefault();
+            //var staffApprovalLevelIds = grants.Select(x => x.ApprovalLevelId).ToList();
+
             if (grant != null)
             {
                 return new PrivilegeViewModel
@@ -251,6 +259,8 @@ namespace FintrakBanking.Repositories.Credit
                     canApprove = grant.CanApprove,
                     canUploadFile = grant.CanUploadFile,
                     canSendRequest = grant.CanSendJobRequest,
+                    approvalLimit = grant.MaximumAmount,
+                    userApprovalLevelIds = grants.Select(x => x.ApprovalLevelId).ToList()
                 };
             }
 

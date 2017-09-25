@@ -1,0 +1,109 @@
+﻿using System.Linq;
+using System.Threading.Tasks;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.ViewModels;
+using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.ViewModels.Credit;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Web;
+using System.Web.Http;
+
+namespace FintrakBanking.APICore.Controllers
+{
+    [RoutePrefix("api/v1/credit")]
+    public class ConditionPrecedentController : ApiControllerBase
+    {
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        private IConditionPrecedentRepository repo;
+
+        public ConditionPrecedentController(IConditionPrecedentRepository repo)
+        {
+            this.repo = repo;
+        }
+
+        [HttpGet]
+        [Route("condition-precedent")]
+        public HttpResponseMessage GetConditionPrecedent()
+        {
+            try
+            {
+                var data = repo.GetAllConditionPrecedent();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("condition-precedent/application/{applicationId}")]
+        public HttpResponseMessage GetConditionPrecedentByApplicationId(int applicationId)
+        {
+            try
+            {
+                var data = repo.GetConditionPrecedentByApplicationId(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("condition-precedent")]
+        public HttpResponseMessage AddConditionPrecedent([FromBody] ConditionPrecedentViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.AddConditionPrecedent(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpPut]
+        [Route("condition-precedent/{conditionPrecedentId}")]
+        public HttpResponseMessage UpdateConditionPrecedent([FromBody] ConditionPrecedentViewModel entity, int conditionPrecedentId)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.UpdateConditionPrecedent(entity, conditionPrecedentId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+    }
+}

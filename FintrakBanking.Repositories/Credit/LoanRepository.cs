@@ -573,15 +573,15 @@ namespace FintrakBanking.Repositories.Credit
                         var loan = context.tbl_Loan.Add(data);
                         context.tbl_Audit.Add(audit);
 
-                        var dataCount = context.SaveChanges();
-                        this.loanSchedule.AddLoanSchedule(loan.LoanId, entity.loanScheduleInput, entity.createdBy);
+                        var dataCount = await context.SaveChangesAsync();
+                        this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
                         var approvalModel = new ApprovalViewModel
                         {
                             staffId = entity.createdBy,
                             companyId = entity.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                           // targetId = loan.TermLoanId,
+                            targetId = loan.TermLoanId,
                             operationId = (int)OperationsEnum.TermLoanBooking,
                             BranchId = entity.userBranchId,
                         };
@@ -789,12 +789,12 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from ln in context.tbl_Loan
                         join coy in context.tbl_Company on ln.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on ln.BranchId equals br.BranchId
-                        join atrail in context.tbl_Approval_Trail on ln.LoanId equals atrail.TargetId
+                        join atrail in context.tbl_Approval_Trail on ln.TermLoanId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending  
                               && atrail.OperationId == (int)OperationsEnum.TermLoanBooking && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new LoanViewModel()
                         {
-                            loanId = ln.LoanId,
+                            loanId = ln.TermLoanId,
                             customerId  = ln.CustomerId,
                             productId = ln.ProductId,
                             casaAccountId =ln.CasaAccountId,
@@ -804,7 +804,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanReferenceNumber =ln.LoanReferenceNumber,
                             applicationReferenceNumber =ln.tbl_Loan_Application.ApplicationReferenceNumber,
 
-                            tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
+                            //tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
                             //principalFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
                             pricipalFrequencyTypeName = ln.tbl_Frequency_Type.Description,
                             //interestFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
@@ -1187,7 +1187,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from l in context.tbl_Loan
                         select new LoanViewModel
                         {
-                           // loanId = l.TermLoanId,
+                            loanId = l.TermLoanId,
                             customerId = l.CustomerId,
                             customerName = l.tbl_Customer.FirstName + " " + l.tbl_Customer.LastName,
                             productId = l.ProductId,
@@ -1245,7 +1245,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerSensitivityLevelId = l.CustomerSensitivityLevelId,
                             createdBy = l.CreatedBy,
                             dateTimeCreated = l.DateTimeCreated,
-                            isCamsol = context.tbl_Loan_Camsol.Where(x => x.LoanId == l.LoanId).Any()
+                            isCamsol = context.tbl_Loan_Camsol.Where(x => x.LoanId == l.TermLoanId).Any()
                         });
             return data;
         }
@@ -1302,17 +1302,17 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel GetLoan(int loanId)
         {
             return (from data in context.tbl_Loan
-                    where data.LoanId == loanId
+                    where data.TermLoanId == loanId
                     select new LoanViewModel()
                     {
-                        loanId = data.LoanId,
+                        loanId = data.TermLoanId,
                         customerId = data.CustomerId,
                         productId = data.ProductId,
                         companyId = data.CompanyId,
                         casaAccountId = data.CasaAccountId,
                         branchId = data.BranchId,
                         loanReferenceNumber = data.LoanReferenceNumber,
-                        tenor = (data.MaturityDate - data.EffectiveDate).Days,
+                        //tenor = (data.MaturityDate - data.EffectiveDate).Days,
                         principalFrequencyTypeId = (short)data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = (short)data.InterestFrequencyTypeId,
 
@@ -1368,14 +1368,14 @@ namespace FintrakBanking.Repositories.Credit
                       $"{data.tbl_Customer.FirstName} {data.tbl_Customer.MiddleName} {data.tbl_Customer.LastName} {data.tbl_Customer.CustomerCode} {data.tbl_CASA.ProductAccountNumber}".Contains(referenceNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
                     select new LoanViewModel()
                     {
-                      //  loanId = data.TermLoanId,
+                        loanId = data.TermLoanId,
                         customerId = data.CustomerId,
                         productId = data.ProductId,
                         companyId = data.CompanyId,
                         casaAccountId = data.CasaAccountId,
                         branchId = data.BranchId,
                         loanReferenceNumber = data.LoanReferenceNumber,
-                        tenor = (data.MaturityDate - data.EffectiveDate).Days,
+                        //tenor = (data.MaturityDate - data.EffectiveDate).Days,
                         //tenorModeId = data.TenorModeId,
                         principalFrequencyTypeId = (short)data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = (short)data.InterestFrequencyTypeId,
@@ -1430,13 +1430,13 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.CompanyId == companyId)
                 .Select(o => new LoanViewModel
                 {
-                   // loanId = o.TermLoanId,
+                    loanId = o.TermLoanId,
                     customerId = o.CustomerId,
                     productId = o.ProductId,
                     casaAccountId = o.CasaAccountId,
                     branchId = o.BranchId,
                     loanReferenceNumber = o.LoanReferenceNumber,
-                    tenor = (o.MaturityDate - o.EffectiveDate).Days,
+                    //tenor = (o.MaturityDate - o.EffectiveDate).Days,
                     principalFrequencyTypeId = (short)o.PrincipalFrequencyTypeId,
                     interestFrequencyTypeId = (short)o.InterestFrequencyTypeId,
 
@@ -1646,7 +1646,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanCollateralMappingViewModel
                         {
                             loanCollateralMappingId = c.LoanCollateralMappingId,
-                           // loanId = c.LoanId,
+                            loanId = c.LoanId,
                             collateralCustomerId = c.CollateralCustomerId,
                             loanApplicationId = c.LoanApplicationId
 
@@ -1656,19 +1656,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
         {
-            return (from data in context.tbl_Loan_Application_Collateral
-                    where data.LoanApplicationId == loanApplicationId && data.Deleted == false
+            var data = (from lac in context.tbl_Loan_Application_Collateral
+                    where lac.LoanApplicationId == loanApplicationId && lac.Deleted == false
                     select new LoanApplicationCollateralViewModel()
                     {
-                        customerCollateralId = data.CustomerCollateralId,
-                        latitude = data.Latitude,
-                        longitude = data.Longitude,
-                        nearestBusStop = data.NearestBusStop,
-                        nearestLandmark = data.NearestLandmark,
-                        locationAddress = data.LocationAddress,
-                        documentTitle = data.DocumentTitle,
-                        otherInformations = data.OtherInformations
+                        customerCollateralId = lac.CustomerCollateralId,
+                        latitude = lac.Latitude,
+                        longitude = lac.Longitude,
+                        nearestBusStop = lac.NearestBusStop,
+                        nearestLandmark = lac.NearestLandmark,
+                        locationAddress = lac.LocationAddress,
+                        documentTitle = lac.DocumentTitle,
+                        otherInformations = lac.OtherInformations
                     });
+            return data;
         }
 
         public AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId)
@@ -1833,7 +1834,6 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         
-
 
 
     }

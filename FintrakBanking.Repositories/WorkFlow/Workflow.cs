@@ -45,12 +45,15 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int requestStaffId;
         private int neededNumberOfApproval;
         private bool externalInitialization = false;
+        private bool vote = false;
 
         public int StaffId { set { staffId = value; } }
         public int TargetId { set { targetId = value; } }
         public int CompanyId { set { companyId = value; } }
         public int OperationId { set { operationId = value; } }
+        public decimal Amount { set { amount = value; } }
         public string Comment { set { comment = value; } }
+        public bool Vote { set { vote = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int NextLevelId { set { nextLevelId = value; } }
         public int? ProductId { set { productId = value; } }
@@ -60,6 +63,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool ExternalInitialization { set { externalInitialization = value; } }
         public string Message { get { return message; } }
         public bool Saved { get { return saved; } }
+        public int NewState { get { return newStateId; } }
 
         public async Task<bool> LogActivity()
         {
@@ -76,7 +80,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 this.currentStateId = request.ApprovalStateId;
                 this.requestStaffId = request.RequestStaffId;
-                //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
+                if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
                 this.fromLevelId = request.ToApprovalLevelId;
             } else
             {
@@ -95,6 +99,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             CheckApprovalLimits();
+
             SetState(); 
 
             this.applicationDate = GetApplicationDate();
@@ -109,7 +114,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var trail = new tbl_Approval_Trail
             {
                 FromApprovalLevelId = this.fromLevelId,
-                ToApprovalLevelId = (int)this.nextLevelId,
+                ToApprovalLevelId = this.nextLevelId,
                 TargetId = this.targetId,
                 CompanyId = this.companyId,
                 RequestStaffId = this.staffId,
@@ -120,6 +125,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 ApprovalStatusId = (short)this.statusId,
                 SystemArrivalDateTime = this.systemDate,
                 SystemResponseDateTime = this.systemDate,
+                VotedYes = this.vote,
             };
 
             context.tbl_Approval_Trail.Add(trail);
@@ -364,6 +370,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (this.amount > staffCeiling)
                 {
                     this.statusId = (int)ApprovalStatusEnum.Authorised;
+                }
+
+                if (this.amount <= staffCeiling)
+                {
+                    this.EndProcess((int)ApprovalStatusEnum.Approved);
                 }
             }
         }

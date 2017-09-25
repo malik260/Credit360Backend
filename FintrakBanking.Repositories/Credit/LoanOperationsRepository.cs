@@ -30,7 +30,7 @@ namespace FintrakBanking.Repositories.Credit
             this.context = _context;
             this.generalSetup = _genSetup;
             this.financeTransaction = _financeTransaction;
-
+            this.auditTrail = _auditTrail;
         }
 
 
@@ -49,8 +49,8 @@ namespace FintrakBanking.Repositories.Credit
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
             var data = (from a in context.tbl_Loan_Schedule_Daily
-                        join b in context.tbl_Loan on a.LoanId equals b.LoanId
-                        join c in context.tbl_Loan_Schedule_Periodic on b.LoanId equals c.LoanId
+                        join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
+                        join c in context.tbl_Loan_Schedule_Periodic on b.TermLoanId equals c.LoanId
                         join d in context.tbl_Day_Count_Convention on b.ScheduleDayCountConventionId equals d.DayCountConventionId
                         where a.Date == applicationDate && b.LoanStatusId == (short)LoanStatusEnum.Active
                         && a.PaymentDate == c.PaymentDate
@@ -181,7 +181,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from a in context.tbl_Loan_Revolving
                         join b in context.tbl_CASA on a.CasaAccountId equals b.CasaAccountId
-                        join c in context.tbl_Day_Count_Convention on a.LoanTypeId equals c.DayCountConventionId
+                        join c in context.tbl_Day_Count_Convention on a.DayCountConventionId equals c.DayCountConventionId
                         where a.EffectiveDate == applicationDate && a.LoanStatusId == (short)LoanStatusEnum.Active
                         && b.AvailableBalance < 0
 
@@ -265,7 +265,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.tbl_Loan
                         join b in context.tbl_CASA on a.CasaAccountId equals b.CasaAccountId
                         join c in context.tbl_Day_Count_Convention on a.ScheduleDayCountConventionId equals c.DayCountConventionId
-                        join d in context.tbl_Setup_Global on a.CompanyId equals d.DefaultPastDue_InterestRate
+                        join d in context.tbl_Setup_Global on a.CompanyId equals d.CompanyId
                         where a.EffectiveDate == applicationDate && a.LoanStatusId == (short)LoanStatusEnum.Active
                         && b.AvailableBalance < 0 && a.AllowForceDebitRepayment == true
 
@@ -280,7 +280,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = a.ExchangeRate,
                             interestRate = a.InterestRate,
                             date = applicationDate,
-                            dailyAccuralAmount = (decimal)d.DefaultPastDue_InterestRate,
+                            dailyAccuralAmount = (decimal)d.UnauthorisedOverdraft_InterestRate,
                             mainAmount = b.AvailableBalance,
                             categoryId = (short)DailyAccrualCategory.UnauthorisedOverdraft,
                             availableBalance = b.AvailableBalance,
@@ -288,7 +288,7 @@ namespace FintrakBanking.Repositories.Credit
                             baseReferenceNumber = null,
                             dayCountConventionId = c.DayCountConventionId,
                             daysInAYear = c.DaysInAYear,
-                       
+
 
                         });
 
@@ -348,8 +348,9 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var data = (from a in context.tbl_Loan
-                        join b in context.tbl_Loan_Past_Due on a.LoanId equals b.LoanId
+                        join b in context.tbl_Loan_Past_Due on a.TermLoanId equals b.LoanId
                         join c in context.tbl_Day_Count_Convention on a.ScheduleDayCountConventionId equals c.DayCountConventionId
+                        join d in context.tbl_Setup_Global on a.CompanyId equals d.CompanyId
                         where a.EffectiveDate == applicationDate && a.LoanStatusId == (short)LoanStatusEnum.Active
                         && (b.DebitAmount - b.CreditAmount) < 0 && a.AllowForceDebitRepayment == false
                         && b.TransactionTypeId == (byte)LoanTransactionTypeEnum.Interest
@@ -365,7 +366,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = a.ExchangeRate,
                             interestRate = a.InterestRate,
                             date = applicationDate,
-                           // dailyAccuralAmount = (decimal)d.PastDueInDefault_InterestRate,
+                            dailyAccuralAmount = (decimal)d.PastDueInDefault_InterestRate,
                             mainAmount = (b.DebitAmount - b.CreditAmount),
                             categoryId = (short)DailyAccrualCategory.UnauthorisedOverdraft,
                             availableBalance = (b.DebitAmount - b.CreditAmount),
@@ -433,9 +434,9 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var data = (from a in context.tbl_Loan
-                        join b in context.tbl_Loan_Past_Due on a.LoanId equals b.LoanId
+                        join b in context.tbl_Loan_Past_Due on a.TermLoanId equals b.LoanId
                         join c in context.tbl_Day_Count_Convention on a.ScheduleDayCountConventionId equals c.DayCountConventionId
-                        join d in context.tbl_Setup_Global on a.CompanyId equals d.DefaultPastDue_InterestRate
+                        join d in context.tbl_Setup_Global on a.CompanyId equals d.CompanyId
                         where a.EffectiveDate == applicationDate && a.LoanStatusId == (short)LoanStatusEnum.Active
                         && (b.DebitAmount - b.CreditAmount) < 0 && a.AllowForceDebitRepayment == false
                         && b.TransactionTypeId == (byte)LoanTransactionTypeEnum.Principal
@@ -451,7 +452,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = a.ExchangeRate,
                             interestRate = a.InterestRate,
                             date = applicationDate,
-                            dailyAccuralAmount = (decimal)d.DefaultPastDue_InterestRate,
+                            dailyAccuralAmount = (decimal)d.PastDueInDefault_InterestRate,
                             mainAmount = (b.DebitAmount - b.CreditAmount),
                             categoryId = (short)DailyAccrualCategory.UnauthorisedOverdraft,
                             availableBalance = (b.DebitAmount - b.CreditAmount),
@@ -515,7 +516,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanRepaymentViewModel> BuildLoanRepaymentPostingForceDebit(DateTime applicationDate)
         {
             var model = (from a in context.tbl_Loan_Schedule_Periodic
-                         join b in context.tbl_Loan on a.LoanId equals b.LoanId
+                         join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
                          where a.PaymentDate == applicationDate && b.LoanStatusId == (short)LoanStatusEnum.Active
                          && b.AllowForceDebitRepayment == true
                          select new LoanRepaymentViewModel()
@@ -549,7 +550,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     //financeTransaction.PostAnniversaryTeamLoansAllowForceDebit(item);
 
-                    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();                                        
+                    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.InterestReceivablePayableGL.Value, "interest repayment"));
 
@@ -562,13 +563,13 @@ namespace FintrakBanking.Repositories.Credit
                     tbl_Loan_Force_Debit forceDebit = new tbl_Loan_Force_Debit();
 
 
-                    forceDebit.LoanId = item.loanId;                 
+                    forceDebit.LoanId = item.loanId;
                     forceDebit.ForceDebitCode = forceDebitCode;
                     forceDebit.CreditAmount = 0;
                     forceDebit.Description = "Force Debit as a result of Account not funded";
                     forceDebit.DebitAmount = Math.Abs(casabalance - item.totalAmount);
                     forceDebit.Date = item.paymentDate;
-                    forceDebit.TransactionTypeId = (byte) LoanTransactionTypeEnum.Principal;
+                    forceDebit.TransactionTypeId = (byte)LoanTransactionTypeEnum.Principal;
                     forceDebit.Parent_ForceDebitCode = item.loanRefNo;
 
                     transForceDebit.Add(forceDebit);
@@ -580,7 +581,7 @@ namespace FintrakBanking.Repositories.Credit
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.InterestReceivablePayableGL.Value, "interest repayment"));
 
                     inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PrincipalBalanceGL.Value, "partial principal repayment"));
-                    
+
                     financeTransaction.PostTransaction(inputTransactions);
 
                     //financeTransaction.PostAnniversaryTeamLoansAllowForceDebit(item);
@@ -669,7 +670,7 @@ namespace FintrakBanking.Repositories.Credit
 
         {
             var model = (from a in context.tbl_Loan_Schedule_Periodic
-                         join b in context.tbl_Loan on a.LoanId equals b.LoanId
+                         join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
                          where a.PaymentDate == applicationDate && b.LoanStatusId == (short)LoanStatusEnum.Active
                          && b.AllowForceDebitRepayment == false
                          select new LoanRepaymentViewModel()
@@ -983,9 +984,19 @@ namespace FintrakBanking.Repositories.Credit
                          where firstDayOfMonth <= applicationDate && lastDayOfMonth <= applicationDate
                          && a.LoanStatusId == (short)LoanStatusEnum.Active
                          && c.CategoryId == (short)DailyAccrualCategory.AuthorisedOverdraft
-                        // && b.AvailableBalance < 0
-                         group c by new { a.ProductId, a.BranchId, a.CompanyId, a.CurrencyId, a.ExchangeRate , a.LoanReferenceNumber,
-                             c.InterestRate, a.RevolvingLoanId,b.CasaAccountId} into groupedQ
+                         // && b.AvailableBalance < 0
+                         group c by new
+                         {
+                             a.ProductId,
+                             a.BranchId,
+                             a.CompanyId,
+                             a.CurrencyId,
+                             a.ExchangeRate,
+                             a.LoanReferenceNumber,
+                             c.InterestRate,
+                             a.RevolvingLoanId,
+                             b.CasaAccountId
+                         } into groupedQ
                          select new LoanRepaymentViewModel()
                          {
                              productId = groupedQ.Key.ProductId,
@@ -995,7 +1006,7 @@ namespace FintrakBanking.Repositories.Credit
                              exchangeRate = groupedQ.Key.ExchangeRate,
                              interestRate = groupedQ.Key.InterestRate,
                              paymentDate = applicationDate,
-                             loanId = groupedQ.Key.RevolvingLoanId,                           
+                             loanId = groupedQ.Key.RevolvingLoanId,
                              casaAccountId = groupedQ.Key.CasaAccountId,
                              loanRefNo = groupedQ.Key.LoanReferenceNumber,
                              periodInterestAmount = groupedQ.Sum(i => i.DailyAccuralAmount)
@@ -1013,12 +1024,12 @@ namespace FintrakBanking.Repositories.Credit
                 //var casabalance = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == item.casaAccountId).AvailableBalance;
                 //if (casabalance < 0 )
                 //{
-                    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                    inputTransactions.Add(financeTransaction.PostBuildAuthorisedOverdraftRepaymentPosting(item, item.periodInterestAmount, product.InterestReceivablePayableGL.Value, "interest repayment"));
+                inputTransactions.Add(financeTransaction.PostBuildAuthorisedOverdraftRepaymentPosting(item, item.periodInterestAmount, product.InterestReceivablePayableGL.Value, "interest repayment"));
 
-                    financeTransaction.PostTransaction(inputTransactions);
-               // }
+                financeTransaction.PostTransaction(inputTransactions);
+                // }
             }
 
             this.context.tbl_Loan_Force_Debit.AddRange(transForceDebit);
@@ -1040,7 +1051,7 @@ namespace FintrakBanking.Repositories.Credit
                          && c.CategoryId == (short)DailyAccrualCategory.UnauthorisedOverdraft
                          //&& b.AvailableBalance < 0
                          group c by new
-                         {a.ProductId, a.BranchId,a.CompanyId,a.CurrencyId,a.ExchangeRate,a.LoanReferenceNumber,c.InterestRate,a.LoanId,b.CasaAccountId} into groupedQ
+                         { a.ProductId, a.BranchId, a.CompanyId, a.CurrencyId, a.ExchangeRate, a.LoanReferenceNumber, c.InterestRate, a.TermLoanId, b.CasaAccountId } into groupedQ
                          select new LoanRepaymentViewModel()
                          {
                              productId = groupedQ.Key.ProductId,
@@ -1050,7 +1061,7 @@ namespace FintrakBanking.Repositories.Credit
                              exchangeRate = groupedQ.Key.ExchangeRate,
                              interestRate = groupedQ.Key.InterestRate,
                              paymentDate = applicationDate,
-                             loanId = groupedQ.Key.LoanId,
+                             loanId = groupedQ.Key.TermLoanId,
                              casaAccountId = groupedQ.Key.CasaAccountId,
                              loanRefNo = groupedQ.Key.LoanReferenceNumber,
                              periodInterestAmount = groupedQ.Sum(i => i.DailyAccuralAmount)
@@ -1061,20 +1072,20 @@ namespace FintrakBanking.Repositories.Credit
             List<tbl_Loan_Force_Debit> transForceDebit = new List<tbl_Loan_Force_Debit>();
 
 
-            //foreach (var item in model)
-            //{
-            //    var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == item.productId);
-            //    var forceDebitCode = CommonHelpers.GenerateRandomDigitCode(10);
-            //    //var casabalance = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == item.casaAccountId).AvailableBalance;
-            //    //if (casabalance < 0)
-            //    //{
-            //        List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            foreach (var item in model)
+            {
+                var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == item.productId);
+                var forceDebitCode = CommonHelpers.GenerateRandomDigitCode(10);
+                //var casabalance = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == item.casaAccountId).AvailableBalance;
+                //if (casabalance < 0)
+                //{
+                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            //        inputTransactions.Add(financeTransaction.PostBuildAuthorisedOverdraftRepaymentPosting(item, item.periodInterestAmount, product.InterestReceivablePayableGL.Value, "interest repayment"));
+                inputTransactions.Add(financeTransaction.PostBuildAuthorisedOverdraftRepaymentPosting(item, item.periodInterestAmount, product.InterestReceivablePayableGL.Value, "interest repayment"));
 
-            //        financeTransaction.PostTransaction(inputTransactions);
-            //    //}
-            //}
+                financeTransaction.PostTransaction(inputTransactions);
+                //}
+            }
 
             this.context.tbl_Loan_Force_Debit.AddRange(transForceDebit);
 
@@ -1091,16 +1102,16 @@ namespace FintrakBanking.Repositories.Credit
 
             var model = (from a in context.tbl_Loan_Past_Due
                          where firstDayOfMonth <= applicationDate && lastDayOfMonth <= applicationDate
-                         &&  a.TransactionTypeId ==  (byte)LoanTransactionTypeEnum.Interest
+                         && a.TransactionTypeId == (byte)LoanTransactionTypeEnum.Interest
                          group a by new
-                         { a.LoanId, a.TransactionTypeId, a.PastDueCode, a.Parent_PastDueCode} into groupedQ
+                         { a.LoanId, a.TransactionTypeId, a.PastDueCode, a.Parent_PastDueCode } into groupedQ
                          select new LoanPastDueViewModel()
                          {
                              loanId = groupedQ.Key.LoanId,
                              transactionTypeId = groupedQ.Key.TransactionTypeId,
                              pastDueCode = groupedQ.Key.PastDueCode,
                              parent_PastDueCode = groupedQ.Key.Parent_PastDueCode,
-                             totalAmount = groupedQ.Sum(i => (i.DebitAmount-i.CreditAmount)),
+                             totalAmount = groupedQ.Sum(i => (i.DebitAmount - i.CreditAmount)),
                          });
 
             List<tbl_Loan_Past_Due> loanPastDue = new List<tbl_Loan_Past_Due>();

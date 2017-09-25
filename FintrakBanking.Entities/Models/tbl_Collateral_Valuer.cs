@@ -29,12 +29,6 @@ namespace FintrakBanking.Entities.Models
         public short? CountryId { get; set; }
 
         [StringLength(50)]
-        public string AccountNumber { get; set; }
-
-        [StringLength(50)]
-        public string ValuerBVN { get; set; }
-
-        [StringLength(50)]
         public string EmailAddress { get; set; }
 
         [StringLength(50)]

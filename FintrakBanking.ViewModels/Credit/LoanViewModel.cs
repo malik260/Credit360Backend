@@ -32,7 +32,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
-        public int tenor { get; set; }
+        public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
         public short principalFrequencyTypeId { get; set; }
         public short interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
@@ -274,6 +274,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short productTypeId { get; set; }
         public string productTypeName { get; set; }
         public int customerSensitivityLevelId { get; set; }
+        public string camDocumentation { get; set; }
     }
 
     public class AppraisalMemorandumLoanDetailViewModel
@@ -361,7 +362,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short productId { get; set; }
 
-        public int companyId { get; set; }
+        //public int companyId { get; set; }
 
         public short branchId { get; set; }
 

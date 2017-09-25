@@ -27,6 +27,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanPaymentScheduleDailyViewModel> GenerateDailyLoanSchedule(LoanPaymentScheduleInputViewModel loanInput);
 
+        List<FeePaymentScheduleViewModel> GenerateFeeSchedule(decimal recurringAmount, DateTime startDate, DateTime endDate, int feeDay, FrequencyTypeEnum frequency);
+
         bool AddLoanSchedule(int loanId, LoanPaymentScheduleInputViewModel loanInput, int staffId);
+
+        bool AddLoanFeeSchedule(int loanId, decimal amount, DateTime feeDate, DateTime loanMaturityDate, int feeDay, FrequencyTypeEnum frequency);
     }
 }

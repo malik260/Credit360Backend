@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? FromApprovalLevelId { get; set; }
 
-        public int ToApprovalLevelId { get; set; }
+        public int? ToApprovalLevelId { get; set; }
 
         public short ApprovalStateId { get; set; }
 
@@ -40,8 +40,12 @@ namespace FintrakBanking.Entities.Models
 
         public int OperationId { get; set; }
 
+        public bool VotedYes { get; set; }
+
         [StringLength(700)]
         public string Comment { get; set; }
+
+        public bool VotedYes { get; set; }
 
         public virtual tbl_Approval_Level tbl_Approval_Level { get; set; }
 

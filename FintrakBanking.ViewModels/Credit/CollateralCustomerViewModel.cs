@@ -138,7 +138,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         // stock
         public int? collateralStockId { get; set; }
-        public string companyName { get; set; }
+        //public string companyName { get; set; }
         public int shareQuantity { get; set; }
         public decimal marketPrice { get; set; }
         public decimal amount { get; set; }

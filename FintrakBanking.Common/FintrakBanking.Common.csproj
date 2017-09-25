@@ -58,6 +58,7 @@
     <Compile Include="Enum\DayCountConventionEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />
     <Compile Include="Enum\LimitValueTypeEnum.cs" />
+    <Compile Include="Enum\LoanApplicationStatusEnum.cs" />
     <Compile Include="Enum\LoanScheduleTypeEnum.cs" />
     <Compile Include="Enum\LoanStatusEnum.cs" />
     <Compile Include="Enum\LoanTransactionTypeEnum.cs" />
