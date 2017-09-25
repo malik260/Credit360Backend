@@ -57,8 +57,6 @@ namespace FintrakBanking.Entities.Models
 
         public int? CityId { get; set; }
 
-        public bool NPL_LimitExceeded { get; set; }
-
         public bool Deleted { get; set; }
 
         public int? DeletedBy { get; set; }

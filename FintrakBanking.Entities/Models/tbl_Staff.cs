@@ -23,7 +23,6 @@ namespace FintrakBanking.Entities.Models
             tbl_Finance_Transaction1 = new HashSet<tbl_Finance_Transaction>();
             tbl_Job_Request = new HashSet<tbl_Job_Request>();
             tbl_Job_Request1 = new HashSet<tbl_Job_Request>();
-            tbl_Job_Request2 = new HashSet<tbl_Job_Request>();
             tbl_Notification_Log = new HashSet<tbl_Notification_Log>();
             tbl_Profile_User = new HashSet<tbl_Profile_User>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
@@ -115,8 +114,6 @@ namespace FintrakBanking.Entities.Models
 
         public short CustomerSensitivityLevel { get; set; }
 
-        public bool NPL_LimitExceeded { get; set; }
-
         public int? CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
@@ -167,9 +164,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Job_Request> tbl_Job_Request1 { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Job_Request> tbl_Job_Request2 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Notification_Log> tbl_Notification_Log { get; set; }

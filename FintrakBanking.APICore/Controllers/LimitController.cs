@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.APICore.core;
 using System.Web;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -139,13 +140,99 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Limits Details
-        [HttpGet][Route("limit-detail")]
-        public HttpResponseMessage GetAllLimitDetail()
+        [HttpGet][Route("limit-detailObligor")]
+        public HttpResponseMessage GetLimitDetailObligor()
         {
             try
             {
                 var token = new TokenDecryptionHelper();
-                var response = repo.GetAllLimitDetail();
+                int typeId = (int)LimitType.Obligor;
+                var response = repo.GetAllLimitDetail(typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("limit-detailCustomerGroup")]
+        public HttpResponseMessage GetLimitDetailCustomerGroup()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                int typeId = (int)LimitType.CustomerGroup;
+                var response = repo.GetAllLimitDetail(typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("limit-detailSector")]
+        public HttpResponseMessage GetLimitDetailSector()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                int typeId = (int)LimitType.Sector;
+                var response = repo.GetAllLimitDetail(typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("limit-detailBranch")]
+        public HttpResponseMessage GetLimitDetailBranch()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                int typeId = (int)LimitType.Branch;
+                var response = repo.GetAllLimitDetail(typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("limit-detailRelationshipManager")]
+        public HttpResponseMessage GetLimitDetailRelationshipManager()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                int typeId = (int)LimitType.RelationshipManager;
+                var response = repo.GetAllLimitDetail(typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("limit-detailPrelimemaryEvaluationNote")]
+        public HttpResponseMessage GetLimitDetailPrelimemaryEvaluationNote()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                int typeId = (int)LimitType.PrelimemaryEvaluationNote;
+                var response = repo.GetAllLimitDetail(typeId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
             }

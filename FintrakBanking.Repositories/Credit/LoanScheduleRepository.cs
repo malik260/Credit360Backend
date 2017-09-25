@@ -1233,7 +1233,7 @@ namespace FintrakBanking.Repositories.Credit
             this.context.tbl_Loan_Schedule_Daily.AddRange(tblDailySchedule);
 
             //----------update loan details -----------------------------------
-            var loan = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == loanId);
+            var loan = this.context.tbl_Loan.FirstOrDefault(x => x.LoanId == loanId);
             loan.MaturityDate = periodicSchedule.Max(x => x.paymentDate);
             loan.PrincipalNumberOfInstallment = periodicSchedule.Count() -1;
             loan.InterestNumberOfInstallment = loan.PrincipalNumberOfInstallment;
