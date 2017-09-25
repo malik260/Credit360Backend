@@ -804,7 +804,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanReferenceNumber =ln.LoanReferenceNumber,
                             applicationReferenceNumber =ln.tbl_Loan_Application.ApplicationReferenceNumber,
 
-                            tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
+                            //tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
                             //principalFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
                             pricipalFrequencyTypeName = ln.tbl_Frequency_Type.Description,
                             //interestFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
@@ -1312,7 +1312,7 @@ namespace FintrakBanking.Repositories.Credit
                         casaAccountId = data.CasaAccountId,
                         branchId = data.BranchId,
                         loanReferenceNumber = data.LoanReferenceNumber,
-                        tenor = (data.MaturityDate - data.EffectiveDate).Days,
+                        //tenor = (data.MaturityDate - data.EffectiveDate).Days,
                         principalFrequencyTypeId = (short)data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = (short)data.InterestFrequencyTypeId,
 
@@ -1375,7 +1375,7 @@ namespace FintrakBanking.Repositories.Credit
                         casaAccountId = data.CasaAccountId,
                         branchId = data.BranchId,
                         loanReferenceNumber = data.LoanReferenceNumber,
-                        tenor = (data.MaturityDate - data.EffectiveDate).Days,
+                        //tenor = (data.MaturityDate - data.EffectiveDate).Days,
                         //tenorModeId = data.TenorModeId,
                         principalFrequencyTypeId = (short)data.PrincipalFrequencyTypeId,
                         interestFrequencyTypeId = (short)data.InterestFrequencyTypeId,
@@ -1436,7 +1436,7 @@ namespace FintrakBanking.Repositories.Credit
                     casaAccountId = o.CasaAccountId,
                     branchId = o.BranchId,
                     loanReferenceNumber = o.LoanReferenceNumber,
-                    tenor = (o.MaturityDate - o.EffectiveDate).Days,
+                    //tenor = (o.MaturityDate - o.EffectiveDate).Days,
                     principalFrequencyTypeId = (short)o.PrincipalFrequencyTypeId,
                     interestFrequencyTypeId = (short)o.InterestFrequencyTypeId,
 
@@ -1656,19 +1656,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
         {
-            return (from data in context.tbl_Loan_Application_Collateral
-                    where data.LoanApplicationId == loanApplicationId && data.Deleted == false
+            var data = (from lac in context.tbl_Loan_Application_Collateral
+                    where lac.LoanApplicationId == loanApplicationId && lac.Deleted == false
                     select new LoanApplicationCollateralViewModel()
                     {
-                        customerCollateralId = data.CustomerCollateralId,
-                        latitude = data.Latitude,
-                        longitude = data.Longitude,
-                        nearestBusStop = data.NearestBusStop,
-                        nearestLandmark = data.NearestLandmark,
-                        locationAddress = data.LocationAddress,
-                        documentTitle = data.DocumentTitle,
-                        otherInformations = data.OtherInformations
+                        customerCollateralId = lac.CustomerCollateralId,
+                        latitude = lac.Latitude,
+                        longitude = lac.Longitude,
+                        nearestBusStop = lac.NearestBusStop,
+                        nearestLandmark = lac.NearestLandmark,
+                        locationAddress = lac.LocationAddress,
+                        documentTitle = lac.DocumentTitle,
+                        otherInformations = lac.OtherInformations
                     });
+            return data;
         }
 
         public AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId)
@@ -1837,8 +1838,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.tbl_Loan_Application
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
-                        //join custgrp in context.tbl_Customer_Group on a.CustomerGroupId equals custgrp.CustomerGroupId
-                        where a.CompanyId == companyId && a.Deleted == false && c.IsCompleted == true 
+                        where a.CompanyId == companyId && a.Deleted == false
                             && a.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
                         {
@@ -1861,7 +1861,6 @@ namespace FintrakBanking.Repositories.Credit
                             branchName = a.tbl_Branch.BranchName,
                             subSectorId = a.SubSectorId,
 
-                            //tenor = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().Tenor,
                             tenor = a.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
@@ -1885,12 +1884,10 @@ namespace FintrakBanking.Repositories.Credit
                             misCode = a.MISCode,
                             teamMisCode = a.TeamMISCode,
 
-                            //interestRate = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().InterestRate,
                             interestRate = a.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
                             submittedForAppraisal = a.SubmittedForAppraisal,
-                            //principalAmount = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().PrincipalAmount,
                             principalAmount = a.PrincipalAmount,
 
                             createdBy = a.CreatedBy,
