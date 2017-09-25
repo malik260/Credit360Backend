@@ -123,6 +123,7 @@
     <Compile Include="Models\tbl_Company.cs" />
     <Compile Include="Models\tbl_Company_Class.cs" />
     <Compile Include="Models\tbl_Company_Type.cs" />
+    <Compile Include="Models\tbl_Loan_Condition_Precedent.cs" />
     <Compile Include="Models\tbl_Content_PlaceHolder.cs" />
     <Compile Include="Models\tbl_COT.cs" />
     <Compile Include="Models\tbl_Country.cs" />

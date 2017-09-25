@@ -9,35 +9,22 @@ namespace FintrakBanking.Interfaces.WorkFlow
     public interface IWorkflow
     {
         Task<bool> LogActivity();
-
         int OperationId { set; }
-
         int? ProductClassId { set; }
-
         int? ProductId { set; }
-
         int StaffId { set; }
-
         int TargetId { set; }
-
         int CompanyId { set; }
-
         string Comment { set; }
-
         decimal Amount { set; }
-
         int StatusId { get; set; }
-
+        int NewState { get; }
         int NextLevelId { set; }
-
         bool EmailNotification { set; }
-
+        bool Vote { set; }
         bool SmsNotification { set; }
-
         bool ExternalInitialization { set; }
-
         string Message { get; }
-
         bool Saved { get; }
     }
 }

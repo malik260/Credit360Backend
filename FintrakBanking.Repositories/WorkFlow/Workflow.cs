@@ -45,6 +45,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int requestStaffId;
         private int neededNumberOfApproval;
         private bool externalInitialization = false;
+        private bool vote = false;
 
         public int StaffId { set { staffId = value; } }
         public int TargetId { set { targetId = value; } }
@@ -52,6 +53,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int OperationId { set { operationId = value; } }
         public decimal Amount { set { amount = value; } }
         public string Comment { set { comment = value; } }
+        public bool Vote { set { vote = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int NextLevelId { set { nextLevelId = value; } }
         public int? ProductId { set { productId = value; } }
@@ -61,6 +63,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool ExternalInitialization { set { externalInitialization = value; } }
         public string Message { get { return message; } }
         public bool Saved { get { return saved; } }
+        public int NewState { get { return newStateId; } }
 
         public async Task<bool> LogActivity()
         {
@@ -77,7 +80,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 this.currentStateId = request.ApprovalStateId;
                 this.requestStaffId = request.RequestStaffId;
-                //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
+                if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
                 this.fromLevelId = request.ToApprovalLevelId;
             } else
             {
@@ -122,6 +125,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 ApprovalStatusId = (short)this.statusId,
                 SystemArrivalDateTime = this.systemDate,
                 SystemResponseDateTime = this.systemDate,
+                VotedYes = this.vote,
             };
 
             context.tbl_Approval_Trail.Add(trail);

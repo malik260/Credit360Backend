@@ -68,7 +68,13 @@ namespace FintrakBanking.ViewModels.Credit
         public double exchangeRate { get; set; }
         public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
 
+        public int? currentApprovalStateId { get; set; }
+        public int? currentApprovalLevelId { get; set; }
+        public string currentApprovalLevel { get; set; }
+        public string lastComment { get; set; }
+        public int approvalTrailId { get; set; }
     }
+
     public class CollateralLenPlacementViewModel : GeneralEntity
     {
         public string acountNumber { get; set; }
