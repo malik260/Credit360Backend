@@ -678,6 +678,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId,
                             exchangeRate = a.ExchangeRate,
+                            applicationStatusId = a.ApplicationStatusId
                         }).ToList().Where(r => !context.tbl_Loan.AsEnumerable().Any(c =>
                                                    r.loanApplicationId == c.LoanApplicationId
                                                    && r.loanTypeId == (int)LoanTypeEnum.Single)
@@ -703,17 +704,18 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             target.ApplicationStatusId =
                                 (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-                        }
 
-                        return context.SaveChanges() > 0;
+                            return context.SaveChanges() > 0;
+                        }
+                        return true;
 
                     case (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted:
                         if (target.ApplicationStatusId != (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted)
                         {
                             target.ApplicationStatusId = (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted;
+                            return context.SaveChanges() > 0;
                         }
-
-                        return context.SaveChanges() > 0;
+                        return true;
 
                     case (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewInProgress:
                         if (target.ApplicationStatusId !=
@@ -721,35 +723,35 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             target.ApplicationStatusId =
                                 (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewInProgress;
+                            return context.SaveChanges() > 0;
                         }
-
-                        return context.SaveChanges() > 0;
+                        return true;
 
                     case (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted:
                         if (target.ApplicationStatusId !=
                             (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted)
                         {
                             target.ApplicationStatusId =
-                                (short) LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted;
+                                (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted;
+                            return context.SaveChanges() > 0;
                         }
-
-                        return context.SaveChanges() > 0;
+                        return true;
 
                     case (short)LoanApplicationStatusEnum.AvailmentInProgress:
                         if (target.ApplicationStatusId != (short)LoanApplicationStatusEnum.AvailmentInProgress)
                         {
                             target.ApplicationStatusId = (short)LoanApplicationStatusEnum.AvailmentInProgress;
+                            return context.SaveChanges() > 0;
                         }
-                        
-                        return context.SaveChanges() > 0;
+                        return true;
 
                     case (short)LoanApplicationStatusEnum.AvailmentCompleted:
                         if (target.ApplicationStatusId != (short)LoanApplicationStatusEnum.AvailmentCompleted)
                         {
                             target.ApplicationStatusId = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                            return context.SaveChanges() > 0;
                         }
-
-                        return context.SaveChanges() > 0;
+                        return true;
 
                     default:
                         return false;
@@ -760,5 +762,22 @@ namespace FintrakBanking.Repositories.Credit
 
             //public IEnumerable
         }
+
+        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int companyId)
+        {
+            var data = GetCamProcessedLoanApplications(companyId).Where(x =>
+                x.applicationStatusId == (short) LoanApplicationStatusEnum.OfferLetterGenerationCompleted);
+
+            return data;
+        }
+
+        public IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplicationsDueForAvailment(int companyId)
+        {
+            var data = GetCamProcessedLoanApplications(companyId).Where(x =>
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted);
+
+            return data;
+        }
+
     }
 }

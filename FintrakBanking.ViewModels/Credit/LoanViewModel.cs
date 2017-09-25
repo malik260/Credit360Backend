@@ -275,6 +275,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productTypeName { get; set; }
         public int customerSensitivityLevelId { get; set; }
         public string camDocumentation { get; set; }
+        public short applicationStatusId { get; set; }
     }
 
     public class AppraisalMemorandumLoanDetailViewModel

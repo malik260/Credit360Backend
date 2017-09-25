@@ -276,7 +276,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application/credit-assessment-memorandum/approved-loans")]
         public HttpResponseMessage GetCamProcessedLoanApplications()
         {
-            TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
                 var response = repoApply.GetCamProcessedLoanApplications(token.GetCompanyId);
@@ -314,6 +313,45 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/due-for-review")]
+        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForReview()
+        {
+            try
+            {
+                var response = repoApply.GetApplicationsForReviewFromCreditUnit(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList(), count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/approved-loans")]
+        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForAvailment()
+        {
+            try
+            {
+                var response = repoApply.GetCamProcessedLoanApplicationsDueForAvailment(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList(), count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         #endregion
 
         #region Loan Preliminary Evaluation
