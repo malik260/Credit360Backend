@@ -572,8 +572,13 @@ namespace FintrakBanking.Repositories.Credit
 
                         var loan = context.tbl_Loan.Add(data);
                         context.tbl_Audit.Add(audit);
+                        var dataCount = context.SaveChanges();
 
-                        var dataCount = await context.SaveChangesAsync();
+                        AddLoanCovenantDetail(entity.loanCovenant, loan.TermLoanId, (short)entity.productTypeId);
+                        AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
+                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
+                        AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
+
                         this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
                         var approvalModel = new ApprovalViewModel
@@ -1692,8 +1697,9 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.tbl_Credit_Appraisal_Memorandum
                         on a.LoanApplicationId equals c.LoanApplicationId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
-                        //join custgrp in context.tbl_Customer_Group on a.CustomerGroupId equals custgrp.CustomerGroupId
-                        where a.CompanyId == companyId && a.Deleted == false && c.IsCompleted == true
+                        where a.CompanyId == companyId && a.Deleted == false 
+                        && c.IsCompleted==true //TODO: Remove this line
+                        //&& a.ApplicationStatusId = ApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted
                         select new CamProcessedLoanViewModel
                         {
                             approvalStatusId = a.ApprovalStatusId,

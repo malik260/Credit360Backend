@@ -367,6 +367,12 @@ namespace FintrakBanking.Repositories.Credit
             return collateral;
         }
 
+        public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)
+        {
+            return GetCustomerCollateral(companyId).Where(x=>x.collateralTypeId == collateralTypeId && (x.customerId==customerId || x.customerId == thirdpartyCustomerId));
+        }
+
+
         public IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId)
         {
             var collateral = context.tbl_Collateral_Customer.Where(x => x.Deleted == false
@@ -376,9 +382,11 @@ namespace FintrakBanking.Repositories.Credit
             {
                 collateralId = x.CollateralCustomerId,
                 collateralTypeId = x.CollateralTypeId,
+                collateralTypeName =x.tbl_Collateral_Type.CollateralTypeName,
                 collateralSubTypeId = x.CollateralSubTypeId,
                 customerId = x.CustomerId,
                 currencyId = x.CurrencyId,
+                currencyCode = x.tbl_Currency.CurrencyCode,
                 collateralCode = x.CollateralCode,
                 camRefNumber = x.CamRefNumber,
                 allowSharing = x.AllowSharing,
