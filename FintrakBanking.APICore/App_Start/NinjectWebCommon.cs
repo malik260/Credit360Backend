@@ -171,7 +171,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
             kernel.Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
-            
+            kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
         }        
     }
     

@@ -42,6 +42,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Company> tbl_Company { get; set; }
         public virtual DbSet<tbl_Company_Class> tbl_Company_Class { get; set; }
         public virtual DbSet<tbl_Company_Type> tbl_Company_Type { get; set; }
+        public virtual DbSet<tbl_Loan_Condition_Precedent> tbl_Condition_Precedent { get; set; }
         public virtual DbSet<tbl_Content_PlaceHolder> tbl_Content_PlaceHolder { get; set; }
         public virtual DbSet<tbl_Country> tbl_Country { get; set; }
         public virtual DbSet<tbl_Currency> tbl_Currency { get; set; }
@@ -2411,6 +2412,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Loan_Schedule_Periodic)
                 .WithRequired(e => e.tbl_Loan)
                 .HasForeignKey(e => e.LoanId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Condition_Precedent)
+                .WithRequired(e => e.tbl_Loan_Application)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan_Application>()

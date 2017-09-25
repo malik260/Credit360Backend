@@ -25,11 +25,13 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int forwardAction { get; set; } // statusId
         public int applicationId { get; set; } // targetId
+        public int appraisalMemorandumId { get; set; }
         public int? productClassId { get; set; }
         public int? productId { get; set; }
         public int receiverLevelId { get; set; }
         public decimal amount { get; set; }
         public bool politicallyExposed { get; set; }
+        public bool vote { get; set; }
         public string comment { get; set; }
         public decimal principal { get; set; }
         public double rate { get; set; }
@@ -55,5 +57,9 @@ namespace FintrakBanking.ViewModels.Credit
         public bool canApprove { get; set; }
         public bool canUploadFile { get; set; }
         public bool canSendRequest { get; set; }
+        public decimal approvalLimit { get; set; }
+        public decimal investmentGradeApprovalLimit { get; set; }
+        public List<int> userApprovalLevelIds { get; set; }
+        public int maximumTenor { get; set; }
     }
 }
