@@ -245,7 +245,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 
@@ -271,6 +271,48 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/approved-loans")]
+        public HttpResponseMessage GetCamProcessedLoanApplications()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repoApply.GetCamProcessedLoanApplications(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [Route("loan-application/send-for-availment/{applicationRefNumber}/statusId/{applicationStatusId}")]
+        public HttpResponseMessage UpdateApplicationStatus(int applicationRefNumber, short applicationStatusId)
+        {
+            try
+            {
+                var response = repoApply.UpdateLoanApplicationStatus(applicationRefNumber.ToString(), applicationStatusId);
+
+                if (!response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "record not updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "record updated successfully"});
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         #endregion
 
