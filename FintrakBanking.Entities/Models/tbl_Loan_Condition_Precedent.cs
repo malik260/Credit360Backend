@@ -13,10 +13,10 @@
         public int ConditionId { get; set; }
 
         [Required]
-        [StringLength(500)]
+        [StringLength(1000)]
         public string Condition { get; set; }
 
-        public bool? IsExternal { get; set; }
+        public bool IsExternal { get; set; }
 
         public int CreatedBy { get; set; }
 

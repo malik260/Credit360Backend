@@ -14,6 +14,7 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Credit_Appraisal_Memorandum = new HashSet<tbl_Credit_Appraisal_Memorandum>();
             tbl_Loan = new HashSet<tbl_Loan>();
+            tbl_Loan_Condition_Precedent = new HashSet<tbl_Loan_Condition_Precedent>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Loan_Collateral_Mapping = new HashSet<tbl_Loan_Collateral_Mapping>();
             tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
@@ -99,6 +100,8 @@ namespace FintrakBanking.Entities.Models
 
         public int ApprovalStatusId { get; set; }
 
+        public short ApplicationStatusId { get; set; }
+
         public DateTime? DateActedOn { get; set; }
 
         public int? ActedOnBy { get; set; }
@@ -130,6 +133,11 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Condition_Precedent> tbl_Loan_Condition_Precedent { get; set; }
+
+        public virtual tbl_Loan_Application_Status tbl_Loan_Application_Status { get; set; }
 
         public virtual tbl_Loan_Preliminary_Evaluation tbl_Loan_Preliminary_Evaluation { get; set; }
 
