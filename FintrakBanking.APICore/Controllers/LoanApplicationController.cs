@@ -334,7 +334,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-application/credit-assessment-memorandum/approved-loans")]
+        [Route("loan-application/credit-assessment-memorandum/due-for-availment")]
         public HttpResponseMessage GetCamProcessedLoanApplicationsDueForAvailment()
         {
             try
