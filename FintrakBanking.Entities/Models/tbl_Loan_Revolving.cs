@@ -97,6 +97,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool SuspendInterest { get; set; }
 
+        public short DayCountConventionId { get; set; }
+
         public short CustomerSensitivityLevelId { get; set; }
 
         public int? InternalPrudentialGuidelineStatusId { get; set; }
@@ -123,6 +125,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
 
         public virtual tbl_Customer_Sensitivity_Level tbl_Customer_Sensitivity_Level { get; set; }
+
+        public virtual tbl_Day_Count_Convention tbl_Day_Count_Convention { get; set; }
 
         public virtual tbl_Product tbl_Product { get; set; }
 

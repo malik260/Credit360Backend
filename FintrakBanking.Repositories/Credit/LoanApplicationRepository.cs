@@ -717,22 +717,22 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         return true;
 
-                    case (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewInProgress:
+                    case (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress:
                         if (target.ApplicationStatusId !=
-                            (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewInProgress)
+                            (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress)
                         {
                             target.ApplicationStatusId =
-                                (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewInProgress;
+                                (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress;
                             return context.SaveChanges() > 0;
                         }
                         return true;
 
-                    case (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted:
+                    case (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted:
                         if (target.ApplicationStatusId !=
-                            (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted)
+                            (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted)
                         {
                             target.ApplicationStatusId =
-                                (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted;
+                                (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted;
                             return context.SaveChanges() > 0;
                         }
                         return true;
@@ -774,7 +774,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int companyId)
         {
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
-                x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted);
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted);
 
             return data;
         }
