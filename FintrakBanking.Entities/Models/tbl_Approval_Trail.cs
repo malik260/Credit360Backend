@@ -40,10 +40,10 @@ namespace FintrakBanking.Entities.Models
 
         public int OperationId { get; set; }
 
-        public bool VotedYes { get; set; }
-
         [StringLength(700)]
         public string Comment { get; set; }
+
+        public bool VotedYes { get; set; }
 
         public virtual tbl_Approval_Level tbl_Approval_Level { get; set; }
 
