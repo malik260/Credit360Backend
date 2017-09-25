@@ -31,5 +31,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         Task<bool> AddLoanApplication(LoanApplicationViewModel loan);
 
+        IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
+
+        bool UpdateLoanApplicationStatus(string applicationRefNumber, short applicationStatusId);
     }
 }

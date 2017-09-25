@@ -12,7 +12,6 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Loan()
         {
-            tbl_Loan_Amortization_Schedule = new HashSet<tbl_Loan_Amortization_Schedule>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Loan_Camsol = new HashSet<tbl_Loan_Camsol>();
             tbl_Loan_Force_Debit = new HashSet<tbl_Loan_Force_Debit>();
@@ -22,6 +21,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Schedule_Irregular_Input = new HashSet<tbl_Loan_Schedule_Irregular_Input>();
             tbl_Loan_Schedule_Periodic_Archive = new HashSet<tbl_Loan_Schedule_Periodic_Archive>();
             tbl_Loan_Schedule_Periodic = new HashSet<tbl_Loan_Schedule_Periodic>();
+            tbl_Loan_Schedule_Periodic_Temp = new HashSet<tbl_Loan_Schedule_Periodic_Temp>();
         }
 
         [Key]
@@ -217,9 +217,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Amortization_Schedule> tbl_Loan_Amortization_Schedule { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -245,6 +242,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Periodic> tbl_Loan_Schedule_Periodic { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Schedule_Periodic_Temp> tbl_Loan_Schedule_Periodic_Temp { get; set; }
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
 

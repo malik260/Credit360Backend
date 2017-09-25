@@ -200,11 +200,13 @@
     <Compile Include="Models\tbl_Loan_Amortization_Schedule.cs" />
     <Compile Include="Models\tbl_Loan_Application.cs" />
     <Compile Include="Models\tbl_Loan_Application_Collateral.cs" />
+    <Compile Include="Models\tbl_Loan_Application_Status.cs" />
     <Compile Include="Models\tbl_Loan_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
     <Compile Include="Models\tbl_Loan_Change_Type.cs" />
     <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
+    <Compile Include="Models\tbl_Loan_Condition_Precedent.cs" />
     <Compile Include="Models\tbl_Loan_Contingent.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Detail.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Type.cs" />
@@ -225,6 +227,7 @@
     <Compile Include="Models\tbl_Loan_Schedule_Irregular_Input.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Periodic.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Periodic_Archive.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Periodic_Temp.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Type.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Type_Product_Type_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Status.cs" />
