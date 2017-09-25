@@ -18,6 +18,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Past_Due = new HashSet<tbl_Loan_Past_Due>();
             tbl_Loan_Schedule_Daily_Archive = new HashSet<tbl_Loan_Schedule_Daily_Archive>();
             tbl_Loan_Schedule_Daily = new HashSet<tbl_Loan_Schedule_Daily>();
+            tbl_Loan_Schedule_Daily_Temp = new HashSet<tbl_Loan_Schedule_Daily_Temp>();
             tbl_Loan_Schedule_Irregular_Input = new HashSet<tbl_Loan_Schedule_Irregular_Input>();
             tbl_Loan_Schedule_Periodic_Archive = new HashSet<tbl_Loan_Schedule_Periodic_Archive>();
             tbl_Loan_Schedule_Periodic = new HashSet<tbl_Loan_Schedule_Periodic>();
@@ -233,6 +234,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Schedule_Daily_Temp> tbl_Loan_Schedule_Daily_Temp { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Irregular_Input> tbl_Loan_Schedule_Irregular_Input { get; set; }
