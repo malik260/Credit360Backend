@@ -495,7 +495,7 @@ namespace FintrakBanking.Repositories.Credit
                             lastComment = y.Comment,
                             currentApprovalStateId = y.ApprovalStateId,
                             currentApprovalLevelId = y.ToApprovalLevelId,
-                            currentApprovalLevel = y.tbl_Approval_Level.LevelName,
+                            currentApprovalLevel = y.tbl_Approval_Level1.LevelName, // pls note! tbl_Approval_Level1<---1
                             approvalTrailId = y == null ? 0 : y.ApprovalTrailId, // for inner sequence ordering
 
                             loanInformation = x.a.LoanInformation,
@@ -569,7 +569,7 @@ namespace FintrakBanking.Repositories.Credit
                 lastComment = x.b.Comment,
                 currentApprovalStateId = x.b.ApprovalStateId,
                 currentApprovalLevelId = x.b.ToApprovalLevelId,
-                currentApprovalLevel = x.b.tbl_Approval_Level.LevelName,
+                currentApprovalLevel = x.b.tbl_Approval_Level1.LevelName, // pls note! tbl_Approval_Level1<---1
                 loanInformation = x.a.LoanInformation,
                 submittedForAppraisal = x.a.SubmittedForAppraisal,
                 isRealatedParty = x.a.IsRealatedParty,

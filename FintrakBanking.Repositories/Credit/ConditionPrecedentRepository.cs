@@ -35,7 +35,7 @@ namespace FintrakBanking.Repositories.Credit
                 DateTimeCreated = general.GetApplicationDate(),
             };
 
-            context.tbl_Condition_Precedent.Add(data);
+            context.tbl_Loan_Condition_Precedent.Add(data);
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -57,7 +57,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateConditionPrecedent(ConditionPrecedentViewModel model, int conditionPrecedentId)
         {
-            var data = this.context.tbl_Condition_Precedent.Find(conditionPrecedentId);
+            var data = this.context.tbl_Loan_Condition_Precedent.Find(conditionPrecedentId);
             if (data == null)
             {
                 return false;
@@ -90,7 +90,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ConditionPrecedentViewModel> GetAllConditionPrecedent()
         {
-            return this.context.tbl_Condition_Precedent
+            return this.context.tbl_Loan_Condition_Precedent
                 .Join(
                     context.tbl_Staff,
                     c => c.CreatedBy,
