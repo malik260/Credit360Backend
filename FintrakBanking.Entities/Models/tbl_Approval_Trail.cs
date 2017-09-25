@@ -45,8 +45,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(700)]
         public string Comment { get; set; }
 
-        public bool VotedYes { get; set; }
-
         public virtual tbl_Approval_Level tbl_Approval_Level { get; set; }
 
         public virtual tbl_Approval_Level tbl_Approval_Level1 { get; set; }
