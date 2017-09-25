@@ -50,6 +50,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Interfaces.Finance;
     using FintrakBanking.Interfaces.Risk;
     using FintrakBanking.Repositories.Risk;
+    using FintrakBanking.ReportObjects.InterfaceReporting;
+    using FintrakBanking.ReportObjects.ReportCalls;
 
     public static class NinjectWebCommon 
     {
@@ -171,6 +173,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
             kernel.Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
+            kernel.Bind<IReportRouts>().To<ReportRouts>();
             
         }        
     }
