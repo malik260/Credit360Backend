@@ -8,7 +8,7 @@ namespace FintrakBanking.Entities.Models
     public partial class FinTrakBankingContext : DbContext
     {
         public FinTrakBankingContext()
-            : base("name=FinTrakBankingContext1")
+            : base("name=FinTrakBankingContext")
         {
         }
 
@@ -42,7 +42,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Company> tbl_Company { get; set; }
         public virtual DbSet<tbl_Company_Class> tbl_Company_Class { get; set; }
         public virtual DbSet<tbl_Company_Type> tbl_Company_Type { get; set; }
-        public virtual DbSet<tbl_Loan_Condition_Precedent> tbl_Condition_Precedent { get; set; }
         public virtual DbSet<tbl_Content_PlaceHolder> tbl_Content_PlaceHolder { get; set; }
         public virtual DbSet<tbl_Country> tbl_Country { get; set; }
         public virtual DbSet<tbl_Currency> tbl_Currency { get; set; }
