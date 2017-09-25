@@ -37,6 +37,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int companyId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplicationsDueForAvailment(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int companyId);
     }
 }

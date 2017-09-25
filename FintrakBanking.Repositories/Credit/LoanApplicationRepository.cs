@@ -771,7 +771,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplicationsDueForAvailment(int companyId)
+        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int companyId)
         {
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted);
