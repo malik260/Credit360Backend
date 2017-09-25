@@ -471,7 +471,6 @@ namespace FintrakBanking.Repositories.Credit
                         xy => xy.bs.DefaultIfEmpty(),
                         (x, y) => new LoanApplicationViewModel
                         {
-
                             loanApplicationId = x.a.LoanApplicationId,
                             applicationReferenceNumber = x.a.ApplicationReferenceNumber,
                             customerId = x.a.CustomerId,
@@ -574,19 +573,14 @@ namespace FintrakBanking.Repositories.Credit
                 isPoliticallyExposed = x.a.IsPoliticallyExposed,
                 approvalStatusId = x.a.ApprovalStatusId,
                 branchName = x.a.tbl_Branch.BranchName,
-                relationshipOfficerName = x.a.tbl_Staff.FirstName + " " + x.a.tbl_Staff.MiddleName + " " +
-                                              x.a.tbl_Staff.LastName,
-                relationshipManagerName = x.a.tbl_Staff.FirstName + " " + x.a.tbl_Staff.MiddleName + " " +
-                                              x.a.tbl_Staff.LastName,
+                relationshipOfficerName = x.a.tbl_Staff.FirstName + " " + x.a.tbl_Staff.MiddleName + " " + x.a.tbl_Staff.LastName,
+                relationshipManagerName = x.a.tbl_Staff.FirstName + " " + x.a.tbl_Staff.MiddleName + " " + x.a.tbl_Staff.LastName,
                 misCode = x.a.MISCode,
                 customerGroupName = x.a.CustomerGroupId.HasValue ? x.a.tbl_Customer_Group.GroupName : "",
                 loanTypeName = x.a.tbl_Loan_Type.LoanTypeName,
                 createdBy = x.a.CreatedBy,
                 loanPreliminaryEvaluationId = x.a.LoanPreliminaryEvaluationId,
-                customerName = x.a.CustomerId.HasValue
-                        ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " +
-                          x.a.tbl_Customer.LastName
-                        : "",
+                customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
             })
             .OrderByDescending(x => x.applicationDate)
             .ThenByDescending(x => x.loanApplicationId)
@@ -766,7 +760,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int companyId)
         {
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
-                x.applicationStatusId == (short) LoanApplicationStatusEnum.OfferLetterGenerationCompleted);
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted);
 
             return data;
         }
