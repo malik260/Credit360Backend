@@ -783,7 +783,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralId = specifics.CollateralCustomerId,
                 collateralGauranteeId = specifics.CollateralGauranteeId,
                 collateralCustomerId = specifics.CollateralCustomerId,
-                isOwnedByCustomer = specifics.IsOwnedByCustomer,
+                isOwnedByCustomer = (bool)specifics.IsOwnedByCustomer,
                 institutionName = specifics.InstitutionName,
                 guarantorAddress = specifics.GuarantorAddress,
                 guarantorReferenceNumber = specifics.GuarantorReferenceNumber,

@@ -52,6 +52,5 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
     }
 }

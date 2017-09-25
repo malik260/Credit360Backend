@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Customer
             };
             context.tbl_Loan_Covenant_Detail.Add(convenant);
 
-            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.TermLoanId == entity.loanId).LoanReferenceNumber;
+            var loanRef = context.tbl_Loan.FirstOrDefault(c => c.TermLoanId == entity.loanId).LoanReferenceNumber;
 
             var audit = new tbl_Audit
             {

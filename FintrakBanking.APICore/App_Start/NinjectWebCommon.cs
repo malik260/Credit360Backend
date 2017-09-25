@@ -175,6 +175,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
             kernel.Bind<IReportRouts>().To<ReportRouts>();
             
+            kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
         }        
     }
     

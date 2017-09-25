@@ -744,26 +744,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpGet]
-        [Route("loan-application/credit-assessment-memorandum/approved-loans")]
-        public HttpResponseMessage GetCamProcessedLoanApplications()
-        {
-            TokenDecryptionHelper token = new TokenDecryptionHelper();
-            try
-            {
-                var response = repo.GetCamProcessedLoanApplications(token.GetCompanyId);
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
 
         #endregion
 

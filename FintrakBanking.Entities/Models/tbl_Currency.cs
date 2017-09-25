@@ -12,7 +12,6 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Currency()
         {
-            tbl_Application_Setup = new HashSet<tbl_Application_Setup>();
             tbl_CASA = new HashSet<tbl_CASA>();
             tbl_Company = new HashSet<tbl_Company>();
             tbl_Chart_Of_Account_Currency = new HashSet<tbl_Chart_Of_Account_Currency>();
@@ -49,9 +48,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime DateTimeCreated { get; set; }
 
         public DateTime? DateTimeUpdated { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Application_Setup> tbl_Application_Setup { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_CASA> tbl_CASA { get; set; }
