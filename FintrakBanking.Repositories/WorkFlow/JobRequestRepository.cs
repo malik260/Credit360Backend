@@ -36,7 +36,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 JobTypeId = model.jobTypeId,
                 SenderStaffId = model.createdBy,
                 ReceiverStaffId = model.receiverStaffId,
-                DepartmentId = model.departmentId,
+               // DepartmentId = model.departmentId,
                 ReassignedTo = model.reassignedTo,
                 IsReassigned = model.isReassigned,
                 IsAcknowledged = model.isAcknowledged,
@@ -261,7 +261,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return context.tbl_Department.Where(x => x.DepartmentId == departmentId)
                 .Join(context.tbl_Job_Request.Where(x => x.OperationsId == operationId),
-                a => a.DepartmentId, b => b.DepartmentId, (a, b) => new { a, b })
+                a => a.DepartmentId, b => b.TargetId, (a, b) => new { a, b })
                 .Select(x => new JobRequestViewModel
                 {
                     jobRequestId = x.b.JobRequestId,

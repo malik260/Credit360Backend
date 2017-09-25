@@ -36,8 +36,7 @@ namespace FintrakBanking.Entities.Models
 
         public int TargetId { get; set; }
 
-        public short DepartmentId { get; set; }
-
+        public int StaffApprovalGroupId { get; set; }
 
         public int OperationsId { get; set; }
 
@@ -69,10 +68,12 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? SystemAcknowledgementDate { get; set; }
 
-        public virtual tbl_Department tbl_Department { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Job_Request_Document_Mapping> tbl_Job_Request_Document_Mapping { get; set; }
+
+        public virtual tbl_Job_Request tbl_Job_Request1 { get; set; }
+
+        public virtual tbl_Job_Request tbl_Job_Request2 { get; set; }
 
         public virtual tbl_Job_Request_Status tbl_Job_Request_Status { get; set; }
 
@@ -83,7 +84,5 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Staff tbl_Staff { get; set; }
 
         public virtual tbl_Staff tbl_Staff1 { get; set; }
-
-        public virtual tbl_Staff tbl_Staff2 { get; set; }
     }
 }

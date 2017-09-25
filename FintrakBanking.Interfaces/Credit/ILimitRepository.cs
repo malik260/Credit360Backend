@@ -17,7 +17,7 @@ namespace FintrakBanking.Interfaces.Credit
         #endregion
 
         #region Limits Details
-        IEnumerable<LimitDetailViewModel> GetAllLimitDetail();
+        IEnumerable<LimitDetailViewModel> GetAllLimitDetail(int id);
         List<LimitDetailViewModel> GetLimitDetailById(int limitDetailId);
         bool AddLimitDetail(LimitDetailViewModel model);
         bool UpdateLimitDetail(int limitDetailId, LimitDetailViewModel model);

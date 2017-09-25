@@ -16,7 +16,6 @@ namespace FintrakBanking.Entities.Models
         }
 
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int LimitMetricId { get; set; }
 
         [Required]
