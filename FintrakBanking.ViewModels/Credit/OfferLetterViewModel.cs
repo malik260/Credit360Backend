@@ -17,5 +17,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerAddress { get; set; }
 
         public DateTime applicationDate { get; set; }
+        public string condition { get; set; }
     }
 }
