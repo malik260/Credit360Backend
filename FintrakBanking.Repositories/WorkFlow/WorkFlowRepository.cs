@@ -241,7 +241,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             if (entity.operationId == (int)OperationsEnum .TermLoanBooking)
             { 
-                var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.LoanApplicationId == entity.targetId);
+                var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.TermLoanId == entity.targetId);
                 if (loan.Any())
                 {
                     amount = loan.SingleOrDefault().PrincipalAmount;
@@ -263,7 +263,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             if (entity.operationId == (int)OperationsEnum.TermLoanBooking)
             {
-                var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.LoanApplicationId == entity.targetId);
+                var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.TermLoanId == entity.targetId);
                 if (loan.Any())
                 {
                     tenor = (loan.SingleOrDefault().MaturityDate - loan.SingleOrDefault().EffectiveDate).Days;

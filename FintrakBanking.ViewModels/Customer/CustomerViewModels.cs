@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Credit;
+using System;
 using System.Collections.Generic;
 
 namespace FintrakBanking.ViewModels.Customer
@@ -16,6 +17,7 @@ namespace FintrakBanking.ViewModels.Customer
             CustomerPhoneContact = new List<CustomerPhoneContactViewModels>();
             CustomerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
             CustomerClientOrSupplier = new List<CustomerClientOrSupplierViewModels>();
+
         }
 
         public int customerId { get; set; }
@@ -70,7 +72,8 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerCompanyShareholderViewModels> CustomerCompanyShareholder { get; set; }
         public List<CustomerClientOrSupplierViewModels> CustomerClientOrSupplier { get; set; }
         public List<CustomerSupplierViewModels> CustomerSupplier { get; set; }
-        
+        public List<CollateralViewModel> CustomerCollateral { get; set; }
+
     }
 
     public class CustomerSearchItemViewModels

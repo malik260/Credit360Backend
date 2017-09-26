@@ -340,7 +340,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-
         [HttpGet]
         [Route("customer/{customerId}")]
         public HttpResponseMessage GetCustomerLoans(int customerId)

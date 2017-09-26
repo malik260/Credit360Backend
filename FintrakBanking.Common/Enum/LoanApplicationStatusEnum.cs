@@ -1,15 +1,21 @@
-﻿namespace FintrakBanking.Common.Enum
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FintrakBanking.Common.Enum
 {
     public enum LoanApplicationStatusEnum
     {
         ApplicationInProgress = 1,
         ApplicationCompleted = 2,
-        CamInProgress = 3,
-        CamCompleted = 4,
+        CAMInProgress = 3,
+        CAMCompleted = 4,
         OfferLetterGenerationInProgress = 5,
         OfferLetterGenerationCompleted = 6,
-        RelationshipManagerOverLetterReviewInProgress = 7,
-        RelationshipManagerOverLetterReviewCompleted = 8,
+        RelationshipManagerOfferLetterReviewInProgress = 7,
+        RelationshipManagerOfferLetterReviewCompleted = 8,
         AvailmentInProgress = 9,
         AvailmentCompleted = 10,
         LoanBookingInProgress = 11,
