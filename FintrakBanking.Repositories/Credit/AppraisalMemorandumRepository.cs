@@ -102,7 +102,7 @@ namespace FintrakBanking.Repositories.Credit
             if (application != null)
             {
                 application.SubmittedForAppraisal = true;
-                application.ApplicationStatusId = (int)LoanApplicationStatusEnum.CamInProgress;
+                application.ApplicationStatusId = (int)LoanApplicationStatusEnum.CAMInProgress;
                 return true;
             }
             return false;
@@ -185,7 +185,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (workflow.NewState == (int)ApprovalState.Ended) // cam status
                     {
-                        appl.ApplicationStatusId = (int)LoanApplicationStatusEnum.CamCompleted;
+                        appl.ApplicationStatusId = (int)LoanApplicationStatusEnum.CAMCompleted;
                         memo.IsCompleted = true;
                     }
 
