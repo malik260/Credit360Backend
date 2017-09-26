@@ -579,7 +579,7 @@ namespace FintrakBanking.Repositories.Credit
                         AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
                         AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
 
-                        this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
+                        //this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
                         var approvalModel = new ApprovalViewModel
                         {
@@ -796,7 +796,9 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.tbl_Branch on ln.BranchId equals br.BranchId
                         join atrail in context.tbl_Approval_Trail on ln.TermLoanId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending  
-                              && atrail.OperationId == (int)OperationsEnum.TermLoanBooking && atrail.ToApprovalLevelId == staffApprovalLevelId
+                              && (atrail.OperationId == (int)OperationsEnum.TermLoanBooking 
+                              || atrail.OperationId == (int)OperationsEnum.RevolvingLoanBooking
+                              || atrail.OperationId == (int)OperationsEnum.ContigentLoanBooking) && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new LoanViewModel()
                         {
                             loanId = ln.TermLoanId,
@@ -810,9 +812,9 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber =ln.tbl_Loan_Application.ApplicationReferenceNumber,
 
                             //tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
-                            //principalFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
+                            principalFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
                             pricipalFrequencyTypeName = ln.tbl_Frequency_Type.Description,
-                            //interestFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
+                            interestFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
                             interestFrequencyTypeName = ln.tbl_Frequency_Type.Description,
 
                             principalNumberOfInstallment = ln.PrincipalNumberOfInstallment,
@@ -857,11 +859,11 @@ namespace FintrakBanking.Repositories.Credit
                             profileLoan = ln.ProfileLoan,
                             dischargeLetter = ln.DischargeLetter,
                             suspendInterest = ln.SuspendInterest,
-                           // scheduled = (bool)ln.IsScheduledPrepayment,
-                            //isScheduledPrepayment = (bool)ln.IsScheduledPrepayment,
+                            scheduled = (bool)ln.IsScheduledPrepayment,
+                            isScheduledPrepayment = (bool)ln.IsScheduledPrepayment,
                             scheduledPrepaymentAmount = (decimal) ln.ScheduledPrepaymentAmount,
-                           // scheduledPrepaymentDate = (DateTime)( ln.ScheduledPrepaymentDate),
-                            //scheduledPrepaymentFrequencyTypeId  = ln.ScheduledPrepaymentFrequencyTypeId.Value,
+                            scheduledPrepaymentDate = (DateTime)( ln.ScheduledPrepaymentDate),
+                            scheduledPrepaymentFrequencyTypeId  = ln.ScheduledPrepaymentFrequencyTypeId.Value,
                             customerSensitivityLevelId = ln.CustomerSensitivityLevelId,
                             customerSensitivityLevelName = ln.tbl_Customer_Sensitivity_Level.Description,
                             firstName = ln.tbl_Customer.FirstName,
@@ -1691,15 +1693,14 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
+
         public IEnumerable<CamProcessedLoanViewModel> GetAppraisalMemorandumProcessedLoanApplications(int companyId)
         {
             var data = (from a in context.tbl_Loan_Application
                         join c in context.tbl_Credit_Appraisal_Memorandum
                         on a.LoanApplicationId equals c.LoanApplicationId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
-                        where a.CompanyId == companyId && a.Deleted == false 
-                        && c.IsCompleted==true //TODO: Remove this line
-                        //&& a.ApplicationStatusId = ApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted
+                        where a.CompanyId == companyId  && a.Deleted ==false && a.ApplicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted  
                         select new CamProcessedLoanViewModel
                         {
                             approvalStatusId = a.ApprovalStatusId,
