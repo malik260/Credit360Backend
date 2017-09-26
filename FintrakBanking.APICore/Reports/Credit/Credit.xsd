@@ -32,6 +32,8 @@
               <xs:element name="maturityDate" msprop:Generator_ColumnVarNameInTable="columnmaturityDate" msprop:Generator_ColumnPropNameInRow="maturityDate" msprop:Generator_ColumnPropNameInTable="maturityDateColumn" msprop:Generator_UserColumnName="maturityDate" type="xs:string" minOccurs="0" />
               <xs:element name="customerId" msprop:Generator_ColumnVarNameInTable="columncustomerId" msprop:Generator_ColumnPropNameInRow="customerId" msprop:Generator_ColumnPropNameInTable="customerIdColumn" msprop:Generator_UserColumnName="customerId" type="xs:string" minOccurs="0" />
               <xs:element name="applicationDate" msprop:Generator_ColumnVarNameInTable="columnapplicationDate" msprop:Generator_ColumnPropNameInRow="applicationDate" msprop:Generator_ColumnPropNameInTable="applicationDateColumn" msprop:Generator_UserColumnName="applicationDate" type="xs:string" minOccurs="0" />
+              <xs:element name="condition" msprop:Generator_ColumnVarNameInTable="columncondition" msprop:Generator_ColumnPropNameInRow="condition" msprop:Generator_ColumnPropNameInTable="conditionColumn" msprop:Generator_UserColumnName="condition" type="xs:string" minOccurs="0" />
+              <xs:element name="companyName" msprop:Generator_ColumnVarNameInTable="columncompanyName" msprop:Generator_ColumnPropNameInRow="companyName" msprop:Generator_ColumnPropNameInTable="companyNameColumn" msprop:Generator_UserColumnName="companyName" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

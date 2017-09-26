@@ -278,7 +278,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.GetCamProcessedLoanApplications(token.GetCompanyId);
+                var response = repoApply.GetApplicationsDueForOfferLetterGeneration(token.GetCompanyId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

@@ -16,6 +16,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId);
         CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId);
 
+        IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId);
+
         //#region Collateral
         //Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity);
         //Task<bool> DeleteCollateralCustomer(int collateralCustomerId, UserInfo user);

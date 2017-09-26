@@ -29,7 +29,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = new tbl_Loan_Condition_Precedent
             {
                 Condition = model.condition,
-                IsExternal = model.isExternal,
+                IsExternal = (bool)model.isExternal,
                 CreatedBy = model.createdBy,
                 LoanApplicationId = model.loanApplicationId,
                 DateTimeCreated = general.GetApplicationDate(),
@@ -64,7 +64,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             data.Condition = model.condition;
-            data.IsExternal = model.isExternal;
+            data.IsExternal = (bool)model.isExternal;
             data.LastUpdatedBy = model.lastUpdatedBy;
             data.DateTimeUpdated = DateTime.Now;
             data.LastUpdatedBy = model.lastUpdatedBy;
