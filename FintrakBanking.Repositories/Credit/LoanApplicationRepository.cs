@@ -601,7 +601,10 @@ namespace FintrakBanking.Repositories.Credit
 
             return scope;
         }
-        #endregion 
+        #endregion
+
+
+        #region OfferLetter & Availment Process
 
         public IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId)
         {
@@ -780,5 +783,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
+
+        #endregion
     }
 }
