@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.Interfaces.Customer;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -19,6 +20,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
     {
         private ILoanRepository repo;
         private ICustomerCollateralRepository repoCollateral;
+        private ICustomerRepository repoCustomer;
         private ILoanScheduleRepository scheduleRepo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
@@ -27,10 +29,12 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //TokenDecryptionHelper token = new TokenDecryptionHelper();
         public LoanController(ILoanRepository _repo,
                               ICustomerCollateralRepository _repoCollateral,
+                              ICustomerRepository _repoCustomer,
                                ILoanScheduleRepository _scheduleRepo)
         {
             this.repo = _repo;
             this.repoCollateral = _repoCollateral;
+            this.repoCustomer = _repoCustomer;
             this.scheduleRepo = _scheduleRepo;
 
             //this._hostingEnvironment = hostingEnvironment;
@@ -491,6 +495,50 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
+        }
+
+        [HttpGet]
+        [Route("customer-collateral/")]
+        public HttpResponseMessage SearchCustomerCollateral(string searchQuery)
+        {
+            try
+            {
+                var data = repo.SearchCustomerCollateral(token.GetCompanyId, searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("customer-collateral/search")]
+        public HttpResponseMessage SearchCustomer(string q)
+        {
+            try
+            {
+
+                var data = repo.SearchCustomerCollateral(token.GetCompanyId, q).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
 
