@@ -276,7 +276,7 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy = (int)loan.createdBy,
                 DateTimeCreated = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
-
+               ApplicationStatusId =(short) LoanApplicationStatusEnum.ApplicationCompleted ,
                 ExchangeRate = loan.exchangeRate,
                 LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,
                 CustomerId = loan.customerId,
@@ -610,6 +610,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.tbl_Loan_Application
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
+                        join d in context.tbl_Credit_Appraisal_Memorandum_Loan_Detail on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
                         where a.CompanyId == companyId && a.Deleted == false
                               && a.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
@@ -637,7 +638,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchName = a.tbl_Branch.BranchName,
                             subSectorId = a.SubSectorId,
 
-                            tenor = a.Tenor,
+                            tenor = d.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName =
                                 a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
@@ -663,11 +664,11 @@ namespace FintrakBanking.Repositories.Credit
                             misCode = a.MISCode,
                             teamMisCode = a.TeamMISCode,
 
-                            interestRate = a.InterestRate,
+                            interestRate = d.InterestRate,
                             isRealatedParty = a.IsRealatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
                             submittedForAppraisal = a.SubmittedForAppraisal,
-                            principalAmount = a.PrincipalAmount,
+                            principalAmount = d.PrincipalAmount,
 
                             createdBy = a.CreatedBy,
                             applicationDate = a.ApplicationDate,

@@ -731,6 +731,9 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+
+
+
         [HttpGet]
         [Route("loan-application/collateral/customer/{customerId}")]
         public HttpResponseMessage GetCollateralCustomer(int customerId)
@@ -751,6 +754,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
 
         [HttpGet]
         [Route("loan-application/charge-fee/{chargeFeeId}/product/{productId}")]

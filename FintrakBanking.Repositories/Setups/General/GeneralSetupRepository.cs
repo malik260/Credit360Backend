@@ -223,12 +223,9 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<SectorViewModel> GetAllSectors()
         {
             var data = (from cs in context.tbl_Sector
-                        join ss in context.tbl_Sub_Sector on cs.SectorId equals ss.SectorId into ssTemp
-                        from ss in ssTemp.DefaultIfEmpty()
                         select new SectorViewModel()
                         {
                             sectorId = cs.SectorId,
-                            subSectorId = ss.SubSectorId,
                             sectorName = cs.Name,
                             sectorCode = cs.Code,
                         });
@@ -245,7 +242,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             sectorId = cs.tbl_Sector.SectorId,
                             sectorName = cs.Name,
                             sectorCode = cs.Code,
-                        });
+                        }).Distinct();
 
             return data;
         }
