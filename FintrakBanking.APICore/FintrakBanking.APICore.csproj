@@ -331,6 +331,7 @@
     <Compile Include="Controllers\ProductFeeController.cs" />
     <Compile Include="Controllers\PublicHolidayController.cs" />
     <Compile Include="Controllers\RankController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RiskAssessmentController.cs" />
     <Compile Include="Controllers\RiskController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
@@ -365,6 +366,41 @@
     <Compile Include="Reports\Credit\TestReport.aspx.designer.cs">
       <DependentUpon>TestReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx.cs">
+      <DependentUpon>ApprovalTrailWithSLA.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx.designer.cs">
+      <DependentUpon>ApprovalTrailWithSLA.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx.cs">
+      <DependentUpon>ApprovalTrailWithSLA1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx.designer.cs">
+      <DependentUpon>ApprovalTrailWithSLA1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\GrantedFacilities.aspx.cs">
+      <DependentUpon>GrantedFacilities.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\GrantedFacilities.aspx.designer.cs">
+      <DependentUpon>GrantedFacilities.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanRepaymentSchedule.aspx.cs">
+      <DependentUpon>LoanRepaymentSchedule.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanRepaymentSchedule.aspx.designer.cs">
+      <DependentUpon>LoanRepaymentSchedule.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SectorialLimitMonitoring.aspx.cs">
+      <DependentUpon>SectorialLimitMonitoring.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SectorialLimitMonitoring.aspx.designer.cs">
+      <DependentUpon>SectorialLimitMonitoring.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -382,6 +418,11 @@
     <Content Include="Global.asax" />
     <Content Include="Reports\Credit\OfferLetter.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
+    <Content Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx" />
+    <Content Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx" />
+    <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
+    <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
+    <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -508,8 +549,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
+    <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

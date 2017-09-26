@@ -463,7 +463,7 @@ namespace FintrakBanking.Repositories.Credit
                 //IsScheduledPrepayment = null,
                 ScheduledPrepaymentAmount = entity.scheduledPrepaymentAmount,
                 ScheduledPrepaymentFrequencyTypeId = null,
-
+                
                 // CustomerGroupId = entity.customerGroupId,
                 LoanTypeId = entity.loanTypeId,
                 SubSectorId = entity.subSectorId,

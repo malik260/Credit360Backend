@@ -2377,12 +2377,6 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan>()
-                .HasMany(e => e.tbl_Loan_Schedule_Daily_Archive)
-                .WithRequired(e => e.tbl_Loan)
-                .HasForeignKey(e => e.LoanId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Loan>()
                 .HasMany(e => e.tbl_Loan_Schedule_Daily)
                 .WithRequired(e => e.tbl_Loan)
                 .HasForeignKey(e => e.LoanId)

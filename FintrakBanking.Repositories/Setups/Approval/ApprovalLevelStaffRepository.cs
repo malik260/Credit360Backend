@@ -253,7 +253,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                           {
                               arrivalDate = a.ArrivalDate,
                               responseApprovalLevel = context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
-                              responseDate = a.ResponseDate,
+                              responseDate = (DateTime)(a.SystemResponseDateTime.HasValue ? a.SystemResponseDateTime : DateTime.Now),
                               systemArrivalDate = a.SystemArrivalDateTime,
                               systemResponseDate = a.SystemResponseDateTime,
                               responseStaffName = !a.ResponseStaffId.HasValue ? "Awaiting Action" : a.tbl_Staff1.FirstName + " " + a.tbl_Staff1.LastName,
@@ -262,6 +262,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               requestApprovalLevel = !a.FromApprovalLevelId.HasValue ? "Initiation" : context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
                               TargetId = a.TargetId,
                               approvalStatus = context.tbl_Approval_Status.FirstOrDefault(c => c.ApprovalStatusId == a.ApprovalStatusId).ApprovalStatusName
+
                           }
                           );
             return result;
