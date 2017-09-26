@@ -29,13 +29,13 @@ namespace FintrakBanking.Repositories.Credit
             var data = new tbl_Loan_Condition_Precedent
             {
                 Condition = model.condition,
-                IsExternal = model.isExternal,
+                IsExternal = (bool)model.isExternal,
                 CreatedBy = model.createdBy,
                 LoanApplicationId = model.loanApplicationId,
                 DateTimeCreated = general.GetApplicationDate(),
             };
 
-            context.tbl_Condition_Precedent.Add(data);
+            context.tbl_Loan_Condition_Precedent.Add(data);
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -57,14 +57,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateConditionPrecedent(ConditionPrecedentViewModel model, int conditionPrecedentId)
         {
-            var data = this.context.tbl_Condition_Precedent.Find(conditionPrecedentId);
+            var data = this.context.tbl_Loan_Condition_Precedent.Find(conditionPrecedentId);
             if (data == null)
             {
                 return false;
             }
 
             data.Condition = model.condition;
-            data.IsExternal = model.isExternal;
+            data.IsExternal = (bool)model.isExternal;
             data.LastUpdatedBy = model.lastUpdatedBy;
             data.DateTimeUpdated = DateTime.Now;
             data.LastUpdatedBy = model.lastUpdatedBy;
@@ -90,7 +90,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ConditionPrecedentViewModel> GetAllConditionPrecedent()
         {
-            return this.context.tbl_Condition_Precedent
+            return this.context.tbl_Loan_Condition_Precedent
                 .Join(
                     context.tbl_Staff,
                     c => c.CreatedBy,

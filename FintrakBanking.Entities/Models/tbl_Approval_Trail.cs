@@ -40,8 +40,6 @@ namespace FintrakBanking.Entities.Models
 
         public int OperationId { get; set; }
 
-        public bool VotedYes { get; set; }
-
         [StringLength(700)]
         public string Comment { get; set; }
 

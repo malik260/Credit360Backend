@@ -269,7 +269,10 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-
+                if(model.limitTypeId != (int)LimitType.PrelimemaryEvaluationNote && model.targetId == -1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Please select your entry to continue" });
+                }
                 var response = repo.AddLimitDetail(model);
                 if (response)
                 {
