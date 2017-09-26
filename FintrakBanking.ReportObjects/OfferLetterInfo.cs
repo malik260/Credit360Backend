@@ -17,17 +17,19 @@ namespace FintrakBanking.ReportObjects
 
             var offerLetterDetails = (from a in context.tbl_Loan_Application
                                       join b in context.tbl_Customer on a.CustomerId equals b.CustomerId
+                                      join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
+                                      join d in context.tbl_Credit_Appraisal_Memorandum_Loan_Detail on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
                                       where a.ApplicationReferenceNumber.ToLower() == applicationRefNumber.ToLower() &&
                                       a.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
                                       select new OfferLetterViewModel
                                       {
                                           customerId = (int)a.CustomerId,
-                                          customerName = b.Title + ". " + b.FirstName + " " + b.LastName,
+                                          customerName = b.Title + " " + b.FirstName + " " + b.LastName,
                                           customerAddress = context.tbl_Customer_Address.FirstOrDefault(cAddr => cAddr.CustomerId == b.CustomerId).Address ?? string.Empty,
-                                          loanAmount = a.PrincipalAmount,
-                                          interestRate = a.InterestRate,
-                                          tenor = a.Tenor,
-                                          applicationDate = a.ApplicationDate
+                                          loanAmount = d.PrincipalAmount,
+                                          interestRate = d.InterestRate,
+                                          tenor = d.Tenor,
+                                          applicationDate = d.DateTimeCreated
                                       }).FirstOrDefault();
 
             if (offerLetterDetails != null)
