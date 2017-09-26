@@ -471,7 +471,6 @@ namespace FintrakBanking.Repositories.Credit
                         xy => xy.bs.DefaultIfEmpty(),
                         (x, y) => new LoanApplicationViewModel
                         {
-
                             loanApplicationId = x.a.LoanApplicationId,
                             applicationReferenceNumber = x.a.ApplicationReferenceNumber,
                             customerId = x.a.CustomerId,
@@ -492,7 +491,7 @@ namespace FintrakBanking.Repositories.Credit
                             lastComment = y.Comment,
                             currentApprovalStateId = y.ApprovalStateId,
                             currentApprovalLevelId = y.ToApprovalLevelId,
-                            currentApprovalLevel = y.tbl_Approval_Level.LevelName,
+                            currentApprovalLevel = y.tbl_Approval_Level1.LevelName, // pls note! tbl_Approval_Level1<---1
                             approvalTrailId = y == null ? 0 : y.ApprovalTrailId, // for inner sequence ordering
 
                             loanInformation = x.a.LoanInformation,
@@ -567,26 +566,21 @@ namespace FintrakBanking.Repositories.Credit
                 lastComment = x.b.Comment,
                 currentApprovalStateId = x.b.ApprovalStateId,
                 currentApprovalLevelId = x.b.ToApprovalLevelId,
-                currentApprovalLevel = x.b.tbl_Approval_Level.LevelName,
+                currentApprovalLevel = x.b.tbl_Approval_Level1.LevelName, // pls note! tbl_Approval_Level1<---1
                 loanInformation = x.a.LoanInformation,
                 submittedForAppraisal = x.a.SubmittedForAppraisal,
                 isRealatedParty = x.a.IsRealatedParty,
                 isPoliticallyExposed = x.a.IsPoliticallyExposed,
                 approvalStatusId = x.a.ApprovalStatusId,
                 branchName = x.a.tbl_Branch.BranchName,
-                relationshipOfficerName = x.a.tbl_Staff.FirstName + " " + x.a.tbl_Staff.MiddleName + " " +
-                                              x.a.tbl_Staff.LastName,
-                relationshipManagerName = x.a.tbl_Staff.FirstName + " " + x.a.tbl_Staff.MiddleName + " " +
-                                              x.a.tbl_Staff.LastName,
+                relationshipOfficerName = x.a.tbl_Staff.FirstName + " " + x.a.tbl_Staff.MiddleName + " " + x.a.tbl_Staff.LastName,
+                relationshipManagerName = x.a.tbl_Staff.FirstName + " " + x.a.tbl_Staff.MiddleName + " " + x.a.tbl_Staff.LastName,
                 misCode = x.a.MISCode,
                 customerGroupName = x.a.CustomerGroupId.HasValue ? x.a.tbl_Customer_Group.GroupName : "",
                 loanTypeName = x.a.tbl_Loan_Type.LoanTypeName,
                 createdBy = x.a.CreatedBy,
                 loanPreliminaryEvaluationId = x.a.LoanPreliminaryEvaluationId,
-                customerName = x.a.CustomerId.HasValue
-                        ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " +
-                          x.a.tbl_Customer.LastName
-                        : "",
+                customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
             })
             .OrderByDescending(x => x.applicationDate)
             .ThenByDescending(x => x.loanApplicationId)
@@ -717,22 +711,22 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         return true;
 
-                    case (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewInProgress:
+                    case (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress:
                         if (target.ApplicationStatusId !=
-                            (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewInProgress)
+                            (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress)
                         {
                             target.ApplicationStatusId =
-                                (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewInProgress;
+                                (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress;
                             return context.SaveChanges() > 0;
                         }
                         return true;
 
-                    case (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted:
+                    case (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted:
                         if (target.ApplicationStatusId !=
-                            (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted)
+                            (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted)
                         {
                             target.ApplicationStatusId =
-                                (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted;
+                                (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted;
                             return context.SaveChanges() > 0;
                         }
                         return true;
@@ -766,7 +760,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int companyId)
         {
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
-                x.applicationStatusId == (short) LoanApplicationStatusEnum.OfferLetterGenerationCompleted);
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress);
 
             return data;
         }
@@ -774,10 +768,17 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int companyId)
         {
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
-                x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOverLetterReviewCompleted);
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress);
 
             return data;
         }
 
+        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int companyId)
+        {
+            var data = GetCamProcessedLoanApplications(companyId).Where(x =>
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.CamCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress);
+
+            return data;
+        }
     }
 }
