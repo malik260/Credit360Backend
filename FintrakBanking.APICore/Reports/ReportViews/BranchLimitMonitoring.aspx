@@ -31,9 +31,9 @@
         </asp:ObjectDataSource>
         </div> 
          
-        <asp:Label ID="companyId" runat="server" Visible ="true"  ></asp:Label>
+        <asp:Label ID="companyId" runat="server" Visible ="false"  ></asp:Label>
          
-        <asp:Label ID="branchId" runat="server" Visible ="true"  ></asp:Label>
+        <asp:Label ID="branchId" runat="server" Visible ="false"  ></asp:Label>
     </form>
 </body>
 </html>

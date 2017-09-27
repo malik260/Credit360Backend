@@ -4803,21 +4803,21 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.tableSectorialLimits = ((SectorialLimitsDataTable)(this.Table));
             }
             
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string Name {
-                get {
-                    try {
-                        return ((string)(this[this.tableSectorialLimits.NameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Name\' in table \'SectorialLimits\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableSectorialLimits.NameColumn] = value;
-                }
-            }
+            //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            //[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            //public string Name {
+            //    get {
+            //        try {
+            //            return ((string)(this[this.tableSectorialLimits.NameColumn]));
+            //        }
+            //        catch (global::System.InvalidCastException e) {
+            //            throw new global::System.Data.StrongTypingException("The value for column \'Name\' in table \'SectorialLimits\' is DBNull.", e);
+            //        }
+            //    }
+            //    set {
+            //        this[this.tableSectorialLimits.NameColumn] = value;
+            //    }
+            //}
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -4931,17 +4931,17 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 }
             }
             
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsNameNull() {
-                return this.IsNull(this.tableSectorialLimits.NameColumn);
-            }
+            //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            //[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            //public bool IsNameNull() {
+            //    return this.IsNull(this.tableSectorialLimits.NameColumn);
+            //}
             
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetNameNull() {
-                this[this.tableSectorialLimits.NameColumn] = global::System.Convert.DBNull;
-            }
+            //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            //[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            //public void SetNameNull() {
+            //    this[this.tableSectorialLimits.NameColumn] = global::System.Convert.DBNull;
+            //}
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
