@@ -50,7 +50,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short subSectorId { get; set; }
         public int sectorId { get; set; }
-
+        public bool isInvestmentGrade { set; get; }
         public string customerName { get; set; }
         public string branchName { get; set; }
         public string productName { get; set; }
