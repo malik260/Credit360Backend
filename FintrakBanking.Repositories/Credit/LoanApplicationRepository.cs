@@ -276,11 +276,9 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy = (int)loan.createdBy,
                 DateTimeCreated = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
-<<<<<<< HEAD
+
                ApplicationStatusId =(short) LoanApplicationStatusEnum.ApplicationCompleted ,
-=======
-                 IsInvestmentGrade = loan.isInvestmentGrade ,
->>>>>>> ab371b663299070fc319d68ad881020fac5d80b2
+
                 ExchangeRate = loan.exchangeRate,
                 LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,
                 CustomerId = loan.customerId,

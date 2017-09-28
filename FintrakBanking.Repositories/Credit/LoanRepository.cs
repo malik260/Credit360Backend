@@ -562,7 +562,7 @@ namespace FintrakBanking.Repositories.Credit
                         var loan = context.tbl_Loan.Add(data);
                         context.tbl_Audit.Add(audit);
 
-                        AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
+                        //AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
                         //AddLoanCovenantDetail(entity.loanCovenant, loan.TermLoanId, (short)entity.productTypeId);
                         //AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
                         // AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
@@ -588,7 +588,7 @@ namespace FintrakBanking.Repositories.Credit
                         trans.Commit();
                        //AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
 
-                        if (dataCount > 0)
+                         if (dataCount > 0)
                             return loanReferenceNumber;
                         else
 
