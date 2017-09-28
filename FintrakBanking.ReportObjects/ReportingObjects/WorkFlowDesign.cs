@@ -47,7 +47,7 @@ namespace FintrakBanking.ReportObjects
 
        public static IEnumerable<WorkflowTrackerViewModel> TrackWorkFlow(int operationId, int companyId, int targetId)
         {
-           
+
 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -56,14 +56,22 @@ namespace FintrakBanking.ReportObjects
                               join b in context.tbl_Approval_Level on a.FromApprovalLevelId equals b.ApprovalLevelId
                               join c in context.tbl_Approval_Group_Mapping on b.GroupOperationMappingId equals c.GroupOperationMappingId
                               join d in context.tbl_Approval_Group on c.GroupId equals d.GroupId
+<<<<<<< HEAD
                               join e in context.tbl_Operations on c.OperationId equals e.OperationId
 
+=======
+                              join e in context.tbl_Operations on c.OperationId equals e.OperationId 
+>>>>>>> ab371b663299070fc319d68ad881020fac5d80b2
 
                               join n in context.tbl_Approval_Level on a.ToApprovalLevelId equals n.ApprovalLevelId
                               join m in context.tbl_Approval_Group_Mapping on n.GroupOperationMappingId equals m.GroupOperationMappingId
                               join o in context.tbl_Approval_Group on m.GroupId equals o.GroupId
+<<<<<<< HEAD
                               join p in context.tbl_Operations on m.OperationId equals p.OperationId
                              
+=======
+                              join p in context.tbl_Operations on m.OperationId equals p.OperationId 
+>>>>>>> ab371b663299070fc319d68ad881020fac5d80b2
                               where a.OperationId == operationId && a.CompanyId == companyId && a.TargetId == targetId
                               orderby a.TargetId descending
                               select
@@ -74,6 +82,7 @@ namespace FintrakBanking.ReportObjects
                              operationName = e.OperationName,
                              companyName = company.Name,
                              arrivalDate = a.SystemArrivalDateTime,
+<<<<<<< HEAD
 
                              responseApprovalLevel = a.ToApprovalLevelId.HasValue ? n.LevelName : "N/A",// context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
                              responseDate = (DateTime)(a.SystemResponseDateTime == null ? DateTime.Now : a.SystemResponseDateTime),
@@ -82,6 +91,12 @@ namespace FintrakBanking.ReportObjects
 
                              sla = b.SLAInterval,
 
+=======
+                             responseApprovalLevel = a.ToApprovalLevelId.HasValue ? n.LevelName : "N/A",// context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
+                             responseDate = (DateTime)(a.SystemResponseDateTime == null ? DateTime.Now : a.SystemResponseDateTime),
+                             responseStaffName = !a.ResponseStaffId.HasValue ? "Awaiting Action" : a.tbl_Staff1 .FirstName + " " + a.tbl_Staff1.LastName,
+                             sla = b.SLAInterval,
+>>>>>>> ab371b663299070fc319d68ad881020fac5d80b2
                              comment = a.Comment,
                              requestStaffName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
                              requestApprovalLevel = a.FromApprovalLevelId.HasValue ? b.LevelName : "N/A",// context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
@@ -89,6 +104,7 @@ namespace FintrakBanking.ReportObjects
                              approvalStatus = context.tbl_Approval_Status.FirstOrDefault(c => c.ApprovalStatusId == a.ApprovalStatusId).ApprovalStatusName
                          });
                 return result.ToList();
+
             }
         }
 

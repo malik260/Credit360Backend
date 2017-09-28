@@ -66,13 +66,36 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
-        [Route("limitmonitoring")]
+        [Route("limitmonitoring/sector")]
         public HttpResponseMessage GetSectorLimitMonitoringReport()
         {
             var token = new TokenDecryptionHelper();
             try
             {
                 var data = repo.GetSectorLimitMonitoringReport(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("limitmonitoring/branch")]
+        public HttpResponseMessage GetBranchLoanAmountLimit()
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetBranchLoanAmountLimit( token.GetBranchId ,token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

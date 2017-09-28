@@ -15,7 +15,7 @@ namespace FintrakBanking.ReportObjects
     {
       
 
-        private IQueryable<LoanInformation> Loans(int companyId )
+        private IQueryable<LoanInformation> Loans(int companyId , DateTime startDate, DateTime endDate)
         {
             IQueryable<LoanInformation> loan;
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -23,7 +23,7 @@ namespace FintrakBanking.ReportObjects
 
                 loan = (from a in context.tbl_Loan
                         join b in context.tbl_Loan_Schedule_Periodic on a.TermLoanId equals b.LoanId
-                        where a.CompanyId == companyId && a.IsDisbursed == true
+                        where a.CompanyId == companyId && a.IsDisbursed == true &&( a.DisburseDate >= startDate && a.DisburseDate <= endDate)
                         select new LoanInformation()
                         { customerId = a.CustomerId, tearmLoanId = a.TermLoanId ,
                             branchName = a.tbl_Branch.BranchName,
