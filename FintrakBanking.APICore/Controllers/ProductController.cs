@@ -536,6 +536,24 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
+                foreach (var item in model.currencies)
+                {
+                    item.createdBy = model.createdBy;
+                    item.companyId = model.companyId;
+                }
+
+                foreach (var item in model.collaterals)
+                {
+                    item.createdBy = model.createdBy;
+                    item.companyId = model.companyId;
+                }
+
+                foreach (var item in model.fees)
+                {
+                    item.createdBy = model.createdBy;
+                    item.companyId = model.companyId;
+                }
+
                 var product = await repo.AddTempProduct(model);
 
                 if (product != null)
@@ -602,6 +620,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
                 var staff = await repo.UpdateProduct(productId, model);
 
