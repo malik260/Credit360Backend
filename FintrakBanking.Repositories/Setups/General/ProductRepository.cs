@@ -384,6 +384,11 @@ namespace FintrakBanking.Repositories.Setups.General
             return AllProduct().FirstOrDefault(p => p.productId == productId);
         }
 
+        public IEnumerable<ProductViewModel> GetProductByProductGroup(int companyId)
+        {
+            return AllProduct().Where(p => p.companyId  == companyId && p.productGroupId == 1).ToList();
+        }
+
         public IEnumerable<ProductViewModel> GetProductByGroupAndCategory(short productGroupId, short productCategoryId)
         {
             return AllProduct().Where(p => p.productGroupId == productGroupId && p.productCategoryId == productCategoryId);

@@ -29,13 +29,49 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                               select new SectorLimitViewModel()
                               {
                                   companyName = company.Name ,
-                                  sectorId = groupedQ.Key.SectorId,
-                                  sectorCode = groupedQ.Key.Code,
-                                  sectorName = groupedQ.Key.Name,
-                                  sectorLimit = groupedQ.Key.MaximumValue,
-                                  sectorUsage = groupedQ.Sum(i => i.OutstandingPrincipal),
-                                  sectorBalance = groupedQ.Key.MaximumValue - groupedQ.Sum(i => i.OutstandingPrincipal)
+                                  Id = groupedQ.Key.SectorId,
+                                  Code = groupedQ.Key.Code,
+                                  Name = groupedQ.Key.Name,
+                                  Limit = groupedQ.Key.MaximumValue,
+                                  Usage = groupedQ.Sum(i => i.OutstandingPrincipal),
+                                  Balance = groupedQ.Key.MaximumValue - groupedQ.Sum(i => i.OutstandingPrincipal)
                               }).ToList();
+
+                return output;
+            }
+        }
+
+        public IEnumerable<SectorLimitViewModel> GetBranchLoanAmountLimit(int branchId,int companyId)
+        {
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var company = context.tbl_Company.Where(c => c.CompanyId == companyId).FirstOrDefault();
+
+                var output = (from a in context.tbl_Limit_Detail
+                              join b in context.tbl_Branch on a.TargetId equals b.BranchId
+                              join c in context.tbl_Loan on a.TargetId equals c.BranchId
+                              where a.LimitTypeId == (int)LimitType.Sector && c.LoanStatusId == (short)LoanStatusEnum.Active
+                                  && a.tbl_Limit.tbl_Limit_Metric.LimitMetricId == (int)LimitMatricEnum.LoanAmount && c.CompanyId == companyId && c.BranchId == branchId
+                              group new { a, b, c } by new
+                              {
+                                  a.MaximumValue,
+                                  b.BranchName,
+                                  b.BranchCode,
+                                  b.BranchId
+                              } into groupedQ
+                              select new  SectorLimitViewModel
+
+                              {
+                                  companyName = company.Name,
+                                   Limit = groupedQ.Key.MaximumValue,
+                                   Usage = groupedQ.Sum(p => p.c.OutstandingPrincipal),
+                                   Name = groupedQ.Key.BranchName,
+                                   Code = groupedQ.Key.BranchCode,
+                                   Id = groupedQ.Key.BranchId,
+                                  Balance = groupedQ.Key.MaximumValue - groupedQ.Sum(i => i.c.OutstandingPrincipal)
+                                   
+            }).ToList();
 
                 return output;
             }

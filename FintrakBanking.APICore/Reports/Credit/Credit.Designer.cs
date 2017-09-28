@@ -2593,17 +2593,17 @@ namespace FintrakBanking.APICore.Reports.Credit {
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
         public partial class SectorialLimitsDataTable : global::System.Data.TypedTableBase<SectorialLimitsRow> {
             
-            private global::System.Data.DataColumn columnsectorName;
+            private global::System.Data.DataColumn columnName;
             
-            private global::System.Data.DataColumn columnsectorCode;
+            private global::System.Data.DataColumn columnCode;
             
-            private global::System.Data.DataColumn columnsectorLimit;
+            private global::System.Data.DataColumn columnLimit;
             
-            private global::System.Data.DataColumn columnsectorBalance;
+            private global::System.Data.DataColumn columnBalance;
             
             private global::System.Data.DataColumn columnallowOverride;
             
-            private global::System.Data.DataColumn columnsectorUsage;
+            private global::System.Data.DataColumn columnUsage;
             
             private global::System.Data.DataColumn columncompanyName;
             
@@ -2643,34 +2643,34 @@ namespace FintrakBanking.APICore.Reports.Credit {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn sectorNameColumn {
                 get {
-                    return this.columnsectorName;
+                    return this.columnName;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn sectorCodeColumn {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn CodeColumn {
                 get {
-                    return this.columnsectorCode;
+                    return this.columnCode;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn sectorLimitColumn {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn LimitColumn {
                 get {
-                    return this.columnsectorLimit;
+                    return this.columnLimit;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn sectorBalanceColumn {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn BalanceColumn {
                 get {
-                    return this.columnsectorBalance;
+                    return this.columnBalance;
                 }
             }
             
@@ -2683,10 +2683,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn sectorUsageColumn {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn UsageColumn {
                 get {
-                    return this.columnsectorUsage;
+                    return this.columnUsage;
                 }
             }
             
@@ -2742,16 +2742,16 @@ namespace FintrakBanking.APICore.Reports.Credit {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public SectorialLimitsRow AddSectorialLimitsRow(string sectorName, string sectorCode, string sectorLimit, string sectorBalance, string allowOverride, string sectorUsage, string companyName, string sectorId) {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public SectorialLimitsRow AddSectorialLimitsRow(string Name, string Code, string Limit, string Balance, string allowOverride, string Usage, string companyName, string sectorId) {
                 SectorialLimitsRow rowSectorialLimitsRow = ((SectorialLimitsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        sectorName,
-                        sectorCode,
-                        sectorLimit,
-                        sectorBalance,
+                        Name,
+                        Code,
+                        Limit,
+                        Balance,
                         allowOverride,
-                        sectorUsage,
+                        Usage,
                         companyName,
                         sectorId};
                 rowSectorialLimitsRow.ItemArray = columnValuesArray;
@@ -2776,12 +2776,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             internal void InitVars() {
-                this.columnsectorName = base.Columns["sectorName"];
-                this.columnsectorCode = base.Columns["sectorCode"];
-                this.columnsectorLimit = base.Columns["sectorLimit"];
-                this.columnsectorBalance = base.Columns["sectorBalance"];
+                this.columnName = base.Columns["Name"];
+                this.columnCode = base.Columns["Code"];
+                this.columnLimit = base.Columns["Limit"];
+                this.columnBalance = base.Columns["Balance"];
                 this.columnallowOverride = base.Columns["allowOverride"];
-                this.columnsectorUsage = base.Columns["sectorUsage"];
+                this.columnUsage = base.Columns["Usage"];
                 this.columncompanyName = base.Columns["companyName"];
                 this.columnsectorId = base.Columns["sectorId"];
             }
@@ -2789,28 +2789,28 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             private void InitClass() {
-                this.columnsectorName = new global::System.Data.DataColumn("sectorName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnsectorName);
-                this.columnsectorCode = new global::System.Data.DataColumn("sectorCode", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnsectorCode);
-                this.columnsectorLimit = new global::System.Data.DataColumn("sectorLimit", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnsectorLimit);
-                this.columnsectorBalance = new global::System.Data.DataColumn("sectorBalance", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnsectorBalance);
+                this.columnName = new global::System.Data.DataColumn("Name", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnName);
+                this.columnCode = new global::System.Data.DataColumn("Code", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnCode);
+                this.columnLimit = new global::System.Data.DataColumn("Limit", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnLimit);
+                this.columnBalance = new global::System.Data.DataColumn("Balance", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnBalance);
                 this.columnallowOverride = new global::System.Data.DataColumn("allowOverride", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnallowOverride);
-                this.columnsectorUsage = new global::System.Data.DataColumn("sectorUsage", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnsectorUsage);
+                this.columnUsage = new global::System.Data.DataColumn("Usage", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnUsage);
                 this.columncompanyName = new global::System.Data.DataColumn("companyName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncompanyName);
                 this.columnsectorId = new global::System.Data.DataColumn("sectorId", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnsectorId);
-                this.columnsectorName.Caption = "sectorId";
-                this.columnsectorCode.Caption = "sectorId";
-                this.columnsectorLimit.Caption = "sectorId";
-                this.columnsectorBalance.Caption = "sectorId";
+                this.columnName.Caption = "sectorId";
+                this.columnCode.Caption = "sectorId";
+                this.columnLimit.Caption = "sectorId";
+                this.columnBalance.Caption = "sectorId";
                 this.columnallowOverride.Caption = "sectorId";
-                this.columnsectorUsage.Caption = "sectorId";
+                this.columnUsage.Caption = "sectorId";
                 this.columncompanyName.Caption = "sectorId";
             }
             
@@ -4803,67 +4803,67 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.tableSectorialLimits = ((SectorialLimitsDataTable)(this.Table));
             }
             
+            //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            //[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            //public string Name {
+            //    get {
+            //        try {
+            //            return ((string)(this[this.tableSectorialLimits.NameColumn]));
+            //        }
+            //        catch (global::System.InvalidCastException e) {
+            //            throw new global::System.Data.StrongTypingException("The value for column \'Name\' in table \'SectorialLimits\' is DBNull.", e);
+            //        }
+            //    }
+            //    set {
+            //        this[this.tableSectorialLimits.NameColumn] = value;
+            //    }
+            //}
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string sectorName {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string Code {
                 get {
                     try {
-                        return ((string)(this[this.tableSectorialLimits.sectorNameColumn]));
+                        return ((string)(this[this.tableSectorialLimits.CodeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'sectorName\' in table \'SectorialLimits\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Code\' in table \'SectorialLimits\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableSectorialLimits.sectorNameColumn] = value;
+                    this[this.tableSectorialLimits.CodeColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string sectorCode {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string Limit {
                 get {
                     try {
-                        return ((string)(this[this.tableSectorialLimits.sectorCodeColumn]));
+                        return ((string)(this[this.tableSectorialLimits.LimitColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'sectorCode\' in table \'SectorialLimits\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Limit\' in table \'SectorialLimits\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableSectorialLimits.sectorCodeColumn] = value;
+                    this[this.tableSectorialLimits.LimitColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string sectorLimit {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string Balance {
                 get {
                     try {
-                        return ((string)(this[this.tableSectorialLimits.sectorLimitColumn]));
+                        return ((string)(this[this.tableSectorialLimits.BalanceColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'sectorLimit\' in table \'SectorialLimits\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Balance\' in table \'SectorialLimits\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableSectorialLimits.sectorLimitColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string sectorBalance {
-                get {
-                    try {
-                        return ((string)(this[this.tableSectorialLimits.sectorBalanceColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'sectorBalance\' in table \'SectorialLimits\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableSectorialLimits.sectorBalanceColumn] = value;
+                    this[this.tableSectorialLimits.BalanceColumn] = value;
                 }
             }
             
@@ -4884,18 +4884,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string sectorUsage {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string Usage {
                 get {
                     try {
-                        return ((string)(this[this.tableSectorialLimits.sectorUsageColumn]));
+                        return ((string)(this[this.tableSectorialLimits.UsageColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'sectorUsage\' in table \'SectorialLimits\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'Usage\' in table \'SectorialLimits\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableSectorialLimits.sectorUsageColumn] = value;
+                    this[this.tableSectorialLimits.UsageColumn] = value;
                 }
             }
             
@@ -4931,52 +4931,52 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 }
             }
             
+            //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            //[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            //public bool IsNameNull() {
+            //    return this.IsNull(this.tableSectorialLimits.NameColumn);
+            //}
+            
+            //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            //[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            //public void SetNameNull() {
+            //    this[this.tableSectorialLimits.NameColumn] = global::System.Convert.DBNull;
+            //}
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IssectorNameNull() {
-                return this.IsNull(this.tableSectorialLimits.sectorNameColumn);
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsCodeNull() {
+                return this.IsNull(this.tableSectorialLimits.CodeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetsectorNameNull() {
-                this[this.tableSectorialLimits.sectorNameColumn] = global::System.Convert.DBNull;
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetCodeNull() {
+                this[this.tableSectorialLimits.CodeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IssectorCodeNull() {
-                return this.IsNull(this.tableSectorialLimits.sectorCodeColumn);
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsLimitNull() {
+                return this.IsNull(this.tableSectorialLimits.LimitColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetsectorCodeNull() {
-                this[this.tableSectorialLimits.sectorCodeColumn] = global::System.Convert.DBNull;
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetLimitNull() {
+                this[this.tableSectorialLimits.LimitColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IssectorLimitNull() {
-                return this.IsNull(this.tableSectorialLimits.sectorLimitColumn);
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsBalanceNull() {
+                return this.IsNull(this.tableSectorialLimits.BalanceColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetsectorLimitNull() {
-                this[this.tableSectorialLimits.sectorLimitColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IssectorBalanceNull() {
-                return this.IsNull(this.tableSectorialLimits.sectorBalanceColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetsectorBalanceNull() {
-                this[this.tableSectorialLimits.sectorBalanceColumn] = global::System.Convert.DBNull;
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetBalanceNull() {
+                this[this.tableSectorialLimits.BalanceColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4992,15 +4992,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IssectorUsageNull() {
-                return this.IsNull(this.tableSectorialLimits.sectorUsageColumn);
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsUsageNull() {
+                return this.IsNull(this.tableSectorialLimits.UsageColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetsectorUsageNull() {
-                this[this.tableSectorialLimits.sectorUsageColumn] = global::System.Convert.DBNull;
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetUsageNull() {
+                this[this.tableSectorialLimits.UsageColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

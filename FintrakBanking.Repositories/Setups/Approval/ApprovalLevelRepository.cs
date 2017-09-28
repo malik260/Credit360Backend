@@ -228,8 +228,19 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public async Task<bool> AddApprovalTrail(tbl_Approval_Trail model)
         {
-            context.tbl_Approval_Trail.Add(model);
-            return await context.SaveChangesAsync() != 0;
+            try
+            {
+
+                context.tbl_Approval_Trail.Add(model);
+                var saved = context.SaveChanges();
+                return saved > 0;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
         }
 
         public bool UpdateApprovalTrail(tbl_Approval_Trail model)
