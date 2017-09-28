@@ -52,8 +52,6 @@ namespace FintrakBanking.Entities.Models
 
         public short LoanTypeId { get; set; }
 
-        public bool  IsInvestmentGrade { get; set; }
-
         public int RelationshipOfficerId { get; set; }
 
         public int RelationshipManagerId { get; set; }
