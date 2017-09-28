@@ -175,6 +175,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralCustomerViewModel : GeneralEntity
     {
         public int collateralCustomerId { get; set; }
+        public int collateralId { get; set; }
         public int collateralTypeId { get; set; }
         public string collateralType { get; set; }
         public string collateralCode { get; set; }

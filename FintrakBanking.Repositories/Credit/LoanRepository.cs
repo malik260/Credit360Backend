@@ -323,11 +323,16 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = entity.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = loan.RevolvingLoanId,
-                            operationId = (int)OperationsEnum.TermLoanBooking,
+                            operationId = (int)OperationsEnum.RevolvingLoanBooking,
                             BranchId = entity.userBranchId
                         };
                         var response = await workFlow.LogForApproval(approvalModel);
                         trans.Commit();
+
+                        AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.RevolvingLoanId, (short)entity.productTypeId);
+                        AddLoanGuarantor(entity.loanGuarantor, loan.RevolvingLoanId, (short)entity.productTypeId);
+                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.RevolvingLoanId, (short)entity.productTypeId);
+                        AddLoanFees(entity.loanChargeFee, loan.RevolvingLoanId, (short)entity.productTypeId);
 
 
                         if (dataCount > 0)
@@ -383,7 +388,6 @@ namespace FintrakBanking.Repositories.Credit
                 TrancheBatchCode = entity.trancheBatchCode,
                 DischargeLetter = false,
                 CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
- 
 
             };
 
@@ -408,16 +412,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     try
                     {
-
                         var loan = context.tbl_Loan_Contingent.Add(data);
                         context.tbl_Audit.Add(audit);
                         var dataCount = context.SaveChanges();
-
-                        //AddLoanCovenantDetail(entity.loanCovenant, loan.ContingentLoanId, (short)entity.productTypeId);
-                        AddLoanGuarantor(entity.loanGuarantor, loan.ContingentLoanId, (short)entity.productTypeId);
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.ContingentLoanId, (short)entity.productTypeId);
-                        AddLoanFees(entity.loanChargeFee, loan.ContingentLoanId, (short)entity.productTypeId);
-                        
 
                         var approvalModel = new ApprovalViewModel
                         {
@@ -425,13 +422,17 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = entity.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = loan.ContingentLoanId,
-                            operationId = (int)OperationsEnum.TermLoanBooking,
+                            operationId = (int)OperationsEnum.ContigentLoanBooking,
                             BranchId = entity.userBranchId
                         };
                         
                         var response = await workFlow.LogForApproval(approvalModel);
                         trans.Commit();
 
+                        AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.ContingentLoanId, (short)entity.productTypeId);
+                        AddLoanGuarantor(entity.loanGuarantor, loan.ContingentLoanId, (short)entity.productTypeId);
+                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.ContingentLoanId, (short)entity.productTypeId);
+                        AddLoanFees(entity.loanChargeFee, loan.ContingentLoanId, (short)entity.productTypeId);
 
                         if (dataCount > 0)
                             return loanReferenceNumber;
@@ -562,12 +563,6 @@ namespace FintrakBanking.Repositories.Credit
                         var loan = context.tbl_Loan.Add(data);
                         context.tbl_Audit.Add(audit);
 
-                        //AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
-                        //AddLoanCovenantDetail(entity.loanCovenant, loan.TermLoanId, (short)entity.productTypeId);
-                        //AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
-                        // AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
-                        //AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
-
                         var dataCount = context.SaveChanges();
                        
                         //this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
@@ -586,9 +581,17 @@ namespace FintrakBanking.Repositories.Credit
                         var response = workFlow.LogForApproval(approvalModel);
 
                         trans.Commit();
-                       //AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
+                        AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
+                        AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
+                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
+                        AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
 
-                         if (dataCount > 0)
+                        var application = context.tbl_Loan_Application.Find(entity.loanApplicationId);
+                        application.ApplicationStatusId = (int)LoanApplicationStatusEnum.LoanBookingInProgress;
+
+                        context.SaveChanges();
+
+                        if (dataCount > 0)
                             return loanReferenceNumber;
                         else
 
@@ -612,7 +615,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public async Task<bool> LogApproval(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId)
         {
-
+            // THIS METHOD HAS NOT BEEN USED. RESERVED FOR NEW APPROVAL WORKFLOW IN DESIGN
             workflow.StaffId = model.createdBy;
             workflow.OperationId = operationId;
             workflow.TargetId = model.applicationId;
@@ -639,9 +642,6 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
           
-      
-   
-
         private void DisburseLoan(LoanViewModel entity)
         {
             //PostLoanDisbursment(entity);
@@ -951,6 +951,8 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             this.auditTrail.AddAuditTrail(audit);
+
+           // DisburseLoan(LoanViewModel entity)
             // Audit Section ---------------------------
 
             return this.context.SaveChanges() > 0;
@@ -1097,35 +1099,37 @@ namespace FintrakBanking.Repositories.Credit
                
                 context.tbl_Loan_Covenant_Detail.Add(covenant);
             }
-            //return context.SaveChanges() >0;
-            return true;
+            return context.SaveChanges() >0;
+         
         }
-        //public ICollection<tbl_Loan_Covenant_Detail> AddLoanCovenantDetail(List<LoanCovenantDetailViewModel> covenantModel, int loanId, short productTypeId)
-        //{
-        //    ICollection<tbl_Loan_Covenant_Detail> covenant;
 
-        //    if (covenantModel.Count  < 1)
-        //        return null;
-
-        //    covenant = new List<tbl_Loan_Covenant_Detail>();
-        //    foreach(LoanCovenantDetailViewModel entity in covenantModel)
-        //    covenant.Add(new tbl_Loan_Covenant_Detail
-        //    {
-        //        CompanyId = entity.companyId,
-        //        CovenantAmount = entity.covenantAmount,
-        //        CovenantDate = entity.covenantDate,
-        //        CovenantDetail = entity.covenantDetail,
-        //        CovenantTypeId = entity.covenantTypeId,
-        //        CreatedBy = entity.createdBy,
-        //        DateTimeCreated = this.generalSetup.GetApplicationDate().Date,
-        //        FrequencyTypeId = entity.frequencyTypeId,
-        //        LoanId = entity.loanId,
-        //        ProductTypeId = productTypeId
-
-        //    });
-        //    context.SaveChanges();
-        //    return covenant;
-        //}
+        public  bool AddLoanGuarantor(List<LoanGuarantorViewModel> guarantorModel, int loanId, short productTypeId)
+        {
+            
+            foreach (LoanGuarantorViewModel entity in guarantorModel)
+            {
+                var guarantor = new tbl_Loan_Guarantor
+                {
+                    ProductTypeId = productTypeId,
+                    LoanId = loanId,
+                    Firstname = entity.firstname,
+                    Lastname = entity.lastname,
+                    Middlename = entity.middlename,
+                    Address = entity.address,
+                    PhoneNumber1 = entity.phoneNumber1,
+                    PhoneNumber2 = entity.phoneNumber2,
+                    Relationship = entity.relationship,
+                    RelationshipDuration = (short)entity.relationshipDuration,
+                    BVN = entity.bvn,
+                    EmailAddress = entity.emailAddress,
+                    CreatedBy = 1,
+                    DateTimeCreated = generalSetup.GetApplicationDate()
+                };
+                context.tbl_Loan_Guarantor.Add(guarantor);
+            }
+                
+            return context.SaveChanges() > 0;
+        }
 
         private ICollection<tbl_Loan_Covenant_Detail> AddLoanCovenant(LoanCovenantDetailViewModel entity, short productTypeId)
         {
@@ -1146,87 +1150,56 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy =  entity.createdBy,
                 DateTimeCreated = generalSetup.GetApplicationDate(),
             });
-
+            
             return covenant;
         }
 
-        public ICollection<tbl_Loan_Guarantor> AddLoanGuarantor(List<LoanGuarantorViewModel> guarantorModel, int loanId, short productTypeId)
+        public bool AddLoanCollateralMapping(List<LoanCollateralMappingViewModel> collateralModel, int loanApplicationId, int loanId, short productTypeId)
         {
-            ICollection<tbl_Loan_Guarantor> guarantor;
-
-            if (guarantorModel.Count < 1)
-                return null;
-
-            guarantor = new List<tbl_Loan_Guarantor>();
-            foreach (LoanGuarantorViewModel entity in guarantorModel)
-                guarantor.Add(new tbl_Loan_Guarantor
-                {
-                    ProductTypeId = productTypeId,
-                    LoanId = entity.loanId,
-                    Firstname = entity.firstname,
-                    Lastname = entity.lastname,
-                    Middlename = entity.middlename,
-                    Address = entity.address,
-                    PhoneNumber1 = entity.phoneNumber1,
-                    PhoneNumber2 = entity.phoneNumber2,
-                    Relationship = entity.relationship,
-                    RelationshipDuration = (short)entity.relationshipDuration,
-                    BVN = entity.bvn,
-                    EmailAddress = entity.emailAddress, CreatedBy = 1, DateTimeCreated = generalSetup.GetApplicationDate()
-                });
-            context.SaveChanges();
-            return guarantor;
-        }
-
-        public ICollection<tbl_Loan_Collateral_Mapping> AddLoanCollateralMapping(List<LoanCollateralMappingViewModel> collateralModel, int loanApplicationId, int loanId, short productTypeId)
-        {
-            ICollection<tbl_Loan_Collateral_Mapping> collateral;
-
-            if (collateralModel.Count < 1)
-                return null;
-
-            collateral = new List<tbl_Loan_Collateral_Mapping>();
+            
             foreach (LoanCollateralMappingViewModel entity in collateralModel)
-                collateral.Add(new tbl_Loan_Collateral_Mapping
+            {
+                var collateral = new tbl_Loan_Collateral_Mapping
                 {
                     LoanId = loanId,
                     ProductTypeId = productTypeId,
-                    CollateralCustomerId =entity.collateralCustomerId,
+                    CollateralCustomerId = entity.collateralId,
                     LoanApplicationId = loanApplicationId,
-                });
-            context.SaveChanges();
-            return collateral;
+                };
+                context.tbl_Loan_Collateral_Mapping.Add(collateral);
+            }
+                
+            return context.SaveChanges() >0;
+         
         }
 
-        private ICollection<tbl_Loan_Fee> AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short productTypeId)
+        private bool AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short productTypeId)
         {
-            ICollection<tbl_Loan_Fee> fee;
             var feeAmount = 0;
-            
-            fee = new List<tbl_Loan_Fee>();
-
             foreach (LoanChargeFeeViewModel ent in feeModel)
             {
                 if (ent.feeTypeId == 1)
                 {
                     feeAmount = 0;
                 }
-                fee.Add(new tbl_Loan_Fee
+                var fee = new tbl_Loan_Fee
                 {
-                    ChargeFeeId =  ent.chargeFeeId,
+                    ChargeFeeId = ent.chargeFeeId,
                     FeeAmount = feeAmount,
                     FeeDependentAmount = ent.feeDependentAmount,
                     FeeRateValue = ent.feeRateValue,
                     IsIntegralFee = ent.isIntegralFee,
                     LoanId = loanId,
                     ProductTypeId = productTypeId,
+                    IsRecurring = false, //TODO : get from entity
+                    RecurringPaymentDay = 28, //TODO: get from entity
                     CreatedBy = ent.createdBy,
                     DateTimeCreated = DateTime.Now.Date
-
-                });
+                };
+                context.tbl_Loan_Fee.Add(fee);
             }
                 
-            return fee;
+            return context.SaveChanges() > 0;
         }
 
         private IQueryable<LoanViewModel> GetAllLoans()
