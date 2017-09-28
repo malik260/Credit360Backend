@@ -77,6 +77,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string TeamMISCode { get; set; }
 
+        public bool IsInvestmentGrade { get; set; }
+
         public bool IsRealatedParty { get; set; }
 
         public bool IsPoliticallyExposed { get; set; }
