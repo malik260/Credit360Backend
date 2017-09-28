@@ -16,6 +16,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Camsol = new HashSet<tbl_Loan_Camsol>();
             tbl_Loan_Force_Debit = new HashSet<tbl_Loan_Force_Debit>();
             tbl_Loan_Past_Due = new HashSet<tbl_Loan_Past_Due>();
+            tbl_Loan_PriceIndex_Exception = new HashSet<tbl_Loan_PriceIndex_Exception>();
             tbl_Loan_Schedule_Daily_Archive = new HashSet<tbl_Loan_Schedule_Daily_Archive>();
             tbl_Loan_Schedule_Daily = new HashSet<tbl_Loan_Schedule_Daily>();
             tbl_Loan_Schedule_Daily_Temp = new HashSet<tbl_Loan_Schedule_Daily_Temp>();
@@ -30,7 +31,7 @@ namespace FintrakBanking.Entities.Models
 
         public double ProductPriceIndexRate { get; set; }
 
-        public int CustomerRiskRatingId { get; set; }
+        public int? CustomerRiskRatingId { get; set; }
 
         public int CustomerId { get; set; }
 
@@ -228,6 +229,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Past_Due> tbl_Loan_Past_Due { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_PriceIndex_Exception> tbl_Loan_PriceIndex_Exception { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Daily_Archive> tbl_Loan_Schedule_Daily_Archive { get; set; }

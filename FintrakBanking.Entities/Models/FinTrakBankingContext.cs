@@ -189,6 +189,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Operation> tbl_Loan_Operation { get; set; }
         public virtual DbSet<tbl_Loan_Past_Due> tbl_Loan_Past_Due { get; set; }
         public virtual DbSet<tbl_Loan_Preliminary_Evaluation> tbl_Loan_Preliminary_Evaluation { get; set; }
+        public virtual DbSet<tbl_Loan_PriceIndex_Exception> tbl_Loan_PriceIndex_Exception { get; set; }
         public virtual DbSet<tbl_Loan_PrudentialGuideline> tbl_Loan_PrudentialGuideline { get; set; }
         public virtual DbSet<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
         public virtual DbSet<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
@@ -2372,6 +2373,18 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Loan>()
                 .HasMany(e => e.tbl_Loan_Past_Due)
+                .WithRequired(e => e.tbl_Loan)
+                .HasForeignKey(e => e.LoanId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .HasMany(e => e.tbl_Loan_PriceIndex_Exception)
+                .WithRequired(e => e.tbl_Loan)
+                .HasForeignKey(e => e.LoanId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .HasMany(e => e.tbl_Loan_Schedule_Daily_Archive)
                 .WithRequired(e => e.tbl_Loan)
                 .HasForeignKey(e => e.LoanId)
                 .WillCascadeOnDelete(false);

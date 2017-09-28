@@ -214,6 +214,7 @@
     <Compile Include="Models\tbl_Loan_Operation.cs" />
     <Compile Include="Models\tbl_Loan_Past_Due.cs" />
     <Compile Include="Models\tbl_Loan_Preliminary_Evaluation.cs" />
+    <Compile Include="Models\tbl_Loan_PriceIndex_Exception.cs" />
     <Compile Include="Models\tbl_Loan_PrudentialGuideline.cs" />
     <Compile Include="Models\tbl_Loan_Relationship_Officer_History.cs" />
     <Compile Include="Models\tbl_Loan_Revolving.cs" />

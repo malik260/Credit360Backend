@@ -150,6 +150,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? ParentId { get; set; }
 
+        [StringLength(100)]
+        public string LogoPath { get; set; }
+
         public int? CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
