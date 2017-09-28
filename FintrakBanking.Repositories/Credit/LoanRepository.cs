@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -38,12 +39,15 @@ namespace FintrakBanking.Repositories.Credit
         private ILoanCovenantRepository loanCovenant;
         private IFinanceTransactionRepository financeTransaction;
         private IApprovalLevelStaffRepository level;
+        private ICustomerRepository customers;
+        private IWorkflow workflow;
 
 
         public LoanRepository(FinTrakBankingContext _context,IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
                                         IWorkFlowRepository _workFlow, ILoanCovenantRepository _loanCovenant, 
-                                        IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level)
+                                        IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
+                                        ICustomerRepository _customers, IWorkflow _workflow)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
@@ -53,6 +57,8 @@ namespace FintrakBanking.Repositories.Credit
             this.loanCovenant = _loanCovenant;
             this.financeTransaction = _financeTransaction;
             this.level = _level;
+            this.customers = _customers;
+            this.workflow = _workflow;
         }
 
   
@@ -303,7 +309,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
 
                         var loan = context.tbl_Loan_Revolving.Add(data);
-                        AddLoanCovenantDetail(entity.loanCovenant, loan.RevolvingLoanId, (short)entity.productTypeId);
+                        //AddLoanCovenantDetail(entity.loanCovenant, loan.RevolvingLoanId, (short)entity.productTypeId);
                         AddLoanGuarantor(entity.loanGuarantor, loan.RevolvingLoanId, (short)entity.productTypeId);
                         AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.RevolvingLoanId, (short)entity.productTypeId);
                         AddLoanFees(entity.loanChargeFee, loan.RevolvingLoanId, (short)entity.productTypeId);
@@ -407,7 +413,7 @@ namespace FintrakBanking.Repositories.Credit
                         context.tbl_Audit.Add(audit);
                         var dataCount = context.SaveChanges();
 
-                        AddLoanCovenantDetail(entity.loanCovenant, loan.ContingentLoanId, (short)entity.productTypeId);
+                        //AddLoanCovenantDetail(entity.loanCovenant, loan.ContingentLoanId, (short)entity.productTypeId);
                         AddLoanGuarantor(entity.loanGuarantor, loan.ContingentLoanId, (short)entity.productTypeId);
                         AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.ContingentLoanId, (short)entity.productTypeId);
                         AddLoanFees(entity.loanChargeFee, loan.ContingentLoanId, (short)entity.productTypeId);
@@ -422,6 +428,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = (int)OperationsEnum.TermLoanBooking,
                             BranchId = entity.userBranchId
                         };
+                        
                         var response = await workFlow.LogForApproval(approvalModel);
                         trans.Commit();
 
@@ -450,6 +457,11 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
                 throw new Exception("Loan terminal date should be more than effective date");
 
+            double? priceIndex = (from a in context.tbl_Product
+                                  where a.ProductId == entity.productId
+                                  select a.tbl_Product_Price_Index.PriceIndexRate).FirstOrDefault();
+
+
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
 
             var data = new tbl_Loan
@@ -463,7 +475,8 @@ namespace FintrakBanking.Repositories.Credit
                 //IsScheduledPrepayment = null,
                 ScheduledPrepaymentAmount = entity.scheduledPrepaymentAmount,
                 ScheduledPrepaymentFrequencyTypeId = null,
-                
+                ProductPriceIndexRate = (double)priceIndex,
+
                 // CustomerGroupId = entity.customerGroupId,
                 LoanTypeId = entity.loanTypeId,
                 SubSectorId = entity.subSectorId,
@@ -523,31 +536,6 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
-            //try
-            //{
-            //    LoanPaymentScheduleInputViewModel loanScheduleInput = new LoanPaymentScheduleInputViewModel()
-            //    {
-            //        accurialBasis = entity.accurialBasis,
-            //        effectiveDate = entity.effectiveDate,
-            //        firstDayType = entity.firstDayType,
-            //        integralFeeAmount = entity.integralFeeAmount,
-            //        interestFirstpaymentDate = (DateTime)entity.firstInterestPaymentDate,
-            //        interestFrequency = entity.interestFrequencyTypeId,
-            //        interestRate = entity.interestRate,
-            //        maturityDate = entity.maturityDate,
-            //        principalAmount = (double)entity.principalAmount,
-            //        principalFirstpaymentDate = (DateTime)entity.firstPrincipalPaymentDate,
-            //        principalFrequency = entity.principalFrequencyTypeId,
-            //        scheduleMethodId = entity.loanScheduleInput.scheduleMethodId,
-            //        tenor = entity.tenor,
-            //        irregularPaymentSchedule = entity.loanScheduleInput.irregularPaymentSchedule
-            //    };
-            //}
-            //catch (NoNullAllowedException) {
-            //    throw new NullReferenceException("An error occured processing Loan Schedule Inputs");
-            //}
-
-
             ////Audit Section ---------------------------
             var audit = new tbl_Audit
             {
@@ -563,6 +551,7 @@ namespace FintrakBanking.Repositories.Credit
             ////end of Audit section -------------------------------
 
 
+
             if (workFlow.CheckRouteForOperation((int)OperationsEnum.TermLoanBooking, entity.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
@@ -572,13 +561,15 @@ namespace FintrakBanking.Repositories.Credit
 
                         var loan = context.tbl_Loan.Add(data);
                         context.tbl_Audit.Add(audit);
+
+                        //AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
+                        //AddLoanCovenantDetail(entity.loanCovenant, loan.TermLoanId, (short)entity.productTypeId);
+                        //AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
+                        // AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
+                        //AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
+
                         var dataCount = context.SaveChanges();
-
-                        AddLoanCovenantDetail(entity.loanCovenant, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
-
+                       
                         //this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
                         var approvalModel = new ApprovalViewModel
@@ -587,24 +578,17 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = entity.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             targetId = loan.TermLoanId,
+                            comment = "Please approve this Loan",
                             operationId = (int)OperationsEnum.TermLoanBooking,
                             BranchId = entity.userBranchId,
                         };
+
+                        var response = workFlow.LogForApproval(approvalModel);
+
                         trans.Commit();
-                        //var response = await workFlow.LogForApproval(approvalModel);
+                       //AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
 
-                        //if (response.Item1)
-                        //{
-                        //    this.loanSchedule.AddLoanSchedule(loan.LoanId, entity.loanScheduleInput, entity.createdBy);
-                        //    trans.Commit();
-                        //}
-                        //else
-                        //{
-                        //    trans.Rollback();
-                        //    throw new Exception("This transaction failed to log for approval");
-                        //}
-
-                        if (dataCount > 0)
+                         if (dataCount > 0)
                             return loanReferenceNumber;
                         else
 
@@ -624,6 +608,39 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        
+
+        public async Task<bool> LogApproval(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId)
+        {
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.Comment = model.comment;
+            workflow.ExternalInitialization = externalInitialization;
+            workflow.StatusId = ApprovalStatusId;
+            await workflow.LogActivity();
+
+            if (workflow.Saved)
+            {
+                var appl = context.tbl_Loan.Find(model.applicationId);
+                appl.ApprovalStatusId = workflow.StatusId;
+                if (appl.ApprovalStatusId == (int)ApprovalStatusEnum.Pending) // redundant block
+                {
+                    appl.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
+                }
+
+                context.SaveChanges();
+
+                return true;
+            }
+
+            return false;
+        }
+          
+      
+   
 
         private void DisburseLoan(LoanViewModel entity)
         {
@@ -1060,32 +1077,55 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public ICollection<tbl_Loan_Covenant_Detail> AddLoanCovenantDetail(List<LoanCovenantDetailViewModel> covenantModel, int loanId, short productTypeId)
+        private bool AddLoanCovenant(List<LoanCovenantDetailViewModel> covenantModel,int loanApplicationId, int loanId, short productTypeId)
         {
-            ICollection<tbl_Loan_Covenant_Detail> covenant;
-
-            if (covenantModel.Count  < 1)
-                return null;
-
-            covenant = new List<tbl_Loan_Covenant_Detail>();
-            foreach(LoanCovenantDetailViewModel entity in covenantModel)
-            covenant.Add(new tbl_Loan_Covenant_Detail
+            foreach (LoanCovenantDetailViewModel entity in covenantModel)
             {
-                CompanyId = entity.companyId,
-                CovenantAmount = entity.covenantAmount,
-                CovenantDate = entity.covenantDate,
-                CovenantDetail = entity.covenantDetail,
-                CovenantTypeId = entity.covenantTypeId,
-                CreatedBy = entity.createdBy,
-                DateTimeCreated = this.generalSetup.GetApplicationDate().Date,
-                FrequencyTypeId = entity.frequencyTypeId,
-                LoanId = entity.loanId,
-                ProductTypeId = productTypeId
-
-            });
-
-            return covenant;
+                var covenant = new tbl_Loan_Covenant_Detail
+                {
+                    CompanyId = entity.companyId,
+                    CovenantAmount = entity.covenantAmount,
+                    CovenantDate = entity.covenantDate,
+                    CovenantDetail = entity.covenantDetail,
+                    CovenantTypeId = entity.covenantTypeId,
+                    CreatedBy = entity.createdBy,
+                    DateTimeCreated = this.generalSetup.GetApplicationDate().Date,
+                    FrequencyTypeId = entity.frequencyTypeId,
+                    LoanId = loanId,
+                    ProductTypeId = productTypeId
+                };
+               
+                context.tbl_Loan_Covenant_Detail.Add(covenant);
+            }
+            //return context.SaveChanges() >0;
+            return true;
         }
+        //public ICollection<tbl_Loan_Covenant_Detail> AddLoanCovenantDetail(List<LoanCovenantDetailViewModel> covenantModel, int loanId, short productTypeId)
+        //{
+        //    ICollection<tbl_Loan_Covenant_Detail> covenant;
+
+        //    if (covenantModel.Count  < 1)
+        //        return null;
+
+        //    covenant = new List<tbl_Loan_Covenant_Detail>();
+        //    foreach(LoanCovenantDetailViewModel entity in covenantModel)
+        //    covenant.Add(new tbl_Loan_Covenant_Detail
+        //    {
+        //        CompanyId = entity.companyId,
+        //        CovenantAmount = entity.covenantAmount,
+        //        CovenantDate = entity.covenantDate,
+        //        CovenantDetail = entity.covenantDetail,
+        //        CovenantTypeId = entity.covenantTypeId,
+        //        CreatedBy = entity.createdBy,
+        //        DateTimeCreated = this.generalSetup.GetApplicationDate().Date,
+        //        FrequencyTypeId = entity.frequencyTypeId,
+        //        LoanId = entity.loanId,
+        //        ProductTypeId = productTypeId
+
+        //    });
+        //    context.SaveChanges();
+        //    return covenant;
+        //}
 
         private ICollection<tbl_Loan_Covenant_Detail> AddLoanCovenant(LoanCovenantDetailViewModel entity, short productTypeId)
         {
@@ -1134,7 +1174,7 @@ namespace FintrakBanking.Repositories.Credit
                     BVN = entity.bvn,
                     EmailAddress = entity.emailAddress, CreatedBy = 1, DateTimeCreated = generalSetup.GetApplicationDate()
                 });
-
+            context.SaveChanges();
             return guarantor;
         }
 
@@ -1154,7 +1194,7 @@ namespace FintrakBanking.Repositories.Credit
                     CollateralCustomerId =entity.collateralCustomerId,
                     LoanApplicationId = loanApplicationId,
                 });
-
+            context.SaveChanges();
             return collateral;
         }
 
@@ -1573,6 +1613,8 @@ namespace FintrakBanking.Repositories.Credit
                             feeIntervalId = c.FeeIntervalId,
                             feeIntervalName = c.tbl_Fee_Interval.FeeIntervalName,
                             feeTypeId = c.FeeTypeId,
+                            required = c.tbl_Fee_Type.ByAmountRequired,
+                            recurring = (bool)c.Recurring,
                             //feeTypeName = c.FeeTypeName
 
                         }).ToList();
@@ -1659,6 +1701,231 @@ namespace FintrakBanking.Repositories.Credit
 
                         }).ToList();
             return data;
+        }
+
+        public IQueryable<CustomerSearchItemViewModels> SearchCustomerCollateral(int companyId, string searchQuery)
+        {
+            return this.customers.CustomerSearchRealTime(companyId, searchQuery);
+        }
+
+        public IQueryable<CustomerViewModels> SearchForCustomerCollateral(int companyId, string searchQuery)
+        {
+            IQueryable<CustomerViewModels> allCustomers = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allCustomers = GetCustomers()
+                    .Where(c => c.companyId == companyId)
+                    .Where(x => x.firstName.Contains(searchQuery)
+               || x.lastName.Contains(searchQuery)
+               || x.middleName.Contains(searchQuery)
+                );
+            }
+
+            return allCustomers;
+        }
+
+        IQueryable<CustomerViewModels> GetCustomers()
+        {
+            return from a in context.tbl_Customer
+                   where a.Deleted == false
+                   select
+
+                   new CustomerViewModels
+                   {
+                       accountCreationComplete = a.AccountCreationComplete,
+                       branchId = a.BranchId,
+                       branchName = a.tbl_Branch.BranchName,
+                       childDateOfBirth = a.ChildDateOfBirth.Value,
+                       companyMainId = a.CompanyId,
+                       createdBy = a.CreatedBy,
+                       creationMailSent = a.CreationMailSent,
+                       customerCode = a.CustomerCode,
+                       customerSensitivityLevelId = a.CustomerSensitivityLevelId,
+                       customerTypeId = a.CustomerTypeId.Value,
+                       dateOfBirth = a.DateOfBirth,
+                       customerId = a.CustomerId,
+                       emailAddress = a.EmailAddress,
+                       firstChildName = a.FirstChildName,
+                       firstName = a.FirstName,
+                       gender = a.Gender,
+                       lastName = a.LastName,
+                       maidenName = a.MaidenName,
+                       maritalStatus = a.MaritalStatus.Value,
+                       title = a.Title,
+                       middleName = a.MiddleName,
+                       customerTypeName = context.tbl_Customer_Type.FirstOrDefault(c => c.CustomerTypeId == a.CustomerTypeId).Name,
+                       misCode = a.MISCode,
+                       misStaff = a.MISStaff,
+                       nationality = a.Nationality,
+                       occupation = a.Occupation,
+                       placeOfBirth = a.PlaceOfBirth,
+                       politicallyExposedPerson = a.PoliticallyExposedPerson,
+                       relationshipOfficerId = a.RelationshipOfficerId.Value,
+                       spouse = a.Spouse,
+                       sectorId = a.tbl_Sub_Sector.tbl_Sector.SectorId,
+                       sectorName = a.tbl_Sub_Sector.tbl_Sector.Name,
+                       subSectorId = a.SubSectorId,
+                       subSectorName = a.tbl_Sub_Sector.Name,
+                       taxNumber = a.TaxNumber
+                       ,
+                       CustomerAddresses = context.tbl_Customer_Address.Where(x => x.CustomerId == a.CustomerId).Select(x => new CustomerAddressViewModels()
+                       {
+                           address = x.Address,
+                           addressTypeId = x.AddressTypeId,
+                           cityId = x.CityId,
+                           customerId = x.CustomerId,
+                           homeTown = x.HomeTown,
+                           nearestLandmark = x.NearestLandmark,
+                           electricMeterNumber = x.ElectricMeterNumber,
+                           pobox = x.POBox,
+                           stateId = x.StateId,
+                           addressId = x.AddressId
+                       }).ToList(),
+                       CustomerBvn = context.tbl_Customer_BVN.Where(b => b.CustomerId == a.CustomerId).Select(b => new CustomerBvnViewModels()
+                       {
+                           bankVerificationNumber = b.BankVerificationNumber,
+                           customerBvnid = b.CustomerBVNId,
+                           firstname = b.Firstname,
+                           isValidBvn = b.IsValidBVN,
+                           isPoliticallyExposed = b.IsPoliticallyExposed,
+                           surname = b.Surname
+                       }).ToList(),
+                       CustomerPhoneContact = context.tbl_Customer_PhoneContact.Where(c => c.CustomerId == a.CustomerId).Select(c => new CustomerPhoneContactViewModels
+                       {
+                           active = c.Active,
+                           customerId = c.CustomerId,
+                           phone = c.Phone,
+                           phoneContactId = c.PhoneContactId,
+                           phoneNumber = c.PhoneNumber
+                       }).ToList(),
+                       CustomerCompanyInfomation = context.tbl_Customer_CompanyInfomation.Where(d => d.CustomerId == a.CustomerId).Select(d => new CustomerCompanyInfomationViewModels()
+                       {
+                           annualTurnOver = d.AnnualTurnOver,
+                           companyEmail = d.CompanyEmail,
+                           companyId = d.CustomerId,
+                           companyName = d.CompanyName,
+                           companyWebsite = d.CompanyWebsite,
+                           companyInfomationId = d.CompanyInfomationId,
+                           corporateBusinessCategory = d.CorporateBusinessCategory,
+                           createdBy = a.CreatedBy,
+                           creditRating = d.CreditRating,
+                           registeredOffice = d.RegisteredOffice,
+                           previousCreditRating = d.PreviousCreditRating,
+                           registrationNumber = d.RegistrationNumber,
+                           paidUpCapital = d.PaidUpCapital,
+                           authorizedCapital = d.AuthorisedCapital
+
+                       }).ToList(),
+                       CustomerIdentification = context.tbl_Customer_Identification.Where(e => e.CustomerId == a.CustomerId).Select(e => new CustomerIdentificationViewModels()
+                       {
+                           identificationId = e.IdentificationId,
+                           identificationModeId = e.IdentificationModeId.Value,
+                           identificationMode = context.tbl_Customer_IdentificationModeType.FirstOrDefault(r => r.IdentificationModeId == e.IdentificationModeId).IdentificationMode,
+                           identificationNo = e.IdentificationNo,
+                           issueAuthority = e.IssueAuthority,
+                           issuePlace = e.IssuePlace
+                       }).ToList(),
+                       CustomerEmploymentHistory = context.tbl_Customer_EmploymentHistory.Where(s => s.CustomerId == a.CustomerId).Select(s => new CustomerEmploymentHistoryViewModels()
+                       {
+                           active = s.Active,
+                           previousEmployer = s.PreviousEmployer,
+                           customerId = s.CustomerId,
+                           employDate = s.EmployDate,
+                           placeOfWorkId = s.PlaceOfWorkId,
+                           employerAddress = s.EmployerAddress,
+                           employerCountryId = s.EmployerCountryId,
+                           employerName = s.EmployerName,
+                           officePhone = s.OfficePhone,
+                           employerStateId = s.EmployerStateId
+                       }).ToList(),
+                       CustomerCompanyDirectors = context.tbl_Customer_Company_Director.Where(s => s.CustomerId == a.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
+                       .Select(s => new CustomerCompanyDirectorsViewModels()
+                       {
+                           companyDirectorId = s.CompanyDirectorId,
+                           surname = s.Surname,
+                           firstname = s.Firstname,
+                           numberOfShares = s.NumberOfShares,
+                           isPoliticallyExposed = s.IsPoliticallyExposed,
+                           bankVerificationNumber = s.CustomerBVN,
+                           companyDirectorTypeId = s.CompanyDirectorTypeId,
+                           companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                           customerId = s.CustomerId,
+                           customerName = s.Firstname + " " + s.Surname,
+                           address = s.Address,
+                           phoneNumber = s.PhoneNumber,
+                           email = s.EmailAddress
+                       }).ToList(),
+                       CustomerCompanyShareholder = context.tbl_Customer_Company_Director.Where(s => s.CustomerId == a.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
+                       .Select(s => new CustomerCompanyShareholderViewModels()
+                       {
+                           companyDirectorId = s.CompanyDirectorId,
+                           surname = s.Surname,
+                           firstname = s.Firstname,
+                           numberOfShares = s.NumberOfShares,
+                           isPoliticallyExposed = s.IsPoliticallyExposed,
+                           bankVerificationNumber = s.CustomerBVN,
+                           companyDirectorTypeId = s.CompanyDirectorTypeId,
+                           companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                           customerId = s.CustomerId,
+                           customerName = s.Firstname + " " + s.Surname,
+                           address = s.Address,
+                           phoneNumber = s.PhoneNumber,
+                           email = s.EmailAddress
+                       }).ToList(),
+                       CustomerClientOrSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
+                       .Select(cs => new CustomerClientOrSupplierViewModels()
+                       {
+                           client_SupplierId = cs.Client_SupplierId,
+                           clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                           firstName = cs.FirstName,
+                           middleName = cs.MiddleName,
+                           lastName = cs.LastName,
+                           client_SupplierAddress = cs.Address,
+                           client_SupplierPhoneNumber = cs.PhoneNumber,
+                           client_SupplierEmail = cs.EmailAddress,
+                           client_SupplierTypeId = cs.Client_SupplierTypeId,
+                           client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                       }).ToList(),
+                       CustomerSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                       .Select(cs => new CustomerSupplierViewModels()
+                       {
+                           client_SupplierId = cs.Client_SupplierId,
+                           clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                           firstName = cs.FirstName,
+                           middleName = cs.MiddleName,
+                           lastName = cs.LastName,
+                           client_SupplierAddress = cs.Address,
+                           client_SupplierPhoneNumber = cs.PhoneNumber,
+                           client_SupplierEmail = cs.EmailAddress,
+                           client_SupplierTypeId = cs.Client_SupplierTypeId,
+                           client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                       }).ToList(),
+                       CustomerCollateral = context.tbl_Collateral_Customer.Where(cc => cc.CustomerId == a.CustomerId)
+                       .Select(x => new CollateralViewModel()
+                       {
+                           collateralId = x.CollateralCustomerId,
+                           collateralTypeId = x.CollateralTypeId,
+                           collateralSubTypeId = x.CollateralSubTypeId,
+                           customerId = x.CustomerId,
+                           currencyId = x.CurrencyId,
+                           currency = x.tbl_Currency.CurrencyName,
+                           collateralTypeName = x.tbl_Collateral_Type.CollateralTypeName,
+                           collateralCode = x.CollateralCode,
+                           camRefNumber = x.CamRefNumber,
+                           allowSharing = x.AllowSharing,
+                           isLocationBased = x.IsLocationBased,
+                           valuationCycle = x.ValuationCycle,
+                           haircut = x.HairCut,
+                           approvalStatus = x.ApprovalStatus,
+                       }).ToList(),
+                   };
+
         }
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId)

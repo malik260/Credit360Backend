@@ -432,7 +432,7 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox11">
+                        <Textbox Name="Textbox2">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -450,7 +450,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox11</rd:DefaultName>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -466,7 +466,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox12">
+                        <Textbox Name="Textbox4">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -477,13 +477,14 @@
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox12</rd:DefaultName>
+                          <rd:DefaultName>Textbox4</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -510,6 +511,7 @@
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                     <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
@@ -544,6 +546,7 @@
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                     <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
@@ -578,6 +581,7 @@
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
                                     <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
@@ -669,7 +673,7 @@
             </ChartSeriesHierarchy>
             <ChartData>
               <ChartSeriesCollection>
-                <ChartSeries Name="sectorName">
+                <ChartSeries Name="Limit">
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
@@ -702,7 +706,7 @@
                     <MinMovingDistance>0pt</MinMovingDistance>
                   </ChartSmartLabel>
                 </ChartSeries>
-                <ChartSeries Name="sectorUsage">
+                <ChartSeries Name="Usage">
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
@@ -735,7 +739,7 @@
                     <MinMovingDistance>0pt</MinMovingDistance>
                   </ChartSmartLabel>
                 </ChartSeries>
-                <ChartSeries Name="sectorBalance">
+                <ChartSeries Name="Balance">
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
@@ -1053,10 +1057,10 @@
               </Style>
             </ChartNoDataMessage>
             <DataSetName>Sectors</DataSetName>
-            <Top>4.44667in</Top>
-            <Left>7.37375in</Left>
-            <Height>2in</Height>
-            <Width>4.77083in</Width>
+            <Top>1.22839in</Top>
+            <Left>0.155in</Left>
+            <Height>2.99953in</Height>
+            <Width>6.40625in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -1088,7 +1092,7 @@
             </ChartSeriesHierarchy>
             <ChartData>
               <ChartSeriesCollection>
-                <ChartSeries Name="sectorLimit">
+                <ChartSeries Name="Limit">
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
@@ -1122,7 +1126,7 @@
                     <MinMovingDistance>0pt</MinMovingDistance>
                   </ChartSmartLabel>
                 </ChartSeries>
-                <ChartSeries Name="sectorUsage">
+                <ChartSeries Name="Usage">
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
@@ -1410,7 +1414,7 @@
             </ChartLegends>
             <ChartTitles>
               <ChartTitle Name="Default">
-                <Caption>Sector Distribution</Caption>
+                <Caption>Distribution</Caption>
                 <Style>
                   <BackgroundGradientType>None</BackgroundGradientType>
                   <FontSize>9pt</FontSize>
@@ -1441,7 +1445,7 @@
             </ChartNoDataMessage>
             <DataSetName>Sectors</DataSetName>
             <Top>0.06944in</Top>
-            <Left>7.37375in</Left>
+            <Left>6.74875in</Left>
             <Height>2in</Height>
             <Width>3in</Width>
             <ZIndex>2</ZIndex>
@@ -1475,11 +1479,11 @@
             </ChartSeriesHierarchy>
             <ChartData>
               <ChartSeriesCollection>
-                <ChartSeries Name="sectorUsage">
+                <ChartSeries Name="Usage">
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Count(Fields!Usage.Value)</Y>
+                        <Y>=Sum(Fields!Usage.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
@@ -1510,11 +1514,11 @@
                     <MinMovingDistance>0pt</MinMovingDistance>
                   </ChartSmartLabel>
                 </ChartSeries>
-                <ChartSeries Name="sectorUsage1">
+                <ChartSeries Name="Limit">
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Count(Fields!Limit.Value)</Y>
+                        <Y>=Sum(Fields!Limit.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
@@ -1799,7 +1803,7 @@
             </ChartLegends>
             <ChartTitles>
               <ChartTitle Name="Default">
-                <Caption>Sector Exposure</Caption>
+                <Caption>Exposure</Caption>
                 <Style>
                   <BackgroundGradientType>None</BackgroundGradientType>
                   <FontSize>9pt</FontSize>
@@ -1830,7 +1834,7 @@
             </ChartNoDataMessage>
             <DataSetName>Sectors</DataSetName>
             <Top>2.22792in</Top>
-            <Left>7.37375in</Left>
+            <Left>6.74875in</Left>
             <Height>2in</Height>
             <Width>3in</Width>
             <ZIndex>3</ZIndex>
@@ -1893,7 +1897,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Sector Limit And Monitoring Report</Value>
+                      <Value>Branch Limit And Monitoring Report</Value>
                       <Style>
                         <FontFamily>verdana</FontFamily>
                         <FontSize>12pt</FontSize>
