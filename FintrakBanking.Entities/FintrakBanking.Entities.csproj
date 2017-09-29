@@ -76,6 +76,9 @@
     <Compile Include="Models\tbl_Audit.cs" />
     <Compile Include="Models\tbl_Audit_Type.cs" />
     <Compile Include="Models\tbl_Branch.cs" />
+    <Compile Include="Models\tbl_Call_Memo.cs" />
+    <Compile Include="Models\tbl_Call_Memo_Limit.cs" />
+    <Compile Include="Models\tbl_Call_Memo_Type.cs" />
     <Compile Include="Models\tbl_CASA.cs" />
     <Compile Include="Models\tbl_CASA_AccountStatus.cs" />
     <Compile Include="Models\tbl_CASA_Lien.cs" />
@@ -233,6 +236,9 @@
     <Compile Include="Models\tbl_Loan_Type.cs" />
     <Compile Include="Models\tbl_MachineValue_Base.cs" />
     <Compile Include="Models\tbl_Management_Type.cs" />
+    <Compile Include="Models\tbl_Message_Log.cs" />
+    <Compile Include="Models\tbl_Message_Log_Status.cs" />
+    <Compile Include="Models\tbl_Message_Log_Type.cs" />
     <Compile Include="Models\tbl_MIS_Info.cs" />
     <Compile Include="Models\tbl_MIS_Type.cs" />
     <Compile Include="Models\tbl_Nature_Of_Business.cs" />
@@ -310,12 +316,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>

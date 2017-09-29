@@ -6,23 +6,25 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Product_Charge_Fee")]
-    public partial class tbl_Temp_Product_Charge_Fee
+    [Table("credit.tbl_Call_Memo_Limit")]
+    public partial class tbl_Call_Memo_Limit
     {
         [Key]
-        public int ProductFeeId { get; set; }
+        public int CallLimitId { get; set; }
 
-        public short ProductId { get; set; }
+        public int JobTitleId { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal MinimumAmount { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal MaximumAmount { get; set; }
+
+        public short FrequencyId { get; set; }
+
+        public int CallLimitTypeId { get; set; }
 
         public int CompanyId { get; set; }
-
-        public int ChargeFeeId { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal RateValue { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? DependentAmount { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -32,16 +34,14 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeUpdated { get; set; }
 
-        public bool? Deleted { get; set; }
+        public bool Deleted { get; set; }
 
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
-
         public virtual tbl_Company tbl_Company { get; set; }
 
-        public virtual tbl_Temp_Product tbl_Temp_Product { get; set; }
+        public virtual tbl_Frequency_Type tbl_Frequency_Type { get; set; }
     }
 }

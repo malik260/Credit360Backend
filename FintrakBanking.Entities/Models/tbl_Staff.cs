@@ -26,6 +26,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Job_Request2 = new HashSet<tbl_Job_Request>();
             tbl_Notification_Log = new HashSet<tbl_Notification_Log>();
             tbl_Profile_User = new HashSet<tbl_Profile_User>();
+            tbl_Call_Memo = new HashSet<tbl_Call_Memo>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Application1 = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
@@ -176,6 +177,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Profile_User> tbl_Profile_User { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Call_Memo> tbl_Call_Memo { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }

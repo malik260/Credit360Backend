@@ -295,6 +295,7 @@
     <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\AuthorizationController.cs" />
     <Compile Include="Controllers\BranchController.cs" />
+    <Compile Include="Controllers\CallMemoController.cs" />
     <Compile Include="Controllers\ConditionPrecedentController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
     <Compile Include="Controllers\FinanceTransactionController.cs" />
