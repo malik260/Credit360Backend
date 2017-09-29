@@ -1,19 +1,18 @@
-﻿using FintrakBanking.Interfaces.Setups.Approval;
-using FintrakBanking.ViewModels;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
+﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.Admin;
-using System.Threading.Tasks;
-using FintrakBanking.Common.Enum;
-using System.ComponentModel.Composition;
+using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.WorkFlow;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.Approval
-{ 
+{
     public class ApprovalLevelStaffRepository : IApprovalLevelStaffRepository
     {
         private FinTrakBankingContext context;
@@ -65,6 +64,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             return GetApprovalLevelStaff(companyId);
         }
+
         public IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaffByOperationId(int operationId, int companyId)
         {
             return GetApprovalLevelStaff(companyId).Where(c => c.operationId == operationId);
@@ -79,7 +79,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var levelStaff = GetApprovalLevelStaff(companyId);
             return levelStaff.Where(c => c.staffId == staffId && c.operationId == operationId).FirstOrDefault();
-            
         }
 
         public bool AddApprovalLevelStaff(ApprovalLevelStaffViewModel model)
@@ -203,7 +202,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return await context.SaveChangesAsync() != 0;
         }
 
-
         public bool AddApprovalTrail(tbl_Approval_Trail model)
         {
             context.tbl_Approval_Trail.Add(model);
@@ -243,35 +241,53 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 c.ToApprovalLevelId == approvalLevelId)
                 .Take(numberOfApprovals);
         }
-        public IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int operationId, int companyId)
-        {
-            var result = (from a in context.tbl_Approval_Trail 
-                          where a.OperationId == operationId && a.CompanyId == companyId
-                          select
 
-                          new WorkflowTrackerViewModel
+        private IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int companyId)
+        {
+            var result = (from a in context.tbl_Approval_Trail
+                          join b in context.tbl_Approval_Level on a.FromApprovalLevelId equals b.ApprovalLevelId
+                          join c in context.tbl_Approval_Group_Mapping on b.GroupOperationMappingId equals c.GroupOperationMappingId
+                          join d in context.tbl_Approval_Group on c.GroupId equals d.GroupId
+                          join e in context.tbl_Operations on c.OperationId equals e.OperationId
+
+                          join f in context.tbl_Approval_Level on a.ToApprovalLevelId equals f.ApprovalLevelId
+                          join g in context.tbl_Approval_Group_Mapping on f.GroupOperationMappingId equals g.GroupOperationMappingId
+                          join h in context.tbl_Approval_Group on g.GroupId equals h.GroupId
+                          join i in context.tbl_Staff on a.RequestStaffId equals i.StaffId
+                          join j in context.tbl_Staff on a.ResponseStaffId equals j.StaffId
+                          join k in context.tbl_Approval_Status on a.ApprovalStatusId equals k.ApprovalStatusId
+                          where a.CompanyId == companyId
+                          select new WorkflowTrackerViewModel
+
                           {
                               arrivalDate = a.ArrivalDate,
-                              responseApprovalLevel = context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
-                              responseDate = (DateTime)(a.SystemResponseDateTime.HasValue ? a.SystemResponseDateTime : DateTime.Now),
+                              responseApprovalLevel = a.ToApprovalLevelId.HasValue ? f.LevelName : "N/A",
+                              responseDate = a.SystemResponseDateTime ?? DateTime.Now,
                               systemArrivalDate = a.SystemArrivalDateTime,
                               systemResponseDate = a.SystemResponseDateTime,
-                              responseStaffName = !a.ResponseStaffId.HasValue ? "Awaiting Action" : a.tbl_Staff1.FirstName + " " + a.tbl_Staff1.LastName,
+                              responseStaffName = !a.ResponseStaffId.HasValue ? "Awaiting Action" : j.FirstName + " " + j.LastName,
                               comment = a.Comment,
-                              requestStaffName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
-                              requestApprovalLevel = !a.FromApprovalLevelId.HasValue ? "Initiation" : context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
+                              requestStaffName = i.FirstName + " " + i.LastName,
+                              requestApprovalLevel = !a.FromApprovalLevelId.HasValue ? "Initiation" : b.LevelName,
                               TargetId = a.TargetId,
-                              approvalStatus = context.tbl_Approval_Status.FirstOrDefault(c => c.ApprovalStatusId == a.ApprovalStatusId).ApprovalStatusName
-
-                          }
-                          );
+                              operationId = e.OperationId,
+                              operationName = e.OperationName,
+                              approvalStatus = k.ApprovalStatusName
+                          });
             return result;
         }
-        public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
+
+        public async Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
         {
-            var result = GetApprovalTrail(operationId, companyId).Where(c => c.TargetId == targetId).OrderByDescending(c => c.systemArrivalDate).ToList();
+            var result = await GetApprovalTrail(companyId).Where(c => c.TargetId == targetId && c.operationId == operationId).OrderByDescending(c => c.systemArrivalDate).ToListAsync();
             return result;
         }
 
+        public IQueryable<WorkflowTrackerViewModel> GetAllRecordsOnApprovalTrail(int companyId)
+        {
+            var result = GetApprovalTrail(companyId).OrderByDescending(c => c.systemArrivalDate);
+
+            return result;
+        }
     }
 }
