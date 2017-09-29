@@ -32,12 +32,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaff(int companyId)
         {
             var data = (from a in context.tbl_Approval_Level_Staff
-                        where a.tbl_Approval_Level.tbl_Approval_Group_Mapping.tbl_Approval_Group.CompanyId == companyId
+                        where a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
                         && a.Deleted == false
                         select new ApprovalLevelStaffViewModel
                         {
-                            groupId = a.tbl_Approval_Level.tbl_Approval_Group_Mapping.GroupId,
-                            operationId = a.tbl_Approval_Level.tbl_Approval_Group_Mapping.OperationId,
+                            groupId = a.tbl_Approval_Level.GroupId,
+                            operationId = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().OperationId,
                             maximumAmount = a.MaximumAmount,
                             processViewScope = a.ProcessViewScopeId,
                             canViewDocument = a.CanViewCAMDocument,
@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             canSendRequest = a.CanSendJobRequest,
                             canEdit = a.CanEdit,
                             vetoPower = a.VetoPower,
-                            minimumAmount = a.tbl_Approval_Level.MinimumAmount,
+                            minimumAmount = a.tbl_Approval_Level.MaximumAmount,
                             position = a.tbl_Approval_Level.Position,
                             approvalLevelId = a.ApprovalLevelId,
                             approvalLevelName = a.tbl_Approval_Level.LevelName,
@@ -174,11 +174,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         public async Task<bool> DeleteApprovalLevelStaff(int StaffLevelId, UserInfo user)
         {
             var data = this.context.tbl_Approval_Level_Staff.Find(StaffLevelId);
-            {
-                data.DateTimeDeleted = _genSetup.GetApplicationDate();
-                data.Deleted = true;
-                data.DeletedBy = user.staffId;
-            };
+
 
             //Audit Section ---------------------------
             var audit_staff_level = (context.tbl_Approval_Level.FirstOrDefault(x => x.ApprovalLevelId == data.ApprovalLevelId));
@@ -187,7 +183,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.ApprovalLevelDeleted,
-                StaffId = user.createdBy,
+                StaffId = user.staffId,
                 BranchId = (short)user.BranchId,
                 Detail = $"Added Approval Level Staff {audit_staff_level.LevelName}' for staff with code '{audit_staff.StaffCode}' ",
                 IPAddress = user.userIPAddress,
@@ -199,6 +195,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
+
+            this.context.tbl_Approval_Level_Staff.Remove(data);
 
             return await context.SaveChangesAsync() != 0;
         }

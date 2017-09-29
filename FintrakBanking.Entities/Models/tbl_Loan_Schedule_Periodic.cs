@@ -36,6 +36,8 @@ namespace FintrakBanking.Entities.Models
 
         public double InterestRate { get; set; }
 
+        public double? PreviousInterestRate { get; set; }
+
         [Column(TypeName = "money")]
         public decimal AmortisedStartPrincipalAmount { get; set; }
 
@@ -52,6 +54,8 @@ namespace FintrakBanking.Entities.Models
         public decimal AmortisedEndPrincipalAmount { get; set; }
 
         public double EffectiveInterestRate { get; set; }
+
+        public double? PreviousEffectiveInterestRate { get; set; }
 
         public int CreatedBy { get; set; }
 

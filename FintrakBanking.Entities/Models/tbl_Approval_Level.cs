@@ -26,8 +26,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(150)]
         public string LevelName { get; set; }
 
-        public int GroupOperationMappingId { get; set; }
-
         public int Position { get; set; }
 
         public int? Tenor { get; set; }
@@ -35,7 +33,10 @@ namespace FintrakBanking.Entities.Models
         public short? TenorModeId { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal MinimumAmount { get; set; }
+        public decimal MaximumAmount { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? InvestmentGradeAmount { get; set; }
 
         public int NumberOfUsers { get; set; }
 
@@ -83,7 +84,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
-        public virtual tbl_Approval_Group_Mapping tbl_Approval_Group_Mapping { get; set; }
+        public int GroupId { get; set; }
+
+        public virtual tbl_Approval_Group tbl_Approval_Group { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Approval_Level_Staff> tbl_Approval_Level_Staff { get; set; }
