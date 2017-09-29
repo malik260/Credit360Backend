@@ -15,6 +15,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 
                 companyId.Text = Request.QueryString["companyId"];
+                 
                 ReportViewer.LocalReport.Refresh();
             }
         }

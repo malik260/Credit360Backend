@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Frequency_Type()
         {
+            tbl_Call_Memo_Limit = new HashSet<tbl_Call_Memo_Limit>();
             tbl_Collateral_Policy = new HashSet<tbl_Collateral_Policy>();
             tbl_Limit_Detail = new HashSet<tbl_Limit_Detail>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
@@ -37,6 +38,9 @@ namespace FintrakBanking.Entities.Models
         public string Description { get; set; }
 
         public bool? IsVisible { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Call_Memo_Limit> tbl_Call_Memo_Limit { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Collateral_Policy> tbl_Collateral_Policy { get; set; }

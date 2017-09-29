@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FintrakBanking.ViewModels.Setups.Finance;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {

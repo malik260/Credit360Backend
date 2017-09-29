@@ -244,7 +244,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.TermLoanId == entity.targetId);
                 if (loan.Any())
                 {
-                    amount = loan.SingleOrDefault().PrincipalAmount;
+                    amount = loan.SingleOrDefault().OutstandingPrincipal;
                 }
             }
             return amount;
