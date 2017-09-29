@@ -303,6 +303,7 @@
     <Compile Include="Models\tbl_Temp_Customer_Group_Mapping.cs" />
     <Compile Include="Models\tbl_Temp_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Product.cs" />
+    <Compile Include="Models\tbl_Temp_Product_Charge_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Product_CollateralType.cs" />
     <Compile Include="Models\tbl_Temp_Product_Currency.cs" />
     <Compile Include="Models\tbl_Temp_Product_Fee.cs" />

@@ -19,17 +19,14 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductViewModel> GetProductAwaitingApprovals(int staffId, int companyId);
         ProductViewModel GetTempProductDetail(int productId);
         IEnumerable<ProductViewModel> GetAllProduct();
-
+        IEnumerable<ProductViewModel> GetProductByProductGroup(int companyId);
         ProductViewModel GetProductById(int productId);
-
         IEnumerable<ProductViewModel> GetProductByGroupAndCategory(short productGroupId, short productCategoryId);
-
         IEnumerable<ProductViewModel> GetProductByTypeAndCategory(short productTypeId, short productCategoryId);
         bool IsProductCodeAlreadyExist(string productCode);
         bool IsProductExist(string productCode);
         Task<bool> GoForApproval(ApprovalViewModel entity);
         Task<ProductViewModel> AddTempProduct(ProductViewModel product);
-
         Task<bool> UpdateProduct(int productId, ProductViewModel product);
 
         //bool DeleteProduct(int productId);

@@ -36,6 +36,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? AccountStatusId { get; set; }
 
+        public short? GLClassId { get; set; }
+
         public bool BranchSpecific { get; set; }
 
         [StringLength(20)]
@@ -68,6 +70,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Company tbl_Company { get; set; }
 
         public virtual tbl_Account_Type tbl_Account_Type { get; set; }
+
+        public virtual tbl_Chart_Of_Account_Class tbl_Chart_Of_Account_Class { get; set; }
 
         public virtual tbl_Financial_Statement_Caption tbl_Financial_Statement_Caption { get; set; }
 

@@ -395,6 +395,13 @@
     <Compile Include="Reports\ReportViews\LoanRepaymentSchedule.aspx.designer.cs">
       <DependentUpon>LoanRepaymentSchedule.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\BranchLimitMonitoring.aspx.cs">
+      <DependentUpon>BranchLimitMonitoring.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\BranchLimitMonitoring.aspx.designer.cs">
+      <DependentUpon>BranchLimitMonitoring.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\SectorialLimitMonitoring.aspx.cs">
       <DependentUpon>SectorialLimitMonitoring.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -423,6 +430,7 @@
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
+    <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -508,6 +516,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="EmailTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -555,6 +564,7 @@
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
+    <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
   </ItemGroup>
   <PropertyGroup>

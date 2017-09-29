@@ -43,6 +43,13 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string GetBranchLoanAmountLimit(int branchId,int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/BranchLimitMonitoring.aspx?companyId=" + companyId.ToString() + "&branchId=" + branchId.ToString();
+            return path;
+        }
 
     }
+
 }

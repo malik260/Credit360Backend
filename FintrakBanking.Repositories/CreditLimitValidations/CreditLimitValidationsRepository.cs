@@ -68,20 +68,19 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         {
 
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
-            var outstandingbal = from d in context.tbl_Loan
-                                 where d.BranchId == branchId
-                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.BranchId == branchId).Sum(a => a.PrincipalAmount)
-                                 select sumPrincipalAmount;
+            var outstandingbal = (from d in context.tbl_Loan
+                                 where d.BranchId == branchId && d.LoanStatusId == (short)LoanStatusEnum.Active
+                                 select d.OutstandingPrincipal).Sum();
 
-            var limitAmount = from a in context.tbl_Limit_Detail
+            var limitAmount = (from a in context.tbl_Limit_Detail
                               join b in context.tbl_Limit on a.LimitId equals b.LimitId
                               where a.LimitTypeId == (int)LimitType.Branch && a.TargetId == branchId &&
                               b.LimitMetricId == (int)LimitMatricEnum.LoanAmount
-                              select a.MaximumValue;
+                              select a.MaximumValue).Sum();
 
-            model.outstandingBalance = outstandingbal.FirstOrDefault();
-            model.limit = limitAmount.FirstOrDefault();
-            model.difference = outstandingbal.FirstOrDefault() - limitAmount.FirstOrDefault();
+            model.outstandingBalance = outstandingbal;
+            model.limit = limitAmount;
+            model.difference = outstandingbal - limitAmount;
             return model;
         }
 
@@ -203,27 +202,31 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         //    return diff;
         //}
 
+        
+
+
         public CreditLimitValidationsModel ValidateAmountBySector(int subSectorId)
         {
+            short sectorId = context.tbl_Sub_Sector.Where(a => a.SubSectorId == subSectorId).FirstOrDefault().SectorId.Value;
+
+            var outstandingbal = (from a in context.tbl_Loan
+                                  join c in context.tbl_Sub_Sector on a.SubSectorId equals c.SubSectorId
+                                  where a.tbl_Sub_Sector.SectorId == sectorId && a.LoanStatusId == (short)LoanStatusEnum.Active
+                                  select a.OutstandingPrincipal).Sum();
+
+
+            var limitAmount = (from a in context.tbl_Limit_Detail
+                               join b in context.tbl_Limit on a.LimitId equals b.LimitId
+                               where a.LimitTypeId == (int)LimitType.Sector && a.TargetId == sectorId &&
+                               b.LimitMetricId == (int)LimitMatricEnum.LoanAmount
+                               select a.MaximumValue).Sum();
+
+
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
-            var outstandingbal = from a in context.tbl_Loan
-                                 join c in context.tbl_Sub_Sector on a.SubSectorId equals c.SubSectorId
-                                 where a.SubSectorId==c.SubSectorId
-                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.SubSectorId == subSectorId).Sum(a => a.PrincipalAmount)
-                                 select sumPrincipalAmount;
 
-            var limitAmount = from a in context.tbl_Limit_Detail
-                              join b in context.tbl_Limit on a.LimitId equals b.LimitId
-                              where a.LimitTypeId == (int)LimitType.Sector && a.TargetId == subSectorId &&
-                              b.LimitMetricId == (int)LimitMatricEnum.LoanAmount //&&
-                                                                                 //b.LimitValueTypeId == (int)LimitValueTypeEnum.Amount
-                                                                                 //let maximumValue = context.tbl_Limit_Detail.Sum(a => a.MaximumValue)
-                                                                                 //select maximumValue;
-                              select a.MaximumValue;
-
-            model.outstandingBalance = outstandingbal.FirstOrDefault();
-            model.limit = limitAmount.FirstOrDefault();
-            model.difference = outstandingbal.FirstOrDefault() - limitAmount.FirstOrDefault();
+            model.outstandingBalance = outstandingbal;
+            model.limit = limitAmount;
+            model.difference = outstandingbal - limitAmount;
             return model;
         }
 

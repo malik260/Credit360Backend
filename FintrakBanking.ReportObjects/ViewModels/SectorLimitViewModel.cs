@@ -3,12 +3,12 @@
     public class SectorLimitViewModel
     {
         public string companyName { get; set; }
-        public short sectorId { get; set; }
-        public string sectorName { get; set; }
-        public string sectorCode { get; set; }
-        public decimal sectorLimit { get; set; }
-        public decimal sectorUsage { get; set; }
-        public decimal sectorBalance { get; set; }
+        public short Id { get; set; }
+        public string Name { get; set; }
+        public string Code { get; set; }
+        public decimal Limit { get; set; }
+        public decimal Usage { get; set; }
+        public decimal Balance { get; set; }
         public bool allowOverride { get; set; }
     }
 }

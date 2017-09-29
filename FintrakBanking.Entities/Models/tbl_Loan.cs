@@ -31,7 +31,7 @@ namespace FintrakBanking.Entities.Models
 
         public double ProductPriceIndexRate { get; set; }
 
-        public int CustomerRiskRatingId { get; set; }
+        public int? CustomerRiskRatingId { get; set; }
 
         public int CustomerId { get; set; }
 
