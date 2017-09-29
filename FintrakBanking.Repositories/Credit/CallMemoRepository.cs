@@ -29,7 +29,6 @@ namespace FintrakBanking.Repositories.Credit
         public IQueryable<CallMemoLoanSearchViewModel> SearchForCallMemoLoan(int staffId, string searchQuery)
         {
             IQueryable<CallMemoLoanSearchViewModel> allFilteredLoan = null;
-            decimal CallLimit = 0;
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 searchQuery = searchQuery.ToLower();
@@ -37,23 +36,27 @@ namespace FintrakBanking.Repositories.Credit
 
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
+             
                 var JobRole = (from a in _context.tbl_Staff where a.StaffId == staffId select a.JobTitleId).FirstOrDefault();
                 if (JobRole > 0)
                 {
-                    CallLimit = (from b in _context.tbl_Call_Memo_Limit where b.JobTitleId == JobRole && b.CallLimitTypeId == 1 select b.MaximumAmount).FirstOrDefault();
+                    var memoLimit = (from b in _context.tbl_Call_Memo_Limit where b.JobTitleId == JobRole && b.CallLimitTypeId == 1 select b).FirstOrDefault();
+                    if (memoLimit != null)
+                    {
+                        allFilteredLoan = (from a in _context.tbl_Loan_Application
+                                           join b in _context.tbl_Customer on a.CustomerId equals b.CustomerId
+                                           where a.PrincipalAmount <= memoLimit.MaximumAmount && a.PrincipalAmount >= memoLimit.MinimumAmount && (a.ApplicationReferenceNumber.Contains(searchQuery) ||
+                                           b.CustomerCode.ToLower().Contains(searchQuery))
+                                           select new CallMemoLoanSearchViewModel
+                                           {
+                                               loanApplicationId = a.LoanApplicationId,
+                                               customerId = a.CustomerId,
+                                               customerName = b.CustomerCode + " - " + b.FirstName + " " + b.LastName,
+                                               loanReferenceNo = a.ApplicationReferenceNumber,
+                                               principalAmount = a.PrincipalAmount
+                                           }).Take(10).AsQueryable();
+                    }
                 }
-                allFilteredLoan = (from a in _context.tbl_Loan_Application
-                                   join b in _context.tbl_Customer on a.CustomerId equals b.CustomerId
-                                   where a.PrincipalAmount <= CallLimit && (a.ApplicationReferenceNumber.Contains(searchQuery) ||
-                                   b.CustomerCode.ToLower().Contains(searchQuery))
-                                   select new CallMemoLoanSearchViewModel
-                                   {
-                                       loanApplicationId = a.LoanApplicationId,
-                                       customerId = a.CustomerId,
-                                       customerName = b.CustomerCode + " - " + b.FirstName + " " + b.LastName,
-                                       loanReferenceNo = a.ApplicationReferenceNumber,
-                                       principalAmount = a.PrincipalAmount
-                                   }).Take(10).AsQueryable();
             }
 
             return allFilteredLoan;

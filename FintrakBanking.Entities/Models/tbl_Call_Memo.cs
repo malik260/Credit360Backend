@@ -46,9 +46,5 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Staff tbl_Staff { get; set; }
 
         public virtual tbl_Call_Memo_Type tbl_Call_Memo_Type { get; set; }
-
-        public virtual tbl_Call_Memo tbl_Call_Memo1 { get; set; }
-
-        public virtual tbl_Call_Memo tbl_Call_Memo2 { get; set; }
     }
 }

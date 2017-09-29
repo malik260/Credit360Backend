@@ -1889,9 +1889,7 @@ namespace FintrakBanking.Entities.Models
                 .WithOptional(e => e.tbl_Tax1)
                 .HasForeignKey(e => e.SecondaryTaxId);
 
-            modelBuilder.Entity<tbl_Call_Memo>()
-                .HasOptional(e => e.tbl_Call_Memo1)
-                .WithRequired(e => e.tbl_Call_Memo2);
+            modelBuilder.Entity<tbl_Call_Memo>();
 
             modelBuilder.Entity<tbl_Call_Memo_Limit>()
                 .Property(e => e.MinimumAmount)
