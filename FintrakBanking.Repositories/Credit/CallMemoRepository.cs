@@ -40,7 +40,7 @@ namespace FintrakBanking.Repositories.Credit
                 var JobRole = (from a in _context.tbl_Staff where a.StaffId == staffId select a.JobTitleId).FirstOrDefault();
                 if (JobRole > 0)
                 {
-                    CallLimit = (from b in _context.tbl_Call_Limit where b.JobTitleId == JobRole && b.CallLimitTypeId == 1 select b.CallLimit).FirstOrDefault();
+                    CallLimit = (from b in _context.tbl_Call_Memo_Limit where b.JobTitleId == JobRole && b.CallLimitTypeId == 1 select b.MaximumAmount).FirstOrDefault();
                 }
                 allFilteredLoan = (from a in _context.tbl_Loan_Application
                                    join b in _context.tbl_Customer on a.CustomerId equals b.CustomerId
@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CallMemoTypeViewModel> GetCallLimitType()
         {
-            var data = (from a in _context.tbl_Call_Limit_Type
+            var data = (from a in _context.tbl_Call_Memo_Type
                         orderby a.Name
                         select new CallMemoTypeViewModel
                         {
@@ -73,12 +73,13 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<CallLimitViewModel> GetAllCallLimit(int companyId)
         {
-            var data = (from a in _context.tbl_Call_Limit
+            var data = (from a in _context.tbl_Call_Memo_Limit
                         where a.Deleted == false && a.CompanyId == companyId
                         orderby a.CallLimitTypeId
                         select new CallLimitViewModel
                         {
-                            CallLimit = a.CallLimit,
+                            MaximumAmount = a.MaximumAmount,
+                            MinimumAmount = a.MinimumAmount,
                             CallLimitId = a.CallLimitId,
                             companyId = a.CompanyId,
                             FrequencyId = a.FrequencyId,
@@ -86,19 +87,20 @@ namespace FintrakBanking.Repositories.Credit
                             JobTitleId = a.JobTitleId,
                             JobTitleName = _context.tbl_Staff_JobTitle.FirstOrDefault(d => d.JobTitleId == a.JobTitleId).JobTitleName,
                             CallLimitTypeId = a.CallLimitTypeId,
-                            CallLimitTypeName = a.tbl_Call_Limit_Type.Name
+                            CallLimitTypeName = _context.tbl_Call_Memo_Type.FirstOrDefault(i=>i.CallLimitTypeId == a.CallLimitTypeId).Name
                         }).ToList();
             return data;
         }
 
         public List<CallLimitViewModel> GetCallLimitByTypeId(int limitId)
         {
-            var data = (from a in _context.tbl_Call_Limit
+            var data = (from a in _context.tbl_Call_Memo_Limit
                         where a.Deleted == false && a.CallLimitId == limitId
                         orderby a.CallLimitTypeId
                         select new CallLimitViewModel
                         {
-                            CallLimit = a.CallLimit,
+                            MaximumAmount = a.MaximumAmount,
+                            MinimumAmount = a.MinimumAmount,
                             CallLimitId = a.CallLimitId,
                             companyId = a.CompanyId,
                             FrequencyId = a.FrequencyId,
@@ -106,19 +108,20 @@ namespace FintrakBanking.Repositories.Credit
                             JobTitleId = a.JobTitleId,
                             JobTitleName = _context.tbl_Staff_JobTitle.FirstOrDefault(d => d.JobTitleId == a.JobTitleId).JobTitleName,
                             CallLimitTypeId = a.CallLimitTypeId,
-                            CallLimitTypeName = a.tbl_Call_Limit_Type.Name
+                            CallLimitTypeName = _context.tbl_Call_Memo_Type.FirstOrDefault(i => i.CallLimitTypeId == a.CallLimitTypeId).Name
                         }).ToList();
             return data;
         }
         public bool isLimitExist(CallLimitViewModel model)
         {
-            return _context.tbl_Call_Limit.Where(x => x.JobTitleId == model.JobTitleId && x.CallLimitTypeId == model.CallLimitTypeId).Any();
+            return _context.tbl_Call_Memo_Limit.Where(x => x.JobTitleId == model.JobTitleId && x.CallLimitTypeId == model.CallLimitTypeId).Any();
         }
         public bool AddCallLimit(CallLimitViewModel model)
         {
-            var data = new tbl_Call_Limit
+            var data = new tbl_Call_Memo_Limit
             {
-                CallLimit = model.CallLimit,
+                MaximumAmount = model.MaximumAmount,
+                MinimumAmount = model.MinimumAmount,
                 FrequencyId = model.FrequencyId,
                 JobTitleId = model.JobTitleId,
                 CallLimitTypeId = model.CallLimitTypeId,
@@ -127,7 +130,7 @@ namespace FintrakBanking.Repositories.Credit
                 DateTimeCreated = _genSetup.GetApplicationDate()
             };
 
-            _context.tbl_Call_Limit.Add(data);
+            _context.tbl_Call_Memo_Limit.Add(data);
 
             // Audit Section ---------------------------
 
@@ -151,10 +154,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateCallLimit(int limitId, CallLimitViewModel model)
         {
-            var data = _context.tbl_Call_Limit.Find(limitId);
+            var data = _context.tbl_Call_Memo_Limit.Find(limitId);
             if (data == null) return false;
 
-            data.CallLimit = model.CallLimit;
+            data.MaximumAmount = model.MaximumAmount;
+            data.MinimumAmount = model.MinimumAmount;
             data.CallLimitTypeId = model.CallLimitTypeId;
             data.FrequencyId = model.FrequencyId;
             data.JobTitleId = model.JobTitleId;
@@ -180,7 +184,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteCallLimit(int limitId, UserInfo user)
         {
-            var data = _context.tbl_Call_Limit.Find(limitId);
+            var data = _context.tbl_Call_Memo_Limit.Find(limitId);
             if (data != null)
             {
                 data.Deleted = true;
@@ -221,6 +225,8 @@ namespace FintrakBanking.Repositories.Credit
                             LoanApplicationId = a.LoanApplicationId,
                             LoanReferenceNo = b.ApplicationReferenceNumber,
                             StaffId = a.StaffId,
+                            CallMemoTypeId = a.CallLimitTypeId,
+                            CallMemoType = a.tbl_Call_Memo_Type.Name,
                             CustomerName = _context.tbl_Customer.FirstOrDefault(x=>x.CustomerId == b.CustomerId).FirstName,
                             MemoDate = a.MemoDate,
                             NextCallDate = a.NextCallDate,
@@ -243,6 +249,7 @@ namespace FintrakBanking.Repositories.Credit
                 MemoDate = model.MemoDate,
                 NextCallDate = model.NextCallDate,
                 Purpose = model.Purpose,
+                CallLimitTypeId = model.CallMemoTypeId,
                 Discusion = model.Discusion,
                 Summary = model.Summary,
                 Action = model.Action,
@@ -276,6 +283,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = _context.tbl_Call_Memo.Find(limitId);
             if (data == null) return false;
+            data.CallLimitTypeId = model.CallMemoTypeId;
             data.LoanApplicationId = model.LoanApplicationId;
             data.StaffId = model.StaffId;
             data.MemoDate = model.MemoDate;

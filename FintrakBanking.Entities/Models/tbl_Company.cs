@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
             tbl_MIS_Info = new HashSet<tbl_MIS_Info>();
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
-            tbl_Call_Limit = new HashSet<tbl_Call_Limit>();
+            tbl_Call_Memo_Limit = new HashSet<tbl_Call_Memo_Limit>();
             tbl_CASA_Lien = new HashSet<tbl_CASA_Lien>();
             tbl_Chart_Of_Account = new HashSet<tbl_Chart_Of_Account>();
             tbl_Temp_Chart_Of_Account = new HashSet<tbl_Temp_Chart_Of_Account>();
@@ -205,7 +205,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Call_Limit> tbl_Call_Limit { get; set; }
+        public virtual ICollection<tbl_Call_Memo_Limit> tbl_Call_Memo_Limit { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }

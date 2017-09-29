@@ -12,9 +12,9 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Temp_Product()
         {
-            tbl_Temp_Product_Charge_Fee = new HashSet<tbl_Temp_Product_Charge_Fee>();
             tbl_Temp_Product_CollateralType = new HashSet<tbl_Temp_Product_CollateralType>();
             tbl_Temp_Product_Currency = new HashSet<tbl_Temp_Product_Currency>();
+            tbl_Temp_Product_Charge_Fee = new HashSet<tbl_Temp_Product_Charge_Fee>();
             tbl_Temp_Product_Fee = new HashSet<tbl_Temp_Product_Fee>();
         }
 
@@ -134,9 +134,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_Charge_Fee> tbl_Temp_Product_Charge_Fee { get; set; }
-
         public virtual tbl_Loan_Schedule_Type tbl_Loan_Schedule_Type { get; set; }
 
         public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
@@ -160,6 +157,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Temp_Product_Currency> tbl_Temp_Product_Currency { get; set; }
 
         public virtual tbl_Deal_Type tbl_Deal_Type { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_Charge_Fee> tbl_Temp_Product_Charge_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Product_Fee> tbl_Temp_Product_Fee { get; set; }

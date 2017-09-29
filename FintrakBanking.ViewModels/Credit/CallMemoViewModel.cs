@@ -32,6 +32,10 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string CustomerName { get; set; }
 
+        public short CallMemoTypeId { get; set; }
+
+        public string CallMemoType { get; set; }
+
         public DateTime MemoDate { get; set; }
 
         public DateTime? NextCallDate { get; set; }
@@ -54,7 +58,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string JobTitleName { get; set;}
 
-        public decimal CallLimit { get; set; }
+        public decimal MaximumAmount { get; set; }
+
+        public decimal MinimumAmount { get; set; }
 
         public short FrequencyId { get; set; }
 

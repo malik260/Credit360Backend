@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Call_Limit")]
-    public partial class tbl_Call_Limit
+    [Table("credit.tbl_Call_Memo_Limit")]
+    public partial class tbl_Call_Memo_Limit
     {
         [Key]
         public int CallLimitId { get; set; }
@@ -15,7 +15,10 @@ namespace FintrakBanking.Entities.Models
         public int JobTitleId { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal CallLimit { get; set; }
+        public decimal MinimumAmount { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal MaximumAmount { get; set; }
 
         public short FrequencyId { get; set; }
 
@@ -40,7 +43,5 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Company tbl_Company { get; set; }
 
         public virtual tbl_Frequency_Type tbl_Frequency_Type { get; set; }
-
-        public virtual tbl_Call_Limit_Type tbl_Call_Limit_Type { get; set; }
     }
 }

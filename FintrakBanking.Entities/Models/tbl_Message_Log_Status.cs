@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Call_Limit_Type")]
-    public partial class tbl_Call_Limit_Type
+    [Table("core.tbl_Message_Log_Status")]
+    public partial class tbl_Message_Log_Status
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Call_Limit_Type()
+        public tbl_Message_Log_Status()
         {
-            tbl_Call_Limit = new HashSet<tbl_Call_Limit>();
+            tbl_Message_Log = new HashSet<tbl_Message_Log>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int CallLimitTypeId { get; set; }
+        public short MessageStatusId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Name { get; set; }
+        public string MessageStatusName { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Call_Limit> tbl_Call_Limit { get; set; }
+        public virtual ICollection<tbl_Message_Log> tbl_Message_Log { get; set; }
     }
 }
