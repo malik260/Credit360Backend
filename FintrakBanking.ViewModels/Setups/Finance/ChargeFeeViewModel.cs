@@ -34,6 +34,14 @@ namespace FintrakBanking.ViewModels.Setups.Finance
 
 
         public List<ChargeRangeViewModel> ranges { get; set; }
+        public string accountCategoryName { get; set; }
+        public string frequencyTypeName { get; set; }
+        public string amortizationTypeName { get; set; }
+        public string targetName { get; set; }
+        public string feeTypeName { get; set; }
+        public string ledgerAccountName { get; set; }
+        public string ledgerAccountCode { get; set; }
+        public string amortisationTypeName { get; set; }
     }
 
     public class ChargeRangeViewModel : GeneralEntity

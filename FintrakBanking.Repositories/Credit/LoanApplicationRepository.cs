@@ -276,8 +276,7 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy = (int)loan.createdBy,
                 DateTimeCreated = genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
-
-               ApplicationStatusId =(short) LoanApplicationStatusEnum.ApplicationCompleted ,
+                ApplicationStatusId = (short)LoanApplicationStatusEnum.ApplicationCompleted,
 
                 ExchangeRate = loan.exchangeRate,
                 LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,
@@ -322,7 +321,6 @@ namespace FintrakBanking.Repositories.Credit
             //end of Audit section -------------------------------
 
             response = await context.SaveChangesAsync();
-
 
             // application goes for approval. maybe needed in future
 
@@ -451,7 +449,6 @@ namespace FintrakBanking.Repositories.Credit
             }
             return isExisting;
         }
-
 
         #region PENDING APPLICATIONS
 
@@ -603,12 +600,12 @@ namespace FintrakBanking.Repositories.Credit
 
             return scope;
         }
-        #endregion
 
+        #endregion PENDING APPLICATIONS
 
         #region OfferLetter & Availment Process
 
-        public IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId)
+        private IQueryable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId)
         {
             var data = (from a in context.tbl_Loan_Application
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
@@ -679,13 +676,13 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId,
                             exchangeRate = a.ExchangeRate,
                             applicationStatusId = a.ApplicationStatusId
-                        }).ToList().Where(r => !context.tbl_Loan.AsEnumerable().Any(c =>
-                                                   r.loanApplicationId == c.LoanApplicationId
-                                                   && r.loanTypeId == (int)LoanTypeEnum.Single)
-                                               || (context.tbl_Customer_Group_Mapping.Count(x =>
-                                                       x.CustomerGroupId == r.customerGroupId)
-                                                   >= context.tbl_Loan.Count(g => g.CustomerGroupId == r.customerGroupId) &&
-                                                   r.loanTypeId == (int)LoanTypeEnum.CustomerGroup));
+                        });
+
+            //var models = data.Where(r => !context.tbl_Loan.AsEnumerable().Any(c => r.loanApplicationId == c.LoanApplicationId &&
+            // r.loanTypeId == (int)LoanTypeEnum.Single) || (context.tbl_Customer_Group_Mapping
+            // .Count(x => x.CustomerGroupId == r.customerGroupId) >= context.tbl_Loan.Count(g => g.CustomerGroupId == r.customerGroupId)
+            //                                                     && r.loanTypeId == (int)LoanTypeEnum.CustomerGroup));
+
 
             return data;
         }
@@ -766,7 +763,8 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int companyId)
         {
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
-                x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress);
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress)
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
 
             return data;
         }
@@ -774,7 +772,8 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int companyId)
         {
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
-                x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress);
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
 
             return data;
         }
@@ -782,11 +781,12 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int companyId)
         {
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
-                x.applicationStatusId == (short)LoanApplicationStatusEnum.CAMCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress);
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.CAMCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress)
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
 
             return data;
         }
 
-        #endregion
+        #endregion OfferLetter & Availment Process
     }
 }

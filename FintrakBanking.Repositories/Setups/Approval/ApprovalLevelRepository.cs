@@ -230,15 +230,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             try
             {
-
                 context.tbl_Approval_Trail.Add(model);
-                var saved = context.SaveChanges();
+                var saved = await context.SaveChangesAsync();
                 return saved > 0;
             }
             catch (Exception ex)
             {
-
-                throw;
+                throw new Exception(ex.Message);
             }
 
         }
