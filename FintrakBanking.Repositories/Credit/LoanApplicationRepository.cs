@@ -86,7 +86,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerId = a.RelationshipManagerId,
                             relationshipManagerName =
                                 a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-                             isInvestmentGrade = a.IsInvestmentGrade ,
+                             //isInvestmentGrade = a.IsInvestmentGrade ,
                             misCode = a.MISCode,
 
                             productId = (short)a.ProductId,

@@ -77,10 +77,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool dischargeLetter { get; set; }
         public bool suspendInterest { get; set; }
         public bool booked { get; set; }
-        public bool scheduled { get; set; }
-        public bool isScheduledPrepayment { get; set; }
-        public decimal scheduledPrepaymentAmount { get; set; }
-        public DateTime scheduledPrepaymentDate { get; set; }
+        public bool ? scheduled { get; set; }
+        public bool ? isScheduledPrepayment { get; set; }
+        public decimal ? scheduledPrepaymentAmount { get; set; }
+        public DateTime ? scheduledPrepaymentDate { get; set; }
         public short scheduledPrepaymentFrequencyTypeId { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public string firstName { get; set; }

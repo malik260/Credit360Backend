@@ -565,7 +565,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         var dataCount = context.SaveChanges();
                        
-                        //this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
+                        this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
                         var approvalModel = new ApprovalViewModel
                         {
@@ -813,9 +813,9 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.tbl_Branch on ln.BranchId equals br.BranchId
                         join atrail in context.tbl_Approval_Trail on ln.TermLoanId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending  
-                              && (atrail.OperationId == (int)OperationsEnum.TermLoanBooking 
-                              || atrail.OperationId == (int)OperationsEnum.RevolvingLoanBooking
-                              || atrail.OperationId == (int)OperationsEnum.ContigentLoanBooking) && atrail.ToApprovalLevelId == staffApprovalLevelId
+                              && atrail.OperationId == (int)OperationsEnum.TermLoanBooking 
+                              && atrail.ToApprovalLevelId == staffApprovalLevelId
+                              orderby ln.TermLoanId descending
                         select new LoanViewModel()
                         {
                             loanId = ln.TermLoanId,
@@ -837,21 +837,21 @@ namespace FintrakBanking.Repositories.Credit
                             principalNumberOfInstallment = ln.PrincipalNumberOfInstallment,
                             interestNumberOfInstallment = ln.InterestNumberOfInstallment,
                             relationshipOfficerId = ln.RelationshipOfficerId,
-                            relationshipManagerId =ln.RelationshipManagerId,
-                            misCode =ln.MISCode,
-                            teamMiscode =ln.TeamMISCode,
-                            interestRate  = ln.InterestRate,
+                            relationshipManagerId = ln.RelationshipManagerId,
+                            misCode = ln.MISCode,
+                            teamMiscode = ln.TeamMISCode,
+                            interestRate = ln.InterestRate,
                             effectiveDate = ln.EffectiveDate,
                             maturityDate = ln.MaturityDate,
                             bookingDate = ln.BookingDate,
-                            principalAmount = ln.PrincipalAmount,
+                            principalAmount = ln.OutstandingPrincipal, //\\\ln.PrincipalAmount,
                             principalInstallmentLeft = ln.PrincipalInstallmentLeft,
                             interestInstallmentLeft = ln.InterestInstallmentLeft,
                             approvalStatusId = ln.ApprovalStatusId,
                             approvedBy = ln.ApprovedBy,
                             approverComment = ln.ApproverComment,
                             dateApproved = ln.DateApproved,
-                            loanStatusId = ln.LoanStatusId,
+                            //loanStatusId = ln.LoanStatusId,
                             scheduleTypeId = ln.ScheduleTypeId,
                             isDisbursed  = ln.IsDisbursed,
                             disbursedBy = ln.DisbursedBy,
@@ -876,11 +876,11 @@ namespace FintrakBanking.Repositories.Credit
                             profileLoan = ln.ProfileLoan,
                             dischargeLetter = ln.DischargeLetter,
                             suspendInterest = ln.SuspendInterest,
-                            scheduled = (bool)ln.IsScheduledPrepayment,
-                            isScheduledPrepayment = (bool)ln.IsScheduledPrepayment,
-                            scheduledPrepaymentAmount = (decimal) ln.ScheduledPrepaymentAmount,
-                            scheduledPrepaymentDate = (DateTime)( ln.ScheduledPrepaymentDate),
-                            scheduledPrepaymentFrequencyTypeId  = ln.ScheduledPrepaymentFrequencyTypeId.Value,
+                            scheduled = ln.IsScheduledPrepayment,
+                            isScheduledPrepayment = ln.IsScheduledPrepayment,
+                            scheduledPrepaymentAmount = ln.ScheduledPrepaymentAmount,
+                            scheduledPrepaymentDate = ln.ScheduledPrepaymentDate,
+                            //scheduledPrepaymentFrequencyTypeId = ln.ScheduledPrepaymentFrequencyTypeId,
                             customerSensitivityLevelId = ln.CustomerSensitivityLevelId,
                             customerSensitivityLevelName = ln.tbl_Customer_Sensitivity_Level.Description,
                             firstName = ln.tbl_Customer.FirstName,
@@ -890,7 +890,7 @@ namespace FintrakBanking.Repositories.Credit
                             productAccountNumber = ln.tbl_Product.tbl_Chart_Of_Account.AccountCode,
                             productAccountName = ln.tbl_Product.tbl_Chart_Of_Account.AccountName,
                             loanTypeName = ln.tbl_Loan_Type.LoanTypeName,
-                            customerName = ln.tbl_Customer.LastName+" "+ln.tbl_Customer.FirstName +" "+ ln.tbl_Customer.MiddleName,
+                            customerName = ln.tbl_Customer.LastName + " " + ln.tbl_Customer.FirstName + " " + ln.tbl_Customer.MiddleName,
                             currencyId = ln.CurrencyId,
 
                             branchName = ln.tbl_Branch.BranchName,
@@ -900,7 +900,7 @@ namespace FintrakBanking.Repositories.Credit
                             productName = ln.tbl_Product.ProductName,
 
                             createdBy = ln.CreatedBy,
-                            creatorName = ln.tbl_Staff.LastName +" "+ ln.tbl_Staff.FirstName + " ("+ ln.tbl_Staff.StaffCode+")",
+                            creatorName = ln.tbl_Staff.LastName + " " + ln.tbl_Staff.FirstName + " (" + ln.tbl_Staff.StaffCode + ")",
                             dateTimeCreated = ln.DateTimeCreated,
 
                             //isCamsol 
@@ -915,6 +915,9 @@ namespace FintrakBanking.Repositories.Credit
         public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.TermLoanBooking;
+            entity.comment = " Okay";
+            entity.amount = context.tbl_Loan.Where(x => x.TermLoanId == entity.targetId).FirstOrDefault().OutstandingPrincipal;
+            entity.approvalStatusId = (short)ApprovalStatusEnum.Approved;
 
             var response = await workFlow.GoForApproval(entity);
 
@@ -2013,7 +2016,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private IEnumerable<LoanViewModel> BookedLoan(int companyId)
         {
-            return GetAllLoans().Where(x => x.companyId == companyId);
+            return GetAllLoans().Where(x => x.companyId == companyId).OrderByDescending(x=> x.loanId);
         }
 
         public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId)
