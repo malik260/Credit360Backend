@@ -139,6 +139,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Sub_Sector> tbl_Sub_Sector { get; set; }
         public virtual DbSet<tbl_Tax> tbl_Tax { get; set; }
         public virtual DbSet<tbl_Tenor_Mode> tbl_Tenor_Mode { get; set; }
+        public virtual DbSet<tbl_Call_Limit> tbl_Call_Limit { get; set; }
+        public virtual DbSet<tbl_Call_Limit_Type> tbl_Call_Limit_Type { get; set; }
+        public virtual DbSet<tbl_Call_Memo> tbl_Call_Memo { get; set; }
         public virtual DbSet<tbl_Collateral_Casa> tbl_Collateral_Casa { get; set; }
         public virtual DbSet<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
         public virtual DbSet<tbl_Collateral_Deposit> tbl_Collateral_Deposit { get; set; }
@@ -189,6 +192,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Operation> tbl_Loan_Operation { get; set; }
         public virtual DbSet<tbl_Loan_Past_Due> tbl_Loan_Past_Due { get; set; }
         public virtual DbSet<tbl_Loan_Preliminary_Evaluation> tbl_Loan_Preliminary_Evaluation { get; set; }
+        public virtual DbSet<tbl_Loan_PriceIndex_Exception> tbl_Loan_PriceIndex_Exception { get; set; }
         public virtual DbSet<tbl_Loan_PrudentialGuideline> tbl_Loan_PrudentialGuideline { get; set; }
         public virtual DbSet<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
         public virtual DbSet<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
@@ -216,7 +220,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Solicitor> tbl_Solicitor { get; set; }
         public virtual DbSet<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
         public virtual DbSet<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
@@ -619,6 +623,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Company>()
                 .HasMany(e => e.tbl_Temp_Product)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Call_Limit)
                 .WithRequired(e => e.tbl_Company)
                 .WillCascadeOnDelete(false);
 
@@ -1294,6 +1303,12 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<tbl_Frequency_Type>()
+                .HasMany(e => e.tbl_Call_Limit)
+                .WithRequired(e => e.tbl_Frequency_Type)
+                .HasForeignKey(e => e.FrequencyId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Frequency_Type>()
                 .HasMany(e => e.tbl_Collateral_Policy)
                 .WithOptional(e => e.tbl_Frequency_Type)
                 .HasForeignKey(e => e.RenewalFrequencyTypeId);
@@ -1846,6 +1861,15 @@ namespace FintrakBanking.Entities.Models
                 .WithOptional(e => e.tbl_Tax1)
                 .HasForeignKey(e => e.SecondaryTaxId);
 
+            modelBuilder.Entity<tbl_Call_Limit>()
+                .Property(e => e.CallLimit)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Call_Limit_Type>()
+                .HasMany(e => e.tbl_Call_Limit)
+                .WithRequired(e => e.tbl_Call_Limit_Type)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<tbl_Collateral_Casa>()
                 .Property(e => e.AvailableBalance)
                 .HasPrecision(19, 4);
@@ -2372,6 +2396,18 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Loan>()
                 .HasMany(e => e.tbl_Loan_Past_Due)
+                .WithRequired(e => e.tbl_Loan)
+                .HasForeignKey(e => e.LoanId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .HasMany(e => e.tbl_Loan_PriceIndex_Exception)
+                .WithRequired(e => e.tbl_Loan)
+                .HasForeignKey(e => e.LoanId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan>()
+                .HasMany(e => e.tbl_Loan_Schedule_Daily_Archive)
                 .WithRequired(e => e.tbl_Loan)
                 .HasForeignKey(e => e.LoanId)
                 .WillCascadeOnDelete(false);

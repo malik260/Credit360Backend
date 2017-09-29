@@ -447,80 +447,80 @@ namespace FintrakBanking.Repositories.Credit
 
         private async Task<string> AddTermLoan(LoanViewModel entity)
         {
-            if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
-                throw new Exception("Loan terminal date should be more than effective date");
+            //if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
+            //    throw new Exception("Loan terminal date should be more than effective date");
 
-            var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
+            //var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
 
-            var data = new tbl_Loan
-            {
-                LoanApplicationId = entity.loanApplicationId,
-                LoanReferenceNumber = loanReferenceNumber,
-                LoanStatusId = (short)LoanStatusEnum.Inactive,
-                IsDisbursed = false,
-                PrincipalNumberOfInstallment = 0, // loanSchedule.CalculateNumberOfInstallments((TenorModeEnum)entity.tenorModeId, entity.principalFrequencyTypeId, entity.tenor),
-                InterestNumberOfInstallment = 0, // loanSchedule.CalculateNumberOfInstallments((TenorModeEnum)entity.tenorModeId, entity.interestFrequencyTypeId, entity.tenor),
-                //IsScheduledPrepayment = null,
-                ScheduledPrepaymentAmount = entity.scheduledPrepaymentAmount,
-                ScheduledPrepaymentFrequencyTypeId = null,
+            //var data = new tbl_Loan
+            //{
+            //    LoanApplicationId = entity.loanApplicationId,
+            //    LoanReferenceNumber = loanReferenceNumber,
+            //    LoanStatusId = (short)LoanStatusEnum.Inactive,
+            //    IsDisbursed = false,
+            //    PrincipalNumberOfInstallment = 0, // loanSchedule.CalculateNumberOfInstallments((TenorModeEnum)entity.tenorModeId, entity.principalFrequencyTypeId, entity.tenor),
+            //    InterestNumberOfInstallment = 0, // loanSchedule.CalculateNumberOfInstallments((TenorModeEnum)entity.tenorModeId, entity.interestFrequencyTypeId, entity.tenor),
+            //    //IsScheduledPrepayment = null,
+            //    ScheduledPrepaymentAmount = entity.scheduledPrepaymentAmount,
+            //    ScheduledPrepaymentFrequencyTypeId = null,
                 
-                // CustomerGroupId = entity.customerGroupId,
-                LoanTypeId = entity.loanTypeId,
-                SubSectorId = entity.subSectorId,
-                CurrencyId = (short)entity.currencyId,
+            //    // CustomerGroupId = entity.customerGroupId,
+            //    LoanTypeId = entity.loanTypeId,
+            //    SubSectorId = entity.subSectorId,
+            //    CurrencyId = (short)entity.currencyId,
 
-                DischargeLetter = false,
-                SuspendInterest = false,
+            //    DischargeLetter = false,
+            //    SuspendInterest = false,
 
-                CustomerId = entity.customerId,
-                ProductId = (short)entity.productId,
-                CompanyId = entity.companyId,
-                CasaAccountId = entity.casaAccountId,
-                BranchId = entity.branchId,
+            //    CustomerId = entity.customerId,
+            //    ProductId = (short)entity.productId,
+            //    CompanyId = entity.companyId,
+            //    CasaAccountId = entity.casaAccountId,
+            //    BranchId = entity.branchId,
 
-                PrincipalFrequencyTypeId = entity.loanScheduleInput.principalFrequency,
-                InterestFrequencyTypeId = entity.loanScheduleInput.interestFrequency,
+            //    PrincipalFrequencyTypeId = entity.loanScheduleInput.principalFrequency,
+            //    InterestFrequencyTypeId = entity.loanScheduleInput.interestFrequency,
 
-                RelationshipOfficerId = entity.relationshipOfficerId,
-                RelationshipManagerId = entity.relationshipManagerId,
-                MISCode = entity.misCode,
-                TeamMISCode = entity.teamMiscode,
-                InterestRate = entity.interestRate,
-                PrincipalAmount = entity.principalAmount,
+            //    RelationshipOfficerId = entity.relationshipOfficerId,
+            //    RelationshipManagerId = entity.relationshipManagerId,
+            //    MISCode = entity.misCode,
+            //    TeamMISCode = entity.teamMiscode,
+            //    InterestRate = entity.interestRate,
+            //    PrincipalAmount = entity.principalAmount,
 
-                PrincipalInstallmentLeft = 0,
-                InterestInstallmentLeft = 0,
+            //    PrincipalInstallmentLeft = 0,
+            //    InterestInstallmentLeft = 0,
 
-                ScheduleTypeId = entity.loanScheduleInput.scheduleMethodId,
-                ApprovedAmount = Convert.ToDecimal(entity.loanScheduleInput.principalAmount),
-                OperationId = (int)OperationsEnum.TermLoanBooking,
-                TrancheBatchCode = entity.trancheBatchCode,
+            //    ScheduleTypeId = entity.loanScheduleInput.scheduleMethodId,
+            //    ApprovedAmount = Convert.ToDecimal(entity.loanScheduleInput.principalAmount),
+            //    OperationId = (int)OperationsEnum.TermLoanBooking,
+            //    TrancheBatchCode = entity.trancheBatchCode,
 
-                EquityContribution = 0,
-                OutstandingPrincipal = Convert.ToDecimal(entity.loanScheduleInput.principalAmount),
-                PrincipalAdditionCount = 0,
-                PrincipalReductionCount = 0,
-                FixedPrincipal = false,
-                ProfileLoan = false,
-                CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
+            //    EquityContribution = 0,
+            //    OutstandingPrincipal = Convert.ToDecimal(entity.loanScheduleInput.principalAmount),
+            //    PrincipalAdditionCount = 0,
+            //    PrincipalReductionCount = 0,
+            //    FixedPrincipal = false,
+            //    ProfileLoan = false,
+            //    CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
 
-                ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
+            //    ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
 
-                BookingDate = entity.bookingDate,
-                CreatedBy = entity.createdBy,
-                DateTimeCreated = generalSetup.GetApplicationDate(),
-                EffectiveDate = entity.effectiveDate,
-                MaturityDate = entity.maturityDate,
-                FirstPrincipalPaymentDate = entity.loanScheduleInput.principalFirstpaymentDate,
-                FirstInterestPaymentDate = entity.loanScheduleInput.interestFirstpaymentDate,
-                AllowForceDebitRepayment = false,
+            //    BookingDate = entity.bookingDate,
+            //    CreatedBy = entity.createdBy,
+            //    DateTimeCreated = generalSetup.GetApplicationDate(),
+            //    EffectiveDate = entity.effectiveDate,
+            //    MaturityDate = entity.maturityDate,
+            //    FirstPrincipalPaymentDate = entity.loanScheduleInput.principalFirstpaymentDate,
+            //    FirstInterestPaymentDate = entity.loanScheduleInput.interestFirstpaymentDate,
+            //    AllowForceDebitRepayment = false,
 
-            };
+            //};
 
-            if (entity.customerGroupId > 0)
-            {
-                data.CustomerGroupId = entity.customerGroupId;
-            }
+            //if (entity.customerGroupId > 0)
+            //{
+            //    data.CustomerGroupId = entity.customerGroupId;
+            //}
 
 
             //try
@@ -549,17 +549,17 @@ namespace FintrakBanking.Repositories.Credit
 
 
             ////Audit Section ---------------------------
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.LoanBookingAdded,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Applied for loan with reference number: {loanReferenceNumber}",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
+            //var audit = new tbl_Audit
+            //{
+            //    AuditTypeId = (short)AuditTypeEnum.LoanBookingAdded,
+            //    StaffId = entity.createdBy,
+            //    BranchId = (short)entity.userBranchId,
+            //    Detail = $"Applied for loan with reference number:, {loanReferenceNumber}",
+            //    IPAddress = entity.userIPAddress,
+            //    Url = entity.applicationUrl,
+            //    ApplicationDate = generalSetup.GetApplicationDate(),
+            //    SystemDateTime = DateTime.Now
+            //};
             ////end of Audit section -------------------------------
 
 
@@ -570,14 +570,14 @@ namespace FintrakBanking.Repositories.Credit
                     try
                     {
 
-                        var loan = context.tbl_Loan.Add(data);
-                        context.tbl_Audit.Add(audit);
-                        var dataCount = context.SaveChanges();
+                      //  var loan = context.tbl_Loan.Add(data);
+                      //  context.tbl_Audit.Add(audit);
+                     //   var dataCount = context.SaveChanges();
 
-                        AddLoanCovenantDetail(entity.loanCovenant, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
-                        AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
+                     //   AddLoanCovenantDetail(entity.loanCovenant, loan.TermLoanId, (short)entity.productTypeId);
+                      //  AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
+                      //  AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
+                      //  AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
 
                         //this.loanSchedule.AddLoanSchedule(loan.TermLoanId, entity.loanScheduleInput, entity.createdBy);
 
@@ -586,10 +586,11 @@ namespace FintrakBanking.Repositories.Credit
                             staffId = entity.createdBy,
                             companyId = entity.companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = loan.TermLoanId,
+                            targetId = -1,//loan.TermLoanId,
                             operationId = (int)OperationsEnum.TermLoanBooking,
                             BranchId = entity.userBranchId,
                         };
+                        var response = await workFlow.LogForApproval(approvalModel);
                         trans.Commit();
                         //var response = await workFlow.LogForApproval(approvalModel);
 
@@ -604,9 +605,9 @@ namespace FintrakBanking.Repositories.Credit
                         //    throw new Exception("This transaction failed to log for approval");
                         //}
 
-                        if (dataCount > 0)
-                            return loanReferenceNumber;
-                        else
+                        //if (dataCount > 0)
+                        //    return loanReferenceNumber;
+                        //else
 
                             return "";
                     }

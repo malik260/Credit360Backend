@@ -52,6 +52,7 @@
     <Compile Include="CreditLimitValidations\CreditLimitValidationsModel.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
+    <Compile Include="Credit\CallMemoViewModel.cs" />
     <Compile Include="Credit\CollateralCustomerViewModel.cs" />
     <Compile Include="Credit\CollateralDocumentViewModel.cs" />
     <Compile Include="Credit\ColleralCustomFieldsDataViewModel.cs" />

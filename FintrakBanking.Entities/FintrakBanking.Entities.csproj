@@ -57,7 +57,7 @@
     <Compile Include="DocumentModels\tbl_Media_Collateral_Documents.cs" />
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\sysdiagrams.cs" />
+    <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -76,6 +76,9 @@
     <Compile Include="Models\tbl_Audit.cs" />
     <Compile Include="Models\tbl_Audit_Type.cs" />
     <Compile Include="Models\tbl_Branch.cs" />
+    <Compile Include="Models\tbl_Call_Limit.cs" />
+    <Compile Include="Models\tbl_Call_Limit_Type.cs" />
+    <Compile Include="Models\tbl_Call_Memo.cs" />
     <Compile Include="Models\tbl_CASA.cs" />
     <Compile Include="Models\tbl_CASA_AccountStatus.cs" />
     <Compile Include="Models\tbl_CASA_Lien.cs" />
@@ -214,6 +217,7 @@
     <Compile Include="Models\tbl_Loan_Operation.cs" />
     <Compile Include="Models\tbl_Loan_Past_Due.cs" />
     <Compile Include="Models\tbl_Loan_Preliminary_Evaluation.cs" />
+    <Compile Include="Models\tbl_Loan_PriceIndex_Exception.cs" />
     <Compile Include="Models\tbl_Loan_PrudentialGuideline.cs" />
     <Compile Include="Models\tbl_Loan_Relationship_Officer_History.cs" />
     <Compile Include="Models\tbl_Loan_Revolving.cs" />
