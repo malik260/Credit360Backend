@@ -1980,7 +1980,7 @@ namespace FintrakBanking.Repositories.Credit
                             //loanStatusName = a.tbl_Loan_Type.AccountStatus,
                             camReference = c.CAMRef,
                             appraisalMemorandumId = c.AppraisalMemorandumId,
-                            loanDetails = c.LoanDetails,
+                            //loanDetails = c.LoanDetails,
                             productId = (short)a.ProductId,
                             productTypeId = a.tbl_Product.ProductTypeId,
                             productTypeName = a.tbl_Product.tbl_Product_Type.ProductTypeName,

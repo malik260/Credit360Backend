@@ -117,7 +117,6 @@ namespace FintrakBanking.ReportObjects
                             CompanyName = company.Name ,
                             OperationId = b.OperationId,
                             GroupName = a.GroupName,
-                            IsBeforeCAMApproval = a.IsBeforeCAMApproval,
                             IsCommittee = a.IsCommittee,
                             CanDoRiskAssessment = d.CanDoRiskAssessment,
                             CanEdit = d.CanEdit,
@@ -131,7 +130,7 @@ namespace FintrakBanking.ReportObjects
                             IsActive = d.IsActive,
                             IsPoliticallyExposed = d.IsPoliticallyExposed,
                             LevelName = d.LevelName,
-                            MinimumAmount = d.MaximumAmount,
+                            MaximumAmount = d.MaximumAmount,
                             NumberOfApprovals = d.NumberOfApprovals,
                             NumberOfUsers = d.NumberOfUsers,
                             RequireAuthorisation = d.RequireAuthorisation,
@@ -144,7 +143,7 @@ namespace FintrakBanking.ReportObjects
                             CanViewApproval = c.CanViewApproval,
                             CanViewCAMDocument = c.CanViewCAMDocument,
                             CanViewUploadedFile = c.CanViewUploadedFile,
-                            MaximumAmount = c.MaximumAmount,
+                            //MaximumAmount = c.MaximumAmount,
                             StaffName = context.tbl_Staff.Where(t => t.StaffId == c.StaffId).Select(t => t.FirstName + " " + t.LastName).FirstOrDefault()
                         }).AsQueryable();
             }

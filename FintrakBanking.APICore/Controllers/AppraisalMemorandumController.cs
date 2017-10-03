@@ -29,7 +29,22 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAppraisalMemorandumByLoanApplicationId(loanApplicationId);
+                var data = repo.GetAppraisalMemorandum(loanApplicationId,token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("appraisal-memorandum/loan-application/{loanApplicationId}/documentation")]
+        public HttpResponseMessage GetAppraisalMemorandumDocumentation(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetAllDocumentation(loanApplicationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -59,7 +74,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 

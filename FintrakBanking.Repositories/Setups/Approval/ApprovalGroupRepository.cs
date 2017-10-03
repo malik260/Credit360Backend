@@ -38,7 +38,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         {
                             groupId = a.GroupId,
                             groupName = a.GroupName,
-                            isBeforeCamapproval = a.IsBeforeCAMApproval,
                             isCommittee = a.IsCommittee,
                             companyId = a.CompanyId,
                             companyName = a.tbl_Company.Name,
@@ -62,7 +61,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
             {                
                 GroupName = model.groupName,
                 IsCommittee = model.isCommittee,
-                IsBeforeCAMApproval = model.isBeforeCamapproval,
                 CompanyId = model.companyId,
                 DateTimeCreated = _genSetup.GetApplicationDate(),
                 CreatedBy = (int)model.createdBy
@@ -93,7 +91,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var data = this.context.tbl_Approval_Group .Find(GroupId);
             if (data == null) return false;
             data.GroupName = model.groupName;
-            data.IsBeforeCAMApproval = model.isBeforeCamapproval;
             data.IsCommittee = model.isCommittee;
             data.DateTimeUpdated = _genSetup.GetApplicationDate();
             data.LastUpdatedBy = (int)model.createdBy;

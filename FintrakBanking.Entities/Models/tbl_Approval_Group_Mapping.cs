@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         public int OperationId { get; set; }
 
+        public int GroupId { get; set; }
+
         public short? ProductClassId { get; set; }
 
         public short? ProductId { get; set; }
@@ -33,8 +35,6 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        public int GroupId { get; set; }
 
         public virtual tbl_Approval_Group tbl_Approval_Group { get; set; }
 

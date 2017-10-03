@@ -15,10 +15,12 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isCompleted { get; set; }
         public bool riskRated { get; set; }
         public string camDocumentation { get; set; }
-        public string loanDetails { get; set; }
+        //public string loanDetails { get; set; }
         public bool politicalyExposed { get; set; }
         public string comment { get; set; }
         public decimal loanAmount { get; set; }
+        public int approvalLevelId { get; set; }
+        public int documentationId { get; set; }
     }
 
     public class ForwardViewModel : GeneralEntity
@@ -61,5 +63,13 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal investmentGradeApprovalLimit { get; set; }
         public List<int> userApprovalLevelIds { get; set; }
         public int maximumTenor { get; set; }
+    }
+
+    public class DocumentationViewModel : GeneralEntity
+    {
+        public int documentationId { get; set; }
+        public string documentation { get; set; }
+        public int appraisalMemorandumId { get; set; }
+        public int approvalLevelId { get; set; }
     }
 }

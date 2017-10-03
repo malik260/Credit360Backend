@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Credit_Appraisal_Memorandum()
         {
+            tbl_Credit_Appraisal_Memorandum_Document = new HashSet<tbl_Credit_Appraisal_Memorandum_Document>();
             tbl_Credit_Appraisal_Memorandum_Loan_Detail = new HashSet<tbl_Credit_Appraisal_Memorandum_Loan_Detail>();
         }
 
@@ -30,11 +31,6 @@ namespace FintrakBanking.Entities.Models
 
         public bool RiskRated { get; set; }
 
-        public string CAMDocumentation { get; set; }
-
-        [Column(TypeName = "xml")]
-        public string LoanDetails { get; set; }
-
         public int CreatedBy { get; set; }
 
         public DateTime DateTimeCreated { get; set; }
@@ -50,6 +46,9 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateTimeDeleted { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Credit_Appraisal_Memorandum_Document> tbl_Credit_Appraisal_Memorandum_Document { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Credit_Appraisal_Memorandum_Loan_Detail> tbl_Credit_Appraisal_Memorandum_Loan_Detail { get; set; }
