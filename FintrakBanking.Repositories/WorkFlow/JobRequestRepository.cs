@@ -221,13 +221,14 @@ namespace FintrakBanking.Repositories.WorkFlow
         public IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId)
         {
            return this.context.tbl_Approval_Group_Mapping.Where(x => x.OperationId == operationId)
-                .SelectMany(g => g.tbl_Approval_Level)
-                .SelectMany(l => l.tbl_Approval_Level_Staff)
+                .Select(g => g.tbl_Approval_Group)
+                .SelectMany(l => l.tbl_Approval_Level)
+                .SelectMany(s => s.tbl_Approval_Level_Staff)
                 .Select(s => new OperationStaffViewModel
                 {
                     id = s.StaffId,
                     name = s.tbl_Staff.FirstName,
-                    groupId = s.tbl_Approval_Level.GroupOperationMappingId
+                    groupId = s.tbl_Approval_Level.GroupId
                 }).ToList();
         }
 
@@ -237,11 +238,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             var approvalGroupIds = context.tbl_Approval_Group_Mapping
                 .Join(context.tbl_Approval_Level,
-                    a => a.GroupOperationMappingId, b => b.GroupOperationMappingId, (a, b) => new { a, b })
+                    a => a.GroupId, b => b.GroupId, (a, b) => new { a, b })
                 .Join(context.tbl_Approval_Level_Staff,
                     c => c.b.ApprovalLevelId, d => d.ApprovalLevelId, (c, d) => new { c, d })
                 .Where(x => x.c.a.OperationId == operationId && x.d.StaffId == staffId)
-                    .Select(x => x.c.b.GroupOperationMappingId);
+                    .Select(x => x.c.b.GroupId);
 
             return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.departmentId)).OrderByDescending(x => x.jobRequestId).ToList();
         }

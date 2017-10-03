@@ -174,8 +174,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 && x.ProductClassId == this.productClassId
                                 && x.ProductId == this.productId
                             )
-                            .SelectMany(x => x.tbl_Approval_Level).Where(x => x.IsActive == true)
-                            .OrderBy(x => x.tbl_Approval_Group_Mapping.Position)
+                            .Select(x => x.tbl_Approval_Group)
+                            .SelectMany(x => x.tbl_Approval_Level)
+                            .Where(x => x.IsActive == true)
+                            .OrderBy(x => x.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position)
                             .ThenBy(x => x.Position);
 
             tbl_Approval_Level next;
@@ -212,8 +214,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var currentLevel = context.tbl_Approval_Level.Find(this.fromLevelId);
 
                 next = approvalLevels.FirstOrDefault(x =>
-                    x.tbl_Approval_Group_Mapping.Position > currentLevel.tbl_Approval_Group_Mapping.Position // next group
-                    || (x.Position > currentLevel.Position && x.tbl_Approval_Group_Mapping.Position == currentLevel.tbl_Approval_Group_Mapping.Position) // same group
+                    x.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position > currentLevel.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position // next group
+                    || (x.Position > currentLevel.Position && x.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position == currentLevel.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position) // same group
                     );
             }
             else
@@ -341,8 +343,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 && x.ProductClassId == this.productClassId
                                 && x.ProductId == this.productId
                             )
-                            .SelectMany(x => x.tbl_Approval_Level).Where(x => x.IsActive == true)
-                            .OrderBy(x => x.tbl_Approval_Group_Mapping.Position)
+                            .SelectMany(x => x.tbl_Approval_Group.tbl_Approval_Level).Where(x => x.IsActive == true)
+                            .OrderBy(x => x.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position)
                             .ThenBy(x => x.Position)
                             .SelectMany(x => x.tbl_Approval_Level_Staff).Where(x => x.StaffId == staffId).FirstOrDefault();
 

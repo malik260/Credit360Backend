@@ -86,7 +86,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerId = a.RelationshipManagerId,
                             relationshipManagerName =
                                 a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-                             isInvestmentGrade = a.IsInvestmentGrade ,
+                             //isInvestmentGrade = a.IsInvestmentGrade ,
                             misCode = a.MISCode,
 
                             productId = (short)a.ProductId,
@@ -126,10 +126,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (level != null)
                 {
-                    levelGroupId = level.GroupOperationMappingId;
+                    levelGroupId = level.GroupId;
 
                     var groupApprovalLevelIds = context.tbl_Approval_Level
-                        .Where(x => x.GroupOperationMappingId == levelGroupId)
+                        .Where(x => x.GroupId == levelGroupId)
                         .Select(x => x.ApprovalLevelId);
 
                     applications = applications.Where(x => groupApprovalLevelIds.Contains(x.approvalLevelId));
@@ -531,8 +531,10 @@ namespace FintrakBanking.Repositories.Credit
                 var groupApprovalLevelIds = context.tbl_Approval_Level_Staff
                     .Where(x => x.Deleted == false && x.StaffId == staffId)
                     .Select(x => x.tbl_Approval_Level)
-                    .Select(x => x.tbl_Approval_Group_Mapping)
+                    .Select(x => x.tbl_Approval_Group)
+                    .SelectMany(x => x.tbl_Approval_Group_Mapping)
                     .Where(x => x.Deleted == false && x.OperationId == operationId)
+                    .Select(x => x.tbl_Approval_Group)
                     .SelectMany(x => x.tbl_Approval_Level)
                     .Select(x => x.ApprovalLevelId);
 
@@ -590,6 +592,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             int scope = (int)ProcessViewScopeEnum.Level; // default @Level
             var staffWorkflow = context.tbl_Approval_Group_Mapping.Where(x => x.OperationId == operationId)
+                .Select(g => g.tbl_Approval_Group)
                 .SelectMany(g => g.tbl_Approval_Level)
                 .SelectMany(l => l.tbl_Approval_Level_Staff).Where(x => x.StaffId == staffId);
 

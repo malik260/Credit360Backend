@@ -174,7 +174,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
             kernel.Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
             kernel.Bind<IReportRouts>().To<ReportRouts>();
-            
+            kernel.Bind<ICallMemoRepository>().To<CallMemoRepository>();
             kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
         }        
     }

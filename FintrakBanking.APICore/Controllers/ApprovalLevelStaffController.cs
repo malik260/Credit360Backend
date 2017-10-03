@@ -112,7 +112,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [Route("approval-level-staff/{StaffLevelId}")]
-        public HttpResponseMessage DeleteApprovalLevelStaff(int StaffLevelId)
+        public async Task<HttpResponseMessage> DeleteApprovalLevelStaffAsync(int StaffLevelId)
         {
             try
             {
@@ -123,13 +123,16 @@ namespace FintrakBanking.APICore.Controllers
                     staffId = token.GetStaffId,
                 };
 
-                repo.DeleteApprovalLevelStaff(StaffLevelId, user);
+                var saved = await repo.DeleteApprovalLevelStaff(StaffLevelId, user);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = StaffLevelId, message = "record has been deleted successfully" });
+                if (saved)
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = StaffLevelId, message = "record has been deleted successfully" });
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = StaffLevelId, message = "Record could not be saved" });
             }
             catch (System.Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException, stack = ex.StackTrace });
             }
         }
 

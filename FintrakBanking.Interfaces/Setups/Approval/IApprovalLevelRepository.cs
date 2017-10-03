@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
     {
         IEnumerable<ApprovalLevelViewModel> GetAllApprovalLevel(int companyId);
         IEnumerable<ApprovalLevelViewModel> GetApprovalLevelById(int ApprovalLevelId, int companyId);
-        IEnumerable<ApprovalLevelViewModel> GetApprovalLevelByOperationId(int groupOperationMappingId, int companyId);
+        IEnumerable<ApprovalLevelViewModel> GetApprovalLevelByGroupId(int groupId, int companyId);
         bool AddApprovalLevel(ApprovalLevelViewModel model);
         
         bool AddMultipleApprovalLevel(List<ApprovalLevelViewModel> models);
