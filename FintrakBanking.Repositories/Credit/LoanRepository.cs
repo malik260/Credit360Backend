@@ -206,12 +206,12 @@ namespace FintrakBanking.Repositories.Credit
         public async Task<string> AddLoanBooking(LoanViewModel entity)
         {
             //...................CHECK IF THE LOAN RECORD IS A SCHEDULED LOAN..................//
-            if (entity.productTypeId == (int)ScheduleTypeEnum.TermLoan || entity.productTypeId == (int)ScheduleTypeEnum.SelfLiquidating)
+            if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating)
             {
                 return this.AddTermLoan(entity).Result;
             }
             // ...............CHECK IF THE LOAN RECORD IS ANON SCHEDULED LOAN....................//
-            else if (entity.productTypeId != (int)ScheduleTypeEnum.RevolvingLoan)
+            else if (entity.productTypeId != (int)LoanProductTypeEnum.RevolvingLoan)
             {
                 var revolvingLoanInput = entity.revolvingLoanInput;
 
@@ -221,7 +221,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 return await addRevolvingLoan(revolvingLoanInput);
             }
-            else if (entity.productTypeId != (int)ScheduleTypeEnum.ContingentLiability)
+            else if (entity.productTypeId != (int)LoanProductTypeEnum.ContingentLiability)
             {
                 var contingentLoanInput = entity.contingentLoanInput;
 

@@ -476,12 +476,12 @@ namespace FintrakBanking.Repositories.Credit
                     .SelectMany(x => x.tbl_Approval_Level)
                     .Select(x => x.ApprovalLevelId);
 
-                pendingApplications = pendingApplications.Where(x => groupApprovalLevelIds.Contains(x.b.ToApprovalLevelId));
+                pendingApplications = pendingApplications.Where(x => groupApprovalLevelIds.Contains((int)x.b.ToApprovalLevelId));
             }
 
             if (scope == (int)ProcessViewScopeEnum.Level) // 1
             {
-                pendingApplications = pendingApplications.Where(x => staffApprovalLevelIds.Contains(x.b.ToApprovalLevelId));
+                pendingApplications = pendingApplications.Where(x => staffApprovalLevelIds.Contains((int)x.b.ToApprovalLevelId));
             }
 
             return pendingApplications.Select(x => new LoanApplicationViewModel

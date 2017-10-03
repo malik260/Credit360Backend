@@ -9,8 +9,8 @@ namespace FintrakBanking.Common.Enum
         Customer  = 1,
         //CustomerCorporate = 2,
         Sector = 3,
-        AccountOfficer = 4,
-        Branch = 5,
+        Branch = 4,
+        AccountOfficer = 5,
         Director = 6,
         Product = 7
 

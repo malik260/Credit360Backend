@@ -51,4 +51,15 @@
         public string description { get; set; }
         public bool? isVisible { get; set; }
     }
+
+
+    public class LimitSuspensionViewModel : GeneralEntity
+    {
+        public int limitId { get; set; }
+        //public string limitName { get; set; }
+        public int staffId { get; set; }
+        public int branchId { get; set; }
+        public decimal limitAmount { get; set; }
+        public decimal amount { get; set; }
+    }
 }

@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Schedule_Periodic")]
-    public partial class tbl_Loan_Schedule_Periodic
+    [Table("credit.tbl_Loan_Schedule_Periodic_Temp")]
+    public partial class tbl_Loan_Schedule_Periodic_Temp
     {
         [Key]
         public int PeriodicScheduleId { get; set; }
@@ -36,8 +36,6 @@ namespace FintrakBanking.Entities.Models
 
         public double InterestRate { get; set; }
 
-        public double? PreviousInterestRate { get; set; }
-
         [Column(TypeName = "money")]
         public decimal AmortisedStartPrincipalAmount { get; set; }
 
@@ -54,8 +52,6 @@ namespace FintrakBanking.Entities.Models
         public decimal AmortisedEndPrincipalAmount { get; set; }
 
         public double EffectiveInterestRate { get; set; }
-
-        public double? PreviousEffectiveInterestRate { get; set; }
 
         public int CreatedBy { get; set; }
 

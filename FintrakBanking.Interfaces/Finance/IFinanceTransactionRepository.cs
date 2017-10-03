@@ -34,5 +34,13 @@ namespace FintrakBanking.Interfaces.Finance
         CasaBalanceViewModel GetCASABalanceFromTransactions(int casaAccountId);
 
         decimal GetLienBalance(string productAccountNumber);
+
+        FinanceTransactionViewModel PostBuildLoanChargeFeesPosting(LoanViewModel model);
+
+        FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
+
+        FinanceTransactionViewModel BuildChargeReversalPosting(LoanChargeFeeViewModel model);
+
+        FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
     }
 }
