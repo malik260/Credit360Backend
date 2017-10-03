@@ -2,6 +2,7 @@
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -31,7 +32,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
 
 
-        IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetAppraisalMemorandumProcessedLoanApplications(int companyId);
 
         //IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId);
 
@@ -47,5 +48,12 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId);
         Task<bool> GoForApproval(ApprovalViewModel entity);
+
+        AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId);
+
+        IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId);
+        IQueryable<CustomerSearchItemViewModels> SearchCustomerCollateral(int companyId, string searchQuery);
+        IQueryable<CustomerViewModels> SearchForCustomerCollateral(int companyId, string searchQuery);
+
     }
 }

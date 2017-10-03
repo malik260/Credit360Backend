@@ -4,6 +4,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
@@ -933,7 +934,25 @@ namespace FintrakBanking.Repositories.Customer
                            client_SupplierEmail = cs.EmailAddress,
                            client_SupplierTypeId = cs.Client_SupplierTypeId,
                            client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
-                       }).ToList()
+                       }).ToList(),
+                       CustomerCollateral = context.tbl_Collateral_Customer.Where(cc => cc.CustomerId == a.CustomerId)
+                       .Select(x => new CollateralViewModel()
+                       {
+                           collateralId = x.CollateralCustomerId,
+                           collateralTypeId = x.CollateralTypeId,
+                           collateralSubTypeId = x.CollateralSubTypeId,
+                           customerId = x.CustomerId,
+                           currencyId = x.CurrencyId,
+                           currency = x.tbl_Currency.CurrencyName,
+                           collateralTypeName = x.tbl_Collateral_Type.CollateralTypeName,
+                           collateralCode = x.CollateralCode,
+                           camRefNumber = x.CamRefNumber,
+                           allowSharing = x.AllowSharing,
+                           isLocationBased = x.IsLocationBased,
+                           valuationCycle = x.ValuationCycle,
+                           haircut = x.HairCut,
+                           approvalStatus = x.ApprovalStatus,
+                       }).ToList(),
                    };
 
         }
@@ -1128,6 +1147,7 @@ namespace FintrakBanking.Repositories.Customer
                     subSectorId = c.subSectorId,
                     subSectorName = c.subSectorName,
                     relationshipOfficerId = c.relationshipOfficerId
+                    
                 });
             }
             return allCustomers;

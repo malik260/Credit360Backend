@@ -32,6 +32,7 @@ namespace FintrakBanking.Repositories.Credit
             this.context = _context;
             this.generalSetup = _genSetup;
             this.financeTransaction = _financeTransaction;
+            this.auditTrail = _auditTrail;
             this.loanSchedule = _loanSchedule;
 
         }
@@ -130,6 +131,50 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return data;
+        }
+
+
+
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool AddCollateralSearchLien(CasaLienViewModel model)
+        {
+
+            var data = new tbl_CASA_Lien
+            {
+                ProductAccountNumber = model.productAccountNumber,
+                LienReferenceNumber = CommonHelpers.GenerateRandomDigitCode(10),
+                SourceReferenceNumber = model.sourceReferenceNumber,
+                BranchId = model.userBranchId,
+                CompanyId = model.companyId,
+                LienCreditAmount = GetCollateralSearchChargeAmount(model.stateId),
+                LienDebitAmount = 0,
+                LienTypeId = (short)LienTypeEnum.CollateralSearch,
+                CreatedBy = model.createdBy,
+                Description = "lien placed due to loan application collateral search", // model.description,
+                DateCreated = generalSetup.GetApplicationDate()
+
+            };
+
+            context.tbl_CASA_Lien.Add(data);
+
+            // Audit Section ---------------------------            
+
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.LienAdded,
+                StaffId = model.createdBy,
+                BranchId = model.branchId,
+                Detail = $"Applied for lien with reference number: { model.sourceReferenceNumber}",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = generalSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            return context.SaveChanges() != 0;
+
         }
 
         public IEnumerable<DailyInterestAccrualViewModel> GetDailyAuthorisedOverdraftInterestAccrual(DateTime applicationDate)

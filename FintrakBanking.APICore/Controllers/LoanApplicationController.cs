@@ -1,6 +1,5 @@
 using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Credit;
@@ -15,28 +14,30 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-
     [RoutePrefix("api/v1/credit")]
     public class LoanApplicationController : ApiControllerBase
     {
-        
         private ILoanApplicationRepository repoApply;
         private ILoanRepository loanRepository;
         private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
-        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        private TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public LoanApplicationController(ILoanApplicationRepository _repoApply, ILoanRepository _loanRepository,
-            ICreditLimitValidationsRepository _creditLimitValidationsRepository, 
-            ILoanPreliminaryEvaluationRepository _repoLoanPEN)
+        public LoanApplicationController(
+            ILoanApplicationRepository _repoApply,
+            ILoanRepository _loanRepository,
+            ICreditLimitValidationsRepository _creditLimitValidationsRepository,
+            ILoanPreliminaryEvaluationRepository _repoLoanPEN
+            )
         {
             this.repoApply = _repoApply;
             this.loanRepository = _loanRepository;
-          this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
+            this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
         }
 
         #region Loan Application
+
         [HttpGet]
         [Route("loan-application")]
         public HttpResponseMessage GetAllLoanApplications()
@@ -92,7 +93,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpGet]
         [Route("loan-application/{id}")]
         public HttpResponseMessage GetLoanApplicationById(int id)
@@ -132,7 +132,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-
 
         [HttpGet]
         [Route("loan-application/search/{searchCriteria}")]
@@ -199,9 +198,7 @@ namespace FintrakBanking.APICore.Controllers
                     throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
                 }
 
-
                 //var model =  creditLimitValidationsRepository.ValidateAmountByBranch1(entity.branchId).Difference;
-
 
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -231,18 +228,18 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repoApply.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId)
-                    .OrderByDescending(x => x.applicationDate)
+                var items = repoApply.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId);
+
+                var data = items.OrderByDescending(x => x.applicationDate)
                     .ThenByDescending(x => x.loanApplicationId)
-                    .Where(x => x.approvalStatusId == (int)ApprovalStatusEnum.Pending)
                     .Skip(page).Take(itemsPerPage)
                     .ToList();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
             }
             catch (System.Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 
@@ -268,8 +265,88 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/approved-loans")]
+        public HttpResponseMessage GetCamProcessedLoanApplications()
+        {
+            try
+            {
+                var response = repoApply.GetApplicationsDueForOfferLetterGeneration(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
-        #endregion
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [Route("loan-application/send-for-availment/{applicationRefNumber}/statusId/{applicationStatusId}")]
+        public HttpResponseMessage UpdateApplicationStatus(int applicationRefNumber, short applicationStatusId)
+        {
+            try
+            {
+                var response = repoApply.UpdateLoanApplicationStatus(applicationRefNumber.ToString(), applicationStatusId);
+
+                if (!response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "record not updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "record updated successfully" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/due-for-review")]
+        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForReview()
+        {
+            try
+            {
+                var response = repoApply.GetApplicationsForReviewFromCreditUnit(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList(), count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/due-for-availment")]
+        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForAvailment()
+        {
+            try
+            {
+                var response = repoApply.GetApplicationsDueForAvailment(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList(), count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        #endregion Loan Application
 
         #region Loan Preliminary Evaluation
 
@@ -480,6 +557,7 @@ namespace FintrakBanking.APICore.Controllers
                     new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-        #endregion
+
+        #endregion Loan Preliminary Evaluation
     }
 }

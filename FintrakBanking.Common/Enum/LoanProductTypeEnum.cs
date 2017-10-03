@@ -5,12 +5,7 @@
         TermLoan = 1,
         SelfLiquidating = 2,
         RevolvingLoan = 6,
-        ContingentLiability = 9,
-        AdvisoryFee = 14,
-        LPO = 15,
-        CFF = 16,
-        IDF = 17,
-
+        ContingentLiability = 9
     };
 
 }

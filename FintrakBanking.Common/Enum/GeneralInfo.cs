@@ -149,11 +149,13 @@ namespace FintrakBanking.Common.Enum
         DepartmentUpdated = 143,
         PublicHolidayAdded = 144,
         PublicHolidayUpdated = 145,
-        CollateralDocumentAdded = 146,
-        CollateralDocumentUpdated = 147,
+        CollateralDocumentAdded = 000,
+        CollateralDocumentUpdated = 000,
         LoanDailyInterestAccrual = 148,
         LoanDailyPrincipalAccrual = 148,
-
+        CollateralValuerAdded = 149,
+        ConditionPrecedentAdded = 000,
+        ConditionPrecedentUpdated = 000,
     };
 
 

@@ -9,18 +9,10 @@ namespace FintrakBanking.Entities.Models
     [Table("core.tbl_Approval_Group_Mapping")]
     public partial class tbl_Approval_Group_Mapping
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Approval_Group_Mapping()
-        {
-            tbl_Approval_Level = new HashSet<tbl_Approval_Level>();
-        }
-
         [Key]
         public int GroupOperationMappingId { get; set; }
 
         public int OperationId { get; set; }
-
-        public int GroupId { get; set; }
 
         public short? ProductClassId { get; set; }
 
@@ -42,6 +34,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
+        public int GroupId { get; set; }
+
         public virtual tbl_Approval_Group tbl_Approval_Group { get; set; }
 
         public virtual tbl_Operations tbl_Operations { get; set; }
@@ -49,8 +43,5 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Product tbl_Product { get; set; }
 
         public virtual tbl_Product_Class tbl_Product_Class { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Level> tbl_Approval_Level { get; set; }
     }
 }

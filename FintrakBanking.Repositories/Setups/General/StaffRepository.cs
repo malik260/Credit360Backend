@@ -16,8 +16,6 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    [Export(typeof(IStaffRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class StaffRepository : IStaffRepository
     {
         private FinTrakBankingContext context;
@@ -816,6 +814,7 @@ on c.DepartmentId equals dept.DepartmentId
                         lastName = o.LastName,
                         staffCode = o.StaffCode,
                     })
+                    .Take(12)
                 ;
             }
 

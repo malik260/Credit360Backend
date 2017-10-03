@@ -63,12 +63,36 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
          new { success = true, result = data });  //Ok(accounts);
-       }
+            }
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
+        [HttpGet]
+        [Route("product/group")]
+        public HttpResponseMessage GetProductByProductGroup()
+        {
+            try
+            {
+                var data = repo.GetProductByProductGroup(new TokenDecryptionHelper().GetCompanyId).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+         new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
 
         #region Product Group
 
@@ -536,6 +560,24 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
+                foreach (var item in model.currencies)
+                {
+                    item.createdBy = model.createdBy;
+                    item.companyId = model.companyId;
+                }
+
+                foreach (var item in model.collaterals)
+                {
+                    item.createdBy = model.createdBy;
+                    item.companyId = model.companyId;
+                }
+
+                foreach (var item in model.fees)
+                {
+                    item.createdBy = model.createdBy;
+                    item.companyId = model.companyId;
+                }
+
                 var product = await repo.AddTempProduct(model);
 
                 if (product != null)
@@ -602,6 +644,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
                 var staff = await repo.UpdateProduct(productId, model);
 

@@ -6,13 +6,12 @@ namespace FintrakBanking.Common.Enum
 {
     public enum LimitType
     {
-        Customer  = 1,
-        //CustomerCorporate = 2,
-        Sector = 3,
-        Branch = 4,
-        AccountOfficer = 5,
-        Director = 6,
-        Product = 7
-
+        Obligor = 1,
+        Sector = 2,
+        Branch = 3,
+        RelationshipManager = 4,
+        PrelimemaryEvaluationNote = 5,
+        CustomerGroup = 6,
+       
     }
 }

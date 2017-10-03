@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Admin
 {
-    public class AuditViewModel
+    public class AuditViewModel : GeneralEntity
     {
         public long auditId { get; set; }
         public string auditType { get; set; }
@@ -18,9 +18,6 @@ namespace FintrakBanking.ViewModels.Admin
         public string formattedSystemDate { get { return this.systemDate.ToString("dd/MM/yyy"); } }
         public string formattedApplicationDate { get { return this.systemDate.ToString("dd/MM/yyy"); } }
 
-        public string staffName
-        {
-            get { return $"{this.firstName} {this.lastName}"; }
-        }
+        public string staffName => $"{this.firstName} {this.lastName}";
     }
 }

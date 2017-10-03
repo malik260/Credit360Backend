@@ -1,7 +1,7 @@
 ﻿using FintrakBanking.ViewModels;
-using System;
+using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.Approval
@@ -10,9 +10,9 @@ namespace FintrakBanking.Interfaces.Setups.Approval
     {
         bool AddApprovalLevelStaff(ApprovalLevelStaffViewModel model);
 
-        bool UpdateApprovalLevelStaff(int StaffLevelId, ApprovalLevelStaffViewModel model);
+        bool UpdateApprovalLevelStaff(int staffLevelId, ApprovalLevelStaffViewModel model);
 
-        Task<bool> DeleteApprovalLevelStaff(int StaffLevelId, UserInfo user);
+        Task<bool> DeleteApprovalLevelStaff(int staffLevelId, UserInfo user);
 
         IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaffByOperationId(int operationId, int companyId);
 
@@ -20,6 +20,11 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 
         IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaff(int companyId);
 
-        IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaffById(int StaffLevelId, int companyId);
+        IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaffById(int staffLevelId, int companyId);
+
+        Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId,
+            int targetId, int companyId);
+
+        IQueryable<WorkflowTrackerViewModel> GetAllRecordsOnApprovalTrail(int companyId);
     }
 }

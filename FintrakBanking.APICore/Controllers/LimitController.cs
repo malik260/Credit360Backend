@@ -10,13 +10,15 @@ using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.APICore.core;
 using System.Web;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/credit")]
     public class LimitController : ApiControllerBase
     {
-        private ILimitRepository repo;
+        private readonly ILimitRepository repo;
+        private readonly TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public LimitController(ILimitRepository _repo)
         {
@@ -29,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
+               
                 var response = repo.GetAllLimit(token.GetCompanyId);
                 if (!response.Any())
                 {
@@ -49,7 +51,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
+               
                 var response = repo.GetLimitById(limitId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
@@ -65,7 +67,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
+               
                 model.userBranchId = (short)token.GetBranchId;
                 //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 model.applicationUrl = HttpContext.Current.Request.Path;
@@ -90,7 +92,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper(); ;
+                ;
                 model.userBranchId = (short)token.GetBranchId;
                 //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 model.applicationUrl = HttpContext.Current.Request.Path;
@@ -115,7 +117,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
+               
 
                 UserInfo user = new UserInfo()
                 {
@@ -138,13 +140,99 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Limits Details
-        [HttpGet][Route("limit-detail")]
-        public HttpResponseMessage GetAllLimitDetail()
+        [HttpGet][Route("limit-detailObligor")]
+        public HttpResponseMessage GetLimitDetailObligor()
         {
             try
             {
                 var token = new TokenDecryptionHelper();
-                var response = repo.GetAllLimitDetail();
+                int typeId = (int)LimitType.Obligor;
+                var response = repo.GetAllLimitDetail(typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("limit-detailCustomerGroup")]
+        public HttpResponseMessage GetLimitDetailCustomerGroup()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                int typeId = (int)LimitType.CustomerGroup;
+                var response = repo.GetAllLimitDetail(typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("limit-detailSector")]
+        public HttpResponseMessage GetLimitDetailSector()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                int typeId = (int)LimitType.Sector;
+                var response = repo.GetAllLimitDetail(typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("limit-detailBranch")]
+        public HttpResponseMessage GetLimitDetailBranch()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                int typeId = (int)LimitType.Branch;
+                var response = repo.GetAllLimitDetail(typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("limit-detailRelationshipManager")]
+        public HttpResponseMessage GetLimitDetailRelationshipManager()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                int typeId = (int)LimitType.RelationshipManager;
+                var response = repo.GetAllLimitDetail(typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("limit-detailPrelimemaryEvaluationNote")]
+        public HttpResponseMessage GetLimitDetailPrelimemaryEvaluationNote()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                int typeId = (int)LimitType.PrelimemaryEvaluationNote;
+                var response = repo.GetAllLimitDetail(typeId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
             }
@@ -159,7 +247,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
+               
                 var response = repo.GetLimitDetailById(limitDetailId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
@@ -181,7 +269,10 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-
+                if(model.limitTypeId != (int)LimitType.PrelimemaryEvaluationNote && model.targetId == -1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Please select your entry to continue" });
+                }
                 var response = repo.AddLimitDetail(model);
                 if (response)
                 {
@@ -195,12 +286,39 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost][Route("limit-detail-multiple")]
+        public HttpResponseMessage AddMultipleLimitDetail([FromBody] List<LimitDetailViewModel> model)
+        {
+            try
+            {
+                foreach (var item in model)
+                {
+                    item.userBranchId = (short)token.GetBranchId;
+                    item.userIPAddress = HttpContext.Current.Request.Url.AbsoluteUri;
+                    item.applicationUrl = HttpContext.Current.Request.Path;
+                    item.createdBy = token.GetStaffId;
+                    item.companyId = token.GetCompanyId;
+                }
+
+                var response = repo.AddMultipleLimitDetail(model);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "The records have been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating these records" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+        }
+
         [HttpPut][Route("limit-detail/{limitDetailId}")]
         public HttpResponseMessage UpdateLimitDetail(int limitDetailId, [FromBody] LimitDetailViewModel model)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
+               
                 model.userBranchId = (short)token.GetBranchId;
                 //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                 model.applicationUrl = HttpContext.Current.Request.Path;

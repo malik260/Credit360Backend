@@ -26,6 +26,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCreditTemplate(CreditTemplateViewModel model)
         {
+            if (String.IsNullOrEmpty(model.templateDocument)) { throw new Exception("Document is blank. Cannot create a blank document!"); }
+
             var data = new tbl_Credit_Template
             {
                 CompanyId = model.companyId,

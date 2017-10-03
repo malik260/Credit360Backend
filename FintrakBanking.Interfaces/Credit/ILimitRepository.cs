@@ -17,11 +17,12 @@ namespace FintrakBanking.Interfaces.Credit
         #endregion
 
         #region Limits Details
-        IEnumerable<LimitDetailViewModel> GetAllLimitDetail();
-        List<LimitDetailViewModel> GetLimitDetailById(int LimitDetailId);
+        IEnumerable<LimitDetailViewModel> GetAllLimitDetail(int id);
+        List<LimitDetailViewModel> GetLimitDetailById(int limitDetailId);
         bool AddLimitDetail(LimitDetailViewModel model);
-        bool UpdateLimitDetail(int LimitDetailId, LimitDetailViewModel model);
-        bool DeleteLimitDetail(int LimitDetailId, UserInfo user);
+        bool UpdateLimitDetail(int limitDetailId, LimitDetailViewModel model);
+        bool DeleteLimitDetail(int limitDetailId, UserInfo user);
+        bool AddMultipleLimitDetail(List<LimitDetailViewModel> model);
         #endregion
 
         #region Limits Metric

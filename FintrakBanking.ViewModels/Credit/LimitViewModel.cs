@@ -16,13 +16,14 @@
         public int limitTypeId { get; set; }
         public int limitId { get; set; }
         public int targetId { get; set; }
+        public string targetName { get; set; }
         public short limitFrequencyTypeId { get; set; }
         public string limitFrequencyTypeName { get; set; }
         public decimal minimumValue { get; set; }
         public decimal maximumValue { get; set; }
         public string limitName { get; set; }
         public string limitTypeName { get; set; }
-
+        public bool allowOverride { get; set; }
     }
 
     public class LimitMetricViewModel
@@ -37,6 +38,11 @@
         public string limitTypeName { get; set; }
     }
 
+    public class TargetViewModel
+    {
+        public int targetId { get; set; }
+        public string targetName { get; set; }
+    }
     public class LimitValueTypeViewModel 
     {
         public int limitValueTypeId { get; set; }

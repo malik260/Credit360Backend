@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using FintrakBanking.ViewModels.Setups.Finance;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -106,8 +107,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public int AddTempProductFee(ProductFeeViewModel productFee)
         {
-            var dataExist = this.context.tbl_Temp_Product_Fee.FirstOrDefault(x => x.ProductId == productFee.productId 
-                                                                && x.ProductFeeId == productFee.feeId 
+            var dataExist = this.context.tbl_Temp_Product_Fee.FirstOrDefault(x => x.ProductId == productFee.productId
+                                                                && x.ProductFeeId == productFee.feeId
                                                                 && x.Deleted == true); // .Find(accountId);
 
             var tempProductFeeEntity = dataExist;
@@ -126,7 +127,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CreatedBy = productFee.createdBy,
                     DateTimeCreated = genSetup.GetApplicationDate(),
                     Deleted = false,
-                    IsCurrent= true
+                    IsCurrent = true
                 };
 
                 var existingProductApprovalLog = context.tbl_Temp_Product.Find(productFee.productId);
@@ -174,12 +175,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public void ApproveProductFee(int productId, UserInfo user)
         {
-            var productFeeModel = context.tbl_Temp_Product_Fee.Where(x => x.ProductId == productId 
+            var productFeeModel = context.tbl_Temp_Product_Fee.Where(x => x.ProductId == productId
                                                                         && x.Deleted == false
                                                                         && x.IsCurrent == true);
             var productToUpdate = context.tbl_Product.Find(productId);
 
-            foreach( var p in productFeeModel)
+            foreach (var p in productFeeModel)
             {
                 var product = new tbl_Product_Charge_Fee()
                 {
@@ -197,7 +198,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 context.tbl_Product_Charge_Fee.Add(product);
                 context.tbl_Temp_Product_Fee.Remove(p);
             }
-            
+
             // Audit Section ---------------------------
             var audit = new tbl_Audit
             {
@@ -246,13 +247,13 @@ namespace FintrakBanking.Repositories.Setups.General
             //accountModel.DeletedBy = ;
             data.DateTimeDeleted = genSetup.GetApplicationDate();
             // Audit Section ---------------------------
-            var productFee = this.context.tbl_Fee.FirstOrDefault(x => x.FeeId == data.ChargeFeeId);
+            var productFee = this.context.tbl_Charge_Fee.FirstOrDefault(x => x.ChargeFeeId == data.ChargeFeeId);
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.ProductFeeDeleted,
                 StaffId = user.staffId,
                 BranchId = (short)user.BranchId,
-                Detail = $"Deleted tbl_Product Fee: {productFee.FeeName} to product {data.tbl_Product} ",
+                Detail = $"Deleted tbl_Product Fee: {productFee?.ChargeFeeName} to product {data.tbl_Product} ",
                 IPAddress = user.userIPAddress,
                 Url = user.applicationUrl,
                 ApplicationDate = genSetup.GetApplicationDate(),
@@ -293,7 +294,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<ProductFeeViewModel> GetAllMappedFeeByProduct(int productId)
         {
             return (from data in context.tbl_Temp_Product_Fee
-                    where data.ProductId == productId && data.Deleted == false 
+                    where data.ProductId == productId && data.Deleted == false
                     select new ProductFeeViewModel()
                     {
                         productFeeId = data.ProductFeeId,
@@ -382,45 +383,74 @@ namespace FintrakBanking.Repositories.Setups.General
                     }).ToList();
         }
 
-        public IEnumerable<FeeViewModel> GetUnmappedFeeToProduct(int productId)
-        {           
+        public IEnumerable<ChargeFeeViewModel> GetUnmappedFeeToProduct(int productId)
+        {
             var dataList = (from data in context.tbl_Product_Charge_Fee
                             where data.ProductId == productId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
-                            select data.ChargeFeeId).ToList();           
+                            select data.ChargeFeeId).ToList();
 
-            var fee = (from data in context.tbl_Fee
-                       where data.Deleted == false // && !dataList.Contains(data.ProductFeeId)
-                       select new FeeViewModel
-                       {
-                           feeId = data.FeeId,
-                           feeName = data.FeeName,
-                           accountCategoryId = data.AccountCategoryId,
-                           accountCategoryName = data.tbl_Account_Category.AccountCategoryName,
-                           feeTypeId = data.FeeTypeId,
-                           feeTypeName = string.Empty,//data.tbl_Fee_Type.FeeTypeName,
-                           feeTypeByAmountRequired = false,//data.tbl_Fee_Type.ByAmountRequired,
-                           byAmountRequired = false,//data.tbl_Fee_Type.ByAmountRequired,
-                           feeIntervalId = data.FeeIntervalId,
-                           feeIntervalName = data.tbl_Fee_Interval.FeeIntervalName,
-                           productTypeId = data.ProductTypeId,
-                           productTypeName = data.tbl_Product_Type.ProductTypeName,
-                           feeTargetId = data.FeeTargetId,
-                           feeTargetName = data.tbl_Fee_Target.FeeTargetName,
-                           glAccountId = data.GLAccountId,
-                           glAccountCode = data.tbl_Chart_Of_Account.AccountCode,
-                           includeCutOffDay = data.IncludeCutOffDay,
-                           cutOffDay = data.CutOffDay,
-                           companyId = data.CompanyId,
-                           feeDate = data.FeeDate,
-                           createdBy = data.CreatedBy,
-                       });
+            //var fee = (from data in context.tbl_Fee
+            //           where data.Deleted == false // && !dataList.Contains(data.ProductFeeId)
+            //           select new FeeViewModel
+            //           {
+            //               feeId = data.FeeId,
+            //               feeName = data.FeeName,
+            //               accountCategoryId = data.AccountCategoryId,
+            //               accountCategoryName = data.tbl_Account_Category.AccountCategoryName,
+            //               feeTypeId = data.FeeTypeId,
+            //               feeTypeName = string.Empty,//data.tbl_Fee_Type.FeeTypeName,
+            //               feeTypeByAmountRequired = false,//data.tbl_Fee_Type.ByAmountRequired,
+            //               byAmountRequired = false,//data.tbl_Fee_Type.ByAmountRequired,
+            //               feeIntervalId = data.FeeIntervalId,
+            //               feeIntervalName = data.tbl_Fee_Interval.FeeIntervalName,
+            //               productTypeId = data.ProductTypeId,
+            //               productTypeName = data.tbl_Product_Type.ProductTypeName,
+            //               feeTargetId = data.FeeTargetId,
+            //               feeTargetName = data.tbl_Fee_Target.FeeTargetName,
+            //               glAccountId = data.GLAccountId,
+            //               glAccountCode = data.tbl_Chart_Of_Account.AccountCode,
+            //               includeCutOffDay = data.IncludeCutOffDay,
+            //               cutOffDay = data.CutOffDay,
+            //               companyId = data.CompanyId,
+            //               feeDate = data.FeeDate,
+            //               createdBy = data.CreatedBy,
+            //           });
+
+            var chargeFee = (from data in context.tbl_Charge_Fee
+                             where data.Deleted == false
+                             select new ChargeFeeViewModel
+                             {
+                                 chargeFeeId = data.ChargeFeeId,
+                                 chargeName = data.ChargeFeeName,
+                                 productId = data.ProductTypeId,
+                                 amount = data.Amount,
+                                 rate = data.Rate,
+                                 feeTypeId = data.FeeTypeId,
+                                 feeTypeName = data.tbl_Fee_Type.FeeTypeName,
+                                 ledgerAccountId = data.GLAccountId,
+                                 ledgerAccountName = data.tbl_Chart_Of_Account.AccountName,
+                                 ledgerAccountCode = data.tbl_Chart_Of_Account.AccountCode,
+                                 accountCategoryId = data.AccountCategoryId,
+                                 accountCategoryName = data.tbl_Account_Category.AccountCategoryName,
+                                 targetId = data.FeeTargetId,
+                                 targetName = data.tbl_Fee_Target.FeeTargetName,
+                                 amortisationTypeId = data.FeeAmortisationTypeId,
+                                 amortisationTypeName = data.tbl_Fee_Amortisation_Type.FeeAmortisationTypeName,
+                                 frequencyTypeId = data.FeeIntervalId,
+                                 frequencyTypeName = data.tbl_Fee_Interval.FeeIntervalName
+                             });
+
+            //if (dataList.Any())
+            //{
+            //    fee = fee.Where(x => !dataList.Contains(x.feeId));
+            //}
 
             if (dataList.Any())
             {
-                fee = fee.Where(x => !dataList.Contains(x.feeId));
+                chargeFee = chargeFee.Where(x => !dataList.Contains(x.chargeFeeId));
             }
 
-            return fee;
+            return chargeFee;
         }
 
         //public IEnumerable<FeeViewModel> GetUnmappedFeesToTempProduct(int productId)

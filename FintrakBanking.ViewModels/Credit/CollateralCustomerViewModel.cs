@@ -10,9 +10,12 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralId { get; set; }
         public int detailId { get; set; }
         public int collateralTypeId { get; set; }
+        public string collateralTypeName { get; set; }
         public short collateralSubTypeId { get; set; }
         public int customerId { get; set; }
         public short currencyId { get; set; }
+        public string currencyCode { get; set; }
+        public string currency { get; set; }
         public string collateralCode { get; set; }
         public string camRefNumber { get; set; }
         public bool allowSharing { get; set; }
@@ -26,7 +29,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         // insurance
         public string referenceNumber { get; set; }
-        public decimal coverageAmount { get; set; }
+        public decimal sumInsured { get; set; }
         public string insuranceCompany { get; set; }
         public DateTime startDate { get; set; }
         public DateTime expiryDate { get; set; }
@@ -64,12 +67,102 @@ namespace FintrakBanking.ViewModels.Credit
         // guarantee
         public int collateralGauranteeId { get; set; }
         public int collateralCustomerId { get; set; }
-        public bool? isOwnedByCustomer { get; set; }
         public string institutionName { get; set; }
         public string guarantorAddress { get; set; }
         public string guarantorReferenceNumber { get; set; }
         public decimal guaranteeValue { get; set; }
         public DateTime? endDate { get; set; }
+
+        // casa
+        public int collateralCasaId { get; set; }
+        public bool isOwnedByCustomer { get; set; }
+
+        // immovableProperty
+        public int collateralPropertyId { get; set; }
+        public string propertyName { get; set; }
+        public int cityId { get; set; }
+        public short countryId { get; set; }
+        public DateTime? constructionDate { get; set; }
+        public string propertyAddress { get; set; }
+        public DateTime dateOfAcquisition { get; set; }
+        public DateTime lastValuationDate { get; set; }
+        public short? valuerId { get; set; }
+        public string valuerReferenceNumber { get; set; }
+        public short propertyValueBaseTypeId { get; set; }
+        public decimal? openMarketValue { get; set; }
+        public decimal collateralValue { get; set; }
+        public decimal? forcedSaleValue { get; set; }
+        public string stampToCover { get; set; }
+        public string valuationSource { get; set; }
+        public decimal originalValue { get; set; }
+        public decimal availableValue { get; set; }
+        public decimal? collateralUsableAmount { get; set; }
+        public string nearestLandMark { get; set; }
+        public string nearestBusStop { get; set; }
+        public decimal? longitude { get; set; }
+        public decimal? latitude { get; set; }
+
+        // marketableSecurities
+        public int collateralMarketableSecurityId { get; set; }
+        public string securityType { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public decimal dealAmount { get; set; }
+        public decimal lienUsableAmount { get; set; }
+        public string issuerName { get; set; }
+        public string issuerReferenceNumber { get; set; }
+        public decimal unitValue { get; set; }
+        public int numberOfUnits { get; set; }
+        public short rating { get; set; }
+        public short percentageInterest { get; set; }
+        public short? interestPaymentFrequency { get; set; }
+
+        // policy
+        public int collateralInsurancePolicyId { get; set; }
+        public string insurancePolicyNumber { get; set; }
+        public decimal premiumAmount { get; set; }
+        public decimal policyAmount { get; set; }
+        public string insuranceCompanyName { get; set; }
+        public string insurerAddress { get; set; }
+        public DateTime policyStartDate { get; set; }
+        public DateTime assignDate { get; set; }
+        public short? renewalFrequencyTypeId { get; set; }
+        public string insurerDetails { get; set; }
+        public DateTime policyRenewalDate { get; set; }
+
+        // preciousMetal
+        public int collateralPreciousMetalId { get; set; }
+        public string preciousMetalName { get; set; }
+        public string weightInGrammes { get; set; }
+        public decimal? valuationAmount { get; set; }
+        public double? unitRate { get; set; }
+        public string preciousMetalForm { get; set; }
+
+        // stock
+        public int? collateralStockId { get; set; }
+        //public string companyName { get; set; }
+        public int shareQuantity { get; set; }
+        public decimal marketPrice { get; set; }
+        public decimal amount { get; set; }
+        public decimal sharesSecurityValue { get; set; }
+        public decimal shareValueAmountToUse { get; set; }
+
+        // vehicle
+        public int collateralVehicleId { get; set; }
+        public string vehicleType { get; set; }
+        public string vehicleStatus { get; set; }
+        public string vehicleMake { get; set; }
+        public string modelName { get; set; }
+        public string manufacturedDate { get; set; }
+        public string registrationNumber { get; set; }
+        public string serialNumber { get; set; }
+        public string chasisNumber { get; set; }
+        public string engineNumber { get; set; }
+        public string nameOfOwner { get; set; }
+        public string registrationCompany { get; set; }
+        public decimal? resaleValue { get; set; }
+        public DateTime? valuationDate { get; set; }
+        public decimal? lastValuationAmount { get; set; }
+        public decimal invoiceValue { get; set; }
     }
 
     public class MiscellaneousNote
@@ -82,6 +175,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralCustomerViewModel : GeneralEntity
     {
         public int collateralCustomerId { get; set; }
+        public int collateralId { get; set; }
         public int collateralTypeId { get; set; }
         public string collateralType { get; set; }
         public string collateralCode { get; set; }
@@ -207,7 +301,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string valuationSource { get; set; }
         public decimal originalValue { get; set; }
         public decimal availableValue { get; set; }
-        public decimal? securityValue { get; set; }
+        public decimal securityValue { get; set; }
         public decimal? collateralUsableAmount { get; set; }
         public string remark { get; set; }
     }
@@ -350,6 +444,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string cityName { get; set; }
         public short? countryId { get; set; }
         public string countryName { get; set; }
+        public string accountNumber { get; set; }
+        public string valuerBVN { get; set; }
         public string emailAddress { get; set; }
         public string phoneNumber { get; set; }
         public string address { get; set; }
@@ -380,5 +476,20 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralTypeId { get; set; }
         public double haircut { get; set; }
         public int revaluationDuration { get; set; }
+    }
+
+    public class CustomerCollateralSearch
+    {
+        public int customerId { get; set; }
+        public string firstName { get; set; }
+        public string customerCode { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string accountNumber { get; set; }
+        public string currency { get; set; }
+        public int relationshipOfficerId { get; set; }
+        public int relationshipManagerId { get; set; }
+        public string customerName { get { return $"{this.firstName} {this.lastName}"; } }
+        public CollateralViewModel customerCollateral { get; set; }
     }
 }

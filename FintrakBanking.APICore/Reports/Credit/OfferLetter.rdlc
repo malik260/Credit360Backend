@@ -45,10 +45,22 @@
           <DataField>customerId</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="applicationDate">
+          <DataField>applicationDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="condition">
+          <DataField>condition</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="companyName">
+          <DataField>companyName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\CoreBankingDevServer\Documents\Austin\FBNClone\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\Tosin\Documents\Visual Studio 2017\Projects\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetter</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -83,7 +95,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>FIRST BANK NIGERIA LIMITED</Value>
+                    <Value>FIRST BANK OF NIGERIA LIMITED</Value>
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -95,8 +107,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>12.46283cm</Top>
-            <Left>0.58558cm</Left>
+            <Top>14.45cm</Top>
+            <Left>0.51687cm</Left>
             <Height>1.12169cm</Height>
             <Width>15.3653cm</Width>
             <Style>
@@ -131,8 +143,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>11.22182cm</Top>
-            <Left>0.58558cm</Left>
+            <Top>13.20899cm</Top>
+            <Left>0.51687cm</Left>
             <Height>1.13518cm</Height>
             <Width>15.3653cm</Width>
             <ZIndex>1</ZIndex>
@@ -168,8 +180,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>9.35811cm</Top>
-            <Left>0.58558cm</Left>
+            <Top>11.23062cm</Top>
+            <Left>0.5167cm</Left>
             <Height>1.83726cm</Height>
             <Width>15.3653cm</Width>
             <ZIndex>2</ZIndex>
@@ -207,13 +219,25 @@
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
-                      <Format>0.00;(0.00)</Format>
+                      <Format>0.00;(0.00) %</Format>
                       <TextDecoration>None</TextDecoration>
                       <Color>#000000</Color>
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value> interest on this investment is subject to 10% withholding tax (i.e) to be deducted on maturity. You are thereby encouraged to ensure that you go through the repayment schedule for a clearer understanding of how the loan is to be repaid.</Value>
+                    <Value> %</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <Format>0.00;(0.00) %</Format>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value> interest on this loan is subject to 10% withholding tax (i.e) to be deducted on maturity. You are thereby encouraged to ensure that you go through the repayment schedule for a clearer understanding of how the loan is to be repaid.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -228,8 +252,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>7.89766cm</Top>
-            <Left>0.58554cm</Left>
+            <Top>9.61385cm</Top>
+            <Left>0.5167cm</Left>
             <Height>1.44038cm</Height>
             <Width>15.36534cm</Width>
             <ZIndex>3</ZIndex>
@@ -258,6 +282,24 @@
                       <Format>0.00;(0.00)</Format>
                     </Style>
                   </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve"> </Value>
+                    <Style>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <Format>0.00;(0.00)</Format>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>%</Value>
+                    <Style>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <Format>0.00;(0.00) %</Format>
+                    </Style>
+                  </TextRun>
                 </TextRuns>
                 <Style>
                   <TextAlign>Left</TextAlign>
@@ -265,9 +307,9 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>MaturityAmount</rd:DefaultName>
-            <Top>6.55858cm</Top>
-            <Left>6.87884cm</Left>
-            <Height>0.52769cm</Height>
+            <Top>6.82316cm</Top>
+            <Left>6.77309cm</Left>
+            <Height>0.63352cm</Height>
             <Width>7.58154cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
@@ -300,9 +342,9 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>6.55858cm</Top>
-            <Left>0.62962cm</Left>
-            <Height>0.49241cm</Height>
+            <Top>6.82316cm</Top>
+            <Left>0.51718cm</Left>
+            <Height>0.63352cm</Height>
             <Width>4.51589cm</Width>
             <ZIndex>5</ZIndex>
             <Style>
@@ -333,9 +375,9 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>6.55858cm</Top>
-            <Left>5.25137cm</Left>
-            <Height>0.52769cm</Height>
+            <Top>6.82317cm</Top>
+            <Left>5.10369cm</Left>
+            <Height>0.63352cm</Height>
             <Width>1.45108cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
@@ -375,8 +417,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>5.92331cm</Top>
-            <Left>6.87884cm</Left>
+            <Top>6.1879cm</Top>
+            <Left>6.77309cm</Left>
             <Height>0.49416cm</Height>
             <Width>6.33016cm</Width>
             <ZIndex>7</ZIndex>
@@ -412,8 +454,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>FaceVale</rd:DefaultName>
-            <Top>5.32331cm</Top>
-            <Left>6.87884cm</Left>
+            <Top>5.43268cm</Top>
+            <Left>6.77309cm</Left>
             <Height>0.56472cm</Height>
             <Width>7.62487cm</Width>
             <ZIndex>8</ZIndex>
@@ -446,8 +488,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>5.90214cm</Top>
-            <Left>5.28662cm</Left>
+            <Top>6.15262cm</Top>
+            <Left>5.13894cm</Left>
             <Height>0.52944cm</Height>
             <Width>1.41583cm</Width>
             <ZIndex>9</ZIndex>
@@ -480,8 +522,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>5.3233cm</Top>
-            <Left>5.28662cm</Left>
+            <Top>5.4115cm</Top>
+            <Left>5.13894cm</Left>
             <Height>0.56473cm</Height>
             <Width>1.41583cm</Width>
             <ZIndex>10</ZIndex>
@@ -512,8 +554,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>5.92331cm</Top>
-            <Left>0.62963cm</Left>
+            <Top>6.17379cm</Top>
+            <Left>0.51723cm</Left>
             <Height>0.49416cm</Height>
             <Width>4.51588cm</Width>
             <ZIndex>11</ZIndex>
@@ -544,8 +586,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>5.32331cm</Top>
-            <Left>0.62964cm</Left>
+            <Top>5.43268cm</Top>
+            <Left>0.51718cm</Left>
             <Height>0.56472cm</Height>
             <Width>4.51587cm</Width>
             <ZIndex>12</ZIndex>
@@ -576,7 +618,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>FIRSTBANK NIGERIA LIMITED </Value>
+                    <Value>FIRST BANK OF NIGERIA LIMITED </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -587,7 +629,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>by applying for a loan, and based on the information provided by you we are pleased to grant your request to obtain the loan </Value>
+                    <Value>by applying for a loan, and based on the information provided by you we are pleased to grant your request to obtain the loan amount of </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -604,8 +646,10 @@
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
+                      <Format>'₦'#,0.00;('₦'#,0.00)</Format>
                       <TextDecoration>None</TextDecoration>
                       <Color>#000000</Color>
+                      <rd:FormatSymbolCulture>en-NG</rd:FormatSymbolCulture>
                     </Style>
                   </TextRun>
                   <TextRun>
@@ -626,9 +670,9 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>3.76121cm</Top>
-            <Left>0.62966cm</Left>
-            <Height>1.3857cm</Height>
+            <Top>3.72594cm</Top>
+            <Left>0.51718cm</Left>
+            <Height>1.54445cm</Height>
             <Width>15.3653cm</Width>
             <ZIndex>13</ZIndex>
             <Style>
@@ -662,7 +706,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
             <Top>2.98482cm</Top>
-            <Left>0.5944cm</Left>
+            <Left>0.51717cm</Left>
             <Height>0.67056cm</Height>
             <Width>9.50516cm</Width>
             <ZIndex>14</ZIndex>
@@ -709,7 +753,7 @@
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
             <Top>2.25253cm</Top>
-            <Left>0.59441cm</Left>
+            <Left>0.51718cm</Left>
             <Height>0.5559cm</Height>
             <Width>4.76786cm</Width>
             <ZIndex>15</ZIndex>
@@ -742,7 +786,7 @@
             </Paragraphs>
             <rd:DefaultName>Address</rd:DefaultName>
             <Top>1.07352cm</Top>
-            <Left>0.59441cm</Left>
+            <Left>0.51718cm</Left>
             <Height>1.10845cm</Height>
             <Width>4.76786cm</Width>
             <ZIndex>16</ZIndex>
@@ -779,7 +823,7 @@
             </Paragraphs>
             <rd:DefaultName>currentDate</rd:DefaultName>
             <Top>0.26186cm</Top>
-            <Left>0.59441cm</Left>
+            <Left>0.51718cm</Left>
             <Height>0.70583cm</Height>
             <Width>5.7897cm</Width>
             <ZIndex>17</ZIndex>
@@ -800,7 +844,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Fields!maturityDate.Value</Value>
+                    <Value>=First(Fields!maturityDate.Value, "OfferLetterDetails")</Value>
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -815,10 +859,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>MaturityAmount</rd:DefaultName>
-            <Top>7.16923cm</Top>
-            <Left>6.88692cm</Left>
+            <Top>7.63307cm</Top>
+            <Left>6.73918cm</Left>
             <Height>0.52769cm</Height>
-            <Width>7.61679cm</Width>
+            <Width>7.57346cm</Width>
             <ZIndex>18</ZIndex>
             <Style>
               <Border>
@@ -850,8 +894,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>7.16923cm</Top>
-            <Left>0.67295cm</Left>
+            <Top>7.63307cm</Top>
+            <Left>0.51713cm</Left>
             <Height>0.49241cm</Height>
             <Width>4.48064cm</Width>
             <ZIndex>19</ZIndex>
@@ -883,9 +927,9 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>7.16923cm</Top>
-            <Left>5.2947cm</Left>
-            <Height>0.49241cm</Height>
+            <Top>7.63307cm</Top>
+            <Left>5.13888cm</Left>
+            <Height>0.50482cm</Height>
             <Width>1.40775cm</Width>
             <ZIndex>20</ZIndex>
             <Style>
@@ -898,8 +942,48 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
+          <Textbox Name="Textbox2">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>In order for the loan to be processed, please ensure you meet the following conditions: </Value>
+                    <Style>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Fields!condition.Value</Value>
+                    <Style>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>3.23958in</Top>
+            <Left>0.20361in</Left>
+            <Height>0.48984in</Height>
+            <Width>6.04921in</Width>
+            <ZIndex>21</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>5.43614in</Height>
+        <Height>6.18614in</Height>
         <Style />
       </Body>
       <Width>6.45002in</Width>
@@ -922,6 +1006,41 @@
                 </Border>
               </Style>
             </Image>
+            <Textbox Name="companyName">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=First(Fields!companyName.Value, "OfferLetterDetails")</Value>
+                      <Style>
+                        <FontFamily>garamond</FontFamily>
+                        <FontSize>16pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>companyName</rd:DefaultName>
+              <Top>0.37375in</Top>
+              <Left>2.03973in</Left>
+              <Height>0.40625in</Height>
+              <Width>2.30277in</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
           </ReportItems>
           <Style>
             <Border>
@@ -930,7 +1049,7 @@
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>1.05344in</Height>
+          <Height>1.02219in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>

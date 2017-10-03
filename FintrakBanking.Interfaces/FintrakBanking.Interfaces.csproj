@@ -48,7 +48,9 @@
     <Compile Include="CASA\ICasaRepository.cs" />
     <Compile Include="CreditLimitValidations\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IAppraisalMemorandumRepository.cs" />
+    <Compile Include="Credit\ICallMemoRepository.cs" />
     <Compile Include="Credit\ICollateralDocumentRepository.cs" />
+    <Compile Include="Credit\IConditionPrecedentRepository.cs" />
     <Compile Include="Credit\ICreditTemplateRepository.cs" />
     <Compile Include="Credit\ICustomerCollateralRepository.cs" />
     <Compile Include="Credit\ILimitRepository.cs" />
@@ -84,6 +86,7 @@
     <Compile Include="Setups\Finance\IChartOfAccountRepository.cs" />
     <Compile Include="Setups\Finance\ITaxRepository.cs" />
     <Compile Include="Setups\General\IAccountSensitivityRepository.cs" />
+    <Compile Include="Setups\General\IAccreditedConsultantsRepository.cs" />
     <Compile Include="Setups\General\IAuthenticationRepository.cs" />
     <Compile Include="Setups\General\IAuthorizationRepository.cs" />
     <Compile Include="Setups\General\IBranchRepository.cs" />
