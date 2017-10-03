@@ -1,16 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FintrakBanking.ViewModels.Setups.Approval;
-using FintrakBanking.Interfaces.Setups.Approval;
-using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.ViewModels;
-using System.Web.Http;
-using System.Net.Http;
-using System.Net;
 using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.ViewModels;
+using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -18,7 +17,7 @@ namespace FintrakBanking.APICore.Controllers
     public class ApprovalLevelStaffController : ApiControllerBase
     {
         private IApprovalLevelStaffRepository repo;
-        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        private TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public ApprovalLevelStaffController(IApprovalLevelStaffRepository _repo)
         {
@@ -26,6 +25,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Approval Level Staff
+
         [HttpPost]
         [Route("approval-level-staff")]
         public HttpResponseMessage AddApprovalLevelStaff([FromBody] ApprovalLevelStaffViewModel model)
@@ -48,7 +48,6 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
-
         }
 
         [HttpGet]
@@ -135,9 +134,57 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException, stack = ex.StackTrace });
             }
-
         }
 
-        #endregion
+        #endregion Approval Level Staff
+
+        #region Workflow Tracker
+
+        [HttpGet]
+        [Route("work-flow-tracker/operationId/{id}/targetId/{targetId}")]
+        public async Task<HttpResponseMessage> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId)
+        {
+            try
+            {
+                var data = await repo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, count = data.Count() });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("work-flow-tracker/approval-trail/all")]
+        public async Task<HttpResponseMessage> GetAllRecordsOnApprovalTrail([FromUri] int page, [FromUri] int itemsPerPage)
+        {
+            try
+            {
+                var item = repo.GetAllRecordsOnApprovalTrail(token.GetCompanyId);
+
+                var data = await item.Skip(page).Take(itemsPerPage)
+                    .ToListAsync();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, count = item.Count() });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = item.Count() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        #endregion Workflow Tracker
     }
 }

@@ -1,6 +1,5 @@
 using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Credit;
@@ -15,16 +14,14 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-
     [RoutePrefix("api/v1/credit")]
     public class LoanApplicationController : ApiControllerBase
     {
-        
         private ILoanApplicationRepository repoApply;
         private ILoanRepository loanRepository;
         private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
-        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        private TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public LoanApplicationController(
             ILoanApplicationRepository _repoApply,
@@ -40,6 +37,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Loan Application
+
         [HttpGet]
         [Route("loan-application")]
         public HttpResponseMessage GetAllLoanApplications()
@@ -95,7 +93,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpGet]
         [Route("loan-application/{id}")]
         public HttpResponseMessage GetLoanApplicationById(int id)
@@ -135,7 +132,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-
 
         [HttpGet]
         [Route("loan-application/search/{searchCriteria}")]
@@ -202,9 +198,7 @@ namespace FintrakBanking.APICore.Controllers
                     throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
                 }
 
-
                 //var model =  creditLimitValidationsRepository.ValidateAmountByBranch1(entity.branchId).Difference;
-
 
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -271,7 +265,6 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum/approved-loans")]
         public HttpResponseMessage GetCamProcessedLoanApplications()
@@ -305,7 +298,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "record not updated successfully" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "record updated successfully"});
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "record updated successfully" });
             }
             catch (Exception e)
             {
@@ -352,7 +345,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        #endregion
+
+        #endregion Loan Application
 
         #region Loan Preliminary Evaluation
 
@@ -563,6 +557,7 @@ namespace FintrakBanking.APICore.Controllers
                     new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-        #endregion
+
+        #endregion Loan Preliminary Evaluation
     }
 }

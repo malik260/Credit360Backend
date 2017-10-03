@@ -315,7 +315,7 @@ namespace FintrakBanking.Repositories.Credit
                     responseStaffId = x.ResponseStaffId,
                     requestStaffId = x.RequestStaffId,
                     fromApprovalLevelId = x.FromApprovalLevelId,
-                    toApprovalLevelId = x.ToApprovalLevelId,
+                    toApprovalLevelId = (int)x.ToApprovalLevelId,
                     approvalStateId = x.ApprovalStateId,
                     approvalStatusId = x.ApprovalStatusId,
                     comment = x.Comment,

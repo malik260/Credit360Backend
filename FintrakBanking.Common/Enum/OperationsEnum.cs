@@ -20,6 +20,8 @@ namespace FintrakBanking.Common.Enum
         RevolvingLoanBooking = 13,
         ContigentLoanBooking = 14,
         CreditDailyInterestAccural = 15,
-        LoanRepayment = 16
+        LoanRepayment = 16,
+        ChargeReversal = 17,
+        LoanPrepayment  = 18,
     }
 }

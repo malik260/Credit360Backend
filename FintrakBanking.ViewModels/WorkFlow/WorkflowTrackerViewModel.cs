@@ -1,5 +1,4 @@
-﻿ 
-using System; 
+﻿using System;
 
 namespace FintrakBanking.ViewModels.WorkFlow
 {
@@ -28,8 +27,6 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int approvalStatusId { get; set; }
         public DateTime? systemResponseDate { get; set; }
         public DateTime? systemArrivalDate { get; set; }
-
-
-
+        public int operationId { get; set; }
     }
 }

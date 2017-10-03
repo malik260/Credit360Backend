@@ -4,7 +4,8 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class LoanPaymentScheduleInputViewModel
+    public class LoanPaymentScheduleInputViewModel: GeneralEntity
+
     {
         public short scheduleMethodId { get; set; }
         public Double principalAmount { get; set; }
@@ -19,6 +20,16 @@ namespace FintrakBanking.ViewModels.Credit
         public short accurialBasis { get; set; }
         public double integralFeeAmount { get; set; }
         public short firstDayType { get; set; }
+        public short loanChangeType { get; set; }
+        public int loanId  { get; set; }
+        public Double payAmount{ get; set; }
+        public Double newAmount { get; set; }
+        public int productId { get; set; }
+        public short newPrincipalFrequency { get; set; }
+        public short newInterestFrequency { get; set; }
+        public DateTime newPrincipalFirstpaymentDate { get; set; }
+        public DateTime newInterestFirstpaymentDate { get; set; }
+
 
         public List<IrregularLoanScheduleInputViewModel> irregularPaymentSchedule { get; set; }
         //public int numberOfInstallments { get; set; }

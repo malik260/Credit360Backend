@@ -15,7 +15,7 @@ namespace FintrakBanking.Common
             SendHtmlFormattedEmail(recipient, messageSubject, body);
         }
 
-        private string PopulateBody(string description, string urlLink)
+        private static string PopulateBody(string description, string urlLink)
         {
             string body;
             using (var reader = new StreamReader(HostingEnvironment.MapPath("~/EmailTemplates/AssignNewTask.html") ?? throw new InvalidOperationException()))
