@@ -1310,7 +1310,7 @@ namespace FintrakBanking.Repositories.Credit
                          join d in context.tbl_Limit on c.LimitId equals d.LimitId
                          where b.StaffId == c.TargetId && c.LimitId == d.LimitId
                          && d.LimitMetricId == (int)LimitMatricEnum.NonPerformingLoan
-                         && c.LimitTypeId == (int)LimitType.AccountOfficer
+                         && c.LimitTypeId == (int)LimitType.RelationshipManager
                          group a by new
                          { a.RelationshipManagerId, c.LimitId, c.MaximumValue } into groupedQ
                          select new LimitSuspensionViewModel()
@@ -1591,7 +1591,7 @@ namespace FintrakBanking.Repositories.Credit
                          select new LoanViewModel()
                          {
                              loanId = a.TermLoanId,
-                             productPriceIndexRate = a.ProductPriceIndexRate,
+                             productPriceIndexRate = (decimal)a.ProductPriceIndexRate,
                              customerRiskRatingId = (int)a.CustomerRiskRatingId,
                              customerId = a.CustomerId,
                              productId = a.ProductId,
@@ -1671,7 +1671,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 addLoanScheduleArchive.LoanId = item.loanId;
-                addLoanScheduleArchive.ProductPriceIndexRate = item.productPriceIndexRate;
+                addLoanScheduleArchive.ProductPriceIndexRate = (double)item.productPriceIndexRate;
                 addLoanScheduleArchive.CustomerRiskRatingId = item.customerRiskRatingId;
                 addLoanScheduleArchive.CustomerId = item.customerId;
                 addLoanScheduleArchive.ProductId = item.productId;
@@ -2329,7 +2329,7 @@ namespace FintrakBanking.Repositories.Credit
                          select new LoanViewModel()
                          {
                              loanId = a.TermLoanId,
-                             productPriceIndexRate = a.ProductPriceIndexRate,
+                             productPriceIndexRate = (decimal)a.ProductPriceIndexRate,
                              customerRiskRatingId = (int)a.CustomerRiskRatingId,
                              customerId = a.CustomerId,
                              productId = a.ProductId,
@@ -2409,7 +2409,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 addLoanScheduleArchive.LoanId = item.loanId;
-                addLoanScheduleArchive.ProductPriceIndexRate = item.productPriceIndexRate;
+                addLoanScheduleArchive.ProductPriceIndexRate = (double)item.productPriceIndexRate;
                 addLoanScheduleArchive.CustomerRiskRatingId = item.customerRiskRatingId;
                 addLoanScheduleArchive.CustomerId = item.customerId;
                 addLoanScheduleArchive.ProductId = item.productId;

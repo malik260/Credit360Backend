@@ -100,7 +100,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
         public int customerRiskRatingId { get; set; }
-        public double productPriceIndexRate { get; set; }
+       // public double productPriceIndexRate { get; set; }
         public bool allowForceDebitRepayment { get; set; }
 
         //.............Fee Attribute.....................//

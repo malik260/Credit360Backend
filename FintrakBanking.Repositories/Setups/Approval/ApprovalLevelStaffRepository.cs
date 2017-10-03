@@ -244,12 +244,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var result = (from a in context.tbl_Approval_Trail
                           join b in context.tbl_Approval_Level on a.FromApprovalLevelId equals b.ApprovalLevelId
-                          join c in context.tbl_Approval_Group_Mapping on b.GroupOperationMappingId equals c.GroupOperationMappingId
+                          join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupOperationMappingId
                           join d in context.tbl_Approval_Group on c.GroupId equals d.GroupId
                           join e in context.tbl_Operations on c.OperationId equals e.OperationId
 
                           join f in context.tbl_Approval_Level on a.ToApprovalLevelId equals f.ApprovalLevelId
-                          join g in context.tbl_Approval_Group_Mapping on f.GroupOperationMappingId equals g.GroupOperationMappingId
+                          join g in context.tbl_Approval_Group_Mapping on f.GroupId equals g.GroupOperationMappingId
                           join h in context.tbl_Approval_Group on g.GroupId equals h.GroupId
                           join i in context.tbl_Staff on a.RequestStaffId equals i.StaffId
                           join j in context.tbl_Staff on a.ResponseStaffId equals j.StaffId
