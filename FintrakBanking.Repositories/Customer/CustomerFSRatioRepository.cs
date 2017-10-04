@@ -264,6 +264,72 @@ namespace FintrakBanking.Repositories.Customer
             return data.SingleOrDefault();
         }
 
+        private decimal GetCustomerFSRatio(int customerId, short ratioCaptionId, DateTime fsDate, int companyId)
+        {
+            var customerFS = from a in context.tbl_Customer_FS_Caption_Detail
+                             where a.CustomerId == customerId && a.FSDate == fsDate
+                             select a;
+
+            var ratios = from a in context.tbl_Customer_FS_Ratio_Detail
+                         where a.tbl_Customer_FS_Ratio_Caption.CompanyId == companyId && a.RatioCaptionId == ratioCaptionId
+                         select a;
+
+            var numerator = (from a in ratios
+                             join b in customerFS on a.FSCaptionId equals b.FSCaptionId
+                             where a.DivisorTypeId == 1
+                             select (decimal)a.Multiplier * b.Amount).Sum();
+
+            var demoninator = (from a in ratios
+                             join b in customerFS on a.FSCaptionId equals b.FSCaptionId
+                             where a.DivisorTypeId == 2
+                             select (decimal)a.Multiplier * b.Amount).Sum();
+
+
+            if (demoninator == 0)
+                return numerator;
+            else
+                return numerator / demoninator;
+        }
+
+
+        public List<CustomerFSRatioCaptionReportViewModel> GetCustomerFSRatioValues(int customerId)
+        {
+            //var customerCaptions = (from data in context.tbl_Customer_FS_Caption_Detail
+            //                where data.CustomerId == customerId //orderby account.AccountCode ascending, account.AccountName ascending
+            //                select data.FSCaptionId);
+
+            var customerFSDates = (from a in context.tbl_Customer_FS_Caption_Detail
+                             where a.CustomerId == customerId 
+                             orderby a.FSDate descending
+                             select a.FSDate).Distinct();
+
+            var lastFourDates = customerFSDates.Take(4).ToList();
+
+            int count = lastFourDates.Count();
+
+            var ratios = from a in context.tbl_Customer_FS_Ratio_Caption
+                         //where customerCaptions.Where(x => x.)
+                         orderby a.Position
+                         select new CustomerFSRatioCaptionReportViewModel
+                         {
+                             ratioCaptionId = a.RatioCaptionId,
+                             ratioCaptionName = a.RatioCaption,
+                             position = a.Position,
+                             fsDate1 = count >= 4 ? lastFourDates[3] : new DateTime(1900, 1, 1),
+                             fsDate2 = count >= 3 ? lastFourDates[2] : new DateTime(1900, 1, 1),
+                             fsDate3 = count >= 2 ? lastFourDates[1] : new DateTime(1900, 1, 1),
+                             fsDate4 = count >= 1 ? lastFourDates[0] : new DateTime(1900, 1, 1),
+                             ratioValue1 = count >= 4 ? GetCustomerFSRatio(customerId, a.RatioCaptionId, lastFourDates[3], a.CompanyId) : 0,
+                             ratioValue2 = count >= 3 ? GetCustomerFSRatio(customerId, a.RatioCaptionId, lastFourDates[2], a.CompanyId) : 0,
+                             ratioValue3 = count >= 2 ? GetCustomerFSRatio(customerId, a.RatioCaptionId, lastFourDates[1], a.CompanyId) : 0,
+                             ratioValue4 = count >= 1 ? GetCustomerFSRatio(customerId, a.RatioCaptionId, lastFourDates[0], a.CompanyId) : 0,
+                         };
+
+            return ratios.ToList();
+           
+        }
+
+
         public bool UpdateFSRatioDetail(int ratioDetailId, CustomerFSRatioDetailViewModel model)
         {
             var data = this.context.tbl_Customer_FS_Ratio_Detail.Find(ratioDetailId);

@@ -10,7 +10,24 @@ namespace FintrakBanking.ViewModels.Customer
         public short ratioCaptionId { get; set; }
         public string ratioCaptionName { get; set; }
         public bool annualised { get; set; }
+        public int position { get; set; }        
+    }
+
+    public class CustomerFSRatioCaptionReportViewModel : GeneralEntity
+    {
+
+        public short ratioCaptionId { get; set; }
+        public string ratioCaptionName { get; set; }
+        public bool annualised { get; set; }
         public int position { get; set; }
+        public DateTime fsDate1 { get; set; }
+        public DateTime fsDate2 { get; set; }
+        public DateTime fsDate3 { get; set; }
+        public DateTime fsDate4 { get; set; }
+        public decimal ratioValue1 { get; set; }
+        public decimal ratioValue2 { get; set; }
+        public decimal ratioValue3 { get; set; }
+        public decimal ratioValue4 { get; set; }
     }
 
     public class CustomerFSRatioDetailViewModel : GeneralEntity
