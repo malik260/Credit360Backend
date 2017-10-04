@@ -168,6 +168,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Collateral_Valuer_Type> tbl_Collateral_Valuer_Type { get; set; }
         public virtual DbSet<tbl_Collateral_Vehicle> tbl_Collateral_Vehicle { get; set; }
         public virtual DbSet<tbl_Credit_Appraisal_Memorandum> tbl_Credit_Appraisal_Memorandum { get; set; }
+        public virtual DbSet<tbl_Credit_Appraisal_Memorandum_Document> tbl_Credit_Appraisal_Memorandum_Document { get; set; }
         public virtual DbSet<tbl_Credit_Appraisal_Memorandum_Loan_Detail> tbl_Credit_Appraisal_Memorandum_Loan_Detail { get; set; }
         public virtual DbSet<tbl_Credit_Template> tbl_Credit_Template { get; set; }
         public virtual DbSet<tbl_Limit> tbl_Limit { get; set; }
@@ -285,11 +286,6 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Approval_Group)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<tbl_Approval_Group>()
-                .HasMany(e => e.tbl_Approval_Level)
-                .WithRequired(e => e.tbl_Approval_Group)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<tbl_Approval_Level>()
                 .Property(e => e.MaximumAmount)
                 .HasPrecision(19, 4);
@@ -312,6 +308,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Approval_Trail1)
                 .WithOptional(e => e.tbl_Approval_Level1)
                 .HasForeignKey(e => e.ToApprovalLevelId);
+
+            modelBuilder.Entity<tbl_Approval_Level>()
+                .HasMany(e => e.tbl_Credit_Appraisal_Memorandum_Document)
+                .WithRequired(e => e.tbl_Approval_Level)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Approval_Level>()
                 .HasMany(e => e.tbl_Credit_Template)
@@ -1565,7 +1566,17 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Loan_Force_Debit)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
                 .HasMany(e => e.tbl_Loan_Guarantor)
+                .WithRequired(e => e.tbl_Product_Type)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Type>()
+                .HasMany(e => e.tbl_Loan_Past_Due)
                 .WithRequired(e => e.tbl_Product_Type)
                 .WillCascadeOnDelete(false);
 
@@ -1892,8 +1903,6 @@ namespace FintrakBanking.Entities.Models
                 .WithOptional(e => e.tbl_Tax1)
                 .HasForeignKey(e => e.SecondaryTaxId);
 
-            modelBuilder.Entity<tbl_Call_Memo>();
-
             modelBuilder.Entity<tbl_Call_Memo_Limit>()
                 .Property(e => e.MinimumAmount)
                 .HasPrecision(19, 4);
@@ -1926,6 +1935,10 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Collateral_Casa>()
                 .Property(e => e.Remark)
                 .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .Property(e => e.CollateralValue)
+                .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Collateral_Customer>()
                 .Property(e => e.CamRefNumber)
@@ -2347,6 +2360,11 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Collateral_Vehicle>()
                 .Property(e => e.Remark)
                 .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Credit_Appraisal_Memorandum>()
+                .HasMany(e => e.tbl_Credit_Appraisal_Memorandum_Document)
+                .WithRequired(e => e.tbl_Credit_Appraisal_Memorandum)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Credit_Appraisal_Memorandum>()
                 .HasMany(e => e.tbl_Credit_Appraisal_Memorandum_Loan_Detail)

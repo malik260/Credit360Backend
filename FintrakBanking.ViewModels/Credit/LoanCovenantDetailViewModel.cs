@@ -17,6 +17,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string frequencyTypeName { get; set; }
         public string loanRef { get; set; }
         public string productName { get; set; }
+        public DateTime? dueDate { get; set; }
+        public string loanRefNumber { get; set; }
+        public string relationshipOfficer { get; set; }
+        public string relationshipManager { get; set; }
+        public string officerEmail { get; set; }
+        public string managerEmail { get; set; }
     }
 
     public class LoanCovenantTypeViewModel : GeneralEntity
@@ -26,5 +32,4 @@ namespace FintrakBanking.ViewModels.Credit
         public bool requireAmount { get; set; }
         public bool requireFrequency { get; set; }
     }
-
 }

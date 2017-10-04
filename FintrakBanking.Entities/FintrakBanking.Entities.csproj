@@ -127,6 +127,7 @@
     <Compile Include="Models\tbl_COT.cs" />
     <Compile Include="Models\tbl_Country.cs" />
     <Compile Include="Models\tbl_Credit_Appraisal_Memorandum.cs" />
+    <Compile Include="Models\tbl_Credit_Appraisal_Memorandum_Document.cs" />
     <Compile Include="Models\tbl_Credit_Appraisal_Memorandum_Loan_Detail.cs" />
     <Compile Include="Models\tbl_Credit_Template.cs" />
     <Compile Include="Models\tbl_Currency.cs" />

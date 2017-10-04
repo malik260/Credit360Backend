@@ -9,12 +9,6 @@ namespace FintrakBanking.Entities.Models
     [Table("core.tbl_Tenor_Mode")]
     public partial class tbl_Tenor_Mode
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Tenor_Mode()
-        {
-            tbl_Approval_Level = new HashSet<tbl_Approval_Level>();
-        }
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short TenorModeId { get; set; }
@@ -22,8 +16,5 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string TenorModeName { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Level> tbl_Approval_Level { get; set; }
     }
 }

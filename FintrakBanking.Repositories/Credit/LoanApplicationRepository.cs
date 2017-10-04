@@ -86,7 +86,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerId = a.RelationshipManagerId,
                             relationshipManagerName =
                                 a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-                             //isInvestmentGrade = a.IsInvestmentGrade ,
+                            //isInvestmentGrade = a.IsInvestmentGrade ,
                             misCode = a.MISCode,
 
                             productId = (short)a.ProductId,
@@ -126,7 +126,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (level != null)
                 {
-                    levelGroupId = level.GroupId;
+                    levelGroupId = (int)level.GroupId;
 
                     var groupApprovalLevelIds = context.tbl_Approval_Level
                         .Where(x => x.GroupId == levelGroupId)
@@ -614,6 +614,7 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
                         join d in context.tbl_Credit_Appraisal_Memorandum_Loan_Detail on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
+                        join e in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals e.AppraisalMemorandumId
                         where a.CompanyId == companyId && a.Deleted == false
                               && a.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
@@ -655,9 +656,9 @@ namespace FintrakBanking.Repositories.Credit
                             //loanStatusId = a.LoanStatusId,
                             //loanStatusName = a.tbl_Loan_Type.AccountStatus,
                             camReference = c.CAMRef,
-                            camDocumentation = c.CAMDocumentation,
+                            camDocumentation = e.CAMDocumentation,
                             appraisalMemorandumId = c.AppraisalMemorandumId,
-                            loanDetails = c.LoanDetails,
+                            //loanDetails = c.LoanDetails,
                             productId = (short)a.ProductId,
                             productTypeId = a.tbl_Product.ProductTypeId,
                             productTypeName = a.tbl_Product.tbl_Product_Type.ProductTypeName,
@@ -685,7 +686,6 @@ namespace FintrakBanking.Repositories.Credit
             // r.loanTypeId == (int)LoanTypeEnum.Single) || (context.tbl_Customer_Group_Mapping
             // .Count(x => x.CustomerGroupId == r.customerGroupId) >= context.tbl_Loan.Count(g => g.CustomerGroupId == r.customerGroupId)
             //                                                     && r.loanTypeId == (int)LoanTypeEnum.CustomerGroup));
-
 
             return data;
         }
