@@ -60,11 +60,11 @@
     <Compile Include="Credit\ColleralCustomFieldsDataViewModel.cs" />
     <Compile Include="Credit\ConditionPrecedentViewModel.cs" />
     <Compile Include="Credit\CurrentCustomerExposure.cs" />
-    <Compile Include="Credit\DailyInterestAccrualViewModel.cs" />
     <Compile Include="Credit\ExistingLoanApplicationViewModel.cs" />
     <Compile Include="Credit\LimitViewModel.cs" />
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
     <Compile Include="Credit\LoanApplicationViewModel.cs" />
+    <Compile Include="Credit\LoanCovenantDetailViewModel.cs" />
     <Compile Include="Credit\LoanDocumentViewModel.cs" />
     <Compile Include="Credit\LoanPaymentScheduleInput.cs" />
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />

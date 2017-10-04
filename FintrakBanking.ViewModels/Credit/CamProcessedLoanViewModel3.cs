@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Credit
 {
-    public class CamProcessedLoanViewModel3 : LoanApplicationViewModel
+    public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
         public string loanDetails { get; set; }
         public string camReference { get; set; }
