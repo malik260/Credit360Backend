@@ -38,7 +38,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? fromLevelId = null;
         private int currentStateId;
         private int newStateId = (int)ApprovalState.Processing;
+        private int tenor = 0;
         private decimal amount = 0;
+        private bool investmentGrade = false;
         private bool saved = false;
         private bool useOrganogram = false;
         private DateTime systemDate = DateTime.Now;
@@ -54,6 +56,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int OperationId { set { operationId = value; } }
         public decimal Amount { set { amount = value; } }
         public string Comment { set { comment = value; } }
+        public int Tenor { set { tenor = value; } }
+        public bool InvestmentGrade { set { investmentGrade = value; } }
         public bool Vote { set { vote = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int NextLevelId { set { nextLevelId = value; } }
@@ -385,24 +389,34 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.nextLevelId != null && this.amount > 0 && ActionIsApprovalDecision())
             {
-                decimal staffCeiling = 0;
-                var levelStaff = context.tbl_Approval_Level_Staff.Where(x => x.StaffId == this.staffId && x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
-
-                if (levelStaff != null)
+                if (WithinAllLimits() == true)
                 {
-                    staffCeiling = levelStaff.MaximumAmount;
-                }
-
-                if (this.amount > staffCeiling)
+                    this.EndProcess((int)ApprovalStatusEnum.Approved);
+                } else
                 {
                     this.statusId = (int)ApprovalStatusEnum.Authorised;
                 }
-
-                if (this.amount <= staffCeiling)
-                {
-                    this.EndProcess((int)ApprovalStatusEnum.Approved);
-                }
             }
+        }
+
+        private bool WithinTenorLimit() // TODO
+        {
+            return true;
+        }
+
+        private bool WithinMaximumLimit() // TODO
+        {
+            return true;
+        }
+
+        private bool WithinInvestmentGradeLimit() // TODO
+        {
+            return true;
+        }
+
+        private bool WithinAllLimits()
+        {
+            return WithinTenorLimit() == true && WithinMaximumLimit() == true && WithinInvestmentGradeLimit() == true;
         }
 
         private void SetState()
