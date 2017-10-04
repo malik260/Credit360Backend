@@ -6,20 +6,6 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class LoanRepaymentScheduleViewModel
-    {
-        public int loanId { get; set; }
-        public int customerId { get; set; }
-        public decimal principalRepayment { get; set; }
-        public decimal principalAmount { get; set; }
-        public decimal interestAccrual { get; set; }
-        public string productName { get; set; }
-        public double interestRate { get; set; }
-        public double tenor { get; set; }
-        public DateTime terminationDate { get; set; }
-        public DateTime effectiveDate { get; set; }
-        public string totalRepayment { get { return (principalRepayment + interestAccrual).ToString("#,#.00#"); } }
-    }
 
     public class LoanViewModel : GeneralEntity
     {
@@ -29,7 +15,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
         public int loanApplicationId { get; set; }
-
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
@@ -78,10 +63,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool dischargeLetter { get; set; }
         public bool suspendInterest { get; set; }
         public bool booked { get; set; }
-        public bool ? scheduled { get; set; }
-        public bool ? isScheduledPrepayment { get; set; }
-        public decimal ? scheduledPrepaymentAmount { get; set; }
-        public DateTime ? scheduledPrepaymentDate { get; set; }
+        public bool? scheduled { get; set; }
+        public bool? isScheduledPrepayment { get; set; }
+        public decimal? scheduledPrepaymentAmount { get; set; }
+        public DateTime? scheduledPrepaymentDate { get; set; }
         public short scheduledPrepaymentFrequencyTypeId { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public string firstName { get; set; }
@@ -100,7 +85,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
         public int customerRiskRatingId { get; set; }
-       // public double productPriceIndexRate { get; set; }
+      //  public double productPriceIndexRate { get; set; }
         public bool allowForceDebitRepayment { get; set; }
 
         //.............Fee Attribute.....................//
@@ -108,7 +93,6 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime paymentDate { get; set; }
         public decimal totalAmount { get; set; }
         public int chargeFeeId { get; set; }
-
 
         //.............Other Attributes................//
         public int productTypeId { get; set; }
@@ -127,25 +111,23 @@ namespace FintrakBanking.ViewModels.Credit
         public string pricipalFrequencyTypeName { get; set; }
         public string interestFrequencyTypeName { get; set; }
 
-
-        //............Loan Repayment Schedule Model..........................//
+      //  ............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
-        //............End of Loan Repayment Schedule Model.....................//
+      //  ............End of Loan Repayment Schedule Model.....................//
 
-
-        //...........Other Loans Types Model........................//
-        public RevolvingLoanViewModel revolvingLoanInput { get; set; }
+    //    ...........Other Loans Types Model........................//
+       public RevolvingLoanViewModel revolvingLoanInput { get; set; }
         public ContingentLoanViewModel contingentLoanInput { get; set; }
-        //...........End of Other Loans Types Model.................//
+     //   ...........End of Other Loans Types Model.................//
 
 
-        //......Loan Relational Table View Mapping Models..............//
+       // ......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
 
-        //......End f Loan Relational Table View Mapping Models......//
+    //    ......End f Loan Relational Table View Mapping Models......//
 
 
     }
@@ -329,7 +311,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal newFeeAmount { get; set; }
         public decimal feeAmountDiff { get; set; }
         public int casaAccountId { get; set; }
-        public bool required {get; set;}
+        public bool required { get; set; }
         public bool recurring { get; set; }
 
     }
@@ -346,19 +328,19 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanGuarantorViewModel
     {
-    public short loanGuarantorId { get; set; }
-    public int loanId { get; set; }
-    public string fullName { get; set; }
-    public string firstname { get; set; }
-    public string lastname { get; set; }
-    public string middlename { get; set; }
-    public string phoneNumber1 { get; set; }
-    public string phoneNumber2 { get; set; }
-    public string address { get; set; }
-    public string relationship { get; set; }
-    public int? relationshipDuration { get; set; }
-    public string emailAddress { get; set; }
-    public string bvn { get; set; }
+        public short loanGuarantorId { get; set; }
+        public int loanId { get; set; }
+        public string fullName { get; set; }
+        public string firstname { get; set; }
+        public string lastname { get; set; }
+        public string middlename { get; set; }
+        public string phoneNumber1 { get; set; }
+        public string phoneNumber2 { get; set; }
+        public string address { get; set; }
+        public string relationship { get; set; }
+        public int? relationshipDuration { get; set; }
+        public string emailAddress { get; set; }
+        public string bvn { get; set; }
 
     }
 

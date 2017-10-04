@@ -4,6 +4,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,7 +38,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? fromLevelId = null;
         private int currentStateId;
         private int newStateId = (int)ApprovalState.Processing;
+        private int tenor = 0;
         private decimal amount = 0;
+        private bool investmentGrade = false;
         private bool saved = false;
         private bool useOrganogram = false;
         private DateTime systemDate = DateTime.Now;
@@ -53,6 +56,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int OperationId { set { operationId = value; } }
         public decimal Amount { set { amount = value; } }
         public string Comment { set { comment = value; } }
+        public int Tenor { set { tenor = value; } }
+        public bool InvestmentGrade { set { investmentGrade = value; } }
         public bool Vote { set { vote = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int NextLevelId { set { nextLevelId = value; } }
@@ -174,17 +179,32 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 && x.ProductClassId == this.productClassId
                                 && x.ProductId == this.productId
                             )
-                            .Select(x => x.tbl_Approval_Group)
-                            .SelectMany(x => x.tbl_Approval_Level)
-                            .Where(x => x.IsActive == true)
-                            .OrderBy(x => x.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position)
-                            .ThenBy(x => x.Position);
+                            .Join(context.tbl_Approval_Group, m => m.GroupId, g => g.GroupId, (m, g) => new { m, g })
+                            .Join(context.tbl_Approval_Level, mg => mg.m.GroupId, l => l.GroupId, (mg, l) => 
+                            new { Mapping = mg.m, Level = l })
+                            .Where(x => x.Level.IsActive == true)
+                            .Select(x => new WorkflowSetup
+                            {
+                                GroupPosition = x.Mapping.Position,
+                                LevelPosition = x.Level.Position,
+                                Staff = x.Level.tbl_Approval_Level_Staff,
+                                Level= x.Level,
+                                Group = x.Level.tbl_Approval_Group,
+                                Mapping = x.Mapping,
+                                CanRecieveSMS = x.Level.CanRecieveSMS,
+                                CanRecieveEmail = x.Level.CanRecieveEmail,
+                                ApprovalLevelId = x.Level.ApprovalLevelId,
+                                RouteViaStaffOrganogram = x.Level.RouteViaStaffOrganogram,
+                            })
+                            .OrderBy(x => x.GroupPosition)
+                            .ThenBy(x => x.LevelPosition);
 
-            tbl_Approval_Level next;
+
+            WorkflowSetup next = null;
 
             if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
             {
-                next = approvalLevels.FirstOrDefault();
+                next = approvalLevels.FirstOrDefault(); //ok
                 if (next != null)
                 {
                     this.smsNotification = next.CanRecieveSMS;
@@ -197,9 +217,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return false;
             }
 
-            if (this.fromLevelId == null) 
+            if (this.fromLevelId == null) // && externalInitialization == false
             {
-                var levelStaff = approvalLevels.SelectMany(x => x.tbl_Approval_Level_Staff).Where(x => x.StaffId == this.staffId).FirstOrDefault();
+                var levelStaff = approvalLevels.SelectMany(x => x.Staff).Where(x => x.StaffId == this.staffId).FirstOrDefault(); // doing
                 if (levelStaff == null)
                 {
                     this.message = "Unable to resolve initiating level. No setup for the specified operation!";
@@ -209,18 +229,26 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.neededNumberOfApproval = levelStaff.tbl_Approval_Level.NumberOfApprovals;
             }
 
-            if (this.nextLevelId == null)
+            if (this.nextLevelId == null) // && fromLevelId != null
             {
-                var currentLevel = context.tbl_Approval_Level.Find(this.fromLevelId);
+                var currentLevel = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).First();
 
                 next = approvalLevels.FirstOrDefault(x =>
-                    x.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position > currentLevel.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position // next group
-                    || (x.Position > currentLevel.Position && x.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position == currentLevel.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position) // same group
+                    (x.GroupPosition > currentLevel.GroupPosition) // next group
+                    || (x.LevelPosition > currentLevel.LevelPosition && x.GroupPosition == currentLevel.GroupPosition) // same group
                     );
             }
             else
             {
-                next = context.tbl_Approval_Level.Find(this.nextLevelId);
+                var nextlevel = context.tbl_Approval_Level.Find(this.nextLevelId);
+                if (nextlevel != null)
+                {
+                    next = new WorkflowSetup();
+                    next.CanRecieveSMS = nextlevel.CanRecieveSMS;
+                    next.CanRecieveEmail = nextlevel.CanRecieveEmail;
+                    next.ApprovalLevelId = nextlevel.ApprovalLevelId;
+                    next.RouteViaStaffOrganogram = nextlevel.RouteViaStaffOrganogram;
+                }
             }
 
             if (next == null) // end of process
@@ -361,24 +389,34 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.nextLevelId != null && this.amount > 0 && ActionIsApprovalDecision())
             {
-                decimal staffCeiling = 0;
-                var levelStaff = context.tbl_Approval_Level_Staff.Where(x => x.StaffId == this.staffId && x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
-
-                if (levelStaff != null)
+                if (WithinAllLimits() == true)
                 {
-                    staffCeiling = levelStaff.MaximumAmount;
-                }
-
-                if (this.amount > staffCeiling)
+                    this.EndProcess((int)ApprovalStatusEnum.Approved);
+                } else
                 {
                     this.statusId = (int)ApprovalStatusEnum.Authorised;
                 }
-
-                if (this.amount <= staffCeiling)
-                {
-                    this.EndProcess((int)ApprovalStatusEnum.Approved);
-                }
             }
+        }
+
+        private bool WithinTenorLimit() // TODO
+        {
+            return true;
+        }
+
+        private bool WithinMaximumLimit() // TODO
+        {
+            return true;
+        }
+
+        private bool WithinInvestmentGradeLimit() // TODO
+        {
+            return true;
+        }
+
+        private bool WithinAllLimits()
+        {
+            return WithinTenorLimit() == true && WithinMaximumLimit() == true && WithinInvestmentGradeLimit() == true;
         }
 
         private void SetState()
@@ -416,5 +454,43 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.message = "Unauthorized action!";
             return false;
         }
+    }
+
+    public class WorkflowSetup
+    {
+        public IEnumerable<tbl_Approval_Level_Staff> Staff { get; set; }
+        public tbl_Approval_Level Level { get; set; }
+        public tbl_Approval_Group Group { get; set; }
+        public tbl_Approval_Group_Mapping Mapping { get; set; }
+
+        public int GroupPosition { get; set; }
+
+        public int LevelPosition { get; set; }
+
+        public int ApprovalLevelId { get; set; }
+
+        public int NumberOfUsers { get; set; }
+
+        public int NumberOfApprovals { get; set; }
+
+        public bool CanRouteBack { get; set; }
+
+        public bool IsPoliticallyExposed { get; set; }
+
+        public bool IsActive { get; set; }
+
+        public bool CanEdit { get; set; }
+
+        public bool CanRecieveEmail { get; set; }
+
+        public bool CanRecieveSMS { get; set; }
+
+        public bool RouteViaStaffOrganogram { get; set; }
+
+        public int? Tenor { get; set; }
+
+        public decimal MaximumAmount { get; set; }
+
+        public decimal? InvestmentGradeAmount { get; set; }
     }
 }

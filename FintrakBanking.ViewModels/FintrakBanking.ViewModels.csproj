@@ -57,6 +57,7 @@
     <Compile Include="Credit\CollateralDocumentViewModel.cs" />
     <Compile Include="Credit\ColleralCustomFieldsDataViewModel.cs" />
     <Compile Include="Credit\ConditionPrecedentViewModel.cs" />
+    <Compile Include="Credit\CurrentCustomerExposure.cs" />
     <Compile Include="Credit\ExistingLoanApplicationViewModel.cs" />
     <Compile Include="Credit\LimitViewModel.cs" />
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Credit\LoanPaymentScheduleInput.cs" />
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
     <Compile Include="Credit\LoanPreliminaryEvaluationViewModel.cs" />
+    <Compile Include="Credit\LoanRepaymentScheduleViewModel.cs" />
     <Compile Include="Credit\LoanViewModel.cs" />
     <Compile Include="Credit\OfferLetterViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
