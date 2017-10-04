@@ -386,6 +386,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                             createdBy = account.CreatedBy,
                             dateTimeCreated = account.DateTimeCreated,
+                            glClassId = account.GLClassId
 
                             // lastUpdatedBy = account.LastUpdatedBy.Value ,
                             // dateTimeUpdated = account.DateTimeUpdated
