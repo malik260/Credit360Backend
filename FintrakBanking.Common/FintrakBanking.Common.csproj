@@ -71,6 +71,7 @@
     <Compile Include="Enum\OperationsEnum.cs" />
     <Compile Include="Enum\FrequencyTypeEnum.cs" />
     <Compile Include="Enum\LienTypeEnum.cs" />
+    <Compile Include="Enum\OperationTypeEnum.cs" />
     <Compile Include="Enum\PenEvaluationStatusEnum.cs" />
     <Compile Include="Enum\LoanProductTypeEnum.cs" />
     <Compile Include="Enum\SourceApplicationEnum.cs" />
