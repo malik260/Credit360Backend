@@ -6,17 +6,14 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class tbl_Media_Loan_Documents
+    public partial class tbl_Media_Job_Request_Documents
     {
         [Key]
         public int DocumentId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LoanApplicationNumber { get; set; }
-
-        [StringLength(50)]
-        public string LoanReferenceNumber { get; set; }
+        public string JobRequestCode { get; set; }
 
         [Required]
         [StringLength(250)]

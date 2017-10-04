@@ -1,12 +1,8 @@
-﻿using FintrakBanking.Common.Enum;
-using FintrakBanking.Entities.Models;
-using FintrakBanking.ReportObjects.ViewModels;
-using FintrakBanking.ViewModels.Credit;
+﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FintrakBanking.ReportObjects
 {

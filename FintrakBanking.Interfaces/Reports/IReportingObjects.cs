@@ -6,14 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FintrakBanking.ReportObjects.InterfaceReporting
+namespace FintrakBanking.Interfaces.Reports
 {
    public  interface IReportingObjects
     {
-        List<GroupWorkFlowSetup> GetWorkFlowDefination(int companyId);
+       // List<GroupWorkFlowSetup> GetWorkFlowDefination(int companyId);
 
         IQueryable<WorkflowTrackerViewModel> TrackWorkFlow(int operationId, int companyId, int targetId);
 
-        GroupWorkFlowSetup GetWorkFlowDefinationByOperation(int operationId, int companyId);
+      //  GroupWorkFlowSetup GetWorkFlowDefinationByOperation(int operationId, int companyId);
     }
 }

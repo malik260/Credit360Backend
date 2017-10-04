@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FintrakBanking.ReportObjects.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FintrakBanking.ReportObjects.ViewModels
+namespace FintrakBanking.ViewModels.Reports
 {
     public class LoanInformation : LoanScheduleViewModel
     {

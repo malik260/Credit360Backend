@@ -59,7 +59,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         public string Comment { set { comment = value; } }
         public int Tenor { set { tenor = value; } }
         public bool InvestmentGrade { set { investmentGrade = value; } }
+<<<<<<< HEAD
         public bool PoliticallyExposed { set { politicallyExposed = value; } }
+=======
+>>>>>>> 6c46ad2ef3ec373556311170ac7660692789c95b
         public bool Vote { set { vote = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int NextLevelId { set { nextLevelId = value; } }
@@ -404,6 +407,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
+<<<<<<< HEAD
         private bool WithinTenorLimit(WorkflowSetup setup)
         {
             if (tenor == 0 && setup.Tenor == 0) { return true; }
@@ -432,10 +436,26 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (politicallyExposed == false) { return true; }
             if (setup.IsPoliticallyExposed == true) { return true; }
             return false;
+=======
+        private bool WithinTenorLimit() // TODO
+        {
+            return true;
+        }
+
+        private bool WithinMaximumLimit() // TODO
+        {
+            return true;
+        }
+
+        private bool WithinInvestmentGradeLimit() // TODO
+        {
+            return true;
+>>>>>>> 6c46ad2ef3ec373556311170ac7660692789c95b
         }
 
         private bool WithinAllLimits()
         {
+<<<<<<< HEAD
             var setup = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
 
             var level = setup.FirstOrDefault(x=>x.Staff.First().StaffId == staffId);
@@ -444,6 +464,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 && WithinMaximumLimit(level) == true 
                 && WithinInvestmentGradeLimit(level) == true
                 && WithinPoliticallyExposedLimit(level) == true;
+=======
+            return WithinTenorLimit() == true && WithinMaximumLimit() == true && WithinInvestmentGradeLimit() == true;
+>>>>>>> 6c46ad2ef3ec373556311170ac7660692789c95b
         }
 
         private void SetState()

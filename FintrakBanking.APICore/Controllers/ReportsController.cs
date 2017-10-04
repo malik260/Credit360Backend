@@ -1,14 +1,9 @@
 ﻿using FintrakBanking.APICore.core;
-using FintrakBanking.ReportObjects.InterfaceReporting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Interfaces.Reports;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using FintrakBanking.ReportObjects.ViewModels;
-using FintrakBanking.ViewModels.WorkFlow;
-using FintrakBanking.APICore.JWTAuth;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -96,6 +91,28 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetBranchLoanAmountLimit( token.GetBranchId ,token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("workflow-definition/operation/{id}")]
+        public HttpResponseMessage GetWorkflowDefinition( int id)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetWorkflowDefinition(id,token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Credit;
 using System.ComponentModel.Composition;
+using FintrakBanking.ViewModels.Setups;
 
 namespace FintrakBanking.Repositories.Customer
 {

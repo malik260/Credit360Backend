@@ -49,9 +49,9 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.media;
     using FintrakBanking.Interfaces.Finance;
     using FintrakBanking.Interfaces.Risk;
-    using FintrakBanking.Repositories.Risk;
-    using FintrakBanking.ReportObjects.InterfaceReporting;
+    using FintrakBanking.Repositories.Risk; 
     using FintrakBanking.ReportObjects.ReportCalls;
+    using FintrakBanking.Interfaces.Reports;
 
     public static class NinjectWebCommon 
     {
