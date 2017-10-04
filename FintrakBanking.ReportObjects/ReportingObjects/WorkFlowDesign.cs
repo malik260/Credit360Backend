@@ -100,7 +100,7 @@ namespace FintrakBanking.ReportObjects
 
 
 
-        public static List<WorkFlowViewModel> GetWorkFlowDefination(int companyId,int operationId)
+        public static List<WorkFlowViewModel> GetWorkFlowDefination(int companyId, int operationId)
         {
 
 
@@ -108,80 +108,39 @@ namespace FintrakBanking.ReportObjects
             {
                 var data = (from a in context.tbl_Approval_Level_Staff
                             where
-                              a.tbl_Approval_Level.tbl_Approval_Group_Mapping.OperationId == operationId &&
-                              a.tbl_Approval_Level.IsActive == true && a.tbl_Approval_Level.tbl_Approval_Group_Mapping.tbl_Approval_Group.CompanyId == companyId
+                              a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().OperationId == operationId &&
+                              a.tbl_Approval_Level.IsActive == true && a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
                             orderby
-                              a.tbl_Approval_Level.tbl_Approval_Group_Mapping.Position,
+                              a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position,
                               a.tbl_Approval_Level.Position,
                               a.ApprovalLevelId
                             select new WorkFlowViewModel()
                             {
-                                operationName=a.tbl_Approval_Level.tbl_Approval_Group_Mapping.tbl_Operations.OperationName,
-                                groupName = a.tbl_Approval_Level.tbl_Approval_Group_Mapping.tbl_Approval_Group.GroupName,
+                                operationName = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().tbl_Operations.OperationName,
+                                groupName = a.tbl_Approval_Level.tbl_Approval_Group.GroupName,
                                 vetoPower = a.VetoPower == true ? "Yes" : "No",
                                 levelName = a.tbl_Approval_Level.LevelName,
                                 username = (a.tbl_Staff.FirstName + "." + a.tbl_Staff.LastName).ToLower(),
                                 scope = a.ProcessViewScopeId == 1 ? "Default" : a.ProcessViewScopeId == 2 ? "Group" : a.ProcessViewScopeId == 3 ? "global" : null,
-                                grpPosition = a.tbl_Approval_Level.tbl_Approval_Group_Mapping.Position.ToString(),
+                                grpPosition = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position.ToString(),
                                 levelPosition = a.tbl_Approval_Level.Position.ToString(),
                                 canApprove = a.CanApprove == true ? "Yes" : "No",
                                 canEdit = a.CanEdit == true ? "Yes" : "No",
                                 canUploadFile = a.CanUploadFile == true ? "Yes" : "No",
                                 canSendJobRequest = a.CanSendJobRequest == true ? "Yes" : "No",
-                                
+
                                 staffLevelId = a.StaffLevelId.ToString()
                             }).ToList();
                 return data;
 
 
-            using(FinTrakBankingContext context = new FinTrakBankingContext()) {
-                var company = context.tbl_Company.Where(c => c.CompanyId == companyId).FirstOrDefault();
-                data = (from a in context.tbl_Approval_Group
-                        join b in context.tbl_Approval_Group_Mapping on a.GroupId equals b.GroupId
-                        join d in context.tbl_Approval_Level on b.GroupOperationMappingId equals d.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().GroupOperationMappingId
-                        join c in context.tbl_Approval_Level_Staff on d.ApprovalLevelId equals c.StaffLevelId
-                        where a.CompanyId == companyId
-                        orderby (b.Position)
-                        select new GroupWorkFlowSetup()
-                        {
-                            CompanyName = company.Name ,
-                            OperationId = b.OperationId,
-                            GroupName = a.GroupName,
-                            IsCommittee = a.IsCommittee,
-                            CanDoRiskAssessment = d.CanDoRiskAssessment,
-                            CanEdit = d.CanEdit,
-                            CanOverideAuthorisation = d.CanOverideAuthorisation,
-                            CanPerformFinancialAnalysis = d.CanPerformFinancialAnalysis,
-                            CanRecieveAdjustment = d.CanRecieveAdjustment,
-                            CanRecieveEmail = d.CanRecieveEmail,
-                            CanRecieveSMS = d.CanRecieveSMS,
-                            CanRouteBack = d.CanRouteBack,
-                            HasChecklist = d.HasChecklist,
-                            IsActive = d.IsActive,
-                            IsPoliticallyExposed = d.IsPoliticallyExposed,
-                            LevelName = d.LevelName,
-                            MaximumAmount = d.MaximumAmount,
-                            NumberOfApprovals = d.NumberOfApprovals,
-                            NumberOfUsers = d.NumberOfUsers,
-                            RequireAuthorisation = d.RequireAuthorisation,
-                            RouteViaStaffOrganogram = d.RouteViaStaffOrganogram,
-                            SLAInterval = d.SLAInterval,
-                            VetoPower = c.VetoPower,
-                            CanApprove = c.CanApprove,
-                            CanSendJobRequest = c.CanSendJobRequest,
-                            CanUploadFile = c.CanUploadFile,
-                            CanViewApproval = c.CanViewApproval,
-                            CanViewCAMDocument = c.CanViewCAMDocument,
-                            CanViewUploadedFile = c.CanViewUploadedFile,
-                            //MaximumAmount = c.MaximumAmount,
-                            StaffName = context.tbl_Staff.Where(t => t.StaffId == c.StaffId).Select(t => t.FirstName + " " + t.LastName).FirstOrDefault()
-                        }).AsQueryable();
             }
         }
 
-        
+
     }
 }
+ 
 
         
     

@@ -5,11 +5,13 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanChargeFeeViewModel : ChargeRangeViewModel
 
     {
+        public int casaAccountId { get; set; }
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
         public int loanId { get; set; }
         public int productId { get; set; }
         public string chargeFeeName { get; set; }
+        public decimal feeAmountDiff { get; set; }
         public decimal feeRateValue { get; set; }
         public decimal feeDependentAmount { get; set; }
         public decimal feeAmount { get; set; }
@@ -18,6 +20,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int feeTypeId { get; set; }
         public string feeTypeName { get; set; }
         public bool isIntegralFee { get; set; }
+        public bool required { get; set; }
+        public bool recurring { get; set; }
+        public decimal newFeeAmount { get; set; }
 
     }
 
