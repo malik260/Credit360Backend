@@ -108,6 +108,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 existingAccount.CreatedBy = accountModel.CreatedBy;
                 existingAccount.DateTimeUpdated = DateTime.Now;
                 existingAccount.tbl_Chart_Of_Account_Currency = coaCurrencies;
+                existingAccount.GLClassId = (short)accountModel.GLClassId;
 
             }
             else //Insert a new account record into the real account table
@@ -136,7 +137,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     AccountStatusId = accountModel.AccountStatusId,
                     DateTimeCreated = _genSetup.GetApplicationDate(),
                     CreatedBy = accountModel.CreatedBy,
-                    tbl_Chart_Of_Account_Currency = coaCurrencies
+                    tbl_Chart_Of_Account_Currency = coaCurrencies,
+                    GLClassId = (short)accountModel.GLClassId
                 };
                 context.tbl_Chart_Of_Account.Add(account);
             }
@@ -214,7 +216,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                 CreatedBy = account.createdBy,
                 DateTimeCreated = _genSetup.GetApplicationDate(),
-                tbl_Chart_Of_Account_Currency = currencies
+                tbl_Chart_Of_Account_Currency = currencies,
+                GLClassId = account.glClassId
             };
 
             this.context.tbl_Chart_Of_Account.Add(chartOfAccount);
@@ -287,6 +290,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                 IsCurrent = true,
                 tbl_Temp_Chart_Of_Account_Currency = currencies,
+                GLClassId = accountModel.glClassId
             };
 
             // Audit Section ---------------------------
@@ -382,6 +386,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                             createdBy = account.CreatedBy,
                             dateTimeCreated = account.DateTimeCreated,
+                            glClassId = account.GLClassId
 
                             // lastUpdatedBy = account.LastUpdatedBy.Value ,
                             // dateTimeUpdated = account.DateTimeUpdated
@@ -555,6 +560,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     IsCurrent = true,
 
                     tbl_Temp_Chart_Of_Account_Currency = tempCurrencies,
+                    GLClassId = accountModel.glClassId
                 };
 
                 context.tbl_Temp_Chart_Of_Account.Add(tempAccount);
@@ -634,6 +640,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         approvalStatusId = c.ApprovalStatusId,
                         createdBy = c.CreatedBy,
                         dateTimeCreated = c.DateTimeCreated,
+                        glClassId = (short)c.GLClassId
                     });
         }
 
@@ -715,6 +722,16 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     {
                         lookupId = data.FSCaptionId,
                         lookupName = data.FSCaption + " -- " + data.tbl_Account_Category.AccountCategoryName
+                    });
+        }
+
+        public IEnumerable<ChartOfAccountClassViewModel> GetChartOfAccountClasses()
+        {
+            return (from data in context.tbl_Chart_Of_Account_Class
+                    select new ChartOfAccountClassViewModel()
+                    {
+                        glClassId = data.GLClassId,
+                        glClassName = data.GLClassName
                     });
         }
     }

@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class SectorialLimitMonitoring {
+    public partial class Workflow {
         
         /// <summary>
         /// form1 control.

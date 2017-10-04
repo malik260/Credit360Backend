@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FintrakBanking.ReportObjects.InterfaceReporting
+namespace  FintrakBanking.Interfaces.Reports
 {
     public  interface IReportRouts
     {
@@ -12,5 +12,6 @@ namespace FintrakBanking.ReportObjects.InterfaceReporting
         string GetLoanScheduleReport(int tearmLoanId, int companyId);
         string GetSectorLimitMonitoringReport(int companyId);
         string GetBranchLoanAmountLimit(int branchId, int companyId);
+        string GetWorkflowDefinition(int operationId, int companyId);
     }
 }
