@@ -65,7 +65,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     deleted = x.Deleted,
                     deletedBy = x.DeletedBy,
                     dateTimeDeleted = x.DateTimeDeleted,
-                    groupId = x.GroupId,
+                    groupId = (int)x.GroupId
                 }).OrderBy(x => x.position);
         }
 
@@ -243,7 +243,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
             {
                 throw new Exception(ex.Message);
             }
-
         }
 
         public bool UpdateApprovalTrail(tbl_Approval_Trail model)
@@ -278,6 +277,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 c.ToApprovalLevelId == approvalLevelId)
                 .Take(numberOfApprovals);
         }
+
         public IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int operationId, int companyId)
         {
             var result = (from a in context.tbl_Approval_Trail
@@ -314,10 +314,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 responseStaffName = c.ResponseStaffName
             }));
         }
+
         public IQueryable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
         {
             return GetApprovalTrail(operationId, companyId).Where(c => c.TargetId == targetId);
         }
-
     }
 }
