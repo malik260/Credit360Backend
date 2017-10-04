@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SectorialLimitMonitoring.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.SectorialLimitMonitoring" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Workflow.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.Workflow" %>
  <%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
  <%@ Register assembly="Microsoft.ReportViewer.WebForms" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
@@ -16,22 +16,23 @@
         </asp:ScriptManager>
 
         <rsweb:ReportViewer ID="ReportViewer" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="1000px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="100%" BackColor="" ClientIDMode="AutoID" HighlightBackgroundColor="" InternalBorderColor="204, 204, 204" InternalBorderStyle="Solid" InternalBorderWidth="1px" LinkActiveColor="" LinkActiveHoverColor="" LinkDisabledColor="" PrimaryButtonBackgroundColor="" PrimaryButtonForegroundColor="" PrimaryButtonHoverBackgroundColor="" PrimaryButtonHoverForegroundColor="" SecondaryButtonBackgroundColor="" SecondaryButtonForegroundColor="" SecondaryButtonHoverBackgroundColor="" SecondaryButtonHoverForegroundColor="" SplitterBackColor="" ToolbarDividerColor="" ToolbarForegroundColor="" ToolbarForegroundDisabledColor="" ToolbarHoverBackgroundColor="" ToolbarHoverForegroundColor="" ToolBarItemBorderColor="" ToolBarItemBorderStyle="Solid" ToolBarItemBorderWidth="1px" ToolBarItemHoverBackColor="" ToolBarItemPressedBorderColor="51, 102, 153" ToolBarItemPressedBorderStyle="Solid" ToolBarItemPressedBorderWidth="1px" ToolBarItemPressedHoverBackColor="153, 187, 226">
-            <LocalReport ReportPath="Reports\Report\SectorialLimits.rdlc" >
+            <LocalReport ReportPath="Reports\Report\WorkflowDefinition.rdlc" >
                 <DataSources>
-                        <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="Sectors" />
+                        <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="workflow" />
                     </DataSources>
             </LocalReport>
         </rsweb:ReportViewer>
      
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetSectorLoanAmountLimit" TypeName="FintrakBanking.ReportObjects.ReportingObjects.LimitsMonitoringReportsObjects">
+        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetWorkFlowDefinationByOperation" TypeName="FintrakBanking.ReportObjects.WorkFlowDesign">
             <SelectParameters>
-                <asp:ControlParameter ControlID="operationId" Name="operationId" PropertyName="Text" Type="Int32" />
-                  <asp:ControlParameter ControlID="companyId" Name="companyId" PropertyName="Text" Type="Int32" />
+                <asp:ControlParameter ControlID="operationId" DefaultValue="" Name="operationId" PropertyName="Text" Type="Int32" />
+                <asp:ControlParameter ControlID="companyId" Name="companyId" PropertyName="Text" Type="Int32" />
             </SelectParameters>
         </asp:ObjectDataSource>
         </div> 
          
         <asp:Label ID="companyId" runat="server" Visible ="False"  ></asp:Label>
+         
         <asp:Label ID="operationId" runat="server" Visible ="False"  ></asp:Label>
     </form>
 </body>

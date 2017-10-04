@@ -49,7 +49,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/BranchLimitMonitoring.aspx?companyId=" + companyId.ToString() + "&branchId=" + branchId.ToString();
             return path;
         }
-
+        public string GetWorkflowDefinition(int operationId, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/BranchLimitMonitoring.aspx?companyId=" + companyId.ToString() + "&operationId=" + operationId.ToString();
+            return path;
+        }
     }
 
 }

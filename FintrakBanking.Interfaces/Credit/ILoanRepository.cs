@@ -19,7 +19,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
-
         Task<string> AddLoanBooking(LoanViewModel entity);
 
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
@@ -30,7 +29,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
 
-
         IEnumerable<CamProcessedLoanViewModel> GetAppraisalMemorandumProcessedLoanApplications(int companyId);
 
         //IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId);
@@ -40,17 +38,21 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetBookedLoanDetailsByCustomerCode(string customerCode, int companyId);
 
         IEnumerable<LoanViewModel> GetBookedLoanDetailsByLoanReferenceNumber(string loanReferenceNumber, int companyId);
+
         IEnumerable<LoanChargeFeeViewModel> GetProductFees(int productId);
+
         IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId );
 
         IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId);
 
         IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId);
+
         Task<bool> GoForApproval(ApprovalViewModel entity);
 
         AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId);
 
         IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId);
 
+        List<CurrentCustomerExposure> GetCurrentCustomerExposure(int customerId, int companyId);
     }
 }

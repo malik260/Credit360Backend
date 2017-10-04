@@ -80,7 +80,7 @@
     <Compile Include="Credit\LoanDocumentRepository.cs" />
     <Compile Include="Credit\LoanRepository.cs" />
     <Compile Include="Credit\LoanScheduleRepository.cs" />
-    <Compile Include="Credit\MyException.cs" />
+    <Compile Include="Credit\CustomException.cs" />
     <Compile Include="Customer\CustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionGroupRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionRepository.cs" />

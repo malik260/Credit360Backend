@@ -6,12 +6,12 @@ namespace FintrakBanking.Repositories.Credit
     public partial class LoanApplicationRepository : ILoanApplicationRepository
     {
         [Serializable]
-        public class MyException : Exception
+        public class CustomException : Exception
         {
-            public MyException() { }
-            public MyException(string message) : base(message) { }
-            public MyException(string message, Exception inner) : base(message, inner) { }
-            protected MyException(
+            public CustomException() { }
+            public CustomException(string message) : base(message) { }
+            public CustomException(string message, Exception inner) : base(message, inner) { }
+            protected CustomException(
               System.Runtime.Serialization.SerializationInfo info,
               System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
         }
