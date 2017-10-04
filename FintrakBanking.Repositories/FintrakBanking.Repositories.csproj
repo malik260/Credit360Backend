@@ -48,6 +48,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
@@ -69,9 +70,12 @@
     <Compile Include="CASA\CasaRepository.cs" />
     <Compile Include="CreditLimitValidations\CreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\AppraisalMemorandumRepository.cs" />
+    <Compile Include="Credit\CallMemoRepository.cs" />
     <Compile Include="Credit\CollateralDocumentRepository.cs" />
+    <Compile Include="Credit\ConditionPrecedentRepository.cs" />
     <Compile Include="Credit\CreditTemplateRepository.cs" />
     <Compile Include="Credit\CustomerCollateralRepository.cs" />
+    <Compile Include="Credit\EmailAndAlertsRepository.cs" />
     <Compile Include="Credit\LimitRepository.cs" />
     <Compile Include="Credit\LoanApplicationRepository.cs" />
     <Compile Include="Credit\LoanCovenantRepository.cs" />
@@ -79,7 +83,7 @@
     <Compile Include="Credit\LoanDocumentRepository.cs" />
     <Compile Include="Credit\LoanRepository.cs" />
     <Compile Include="Credit\LoanScheduleRepository.cs" />
-    <Compile Include="Credit\MyException.cs" />
+    <Compile Include="Credit\CustomException.cs" />
     <Compile Include="Customer\CustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionGroupRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionRepository.cs" />

@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public tbl_Approval_Group()
         {
             tbl_Approval_Group_Mapping = new HashSet<tbl_Approval_Group_Mapping>();
+            tbl_Approval_Level = new HashSet<tbl_Approval_Level>();
         }
 
         [Key]
@@ -25,8 +26,6 @@ namespace FintrakBanking.Entities.Models
         public int CompanyId { get; set; }
 
         public bool IsCommittee { get; set; }
-
-        public bool IsBeforeCAMApproval { get; set; }
 
         public int CreatedBy { get; set; }
 
@@ -46,5 +45,8 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Approval_Group_Mapping> tbl_Approval_Group_Mapping { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Approval_Level> tbl_Approval_Level { get; set; }
     }
 }

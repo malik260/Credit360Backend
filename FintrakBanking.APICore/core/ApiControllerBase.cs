@@ -1,16 +1,7 @@
-﻿
-using FintrakBanking.APICore.Filters;
-using FintrakBanking.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using FintrakBanking.APICore.Filters;
 using System.Security;
 using System.Web.Http;
-using System.Web.Http.Controllers;
 using System.Web.Http.Cors;
-using System.Web.Http.Filters;
 
 namespace FintrakBanking.APICore.core
 {
@@ -25,6 +16,5 @@ namespace FintrakBanking.APICore.core
             if (userLoggedIn != userRequested)
                 throw new SecurityException("Attempting to access data for another user.");
         }
-
-      }
+    }
 }

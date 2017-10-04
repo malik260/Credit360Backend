@@ -49,6 +49,9 @@
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.4.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
     </Reference>
@@ -73,10 +76,16 @@
     <Reference Include="Microsoft.AspNet.TelemetryCorrelation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.TelemetryCorrelation.1.0.0\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.WebApi.Extensions.Compression.Server, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Extensions.Compression.Server.2.0.6\lib\net45\Microsoft.AspNet.WebApi.Extensions.Compression.Server.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.7\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.1.1.0.0\lib\net45\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin, Version=3.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.3.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
     </Reference>
@@ -152,6 +161,9 @@
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.4.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Extensions.Compression.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Extensions.Compression.Server.2.0.6\lib\net45\System.Net.Http.Extensions.Compression.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
     </Reference>
@@ -295,7 +307,10 @@
     <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\AuthorizationController.cs" />
     <Compile Include="Controllers\BranchController.cs" />
+    <Compile Include="Controllers\CallMemoController.cs" />
+    <Compile Include="Controllers\ConditionPrecedentController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
+    <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\FinanceTransactionController.cs" />
     <Compile Include="Controllers\CreditLimitValidationsController.cs" />
     <Compile Include="Controllers\CasaController.cs" />
@@ -319,7 +334,6 @@
     <Compile Include="Controllers\JobRequestController.cs" />
     <Compile Include="Controllers\JobTitleController.cs" />
     <Compile Include="Controllers\LimitController.cs" />
-    <Compile Include="Controllers\LoanApplicationController.cs" />
     <Compile Include="Controllers\LoanController.cs" />
     <Compile Include="Controllers\LoanCovenantController.cs" />
     <Compile Include="Controllers\LoanDocumentController.cs" />
@@ -330,11 +344,13 @@
     <Compile Include="Controllers\ProductFeeController.cs" />
     <Compile Include="Controllers\PublicHolidayController.cs" />
     <Compile Include="Controllers\RankController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\RiskAssessmentController.cs" />
     <Compile Include="Controllers\RiskController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="core\ApiControllerBase.cs" />
+    <Compile Include="Filters\DeflateCompressionAttribute.cs" />
     <Compile Include="Filters\JWTAuthorizeAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -364,6 +380,55 @@
     <Compile Include="Reports\Credit\TestReport.aspx.designer.cs">
       <DependentUpon>TestReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx.cs">
+      <DependentUpon>ApprovalTrailWithSLA.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx.designer.cs">
+      <DependentUpon>ApprovalTrailWithSLA.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx.cs">
+      <DependentUpon>ApprovalTrailWithSLA1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx.designer.cs">
+      <DependentUpon>ApprovalTrailWithSLA1.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\GrantedFacilities.aspx.cs">
+      <DependentUpon>GrantedFacilities.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\GrantedFacilities.aspx.designer.cs">
+      <DependentUpon>GrantedFacilities.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanRepaymentSchedule.aspx.cs">
+      <DependentUpon>LoanRepaymentSchedule.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanRepaymentSchedule.aspx.designer.cs">
+      <DependentUpon>LoanRepaymentSchedule.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\BranchLimitMonitoring.aspx.cs">
+      <DependentUpon>BranchLimitMonitoring.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\BranchLimitMonitoring.aspx.designer.cs">
+      <DependentUpon>BranchLimitMonitoring.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\Workflow.aspx.cs">
+      <DependentUpon>Workflow.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\Workflow.aspx.designer.cs">
+      <DependentUpon>Workflow.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SectorialLimitMonitoring.aspx.cs">
+      <DependentUpon>SectorialLimitMonitoring.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SectorialLimitMonitoring.aspx.designer.cs">
+      <DependentUpon>SectorialLimitMonitoring.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -376,11 +441,21 @@
     <Content Include="Content\first-bank-logo.png" />
     <Content Include="Content\first-bank-new-logo.jpg" />
     <Content Include="Content\firstbank.png" />
+    <Content Include="Content\Icons\first_bank_logo_kmH_icon.ico" />
+    <Content Include="Content\Icons\first_bank_new_logo_2sm_icon.ico" />
+    <Content Include="EmailTemplates\Monitoring.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Reports\Credit\OfferLetter.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
+    <Content Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx" />
+    <Content Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx" />
+    <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
+    <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
+    <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
+    <Content Include="Reports\ReportViews\Workflow.aspx" />
+    <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
@@ -507,8 +582,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
+    <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -13,8 +13,7 @@ namespace FintrakBanking.Entities.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short ApplicationSetupId { get; set; }
 
-        public short ReportingCurrencyId { get; set; }
-
-        public virtual tbl_Currency tbl_Currency { get; set; }
+        [StringLength(500)]
+        public string ReportPath { get; set; }
     }
 }

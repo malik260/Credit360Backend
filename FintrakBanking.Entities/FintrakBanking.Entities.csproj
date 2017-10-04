@@ -55,9 +55,9 @@
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\tbl_Media_Collateral_Documents.cs" />
+    <Compile Include="DocumentModels\tbl_Media_Job_Request_Documents.cs" />
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
@@ -77,6 +77,9 @@
     <Compile Include="Models\tbl_Audit.cs" />
     <Compile Include="Models\tbl_Audit_Type.cs" />
     <Compile Include="Models\tbl_Branch.cs" />
+    <Compile Include="Models\tbl_Call_Memo.cs" />
+    <Compile Include="Models\tbl_Call_Memo_Limit.cs" />
+    <Compile Include="Models\tbl_Call_Memo_Type.cs" />
     <Compile Include="Models\tbl_CASA.cs" />
     <Compile Include="Models\tbl_CASA_AccountStatus.cs" />
     <Compile Include="Models\tbl_CASA_Lien.cs" />
@@ -96,7 +99,6 @@
     <Compile Include="Models\tbl_Checklist_TargetType.cs" />
     <Compile Include="Models\tbl_City.cs" />
     <Compile Include="Models\tbl_City_Class.cs" />
-    <Compile Include="Models\tbl_Collateral_Auditors.cs" />
     <Compile Include="Models\tbl_Collateral_Casa.cs" />
     <Compile Include="Models\tbl_Collateral_Customer.cs" />
     <Compile Include="Models\tbl_Collateral_Deposit.cs" />
@@ -111,7 +113,6 @@
     <Compile Include="Models\tbl_Collateral_Policy.cs" />
     <Compile Include="Models\tbl_Collateral_PreciousMetal.cs" />
     <Compile Include="Models\tbl_Collateral_Principals.cs" />
-    <Compile Include="Models\tbl_Collateral_RecoveryAgents.cs" />
     <Compile Include="Models\tbl_Collateral_SeniorityOfClaims.cs" />
     <Compile Include="Models\tbl_Collateral_Stock.cs" />
     <Compile Include="Models\tbl_Collateral_Type.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Models\tbl_COT.cs" />
     <Compile Include="Models\tbl_Country.cs" />
     <Compile Include="Models\tbl_Credit_Appraisal_Memorandum.cs" />
+    <Compile Include="Models\tbl_Credit_Appraisal_Memorandum_Document.cs" />
     <Compile Include="Models\tbl_Credit_Appraisal_Memorandum_Loan_Detail.cs" />
     <Compile Include="Models\tbl_Credit_Template.cs" />
     <Compile Include="Models\tbl_Currency.cs" />
@@ -197,14 +199,15 @@
     <Compile Include="Models\tbl_Limit_Value_Type.cs" />
     <Compile Include="Models\tbl_Loan.cs" />
     <Compile Include="Models\tbl_LoanApplication_Collateral_Mapping.cs" />
-    <Compile Include="Models\tbl_Loan_Amortization_Schedule.cs" />
     <Compile Include="Models\tbl_Loan_Application.cs" />
     <Compile Include="Models\tbl_Loan_Application_Collateral.cs" />
+    <Compile Include="Models\tbl_Loan_Application_Status.cs" />
     <Compile Include="Models\tbl_Loan_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
     <Compile Include="Models\tbl_Loan_Change_Type.cs" />
     <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
+    <Compile Include="Models\tbl_Loan_Condition_Precedent.cs" />
     <Compile Include="Models\tbl_Loan_Contingent.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Detail.cs" />
     <Compile Include="Models\tbl_Loan_Covenant_Type.cs" />
@@ -216,15 +219,19 @@
     <Compile Include="Models\tbl_Loan_Operation.cs" />
     <Compile Include="Models\tbl_Loan_Past_Due.cs" />
     <Compile Include="Models\tbl_Loan_Preliminary_Evaluation.cs" />
+    <Compile Include="Models\tbl_Loan_PriceIndex_Exception.cs" />
     <Compile Include="Models\tbl_Loan_PrudentialGuideline.cs" />
     <Compile Include="Models\tbl_Loan_Relationship_Officer_History.cs" />
+    <Compile Include="Models\tbl_Loan_Review_Operation.cs" />
     <Compile Include="Models\tbl_Loan_Revolving.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Category.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Daily.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Daily_Archive.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Daily_Temp.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Irregular_Input.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Periodic.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Periodic_Archive.cs" />
+    <Compile Include="Models\tbl_Loan_Schedule_Periodic_Temp.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Type.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Type_Product_Type_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Status.cs" />
@@ -232,6 +239,9 @@
     <Compile Include="Models\tbl_Loan_Type.cs" />
     <Compile Include="Models\tbl_MachineValue_Base.cs" />
     <Compile Include="Models\tbl_Management_Type.cs" />
+    <Compile Include="Models\tbl_Message_Log.cs" />
+    <Compile Include="Models\tbl_Message_Log_Status.cs" />
+    <Compile Include="Models\tbl_Message_Log_Type.cs" />
     <Compile Include="Models\tbl_MIS_Info.cs" />
     <Compile Include="Models\tbl_MIS_Type.cs" />
     <Compile Include="Models\tbl_Nature_Of_Business.cs" />
@@ -299,20 +309,19 @@
     <Compile Include="Models\tbl_Temp_Customer_Group_Mapping.cs" />
     <Compile Include="Models\tbl_Temp_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Product.cs" />
+    <Compile Include="Models\tbl_Temp_Product_Charge_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Product_CollateralType.cs" />
     <Compile Include="Models\tbl_Temp_Product_Currency.cs" />
     <Compile Include="Models\tbl_Temp_Product_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Staff.cs" />
     <Compile Include="Models\tbl_Tenor_Mode.cs" />
+    <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>

@@ -15,25 +15,30 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isCompleted { get; set; }
         public bool riskRated { get; set; }
         public string camDocumentation { get; set; }
-        public string loanDetails { get; set; }
+        //public string loanDetails { get; set; }
         public bool politicalyExposed { get; set; }
         public string comment { get; set; }
         public decimal loanAmount { get; set; }
+        public int approvalLevelId { get; set; }
+        public int documentationId { get; set; }
     }
 
     public class ForwardViewModel : GeneralEntity
     {
         public int forwardAction { get; set; } // statusId
         public int applicationId { get; set; } // targetId
+        public int appraisalMemorandumId { get; set; }
         public int? productClassId { get; set; }
         public int? productId { get; set; }
         public int receiverLevelId { get; set; }
         public decimal amount { get; set; }
         public bool politicallyExposed { get; set; }
+        public bool vote { get; set; }
         public string comment { get; set; }
         public decimal principal { get; set; }
         public double rate { get; set; }
         public int tenor { get; set; }
+        public bool investmentGrade { get; set; }
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity
@@ -55,5 +60,17 @@ namespace FintrakBanking.ViewModels.Credit
         public bool canApprove { get; set; }
         public bool canUploadFile { get; set; }
         public bool canSendRequest { get; set; }
+        public decimal approvalLimit { get; set; }
+        public decimal investmentGradeApprovalLimit { get; set; }
+        public List<int> userApprovalLevelIds { get; set; }
+        public int maximumTenor { get; set; }
+    }
+
+    public class DocumentationViewModel : GeneralEntity
+    {
+        public int documentationId { get; set; }
+        public string documentation { get; set; }
+        public int appraisalMemorandumId { get; set; }
+        public int approvalLevelId { get; set; }
     }
 }

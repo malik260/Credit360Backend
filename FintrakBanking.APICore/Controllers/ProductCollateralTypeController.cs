@@ -28,22 +28,22 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [Route("product-collateral-type/all/{productId}")]
         public HttpResponseMessage GetCollateralTypeByProduct(int productId)
-        { 
-                try
+        {
+            try
+            {
+                var data = repo.GetCollateralTypeByProduct(productId);
+                if (data == null)
                 {
-                    var data = repo.GetCollateralTypeByProduct(productId);
-                    if (data == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = false, message = "No record found" });
-                    }
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data.ToList() });  //Ok(accounts);
+                        new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
@@ -71,43 +71,43 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product-collateral-type/unmapped/{productId}")]
         public HttpResponseMessage GetUnmappedCollateralToProduct(int productId)
         {
-                try
+            try
+            {
+                var data = repo.GetUnmappedCollateralToProduct(productId);
+                if (data == null)
                 {
-                    var data = repo.GetUnmappedCollateralToProduct(productId);
-                    if (data == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                new { success = false, message = "No record found" });
-                    }
                     return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data.ToList() });  //Ok(accounts);
+                            new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
-        
+
 
         [HttpGet]
         [Route("product-collateral-type/{productCollateralTypeId}")]
         public HttpResponseMessage GetProductCollateralTypeViewModel(int productCollateralTypeId)
         {
-                try
+            try
+            {
+                var data = repo.GetProductCollateralTypeViewModel(productCollateralTypeId);
+                if (data == null)
                 {
-                    var data = repo.GetProductCollateralTypeViewModel(productCollateralTypeId);
-                    if (data == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                    new { success = false, message = "No record found" });
-                    }
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         // POST api/values
@@ -115,140 +115,151 @@ namespace FintrakBanking.APICore.Controllers
         [Route("product-collateral-type")]
         public HttpResponseMessage AddProductCollateralType([FromBody] ProductCollateralTypeViewModel model)
         {
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-                    model.userBranchId = (short)token.GetBranchId;
-                    model.userIPAddress = Request.RequestUri.Host;
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
-                    var recordId = repo.AddTempProductCollateralType(model);
-                    if (recordId >= 1)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                        new
-                                        {
-                                            success = true,
-                                            result = recordId,
-                                            message = "product collateral type has been created successfully"
-                                        });
-                    }
-                    else
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                        new { success = false, message = "product collateral type not created" });
-                }
-                catch (System.Exception ex)
+                var recordId = repo.AddTempProductCollateralType(model);
+                if (recordId >= 1)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                    new
+                                    {
+                                        success = true,
+                                        result = recordId,
+                                        message = "product collateral type has been created successfully"
+                                    });
                 }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                    new { success = false, message = "product collateral type not created" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]
         [Route("product-collateral-type/multiple")]
         public HttpResponseMessage AddMultipleProductCollateralType([FromBody] List<ProductCollateralTypeViewModel> model)
-        { try
-                {
-                    var token = new TokenDecryptionHelper();
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
 
-                    var recordId = repo.AddMultipleProductCollateralType(model);
-                    if (recordId >= 1)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                            new
-                                            {
-                                                success = true,
-                                                result = recordId,
-                                                message = "product collateral type(s) has been created successfully"
-                                            });
-                    }
-                    else
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = false, message = "product collateral type not created" });
-                }
-                catch (System.Exception ex)
+                var recordId = repo.AddMultipleProductCollateralType(model);
+                if (recordId >= 1)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                        new
+                                        {
+                                            success = true,
+                                            result = recordId,
+                                            message = "product collateral type(s) has been created successfully"
+                                        });
                 }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = false, message = "product collateral type not created" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpDelete]
         [Route("product-collateral-type/{productCollateralTypeId}")]
         public HttpResponseMessage DeleteProductCollateralType(int productCollateralTypeId)
         { //if (!repo.DoesProductCollateralExist(productCollateralTypeId))            
-                //{
-                //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                //}
+          //{
+          //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+          //}
 
-                try
+            try
+            {
+                var token = new TokenDecryptionHelper();
+
+                UserInfo user = new UserInfo()
                 {
-                    var token = new TokenDecryptionHelper();
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host
+                };
+                var response = repo.DeleteProductCollateralType(productCollateralTypeId, user);
 
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        applicationUrl = HttpContext.Current.Request.Path,
-                        userIPAddress = Request.RequestUri.Host
-                    };
-                    repo.DeleteProductCollateralType(productCollateralTypeId, user);
-
+                if (!response)
+                {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            new
-                                            {
-                                                success = true,
-                                                result = productCollateralTypeId,
-                                                message = "product collateral type has been deleted successfully"
-                                            });
+                        new
+                        {
+                            success = false,
+                            message = "product collateral type has not been deleted successfully"
+                        });
                 }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                        new
+                                        {
+                                            success = true,
+                                            result = productCollateralTypeId,
+                                            message = "product collateral type has been deleted successfully"
+                                        });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpDelete]
         [Route("product-collateral-type/multiple/{productCollateralTypeIds}")]
         public HttpResponseMessage DeleteMultipleProductCollateralType(List<int> productCollateralTypeIds)
-        { 
-                if (productCollateralTypeIds.Count <= 0)
+        {
+            if (productCollateralTypeIds.Count <= 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new
-                    {
-                        success = false,
-                        message = "No record found"
-                    });
-                }
+                    success = false,
+                    message = "No record found"
+                });
+            }
 
-                try
-                {
-                    var token = new TokenDecryptionHelper();
+            try
+            {
+                var token = new TokenDecryptionHelper();
 
-                    UserInfo user = new UserInfo();
-                    user.BranchId = token.GetBranchId;
-                    user.companyId = token.GetCompanyId;
-                    user.staffId = token.GetStaffId;
-                    user.applicationUrl = HttpContext.Current.Request.Path;
-                    user.userIPAddress = Request.RequestUri.Host;
+                UserInfo user = new UserInfo();
+                user.BranchId = token.GetBranchId;
+                user.companyId = token.GetCompanyId;
+                user.staffId = token.GetStaffId;
+                user.applicationUrl = HttpContext.Current.Request.Path;
+                user.userIPAddress = Request.RequestUri.Host;
 
 
-                    repo.DeleteMultipleProductCollateralType(productCollateralTypeIds, user);
+                repo.DeleteMultipleProductCollateralType(productCollateralTypeIds, user);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                                new
-                                                {
-                                                    success = true,
-                                                    result = 1,
-                                                    message = "product collateral type(s) has been deleted successfully"
-                                                });
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                                new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                            new
+                                            {
+                                                success = true,
+                                                result = 1,
+                                                message = "product collateral type(s) has been deleted successfully"
+                                            });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = false, message = ex.Message });
+            }
         }
     }
 }

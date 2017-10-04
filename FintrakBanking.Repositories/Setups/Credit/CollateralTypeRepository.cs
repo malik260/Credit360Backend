@@ -56,6 +56,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             return CollateralTypes().Where(a => a.collateralTypeId == typeId).SingleOrDefault();
         }
 
+
         public async Task<bool> UpdateCollateralTypes(int typeId, CollateralTypeViewModel entity)
         {
             var type = context.tbl_Collateral_Type.SingleOrDefault(c => c.CollateralTypeId == typeId);
@@ -115,11 +116,12 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         revaluationDuration = m.RevaluationDuration,
                     }).ToList();
         }
-
+        
         public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
         {
             return CollateralSubType().Where(x => x.collateralTypeId == collateralTypeId);
         }
+
 
         public async Task<bool> UpdateCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity)
         {

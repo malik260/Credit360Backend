@@ -16,6 +16,7 @@
         public int limitTypeId { get; set; }
         public int limitId { get; set; }
         public int targetId { get; set; }
+        public string targetName { get; set; }
         public short limitFrequencyTypeId { get; set; }
         public string limitFrequencyTypeName { get; set; }
         public decimal minimumValue { get; set; }
@@ -37,6 +38,11 @@
         public string limitTypeName { get; set; }
     }
 
+    public class TargetViewModel
+    {
+        public int targetId { get; set; }
+        public string targetName { get; set; }
+    }
     public class LimitValueTypeViewModel 
     {
         public int limitValueTypeId { get; set; }
@@ -50,5 +56,16 @@
         public double value { get; set; }
         public string description { get; set; }
         public bool? isVisible { get; set; }
+    }
+
+
+    public class LimitSuspensionViewModel : GeneralEntity
+    {
+        public int limitId { get; set; }
+        //public string limitName { get; set; }
+        public int staffId { get; set; }
+        public int branchId { get; set; }
+        public decimal limitAmount { get; set; }
+        public decimal amount { get; set; }
     }
 }

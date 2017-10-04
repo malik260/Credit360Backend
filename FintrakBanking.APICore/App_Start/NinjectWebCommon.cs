@@ -49,22 +49,24 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.media;
     using FintrakBanking.Interfaces.Finance;
     using FintrakBanking.Interfaces.Risk;
-    using FintrakBanking.Repositories.Risk;
+    using FintrakBanking.Repositories.Risk; 
+    using FintrakBanking.ReportObjects.ReportCalls;
+    using FintrakBanking.Interfaces.Reports;
 
-    public static class NinjectWebCommon 
+    public static class NinjectWebCommon
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
 
         /// <summary>
         /// Starts the application
         /// </summary>
-        public static void Start() 
+        public static void Start()
         {
             DynamicModuleUtility.RegisterModule(typeof(OnePerRequestHttpModule));
             DynamicModuleUtility.RegisterModule(typeof(NinjectHttpModule));
             bootstrapper.Initialize(CreateKernel);
         }
-        
+
         /// <summary>
         /// Stops the application.
         /// </summary>
@@ -72,7 +74,7 @@ namespace FintrakBanking.APICore.App_Start
         {
             bootstrapper.ShutDown();
         }
-        
+
         /// <summary>
         /// Creates the kernel that will manage your application.
         /// </summary>
@@ -104,7 +106,7 @@ namespace FintrakBanking.APICore.App_Start
         {
             kernel.Bind<FinTrakBankingContext>().To<FinTrakBankingContext>();
             kernel.Bind<FinTrakBankingDocumentsContext>().To<FinTrakBankingDocumentsContext>();
-            
+
             kernel.Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
             kernel.Bind<IAuthenticationRepository>().To<AuthenticationRepository>();
             kernel.Bind<IAuthorizationRepository>().To<AuthorizationRepository>();
@@ -171,8 +173,10 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
             kernel.Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
-            
-        }        
+            kernel.Bind<IReportRouts>().To<ReportRouts>();
+            kernel.Bind<ICallMemoRepository>().To<CallMemoRepository>();
+            kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
+            kernel.Bind<IEmailAndAlertsRepository>().To<EmailAndAlertsRepository>();
+        }
     }
-    
 }

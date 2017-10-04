@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{FFFC697E-F2BE-4D13-BA78-96985F3549EB}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.APICore", "FintrakBanking.APICore\FintrakBanking.APICore.csproj", "{515D8B0B-9686-4662-9FA1-BF67415F9B7B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reporting", "Reporting", "{EC9E7C75-EA84-4F40-8A9F-7AEF6169D826}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WindowApp", "WindowApp", "{DC675DB0-A368-4D40-AF2B-CBC5E50E4481}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.ReportObjects", "FintrakBanking.ReportObjects\FintrakBanking.ReportObjects.csproj", "{335B391E-60C0-47C2-9D7F-10CEF0DE800E}"
 EndProject

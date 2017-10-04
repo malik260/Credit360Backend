@@ -1,7 +1,7 @@
-﻿
-using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -17,19 +17,19 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<LookupViewModel> GetAllLoanTypes();
 
-        IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
+        //IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
 
+        IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
         Task<string> AddLoanBooking(LoanViewModel entity);
 
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
 
         LoanViewModel GetLoan(int loanId);
-        
+
         IEnumerable<LoanViewModel> FindLoan(string referenceNumberOrName, int companyId);
 
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
-
 
         IEnumerable<CamProcessedLoanViewModel> GetAppraisalMemorandumProcessedLoanApplications(int companyId);
 
@@ -40,18 +40,29 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetBookedLoanDetailsByCustomerCode(string customerCode, int companyId);
 
         IEnumerable<LoanViewModel> GetBookedLoanDetailsByLoanReferenceNumber(string loanReferenceNumber, int companyId);
+
         IEnumerable<LoanChargeFeeViewModel> GetProductFees(int productId);
-        IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId );
+
+        IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId);
 
         IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId);
 
         IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId);
+
         Task<bool> GoForApproval(ApprovalViewModel entity);
 
         AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId);
 
         IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
+        IQueryable<CustomerSearchItemViewModels> SearchCustomerCollateral(int companyId, string searchQuery);
+
+        IQueryable<CustomerViewModels> SearchForCustomerCollateral(int companyId, string searchQuery);
+
+        List<LoanGuarantorViewModel> GetLoanGuarantors(int loanId);
+
+        List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId);
+
+        List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId);
     }
 }

@@ -151,7 +151,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("")]
-        public HttpResponseMessage AddTempAccount([FromBody] ChartOfAccountViewModel model)
+        public async Task<HttpResponseMessage> AddTempAccount([FromBody] ChartOfAccountViewModel model)
         {
             try
             {
@@ -175,16 +175,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.branchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
 
-                //var username = token.GetUsername;
-                //var staffId = token.GetStaffId;
-                //var companyId = token.GetCompanyId; //etc
-
-                //We can now use staffId extracted from the token as the created by
-                //We ca also get companyId too
-
-                //model.createdBy = staffId; ///This staff Id was gotten from the token
-
-                var account = repo.AddTempAccount(model);
+                var account = await repo.AddTempAccount(model);
                 if (account)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -363,6 +354,30 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
                 }
                   
+        }
+
+        [HttpGet]
+        [Route("classes")]
+        public HttpResponseMessage GetChartOfAccountClasses()
+        {
+            try
+            {
+                var data = repo.GetChartOfAccountClasses();
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, result = data.ToList(), message = "No records found!" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = ex.Message });
+            }
+
         }
     }
 }

@@ -65,17 +65,37 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         }
 
-        private bool ApproveAccount(int accountid, short approvalStatusId, UserInfo user)
+        private bool ApproveAccount(int accountId, short approvalStatusId, UserInfo user)
         {
-            var accountModel = context.tbl_Temp_Chart_Of_Account.Find(accountid);
+            var accountModel = context.tbl_Temp_Chart_Of_Account.Find(accountId);
             var accountToUpdate = context.tbl_Chart_Of_Account.Where(x => x.AccountCode == accountModel.AccountCode);
             var existingAccount = accountToUpdate.FirstOrDefault();
 
             var currModel = context.tbl_Temp_Chart_Of_Account_Currency.Where(c => c.GLAccountId == accountModel.GLAccountId && c.Deleted == false);
             var currListToUpdate = context.tbl_Chart_Of_Account_Currency.Where(x => x.GLAccountId == existingAccount.GLAccountId && x.Deleted == false);
 
+            List<tbl_Chart_Of_Account_Currency> coaCurrencies = new List<tbl_Chart_Of_Account_Currency>();
+
             if (accountToUpdate.Any()) //Update existing account with tempAccount record
             {
+
+                foreach (var curr in currListToUpdate)
+                {
+                    context.tbl_Chart_Of_Account_Currency.Remove(curr);
+                }
+
+                foreach (var c in currModel)
+                {
+                    var curr = new tbl_Chart_Of_Account_Currency()
+                    {
+                        //GLAccountId = c.GLAccountId,
+                        CurrencyId = c.CurrencyId,
+                        DateTimeCreated = _genSetup.GetApplicationDate(),
+                        DateTimeUpdated = DateTime.Now,
+                    };
+                    coaCurrencies.Add(curr);
+                }
+
                 existingAccount.AccountCode = accountModel.AccountCode;
                 existingAccount.AccountName = accountModel.AccountName;
                 existingAccount.AccountTypeId = accountModel.AccountTypeId;
@@ -87,32 +107,23 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 existingAccount.AccountStatusId = accountModel.AccountStatusId;
                 existingAccount.CreatedBy = accountModel.CreatedBy;
                 existingAccount.DateTimeUpdated = DateTime.Now;
-
-                if (currListToUpdate.Any()) //Update existing account currency with tempAccountCurrency record
-                {
-                    foreach (var curr in currListToUpdate)
-                    {
-                        context.tbl_Chart_Of_Account_Currency.Remove(curr);
-
-                    }
-
-                    foreach (var c in currModel)
-                    {
-                        var curr = new tbl_Chart_Of_Account_Currency()
-                        {
-                            GLAccountId = c.GLAccountId,
-                            CurrencyId = c.CurrencyId,
-                            DateTimeCreated = _genSetup.GetApplicationDate(),
-                            DateTimeUpdated = DateTime.Now,
-                        };
-                        context.tbl_Chart_Of_Account_Currency.Add(curr);
-                    }
-
-                }
+                existingAccount.tbl_Chart_Of_Account_Currency = coaCurrencies;
+                existingAccount.GLClassId = (short)accountModel.GLClassId;
 
             }
             else //Insert a new account record into the real account table
             {
+                foreach (var c in currModel)
+                {
+                    var curr = new tbl_Chart_Of_Account_Currency()
+                    {
+                        //GLAccountId = c.GLAccountId,
+                        CurrencyId = c.CurrencyId,
+                        DateTimeCreated = _genSetup.GetApplicationDate(),
+                    };
+                    coaCurrencies.Add(curr);
+                }
+
                 var account = new tbl_Chart_Of_Account()
                 {
                     AccountCode = accountModel.AccountCode,
@@ -125,26 +136,24 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     FSCaptionId = accountModel.FSCaptionId,
                     AccountStatusId = accountModel.AccountStatusId,
                     DateTimeCreated = _genSetup.GetApplicationDate(),
-                    CreatedBy = accountModel.CreatedBy
+                    CreatedBy = accountModel.CreatedBy,
+                    tbl_Chart_Of_Account_Currency = coaCurrencies,
+                    GLClassId = (short)accountModel.GLClassId
                 };
                 context.tbl_Chart_Of_Account.Add(account);
-
-                foreach (var c in currModel)
-                {
-                    var curr = new tbl_Chart_Of_Account_Currency()
-                    {
-                        GLAccountId = c.GLAccountId,
-                        CurrencyId = c.CurrencyId,
-                        DateTimeCreated = _genSetup.GetApplicationDate(),
-                    };
-                    context.tbl_Chart_Of_Account_Currency.Add(curr);
-                }
             }
 
             accountModel.IsCurrent = false;
             accountModel.ApprovalStatusId = approvalStatusId;
             accountModel.DateTimeUpdated = DateTime.Now;
 
+            // remove the temp chart of account and currency
+            context.tbl_Temp_Chart_Of_Account.Remove(accountModel);
+
+            foreach (var curr in currModel)
+            {
+                context.tbl_Temp_Chart_Of_Account_Currency.Remove(curr);
+            }
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -162,7 +171,14 @@ namespace FintrakBanking.Repositories.Setups.Finance
             this.auditTrail.AddAuditTrail(audit);
             // Audit Section ---------------------------
 
-            return this.SaveAll();
+            try
+            {
+                return this.SaveAll();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         private int AddAccount2(ChartOfAccountViewModel account)
@@ -200,7 +216,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                 CreatedBy = account.createdBy,
                 DateTimeCreated = _genSetup.GetApplicationDate(),
-                tbl_Chart_Of_Account_Currency = currencies
+                tbl_Chart_Of_Account_Currency = currencies,
+                GLClassId = account.glClassId
             };
 
             this.context.tbl_Chart_Of_Account.Add(chartOfAccount);
@@ -226,7 +243,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 return -1;
         }
 
-        public bool AddTempAccount(ChartOfAccountViewModel accountModel)
+        public async Task<bool> AddTempAccount(ChartOfAccountViewModel accountModel)
         {
             if (accountModel.currencies.Count < 1)
                 throw new Exception("Chart of Account Currency must be specified");
@@ -273,6 +290,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                 IsCurrent = true,
                 tbl_Temp_Chart_Of_Account_Currency = currencies,
+                GLClassId = accountModel.glClassId
             };
 
             // Audit Section ---------------------------
@@ -296,7 +314,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     {
                         auditTrail.AddAuditTrail(audit);
                         this.context.tbl_Temp_Chart_Of_Account.Add(account);
-                        output = this.SaveAll();
+                        output = await context.SaveChangesAsync() > 0;
 
                         var entity = new ApprovalViewModel
                         {
@@ -307,7 +325,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             operationId = (int)OperationsEnum.ChartOfAccountCreation,
                             BranchId = accountModel.userBranchId
                         };
-                        var response = workFlow.LogForApproval(entity);
+                        var response = await workFlow.LogForApproval(entity);
                         trans.Commit();
                     }
                     catch (Exception ex)
@@ -368,6 +386,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                             createdBy = account.CreatedBy,
                             dateTimeCreated = account.DateTimeCreated,
+                            glClassId = account.GLClassId
 
                             // lastUpdatedBy = account.LastUpdatedBy.Value ,
                             // dateTimeUpdated = account.DateTimeUpdated
@@ -541,6 +560,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     IsCurrent = true,
 
                     tbl_Temp_Chart_Of_Account_Currency = tempCurrencies,
+                    GLClassId = accountModel.glClassId
                 };
 
                 context.tbl_Temp_Chart_Of_Account.Add(tempAccount);
@@ -601,12 +621,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         accountCategoryId = c.tbl_Account_Type.AccountCategoryId,
                         accountCategoryName = c.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
                         accountStatusId = c.AccountStatusId,
-                        currencies = context.tbl_Temp_Chart_Of_Account_Currency.Where(curr => curr.GLAccountId == c.GLAccountId && curr.Deleted == false).Select(c => new ChartOfAccountCurrencyViewModel()
+                        currencies = context.tbl_Temp_Chart_Of_Account_Currency.Where(curr => curr.GLAccountId == c.GLAccountId && curr.Deleted == false).Select(coa => new ChartOfAccountCurrencyViewModel()
                         {
-                            glaccountId = c.GLAccountId,
-                            glaccountCurrencyId = c.GLAccountCurrencyId,
-                            currencyId = c.CurrencyId,
-                            currencyName = c.tbl_Currency.CurrencyCode + " -- " + c.tbl_Currency.CurrencyName
+                            glaccountId = coa.GLAccountId,
+                            glaccountCurrencyId = coa.GLAccountCurrencyId,
+                            currencyId = coa.CurrencyId,
+                            currencyName = coa.tbl_Currency.CurrencyCode + " -- " + coa.tbl_Currency.CurrencyName
 
                         }).ToList(),
                         companyId = c.CompanyId,
@@ -620,6 +640,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         approvalStatusId = c.ApprovalStatusId,
                         createdBy = c.CreatedBy,
                         dateTimeCreated = c.DateTimeCreated,
+                        glClassId = (short)c.GLClassId
                     });
         }
 
@@ -640,12 +661,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         accountCategoryId = c.tbl_Account_Type.AccountCategoryId,
                         accountCategoryName = c.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
                         accountStatusId = c.AccountStatusId,
-                        currencies = context.tbl_Chart_Of_Account_Currency.Where(curr => curr.GLAccountId == c.GLAccountId && curr.Deleted != false).Select(c => new ChartOfAccountCurrencyViewModel()
+                        currencies = context.tbl_Chart_Of_Account_Currency.Where(curr => curr.GLAccountId == c.GLAccountId && curr.Deleted == false).Select(coa => new ChartOfAccountCurrencyViewModel()
                         {
-                            glaccountId = c.GLAccountId,
-                            glaccountCurrencyId = c.GLAccountCurrencyId,
-                            currencyId = c.CurrencyId,
-                            currencyName = c.tbl_Currency.CurrencyCode + " -- " + c.tbl_Currency.CurrencyName
+                            glaccountId = coa.GLAccountId,
+                            glaccountCurrencyId = coa.GLAccountCurrencyId,
+                            currencyId = coa.CurrencyId,
+                            currencyName = coa.tbl_Currency.CurrencyCode + " -- " + coa.tbl_Currency.CurrencyName
 
                         }).ToList(),
                         companyId = c.CompanyId,
@@ -701,6 +722,16 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     {
                         lookupId = data.FSCaptionId,
                         lookupName = data.FSCaption + " -- " + data.tbl_Account_Category.AccountCategoryName
+                    });
+        }
+
+        public IEnumerable<ChartOfAccountClassViewModel> GetChartOfAccountClasses()
+        {
+            return (from data in context.tbl_Chart_Of_Account_Class
+                    select new ChartOfAccountClassViewModel()
+                    {
+                        glClassId = data.GLClassId,
+                        glClassName = data.GLClassName
                     });
         }
     }
