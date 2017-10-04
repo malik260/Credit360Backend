@@ -27,23 +27,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-fee/all/{productId}")]
-        public HttpResponseMessage GetFeeByProduct( int productId)
+        public HttpResponseMessage GetFeeByProduct(int productId)
         {
-                try
+            try
+            {
+                var data = repo.GetFeeByProduct(productId);
+                if (data == null)
                 {
-                    var data = repo.GetFeeByProduct(productId);
-                    if (data == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = false, message = "No record found" });
-                    }
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data.ToList() });  //Ok(accounts);
+                        new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
@@ -52,7 +52,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllMappedFeeByProduct(productId);
+                var data = repo.GetFeeByProduct(productId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -70,43 +70,43 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-fee/unmapped/{productId}")]
-        public HttpResponseMessage GetUnmappedFeeToProduct( int productId)
-        { 
-                try
+        public HttpResponseMessage GetUnmappedFeeToProduct(int productId)
+        {
+            try
+            {
+                var data = repo.GetUnmappedFeeToProduct(productId);
+                if (data == null)
                 {
-                    var data = repo.GetUnmappedFeeToProduct(productId);
-                    if (data == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                new { success = false, message = "No record found" });
-                    }
                     return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data.ToList() });  //Ok(accounts);
+                            new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("product-fee/{productFeeId}")]
-        public HttpResponseMessage GetProductFee( int productFeeId)
-        { 
-                try
+        public HttpResponseMessage GetProductFee(int productFeeId)
+        {
+            try
+            {
+                var data = repo.GetProductFee(productFeeId);
+                if (data == null)
                 {
-                    var data = repo.GetProductFee(productFeeId);
-                    if (data == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                    new { success = false, message = "No record found" });
-                    }
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
@@ -131,7 +131,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-fee/approvals/temp{tempProductId}")]
-        public HttpResponseMessage GetStaffAwaitingApproval(int tempProductId)
+        public HttpResponseMessage GetProductFeeAwaitingApproval(int tempProductId)
         {
             try
             {
@@ -146,7 +146,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
-               // errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                // errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -154,150 +154,168 @@ namespace FintrakBanking.APICore.Controllers
         // POST api/values
         [HttpPost]
         [Route("product-fee")]
-        public HttpResponseMessage AddTempProductFee( [FromBody] ProductFeeViewModel model)
-        {  try
-                {
-                    var token = new TokenDecryptionHelper();
-                    model.userBranchId = (short)token.GetBranchId;
-                    model.userIPAddress = Request.RequestUri.Host;
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
+        public HttpResponseMessage AddTempProductFee([FromBody] ProductFeeViewModel model)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
-                    var recordId = repo.AddTempProductFee(model);
-                    if (recordId >= 1)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                        new { success = true, result = recordId,
-                                            message = "product fee has been created successfully" });
-                    }
-                    else
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                        new { success = false, message = "product fee not created" });
-                }
-                catch (System.Exception ex)
+                var recordId = repo.AddProductFee(model);
+                if (recordId >= 1)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                    new
+                                    {
+                                        success = true,
+                                        result = recordId,
+                                        message = "product fee has been created successfully"
+                                    });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                    new { success = false, message = "product fee not created" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
 
         [HttpPost]
         [Route("product-fee/multiple")]
-        public HttpResponseMessage AddMultipleProductFee( [FromBody] List<ProductFeeViewModel> model)
-        { try
-                {
-                    var token = new TokenDecryptionHelper();
+        public HttpResponseMessage AddMultipleProductFee([FromBody] List<ProductFeeViewModel> model)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
 
-                    var recordId = repo.AddMultipleProductFee(model);
-                    if (recordId >= 1)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, result = recordId, message = "product fee(s) has been created successfully" });
-                    }
-                    else
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = false, message = "product fee not created" });
-                }
-                catch (System.Exception ex)
+                var recordId = repo.AddMultipleProductFee(model);
+                if (recordId >= 1)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = true, result = recordId, message = "product fee(s) has been created successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = false, message = "product fee not created" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPut]
         [Route("product-fee/{productFeeId}")]
-        public HttpResponseMessage UpdateProductFee( int productFeeId, [FromBody] ProductFeeViewModel model)
-        { if (model == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = false, message = "No record found" });
-                }
+        public HttpResponseMessage UpdateProductFee(int productFeeId, [FromBody] ProductFeeViewModel model)
+        {
+            if (model == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = false, message = "No record found" });
+            }
 
-                var data = repo.GetProductFee(productFeeId);
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = false, message = "No record found" });
-                }
+            var data = repo.GetProductFee(productFeeId);
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = false, message = "No record found" });
+            }
 
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-                    model.userBranchId = (short)token.GetBranchId;
-                    model.userIPAddress = Request.RequestUri.Host;
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
-                    repo.UpdateProductFee(productFeeId, model);
+                repo.UpdateProductFee(productFeeId, model);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, result = productFeeId, message = "product fee has been updated successfully" });
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = true, result = productFeeId, message = "product fee has been updated successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpDelete]
         [Route("product-fee/{productFeeId}")]
-        public HttpResponseMessage DeleteProductFee( int productFeeId)
-        {  var account = repo.GetProductFee(productFeeId);
-                if (account == null)
+        public HttpResponseMessage DeleteProductFee(int productFeeId)
+        {
+            var account = repo.GetProductFee(productFeeId);
+            if (account == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = false, message = "No record found" });
+            }
+
+            try
+            {
+                var token = new TokenDecryptionHelper();
+
+                UserInfo user = new UserInfo()
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                                new { success = false, message = "No record found" });
-                }
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host
+                };
+                var response = repo.DeleteProductFee(productFeeId, user);
 
-                try
+                if (!response)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        applicationUrl = HttpContext.Current.Request.Path,
-                        userIPAddress = Request.RequestUri.Host
-                    };
-                    repo.DeleteProductFee(productFeeId, user);
-
                     return Request.CreateResponse(HttpStatusCode.OK, new
                     {
-                        success = true,
-                        result = productFeeId,
-                        message = "product fee has been deleted successfully"
+                        success = false,
+                        message = "product fee has not been deleted successfully"
                     });
                 }
-                catch (System.Exception ex)
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                    success = true,
+                    result = productFeeId,
+                    message = "product fee has been deleted successfully"
+                });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpDelete]
         [Route("product-fee/multiple/{productFeeIds}")]
-        public HttpResponseMessage DeleteMultipleProductFee( List<int> productFeeIds)
-        {  if (productFeeIds.Count <= 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                                    new { success = false, message = "No record found" });
-                }
+        public HttpResponseMessage DeleteMultipleProductFee(List<int> productFeeIds)
+        {
+            if (productFeeIds.Count <= 0)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                                new { success = false, message = "No record found" });
+            }
 
-                try
-                {
-                    repo.DeleteMultipleProductFee(productFeeIds);
+            try
+            {
+                repo.DeleteMultipleProductFee(productFeeIds);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                                    new { success = true, result = 1, message = "product fee(s) has been deleted successfully" });
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                                new { success = true, result = 1, message = "product fee(s) has been deleted successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
     }
 }

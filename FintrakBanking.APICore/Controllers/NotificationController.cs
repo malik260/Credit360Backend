@@ -29,7 +29,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetNotification(token.GetStaffId, token.GetCompanyId);
                 if (data == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }

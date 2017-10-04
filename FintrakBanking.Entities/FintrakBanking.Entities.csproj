@@ -76,6 +76,9 @@
     <Compile Include="Models\tbl_Audit.cs" />
     <Compile Include="Models\tbl_Audit_Type.cs" />
     <Compile Include="Models\tbl_Branch.cs" />
+    <Compile Include="Models\tbl_Call_Memo.cs" />
+    <Compile Include="Models\tbl_Call_Memo_Limit.cs" />
+    <Compile Include="Models\tbl_Call_Memo_Type.cs" />
     <Compile Include="Models\tbl_CASA.cs" />
     <Compile Include="Models\tbl_CASA_AccountStatus.cs" />
     <Compile Include="Models\tbl_CASA_Lien.cs" />
@@ -124,6 +127,7 @@
     <Compile Include="Models\tbl_COT.cs" />
     <Compile Include="Models\tbl_Country.cs" />
     <Compile Include="Models\tbl_Credit_Appraisal_Memorandum.cs" />
+    <Compile Include="Models\tbl_Credit_Appraisal_Memorandum_Document.cs" />
     <Compile Include="Models\tbl_Credit_Appraisal_Memorandum_Loan_Detail.cs" />
     <Compile Include="Models\tbl_Credit_Template.cs" />
     <Compile Include="Models\tbl_Currency.cs" />
@@ -214,6 +218,7 @@
     <Compile Include="Models\tbl_Loan_Operation.cs" />
     <Compile Include="Models\tbl_Loan_Past_Due.cs" />
     <Compile Include="Models\tbl_Loan_Preliminary_Evaluation.cs" />
+    <Compile Include="Models\tbl_Loan_PriceIndex_Exception.cs" />
     <Compile Include="Models\tbl_Loan_PrudentialGuideline.cs" />
     <Compile Include="Models\tbl_Loan_Relationship_Officer_History.cs" />
     <Compile Include="Models\tbl_Loan_Revolving.cs" />
@@ -232,6 +237,9 @@
     <Compile Include="Models\tbl_Loan_Type.cs" />
     <Compile Include="Models\tbl_MachineValue_Base.cs" />
     <Compile Include="Models\tbl_Management_Type.cs" />
+    <Compile Include="Models\tbl_Message_Log.cs" />
+    <Compile Include="Models\tbl_Message_Log_Status.cs" />
+    <Compile Include="Models\tbl_Message_Log_Type.cs" />
     <Compile Include="Models\tbl_MIS_Info.cs" />
     <Compile Include="Models\tbl_MIS_Type.cs" />
     <Compile Include="Models\tbl_Nature_Of_Business.cs" />
@@ -299,21 +307,18 @@
     <Compile Include="Models\tbl_Temp_Customer_Group_Mapping.cs" />
     <Compile Include="Models\tbl_Temp_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Product.cs" />
+    <Compile Include="Models\tbl_Temp_Product_Charge_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Product_CollateralType.cs" />
     <Compile Include="Models\tbl_Temp_Product_Currency.cs" />
     <Compile Include="Models\tbl_Temp_Product_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Staff.cs" />
     <Compile Include="Models\tbl_Tenor_Mode.cs" />
-    <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>

@@ -19,6 +19,7 @@ namespace FintrakBanking.APICore.Controllers
     public class ApprovalLevelController : ApiControllerBase
     {
         private IApprovalLevelRepository repo;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public ApprovalLevelController(IApprovalLevelRepository _repo)
         {
@@ -26,14 +27,13 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Approval Level
+
         [HttpPost]
         [Route("approval-level")]
         public HttpResponseMessage AddApprovalLevel([FromBody] ApprovalLevelViewModel model)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
@@ -43,72 +43,37 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.AddApprovalLevel(model);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                          new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"There was an error creating this record {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
 
         }
 
-        [HttpPost]
-        [Route("approval-level-multiple")]
-        public HttpResponseMessage AddMultipleApprovalLevel([FromBody] List<ApprovalLevelViewModel> model)
-        {
-            try
-            {
-                var token = new TokenDecryptionHelper();
+        //[HttpGet]
+        //[Route("approval-level")]
+        //public HttpResponseMessage GetAllApprovalLevel()
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetAllApprovalLevel(token.GetCompanyId);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //        }
 
-                var recordId = repo.AddMultipleApprovalLevel(model);
-                if (recordId)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = recordId, message = "Approval Levels has been created successfully" });
-                }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Approval Levels not created" });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = ex.Message });
-            }
-
-        }
-
-        [HttpGet]
-        [Route("approval-level")]
-        public HttpResponseMessage GetAllApprovalLevel()
-        {
-            try
-            {
-                var token = new TokenDecryptionHelper();
-
-                var data = repo.GetAllApprovalLevel(token.GetCompanyId);
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data, count = data.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {e.Message}" });
-            }
-
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
         [HttpGet]
         [Route("approval-level/approval-level/{id}")]
@@ -116,46 +81,36 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var data = repo.GetApprovalLevelById(id, token.GetCompanyId);
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data, count = 1 });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
             catch (System.Exception ex)
             {
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
 
         }
 
         [HttpGet]
-        [Route("approval-level/operation-mapping/{id}")]
-        public HttpResponseMessage GetApprovalLevelByOperationId(int id)
+        [Route("approval-level/group/{groupId}")]
+        public HttpResponseMessage GetApprovalLevelByOperationId(int groupId)
         {
 
             try
             {
-                var token = new TokenDecryptionHelper();
-                var data = repo.GetApprovalLevelByOperationId(id, token.GetCompanyId);
+                var data = repo.GetApprovalLevelByGroupId(groupId, token.GetCompanyId);
                 if (data.Any())
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data.ToList(), count = data.Count() });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = data.ToList(), count = data.Count() });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
                 }
-                
             }
             catch (System.Exception ex)
             {
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                  new { success = false, message = $"There was an error updating this record {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
 
         }
@@ -166,7 +121,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
@@ -188,19 +142,17 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {e.Message}" });
+                        new { success = false, message = e.InnerException, error = e.InnerException, e.StackTrace });
             }
 
         }
 
         [HttpDelete]
-        [Route("approval-level/approval-level/{id}")]
-        public HttpResponseMessage DeleteApprovalLevel(int id)
+        [Route("approval-level/{id}")]
+        public async Task<HttpResponseMessage> DeleteApprovalLevelAsync(int id)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
                 UserInfo user = new UserInfo()
                 {
                     BranchId = token.GetBranchId,
@@ -210,15 +162,16 @@ namespace FintrakBanking.APICore.Controllers
                     userIPAddress = HttpContext.Current.Request.UserHostAddress
                 };
 
-                repo.DeleteApprovalLevel(id, user);
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = id, message = "record has been deleted successfully" });
+                var saved = await repo.DeleteApprovalLevel(id, user);
+                if (saved)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = id, message = "Record has been deleted successfully" });
+                }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = id, message = "Record could not be deleted." });
             }
             catch (System.Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException, stack = ex.StackTrace });
             }
 
         }

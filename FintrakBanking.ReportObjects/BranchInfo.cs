@@ -1,7 +1,7 @@
-﻿using FintrakBanking.Entities.Models;
-using FintrakBanking.ViewModels.Setups.General;
+﻿using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
 using System.Linq;
+using FintrakBanking.Entities.Models;
 
 namespace FintrakBanking.ReportObjects
 {

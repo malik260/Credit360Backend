@@ -53,6 +53,7 @@
     <Compile Include="Credit\AppraisalMemorandumLoanDetailViewModel.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
+    <Compile Include="Credit\CallMemoViewModel.cs" />
     <Compile Include="Credit\CamProcessedLoanViewModel.cs" />
     <Compile Include="Credit\CollateralCustomerViewModel.cs" />
     <Compile Include="Credit\CollateralDocumentViewModel.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Setups\General\CityViewModel.cs" />
     <Compile Include="Setups\General\CompanyViewModel.cs" />
     <Compile Include="Setups\General\CountryViewModel.cs" />
+    <Compile Include="Setups\General\ProductChargeFeeViewModel.cs" />
     <Compile Include="Setups\General\PublicHolidayViewModel.cs" />
     <Compile Include="Setups\General\SectorViewModel.cs" />
     <Compile Include="Setups\General\CustomFieldsDataViewModel.cs" />

@@ -19,7 +19,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 
         ApprovalGroupMappingViewModel GetApprovalGroupMapping(int operationMappingId);
 
-        IEnumerable<ApprovalGroupMappingViewModel> GetApprovalGroupMapping(int operationId, short? productClassId);
+        IEnumerable<ApprovalGroupMappingViewModel> GetApprovalGroupMapping(int operationId, short? productClassId, short? productId);
 
     }
 }

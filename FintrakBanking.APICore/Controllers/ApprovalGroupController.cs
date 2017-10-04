@@ -20,6 +20,7 @@ namespace FintrakBanking.APICore.Controllers
         private IApprovalGroupMappingRepository repoMapping;
 
         private IApprovalGroupRepository repoGroup;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public ApprovalGroupController(IApprovalGroupMappingRepository _repoMapping, IApprovalGroupRepository _repoGroup)
         {
@@ -34,30 +35,23 @@ namespace FintrakBanking.APICore.Controllers
         { 
                 try
                 {
-                    var token =   new TokenDecryptionHelper( );
-
                     model.userBranchId = (short)token.GetBranchId;
-                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                model.applicationUrl = HttpContext.Current.Request.Path;
+                    model.applicationUrl = HttpContext.Current.Request.Path;
                     model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
                     var data = repoMapping.AddApprovalGroupMapping(model);
                     if (data != -1)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = true, result = data, message = "The record has been created successfully" });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
                     }
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "There was an error creating this record" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }
                 catch (Exception e)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = $"There was an error creating this record {e.Message}" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message, error = e.InnerException, stack = e.StackTrace });
                 }
-           
         }
 
         [HttpGet][Route("approval-group-mapping/{operationMappingId}")]
@@ -84,37 +78,25 @@ namespace FintrakBanking.APICore.Controllers
                  
         }
 
-        [HttpGet] [Route("approval-group-mapping/operation/{operationId}/product/{productClassId}")]
-        public HttpResponseMessage GetApprovalGroupMapping(  int operationId, short productClassId)
+        [HttpGet, Route("approval-group-mapping/operation/{operationId}/product-class/{productClassId}/product/{productId}")]
+        public HttpResponseMessage GetApprovalGroupMapping(int operationId, short? productClassId, short? productId)
         {
-              
-                try
+            try
+            {
+                productClassId = (productClassId == -1) ? null : productClassId;
+
+                var data = repoMapping.GetApprovalGroupMapping(operationId, productClassId, productId);
+                if (data== null)
                 {
-                    var token = new TokenDecryptionHelper( );
-
-                    short? productClass;
-
-                    if (productClassId != -1)
-                        productClass = productClassId;
-                    else
-                        productClass = null;
-
-                    var data = repoMapping.GetApprovalGroupMapping(operationId, productClass);
-                    if (data== null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = false, message = "No record found" });
-                    }
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = true, result = data, count = data.Count() });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = $"Error: {e.Message}" });
-                }
-                  
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
         }
 
 
@@ -124,11 +106,10 @@ namespace FintrakBanking.APICore.Controllers
         { 
                 try
                 {
-                    TokenDecryptionHelper token = new TokenDecryptionHelper();
                     model.userBranchId = (short)token.GetBranchId;
                     // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                      model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
+                    model.lastUpdatedBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
                     var data = repoMapping.UpdateApprovalGroupMapping(operationMappingId, model);
@@ -147,32 +128,27 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete][Route("approval-group-mapping/{operationMappingId}")]
-        public HttpResponseMessage DeleteApprovalGroupMapping(  int operationMappingId)
+        public HttpResponseMessage DeleteApprovalGroupMapping(int operationMappingId)
         { 
                 try
                 {
-                    var token =    new TokenDecryptionHelper();
-
                     UserInfo user = new UserInfo()
                     {
                         BranchId = token.GetBranchId,
                         companyId = token.GetCompanyId,
                         staffId = token.GetStaffId,
                         applicationUrl = HttpContext.Current.Request.Path,
-                       // userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
                     };
 
                     repoMapping.DeleteApprovalGroupMapping(operationMappingId, user);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = operationMappingId, message = "record has been deleted successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = operationMappingId, message = "record has been deleted successfully" });
                 }
                 catch (System.Exception ex)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = ex.Message });
-                }
-             
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException, stack = ex.StackTrace });
+            }
+
         }
         #endregion
 

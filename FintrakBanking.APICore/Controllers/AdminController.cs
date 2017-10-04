@@ -6,7 +6,7 @@ using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels.Admin;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.General;
-using System;  
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -40,11 +40,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("users")]
-       
+
         public IHttpActionResult GetAllUsers()
         {
             var users = repo.GetAllUsers().ToList();
-            return Ok( new { result = users });
+            return Ok(new { result = users });
         }
 
         [HttpPost]
@@ -175,7 +175,7 @@ namespace FintrakBanking.APICore.Controllers
                 this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
-            } 
+            }
         }
 
         #endregion
@@ -185,7 +185,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("group/add")]
-        public HttpResponseMessage AddGroup(  [FromBody] AppGroupViewModel group)
+        public HttpResponseMessage AddGroup([FromBody] AppGroupViewModel group)
         {
             try
             {
@@ -227,7 +227,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("group/{id}")]
-        public HttpResponseMessage UpdateGroup(  [FromBody] AppGroupViewModel group, short id)
+        public HttpResponseMessage UpdateGroup([FromBody] AppGroupViewModel group, short id)
         {
             //[FromBody]
             var req = this.Request;
@@ -264,12 +264,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("groups")]
-        public HttpResponseMessage GetAllGroups( )
+        public HttpResponseMessage GetAllGroups()
         {
             try
             {
                 var groups = repo.GetAllGroups().ToList();
-                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = groups });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = groups });
             }
             catch (Exception ex)
             {
@@ -283,12 +283,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("group/{id}")]
-        public HttpResponseMessage GetGroupById(  int id)
+        public HttpResponseMessage GetGroupById(int id)
         {
             try
             {
                 var group = repo.GetSingleGroup(id);
-                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = group });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = group });
             }
             catch (Exception ex)
             {
@@ -304,7 +304,7 @@ namespace FintrakBanking.APICore.Controllers
         #region Activities
         [HttpGet]
         [Route("activities/parents")]
-        public HttpResponseMessage GetAllActivities( )
+        public HttpResponseMessage GetAllActivities()
         {
             try
             {
@@ -325,7 +325,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("group/activities/mapped")]
-        public HttpResponseMessage GetGroupActivities( )
+        public HttpResponseMessage GetGroupActivities()
         {
             try
             {
@@ -346,7 +346,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [Route("group/activity/access/{id}")]
-        public HttpResponseMessage AddAccessToActivity(  int id, [FromBody] ActivitiesUpdateVm model)
+        public HttpResponseMessage AddAccessToActivity(int id, [FromBody] ActivitiesUpdateVm model)
         {
 
             //[FromBody]
@@ -375,21 +375,29 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion
 
-        // [HttpGet][Route("audit/log")]
-        //public IHttpActionResult GetAuditLog([FromQuery] int page,[FromQuery] int itemsPerPage)
-        //{
-        //     TokenDecryptionHelper token = null;
+        #region Audit Trail
+        [HttpGet]
+        [Route("audit/log")]
+        public HttpResponseMessage GetAuditLog([FromUri] int page, [FromUri] int itemsPerPage)
+        {
+            try
+            {
+                var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId);
+                int totalItems = allAuditLog.Count();
 
-        //    //token = new TokenDecryptionHelper(this.HttpContext);
-        //    var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId);
-        //    int totalItems = allAuditLog.Count();
+                allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage);
 
-        //    allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage);
+                var data = allAuditLog.ToList();
 
-        //    var result = allAuditLog.ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = totalItems });
 
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
 
-        //    returnnew { result = result, itemsPerPage = itemsPerPage, totalItems = totalItems });
-        //}
+        }
+        #endregion
     }
 }

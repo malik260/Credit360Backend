@@ -151,7 +151,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("")]
-        public HttpResponseMessage AddTempAccount([FromBody] ChartOfAccountViewModel model)
+        public async Task<HttpResponseMessage> AddTempAccount([FromBody] ChartOfAccountViewModel model)
         {
             try
             {
@@ -175,16 +175,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.branchId = (short)token.GetBranchId;
                 model.companyId = token.GetCompanyId;
 
-                //var username = token.GetUsername;
-                //var staffId = token.GetStaffId;
-                //var companyId = token.GetCompanyId; //etc
-
-                //We can now use staffId extracted from the token as the created by
-                //We ca also get companyId too
-
-                //model.createdBy = staffId; ///This staff Id was gotten from the token
-
-                var account = repo.AddTempAccount(model);
+                var account = await repo.AddTempAccount(model);
                 if (account)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

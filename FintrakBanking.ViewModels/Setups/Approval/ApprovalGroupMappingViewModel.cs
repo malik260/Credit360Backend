@@ -12,6 +12,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public int groupId { get; set; }
         public string groupName { get; set; }
         public short? productClassId { get; set; }
+        public short? productId { get; set; }
         public string productClassName { get; set; }
         public int position { get; set; }       
     }

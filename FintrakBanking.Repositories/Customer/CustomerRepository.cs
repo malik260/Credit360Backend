@@ -1147,6 +1147,7 @@ namespace FintrakBanking.Repositories.Customer
                     subSectorId = c.subSectorId,
                     subSectorName = c.subSectorName,
                     relationshipOfficerId = c.relationshipOfficerId
+                    
                 });
             }
             return allCustomers;

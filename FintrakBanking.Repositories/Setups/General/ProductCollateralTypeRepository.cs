@@ -93,7 +93,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public int AddTempProductCollateralType(ProductCollateralTypeViewModel productCollateral)
         {
-            var dataExist = this.context.tbl_Temp_Product_CollateralType.FirstOrDefault(x => x.ProductId == productCollateral.productId
+            var dataExist = this.context.tbl_Product_CollateralType.FirstOrDefault(x => x.ProductId == productCollateral.productId
                                                                 && x.CollateralTypeId == productCollateral.collateralTypeId
                                                                 && x.Deleted == true); // .Find(accountId);
 
@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             if (dataExist == null)
             {
-                tempProductCollateralEntity = new tbl_Temp_Product_CollateralType()
+                tempProductCollateralEntity = new tbl_Product_CollateralType()
                 {
                     ProductId = productCollateral.productId,
                     CompanyId = productCollateral.companyId,
@@ -109,18 +109,18 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     CreatedBy = productCollateral.createdBy,
                     DateTimeCreated = _genSetup.GetApplicationDate(),
                     Deleted = false,
-                    IsCurrent = true
+                    //IsCurrent = true
                 };
 
                 var existingProductApprovalLog = context.tbl_Temp_Product.Find(productCollateral.productId);
-                var ProductData = context.tbl_Temp_Product.Find(productCollateral.productId);
+                var ProductData = context.tbl_Product.Find(productCollateral.productId);
 
-                if (existingProductApprovalLog != null)
-                {
-                    ProductData.IsCurrent = true;
-                }
+                //if (existingProductApprovalLog != null)
+                //{
+                //    ProductData.IsCurrent = true;
+                //}
 
-                this.context.tbl_Temp_Product_CollateralType.Add(tempProductCollateralEntity);
+                this.context.tbl_Product_CollateralType.Add(tempProductCollateralEntity);
                 // Audit Section ---------------------------
                 var product = this.context.tbl_Temp_Product.FirstOrDefault(x => x.ProductId == productCollateral.productId);
                 var collateralInfo = this.context.tbl_Collateral_Type.FirstOrDefault(x => x.CollateralTypeId == productCollateral.collateralTypeId);
@@ -129,7 +129,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     AuditTypeId = (short)AuditTypeEnum.ProductCollateralAdded,
                     StaffId = productCollateral.createdBy,
                     BranchId = (short)productCollateral.userBranchId,
-                    Detail = "Added product collateral type: " + collateralInfo.CollateralTypeName + " to product " + product.ProductCode + " (" + product.ProductName + ")",
+                    Detail = "Added product collateral type: " + collateralInfo?.CollateralTypeName + " to product " + product?.ProductCode + " (" + product?.ProductName + ")",
                     IPAddress = productCollateral.userIPAddress,
                     Url = productCollateral.applicationUrl,
                     SystemDateTime = DateTime.Now,
@@ -152,8 +152,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             if (status)
                 return tempProductCollateralEntity.ProductCollateralTypeId;
-            else
-                return -1;
+
+            return -1;
         }
 
         public void ApproveProductCollateral(int productId, UserInfo user)

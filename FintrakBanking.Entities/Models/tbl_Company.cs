@@ -21,6 +21,7 @@ namespace FintrakBanking.Entities.Models
             tbl_MIS_Info = new HashSet<tbl_MIS_Info>();
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
+            tbl_Call_Memo_Limit = new HashSet<tbl_Call_Memo_Limit>();
             tbl_CASA_Lien = new HashSet<tbl_CASA_Lien>();
             tbl_Chart_Of_Account = new HashSet<tbl_Chart_Of_Account>();
             tbl_Temp_Chart_Of_Account = new HashSet<tbl_Temp_Chart_Of_Account>();
@@ -57,6 +58,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Temp_Charge_Fee = new HashSet<tbl_Temp_Charge_Fee>();
             tbl_Temp_Customer_Group_Mapping = new HashSet<tbl_Temp_Customer_Group_Mapping>();
             tbl_Temp_Customer_Group = new HashSet<tbl_Temp_Customer_Group>();
+            tbl_Temp_Product_Charge_Fee = new HashSet<tbl_Temp_Product_Charge_Fee>();
             tbl_Temp_Product_CollateralType1 = new HashSet<tbl_Temp_Product_CollateralType>();
             tbl_Temp_Fee = new HashSet<tbl_Temp_Fee>();
             tbl_Temp_Product_Fee = new HashSet<tbl_Temp_Product_Fee>();
@@ -150,6 +152,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? ParentId { get; set; }
 
+        [StringLength(100)]
+        public string LogoPath { get; set; }
+
         public int? CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
@@ -198,6 +203,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Call_Memo_Limit> tbl_Call_Memo_Limit { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
@@ -310,6 +318,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Customer_Group> tbl_Temp_Customer_Group { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Temp_Product_Charge_Fee> tbl_Temp_Product_Charge_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Product_CollateralType> tbl_Temp_Product_CollateralType1 { get; set; }

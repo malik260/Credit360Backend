@@ -175,6 +175,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralCustomerViewModel : GeneralEntity
     {
         public int collateralCustomerId { get; set; }
+        public int collateralId { get; set; }
         public int collateralTypeId { get; set; }
         public string collateralType { get; set; }
         public string collateralCode { get; set; }
@@ -475,5 +476,20 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralTypeId { get; set; }
         public double haircut { get; set; }
         public int revaluationDuration { get; set; }
+    }
+
+    public class CustomerCollateralSearch
+    {
+        public int customerId { get; set; }
+        public string firstName { get; set; }
+        public string customerCode { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string accountNumber { get; set; }
+        public string currency { get; set; }
+        public int relationshipOfficerId { get; set; }
+        public int relationshipManagerId { get; set; }
+        public string customerName { get { return $"{this.firstName} {this.lastName}"; } }
+        public CollateralViewModel customerCollateral { get; set; }
     }
 }

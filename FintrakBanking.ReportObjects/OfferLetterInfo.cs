@@ -1,7 +1,7 @@
 ﻿using FintrakBanking.Common.Enum;
-using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Credit;
 using System.Linq;
+using FintrakBanking.Entities.Models;
 
 namespace FintrakBanking.ReportObjects
 {

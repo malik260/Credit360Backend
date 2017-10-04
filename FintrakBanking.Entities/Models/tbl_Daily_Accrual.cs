@@ -46,6 +46,8 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal DailyAccuralAmount { get; set; }
 
+        public bool RepaymentPostedStatus { get; set; }
+
         [Column(TypeName = "money")]
         public decimal SystemDateTime { get; set; }
 
