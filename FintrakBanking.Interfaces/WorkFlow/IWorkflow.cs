@@ -24,10 +24,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool EmailNotification { set; }
         bool Vote { set; }
         bool InvestmentGrade { set; }
-<<<<<<< HEAD
         bool PoliticallyExposed { set; }
-=======
->>>>>>> 6c46ad2ef3ec373556311170ac7660692789c95b
         bool SmsNotification { set; }
         bool ExternalInitialization { set; }
         string Message { get; }
