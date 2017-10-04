@@ -244,7 +244,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var loan = context.tbl_Loan.Where(c => c.CompanyId == entity.companyId && c.TermLoanId == entity.targetId);
                 if (loan.Any())
                 {
-                    amount = loan.SingleOrDefault().PrincipalAmount;
+                    amount = loan.SingleOrDefault().OutstandingPrincipal;
                 }
             }
             return amount;
@@ -301,7 +301,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             var group = allGroups.Where(c => c.OperationId == operationId).OrderBy(c => c.Position).FirstOrDefault();
-            var levels = allLevels.Where(c => c.groupOperationMappingId == group.GroupOperationMappingId).OrderBy(c => c.position).FirstOrDefault();
+            var levels = allLevels.Where(c => c.groupId == group.GroupOperationMappingId).OrderBy(c => c.position).FirstOrDefault();
             return levels.approvalLevelId;
         }
 
@@ -309,16 +309,16 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             int nextGroupOperationMappingId = 0;
             int nextLevelPosition = 0;
-            int groupOperationMappingId = 0;
+            int groupId = 0;
             ApprovalLevelViewModel[] allLevels = GetAllLevels(opereationId, companyId).ToArray();
             ApprovalLevelViewModel nextLevel = null;
             ApprovalGroupMappingViewModel[] allGroups = groupMappingRepo.GetAllApprovalGroupMapping().ToArray();
 
             var currentLevel = GetAllLevels(opereationId, companyId).FirstOrDefault(c => c.approvalLevelId == approvalLevelId);
 
-            groupOperationMappingId = currentLevel.groupOperationMappingId;
+            groupId = currentLevel.groupId;
 
-            var approvalLevels = allLevels.Where(c => c.groupOperationMappingId == groupOperationMappingId).OrderBy(c => c.position).ToArray();
+            var approvalLevels = allLevels.Where(c => c.groupId == groupId).OrderBy(c => c.position).ToArray();
 
             if (approvalLevels.Length > currentLevel.position)
             {
@@ -327,11 +327,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             if (approvalLevels.Length == currentLevel.position)
             {
-                var newGroup = allGroups.Where(c => c.operationId == opereationId && c.groupOperationMappingId != groupOperationMappingId).OrderBy(c => c.position);
+                var newGroup = allGroups.Where(c => c.operationId == opereationId && c.groupId != groupId).OrderBy(c => c.position);
                 if (newGroup.Any())
                 {
-                    nextGroupOperationMappingId = newGroup.FirstOrDefault().groupOperationMappingId;
-                    nextLevel = allLevels.Where(c => c.groupOperationMappingId == nextGroupOperationMappingId).OrderBy(c => c.position).FirstOrDefault();
+                    nextGroupOperationMappingId = newGroup.FirstOrDefault().groupId;
+                    nextLevel = allLevels.Where(c => c.groupId == nextGroupOperationMappingId).OrderBy(c => c.position).FirstOrDefault();
                 }
             }
             return nextLevel;

@@ -552,7 +552,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 var data = repo.GetBookedLoanDetails(token.GetCompanyId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data , count = 1 });
             }
             catch (Exception e)
             {

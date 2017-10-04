@@ -8,6 +8,9 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using FintrakBanking.ViewModels.Credit;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -132,6 +135,32 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
             }
         }
+
+        [HttpPost]
+        [Route("global-job-request")]
+        public HttpResponseMessage AddGlobalJobRequest([FromBody] JobRequestViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.AddGlobalJobRequest(entity);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
         [HttpPut, Route("job-request/reply/{jobRequestId}")]
         public HttpResponseMessage ReplyJobRequest([FromBody] JobRequestViewModel entity, int jobRequestId)
         {
@@ -179,6 +208,84 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
+
+        #region Job-Documents
+
+        [HttpGet]
+        [Route("job-document/{jobRequestCode}")]
+        public HttpResponseMessage GetLoanDocumentByApplication(string jobRequestCode)
+        {
+            try
+            {
+                var data = repo.GetJobRequestDocument(jobRequestCode);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("job-document")]
+        public async Task<HttpResponseMessage> AddJobDocument()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                int uploadType;
+                if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                }
+
+                var entity = new RequestDocumentViewModel
+                {
+                    //targetId = Convert.ToInt32(provider.FormData["targetId"]),
+                    //targetReferenceNumber = provider.FormData["targetReferenceNumber"],
+                    jobRequestCode = provider.FormData["jobRequestCode"],
+                    documentTitle = provider.FormData["documentTitle"],
+                    documentTypeId = (short)uploadType,
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                    physicalFileNumber = provider.FormData["physicalFileNumber"],
+                    physicalLocation = provider.FormData["physicalLocation"],
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = repo.AddJobDocument(entity, buffer);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
+        }
+        #endregion Job-Documents
 
 
         #region job-type

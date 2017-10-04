@@ -8,7 +8,7 @@
         public string Code { get; set; }
         public decimal Limit { get; set; }
         public decimal Usage { get; set; }
-        public decimal Balance { get; set; }
+        public decimal Balance { get { return (Limit - Usage); } }
         public bool allowOverride { get; set; }
     }
 }

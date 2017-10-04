@@ -70,6 +70,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? firstPrincipalPaymentDate { get; set; }
         public DateTime? firstInterestPaymentDate { get; set; }
         public decimal outstandingPrincipal { get; set; }
+        public decimal outstandingInterest { get; set; }
         public int? principalAdditionCount { get; set; }
         public int? principalReductionCount { get; set; }
         public bool fixedPrincipal { get; set; }
@@ -77,10 +78,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool dischargeLetter { get; set; }
         public bool suspendInterest { get; set; }
         public bool booked { get; set; }
-        public bool scheduled { get; set; }
-        public bool isScheduledPrepayment { get; set; }
-        public decimal scheduledPrepaymentAmount { get; set; }
-        public DateTime scheduledPrepaymentDate { get; set; }
+        public bool ? scheduled { get; set; }
+        public bool ? isScheduledPrepayment { get; set; }
+        public decimal ? scheduledPrepaymentAmount { get; set; }
+        public DateTime ? scheduledPrepaymentDate { get; set; }
         public short scheduledPrepaymentFrequencyTypeId { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public string firstName { get; set; }
@@ -94,6 +95,20 @@ namespace FintrakBanking.ViewModels.Credit
         public short firstDayType { get; set; }
         public bool isCamsol { get; set; }
         public string comment { get; set; }
+        public int internalPrudentialGuidelineStatusId { get; set; }
+        public int externalPrudentialGuidelineStatusId { get; set; }
+        public DateTime nplDate { get; set; }
+        public short scheduleDayCountConventionId { get; set; }
+        public short scheduleDayInterestTypeId { get; set; }
+        public int customerRiskRatingId { get; set; }
+       // public double productPriceIndexRate { get; set; }
+        public bool allowForceDebitRepayment { get; set; }
+
+        //.............Fee Attribute.....................//
+        public double exchangeRate { get; set; }
+        public DateTime paymentDate { get; set; }
+        public decimal totalAmount { get; set; }
+        public int chargeFeeId { get; set; }
 
 
         //.............Other Attributes................//
@@ -130,6 +145,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
+
         //......End f Loan Relational Table View Mapping Models......//
 
 
@@ -312,6 +328,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int feeTypeId { get; set; }
         public string feeTypeName { get; set; }
         public bool isIntegralFee { get; set; }
+        public decimal newFeeAmount { get; set; }
+        public decimal feeAmountDiff { get; set; }
+        public int casaAccountId { get; set; }
         public bool required {get; set;}
         public bool recurring { get; set; }
 

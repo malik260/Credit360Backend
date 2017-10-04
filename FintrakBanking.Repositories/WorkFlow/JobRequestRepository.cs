@@ -9,18 +9,22 @@ using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Common.Enum;
 using System.Linq;
 using FintrakBanking.ViewModels.Setups.Approval;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Entities.DocumentModels;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
     public class JobRequestRepository : IJobRequestRepository
     {
         private FinTrakBankingContext context;
+        private FinTrakBankingDocumentsContext docContext;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
 
-        public JobRequestRepository(FinTrakBankingContext _context, IGeneralSetupRepository _general, IAuditTrailRepository _audit)
+        public JobRequestRepository(FinTrakBankingDocumentsContext docContext, FinTrakBankingContext _context, IGeneralSetupRepository _general, IAuditTrailRepository _audit)
         {
             this.context = _context;
+            this.docContext = docContext;
             this.general = _general;
             this.audit = _audit;
         }
@@ -67,6 +71,50 @@ namespace FintrakBanking.Repositories.WorkFlow
             // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
+        }
+
+        public string AddGlobalJobRequest(JobRequestViewModel model)
+        {
+            var date = DateTime.Now;
+            var applicationDate = general.GetApplicationDate();
+
+            var data = new tbl_Job_Request
+            {
+                JobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
+                JobTypeId = model.jobTypeId,
+                SenderStaffId = model.createdBy,
+                ReceiverStaffId = model.receiverStaffId,
+                DepartmentId = model.departmentId,
+                ReassignedTo = model.reassignedTo,
+                IsReassigned = model.isReassigned,
+                IsAcknowledged = model.isAcknowledged,
+                TargetId = model.targetId,
+                OperationsId = model.operationsId, // cam enum
+                RequestStatusId = model.requestStatusId, // status enum
+                SenderComment = model.senderComment,
+                ResponseComment = model.responseComment,
+                ArrivalDate = applicationDate,
+                SystemArrivalDate = date,
+            };
+
+            context.tbl_Job_Request.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.JobRequestAdded,
+                StaffId = model.createdBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"Added JobRequest '{ model.jobRequestCode }' ",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = applicationDate,
+                SystemDateTime = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return data.JobRequestCode;
         }
 
         private string RequestCode()
@@ -221,13 +269,14 @@ namespace FintrakBanking.Repositories.WorkFlow
         public IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId)
         {
            return this.context.tbl_Approval_Group_Mapping.Where(x => x.OperationId == operationId)
-                .SelectMany(g => g.tbl_Approval_Level)
-                .SelectMany(l => l.tbl_Approval_Level_Staff)
+                .Select(g => g.tbl_Approval_Group)
+                .SelectMany(l => l.tbl_Approval_Level)
+                .SelectMany(s => s.tbl_Approval_Level_Staff)
                 .Select(s => new OperationStaffViewModel
                 {
                     id = s.StaffId,
                     name = s.tbl_Staff.FirstName,
-                    groupId = s.tbl_Approval_Level.GroupOperationMappingId
+                    groupId = s.tbl_Approval_Level.GroupId
                 }).ToList();
         }
 
@@ -237,11 +286,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             var approvalGroupIds = context.tbl_Approval_Group_Mapping
                 .Join(context.tbl_Approval_Level,
-                    a => a.GroupOperationMappingId, b => b.GroupOperationMappingId, (a, b) => new { a, b })
+                    a => a.GroupId, b => b.GroupId, (a, b) => new { a, b })
                 .Join(context.tbl_Approval_Level_Staff,
                     c => c.b.ApprovalLevelId, d => d.ApprovalLevelId, (c, d) => new { c, d })
                 .Where(x => x.c.a.OperationId == operationId && x.d.StaffId == staffId)
-                    .Select(x => x.c.b.GroupOperationMappingId);
+                    .Select(x => x.c.b.GroupId);
 
             return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.departmentId)).OrderByDescending(x => x.jobRequestId).ToList();
         }
@@ -364,5 +413,140 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         #endregion
+
+        #region Job-Request Document
+
+        public bool AddJobDocument(RequestDocumentViewModel model, byte[] file)
+        {
+            var data = new tbl_Media_Job_Request_Documents
+            {
+                FileData = file,
+                //LoanApplicationNumber = model.targetId,
+                //LoanReferenceNumber = model.targetReferenceNumber,
+                //operationId = model.operationId,
+                JobRequestCode = model.jobRequestCode,
+                DocumentTitle = model.documentTitle,
+                DocumentTypeId = model.documentTypeId,
+                FileName = model.fileName,
+                FileExtension = model.fileExtension,
+                SystemDateTime = DateTime.Now,
+                PhysicalFileNumber = model.physicalFileNumber,
+                PhysicalLocation = model.physicalLocation,
+                CreatedBy = (int)model.createdBy,
+            };
+
+            docContext.tbl_Media_Job_Request_Documents.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.LoanDocumentAdded,
+                StaffId = model.createdBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"Added Loan Document '{ model.documentTitle }' ",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = general.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            var aud = context.SaveChanges() != 0;
+
+            return docContext.SaveChanges() != 0;
+        }
+
+        public bool UpdateJobDocument(RequestDocumentViewModel model, int documentId)
+        {
+            var data = this.docContext.tbl_Media_Job_Request_Documents.Find(documentId);
+            if (data == null)
+            {
+                return false;
+            }
+
+            //data.LoanApplicationNumber = model.loanApplicationNumber;
+            //data.LoanReferenceNumber = model.loanReferenceNumber;
+            data.JobRequestCode = model.jobRequestCode;
+            data.DocumentTitle = model.documentTitle;
+            data.DocumentTypeId = model.documentTypeId;
+            data.FileName = model.fileName;
+            data.FileExtension = model.fileExtension;
+            data.SystemDateTime = DateTime.Now;
+            data.PhysicalFileNumber = model.physicalFileNumber;
+            data.PhysicalLocation = model.physicalLocation;
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.LoanDocumentUpdated,
+                StaffId = model.lastUpdatedBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"Updated LoanDocument '{ model.documentTitle }' ",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = general.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            var aud = context.SaveChanges() != 0;
+
+            return docContext.SaveChanges() != 0;
+        }
+
+        public IEnumerable<RequestDocumentViewModel> GetAllJobDocument()
+        {
+            return this.docContext.tbl_Media_Job_Request_Documents.Select(x => new RequestDocumentViewModel
+            {
+                documentId = x.DocumentId,
+                //loanApplicationNumber = x.LoanApplicationNumber,
+                //loanReferenceNumber = x.LoanReferenceNumber,
+                jobRequestCode = x.JobRequestCode,
+                documentTitle = x.DocumentTitle,
+                documentTypeId = x.DocumentTypeId,
+                fileData = x.FileData,
+                fileName = x.FileName,
+                fileExtension = x.FileExtension,
+                systemDateTime = x.SystemDateTime,
+                physicalFileNumber = x.PhysicalFileNumber,
+                physicalLocation = x.PhysicalLocation,
+            });
+        }
+
+        public RequestDocumentViewModel GetJobDocument(int documentId)
+        {
+            var data = this.docContext.tbl_Media_Job_Request_Documents.Find(documentId);
+
+            if (data == null)
+            {
+                return null;
+            }
+
+            return new RequestDocumentViewModel
+            {
+                documentId = data.DocumentId,
+                //loanApplicationNumber = data.LoanApplicationNumber,
+                //loanReferenceNumber = data.LoanReferenceNumber,
+                jobRequestCode = data.JobRequestCode,
+                documentTitle = data.DocumentTitle,
+                documentTypeId = data.DocumentTypeId,
+                fileData = data.FileData,
+                fileName = data.FileName,
+                fileExtension = data.FileExtension,
+                systemDateTime = data.SystemDateTime,
+                physicalFileNumber = data.PhysicalFileNumber,
+                physicalLocation = data.PhysicalLocation,
+            };
+        }
+
+        public IEnumerable<RequestDocumentViewModel> GetJobRequestDocument(string jobRequestCode)
+        {
+            return this.GetAllJobDocument().Where(x => x.jobRequestCode == jobRequestCode);
+        }
+
+        #endregion Job-Request Document
+
     }
 }

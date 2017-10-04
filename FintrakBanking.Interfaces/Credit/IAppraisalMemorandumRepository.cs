@@ -7,13 +7,15 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IAppraisalMemorandumRepository
     {
-        AppraisalMemorandumViewModel GetAppraisalMemorandumByLoanApplicationId(int applicationId);
+        AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId);
+
+        IEnumerable<DocumentationViewModel> GetAllDocumentation(int applicationId);
 
         AppraisalMemorandumViewModel AddAppraisalMemorandum(AppraisalMemorandumViewModel model);
 
         Task<bool> ForwardAppraisalMemorandum(ForwardViewModel model);
 
-        IEnumerable<AppraisalMemorandumViewModel> GetAllAppraisalMemorandum();
+        //IEnumerable<AppraisalMemorandumViewModel> GetAllAppraisalMemorandum();
 
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 

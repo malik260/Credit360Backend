@@ -12,11 +12,10 @@ using System.Threading.Tasks;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.ComponentModel.Composition;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.Setups.Approval
 {
-    [Export(typeof(IApprovalLevelRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class ApprovalLevelRepository : IApprovalLevelRepository
     {
         private FinTrakBankingContext context;
@@ -34,38 +33,40 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         private IEnumerable<ApprovalLevelViewModel> GetApprovalLevel(int companyId)
         {
-            var data = (from a in context.tbl_Approval_Level
-                        where a.tbl_Approval_Group_Mapping.tbl_Approval_Group.CompanyId == companyId && a.Deleted == false
-                        select new ApprovalLevelViewModel
-                        {
-                            approvalLevelId = a.ApprovalLevelId,
-                            levelName = a.LevelName,
-                            canEdit = a.CanEdit,
-                            operationId = a.tbl_Approval_Group_Mapping.OperationId,
-                            canOverideAuthorisation = a.CanOverideAuthorisation,
-                            canPerformFinancialAnalysis = a.CanPerformFinancialAnalysis,
-                            canRecieveAdjustment = a.CanRecieveAdjustment,
-                            canRecieveEmail = a.CanRecieveEmail,
-                            canRecieveSms = a.CanRecieveSMS,
-                            hasChecklist = a.HasChecklist,
-                            tenor = a.Tenor,
-                            tenorModeId = a.TenorModeId,
-                            tenorModename = a.tbl_Tenor_Mode.TenorModeName,
-                            isPoliticallyExposed = a.IsPoliticallyExposed,
-                            minimumAmount = a.MinimumAmount,
-                            numberOfApprovals = a.NumberOfApprovals,
-                            numberOfUsers = a.NumberOfUsers,
-                            groupOperationMappingId = a.GroupOperationMappingId,
-                            operationName = a.tbl_Approval_Group_Mapping.tbl_Operations.OperationName,
-                            requireAuthorisation = a.RequireAuthorisation,
-                            slaInterval = a.SLAInterval,
-                            position = a.Position,
-                            routeViaStaffOrganogram = a.RouteViaStaffOrganogram,
-                            canDoRiskAssessment = a.CanDoRiskAssessment,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = (int)a.CreatedBy
-                        }).ToList();
-            return data;
+            return this.context.tbl_Approval_Level
+                .Where(x => x.Deleted == false && x.tbl_Approval_Group.CompanyId == companyId)
+                .Select(x => new ApprovalLevelViewModel
+                {
+                    approvalLevelId = x.ApprovalLevelId,
+                    levelName = x.LevelName,
+                    position = x.Position,
+                    tenor = x.Tenor,
+                    maximumAmount = x.MaximumAmount,
+                    investmentGradeAmount = x.InvestmentGradeAmount,
+                    numberOfUsers = x.NumberOfUsers,
+                    numberOfApprovals = x.NumberOfApprovals,
+                    slaInterval = x.SLAInterval,
+                    canRouteBack = x.CanRouteBack,
+                    isPoliticallyExposed = x.IsPoliticallyExposed,
+                    isActive = x.IsActive,
+                    canEdit = x.CanEdit,
+                    canDoRiskAssessment = x.CanDoRiskAssessment,
+                    canRecieveAdjustment = x.CanRecieveAdjustment,
+                    canRecieveEmail = x.CanRecieveEmail,
+                    canRecieveSms = x.CanRecieveSMS,
+                    hasChecklist = x.HasChecklist,
+                    canPerformFinancialAnalysis = x.CanPerformFinancialAnalysis,
+                    requireAuthorisation = x.RequireAuthorisation,
+                    canOverideAuthorisation = x.CanOverideAuthorisation,
+                    routeViaStaffOrganogram = x.RouteViaStaffOrganogram,
+                    createdBy = x.CreatedBy,
+                    dateTimeCreated = x.DateTimeCreated,
+                    dateTimeUpdated = x.DateTimeUpdated,
+                    deleted = x.Deleted,
+                    deletedBy = x.DeletedBy,
+                    dateTimeDeleted = x.DateTimeDeleted,
+                    groupId = x.GroupId,
+                }).OrderBy(x => x.position);
         }
 
         public IEnumerable<ApprovalLevelViewModel> GetAllApprovalLevel(int companyId)
@@ -78,9 +79,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return GetApprovalLevel(companyId).Where(c => c.approvalLevelId == ApprovalLevelId);
         }
 
-        public IEnumerable<ApprovalLevelViewModel> GetApprovalLevelByOperationId(int groupOperationMappingId, int companyId)
+        public IEnumerable<ApprovalLevelViewModel> GetApprovalLevelByGroupId(int groupId, int companyId)
         {
-            return GetApprovalLevel(companyId).Where(c => c.groupOperationMappingId == groupOperationMappingId);
+            return GetApprovalLevel(companyId).Where(c => c.groupId == groupId);
         }
 
         public bool AddApprovalLevel(ApprovalLevelViewModel model)
@@ -89,48 +90,47 @@ namespace FintrakBanking.Repositories.Setups.Approval
             {
                 ApprovalLevelId = model.approvalLevelId,
                 LevelName = model.levelName,
+                Position = model.position,
+                Tenor = model.tenor,
+                MaximumAmount = model.maximumAmount,
+                InvestmentGradeAmount = model.investmentGradeAmount,
+                NumberOfUsers = model.numberOfUsers,
+                NumberOfApprovals = model.numberOfApprovals,
+                SLAInterval = model.slaInterval,
+                CanRouteBack = model.canRouteBack,
+                IsPoliticallyExposed = model.isPoliticallyExposed,
+                IsActive = model.isActive,
                 CanEdit = model.canEdit,
-                CanOverideAuthorisation = model.canOverideAuthorisation,
-                CanPerformFinancialAnalysis = model.canPerformFinancialAnalysis,
+                CanDoRiskAssessment = model.canDoRiskAssessment,
                 CanRecieveAdjustment = model.canRecieveAdjustment,
                 CanRecieveEmail = model.canRecieveEmail,
                 CanRecieveSMS = model.canRecieveSms,
                 HasChecklist = model.hasChecklist,
-                IsPoliticallyExposed = model.isPoliticallyExposed,
-                MinimumAmount = model.minimumAmount,
-                Tenor = model.tenor,
-                TenorModeId = model.tenorModeId,
-                NumberOfApprovals = model.numberOfApprovals,
-                NumberOfUsers = model.numberOfUsers,
-                GroupOperationMappingId = model.groupOperationMappingId,
+                CanPerformFinancialAnalysis = model.canPerformFinancialAnalysis,
                 RequireAuthorisation = model.requireAuthorisation,
-                SLAInterval = model.slaInterval,
-                Position = model.position,
+                CanOverideAuthorisation = model.canOverideAuthorisation,
                 RouteViaStaffOrganogram = model.routeViaStaffOrganogram,
-                CanDoRiskAssessment = model.canDoRiskAssessment,
-                DateTimeCreated = genSetup.GetApplicationDate(),
-                CreatedBy = (int)model.createdBy
+                CreatedBy = model.createdBy,
+                GroupId = model.groupId,
+                DateTimeCreated = genSetup.GetApplicationDate()
             };
 
-            //Audit Section ---------------------------
+            context.tbl_Approval_Level.Add(data);
+
+            // Audit Section ---------------------------
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.ApprovalLevelAdded,
                 StaffId = model.createdBy,
                 BranchId = (short)model.userBranchId,
-                Detail = $"Added Approval Level '{model.levelName}'. ",
+                Detail = $"Added ApprovalLevel '{ model.levelName }' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
                 ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = model.approvalLevelId
+                SystemDateTime = DateTime.Now
             };
-
-            context.tbl_Approval_Level.Add(data);
             this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------
-
-
+            // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
         }
@@ -148,35 +148,39 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return true;
         }
 
-        public bool UpdateApprovalLevel(int ApprovalLevelId, ApprovalLevelViewModel model)
+        public bool UpdateApprovalLevel(int approvalLevelId, ApprovalLevelViewModel model)
         {
-            var data = this.context.tbl_Approval_Level.Find(ApprovalLevelId);
-            if (data == null) return false;
+            var data = this.context.tbl_Approval_Level.Find(approvalLevelId);
+            if (data == null) { return false; }
 
             data.LevelName = model.levelName;
+            data.Position = model.position;
+            data.Tenor = model.tenor;
+            //data.TenorModeId = 1; // model.tenorModeId;
+            data.MaximumAmount = model.maximumAmount;
+            data.InvestmentGradeAmount = model.investmentGradeAmount;
+            data.NumberOfUsers = model.numberOfUsers;
+            data.NumberOfApprovals = model.numberOfApprovals;
+            data.SLAInterval = model.slaInterval;
+            data.CanRouteBack = model.canRouteBack;
+            data.IsPoliticallyExposed = model.isPoliticallyExposed;
+            data.IsActive = model.isActive;
             data.CanEdit = model.canEdit;
-            data.CanOverideAuthorisation = model.canOverideAuthorisation;
-            data.CanPerformFinancialAnalysis = model.canPerformFinancialAnalysis;
+            data.CanDoRiskAssessment = model.canDoRiskAssessment;
             data.CanRecieveAdjustment = model.canRecieveAdjustment;
             data.CanRecieveEmail = model.canRecieveEmail;
             data.CanRecieveSMS = model.canRecieveSms;
             data.HasChecklist = model.hasChecklist;
-            data.Tenor = model.tenor;
-            data.TenorModeId = model.tenorModeId;
-            data.IsPoliticallyExposed = model.isPoliticallyExposed;
-            data.MinimumAmount = model.minimumAmount;
-            data.NumberOfApprovals = model.numberOfApprovals;
-            data.NumberOfUsers = model.numberOfUsers;
-            data.GroupOperationMappingId = model.groupOperationMappingId;
+            data.CanPerformFinancialAnalysis = model.canPerformFinancialAnalysis;
             data.RequireAuthorisation = model.requireAuthorisation;
-            data.SLAInterval = model.slaInterval;
-            data.Position = model.position;
+            data.CanOverideAuthorisation = model.canOverideAuthorisation;
             data.RouteViaStaffOrganogram = model.routeViaStaffOrganogram;
-            data.CanDoRiskAssessment = model.canDoRiskAssessment;
-            data.DateTimeUpdated = genSetup.GetApplicationDate();
-            data.LastUpdatedBy = (int)model.createdBy;
+            data.LastUpdatedBy = model.lastUpdatedBy;
+            data.DateTimeUpdated = DateTime.Now;
+            data.GroupId = model.groupId;
+            data.LastUpdatedBy = model.lastUpdatedBy;
 
-            //Audit Section ---------------------------
+            // Audit Section ---------------------------
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.ApprovalLevelUpdated,
@@ -189,27 +193,20 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 SystemDateTime = DateTime.Now,
                 TargetId = model.approvalLevelId
             };
-
-            this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------
+            // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
         }
 
-        public async Task<bool> DeleteApprovalLevel(int ApprovalLevelId, UserInfo user)
+        public async Task<bool> DeleteApprovalLevel(int id, UserInfo user)
         {
-            var data = this.context.tbl_Approval_Level.Find(ApprovalLevelId);
-            {
-                data.DateTimeDeleted = genSetup.GetApplicationDate();
-                data.Deleted = true;
-                data.DeletedBy = user.staffId;
-            };
+            var data = this.context.tbl_Approval_Level.Find(id);
 
             //Audit Section ---------------------------
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.ApprovalLevelDeleted,
-                StaffId = user.createdBy,
+                StaffId = user.staffId,
                 BranchId = (short)user.BranchId,
                 Detail = $"Deleted Approval Level '{data.LevelName}'. ",
                 IPAddress = user.userIPAddress,
@@ -222,23 +219,29 @@ namespace FintrakBanking.Repositories.Setups.Approval
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
-            return await context.SaveChangesAsync() != 0;
+            if (context.tbl_Approval_Trail.Where(x => x.ToApprovalLevelId == id || x.FromApprovalLevelId == id).Any())
+            {
+                throw new Exception("Can not delete this level because it is being used. You can de activate it.");
+            }
+            else
+            {
+                this.context.tbl_Approval_Level.Remove(data);
+            }
 
+            return await context.SaveChangesAsync() != 0;
         }
 
         public async Task<bool> AddApprovalTrail(tbl_Approval_Trail model)
         {
             try
             {
-
                 context.tbl_Approval_Trail.Add(model);
-                var saved = context.SaveChanges();
+                var saved = await context.SaveChangesAsync();
                 return saved > 0;
             }
             catch (Exception ex)
             {
-
-                throw;
+                throw new Exception(ex.Message);
             }
 
         }

@@ -17,6 +17,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string frequencyTypeName { get; set; }
         public string loanRef { get; set; }
         public string productName { get; set; }
+        public int casaId { get; set; }
+        public int maximumDrawDownDuration { get; set; }
+        public DateTime effectiveDate { get; set; }
+
+
     }
 
     public class LoanCovenantTypeViewModel : GeneralEntity

@@ -54,7 +54,7 @@ namespace FintrakBanking.ReportObjects
                 var company = context.tbl_Company.Where(c => c.CompanyId == companyId).FirstOrDefault();
                 var result = (from a in context.tbl_Approval_Trail
                               join b in context.tbl_Approval_Level on a.FromApprovalLevelId equals b.ApprovalLevelId
-                              join c in context.tbl_Approval_Group_Mapping on b.GroupOperationMappingId equals c.GroupOperationMappingId
+                              join c in context.tbl_Approval_Group_Mapping on b.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().GroupOperationMappingId equals c.GroupOperationMappingId
                               join d in context.tbl_Approval_Group on c.GroupId equals d.GroupId
 
                               join e in context.tbl_Operations on c.OperationId equals e.OperationId
@@ -62,7 +62,7 @@ namespace FintrakBanking.ReportObjects
 
 
                               join n in context.tbl_Approval_Level on a.ToApprovalLevelId equals n.ApprovalLevelId
-                              join m in context.tbl_Approval_Group_Mapping on n.GroupOperationMappingId equals m.GroupOperationMappingId
+                              join m in context.tbl_Approval_Group_Mapping on n.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().GroupOperationMappingId equals m.GroupOperationMappingId
                               join o in context.tbl_Approval_Group on m.GroupId equals o.GroupId
 
                               join p in context.tbl_Operations on m.OperationId equals p.OperationId
@@ -108,7 +108,7 @@ namespace FintrakBanking.ReportObjects
                 var company = context.tbl_Company.Where(c => c.CompanyId == companyId).FirstOrDefault();
                 data = (from a in context.tbl_Approval_Group
                         join b in context.tbl_Approval_Group_Mapping on a.GroupId equals b.GroupId
-                        join d in context.tbl_Approval_Level on b.GroupOperationMappingId equals d.GroupOperationMappingId
+                        join d in context.tbl_Approval_Level on b.GroupOperationMappingId equals d.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().GroupOperationMappingId
                         join c in context.tbl_Approval_Level_Staff on d.ApprovalLevelId equals c.StaffLevelId
                         where a.CompanyId == companyId
                         orderby (b.Position)
@@ -117,7 +117,6 @@ namespace FintrakBanking.ReportObjects
                             CompanyName = company.Name ,
                             OperationId = b.OperationId,
                             GroupName = a.GroupName,
-                            IsBeforeCAMApproval = a.IsBeforeCAMApproval,
                             IsCommittee = a.IsCommittee,
                             CanDoRiskAssessment = d.CanDoRiskAssessment,
                             CanEdit = d.CanEdit,
@@ -131,7 +130,7 @@ namespace FintrakBanking.ReportObjects
                             IsActive = d.IsActive,
                             IsPoliticallyExposed = d.IsPoliticallyExposed,
                             LevelName = d.LevelName,
-                            MinimumAmount = d.MinimumAmount,
+                            MaximumAmount = d.MaximumAmount,
                             NumberOfApprovals = d.NumberOfApprovals,
                             NumberOfUsers = d.NumberOfUsers,
                             RequireAuthorisation = d.RequireAuthorisation,
@@ -144,7 +143,7 @@ namespace FintrakBanking.ReportObjects
                             CanViewApproval = c.CanViewApproval,
                             CanViewCAMDocument = c.CanViewCAMDocument,
                             CanViewUploadedFile = c.CanViewUploadedFile,
-                            MaximumAmount = c.MaximumAmount,
+                            //MaximumAmount = c.MaximumAmount,
                             StaffName = context.tbl_Staff.Where(t => t.StaffId == c.StaffId).Select(t => t.FirstName + " " + t.LastName).FirstOrDefault()
                         }).AsQueryable();
             }

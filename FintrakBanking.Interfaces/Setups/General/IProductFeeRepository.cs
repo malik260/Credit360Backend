@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
+using FintrakBanking.ViewModels.Setups.Finance;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
@@ -10,7 +11,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<ProductFeeViewModel> GetAllMappedFeeByProduct(int productId);
 
-        IEnumerable<FeeViewModel> GetUnmappedFeeToProduct(int productId);
+        IEnumerable<ChargeFeeViewModel> GetUnmappedFeeToProduct(int productId);
 
         ProductFeeViewModel GetProductFee(int productFeeId);
         List<ProductFeeViewModel> GetTempProductFee(int productFeeId);
