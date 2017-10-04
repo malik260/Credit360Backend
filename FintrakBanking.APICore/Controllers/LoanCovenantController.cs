@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using FintrakBanking.APICore.core;
 using System.Web;
+using FintrakBanking.ViewModels.Setups;
 
 namespace FintrakBanking.APICore.Controllers
 {

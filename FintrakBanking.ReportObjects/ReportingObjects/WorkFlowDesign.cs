@@ -102,35 +102,36 @@ namespace FintrakBanking.ReportObjects
 
         public static List<WorkFlowViewModel> GetWorkFlowDefination(int companyId, int operationId)
         {
+            List<WorkFlowViewModel> data = new List<WorkFlowViewModel>();
 
 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var data = (from a in context.tbl_Approval_Level_Staff
-                            where
-                              a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().OperationId == operationId &&
-                              a.tbl_Approval_Level.IsActive == true && a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
-                            orderby
-                              a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position,
-                              a.tbl_Approval_Level.Position,
-                              a.ApprovalLevelId
-                            select new WorkFlowViewModel()
-                            {
-                                operationName = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().tbl_Operations.OperationName,
-                                groupName = a.tbl_Approval_Level.tbl_Approval_Group.GroupName,
-                                vetoPower = a.VetoPower == true ? "Yes" : "No",
-                                levelName = a.tbl_Approval_Level.LevelName,
-                                username = (a.tbl_Staff.FirstName + "." + a.tbl_Staff.LastName).ToLower(),
-                                scope = a.ProcessViewScopeId == 1 ? "Default" : a.ProcessViewScopeId == 2 ? "Group" : a.ProcessViewScopeId == 3 ? "global" : null,
-                                grpPosition = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position.ToString(),
-                                levelPosition = a.tbl_Approval_Level.Position.ToString(),
-                                canApprove = a.CanApprove == true ? "Yes" : "No",
-                                canEdit = a.CanEdit == true ? "Yes" : "No",
-                                canUploadFile = a.CanUploadFile == true ? "Yes" : "No",
-                                canSendJobRequest = a.CanSendJobRequest == true ? "Yes" : "No",
+                //var data = (from a in context.tbl_Approval_Level_Staff
+                //            where
+                //              a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().OperationId == operationId &&
+                //              a.tbl_Approval_Level.IsActive == true && a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
+                //            orderby
+                //              a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position,
+                //              a.tbl_Approval_Level.Position,
+                //              a.ApprovalLevelId
+                //            select new WorkFlowViewModel()
+                //            {
+                //                operationName = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().tbl_Operations.OperationName,
+                //                groupName = a.tbl_Approval_Level.tbl_Approval_Group.GroupName,
+                //                vetoPower = a.VetoPower == true ? "Yes" : "No",
+                //                levelName = a.tbl_Approval_Level.LevelName,
+                //                username = (a.tbl_Staff.FirstName + "." + a.tbl_Staff.LastName).ToLower(),
+                //                scope = a.ProcessViewScopeId == 1 ? "Default" : a.ProcessViewScopeId == 2 ? "Group" : a.ProcessViewScopeId == 3 ? "global" : null,
+                //                grpPosition = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position.ToString(),
+                //                levelPosition = a.tbl_Approval_Level.Position.ToString(),
+                //                canApprove = a.CanApprove == true ? "Yes" : "No",
+                //                canEdit = a.CanEdit == true ? "Yes" : "No",
+                //                canUploadFile = a.CanUploadFile == true ? "Yes" : "No",
+                //                canSendJobRequest = a.CanSendJobRequest == true ? "Yes" : "No",
 
-                                staffLevelId = a.StaffLevelId.ToString()
-                            }).ToList();
+                //                staffLevelId = a.StaffLevelId.ToString()
+                //            }).ToList();
                 return data;
 
 
