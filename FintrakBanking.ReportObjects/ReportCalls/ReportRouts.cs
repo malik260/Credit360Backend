@@ -1,15 +1,10 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.ReportObjects.InterfaceReporting;
-using System;
-using System.Collections.Generic;
+using FintrakBanking.Interfaces.Reports;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 namespace FintrakBanking.ReportObjects.ReportCalls
 {
-  public  class ReportRouts : IReportRouts
+    public  class ReportRouts : IReportRouts
     {
         string reportPath = "http://localhost:51336/Reports/";
         private IQueryable<tbl_Loan_Application> LoanApplication(int companyId)

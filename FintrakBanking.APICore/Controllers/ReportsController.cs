@@ -1,14 +1,9 @@
 ﻿using FintrakBanking.APICore.core;
-using FintrakBanking.ReportObjects.InterfaceReporting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Interfaces.Reports;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using FintrakBanking.ReportObjects.ViewModels;
-using FintrakBanking.ViewModels.WorkFlow;
-using FintrakBanking.APICore.JWTAuth;
 
 namespace FintrakBanking.APICore.Controllers
 {
