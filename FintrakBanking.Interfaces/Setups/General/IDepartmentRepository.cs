@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
@@ -13,7 +14,11 @@ namespace FintrakBanking.Interfaces.Setups.General
         DepartmentViewModel GetDepartment(int departmentId);
 
         DepartmentViewModel GetStaffDepartment(int staffId);
-        
+
+        IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery);
+        IQueryable<DepartmentCustomersViewModel> SearchDepartment(int departmentId, int companyId, string searchQuery);
+
+
         bool AddDepartment(DepartmentViewModel entity);
 
         bool UpdateDepartment(int departmentId, DepartmentViewModel entity);

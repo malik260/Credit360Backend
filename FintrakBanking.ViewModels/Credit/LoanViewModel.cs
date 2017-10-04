@@ -93,6 +93,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double integralFeeAmount { get; set; }
         public short firstDayType { get; set; }
         public bool isCamsol { get; set; }
+        public string comment { get; set; }
 
 
         //.............Other Attributes................//
@@ -298,6 +299,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     {
         public int productFeeId { get; set; }
+        public int productTypeId { get; set; }
         public int loanChargeFeeId { get; set; }
         public int loanId { get; set; }
         public int productId { get; set; }
