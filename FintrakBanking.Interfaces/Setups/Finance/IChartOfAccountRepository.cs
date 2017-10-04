@@ -24,5 +24,7 @@ namespace FintrakBanking.Interfaces.Setups.Finance
         bool UpdateAccount(short accountId, ChartOfAccountViewModel account);
 
         bool DeleteAccount(short accountId, UserInfo user);
+
+        IEnumerable<ChartOfAccountClassViewModel> GetChartOfAccountClasses();
     }
 }
