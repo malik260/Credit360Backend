@@ -46,7 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorizationValidationException.cs" />
     <Compile Include="CommonHelpers.cs" />
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />

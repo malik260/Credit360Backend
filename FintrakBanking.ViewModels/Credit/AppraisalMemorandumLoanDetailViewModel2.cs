@@ -1,6 +1,6 @@
 ﻿namespace FintrakBanking.ViewModels.Credit
 {
-    public class AppraisalMemorandumLoanDetailViewModel
+    public class AppraisalMemorandumLoanDetailViewModel2
     {
         public int appraisalMemorandumLoanDetailId { get; set; }
 

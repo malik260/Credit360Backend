@@ -9,4 +9,16 @@
         public string DepartmentName { get; set; }
         public string Description { get; set; }
     }
+
+    public class DepartmentCustomersViewModel : DepartmentViewModel
+    {
+        public int customertId { get; set; }
+        public int staffId { get; set; }
+        public string firstname { get; set; }
+        public string lastname { get; set; }
+        public string middlename { get; set; }
+        public string fullname { get; set; }
+        public string jobTitleName { get; set; }
+        public string rankName { get; set; }
+    }
 }

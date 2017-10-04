@@ -6,6 +6,20 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
+    public class LoanRepaymentScheduleViewModel
+    {
+        public int loanId { get; set; }
+        public int customerId { get; set; }
+        public decimal principalRepayment { get; set; }
+        public decimal principalAmount { get; set; }
+        public decimal interestAccrual { get; set; }
+        public string productName { get; set; }
+        public double interestRate { get; set; }
+        public double tenor { get; set; }
+        public DateTime terminationDate { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public string totalRepayment { get { return (principalRepayment + interestAccrual).ToString("#,#.00#"); } }
+    }
 
     public class LoanViewModel : GeneralEntity
     {
@@ -15,6 +29,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
         public int loanApplicationId { get; set; }
+
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
@@ -85,7 +100,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
         public int customerRiskRatingId { get; set; }
-      //  public double productPriceIndexRate { get; set; }
+        // public double productPriceIndexRate { get; set; }
         public bool allowForceDebitRepayment { get; set; }
 
         //.............Fee Attribute.....................//
@@ -93,6 +108,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime paymentDate { get; set; }
         public decimal totalAmount { get; set; }
         public int chargeFeeId { get; set; }
+
 
         //.............Other Attributes................//
         public int productTypeId { get; set; }
@@ -110,24 +126,27 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerName { get; set; }
         public string pricipalFrequencyTypeName { get; set; }
         public string interestFrequencyTypeName { get; set; }
+        public string comment { get; set; }
 
-      //  ............Loan Repayment Schedule Model..........................//
+
+        //............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
-      //  ............End of Loan Repayment Schedule Model.....................//
+        //............End of Loan Repayment Schedule Model.....................//
 
-    //    ...........Other Loans Types Model........................//
-       public RevolvingLoanViewModel revolvingLoanInput { get; set; }
+
+        //...........Other Loans Types Model........................//
+        public RevolvingLoanViewModel revolvingLoanInput { get; set; }
         public ContingentLoanViewModel contingentLoanInput { get; set; }
-     //   ...........End of Other Loans Types Model.................//
+        //...........End of Other Loans Types Model.................//
 
 
-       // ......Loan Relational Table View Mapping Models..............//
+        //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
 
-    //    ......End f Loan Relational Table View Mapping Models......//
+        //......End f Loan Relational Table View Mapping Models......//
 
 
     }
@@ -297,6 +316,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
+        public short productTypeId { get; set; }
         public int loanId { get; set; }
         public int productId { get; set; }
         public string chargeFeeName { get; set; }
@@ -353,6 +373,25 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class LoanCovenantDetailViewModel : GeneralEntity
+    {
+        public int loanCovenantDetailId { get; set; }
+        public string covenantDetail { get; set; }
+        public int loanId { get; set; }
+        public short covenantTypeId { get; set; }
+        public short? frequencyTypeId { get; set; }
+        public decimal? covenantAmount { get; set; }
+        public DateTime covenantDate { get; set; }
+        public string covenantTypeName { get; set; }
+        public string frequencyTypeName { get; set; }
+        public string loanRef { get; set; }
+        public string productName { get; set; }
+        public int casaId { get; set; }
+        public int maximumDrawDownDuration { get; set; }
+        public DateTime effectiveDate { get; set; }
+
+
+    }
 
     public class DailyInterestAccrualViewModel : GeneralEntity
 

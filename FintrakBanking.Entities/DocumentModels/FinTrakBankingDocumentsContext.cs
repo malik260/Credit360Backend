@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.DocumentModels
         }
 
         public virtual DbSet<tbl_Media_Collateral_Documents> tbl_Media_Collateral_Documents { get; set; }
+        public virtual DbSet<tbl_Media_Job_Request_Documents> tbl_Media_Job_Request_Documents { get; set; }
         public virtual DbSet<tbl_Media_Loan_Documents> tbl_Media_Loan_Documents { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

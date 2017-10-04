@@ -2,7 +2,7 @@
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class LoanRepaymentScheduleViewModel
+    public class LoanRepaymentScheduleViewModel2
     {
         public int loanId { get; set; }
         public int customerId { get; set; }
