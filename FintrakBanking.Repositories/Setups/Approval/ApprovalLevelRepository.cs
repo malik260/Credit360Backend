@@ -33,40 +33,44 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         private IEnumerable<ApprovalLevelViewModel> GetApprovalLevel(int companyId)
         {
-            return this.context.tbl_Approval_Level
-                .Where(x => x.Deleted == false && x.tbl_Approval_Group.CompanyId == companyId)
-                .Select(x => new ApprovalLevelViewModel
-                {
-                    approvalLevelId = x.ApprovalLevelId,
-                    levelName = x.LevelName,
-                    position = x.Position,
-                    tenor = x.Tenor,
-                    maximumAmount = x.MaximumAmount,
-                    investmentGradeAmount = x.InvestmentGradeAmount,
-                    numberOfUsers = x.NumberOfUsers,
-                    numberOfApprovals = x.NumberOfApprovals,
-                    slaInterval = x.SLAInterval,
-                    canRouteBack = x.CanRouteBack,
-                    isPoliticallyExposed = x.IsPoliticallyExposed,
-                    isActive = x.IsActive,
-                    canEdit = x.CanEdit,
-                    canDoRiskAssessment = x.CanDoRiskAssessment,
-                    canRecieveAdjustment = x.CanRecieveAdjustment,
-                    canRecieveEmail = x.CanRecieveEmail,
-                    canRecieveSms = x.CanRecieveSMS,
-                    hasChecklist = x.HasChecklist,
-                    canPerformFinancialAnalysis = x.CanPerformFinancialAnalysis,
-                    requireAuthorisation = x.RequireAuthorisation,
-                    canOverideAuthorisation = x.CanOverideAuthorisation,
-                    routeViaStaffOrganogram = x.RouteViaStaffOrganogram,
-                    createdBy = x.CreatedBy,
-                    dateTimeCreated = x.DateTimeCreated,
-                    dateTimeUpdated = x.DateTimeUpdated,
-                    deleted = x.Deleted,
-                    deletedBy = x.DeletedBy,
-                    dateTimeDeleted = x.DateTimeDeleted,
-                    groupId = (int)x.GroupId
-                }).OrderBy(x => x.position);
+            var data = (from x in this.context.tbl_Approval_Level
+                        join b in context.tbl_Approval_Group_Mapping on x.GroupId equals b.GroupId
+                        where x.Deleted == false && x.tbl_Approval_Group.CompanyId == companyId
+                        select new ApprovalLevelViewModel
+                        {
+                            approvalLevelId = x.ApprovalLevelId,
+                            levelName = x.LevelName,
+                            position = x.Position,
+                            tenor = x.Tenor,
+                            maximumAmount = x.MaximumAmount,
+                            investmentGradeAmount = x.InvestmentGradeAmount,
+                            numberOfUsers = x.NumberOfUsers,
+                            numberOfApprovals = x.NumberOfApprovals,
+                            slaInterval = x.SLAInterval,
+                            canRouteBack = x.CanRouteBack,
+                            isPoliticallyExposed = x.IsPoliticallyExposed,
+                            isActive = x.IsActive,
+                            canEdit = x.CanEdit,
+                            canDoRiskAssessment = x.CanDoRiskAssessment,
+                            canRecieveAdjustment = x.CanRecieveAdjustment,
+                            canRecieveEmail = x.CanRecieveEmail,
+                            canRecieveSms = x.CanRecieveSMS,
+                            hasChecklist = x.HasChecklist,
+                            canPerformFinancialAnalysis = x.CanPerformFinancialAnalysis,
+                            requireAuthorisation = x.RequireAuthorisation,
+                            canOverideAuthorisation = x.CanOverideAuthorisation,
+                            routeViaStaffOrganogram = x.RouteViaStaffOrganogram,
+                            createdBy = x.CreatedBy,
+                            dateTimeCreated = x.DateTimeCreated,
+                            dateTimeUpdated = x.DateTimeUpdated,
+                            deleted = x.Deleted,
+                            deletedBy = x.DeletedBy,
+                            dateTimeDeleted = x.DateTimeDeleted,
+                            groupId = (int)x.GroupId,
+                            operationId = b.OperationId
+                        }).OrderBy(x => x.position).ToList();
+
+            return data;
         }
 
         public IEnumerable<ApprovalLevelViewModel> GetAllApprovalLevel(int companyId)
