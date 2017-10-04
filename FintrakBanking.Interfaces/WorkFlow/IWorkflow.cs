@@ -15,6 +15,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         int StaffId { set; }
         int TargetId { set; }
         int CompanyId { set; }
+        int Tenor { set; }
         string Comment { set; }
         decimal Amount { set; }
         int StatusId { get; set; }
@@ -22,6 +23,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         int NextLevelId { set; }
         bool EmailNotification { set; }
         bool Vote { set; }
+        bool InvestmentGrade { set; }
         bool SmsNotification { set; }
         bool ExternalInitialization { set; }
         string Message { get; }

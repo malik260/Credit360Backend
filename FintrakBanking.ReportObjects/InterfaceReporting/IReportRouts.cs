@@ -12,5 +12,6 @@ namespace FintrakBanking.ReportObjects.InterfaceReporting
         string GetLoanScheduleReport(int tearmLoanId, int companyId);
         string GetSectorLimitMonitoringReport(int companyId);
         string GetBranchLoanAmountLimit(int branchId, int companyId);
+        string GetWorkflowDefinition(int operationId, int companyId);
     }
 }

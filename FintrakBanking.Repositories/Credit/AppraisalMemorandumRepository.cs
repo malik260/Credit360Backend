@@ -230,6 +230,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var operationId = (int)OperationsEnum.CAM;
 
+            // init
             workflow.StaffId = model.createdBy;
             workflow.OperationId = operationId;
             workflow.TargetId = model.applicationId;
@@ -237,10 +238,13 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Vote = model.vote;
             workflow.ProductClassId = model.productClassId;
             workflow.ProductId = model.productId;
-            workflow.NextLevelId = model.receiverLevelId; //?status eror if not provided & error if assign but used
+            workflow.NextLevelId = model.receiverLevelId;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
             workflow.Amount = model.amount;
+            workflow.InvestmentGrade = model.investmentGrade;
+            workflow.Tenor = model.tenor;
+            // log
             await workflow.LogActivity();
 
             if (workflow.Saved)

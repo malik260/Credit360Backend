@@ -38,6 +38,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal principal { get; set; }
         public double rate { get; set; }
         public int tenor { get; set; }
+        public bool investmentGrade { get; set; }
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity
