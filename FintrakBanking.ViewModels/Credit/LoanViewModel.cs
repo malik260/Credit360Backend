@@ -1,25 +1,10 @@
 ﻿using FintrakBanking.ViewModels.Customer;
-using FintrakBanking.ViewModels.Setups.Finance;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class LoanRepaymentScheduleViewModel
-    {
-        public int loanId { get; set; }
-        public int customerId { get; set; }
-        public decimal principalRepayment { get; set; }
-        public decimal principalAmount { get; set; }
-        public decimal interestAccrual { get; set; }
-        public string productName { get; set; }
-        public double interestRate { get; set; }
-        public double tenor { get; set; }
-        public DateTime terminationDate { get; set; }
-        public DateTime effectiveDate { get; set; }
-        public string totalRepayment { get { return (principalRepayment + interestAccrual).ToString("#,#.00#"); } }
-    }
 
     public class LoanViewModel : GeneralEntity
     {
@@ -29,7 +14,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
         public int loanApplicationId { get; set; }
-
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
@@ -109,7 +93,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalAmount { get; set; }
         public int chargeFeeId { get; set; }
 
-
         //.............Other Attributes................//
         public int productTypeId { get; set; }
         public string productTypeName { get; set; }
@@ -127,11 +110,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string pricipalFrequencyTypeName { get; set; }
         public string interestFrequencyTypeName { get; set; }
 
-
         //............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
         //............End of Loan Repayment Schedule Model.....................//
-
 
         //...........Other Loans Types Model........................//
         public RevolvingLoanViewModel revolvingLoanInput { get; set; }
