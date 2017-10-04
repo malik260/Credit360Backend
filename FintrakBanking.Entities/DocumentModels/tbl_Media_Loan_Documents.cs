@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.DocumentModels
         [StringLength(10)]
         public string FileExtension { get; set; }
 
-        //[Required]
+        [Required]
         public byte[] FileData { get; set; }
 
         public DateTime SystemDateTime { get; set; }

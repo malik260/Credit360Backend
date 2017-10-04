@@ -334,7 +334,6 @@
     <Compile Include="Controllers\JobRequestController.cs" />
     <Compile Include="Controllers\JobTitleController.cs" />
     <Compile Include="Controllers\LimitController.cs" />
-    <Compile Include="Controllers\LoanApplicationController.cs" />
     <Compile Include="Controllers\LoanController.cs" />
     <Compile Include="Controllers\LoanCovenantController.cs" />
     <Compile Include="Controllers\LoanDocumentController.cs" />
@@ -416,6 +415,13 @@
     <Compile Include="Reports\ReportViews\BranchLimitMonitoring.aspx.designer.cs">
       <DependentUpon>BranchLimitMonitoring.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\Workflow.aspx.cs">
+      <DependentUpon>Workflow.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\Workflow.aspx.designer.cs">
+      <DependentUpon>Workflow.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\SectorialLimitMonitoring.aspx.cs">
       <DependentUpon>SectorialLimitMonitoring.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -448,6 +454,7 @@
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
+    <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -582,6 +589,7 @@
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

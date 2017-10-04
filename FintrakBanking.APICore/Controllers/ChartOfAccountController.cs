@@ -355,5 +355,29 @@ namespace FintrakBanking.APICore.Controllers
                 }
                   
         }
+
+        [HttpGet]
+        [Route("classes")]
+        public HttpResponseMessage GetChartOfAccountClasses()
+        {
+            try
+            {
+                var data = repo.GetChartOfAccountClasses();
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, result = data.ToList(), message = "No records found!" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = ex.Message });
+            }
+
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace FintrakBanking.ReportObjects.ViewModels
+﻿namespace FintrakBanking.ViewModels.Reports
 {
     public class SectorLimitViewModel
     {

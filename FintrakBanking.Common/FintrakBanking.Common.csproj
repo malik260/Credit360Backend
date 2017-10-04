@@ -46,22 +46,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorizationValidationException.cs" />
     <Compile Include="CommonHelpers.cs" />
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />
     <Compile Include="Enum\ApprovalState.cs" />
     <Compile Include="Enum\ApprovalStatusEnum.cs" />
+    <Compile Include="Enum\CASAAccountStatusEnum.cs" />
     <Compile Include="Enum\CollateralTypeEnum.cs" />
     <Compile Include="Enum\CompanyDirectorTypeEnum.cs" />
     <Compile Include="Enum\DailyAccuralCategory.cs" />
     <Compile Include="Enum\DayCountConventionEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />
+    <Compile Include="Enum\CASAPostNoStatusEnum.cs" />
     <Compile Include="Enum\LimitValueTypeEnum.cs" />
     <Compile Include="Enum\LoanApplicationStatusEnum.cs" />
     <Compile Include="Enum\LoanScheduleTypeEnum.cs" />
     <Compile Include="Enum\LoanStatusEnum.cs" />
     <Compile Include="Enum\LoanTransactionTypeEnum.cs" />
+    <Compile Include="Enum\LoanCovenantTypeEnum.cs" />
     <Compile Include="Enum\LoanTypeEnum.cs" />
     <Compile Include="Enum\LimitMatricEnum.cs" />
     <Compile Include="Enum\LimitType.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Enum\OperationsEnum.cs" />
     <Compile Include="Enum\FrequencyTypeEnum.cs" />
     <Compile Include="Enum\LienTypeEnum.cs" />
+    <Compile Include="Enum\OperationTypeEnum.cs" />
     <Compile Include="Enum\PenEvaluationStatusEnum.cs" />
     <Compile Include="Enum\LoanProductTypeEnum.cs" />
     <Compile Include="Enum\SourceApplicationEnum.cs" />

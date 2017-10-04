@@ -1,15 +1,12 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.ReportObjects.ViewModels;
-using System;
+using FintrakBanking.ViewModels.Reports;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FintrakBanking.ReportObjects.ReportingObjects
 {
-   public  class LimitsMonitoringReportsObjects
+    public  class LimitsMonitoringReportsObjects
     {
         public IEnumerable<SectorLimitViewModel> GetSectorLoanAmountLimit(int companyId)
         {

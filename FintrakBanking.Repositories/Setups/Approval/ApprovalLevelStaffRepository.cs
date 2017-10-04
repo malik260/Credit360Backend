@@ -36,7 +36,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         select new ApprovalLevelStaffViewModel
                         {
                             groupId = (int)a.tbl_Approval_Level.GroupId,
-                            operationId = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().OperationId,
+                            //operationId = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().OperationId,
                             maximumAmount = a.MaximumAmount,
                             processViewScope = a.ProcessViewScopeId,
                             canViewDocument = a.CanViewCAMDocument,
@@ -47,13 +47,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             canSendRequest = a.CanSendJobRequest,
                             canEdit = a.CanEdit,
                             vetoPower = a.VetoPower,
-                            minimumAmount = a.tbl_Approval_Level.MaximumAmount,
+                            //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
                             position = a.tbl_Approval_Level.Position,
                             approvalLevelId = a.ApprovalLevelId,
                             approvalLevelName = a.tbl_Approval_Level.LevelName,
                             staffId = a.StaffId,
                             staffLevelId = a.StaffLevelId,// added
-                            staffLevelName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
+                            staffLevelName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
                             dateTimeCreated = a.DateTimeCreated,
                             createdBy = (int)a.CreatedBy
                         }).ToList();

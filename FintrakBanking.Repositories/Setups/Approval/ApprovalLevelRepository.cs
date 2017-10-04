@@ -41,7 +41,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     levelName = x.LevelName,
                     position = x.Position,
                     tenor = x.Tenor,
-                    tenorModeId = x.TenorModeId,
                     maximumAmount = x.MaximumAmount,
                     investmentGradeAmount = x.InvestmentGradeAmount,
                     numberOfUsers = x.NumberOfUsers,
@@ -93,7 +92,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 LevelName = model.levelName,
                 Position = model.position,
                 Tenor = model.tenor,
-                TenorModeId = model.tenorModeId,
                 MaximumAmount = model.maximumAmount,
                 InvestmentGradeAmount = model.investmentGradeAmount,
                 NumberOfUsers = model.numberOfUsers,
@@ -158,7 +156,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             data.LevelName = model.levelName;
             data.Position = model.position;
             data.Tenor = model.tenor;
-            data.TenorModeId = 1; // model.tenorModeId;
+            //data.TenorModeId = 1; // model.tenorModeId;
             data.MaximumAmount = model.maximumAmount;
             data.InvestmentGradeAmount = model.investmentGradeAmount;
             data.NumberOfUsers = model.numberOfUsers;

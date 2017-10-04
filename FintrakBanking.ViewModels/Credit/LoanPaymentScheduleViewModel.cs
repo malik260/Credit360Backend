@@ -16,7 +16,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double endPrincipalAmount { get; set; }
     }
 
-    public class LoanPaymentSchedulePeriodicViewModel
+    public class LoanPaymentSchedulePeriodicViewModel: GeneralEntity
     {
         public int paymentNumber { get; set; }        
         public DateTime paymentDate { get; set; }
@@ -35,9 +35,10 @@ namespace FintrakBanking.ViewModels.Credit
         public double amortisedPeriodPrincipalAmount { get; set; }
         public double amortisedEndPrincipalAmount { get; set; }
         public double effectiveInterestRate { get; set; }
+        public int loanId  { get; set; }
     }
 
-    public class LoanPaymentScheduleDailyViewModel
+    public class LoanPaymentScheduleDailyViewModel: GeneralEntity
     {
         public int paymentNumber { get; set; }
         public DateTime date { get; set; }
@@ -71,6 +72,9 @@ namespace FintrakBanking.ViewModels.Credit
         public double earnedFee { get; set; }
         public double effectiveInterestRate { get; set; }
         public int numberOfPeriods { get; set; }
+        public int loanId { get; set; }
+        public double ballonAmount { get; set; }
+        
 
     }
 

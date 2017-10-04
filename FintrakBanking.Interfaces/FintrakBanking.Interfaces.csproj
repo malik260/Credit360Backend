@@ -69,6 +69,8 @@
     <Compile Include="ErrorLogger\IErrorLogRepository.cs" />
     <Compile Include="Finance\IFinanceTransactionRepository.cs" />
     <Compile Include="Helper\ICultureHelper.cs" />
+    <Compile Include="Reports\IReportingObjects.cs" />
+    <Compile Include="Reports\IReportRouts.cs" />
     <Compile Include="Notification\INotificationRepository.cs" />
     <Compile Include="Media\IMediaRepository.cs" />
     <Compile Include="Credit\ILoanOperationsRepository.cs" />

@@ -18,6 +18,8 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<LookupViewModel> GetAllLoanTypes();
 
+        IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
+
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
 
@@ -54,6 +56,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId);
         IQueryable<CustomerSearchItemViewModels> SearchCustomerCollateral(int companyId, string searchQuery);
         IQueryable<CustomerViewModels> SearchForCustomerCollateral(int companyId, string searchQuery);
-
+        List<LoanGuarantorViewModel> GetLoanGuarantors(int loanId);
+        List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId);
+        List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId);
     }
 }

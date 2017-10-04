@@ -50,6 +50,7 @@
     <Compile Include="CASA\CasaViewModel.cs" />
     <Compile Include="CASA\CustomerSearchVM.cs" />
     <Compile Include="CreditLimitValidations\CreditLimitValidationsModel.cs" />
+    <Compile Include="Credit\AppraisalMemorandumLoanDetailViewModel2.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
     <Compile Include="Credit\CallMemoViewModel.cs" />
@@ -57,15 +58,17 @@
     <Compile Include="Credit\CollateralDocumentViewModel.cs" />
     <Compile Include="Credit\ColleralCustomFieldsDataViewModel.cs" />
     <Compile Include="Credit\ConditionPrecedentViewModel.cs" />
+    <Compile Include="Credit\CurrentCustomerExposure.cs" />
     <Compile Include="Credit\ExistingLoanApplicationViewModel.cs" />
     <Compile Include="Credit\LimitViewModel.cs" />
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
     <Compile Include="Credit\LoanApplicationViewModel.cs" />
-    <Compile Include="Credit\LoanCovenantDetailViewModel.cs" />
     <Compile Include="Credit\LoanDocumentViewModel.cs" />
+    <Compile Include="Credit\LoanOperationViewModel.cs" />
     <Compile Include="Credit\LoanPaymentScheduleInput.cs" />
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
     <Compile Include="Credit\LoanPreliminaryEvaluationViewModel.cs" />
+    <Compile Include="Credit\LoanReviewOperationViewModel.cs" />
     <Compile Include="Credit\LoanViewModel.cs" />
     <Compile Include="Credit\OfferLetterViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
@@ -93,6 +96,10 @@
     <Compile Include="Notification\NotificationViewModel.cs" />
     <Compile Include="Media\DocumentViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report\ApprovalWorkflowTrackerViewModel.cs" />
+    <Compile Include="Report\LoanInformation.cs" />
+    <Compile Include="Report\LoanScheduleViewModel.cs" />
+    <Compile Include="Report\SectorLimitViewModel.cs" />
     <Compile Include="Risk\RiskLoanApplicationViewModel.cs" />
     <Compile Include="Risk\RiskAssessmentViewModels.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupMappingViewModel.cs" />
