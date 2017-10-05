@@ -59,5 +59,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanGuarantorViewModel> GetLoanGuarantors(int loanId);
         List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId);
         List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId);
+        List<CurrentCustomerExposure> GetCurrentCustomerExposure(int customerId, int companyId);
     }
 }
