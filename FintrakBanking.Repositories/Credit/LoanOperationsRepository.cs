@@ -1713,7 +1713,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanScheduleArchive.DisbursedBy = item.disbursedBy;
                 addLoanScheduleArchive.DisburserComment = item.disburserComment;
                 addLoanScheduleArchive.DisburseDate = item.disburseDate;
-                addLoanScheduleArchive.OperationId = item.operationId;
+                addLoanScheduleArchive.OperationId = (int)item.operationId;
                 addLoanScheduleArchive.CustomerGroupId = item.customerGroupId;
                 addLoanScheduleArchive.LoanTypeId = item.loanTypeId;
                 addLoanScheduleArchive.TrancheBatchCode = item.trancheBatchCode;
@@ -2451,7 +2451,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanScheduleArchive.DisbursedBy = item.disbursedBy;
                 addLoanScheduleArchive.DisburserComment = item.disburserComment;
                 addLoanScheduleArchive.DisburseDate = item.disburseDate;
-                addLoanScheduleArchive.OperationId = item.operationId;
+                addLoanScheduleArchive.OperationId = (int)item.operationId;
                 addLoanScheduleArchive.CustomerGroupId = item.customerGroupId;
                 addLoanScheduleArchive.LoanTypeId = item.loanTypeId;
                 addLoanScheduleArchive.TrancheBatchCode = item.trancheBatchCode;
@@ -3220,8 +3220,9 @@ namespace FintrakBanking.Repositories.Credit
             var data = new tbl_Loan_Review_Operation
             {
                 LoanId = model.loanId,
-                LoanTypeId = model.loanTypeId,
+                ProductTypeId = model.productTypeId,
                 OperationTypeId = model.operationTypeId,
+                EffectiveDate = model.proposedEffectiveDate,
                 ReviewDetails = model.reviewDetails,
                 InterateRate = model.interateRate,
                 Prepayment = model.prepayment,
@@ -3233,10 +3234,7 @@ namespace FintrakBanking.Repositories.Credit
                 CASA_AccountId = model.cASA_AccountId,
                 OverDraftTopup = model.overDraftTopup,
                 Fee_Charges = model.fee_Charges,
-                TerminationAndReBook = model.terminationAndReBook,
-                CompleteWriteOff = model.completeWriteOff,
-                CancelUndisbursedLoan = model.cancelUndisbursedLoan,
-                ApprovalStatusId = model.approvalStatusId,
+                ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
                 CreatedBy = model.createdBy,
                 DateCreated = DateTime.Now
             };

@@ -14,9 +14,12 @@ namespace FintrakBanking.Entities.Models
 
         public int LoanId { get; set; }
 
-        public int LoanTypeId { get; set; }
+        public int ProductTypeId { get; set; }
 
         public int OperationTypeId { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime EffectiveDate { get; set; }
 
         [Required]
         public string ReviewDetails { get; set; }
@@ -28,8 +31,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? PrincipalFrequencyTypeId { get; set; }
 
-        [StringLength(10)]
-        public string InterestFrequencyTypeId { get; set; }
+        public int? InterestFrequencyTypeId { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? PrincipalFirstPaymentDate { get; set; }
@@ -46,15 +48,6 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "money")]
         public decimal? Fee_Charges { get; set; }
-
-        [StringLength(50)]
-        public string TerminationAndReBook { get; set; }
-
-        [StringLength(50)]
-        public string CompleteWriteOff { get; set; }
-
-        [StringLength(50)]
-        public string CancelUndisbursedLoan { get; set; }
 
         public int ApprovalStatusId { get; set; }
 

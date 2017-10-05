@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-   public class LoanReviewOperationViewModel : GeneralEntity
+    public class LoanReviewOperationViewModel : GeneralEntity
     {
         public int loanReviewOperationsId { get; set; }
 
         public int loanId { get; set; }
 
-        public int loanTypeId { get; set; }
+        public int productTypeId { get; set; }
 
         public int operationTypeId { get; set; }
+
+        public DateTime proposedEffectiveDate { get; set; }
 
         public string reviewDetails { get; set; }
 
@@ -24,7 +26,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int? principalFrequencyTypeId { get; set; }
 
-        public string interestFrequencyTypeId { get; set; }
+        public int? interestFrequencyTypeId { get; set; }
 
         public DateTime? principalFirstPaymentDate { get; set; }
 
