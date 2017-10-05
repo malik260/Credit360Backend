@@ -41,7 +41,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data });  //Ok(accounts);
-
             }
             catch (System.Exception ex)
             {
@@ -70,7 +69,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpGet]
         [Route("product/group")]
         public HttpResponseMessage GetProductByProductGroup()
@@ -92,8 +90,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
         #region Product Group
 
         [HttpGet]
@@ -111,13 +107,13 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data });  //Ok(accounts);
-
             }
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         //
         [HttpGet]
         [Route("product-group/{productGroupId}")]
@@ -147,7 +143,6 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, Ok());
             }
-
 
             var data = repo.GetProductGroupById(productGroupId);
             if (data == null)
@@ -331,8 +326,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
 
                     new { success = true, result = data.ToList() });  //Ok(accounts);
-
-
             }
             catch (System.Exception ex)
             {
@@ -386,17 +379,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("approval-status")]
         public HttpResponseMessage GetApprovalStatus()
         {
-
             try
             {
                 var token = new TokenDecryptionHelper();
                 var productinfo = repo.GetApprovalStatus();
 
-
                 if (productinfo != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = productinfo.ToList() });
-
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                            new { success = false, message = "No record found" });
@@ -405,16 +395,12 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
-
         }
 
         [HttpGet]
         [Route("product/approvals/temp")]
         public HttpResponseMessage GetProductAwaitingApproval()
         {
-
-
             try
             {
                 var token = new TokenDecryptionHelper();
@@ -431,7 +417,6 @@ namespace FintrakBanking.APICore.Controllers
                 //errorLogger.LogError(ex, HttpContext.Current.Request.UserHostAddress, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
 
         [HttpGet]
@@ -455,7 +440,6 @@ namespace FintrakBanking.APICore.Controllers
                 //errorLogger.LogError(ex, HttpContext.Current.Request.UserHostAddress, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
 
         [HttpGet]
@@ -499,7 +483,6 @@ namespace FintrakBanking.APICore.Controllers
                 //errorLogger.LogError(ex, HttpContext.Current.Request.UserHostAddress, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
 
         //[HttpPost]
@@ -518,7 +501,6 @@ namespace FintrakBanking.APICore.Controllers
         //        var record = repo.AddProduct(model);
         //        if (record != null)
         //        {
-
         //            return Request.CreateResponse(HttpStatusCode.Created,
 
         //                new { success = true, result = record, message = "product has been created successfully" });
@@ -533,14 +515,12 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-
         [HttpPost]
         [Route("product")]
         public async Task<HttpResponseMessage> AddTempProduct([FromBody] ProductViewModel model)
         {
             try
             {
-
                 if (repo.IsProductCodeAlreadyExist(model.productCode))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -741,7 +721,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpPost]
         [Route("product-price-index")]
         public HttpResponseMessage AddProductPriceIndex([FromBody] ProductPriceIndexViewModel model)
@@ -798,9 +777,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
-
 
         [HttpDelete]
         [Route("product-price-index/{productPriceIndexId}")]
@@ -827,9 +804,8 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
 
-        #endregion Product Price index
+        #endregion Product Price Index
     }
 }

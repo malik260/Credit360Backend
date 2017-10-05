@@ -31,12 +31,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaff(int companyId)
         {
             var data = (from a in context.tbl_Approval_Level_Staff
+                        join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
+                        join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupId
                         where a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
                         && a.Deleted == false
                         select new ApprovalLevelStaffViewModel
                         {
-                            groupId = a.tbl_Approval_Level.GroupId,
-                            //operationId = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().OperationId,
+                            groupId = (int)a.tbl_Approval_Level.GroupId,
+                            operationId = c.OperationId,
                             maximumAmount = a.MaximumAmount,
                             processViewScope = a.ProcessViewScopeId,
                             canViewDocument = a.CanViewCAMDocument,
@@ -174,7 +176,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var data = this.context.tbl_Approval_Level_Staff.Find(StaffLevelId);
 
-
             //Audit Section ---------------------------
             var audit_staff_level = (context.tbl_Approval_Level.FirstOrDefault(x => x.ApprovalLevelId == data.ApprovalLevelId));
             var audit_staff = (context.tbl_Staff.FirstOrDefault(x => x.StaffId == data.StaffId));
@@ -244,12 +245,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var result = (from a in context.tbl_Approval_Trail
                           join b in context.tbl_Approval_Level on a.FromApprovalLevelId equals b.ApprovalLevelId
-                          join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupOperationMappingId
+                          join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupId
                           join d in context.tbl_Approval_Group on c.GroupId equals d.GroupId
                           join e in context.tbl_Operations on c.OperationId equals e.OperationId
 
                           join f in context.tbl_Approval_Level on a.ToApprovalLevelId equals f.ApprovalLevelId
-                          join g in context.tbl_Approval_Group_Mapping on f.GroupId equals g.GroupOperationMappingId
+                          join g in context.tbl_Approval_Group_Mapping on f.GroupId equals g.GroupId
                           join h in context.tbl_Approval_Group on g.GroupId equals h.GroupId
                           join i in context.tbl_Staff on a.RequestStaffId equals i.StaffId
                           join j in context.tbl_Staff on a.ResponseStaffId equals j.StaffId

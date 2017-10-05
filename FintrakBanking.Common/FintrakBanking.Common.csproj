@@ -67,6 +67,8 @@
     <Compile Include="Enum\LoanTypeEnum.cs" />
     <Compile Include="Enum\LimitMatricEnum.cs" />
     <Compile Include="Enum\LimitType.cs" />
+    <Compile Include="Enum\MessageStatusEnum.cs" />
+    <Compile Include="Enum\MessageTypeEnum.cs" />
     <Compile Include="Enum\OperationsEnum.cs" />
     <Compile Include="Enum\FrequencyTypeEnum.cs" />
     <Compile Include="Enum\LienTypeEnum.cs" />

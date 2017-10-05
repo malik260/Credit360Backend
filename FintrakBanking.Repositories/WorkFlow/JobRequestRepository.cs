@@ -167,7 +167,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             var applicationDate = general.GetApplicationDate();
 
-            data.ReassignedTo = (int) model.reassignedTo;
+            data.ReassignedTo = (int)model.reassignedTo;
             data.IsReassigned = true;
             data.IsAcknowledged = true;
             data.RequestStatusId = 2;
@@ -194,7 +194,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<JobRequestViewModel> GetAllJobRequest()
         {
-            var allstaff = this.context.tbl_Staff.Select( s => new //OperationStaffViewModel
+            var allstaff = this.context.tbl_Staff.Select(s => new //OperationStaffViewModel
             {
                 id = s.StaffId,
                 name = s.LastName + " " + s.FirstName
@@ -222,14 +222,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 systemResponseDate = x.SystemResponseDate,
                 acknowledgementDate = x.AcknowledgementDate,
                 systemAcknowledgementDate = x.SystemAcknowledgementDate,
-                from = allstaff.FirstOrDefault(s => s.id == x.SenderStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.SenderStaffId).name,    
+                from = allstaff.FirstOrDefault(s => s.id == x.SenderStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.SenderStaffId).name,
                 to = allstaff.FirstOrDefault(s => s.id == x.ReceiverStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.ReceiverStaffId).name,
                 assignee = allstaff.FirstOrDefault(s => s.id == x.ReassignedTo) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.ReassignedTo).name,
                 //from = allstaff.GetStaffName(s => s.id == x.SenderStaffId),
                 //to = allstaff.GetStaffName(s => s.id == x.ReceiverStaffId),
                 //assignee = allstaff.GetStaffName(s => s.id == x.ReassignedTo),
             });
-
         }
 
         public JobRequestViewModel GetJobRequest(int jobRequestId)
@@ -268,16 +267,16 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId)
         {
-           return this.context.tbl_Approval_Group_Mapping.Where(x => x.OperationId == operationId)
-                .Select(g => g.tbl_Approval_Group)
-                .SelectMany(l => l.tbl_Approval_Level)
-                .SelectMany(s => s.tbl_Approval_Level_Staff)
-                .Select(s => new OperationStaffViewModel
-                {
-                    id = s.StaffId,
-                    name = s.tbl_Staff.FirstName,
-                    groupId = s.tbl_Approval_Level.GroupId
-                }).ToList();
+            return this.context.tbl_Approval_Group_Mapping.Where(x => x.OperationId == operationId)
+                 .Select(g => g.tbl_Approval_Group)
+                 .SelectMany(l => l.tbl_Approval_Level)
+                 .SelectMany(s => s.tbl_Approval_Level_Staff)
+                 .Select(s => new OperationStaffViewModel
+                 {
+                     id = s.StaffId,
+                     name = s.tbl_Staff.FirstName,
+                     groupId = (int)s.tbl_Approval_Level.GroupId
+                 }).ToList();
         }
 
         public IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId)
@@ -300,7 +299,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var operationId = (int)OperationsEnum.CAM;
             var departmentId = 0;
             var staff = context.tbl_Staff.Find(staffId);
-            if (staff != null) { departmentId = (int)staff.DepartmentId;  }
+            if (staff != null) { departmentId = (int)staff.DepartmentId; }
 
             var allstaff = this.context.tbl_Staff.Select(s => new
             {
@@ -311,8 +310,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             return context.tbl_Department
                 .Join(context.tbl_Job_Request.Where(x => x.OperationsId == operationId),
                 a => a.DepartmentId, b => b.DepartmentId, (a, b) => new { a, b })
-                .Where(x => 
-                    x.b.SenderStaffId == staffId 
+                .Where(x =>
+                    x.b.SenderStaffId == staffId
                     || x.b.DepartmentId == departmentId
                     || x.b.ReassignedTo == staffId
                 )
@@ -342,7 +341,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     to = allstaff.FirstOrDefault(s => s.id == x.b.ReceiverStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.ReceiverStaffId).name,
                     assignee = allstaff.FirstOrDefault(s => s.id == x.b.ReassignedTo) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.ReassignedTo).name,
                 })
-                .OrderByDescending(x=>x.jobRequestId)
+                .OrderByDescending(x => x.jobRequestId)
                 .Take(100);
         }
 
@@ -352,7 +351,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var data = new tbl_Job_Type
             {
-				JobTypeName = model.jobTypeName,
+                JobTypeName = model.jobTypeName,
             };
 
             context.tbl_Job_Type.Add(data);
@@ -382,7 +381,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return false;
             }
-				
+
             data.JobTypeName = model.jobTypeName;
 
             // Audit Section ---------------------------
@@ -407,12 +406,12 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             return this.context.tbl_Job_Type.Select(x => new JobTypeViewModel
             {
-				jobTypeId = x.JobTypeId,
-				jobTypeName = x.JobTypeName,
+                jobTypeId = x.JobTypeId,
+                jobTypeName = x.JobTypeName,
             });
         }
 
-        #endregion
+        #endregion job-type
 
         #region Job-Request Document
 
@@ -547,6 +546,5 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         #endregion Job-Request Document
-
     }
 }
