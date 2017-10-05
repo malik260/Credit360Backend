@@ -25,7 +25,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductViewModel> GetProductByTypeAndCategory(short productTypeId, short productCategoryId);
         bool IsProductCodeAlreadyExist(string productCode);
         bool IsProductExist(string productCode);
-        bool GoForApproval(ApprovalViewModel entity);
+        Task<bool> GoForApproval(ApprovalViewModel entity);
         Task<ProductViewModel> AddTempProduct(ProductViewModel product);
         Task<bool> UpdateProduct(int productId, ProductViewModel product);
 
