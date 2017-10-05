@@ -301,7 +301,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
             var group = allGroups.Where(c => c.OperationId == operationId).OrderBy(c => c.Position).FirstOrDefault();
-            var levels = allLevels.Where(c => c.groupId == group.GroupOperationMappingId).OrderBy(c => c.position).FirstOrDefault();
+            var levels = allLevels.Where(c => c.groupId == group.GroupId).OrderBy(c => c.position).FirstOrDefault();
             return levels.approvalLevelId;
         }
 

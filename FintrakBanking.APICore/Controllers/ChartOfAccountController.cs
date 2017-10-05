@@ -224,7 +224,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("approval")]
-        public async Task<HttpResponseMessage> GoForApprovalAsync([FromBody]ApprovalViewModel entity)
+        public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
             try
             {
@@ -235,7 +235,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
 
-                var data = await repo.GoForApproval(entity);
+                var data = repo.GoForApproval(entity);
 
                 if (data)
                 {

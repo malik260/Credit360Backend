@@ -6,8 +6,8 @@ using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Setups.Finance;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -19,21 +19,21 @@ namespace FintrakBanking.Repositories.Setups.Finance
     /// <summary>
     /// TODO: Implement audit trails in these methods
     /// </summary>
-    /// 
+    ///
     [Export(typeof(IChartOfAccountRepository))]
     [PartCreationPolicy(CreationPolicy.NonShared)]
     public class ChartOfAccountRepository : IChartOfAccountRepository
     {
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
-        IGeneralSetupRepository _genSetup;
-        private IWorkFlowRepository workFlow;
+        private IGeneralSetupRepository _genSetup;
+        private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
 
         public ChartOfAccountRepository(FinTrakBankingContext _context,
                                                 IAuditTrailRepository _auditTrail,
                                                 IGeneralSetupRepository genSetup,
-                                                IWorkFlowRepository _workFlow,
+                                                IWorkflow _workFlow,
                                                 IApprovalLevelStaffRepository _level)
         {
             this.context = _context;
@@ -48,21 +48,20 @@ namespace FintrakBanking.Repositories.Setups.Finance
             return this.context.SaveChanges() > 0;
         }
 
-        public async Task<bool> GoForApproval(ApprovalViewModel entity)
+        public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.ChartOfAccountCreation;
 
-            var response = await workFlow.GoForApproval(entity);
+            entity.externalInitialization = false;
 
-            if (response.Item1)
+            var response = workFlow.LogForApproval(entity);
+
+            if (workFlow.NewState == (int)ApprovalState.Ended)
             {
-                return ApproveAccount(entity.targetId, response.Item2.approvalStatusId, entity);
-            }
-            else
-            {
-                return false;
+                return ApproveAccount(entity.targetId, (int)ApprovalStatusEnum.Approved, entity);
             }
 
+            return false;
         }
 
         private bool ApproveAccount(int accountId, short approvalStatusId, UserInfo user)
@@ -78,7 +77,6 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             if (accountToUpdate.Any()) //Update existing account with tempAccount record
             {
-
                 foreach (var curr in currListToUpdate)
                 {
                     context.tbl_Chart_Of_Account_Currency.Remove(curr);
@@ -109,7 +107,6 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 existingAccount.DateTimeUpdated = DateTime.Now;
                 existingAccount.tbl_Chart_Of_Account_Currency = coaCurrencies;
                 existingAccount.GLClassId = (short)accountModel.GLClassId;
-
             }
             else //Insert a new account record into the real account table
             {
@@ -306,42 +303,39 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.ChartOfAccountCreation, accountModel.companyId))
+            using (var trans = context.Database.BeginTransaction())
             {
-                using (var trans = context.Database.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        auditTrail.AddAuditTrail(audit);
-                        this.context.tbl_Temp_Chart_Of_Account.Add(account);
-                        output = await context.SaveChangesAsync() > 0;
+                    auditTrail.AddAuditTrail(audit);
+                    context.tbl_Temp_Chart_Of_Account.Add(account);
+                    output = await context.SaveChangesAsync() > 0;
 
-                        var entity = new ApprovalViewModel
-                        {
-                            staffId = accountModel.createdBy,
-                            companyId = accountModel.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = account.GLAccountId,
-                            operationId = (int)OperationsEnum.ChartOfAccountCreation,
-                            BranchId = accountModel.userBranchId
-                        };
-                        var response = await workFlow.LogForApproval(entity);
+                    var entity = new ApprovalViewModel
+                    {
+                        staffId = accountModel.createdBy,
+                        companyId = accountModel.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        targetId = account.GLAccountId,
+                        operationId = (int)OperationsEnum.ChartOfAccountCreation,
+                        BranchId = accountModel.userBranchId,
+                        externalInitialization = true
+                    };
+                    var response = workFlow.LogForApproval(entity);
+
+                    if (response)
+                    {
                         trans.Commit();
                     }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw new Exception(ex.Message);
-                    }
+
+                    return output;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
                 }
             }
-            else
-            {
-                throw new Exception("Approval route have not been defined for this operation");
-            }
-
-            return output;
-
         }
 
         public bool IsAccountCodeAlreadyExist(string accountCode)
@@ -375,7 +369,6 @@ namespace FintrakBanking.Repositories.Setups.Finance
                                 glaccountCurrencyId = c.GLAccountCurrencyId,
                                 currencyId = c.CurrencyId,
                                 currencyName = c.tbl_Currency.CurrencyCode + " -- " + c.tbl_Currency.CurrencyName
-
                             }).ToList(),
                             companyId = account.CompanyId,
                             branchId = account.BranchId,
@@ -564,7 +557,6 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 };
 
                 context.tbl_Temp_Chart_Of_Account.Add(tempAccount);
-
             }
             var audit = new tbl_Audit
             {
@@ -577,11 +569,10 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 ApplicationDate = _genSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now,
                 TargetId = accountId
-
             };
 
             this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------  
+            //end of Audit section -------------------------------
 
             var output = this.SaveAll();
 
@@ -592,9 +583,15 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                 targetId = tempAccount.GLAccountId,
                 operationId = (int)OperationsEnum.ChartOfAccountCreation,
-                BranchId = accountModel.userBranchId
+                BranchId = accountModel.userBranchId,
+                externalInitialization = true
             };
-            var response = workFlow.LogForApproval(entity);
+            bool response = workFlow.LogForApproval(entity);
+
+            if (!response)
+            {
+                return false;
+            }
 
             return output;
         }
@@ -606,42 +603,49 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            return (from c in context.tbl_Temp_Chart_Of_Account
-                    join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
-                    join atrail in context.tbl_Approval_Trail on c.GLAccountId equals atrail.TargetId
-                    where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)OperationsEnum.ChartOfAccountCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
-                    select new ChartOfAccountViewModel()
-                    {
-                        accountId = c.GLAccountId,
-                        accountCode = c.AccountCode,
-                        accountName = c.AccountName,
-                        accountTypeId = c.AccountTypeId,
-                        accountTypeName = c.tbl_Account_Type.AccountTypeName,
-                        accountCategoryId = c.tbl_Account_Type.AccountCategoryId,
-                        accountCategoryName = c.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
-                        accountStatusId = c.AccountStatusId,
-                        currencies = context.tbl_Temp_Chart_Of_Account_Currency.Where(curr => curr.GLAccountId == c.GLAccountId && curr.Deleted == false).Select(coa => new ChartOfAccountCurrencyViewModel()
-                        {
-                            glaccountId = coa.GLAccountId,
-                            glaccountCurrencyId = coa.GLAccountCurrencyId,
-                            currencyId = coa.CurrencyId,
-                            currencyName = coa.tbl_Currency.CurrencyCode + " -- " + coa.tbl_Currency.CurrencyName
+            var data = (from c in context.tbl_Temp_Chart_Of_Account
+                join coy in context.tbl_Company on c.CompanyId equals companyId
+                join atrail in context.tbl_Approval_Trail on c.GLAccountId equals atrail.TargetId
+                where
+                    atrail.ApprovalStateId == (int)ApprovalState.Processing
+                    &&
+                    c.IsCurrent == true
+                    && atrail.ToApprovalLevelId == staffApprovalLevelId &&
+                    atrail.OperationId == (int) OperationsEnum.ChartOfAccountCreation
+                select new ChartOfAccountViewModel()
+                {
+                    accountId = c.GLAccountId,
+                    accountCode = c.AccountCode,
+                    accountName = c.AccountName,
+                    accountTypeId = c.AccountTypeId,
+                    accountTypeName = c.tbl_Account_Type.AccountTypeName,
+                    accountCategoryId = c.tbl_Account_Type.AccountCategoryId,
+                    accountCategoryName = c.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
+                    accountStatusId = c.AccountStatusId,
+                    currencies = context.tbl_Temp_Chart_Of_Account_Currency
+                        .Where(curr => curr.GLAccountId == c.GLAccountId && curr.Deleted == false).Select(coa =>
+                            new ChartOfAccountCurrencyViewModel()
+                            {
+                                glaccountId = coa.GLAccountId,
+                                glaccountCurrencyId = coa.GLAccountCurrencyId,
+                                currencyId = coa.CurrencyId,
+                                currencyName = coa.tbl_Currency.CurrencyCode + " -- " + coa.tbl_Currency.CurrencyName
+                            }).ToList(),
+                    companyId = c.CompanyId,
+                    branchId = c.BranchId,
+                    branchName = c.tbl_Branch.BranchName,
+                    systemUse = c.SystemUse,
+                    branchSpecific = c.BranchSpecific,
+                    fsCaptionId = c.FSCaptionId,
+                    fsCaptionName = c.tbl_Financial_Statement_Caption.FSCaption,
+                    operationId = atrail.OperationId,
+                    approvalStatusId = c.ApprovalStatusId,
+                    createdBy = c.CreatedBy,
+                    dateTimeCreated = c.DateTimeCreated,
+                    glClassId = (short) c.GLClassId
+                }).GroupBy(x => x.accountId).Select(g => g.FirstOrDefault());
 
-                        }).ToList(),
-                        companyId = c.CompanyId,
-                        branchId = c.BranchId,
-                        branchName = c.tbl_Branch.BranchName,
-                        systemUse = c.SystemUse,
-                        branchSpecific = c.BranchSpecific,
-                        fsCaptionId = c.FSCaptionId,
-                        fsCaptionName = c.tbl_Financial_Statement_Caption.FSCaption,
-                        operationId = atrail.OperationId,
-                        approvalStatusId = c.ApprovalStatusId,
-                        createdBy = c.CreatedBy,
-                        dateTimeCreated = c.DateTimeCreated,
-                        glClassId = (short)c.GLClassId
-                    });
+            return data;
         }
 
         public ChartOfAccountViewModel GetTempAccountDetail(int accountId)
@@ -667,7 +671,6 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             glaccountCurrencyId = coa.GLAccountCurrencyId,
                             currencyId = coa.CurrencyId,
                             currencyName = coa.tbl_Currency.CurrencyCode + " -- " + coa.tbl_Currency.CurrencyName
-
                         }).ToList(),
                         companyId = c.CompanyId,
                         branchId = c.BranchId,
@@ -678,11 +681,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                         createdBy = c.CreatedBy,
                         dateTimeCreated = c.DateTimeCreated,
-
                     }).FirstOrDefault();
-
         }
-
 
         public bool DeleteAccount(short accountId, UserInfo user)
         {

@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -49,6 +51,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int neededNumberOfApproval;
         private bool externalInitialization = false;
         private bool vote = false;
+        private bool politicallyExposed = false;
 
         public int StaffId { set { staffId = value; } }
         public int TargetId { set { targetId = value; } }
@@ -58,6 +61,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public string Comment { set { comment = value; } }
         public int Tenor { set { tenor = value; } }
         public bool InvestmentGrade { set { investmentGrade = value; } }
+        public bool PoliticallyExposed { set { politicallyExposed = value; } }
         public bool Vote { set { vote = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int NextLevelId { set { nextLevelId = value; } }
@@ -69,6 +73,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         public string Message { get { return message; } }
         public bool Saved { get { return saved; } }
         public int NewState { get { return newStateId; } }
+
+        private List<WorkflowSetup> workflowSetup;
+
 
         public bool LogActivity()
         {
@@ -136,6 +143,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             context.tbl_Approval_Trail.Add(trail);
             this.saved =  context.SaveChanges() > 0;
 
+
             if (this.saved)
             {
                 this.SendNotifications();
@@ -174,31 +182,32 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool ResolveLevelConfigurations()
         {
-            var approvalLevels = context.tbl_Approval_Group_Mapping.Where(x => x.Deleted == false
-                                && x.OperationId == this.operationId
-                                && x.ProductClassId == this.productClassId
-                                && x.ProductId == this.productId
-                            )
-                            .Join(context.tbl_Approval_Group, m => m.GroupId, g => g.GroupId, (m, g) => new { m, g })
-                            .Join(context.tbl_Approval_Level, mg => mg.m.GroupId, l => l.GroupId, (mg, l) => 
-                            new { Mapping = mg.m, Level = l })
-                            .Where(x => x.Level.IsActive == true)
-                            .Select(x => new WorkflowSetup
-                            {
-                                GroupPosition = x.Mapping.Position,
-                                LevelPosition = x.Level.Position,
-                                Staff = x.Level.tbl_Approval_Level_Staff,
-                                Level= x.Level,
-                                Group = x.Level.tbl_Approval_Group,
-                                Mapping = x.Mapping,
-                                CanRecieveSMS = x.Level.CanRecieveSMS,
-                                CanRecieveEmail = x.Level.CanRecieveEmail,
-                                ApprovalLevelId = x.Level.ApprovalLevelId,
-                                RouteViaStaffOrganogram = x.Level.RouteViaStaffOrganogram,
-                            })
-                            .OrderBy(x => x.GroupPosition)
-                            .ThenBy(x => x.LevelPosition);
+            //var approvalLevels = context.tbl_Approval_Group_Mapping.Where(x => x.Deleted == false
+            //                    && x.OperationId == this.operationId
+            //                    && x.ProductClassId == this.productClassId
+            //                    && x.ProductId == this.productId
+            //                )
+            //                .Join(context.tbl_Approval_Group, m => m.GroupId, g => g.GroupId, (m, g) => new { m, g })
+            //                .Join(context.tbl_Approval_Level, mg => mg.m.GroupId, l => l.GroupId, (mg, l) => 
+            //                new { Mapping = mg.m, Level = l })
+            //                .Where(x => x.Level.IsActive == true)
+            //                .Select(x => new WorkflowSetup
+            //                {
+            //                    GroupPosition = x.Mapping.Position,
+            //                    LevelPosition = x.Level.Position,
+            //                    Staff = x.Level.tbl_Approval_Level_Staff,
+            //                    Level= x.Level,
+            //                    Group = x.Level.tbl_Approval_Group,
+            //                    Mapping = x.Mapping,
+            //                    CanRecieveSMS = x.Level.CanRecieveSMS,
+            //                    CanRecieveEmail = x.Level.CanRecieveEmail,
+            //                    ApprovalLevelId = x.Level.ApprovalLevelId,
+            //                    RouteViaStaffOrganogram = x.Level.RouteViaStaffOrganogram,
+            //                })
+            //                .OrderBy(x => x.GroupPosition)
+            //                .ThenBy(x => x.LevelPosition);
 
+            var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
 
             WorkflowSetup next = null;
 
@@ -399,24 +408,46 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
-        private bool WithinTenorLimit() // TODO
+        private bool WithinTenorLimit(WorkflowSetup setup)
         {
-            return true;
+            if (tenor == 0 && setup.Tenor == 0) { return true; }
+            if (tenor > 0 && setup.Tenor >= tenor) { return true; }
+            return false;
         }
 
-        private bool WithinMaximumLimit() // TODO
+        private bool WithinMaximumLimit(WorkflowSetup setup)
         {
-            return true;
+            if (investmentGrade == true) { return true; }
+            if (amount == 0) { return true; }
+            if (setup.MaximumAmount >= amount) { return true; }
+            return false;
         }
 
-        private bool WithinInvestmentGradeLimit() // TODO
+        private bool WithinInvestmentGradeLimit(WorkflowSetup setup)
         {
-            return true;
+            if (investmentGrade == false) { return true; }
+            if (amount == 0) { return true; }
+            if (setup.InvestmentGradeAmount >= amount) { return true; }
+            return false;
+        }
+
+        private bool WithinPoliticallyExposedLimit(WorkflowSetup setup)
+        {
+            if (politicallyExposed == false) { return true; }
+            if (setup.IsPoliticallyExposed == true) { return true; }
+            return false;
         }
 
         private bool WithinAllLimits()
         {
-            return WithinTenorLimit() == true && WithinMaximumLimit() == true && WithinInvestmentGradeLimit() == true;
+            var setup = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
+
+            var level = setup.FirstOrDefault(x=>x.Staff.First().StaffId == staffId);
+
+            return WithinTenorLimit(level) == true 
+                && WithinMaximumLimit(level) == true 
+                && WithinInvestmentGradeLimit(level) == true
+                && WithinPoliticallyExposedLimit(level) == true;
         }
 
         private void SetState()
@@ -430,6 +461,48 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool ActionIsApprovalDecision()
         {
             return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved);
+        }
+
+        private IEnumerable<WorkflowSetup> GetWorkflowSetup(int operationId, int? productClassId, int? productId)
+        {
+            var mappings = context.tbl_Approval_Group_Mapping.Where(x => x.Deleted == false
+                               && x.OperationId == this.operationId
+                               && x.ProductClassId == this.productClassId
+                               && x.ProductId == this.productId
+                           );
+
+            if (mappings.Any() == false)
+            {
+                mappings = context.tbl_Approval_Group_Mapping.Where(x => x.Deleted == false
+                               && x.OperationId == this.operationId
+                               && x.ProductClassId == this.productClassId
+                           );
+            }
+
+            var approvalLevels = mappings
+                           .Join(context.tbl_Approval_Group, m => m.GroupId, g => g.GroupId, (m, g) => new { m, g })
+                           .Join(context.tbl_Approval_Level, mg => mg.m.GroupId, l => l.GroupId, (mg, l) =>
+                           new { Mapping = mg.m, Level = l })
+                           .Where(x => x.Level.IsActive == true)
+                           .Select(x => new WorkflowSetup
+                           {
+                               GroupPosition = x.Mapping.Position,
+                               LevelPosition = x.Level.Position,
+                               Staff = x.Level.tbl_Approval_Level_Staff,
+                               Level = x.Level,
+                               Group = x.Level.tbl_Approval_Group,
+                               Mapping = x.Mapping,
+                               CanRecieveSMS = x.Level.CanRecieveSMS,
+                               CanRecieveEmail = x.Level.CanRecieveEmail,
+                               ApprovalLevelId = x.Level.ApprovalLevelId,
+                               RouteViaStaffOrganogram = x.Level.RouteViaStaffOrganogram,
+                           })
+                           .OrderBy(x => x.GroupPosition)
+                           .ThenBy(x => x.LevelPosition);
+
+            this.workflowSetup = approvalLevels.ToList();
+
+            return this.workflowSetup;
         }
 
         private void SendNotifications() // TODO
@@ -453,6 +526,21 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             this.message = "Unauthorized action!";
             return false;
+        }
+
+        public bool LogForApproval(ApprovalViewModel model)
+        {
+            StaffId = model.staffId;
+            OperationId = model.operationId;
+            TargetId = model.targetId;
+            CompanyId = model.companyId;
+            Comment = model.comment;
+            ExternalInitialization = model.externalInitialization;
+            StatusId = model.approvalStatusId;
+
+            var response = LogActivity();
+
+            return response;
         }
     }
 

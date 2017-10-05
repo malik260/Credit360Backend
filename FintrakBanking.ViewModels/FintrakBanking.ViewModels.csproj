@@ -64,9 +64,11 @@
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
     <Compile Include="Credit\LoanApplicationViewModel.cs" />
     <Compile Include="Credit\LoanDocumentViewModel.cs" />
+    <Compile Include="Credit\LoanOperationViewModel.cs" />
     <Compile Include="Credit\LoanPaymentScheduleInput.cs" />
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
     <Compile Include="Credit\LoanPreliminaryEvaluationViewModel.cs" />
+    <Compile Include="Credit\LoanReviewOperationViewModel.cs" />
     <Compile Include="Credit\LoanViewModel.cs" />
     <Compile Include="Credit\OfferLetterViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
@@ -94,6 +96,10 @@
     <Compile Include="Notification\NotificationViewModel.cs" />
     <Compile Include="Media\DocumentViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Report\ApprovalWorkflowTrackerViewModel.cs" />
+    <Compile Include="Report\LoanInformation.cs" />
+    <Compile Include="Report\LoanScheduleViewModel.cs" />
+    <Compile Include="Report\SectorLimitViewModel.cs" />
     <Compile Include="Risk\RiskLoanApplicationViewModel.cs" />
     <Compile Include="Risk\RiskAssessmentViewModels.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupMappingViewModel.cs" />
@@ -118,6 +124,7 @@
     <Compile Include="Setups\General\CityViewModel.cs" />
     <Compile Include="Setups\General\CompanyViewModel.cs" />
     <Compile Include="Setups\General\CountryViewModel.cs" />
+    <Compile Include="Setups\General\MessageLogViewModel.cs" />
     <Compile Include="Setups\General\ProductChargeFeeViewModel.cs" />
     <Compile Include="Setups\General\PublicHolidayViewModel.cs" />
     <Compile Include="Setups\General\SectorViewModel.cs" />

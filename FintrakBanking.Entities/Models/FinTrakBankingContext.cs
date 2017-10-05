@@ -182,7 +182,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Application_Status> tbl_Loan_Application_Status { get; set; }
         public virtual DbSet<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
         public virtual DbSet<tbl_Loan_Camsol> tbl_Loan_Camsol { get; set; }
-        public virtual DbSet<tbl_Loan_Change_Type> tbl_Loan_Change_Type { get; set; }
         public virtual DbSet<tbl_Loan_Collateral_Mapping> tbl_Loan_Collateral_Mapping { get; set; }
         public virtual DbSet<tbl_Loan_Comment> tbl_Loan_Comment { get; set; }
         public virtual DbSet<tbl_Loan_Condition_Precedent> tbl_Loan_Condition_Precedent { get; set; }
@@ -199,6 +198,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_PriceIndex_Exception> tbl_Loan_PriceIndex_Exception { get; set; }
         public virtual DbSet<tbl_Loan_PrudentialGuideline> tbl_Loan_PrudentialGuideline { get; set; }
         public virtual DbSet<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
+        public virtual DbSet<tbl_Loan_Review_Operation> tbl_Loan_Review_Operation { get; set; }
         public virtual DbSet<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Category> tbl_Loan_Schedule_Category { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
@@ -224,7 +224,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Solicitor> tbl_Solicitor { get; set; }
         public virtual DbSet<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
-        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
         public virtual DbSet<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
@@ -268,6 +268,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Deal_Type> tbl_Deal_Type { get; set; }
         public virtual DbSet<tbl_Stock> tbl_Stock { get; set; }
         public virtual DbSet<tbl_Temp_Collateral_Stock> tbl_Temp_Collateral_Stock { get; set; }
+        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1422,6 +1423,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.OperationsId)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<tbl_Operations>()
+                .HasMany(e => e.tbl_Loan_Archive)
+                .WithRequired(e => e.tbl_Operations)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<tbl_Operations_Type>()
                 .HasMany(e => e.tbl_Operations)
                 .WithRequired(e => e.tbl_Operations_Type)
@@ -1935,6 +1941,10 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Collateral_Casa>()
                 .Property(e => e.Remark)
                 .IsUnicode(false);
+
+            modelBuilder.Entity<tbl_Collateral_Customer>()
+                .Property(e => e.CollateralValue)
+                .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Collateral_Customer>()
                 .Property(e => e.CamRefNumber)
@@ -2585,11 +2595,6 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.AmountAffected)
                 .HasPrecision(19, 4);
 
-            modelBuilder.Entity<tbl_Loan_Change_Type>()
-                .HasMany(e => e.tbl_Loan_Archive)
-                .WithRequired(e => e.tbl_Loan_Change_Type)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<tbl_Loan_Contingent>()
                 .Property(e => e.TeamMISCode)
                 .IsUnicode(false);
@@ -2681,6 +2686,22 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Loan_Revolving1)
                 .WithOptional(e => e.tbl_Loan_PrudentialGuideline1)
                 .HasForeignKey(e => e.InternalPrudentialGuidelineStatusId);
+
+            modelBuilder.Entity<tbl_Loan_Review_Operation>()
+                .Property(e => e.InterateRate)
+                .HasPrecision(18, 0);
+
+            modelBuilder.Entity<tbl_Loan_Review_Operation>()
+                .Property(e => e.Prepayment)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Review_Operation>()
+                .Property(e => e.OverDraftTopup)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Review_Operation>()
+                .Property(e => e.Fee_Charges)
+                .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan_Revolving>()
                 .Property(e => e.TeamMISCode)
@@ -3326,8 +3347,9 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Chart_Of_Account>()
                 .HasMany(e => e.tbl_Collateral_Type)
-                .WithOptional(e => e.tbl_Chart_Of_Account)
-                .HasForeignKey(e => e.ChargeGLAccountId);
+                .WithRequired(e => e.tbl_Chart_Of_Account)
+                .HasForeignKey(e => e.ChargeGLAccountId)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Chart_Of_Account>()
                 .HasMany(e => e.tbl_Chart_Of_Account_Currency)
@@ -3750,6 +3772,18 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Temp_Collateral_Stock>()
                 .Property(e => e.ShareValueAmountToUse)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.LevelMaximumAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.InvestmentGradeAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.StaffMaximumAmount)
                 .HasPrecision(19, 4);
         }
     }

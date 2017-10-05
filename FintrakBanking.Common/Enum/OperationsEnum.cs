@@ -23,5 +23,19 @@ namespace FintrakBanking.Common.Enum
         LoanRepayment = 16,
         ChargeReversal = 17,
         LoanPrepayment  = 18,
+        RegulatoryInterestRateChange = 19,
+        ManagementInterestRateChange = 20,
+        Prepayment = 21,
+        PrincipalFrequencyChange = 22,
+        InterestFrequencyChange = 23,
+        InterestandPrincipalFrequencyChange = 24,
+        PaymentDateChange= 25,
+        TenorChange = 26,
+        CASAAccountChange = 27,
+        OverdraftTopup = 28,
+        Fee_chargeChange = 29,
+        TerminateandRebook = 30,
+        CompleteWriteOff = 31,
+        CancelUndisbursedLoan = 32
     }
 }

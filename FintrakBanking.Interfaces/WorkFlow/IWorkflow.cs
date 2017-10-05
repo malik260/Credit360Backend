@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using FintrakBanking.ViewModels.WorkFlow;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.WorkFlow
@@ -9,6 +6,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
     public interface IWorkflow
     {
         bool LogActivity();
+
         int OperationId { set; }
         int? ProductClassId { set; }
         int? ProductId { set; }
@@ -24,9 +22,12 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool EmailNotification { set; }
         bool Vote { set; }
         bool InvestmentGrade { set; }
+        bool PoliticallyExposed { set; }
         bool SmsNotification { set; }
         bool ExternalInitialization { set; }
         string Message { get; }
         bool Saved { get; }
+
+        bool LogForApproval(ApprovalViewModel model);
     }
 }

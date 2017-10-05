@@ -1709,7 +1709,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId)
+        public List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId)
         {
             var data = (from a in context.tbl_Loan_Covenant_Detail
                         where a.LoanId == loanId && a.Deleted == false
@@ -1784,7 +1784,7 @@ namespace FintrakBanking.Repositories.Credit
                             feeIntervalName = c.tbl_Charge_Fee.tbl_Fee_Interval.FeeIntervalName
 
                         }).ToList();
-            return null;
+            return data;
         }
 
 
@@ -2309,7 +2309,87 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+        public IQueryable<LoanViewModel> SearchForLoan(string searchQuery)
+        {
+            IQueryable<LoanViewModel> allFilteredLoan = null;
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
 
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                var abc = GetAllLoans();
+                allFilteredLoan = (from a in abc
+                                   join b in context.tbl_Customer on a.customerId equals b.CustomerId
+                                   join c in context.tbl_CASA on a.casaAccountId equals c.CasaAccountId
+                                   where (a.loanReferenceNumber.Contains(searchQuery) ||
+                                   b.CustomerCode.ToLower().Contains(searchQuery) ||
+                                   b.FirstName.ToLower().Contains(searchQuery) ||
+                                   b.LastName.ToLower().Contains(searchQuery) ||
+                                   c.ProductAccountNumber.ToLower().Contains(searchQuery))
+                                   select new LoanViewModel
+                                   {
+                                       loanId = a.loanId,
+                                       customerId = a.customerId,
+                                       customerName = a.customerName,
+                                       productId = a.productId,
+                                       companyId = a.companyId,
+                                       casaAccountId = a.casaAccountId,
+                                       branchId = a.branchId,
+                                       branchName = a.branchName,
+                                       loanReferenceNumber = a.loanReferenceNumber,
+                                       principalFrequencyTypeId = a.principalFrequencyTypeId,
+                                       interestFrequencyTypeId = a.interestFrequencyTypeId,
+
+                                       principalNumberOfInstallment = a.principalNumberOfInstallment,
+                                       interestNumberOfInstallment = a.interestNumberOfInstallment,
+                                       relationshipOfficerId = a.relationshipOfficerId,
+                                       relationshipManagerId = a.relationshipManagerId,
+                                       misCode = a.misCode,
+                                       teamMiscode = a.teamMiscode,
+                                       interestRate = a.interestRate,
+                                       effectiveDate = a.effectiveDate,
+                                       maturityDate = a.maturityDate,
+                                       bookingDate = a.bookingDate,
+                                       principalAmount = a.principalAmount,
+                                       principalInstallmentLeft = a.principalInstallmentLeft,
+                                       interestInstallmentLeft = a.interestInstallmentLeft,
+                                       approvalStatusId = a.approvalStatusId,
+                                       approvedBy = a.approvedBy,
+                                       approverComment = a.approverComment,
+                                       dateApproved = a.dateApproved,
+                                       loanStatusId = a.loanStatusId,
+                                       scheduleTypeId = a.scheduleTypeId,
+                                       isDisbursed = a.isDisbursed,
+                                       disbursedBy = a.disbursedBy,
+                                       disburserComment = a.disburserComment,
+                                       disburseDate = a.disburseDate,
+                                       approvedAmount = a.approvedAmount,
+                                       operationId = a.operationId,
+
+                                       customerGroupId = a.customerGroupId,
+                                       loanTypeId = a.loanTypeId,
+                                       loanTypeName = a.loanTypeName,
+                                       trancheBatchCode = a.trancheBatchCode,
+                                       equityContribution = a.equityContribution,
+                                       firstPrincipalPaymentDate = a.firstPrincipalPaymentDate,
+                                       firstInterestPaymentDate = a.firstInterestPaymentDate,
+                                       outstandingPrincipal = a.outstandingPrincipal,
+                                       principalAdditionCount = a.principalAdditionCount ?? 0,
+                                       principalReductionCount = a.principalReductionCount ?? 0,
+                                       fixedPrincipal = a.fixedPrincipal,
+                                       profileLoan = a.profileLoan,
+                                       dischargeLetter = a.dischargeLetter,
+                                       suspendInterest = a.suspendInterest,
+                                       customerSensitivityLevelId = a.customerSensitivityLevelId,
+                                       createdBy = a.createdBy,
+                                       dateTimeCreated = a.dateTimeCreated,
+                                       isCamsol = a.isCamsol,
+                                   }).Take(10).AsQueryable();
+            }
+            return allFilteredLoan;
+        }
 
 
     }

@@ -135,7 +135,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 SystemDateTime = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section ------------------------------- 
+            //end of Audit section -------------------------------
             return this.SaveAll();
         }
 
@@ -181,7 +181,6 @@ namespace FintrakBanking.Repositories.Setups.General
             //    productGroupName =context.TblProductGroup.Single(x=>x.ProductGroupId==data.ProductGroupId).ProductGroupName
             //};
 
-
             return AllProductType().Where(p => p.productTypeId == productTypeId).FirstOrDefault();
         }
 
@@ -224,7 +223,7 @@ namespace FintrakBanking.Repositories.Setups.General
             };
 
             this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------  
+            //end of Audit section -------------------------------
 
             var status = this.SaveAll();
 
@@ -277,11 +276,12 @@ namespace FintrakBanking.Repositories.Setups.General
             };
 
             this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section ------------------------------- 
+            //end of Audit section -------------------------------
             return this.SaveAll();
         }
 
         #region tbl_Product Region
+
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {
             return from ap in context.tbl_Approval_Status
@@ -292,6 +292,7 @@ namespace FintrakBanking.Repositories.Setups.General
                        forDisplay = ap.ForDisplay,
                    };
         }
+
         private IQueryable<ProductViewModel> AllProduct()
         {
             return (from data in context.tbl_Product
@@ -351,7 +352,6 @@ namespace FintrakBanking.Repositories.Setups.General
                             productCurrencyId = c.ProductCurrencyId,
                             currencyId = c.CurrencyId,
                             currencyName = c.tbl_Currency.CurrencyCode + " -- " + c.tbl_Currency.CurrencyName
-
                         }).ToList(),
 
                         dateTimeUpdated = data.DateTimeUpdated,
@@ -386,7 +386,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ProductViewModel> GetProductByProductGroup(int companyId)
         {
-            return AllProduct().Where(p => p.companyId  == companyId && p.productGroupId == 1).ToList();
+            return AllProduct().Where(p => p.companyId == companyId && p.productGroupId == 1).ToList();
         }
 
         public IEnumerable<ProductViewModel> GetProductByGroupAndCategory(short productGroupId, short productCategoryId)
@@ -397,7 +397,6 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<ProductViewModel> GetProductByTypeAndCategory(short productTypeId, short productCategoryId)
         {
             return AllProduct().Where(p => p.productTypeId == productTypeId && p.productCategoryId == productCategoryId);
-
         }
 
         public IEnumerable<ProductViewModel> GetProductAwaitingApprovals(int staffId, int companyId)
@@ -471,7 +470,6 @@ namespace FintrakBanking.Repositories.Setups.General
                             productCurrencyId = pc.ProductCurrencyId,
                             currencyId = pc.CurrencyId,
                             currencyName = pc.tbl_Currency.CurrencyCode + " -- " + pc.tbl_Currency.CurrencyName
-
                         }).ToList(),
                         //fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == c.ProductId && curr.Deleted == false).Select(pf => new ProductFeeViewModel()
                         //{
@@ -626,7 +624,6 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 return false;
             }
-
         }
 
         private bool ApproveProduct(int productId, short approvalStatusId, UserInfo user)
@@ -751,8 +748,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     existingProduct.tbl_Product_Currency = productCurrencies;
                 }
-
-
             }
             else //Insert a new product record into the real product table
             {
@@ -776,7 +771,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ChargeFeeId = item.ChargeFeeId,
                         DependentAmount = item.DependentAmount,
                         RateValue = item.RateValue,
-                        CompanyId = item.CompanyId,
+                        CompanyId = (int)item.CompanyId,
                         CreatedBy = (int)item.CreatedBy,
                         DateTimeCreated = genSetup.GetApplicationDate(),
                     };
@@ -1101,7 +1096,6 @@ namespace FintrakBanking.Repositories.Setups.General
         //        ProductName = product.productName,
         //        ProductDescription = product.productDescription,
 
-
         //        PrincipalBalanceGL = product.principalBalanceGl,
         //        InterestIncomeExpenseGL = product.interestIncomeExpenseGl,
         //        InterestReceivablePayableGL = product.interestReceivablePayableGl,
@@ -1149,7 +1143,7 @@ namespace FintrakBanking.Repositories.Setups.General
         //    };
 
         //    this.auditTrail.AddAuditTrail(audit);
-        //    //end of Audit section ------------------------------- 
+        //    //end of Audit section -------------------------------
 
         //    var status = this.SaveAll();
 
@@ -1280,7 +1274,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 ProductName = productModel.productName,
                 ProductDescription = productModel.productDescription,
 
-
                 PrincipalBalanceGL = productModel.principalBalanceGl,
                 InterestIncomeExpenseGL = productModel.interestIncomeExpenseGl,
                 InterestReceivablePayableGL = productModel.interestReceivablePayableGl,
@@ -1344,7 +1337,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     try
                     {
                         this.auditTrail.AddAuditTrail(audit);
-                        //end of Audit section -------------------------------  
+                        //end of Audit section -------------------------------
                         context.tbl_Temp_Product.Add(tempProduct);
 
                         output = await context.SaveChangesAsync() > 0;
@@ -1361,7 +1354,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         var response = await workFlow.LogForApproval(entity);
 
                         trans.Commit();
-
                     }
                     catch (Exception ex)
                     {
@@ -1430,14 +1422,15 @@ namespace FintrakBanking.Repositories.Setups.General
         //    return this.SaveAll();
         //}
 
-
         //public bool DeleteProduct(int productId)
         //{
         //    throw new NotImplementedException();
         //}
+
         #endregion tbl_Product Region
 
         #region product Price Index
+
         private IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndex(int companyId)
         {
             return (from data in context.tbl_Product_Price_Index
@@ -1455,6 +1448,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         dateTimeDeleted = data.DateTimeDeleted
                     });
         }
+
         public IEnumerable<ProductPriceIndexViewModel> GetProductPriceIndex(int companyId)
         {
             return GetAllProductPriceIndex(companyId);
@@ -1493,7 +1487,7 @@ namespace FintrakBanking.Repositories.Setups.General
             };
 
             this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section ------------------------------- 
+            //end of Audit section -------------------------------
 
             var status = this.SaveAll();
 
