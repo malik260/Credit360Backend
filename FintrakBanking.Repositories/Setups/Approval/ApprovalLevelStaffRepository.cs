@@ -94,7 +94,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             staffLevelName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
                             dateTimeCreated = a.DateTimeCreated,
                             createdBy = (int)a.CreatedBy
-                        }).OrderBy(x => x.approvalLevelId).ToList();
+                        }).ToList();
             return data;
         }
 

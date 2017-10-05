@@ -36,9 +36,8 @@ namespace FintrakBanking.Repositories.Notification
                     log = (from c in context.tbl_Approval_Trail
                            where c.CompanyId == companyId &&
                            c.OperationId == level.operationId &&
-                            c.ApprovalStateId == (int)ApprovalState.Processing &&
+                            c.ApprovalStatusId == (int)ApprovalStatusEnum.Pending  && c.ResponseStaffId == null &&
                            c.ToApprovalLevelId == level.approvalLevelId
-                           //|| c.ResponseStaffId == null
                            group c by c.OperationId into d
                            select new NotificationViewModel
                            {

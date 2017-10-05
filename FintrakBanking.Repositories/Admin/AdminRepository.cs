@@ -1,22 +1,19 @@
-﻿using FintrakBanking.Interfaces.Admin;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using FintrakBanking.ViewModels.Admin;
-using FintrakBanking.ViewModels.Setups.General;
-using System.Threading.Tasks;
-using FintrakBanking.Entities.Models;
-using FintrakBanking.Common;
 using System.Linq;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Common.Enum;
-using System.ComponentModel.Composition;
-using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.WorkFlow;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels;
-using FintrakBanking.Interfaces.Setups.Approval;
-using FintrakBanking.Repositories.WorkFlow;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Admin
 {
@@ -25,7 +22,7 @@ namespace FintrakBanking.Repositories.Admin
         private FinTrakBankingContext context;
         private IWorkflow workFlow;
         private IAuditTrailRepository auditTrail;
-        IGeneralSetupRepository genSetup;
+        private IGeneralSetupRepository genSetup;
         private IApprovalLevelStaffRepository level;
 
         public AdminRepository(FinTrakBankingContext _context,
@@ -42,6 +39,7 @@ namespace FintrakBanking.Repositories.Admin
         }
 
         #region Users
+
         public bool isUserExist(string username)
         {
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
@@ -60,7 +58,6 @@ namespace FintrakBanking.Repositories.Admin
                 return ApproveUser(entity.targetId, (int)ApprovalStatusEnum.Approved, entity);
             }
             return false;
-
         }
 
         private bool ApproveUser(int userid, short approvalStatusId, UserInfo user)
@@ -266,6 +263,7 @@ namespace FintrakBanking.Repositories.Admin
 
             return data;
         }
+
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {
             return from ap in context.tbl_Approval_Status
@@ -317,8 +315,8 @@ namespace FintrakBanking.Repositories.Admin
         {
             throw new NotImplementedException();
         }
-        #endregion
 
+        #endregion Users
 
         #region Group
 
@@ -403,9 +401,7 @@ namespace FintrakBanking.Repositories.Admin
             return response != 0;
         }
 
-
-
-        #endregion
+        #endregion Group
 
         #region Activies
 
@@ -425,7 +421,6 @@ namespace FintrakBanking.Repositories.Admin
                                           activityParentId = x.ActivityParentId
                                       }).ToList()
                    };
-
         }
 
         public IEnumerable<GroupVModel> GetGroupActivities()
@@ -452,10 +447,8 @@ namespace FintrakBanking.Repositories.Admin
                                               canEdit = ga.CanEdit.Value,
                                               canView = ga.CanView.Value
                                           }).ToList()
-
                         });
             return data;
-
         }
 
         public bool AddAccessToActivity(int id, ActivitiesUpdateVm model)
@@ -628,6 +621,6 @@ namespace FintrakBanking.Repositories.Admin
             }
         }
 
-        #endregion
+        #endregion Activies
     }
 }

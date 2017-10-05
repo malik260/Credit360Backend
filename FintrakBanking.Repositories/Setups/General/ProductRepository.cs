@@ -1,17 +1,17 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using FintrakBanking.ViewModels;
-using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
-using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.Interfaces.Setups.Approval;
-using FintrakBanking.ViewModels.WorkFlow;
-using FintrakBanking.ViewModels.Credit;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
@@ -23,7 +23,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingContext context;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
-        private IWorkFlowRepository workFlow;
+        private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
         private IProductFeeRepository productFee;
         private IProductCollateralTypeRepository productCollateralType;
@@ -31,7 +31,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public ProductRepository(FinTrakBankingContext _context,
                                 IGeneralSetupRepository _genSetup,
                                 IAuditTrailRepository _auditTrail,
-                                IWorkFlowRepository _workFlow,
+            IWorkflow _workFlow,
                                 IApprovalLevelStaffRepository _level,
                                 IProductFeeRepository _productFee,
                                 IProductCollateralTypeRepository _productCollateralType)
@@ -410,6 +410,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
                     join atrail in context.tbl_Approval_Trail on c.ProductId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
+                          && atrail.ResponseStaffId == null
                           && atrail.OperationId == (int)OperationsEnum.ProductCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new ProductViewModel()
                     {
@@ -509,7 +510,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         equityContribution = c.EquityContribution,
                         expiryPeriod = c.ExpiryPeriod,
                         scheduleTypeId = c.ScheduleTypeId
-                    });
+                    }).GroupBy(x => x.productId).Select(g => g.FirstOrDefault());
         }
 
         public ProductViewModel GetTempProductDetail(int productId)
@@ -610,20 +611,20 @@ namespace FintrakBanking.Repositories.Setups.General
             return AllProduct().Where(p => p.productCode == productCode && p.companyId == companyId).SingleOrDefault();
         }
 
-        public async Task<bool> GoForApproval(ApprovalViewModel entity)
+        public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.ProductCreation;
 
-            var response = await workFlow.GoForApproval(entity);
+            entity.externalInitialization = false;
 
-            if (response.Item1)
+            workFlow.LogForApproval(entity);
+
+            if (workFlow.NewState == (int)ApprovalState.Ended)
             {
-                return ApproveProduct(entity.targetId, response.Item2.approvalStatusId, entity);
+                return ApproveProduct(entity.targetId, (short)workFlow.StatusId, entity);
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         private bool ApproveProduct(int productId, short approvalStatusId, UserInfo user)
@@ -857,22 +858,22 @@ namespace FintrakBanking.Repositories.Setups.General
             productModel.DateTimeUpdated = DateTime.Now;
 
             // Remove all tem products, currencies and fees
-            context.tbl_Temp_Product.Remove(productModel);
+            //context.tbl_Temp_Product.Remove(productModel);
 
-            foreach (var curr in currModel)
-            {
-                context.tbl_Temp_Product_Currency.Remove(curr);
-            }
+            //foreach (var curr in currModel)
+            //{
+            //    context.tbl_Temp_Product_Currency.Remove(curr);
+            //}
 
-            foreach (var fee in feeModel)
-            {
-                context.tbl_Temp_Product_Charge_Fee.Remove(fee);
-            }
+            //foreach (var fee in feeModel)
+            //{
+            //    context.tbl_Temp_Product_Charge_Fee.Remove(fee);
+            //}
 
-            foreach (var coll in collateralModel)
-            {
-                context.tbl_Temp_Product_CollateralType.Remove(coll);
-            }
+            //foreach (var coll in collateralModel)
+            //{
+            //    context.tbl_Temp_Product_CollateralType.Remove(coll);
+            //}
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -1031,39 +1032,37 @@ namespace FintrakBanking.Repositories.Setups.General
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.ProductCreation, productModel.companyId))
+            using (var trans = context.Database.BeginTransaction())
             {
-                using (var trans = context.Database.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        auditTrail.AddAuditTrail(audit);
-                        context.tbl_Temp_Product.Add(product);
-                        output = await context.SaveChangesAsync() > 0;
+                    auditTrail.AddAuditTrail(audit);
+                    context.tbl_Temp_Product.Add(product);
+                    output = await context.SaveChangesAsync() > 0;
 
-                        var entity = new ApprovalViewModel
-                        {
-                            staffId = productModel.createdBy,
-                            companyId = productModel.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            comment = "Please approve this product",
-                            targetId = product.ProductId,
-                            operationId = (int)OperationsEnum.ProductCreation,
-                            BranchId = productModel.userBranchId
-                        };
-                        var response = await workFlow.LogForApproval(entity);
+                    var entity = new ApprovalViewModel
+                    {
+                        staffId = productModel.createdBy,
+                        companyId = productModel.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        comment = "Please approve this product",
+                        targetId = product.ProductId,
+                        operationId = (int)OperationsEnum.ProductCreation,
+                        BranchId = productModel.userBranchId,
+                        externalInitialization = true
+                    };
+                    var response = workFlow.LogForApproval(entity);
+
+                    if (response)
+                    {
                         trans.Commit();
                     }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw new Exception(ex.Message);
-                    }
                 }
-            }
-            else
-            {
-                throw new Exception("Approval route have not been defined for this operation");
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
 
             if (output)
@@ -1071,7 +1070,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 return new ProductViewModel { productId = product.ProductId, productCode = product.ProductCode };
             }
             else
-                return null;
+                return new ProductViewModel();
         }
 
         public bool IsProductCodeAlreadyExist(string productCode)
@@ -1330,44 +1329,41 @@ namespace FintrakBanking.Repositories.Setups.General
                 TargetId = productId
             };
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.ProductCreation, productModel.companyId))
+            using (var trans = context.Database.BeginTransaction())
             {
-                using (var trans = context.Database.BeginTransaction())
+                try
                 {
-                    try
+                    this.auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------
+                    context.tbl_Temp_Product.Add(tempProduct);
+
+                    output = await context.SaveChangesAsync() > 0;
+
+                    var entity = new ApprovalViewModel
                     {
-                        this.auditTrail.AddAuditTrail(audit);
-                        //end of Audit section -------------------------------
-                        context.tbl_Temp_Product.Add(tempProduct);
+                        staffId = productModel.createdBy,
+                        companyId = productModel.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        targetId = targetProduct.ProductId,
+                        operationId = (int)OperationsEnum.ProductCreation,
+                        BranchId = productModel.userBranchId,
+                        externalInitialization = true
+                    };
+                    var response = workFlow.LogForApproval(entity);
 
-                        output = await context.SaveChangesAsync() > 0;
-
-                        var entity = new ApprovalViewModel
-                        {
-                            staffId = productModel.createdBy,
-                            companyId = productModel.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = tempProduct.ProductId,
-                            operationId = (int)OperationsEnum.ProductCreation,
-                            BranchId = productModel.userBranchId
-                        };
-                        var response = await workFlow.LogForApproval(entity);
-
+                    if (response)
+                    {
                         trans.Commit();
                     }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw new Exception(ex.Message);
-                    }
+
+                    return output;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
                 }
             }
-            else
-            {
-                throw new Exception("Approval route have not been defined for this operation");
-            }
-
-            return output;
         }
 
         //private bool UpdateProduct2(int productId, ProductViewModel product)

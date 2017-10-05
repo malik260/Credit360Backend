@@ -646,7 +646,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("product/approval")]
-        public async Task<HttpResponseMessage> GoForApprovalAsync([FromBody]ApprovalViewModel entity)
+        public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
             try
             {
@@ -657,16 +657,16 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
 
-                var data = await repo.GoForApproval(entity);
+                var data = repo.GoForApproval(entity);
 
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Product record has been approved successfully" });
                 }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
             }
             catch (System.Exception ex)
             {

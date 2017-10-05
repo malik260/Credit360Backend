@@ -54,11 +54,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             entity.externalInitialization = false;
 
-            var response = workFlow.LogForApproval(entity);
+            workFlow.LogForApproval(entity);
 
             if (workFlow.NewState == (int)ApprovalState.Ended)
             {
-                return ApproveAccount(entity.targetId, (int)ApprovalStatusEnum.Approved, entity);
+                return ApproveAccount(entity.targetId, (short)workFlow.StatusId, entity);
             }
 
             return false;
@@ -145,12 +145,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
             accountModel.DateTimeUpdated = DateTime.Now;
 
             // remove the temp chart of account and currency
-            context.tbl_Temp_Chart_Of_Account.Remove(accountModel);
+            //context.tbl_Temp_Chart_Of_Account.Remove(accountModel);
 
-            foreach (var curr in currModel)
-            {
-                context.tbl_Temp_Chart_Of_Account_Currency.Remove(curr);
-            }
+            //foreach (var curr in currModel)
+            //{
+            //    context.tbl_Temp_Chart_Of_Account_Currency.Remove(curr);
+            //}
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -604,46 +604,43 @@ namespace FintrakBanking.Repositories.Setups.Finance
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             var data = (from c in context.tbl_Temp_Chart_Of_Account
-                join coy in context.tbl_Company on c.CompanyId equals companyId
-                join atrail in context.tbl_Approval_Trail on c.GLAccountId equals atrail.TargetId
-                where
-                    atrail.ApprovalStateId == (int)ApprovalState.Processing
-                    &&
-                    c.IsCurrent == true
-                    && atrail.ToApprovalLevelId == staffApprovalLevelId &&
-                    atrail.OperationId == (int) OperationsEnum.ChartOfAccountCreation
-                select new ChartOfAccountViewModel()
-                {
-                    accountId = c.GLAccountId,
-                    accountCode = c.AccountCode,
-                    accountName = c.AccountName,
-                    accountTypeId = c.AccountTypeId,
-                    accountTypeName = c.tbl_Account_Type.AccountTypeName,
-                    accountCategoryId = c.tbl_Account_Type.AccountCategoryId,
-                    accountCategoryName = c.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
-                    accountStatusId = c.AccountStatusId,
-                    currencies = context.tbl_Temp_Chart_Of_Account_Currency
-                        .Where(curr => curr.GLAccountId == c.GLAccountId && curr.Deleted == false).Select(coa =>
-                            new ChartOfAccountCurrencyViewModel()
-                            {
-                                glaccountId = coa.GLAccountId,
-                                glaccountCurrencyId = coa.GLAccountCurrencyId,
-                                currencyId = coa.CurrencyId,
-                                currencyName = coa.tbl_Currency.CurrencyCode + " -- " + coa.tbl_Currency.CurrencyName
-                            }).ToList(),
-                    companyId = c.CompanyId,
-                    branchId = c.BranchId,
-                    branchName = c.tbl_Branch.BranchName,
-                    systemUse = c.SystemUse,
-                    branchSpecific = c.BranchSpecific,
-                    fsCaptionId = c.FSCaptionId,
-                    fsCaptionName = c.tbl_Financial_Statement_Caption.FSCaption,
-                    operationId = atrail.OperationId,
-                    approvalStatusId = c.ApprovalStatusId,
-                    createdBy = c.CreatedBy,
-                    dateTimeCreated = c.DateTimeCreated,
-                    glClassId = (short) c.GLClassId
-                }).GroupBy(x => x.accountId).Select(g => g.FirstOrDefault());
+                        join coy in context.tbl_Company on c.CompanyId equals companyId
+                        join atrail in context.tbl_Approval_Trail on c.GLAccountId equals atrail.TargetId
+                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
+                            && c.IsCurrent == true && atrail.ResponseStaffId == null
+                              && atrail.OperationId == (int)OperationsEnum.ChartOfAccountCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+                        select new ChartOfAccountViewModel()
+                        {
+                            accountId = c.GLAccountId,
+                            accountCode = c.AccountCode,
+                            accountName = c.AccountName,
+                            accountTypeId = c.AccountTypeId,
+                            accountTypeName = c.tbl_Account_Type.AccountTypeName,
+                            accountCategoryId = c.tbl_Account_Type.AccountCategoryId,
+                            accountCategoryName = c.tbl_Account_Type.tbl_Account_Category.AccountCategoryName,
+                            accountStatusId = c.AccountStatusId,
+                            currencies = context.tbl_Temp_Chart_Of_Account_Currency
+                                .Where(curr => curr.GLAccountId == c.GLAccountId && curr.Deleted == false).Select(coa =>
+                                    new ChartOfAccountCurrencyViewModel()
+                                    {
+                                        glaccountId = coa.GLAccountId,
+                                        glaccountCurrencyId = coa.GLAccountCurrencyId,
+                                        currencyId = coa.CurrencyId,
+                                        currencyName = coa.tbl_Currency.CurrencyCode + " -- " + coa.tbl_Currency.CurrencyName
+                                    }).ToList(),
+                            companyId = c.CompanyId,
+                            branchId = c.BranchId,
+                            branchName = c.tbl_Branch.BranchName,
+                            systemUse = c.SystemUse,
+                            branchSpecific = c.BranchSpecific,
+                            fsCaptionId = c.FSCaptionId,
+                            fsCaptionName = c.tbl_Financial_Statement_Caption.FSCaption,
+                            operationId = atrail.OperationId,
+                            approvalStatusId = c.ApprovalStatusId,
+                            createdBy = c.CreatedBy,
+                            dateTimeCreated = c.DateTimeCreated,
+                            glClassId = (short)c.GLClassId
+                        }).GroupBy(x => x.accountId).Select(g => g.FirstOrDefault());
 
             return data;
         }
