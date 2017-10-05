@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         AppraisalMemorandumViewModel AddAppraisalMemorandum(AppraisalMemorandumViewModel model);
 
-        Task<bool> ForwardAppraisalMemorandum(ForwardViewModel model);
+        bool ForwardAppraisalMemorandum(ForwardViewModel model);
 
         //IEnumerable<AppraisalMemorandumViewModel> GetAllAppraisalMemorandum();
 

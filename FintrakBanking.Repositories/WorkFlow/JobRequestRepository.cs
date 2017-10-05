@@ -97,7 +97,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 SystemArrivalDate = date,
             };
 
-            context.tbl_Job_Request.Add(data);
+            var job = context.tbl_Job_Request.Add(data);
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -113,8 +113,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
-
-            return data.JobRequestCode;
+            context.SaveChanges();
+            return job.JobRequestCode;
         }
 
         private string RequestCode()
@@ -230,6 +230,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //assignee = allstaff.GetStaffName(s => s.id == x.ReassignedTo),
             });
 
+        }
+        public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId)
+        {
+            return GetAllJobRequest().Where(x => x.senderStaffId == staffId || x.receiverStaffId == staffId).OrderByDescending( x=>x.jobRequestId);
         }
 
         public JobRequestViewModel GetJobRequest(int jobRequestId)

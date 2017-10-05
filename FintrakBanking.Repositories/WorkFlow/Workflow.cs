@@ -70,7 +70,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool Saved { get { return saved; } }
         public int NewState { get { return newStateId; } }
 
-        public async Task<bool> LogActivity()
+        public bool LogActivity()
         {
             if (Validation() == false) { return false; }
             if (Authorization() == false) { return false; }
@@ -134,7 +134,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             context.tbl_Approval_Trail.Add(trail);
-            this.saved = await context.SaveChangesAsync() > 0;
+            this.saved =  context.SaveChanges() > 0;
 
             if (this.saved)
             {

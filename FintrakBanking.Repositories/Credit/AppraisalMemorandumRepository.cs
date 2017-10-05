@@ -226,7 +226,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public async Task<bool> ForwardAppraisalMemorandum(ForwardViewModel model)
+        public  bool ForwardAppraisalMemorandum(ForwardViewModel model)
         {
             var operationId = (int)OperationsEnum.CAM;
 
@@ -245,7 +245,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InvestmentGrade = model.investmentGrade;
             workflow.Tenor = model.tenor;
             // log
-            await workflow.LogActivity();
+             workflow.LogActivity();
 
             if (workflow.Saved)
             {

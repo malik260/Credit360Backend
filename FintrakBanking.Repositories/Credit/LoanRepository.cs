@@ -44,6 +44,8 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workflow;
 
 
+       
+
         public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
                                         IWorkFlowRepository _workFlow, ILoanCovenantRepository _loanCovenant, 
@@ -212,12 +214,12 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-        public async Task<string> AddLoanBooking(LoanViewModel entity)
+        public string AddLoanBooking(LoanViewModel entity)
         {
             //...................CHECK IF THE LOAN RECORD IS A SCHEDULED LOAN..................//
             if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating)
             {
-                return this.AddTermLoan(entity).Result;
+                return this.AddTermLoan(entity);
             }
             // ...............CHECK IF THE LOAN RECORD IS ANON SCHEDULED LOAN....................//
             else if (entity.productTypeId != (int)LoanProductTypeEnum.RevolvingLoan)
@@ -228,7 +230,7 @@ namespace FintrakBanking.Repositories.Credit
                 revolvingLoanInput.createdBy = entity.createdBy;
                 revolvingLoanInput.branchId = entity.branchId;
 
-                return await addRevolvingLoan(revolvingLoanInput);
+                return  addRevolvingLoan(revolvingLoanInput);
             }
             else if (entity.productTypeId != (int)LoanProductTypeEnum.ContingentLiability)
             {
@@ -238,14 +240,14 @@ namespace FintrakBanking.Repositories.Credit
                 contingentLoanInput.createdBy = entity.createdBy;
                 contingentLoanInput.branchId = entity.branchId;
 
-                return await addContingentLiability(contingentLoanInput);
+                return  addContingentLiability(contingentLoanInput);
             }
             {
                 return "The Product type is Invalid";
             }
         }
 
-        private async Task<string> addRevolvingLoan(RevolvingLoanViewModel entity)
+        private string addRevolvingLoan(RevolvingLoanViewModel entity)
         {
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
             var data = new tbl_Loan_Revolving
@@ -302,61 +304,54 @@ namespace FintrakBanking.Repositories.Credit
             };
             //end of Audit section -------------------------------
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.RevolvingLoanBooking, entity.companyId))
+            using (var trans = context.Database.BeginTransaction())
             {
-                using (var trans = context.Database.BeginTransaction())
+                try
                 {
-                    try
+
+                    var loan = context.tbl_Loan_Revolving.Add(data);
+                    context.tbl_Audit.Add(audit);
+
+                    var dataCount = context.SaveChanges();
+
+                    var approvalModel = new ForwardViewModel
                     {
+                        createdBy = entity.createdBy,
+                        companyId = entity.companyId,
+                        applicationId = loan.RevolvingLoanId,
+                        comment = "Please approve this Loan",
+                        amount = entity.approvedAmount,
+                    };
 
-                        var loan = context.tbl_Loan_Revolving.Add(data);
-                        //AddLoanCovenantDetail(entity.loanCovenant, loan.RevolvingLoanId, (short)entity.productTypeId);
-                        AddLoanGuarantor(entity.loanGuarantor, loan.RevolvingLoanId, (short)entity.productTypeId);
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.RevolvingLoanId, (short)entity.productTypeId);
-                        AddLoanFees(entity.loanChargeFee, loan.RevolvingLoanId, (short)entity.productTypeId);
-                        context.tbl_Audit.Add(audit);
-
-                        var dataCount = context.SaveChanges();
-
-                        var approvalModel = new ApprovalViewModel
-                        {
-                            staffId = entity.createdBy,
-                            companyId = entity.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = loan.RevolvingLoanId,
-                            operationId = (int)OperationsEnum.RevolvingLoanBooking,
-                            BranchId = entity.userBranchId
-                        };
-                        var response = await workFlow.LogForApproval(approvalModel);
+                    if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                    {
                         trans.Commit();
-
                         AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.RevolvingLoanId, (short)entity.productTypeId);
                         AddLoanGuarantor(entity.loanGuarantor, loan.RevolvingLoanId, (short)entity.productTypeId);
                         AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.RevolvingLoanId, (short)entity.productTypeId);
                         AddLoanFees(entity.loanChargeFee, loan.RevolvingLoanId, (short)entity.productTypeId);
 
+                        var application = context.tbl_Loan_Application.Find(entity.loanApplicationId);
+                        application.ApplicationStatusId = (int)LoanApplicationStatusEnum.LoanBookingInProgress;
 
-                        if (dataCount > 0)
-                            return loanReferenceNumber;
-                        else
+                        context.SaveChanges();
+                    }
 
-                            return "";
-                    }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw new Exception(ex.Message);
-                    }
+                    if (dataCount > 0)
+                        return loanReferenceNumber;
+                    else
+                        return "";
                 }
-            }
-            else
-            {
-                throw new Exception("Approval route have not been defined for this operation");
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
 
         }
 
-        private async Task<string> addContingentLiability(ContingentLoanViewModel entity)
+        private string addContingentLiability(ContingentLoanViewModel entity)
         {
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
             var data = new tbl_Loan_Contingent
@@ -408,54 +403,53 @@ namespace FintrakBanking.Repositories.Credit
             };
             //end of Audit section -------------------------------
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.ContigentLoanBooking, entity.companyId))
+            using (var trans = context.Database.BeginTransaction())
             {
-                using (var trans = context.Database.BeginTransaction())
+                try
                 {
-                    try
+
+                    var loan = context.tbl_Loan_Contingent.Add(data);
+                    context.tbl_Audit.Add(audit);
+
+                    var dataCount = context.SaveChanges();
+
+                    var approvalModel = new ForwardViewModel
                     {
-                        var loan = context.tbl_Loan_Contingent.Add(data);
-                        context.tbl_Audit.Add(audit);
-                        var dataCount = context.SaveChanges();
+                        createdBy = entity.createdBy,
+                        companyId = entity.companyId,
+                        applicationId = loan.ContingentLoanId,
+                        comment = "Please approve this Loan",
+                        amount = entity.approvedAmount,
+                    };
 
-                        var approvalModel = new ApprovalViewModel
-                        {
-                            staffId = entity.createdBy,
-                            companyId = entity.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = loan.ContingentLoanId,
-                            operationId = (int)OperationsEnum.ContigentLoanBooking,
-                            BranchId = entity.userBranchId
-                        };
-                        
-                        var response = await workFlow.LogForApproval(approvalModel);
+                    if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                    {
                         trans.Commit();
-
                         AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.ContingentLoanId, (short)entity.productTypeId);
                         AddLoanGuarantor(entity.loanGuarantor, loan.ContingentLoanId, (short)entity.productTypeId);
                         AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.ContingentLoanId, (short)entity.productTypeId);
                         AddLoanFees(entity.loanChargeFee, loan.ContingentLoanId, (short)entity.productTypeId);
 
-                        if (dataCount > 0)
-                            return loanReferenceNumber;
-                        else
+                        var application = context.tbl_Loan_Application.Find(entity.loanApplicationId);
+                        application.ApplicationStatusId = (int)LoanApplicationStatusEnum.LoanBookingInProgress;
 
-                            return "";
+                        context.SaveChanges();
                     }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw new Exception(ex.Message);
-                    }
+
+                    if (dataCount > 0)
+                        return loanReferenceNumber;
+                    else
+                        return "";
                 }
-            }
-            else
-            {
-                throw new Exception("Approval route have not been defined for this operation");
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
         }
 
-        private async Task<string> AddTermLoan(LoanViewModel entity)
+        private string AddTermLoan(LoanViewModel entity)
         {
             if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
                 throw new Exception("Loan terminal date should be more than effective date");
@@ -555,8 +549,8 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.TermLoanBooking, entity.companyId))
-            {
+            //if (workFlow.CheckRouteForOperation((int)OperationsEnum.TermLoanBooking, entity.companyId))
+            //{
                 using (var trans = context.Database.BeginTransaction())
                 {
                     try
@@ -567,20 +561,17 @@ namespace FintrakBanking.Repositories.Credit
 
                         var dataCount = context.SaveChanges();
 
+                    var approvalModel = new ForwardViewModel
+                    {
+                        createdBy = entity.createdBy,
+                        companyId = entity.companyId,
+                        applicationId = loan.TermLoanId,
+                        comment = "Please approve this Loan",
+                        amount =entity.principalAmount,
+                    };
 
-                        var approvalModel = new ApprovalViewModel
-                        {
-                            staffId = entity.createdBy,
-                            companyId = entity.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = loan.TermLoanId,
-                            comment = "Please approve this Loan",
-                            operationId = (int)OperationsEnum.TermLoanBooking,
-                            BranchId = entity.userBranchId,
-                        };
-
-                        var response = workFlow.LogForApproval(approvalModel);
-
+                    if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                    {
                         trans.Commit();
                         AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
                         AddLoanGuarantor(entity.loanGuarantor, loan.TermLoanId, (short)entity.productTypeId);
@@ -591,14 +582,11 @@ namespace FintrakBanking.Repositories.Credit
                         application.ApplicationStatusId = (int)LoanApplicationStatusEnum.LoanBookingInProgress;
 
                         context.SaveChanges();
+                    }
 
-                        
-                       // DisburseLoan(entity);
-
-                        if (dataCount > 0)
-                            return loanReferenceNumber;
-                        else
-
+                    if (dataCount > 0)
+                       return loanReferenceNumber;
+                    else
                             return "";
                     }
                     catch (Exception ex)
@@ -607,19 +595,18 @@ namespace FintrakBanking.Repositories.Credit
                         throw new Exception(ex.Message);
                     }
                 }
-            }
-            else
-            {
-                throw new Exception("Approval route have not been defined for this operation");
-            }
+            //}
+            //else
+            //{
+            //    throw new Exception("Approval route have not been defined for this operation");
+            //}
 
         }
 
-        
 
-        public async Task<bool> LogApproval(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId)
+
+        public bool LogApproval(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId)
         {
-            // THIS METHOD HAS NOT BEEN USED. RESERVED FOR NEW APPROVAL WORKFLOW IN DESIGN
             workflow.StaffId = model.createdBy;
             workflow.OperationId = operationId;
             workflow.TargetId = model.applicationId;
@@ -627,25 +614,13 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Comment = model.comment;
             workflow.ExternalInitialization = externalInitialization;
             workflow.StatusId = ApprovalStatusId;
-            await workflow.LogActivity();
+            workflow.Amount = model.amount;
 
-            if (workflow.Saved)
-            {
-                var appl = context.tbl_Loan.Find(model.applicationId);
-                appl.ApprovalStatusId = workflow.StatusId;
-                if (appl.ApprovalStatusId == (int)ApprovalStatusEnum.Pending) // redundant block
-                {
-                    appl.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
-                }
+            workflow.LogActivity();
 
-                context.SaveChanges();
-
-                return true;
-            }
-
-            return false;
+            return workflow.Saved;
         }
-          
+
         private void DisburseLoan(LoanViewModel entity)
         {
             //PostLoanDisbursment(entity);
@@ -806,8 +781,9 @@ namespace FintrakBanking.Repositories.Credit
         //}
 
         public IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId)
-        {
+        { 
             var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.TermLoanBooking);
+            //var levelResult = level.GetAllAssignedApprovalLevelStaff(companyId);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
@@ -1935,7 +1911,7 @@ namespace FintrakBanking.Repositories.Credit
                        nationality = a.Nationality,
                        occupation = a.Occupation,
                        placeOfBirth = a.PlaceOfBirth,
-                       politicallyExposedPerson = a.PoliticallyExposedPerson,
+                       //politicallyExposedPerson = a.PoliticallyExposedPerson,
                        relationshipOfficerId = a.RelationshipOfficerId.Value,
                        spouse = a.Spouse,
                        sectorId = a.tbl_Sub_Sector.tbl_Sector.SectorId,

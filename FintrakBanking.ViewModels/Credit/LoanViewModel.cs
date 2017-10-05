@@ -344,8 +344,6 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-
-
     public class LoanGuarantorViewModel
     {
         public short loanGuarantorId { get; set; }
