@@ -37,6 +37,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         && a.Deleted == false
                         select new ApprovalLevelStaffViewModel
                         {
+
                             groupId = (int)a.tbl_Approval_Level.GroupId,
                             //operationId = c.OperationId,
                             maximumAmount = a.MaximumAmount,
@@ -108,6 +109,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var data = GetAllDetailedApprovalLevelStaff(companyId);
             return data;
         }
+
 
         public IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaffByOperationId(int operationId, int companyId)
         {

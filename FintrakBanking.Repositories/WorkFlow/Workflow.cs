@@ -76,6 +76,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private List<WorkflowSetup> workflowSetup;
 
+
         public bool LogActivity()
         {
             if (Validation() == false) { return false; }
@@ -148,7 +149,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             context.tbl_Approval_Trail.Add(trail);
-            this.saved = context.SaveChanges() > 0;
+            this.saved =  context.SaveChanges() > 0;
+
 
             if (this.saved)
             {

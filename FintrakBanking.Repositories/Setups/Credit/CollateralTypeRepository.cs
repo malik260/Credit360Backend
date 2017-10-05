@@ -61,7 +61,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         {
             var type = context.tbl_Collateral_Type.SingleOrDefault(c => c.CollateralTypeId == typeId);
 
-            type.ChargeGLAccountId = entity.chargeGLAccountId;
+            type.ChargeGLAccountId = (int)entity.chargeGLAccountId;
             type.RequireInsurancePolicy = entity.requireInsurancePolicy;
             type.DateTimeUpdated = genSetup.GetApplicationDate();
             type.LastUpdatedBy = entity.lastUpdatedBy;
