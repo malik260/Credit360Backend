@@ -582,6 +582,7 @@ on c.DepartmentId equals dept.DepartmentId
                     join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
                     join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
+                        && atrail.ResponseStaffId == null
                           && atrail.OperationId == (int)OperationsEnum.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new StaffInfoViewModel()
                     {
@@ -621,7 +622,7 @@ on c.DepartmentId equals dept.DepartmentId
                         OperationId = atrail.OperationId,
                         SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description
 
-                    });
+                    }).GroupBy(x => x.StaffId).Select(g => g.FirstOrDefault()); 
         }
 
         public StaffDetailsModel GetTempStaffDetail(int staffId)

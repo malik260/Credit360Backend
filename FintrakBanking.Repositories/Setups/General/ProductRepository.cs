@@ -1269,7 +1269,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 ProductTypeId = productModel.productTypeId,
                 ProductCategoryId = productModel.productCategoryId,
                 ProductClassId = productModel.productClassId,
-                ProductCode = GenerateProductCode(productModel.companyId),
+                ProductCode = productModel.productCode,
                 ProductName = productModel.productName,
                 ProductDescription = productModel.productDescription,
 
@@ -1344,7 +1344,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         staffId = productModel.createdBy,
                         companyId = productModel.companyId,
                         approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = targetProduct.ProductId,
+                        targetId = tempProduct.ProductId,
                         operationId = (int)OperationsEnum.ProductCreation,
                         BranchId = productModel.userBranchId,
                         externalInitialization = true

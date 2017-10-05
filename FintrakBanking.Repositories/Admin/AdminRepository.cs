@@ -224,6 +224,7 @@ namespace FintrakBanking.Repositories.Admin
                         join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
                         join atrail in context.tbl_Approval_Trail on c.UserId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
+                              && atrail.ResponseStaffId == null
                               && atrail.OperationId == (int)OperationsEnum.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new UserViewModel()
                         {
@@ -259,7 +260,7 @@ namespace FintrakBanking.Repositories.Admin
                                 userId = a.UserId,
                                 activityName = a.tbl_Profile_Activity.ActivityName
                             }).ToList()
-                        });
+                        }).GroupBy(x => x.user_id).Select(g => g.FirstOrDefault());
 
             return data;
         }
