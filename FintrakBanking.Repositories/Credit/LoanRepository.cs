@@ -597,7 +597,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Comment = model.comment;
             workflow.ExternalInitialization = externalInitialization;
             workflow.StatusId = ApprovalStatusId;
-            await workflow.LogActivity();
+            workflow.LogActivity();
 
             if (workflow.Saved)
             {

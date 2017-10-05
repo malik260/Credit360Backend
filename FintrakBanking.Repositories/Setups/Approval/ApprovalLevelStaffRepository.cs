@@ -31,14 +31,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaff(int companyId)
         {
             var data = (from a in context.tbl_Approval_Level_Staff
-                        join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
-                        join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupId
+                            //join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
+                            //join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupId
                         where a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
                         && a.Deleted == false
                         select new ApprovalLevelStaffViewModel
                         {
                             groupId = (int)a.tbl_Approval_Level.GroupId,
-                            operationId = c.OperationId,
+                            //operationId = c.OperationId,
                             maximumAmount = a.MaximumAmount,
                             processViewScope = a.ProcessViewScopeId,
                             canViewDocument = a.CanViewCAMDocument,
@@ -62,9 +62,51 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return data;
         }
 
+        private IEnumerable<ApprovalLevelStaffViewModel> GetAllDetailedApprovalLevelStaff(int companyId)
+        {
+            var data = (from a in context.tbl_Approval_Level_Staff
+                        join e in context.tbl_Staff on a.StaffId equals e.StaffId
+                        join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
+                        join c in context.tbl_Approval_Group on b.GroupId equals c.GroupId
+                        join d in context.tbl_Approval_Group_Mapping on c.GroupId equals d.GroupId
+                        where a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
+                        && a.Deleted == false
+                        select new ApprovalLevelStaffViewModel
+                        {
+                            groupId = (int)a.tbl_Approval_Level.GroupId,
+                            operationId = d.OperationId,
+                            maximumAmount = a.MaximumAmount,
+                            processViewScope = a.ProcessViewScopeId,
+                            canViewDocument = a.CanViewCAMDocument,
+                            canViewUploadedFile = a.CanViewUploadedFile,
+                            canViewApproval = a.CanViewApproval,
+                            canApprove = a.CanApprove,
+                            canUploadFile = a.CanUploadFile,
+                            canSendRequest = a.CanSendJobRequest,
+                            canEdit = a.CanEdit,
+                            vetoPower = a.VetoPower,
+                            //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
+                            position = a.tbl_Approval_Level.Position,
+                            approvalLevelId = a.ApprovalLevelId,
+                            approvalLevelName = a.tbl_Approval_Level.LevelName,
+                            staffId = a.StaffId,
+                            staffLevelId = a.StaffLevelId,// added
+                            staffLevelName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
+                            dateTimeCreated = a.DateTimeCreated,
+                            createdBy = (int)a.CreatedBy
+                        }).OrderBy(x => x.approvalLevelId).ToList();
+            return data;
+        }
+
         public IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaff(int companyId)
         {
             return GetApprovalLevelStaff(companyId);
+        }
+
+        public IEnumerable<ApprovalLevelStaffViewModel> GetAllAssignedApprovalLevelStaff(int companyId)
+        {
+            var data = GetAllDetailedApprovalLevelStaff(companyId);
+            return data;
         }
 
         public IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaffByOperationId(int operationId, int companyId)
@@ -79,7 +121,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId, int operationId)
         {
-            var levelStaff = GetApprovalLevelStaff(companyId);
+            var levelStaff = GetAllDetailedApprovalLevelStaff(companyId);
             return levelStaff.Where(c => c.staffId == staffId && c.operationId == operationId).FirstOrDefault();
         }
 

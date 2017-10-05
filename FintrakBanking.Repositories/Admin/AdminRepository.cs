@@ -16,13 +16,14 @@ using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.Repositories.WorkFlow;
 
 namespace FintrakBanking.Repositories.Admin
 {
     public class AdminRepository : IAdminRepository
     {
         private FinTrakBankingContext context;
-        private IWorkFlowRepository workFlow;
+        private IWorkflow workFlow;
         private IAuditTrailRepository auditTrail;
         IGeneralSetupRepository genSetup;
         private IApprovalLevelStaffRepository level;
@@ -30,7 +31,7 @@ namespace FintrakBanking.Repositories.Admin
         public AdminRepository(FinTrakBankingContext _context,
             IAuditTrailRepository _auditTrail,
             IGeneralSetupRepository _genSetup,
-            IWorkFlowRepository _workFlow,
+            IWorkflow _workFlow,
             IApprovalLevelStaffRepository _level)
         {
             this.context = _context;
@@ -46,20 +47,19 @@ namespace FintrakBanking.Repositories.Admin
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
         }
 
-        public async Task<bool> GoForApproval(ApprovalViewModel entity)
+        public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.UserCreation;
 
-            var response = await workFlow.GoForApproval(entity);
+            entity.externalInitialization = false;
 
-            if (response.Item1)
+            var response = workFlow.LogForApproval(entity);
+
+            if (response)
             {
-                return ApproveUser(entity.targetId, response.Item2.approvalStatusId, entity);
+                return ApproveUser(entity.targetId, (int)ApprovalStatusEnum.Approved, entity);
             }
-            else
-            {
-                return false;
-            }
+            return false;
 
         }
 
@@ -177,42 +177,40 @@ namespace FintrakBanking.Repositories.Admin
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
+            using (var trans = context.Database.BeginTransaction())
             {
-                using (var trans = context.Database.BeginTransaction())
+                try
                 {
-                    try
+                    context.tbl_Profile_User.Add(_user);
+                    auditTrail.AddAuditTrail(audit);
+
+                    output = await context.SaveChangesAsync() > 0;
+
+                    var entity = new ApprovalViewModel
                     {
-                        context.tbl_Profile_User.Add(_user);
-                        auditTrail.AddAuditTrail(audit);
+                        staffId = user.createdBy,
+                        companyId = user.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        targetId = _user.UserId,
+                        operationId = (int)OperationsEnum.UserCreation,
+                        BranchId = user.userBranchId,
+                        externalInitialization = true
+                    };
+                    var response = workFlow.LogForApproval(entity);
 
-                        output = await context.SaveChangesAsync() > 0;
-
-                        var entity = new ApprovalViewModel
-                        {
-                            staffId = user.createdBy,
-                            companyId = user.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = _user.UserId,
-                            operationId = (int)OperationsEnum.UserCreation,
-                            BranchId = user.userBranchId
-                        };
-                        var response = await workFlow.LogForApproval(entity);
+                    if (response)
+                    {
                         trans.Commit();
                     }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw new Exception(ex.Message);
-                    }
+
+                    return output;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
                 }
             }
-            else
-            {
-                throw new Exception("Approval route have not been defined for this operation");
-            }
-
-            return output;
         }
 
         public IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId)
@@ -565,46 +563,42 @@ namespace FintrakBanking.Repositories.Admin
                     SystemDateTime = DateTime.Now
                 };
 
-                if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    using (var trans = context.Database.BeginTransaction())
+                    try
                     {
-                        try
+                        auditTrail.AddAuditTrail(audit);
+
+                        output = await context.SaveChangesAsync() > 0;
+
+                        var entity = new ApprovalViewModel
                         {
-                            auditTrail.AddAuditTrail(audit);
+                            staffId = user.createdBy,
+                            companyId = user.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = userId,
+                            operationId = (int)OperationsEnum.UserCreation,
+                            BranchId = user.userBranchId,
+                            externalInitialization = true
+                        };
 
-                            output = await context.SaveChangesAsync() > 0;
+                        var response = workFlow.LogForApproval(entity);
 
-                            var entity = new ApprovalViewModel
-                            {
-                                staffId = user.createdBy,
-                                companyId = user.companyId,
-                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                targetId = userId,
-                                operationId = (int)OperationsEnum.UserCreation,
-                                BranchId = user.userBranchId
-                            };
-                            var response = await workFlow.LogForApproval(entity);
+                        if (response)
+                        {
                             trans.Commit();
                         }
-                        catch (Exception ex)
-                        {
-                            trans.Rollback();
-                            throw new Exception(ex.Message);
-                        }
+
+                        return output;
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new Exception(ex.Message);
                     }
                 }
-                else
-                {
-                    throw new Exception("Approval route have not been defined for this operation");
-                }
-
-                return output;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         public List<string> GetUserActivities(int userId)

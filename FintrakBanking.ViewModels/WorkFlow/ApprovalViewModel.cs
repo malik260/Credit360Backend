@@ -15,5 +15,6 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int nextLevelId { get; set; }
         public decimal amount { get; set; }
         public bool isPoliticalyExposed { get; set; }
+        public bool externalInitialization { get; set; }
     }
 }

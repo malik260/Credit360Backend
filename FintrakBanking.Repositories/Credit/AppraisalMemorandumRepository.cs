@@ -246,7 +246,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Tenor = model.tenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
             // log
-            await workflow.LogActivity();
+            workflow.LogActivity();
 
             if (workflow.Saved)
             {

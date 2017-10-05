@@ -112,7 +112,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("staff/search")]
+        [Route("department/search")]
         public HttpResponseMessage SearchDepartment(string q, string t)
         {
             try
