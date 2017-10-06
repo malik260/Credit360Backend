@@ -45,15 +45,16 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         allFilteredLoan = (from a in _context.tbl_Loan_Application
                                            join b in _context.tbl_Customer on a.CustomerId equals b.CustomerId
-                                           where a.PrincipalAmount <= memoLimit.MaximumAmount && a.PrincipalAmount >= memoLimit.MinimumAmount && (a.ApplicationReferenceNumber.Contains(searchQuery) ||
-                                           b.CustomerCode.ToLower().Contains(searchQuery))
+                                           where (a.ApplicationReferenceNumber.Contains(searchQuery)
+                                           //TODO: Refactor                                  && a.PrincipalAmount <= memoLimit.MaximumAmount && a.PrincipalAmount >= memoLimit.MinimumAmount
+                                           || b.CustomerCode.ToLower().Contains(searchQuery))
                                            select new CallMemoLoanSearchViewModel
                                            {
                                                loanApplicationId = a.LoanApplicationId,
                                                customerId = a.CustomerId,
                                                customerName = b.CustomerCode + " - " + b.FirstName + " " + b.LastName,
                                                loanReferenceNo = a.ApplicationReferenceNumber,
-                                               principalAmount = a.PrincipalAmount
+                                               //TODO: Refactor                                        principalAmount = a.PrincipalAmount
                                            }).Take(10).AsQueryable();
                     }
                 }

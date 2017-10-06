@@ -214,8 +214,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
 
-        public virtual tbl_Loan tbl_Loan { get; set; }
-
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
 
         public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline { get; set; }

@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public int ValidateCamsol(int customerId)
         {
             var camsol = (from a in context.tbl_Loan_Camsol
-                          where a.tbl_Loan.CustomerId == customerId
+                              //TODO: Refactor                         where a.tbl_Loan.CustomerId == customerId
                           select a);
             int camsolresults = camsol.Count();
 
