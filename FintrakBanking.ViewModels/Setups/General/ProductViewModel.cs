@@ -73,6 +73,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public List<ProductCollateralTypeViewModel> collaterals { get; set; }
         public short? scheduleTypeId { get; set; }
+        public short? dayCountConventionId { get; set; }
     }
 
     public class ProductCurrencyViewModel : GeneralEntity

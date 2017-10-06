@@ -205,6 +205,12 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
+                foreach (var curr in model.currencies)
+                {
+                    curr.createdBy = model.createdBy;
+                    curr.companyId = model.companyId;
+                }
+
                 var account = repo.UpdateAccount(accountId, model);
                 if (account)
                 {
