@@ -105,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("appraisal-memorandum/forward")]
-        public async Task<HttpResponseMessage> ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
+        public  HttpResponseMessage ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var response = await repo.ForwardAppraisalMemorandum(entity);
+                var response =  repo.ForwardAppraisalMemorandum(entity);
 
                 if (response == true)
                 {

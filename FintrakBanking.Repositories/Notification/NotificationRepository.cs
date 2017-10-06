@@ -26,7 +26,7 @@ namespace FintrakBanking.Repositories.Notification
         public IEnumerable<NotificationViewModel> GetNotification(int staffId, int companyId)
         {
             List<NotificationViewModel> logs = new List<NotificationViewModel>();
-            var approvalLevel = levelStaffRepo.GetAllApprovalLevelStaff(companyId).Where(c => c.staffId == staffId);
+            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId);
             if (approvalLevel.Any())
             {
                 foreach (var level in approvalLevel)
@@ -36,8 +36,8 @@ namespace FintrakBanking.Repositories.Notification
                     log = (from c in context.tbl_Approval_Trail
                            where c.CompanyId == companyId &&
                            c.OperationId == level.operationId &&
-                           c.ApprovalStatusId == (short)ApprovalStatusEnum.Pending
-                           && c.ToApprovalLevelId == level.approvalLevelId
+                            c.ApprovalStatusId == (int)ApprovalStatusEnum.Pending  && c.ResponseStaffId == null &&
+                           c.ToApprovalLevelId == level.approvalLevelId
                            group c by c.OperationId into d
                            select new NotificationViewModel
                            {

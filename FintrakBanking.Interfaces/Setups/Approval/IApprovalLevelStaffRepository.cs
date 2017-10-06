@@ -14,6 +14,8 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 
         Task<bool> DeleteApprovalLevelStaff(int staffLevelId, UserInfo user);
 
+        //IEnumerable<ApprovalLevelStaffViewModel> GetAllAssignedApprovalLevelStaff(int companyId);
+
         IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaffByOperationId(int operationId, int companyId);
 
         ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId, int operationId);
@@ -26,5 +28,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
             int targetId, int companyId);
 
         IQueryable<WorkflowTrackerViewModel> GetAllRecordsOnApprovalTrail(int companyId);
+
+        IEnumerable<ApprovalLevelStaffViewModel> GetAllAssignedApprovalLevelStaff(int companyId);
     }
 }

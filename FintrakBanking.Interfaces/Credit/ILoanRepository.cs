@@ -21,7 +21,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
-        Task<string> AddLoanBooking(LoanViewModel entity);
+        string AddLoanBooking(LoanViewModel entity);
 
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
 

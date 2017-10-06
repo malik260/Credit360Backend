@@ -21,13 +21,13 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
         IGeneralSetupRepository genSetup;
-        private IWorkFlowRepository workFlow;
+        private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
 
         public StaffRepository(FinTrakBankingContext _context,
                                IAuditTrailRepository _auditTrail,
                                IGeneralSetupRepository _genSetup,
-                               IWorkFlowRepository _workFlow,
+                               IWorkflow _workFlow,
                                IApprovalLevelStaffRepository _level)
         {
             this.context = _context;
@@ -202,7 +202,7 @@ on c.DepartmentId equals dept.DepartmentId
 
             var targetStaff = context.tbl_Staff.Find(staffid);
 
-            var unApprovedStaffEdit = context.tbl_Temp_Staff.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && 
+            var unApprovedStaffEdit = context.tbl_Temp_Staff.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending &&
             x.StaffCode.ToLower() == staffModel.StaffCode.ToLower());
 
             tbl_Temp_Staff tempStaff;
@@ -266,23 +266,40 @@ on c.DepartmentId equals dept.DepartmentId
 
             };
 
-            this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------  
-
-            var output = context.SaveChanges() > 0;
-
-            var entity = new ApprovalViewModel
+            using (var trans = context.Database.BeginTransaction())
             {
-                staffId = staffModel.createdBy,
-                companyId = staffModel.companyId,
-                approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                targetId = tempStaff.StaffId,
-                operationId = (int)OperationsEnum.StaffCreation,
-                BranchId = staffModel.userBranchId
-            };
-            var response = await workFlow.LogForApproval(entity);
+                try
+                {
+                    this.auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------  
 
-            return output;
+                    var output = await context.SaveChangesAsync() > 0;
+
+                    var entity = new ApprovalViewModel
+                    {
+                        staffId = staffModel.createdBy,
+                        companyId = staffModel.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        targetId = tempStaff.StaffId,
+                        operationId = (int)OperationsEnum.StaffCreation,
+                        BranchId = staffModel.userBranchId,
+                        externalInitialization = true
+                    };
+                    var response = workFlow.LogForApproval(entity);
+
+                    if (response)
+                    {
+                        trans.Commit();
+                    }
+
+                    return output;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
         }
 
         /// <summary>
@@ -330,20 +347,20 @@ on c.DepartmentId equals dept.DepartmentId
             return staff;
         }
 
-        public async Task<bool> GoForApproval(ApprovalViewModel entity)
+        public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.StaffCreation;
 
-            var response = await workFlow.GoForApproval(entity);
+            entity.externalInitialization = false;
 
-            if (response.Item1)
+            workFlow.LogForApproval(entity);
+
+            if (workFlow.NewState == (int)ApprovalState.Ended)
             {
-                return ApproveStaff(entity.targetId, response.Item2.approvalStatusId, entity);
+                return ApproveStaff(entity.targetId, (short)workFlow.StatusId, entity);
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
 
         }
 
@@ -450,7 +467,7 @@ on c.DepartmentId equals dept.DepartmentId
         {
             bool output = false;
             var existStingTempStaff = context.tbl_Temp_Staff.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower()
-                                                                  && x.IsCurrent == true 
+                                                                  && x.IsCurrent == true
                                                                   && x.CompanyId == staffModel.companyId
                                                                   && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
 
@@ -506,40 +523,40 @@ on c.DepartmentId equals dept.DepartmentId
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.StaffCreation, staffModel.companyId))
+            using (var trans = context.Database.BeginTransaction())
             {
-                using (var trans = context.Database.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        auditTrail.AddAuditTrail(audit);
-                        this.context.tbl_Temp_Staff.Add(staff);
-                        output = await context.SaveChangesAsync() > 0 ;
+                    auditTrail.AddAuditTrail(audit);
+                    this.context.tbl_Temp_Staff.Add(staff);
+                    output = await context.SaveChangesAsync() > 0;
 
-                        var entity = new ApprovalViewModel
-                        {
-                            staffId = staffModel.createdBy,
-                            companyId = staffModel.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = staff.StaffId,
-                            operationId = (int)OperationsEnum.StaffCreation,
-                            BranchId = staffModel.userBranchId
-                        };
-                        var response = await workFlow.LogForApproval(entity);
+                    var entity = new ApprovalViewModel
+                    {
+                        staffId = staffModel.createdBy,
+                        companyId = staffModel.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        targetId = staff.StaffId,
+                        operationId = (int)OperationsEnum.StaffCreation,
+                        BranchId = staffModel.userBranchId,
+                        externalInitialization = true
+                    };
+                    var response = workFlow.LogForApproval(entity);
+
+                    if (response)
+                    {
                         trans.Commit();
                     }
-                    catch (Exception)
-                    {
-                        trans.Rollback();
-                    }
+
+                    return output;
+                }
+                catch (Exception)
+                {
+                    trans.Rollback();
                 }
             }
-            else
-            {
-                throw new Exception("Approval route have not been defined for this operation");
-            }
-            return output;
 
+            return output;
         }
 
         public bool IsStaffCodeAlreadyExist(string staffCode)
@@ -565,6 +582,7 @@ on c.DepartmentId equals dept.DepartmentId
                     join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
                     join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
                     where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
+                        && atrail.ResponseStaffId == null
                           && atrail.OperationId == (int)OperationsEnum.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                     select new StaffInfoViewModel()
                     {
@@ -604,7 +622,7 @@ on c.DepartmentId equals dept.DepartmentId
                         OperationId = atrail.OperationId,
                         SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description
 
-                    });
+                    }).GroupBy(x => x.StaffId).Select(g => g.FirstOrDefault()); 
         }
 
         public StaffDetailsModel GetTempStaffDetail(int staffId)
@@ -774,7 +792,7 @@ on c.DepartmentId equals dept.DepartmentId
                        firstName = st.FirstName,
                        middleName = st.MiddleName,
                        lastName = st.LastName,
-                       departmentId =(short)st.DepartmentId
+                       departmentId = (short)st.DepartmentId
                    };
         }
 

@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             this.repo = _repo;
         }
-        
+
         #region Customer Group
         [HttpPost]
         [Route("customer-group")]
@@ -36,7 +36,7 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                
+
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -186,7 +186,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("customer-group/approval")]
-        public async Task<HttpResponseMessage> GoForApprovalAsync([FromBody]ApprovalViewModel entity)
+        public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
             try
             {
@@ -194,20 +194,19 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.staffId = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.userIPAddress = Request.RequestUri.Host;
 
-                var data = await repo.GoForApproval(entity);
+                var data = repo.GoForApproval(entity);
 
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "customer group has been approved successfully" });
                 }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An error occured: {ex.Message}" });
             }
