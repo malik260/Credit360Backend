@@ -260,7 +260,7 @@ namespace FintrakBanking.Repositories.Credit
                 BranchId = entity.branchId,
                 CurrencyId = entity.currencyId,
                 ExchangeRate = entity.exchangeRate,
-                LoanApplicationDetailId = entity.loanApplicationId,
+                LoanApplicationId = entity.loanApplicationId,
                 LoanReferenceNumber = entity.loanReferenceNumber,
                 SubSectorId = entity.subSectorId,
                 RelationshipOfficerId = entity.relationshipOfficerId,
@@ -363,7 +363,7 @@ namespace FintrakBanking.Repositories.Credit
                 BranchId = entity.branchId,
                 CurrencyId = entity.currencyId,
                 ExchangeRate = entity.exchangeRate,
-                LoanApplicationDetailId = entity.loanApplicationId,
+                LoanApplicationId = entity.loanApplicationId,
                 LoanReferenceNumber = entity.loanReferenceNumber,
                 SubSectorId = entity.subSectorId,
                 RelationshipOfficerId = entity.relationshipOfficerId,
@@ -462,7 +462,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = new tbl_Loan
             {
-                LoanApplicationDetailId = entity.loanApplicationId,
+                LoanApplicationId = entity.loanApplicationId,
                 LoanReferenceNumber = loanReferenceNumber,
                 LoanStatusId = (short)LoanStatusEnum.Inactive,
                 IsDisbursed = false,
@@ -803,11 +803,11 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = ln.CustomerId,
                             productId = ln.ProductId,
                             casaAccountId = ln.CasaAccountId,
-                            loanApplicationId = (int)ln.LoanApplicationDetailId,
+                            loanApplicationId = (int)ln.LoanApplicationId,
 
                             branchId = ln.BranchId,
                             loanReferenceNumber = ln.LoanReferenceNumber,
-                            applicationReferenceNumber = context.tbl_Loan_Application.FirstOrDefault(k => k.LoanApplicationId == ln.LoanApplicationDetailId).ApplicationReferenceNumber,
+                            applicationReferenceNumber = context.tbl_Loan_Application.FirstOrDefault(k => k.LoanApplicationId == ln.LoanApplicationId).ApplicationReferenceNumber,
 
                             //tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
                             principalFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
@@ -1026,11 +1026,11 @@ namespace FintrakBanking.Repositories.Credit
                 productId = loanRecord.ProductId,
                 productPriceIndexRate = (decimal)loanRecord.ProductPriceIndexRate,
                 casaAccountId = loanRecord.CasaAccountId,
-                loanApplicationId = (int)loanRecord.LoanApplicationDetailId,
+                loanApplicationId = (int)loanRecord.LoanApplicationId,
 
                 branchId = loanRecord.BranchId,
                 loanReferenceNumber = loanRecord.LoanReferenceNumber,
-                applicationReferenceNumber = context.tbl_Loan_Application.FirstOrDefault(l => l.LoanApplicationId == loanRecord.LoanApplicationDetailId).ApplicationReferenceNumber,
+                applicationReferenceNumber = context.tbl_Loan_Application.FirstOrDefault(l => l.LoanApplicationId == loanRecord.LoanApplicationId).ApplicationReferenceNumber,
 
                 principalFrequencyTypeId = (short)loanRecord.PrincipalFrequencyTypeId,
                 interestFrequencyTypeId = (short)loanRecord.InterestFrequencyTypeId,
@@ -1097,7 +1097,7 @@ namespace FintrakBanking.Repositories.Credit
                 //==================================================================
 
                 //...................Updating Loan Application Status....................
-                var loanApplicationRecord = context.tbl_Loan_Application.Find(loanRecord.LoanApplicationDetailId);
+                var loanApplicationRecord = context.tbl_Loan_Application.Find(loanRecord.LoanApplicationId);
                 loanApplicationRecord.ApplicationStatusId = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                 //=======================================================================
 
@@ -1911,7 +1911,7 @@ namespace FintrakBanking.Repositories.Credit
                        nationality = a.Nationality,
                        occupation = a.Occupation,
                        placeOfBirth = a.PlaceOfBirth,
-                       politicallyExposedPerson = a.IsPoliticallyExposed,
+                       //politicallyExposedPerson = a.IsPoliticallyExposed,
                        relationshipOfficerId = a.RelationshipOfficerId.Value,
                        spouse = a.Spouse,
                        sectorId = a.tbl_Sub_Sector.tbl_Sector.SectorId,
@@ -2176,7 +2176,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         }).ToList().Where(r => !context.tbl_Loan.AsEnumerable()
 
-                        .Any(c => r.loanApplicationId == c.LoanApplicationDetailId && r.loanTypeId == (int)LoanTypeEnum.Single)
+                        .Any(c => r.loanApplicationId == c.LoanApplicationId && r.loanTypeId == (int)LoanTypeEnum.Single)
                         || (context.tbl_Customer_Group_Mapping.Where(x => x.CustomerGroupId == r.customerGroupId).Count() >= context.tbl_Loan.Where(g => g.CustomerGroupId == r.customerGroupId).Count() && r.loanTypeId == (int)LoanTypeEnum.CustomerGroup));
 
 

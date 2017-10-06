@@ -3262,7 +3262,7 @@ namespace FintrakBanking.Repositories.Credit
                 LoanId = model.loanId,
                 ProductTypeId = model.productTypeId,
                 OperationTypeId = model.operationTypeId,
-                EffectiveDate = model.proposedEffectiveDate,
+                ProposedEffectiveDate = model.proposedEffectiveDate,
                 ReviewDetails = model.reviewDetails,
                 InterateRate = model.interateRate,
                 Prepayment = model.prepayment,
