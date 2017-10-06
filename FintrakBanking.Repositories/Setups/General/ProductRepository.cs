@@ -473,21 +473,21 @@ namespace FintrakBanking.Repositories.Setups.General
                             currencyId = pc.CurrencyId,
                             currencyName = pc.tbl_Currency.CurrencyCode + " -- " + pc.tbl_Currency.CurrencyName
                         }).ToList(),
-                        //fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == c.ProductId && curr.Deleted == false).Select(pf => new ProductFeeViewModel()
-                        //{
-                        //    productId = c.ProductId,
-                        //    productFeeId = pf.ProductFeeId,
-                        //    feeId = pf.ProductFeeId,
-                        //    rateValue = pf.RateValue,
-                        //    dependentAmount = pf.DependentAmount,
-                        //    feeName = pf.tbl_Fee.FeeName,
-                        //    feeIntervalName = pf.tbl_Fee.tbl_Fee_Interval.FeeIntervalName,
-                        //    feeTargetName = pf.tbl_Fee.tbl_Fee_Target.FeeTargetName,
-                        //    feeTypeName = pf.tbl_Fee.tbl_Fee_Type.FeeTypeName,
-                        //    glAccountCode = pf.tbl_Fee.tbl_Chart_Of_Account.AccountCode,
-                        //    glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
+                        fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == c.ProductId && curr.Deleted == false).Select(pf => new ProductFeeViewModel()
+                        {
+                            productId = c.ProductId,
+                            productFeeId = pf.ProductFeeId,
+                            feeId = pf.ProductFeeId,
+                            rateValue = pf.RateValue,
+                            dependentAmount = pf.DependentAmount,
+                            feeName = pf.tbl_Fee.FeeName,
+                            feeIntervalName = pf.tbl_Fee.tbl_Fee_Interval.FeeIntervalName,
+                            feeTargetName = pf.tbl_Fee.tbl_Fee_Target.FeeTargetName,
+                            feeTypeName = pf.tbl_Fee.tbl_Fee_Type.FeeTypeName,
+                            glAccountCode = pf.tbl_Fee.tbl_Chart_Of_Account.AccountCode,
+                            glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
 
-                        //}).ToList(),
+                        }).ToList(),
                         collaterals = context.tbl_Temp_Product_CollateralType.Where(coll => coll.ProductId == c.ProductId && coll.Deleted == false).Select(prodColl => new ProductCollateralTypeViewModel()
                         {
                             productId = prodColl.ProductId,
