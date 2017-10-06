@@ -28,7 +28,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
-        public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
 
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
@@ -64,7 +64,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
-        public string trancheBatchCode { get; set; }
+
         public decimal equityContribution { get; set; }
         public short subSectorId { get; set; }
         public DateTime? firstPrincipalPaymentDate { get; set; }
@@ -160,7 +160,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short branchId { get; set; }
         public short currencyId { get; set; }
         public double exchangeRate { get; set; }
-        public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
         public string loanReferenceNumber { get; set; }
         public short subSectorId { get; set; }
         public int relationshipOfficerId { get; set; }
@@ -229,7 +229,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short branchId { get; set; }
         public short currencyId { get; set; }
         public double exchangeRate { get; set; }
-        public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
         public string loanReferenceNumber { get; set; }
         public short subSectorId { get; set; }
         public int relationshipOfficerId { get; set; }

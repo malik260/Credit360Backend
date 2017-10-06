@@ -46,8 +46,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var staffId = token.GetStaffId;
-                var data = repo.GetJobRequestByStaffId(staffId);
+                var data = repo.GetJobRequestByStaffId(token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)

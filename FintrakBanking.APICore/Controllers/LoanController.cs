@@ -326,7 +326,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [Route("loan-booking/approval")]
-        public async Task<HttpResponseMessage> ApproveLoanBooking(ApprovalViewModel model)
+        public HttpResponseMessage ApproveLoanBooking(ApprovalViewModel model)
         {
             try
             {
@@ -337,7 +337,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var data = await repo.GoForApproval(model);
+                var data = repo.GoForApproval(model);
 
                 if (data)
                 {

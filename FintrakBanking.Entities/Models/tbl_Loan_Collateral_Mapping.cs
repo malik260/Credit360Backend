@@ -12,15 +12,9 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int LoanCollateralMappingId { get; set; }
 
-        public int LoanId { get; set; }
-
         public int CollateralCustomerId { get; set; }
 
         public int LoanApplicationId { get; set; }
-
-        public short ProductTypeId { get; set; }
-
-        public virtual tbl_Product_Type tbl_Product_Type { get; set; }
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
 

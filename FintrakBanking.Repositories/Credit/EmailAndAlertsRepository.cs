@@ -36,7 +36,7 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
                         join c in context.tbl_Staff on b.RelationshipManagerId equals c.StaffId
                         join d in context.tbl_Staff on b.RelationshipOfficerId equals d.StaffId
-                        join e in context.tbl_Loan_Application on b.LoanApplicationId equals e.LoanApplicationId
+                        join e in context.tbl_Loan_Application on b.LoanApplicationDetailId equals e.LoanApplicationId
                         join f in context.tbl_Frequency_Type on a.FrequencyTypeId equals f.FrequencyTypeId
                         join g in context.tbl_Loan_Covenant_Type on a.CovenantTypeId equals g.CovenantTypeId
                         where SqlFunctions.DateDiff("DAY", a.CovenantDate, a.NextCovenantDate) == 4
@@ -116,7 +116,7 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
                         join c in context.tbl_Staff on b.RelationshipManagerId equals c.StaffId
                         join d in context.tbl_Staff on b.RelationshipOfficerId equals d.StaffId
-                        join e in context.tbl_Loan_Application on b.LoanApplicationId equals e.LoanApplicationId
+                        join e in context.tbl_Loan_Application on b.LoanApplicationDetailId equals e.LoanApplicationId
                         join f in context.tbl_Frequency_Type on a.FrequencyTypeId equals f.FrequencyTypeId
                         join g in context.tbl_Loan_Covenant_Type on a.CovenantTypeId equals g.CovenantTypeId
                         where a.NextCovenantDate.Value >= DateTime.Now
@@ -235,8 +235,8 @@ namespace FintrakBanking.Repositories.Credit
         public void SendAlertsForNplMonitoring()
         {
             var data = (from a in context.tbl_Loan_Application
-                        join b in context.tbl_Loan on a.LoanApplicationId equals b.LoanApplicationId
-                        join c in context.tbl_Loan_Revolving on a.LoanApplicationId equals c.LoanApplicationId
+                        join b in context.tbl_Loan on a.LoanApplicationId equals b.LoanApplicationDetailId
+                        join c in context.tbl_Loan_Revolving on a.LoanApplicationId equals c.LoanApplicationDetailId
                         where b.NPLDate != null
                         select new LoanViewModel
                         {

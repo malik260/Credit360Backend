@@ -16,7 +16,6 @@ namespace FintrakBanking.Entities.Models
             tbl_Fee = new HashSet<tbl_Fee>();
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
-            tbl_Loan_Collateral_Mapping = new HashSet<tbl_Loan_Collateral_Mapping>();
             tbl_Loan_Covenant_Detail = new HashSet<tbl_Loan_Covenant_Detail>();
             tbl_Loan_Fee = new HashSet<tbl_Loan_Fee>();
             tbl_Loan_Force_Debit = new HashSet<tbl_Loan_Force_Debit>();
@@ -69,9 +68,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Collateral_Mapping> tbl_Loan_Collateral_Mapping { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Covenant_Detail> tbl_Loan_Covenant_Detail { get; set; }
