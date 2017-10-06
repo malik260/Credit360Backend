@@ -182,6 +182,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Application_Status> tbl_Loan_Application_Status { get; set; }
         public virtual DbSet<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
         public virtual DbSet<tbl_Loan_Camsol> tbl_Loan_Camsol { get; set; }
+        public virtual DbSet<tbl_Loan_Change_Type> tbl_Loan_Change_Type { get; set; }
         public virtual DbSet<tbl_Loan_Collateral_Mapping> tbl_Loan_Collateral_Mapping { get; set; }
         public virtual DbSet<tbl_Loan_Comment> tbl_Loan_Comment { get; set; }
         public virtual DbSet<tbl_Loan_Condition_Precedent> tbl_Loan_Condition_Precedent { get; set; }
@@ -1423,11 +1424,6 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.OperationsId)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<tbl_Operations>()
-                .HasMany(e => e.tbl_Loan_Archive)
-                .WithRequired(e => e.tbl_Operations)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<tbl_Operations_Type>()
                 .HasMany(e => e.tbl_Operations)
                 .WithRequired(e => e.tbl_Operations_Type)
@@ -2595,6 +2591,11 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.AmountAffected)
                 .HasPrecision(19, 4);
 
+            modelBuilder.Entity<tbl_Loan_Change_Type>()
+                .HasMany(e => e.tbl_Loan_Archive)
+                .WithRequired(e => e.tbl_Loan_Change_Type)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<tbl_Loan_Contingent>()
                 .Property(e => e.TeamMISCode)
                 .IsUnicode(false);
@@ -3347,9 +3348,8 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Chart_Of_Account>()
                 .HasMany(e => e.tbl_Collateral_Type)
-                .WithRequired(e => e.tbl_Chart_Of_Account)
-                .HasForeignKey(e => e.ChargeGLAccountId)
-                .WillCascadeOnDelete(false);
+                .WithOptional(e => e.tbl_Chart_Of_Account)
+                .HasForeignKey(e => e.ChargeGLAccountId);
 
             modelBuilder.Entity<tbl_Chart_Of_Account>()
                 .HasMany(e => e.tbl_Chart_Of_Account_Currency)
@@ -3775,15 +3775,11 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LevelMaximumAmount)
+                .Property(e => e.MaximumAmount)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.InvestmentGradeAmount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.StaffMaximumAmount)
+                .Property(e => e.MinimumAmount)
                 .HasPrecision(19, 4);
         }
     }

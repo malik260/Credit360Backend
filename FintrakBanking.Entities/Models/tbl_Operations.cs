@@ -19,7 +19,6 @@ namespace FintrakBanking.Entities.Models
             tbl_Job_Request = new HashSet<tbl_Job_Request>();
             tbl_Message_Log = new HashSet<tbl_Message_Log>();
             tbl_Charges = new HashSet<tbl_Charges>();
-            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Temp_Charge_Fee = new HashSet<tbl_Temp_Charge_Fee>();
         }
 
@@ -58,9 +57,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Charges> tbl_Charges { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
 
         public virtual tbl_Operations_Type tbl_Operations_Type { get; set; }
 

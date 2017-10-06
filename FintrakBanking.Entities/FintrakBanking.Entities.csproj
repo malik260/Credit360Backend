@@ -204,6 +204,7 @@
     <Compile Include="Models\tbl_Loan_Application_Status.cs" />
     <Compile Include="Models\tbl_Loan_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
+    <Compile Include="Models\tbl_Loan_Change_Type.cs" />
     <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
     <Compile Include="Models\tbl_Loan_Condition_Precedent.cs" />
