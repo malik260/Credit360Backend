@@ -14,5 +14,6 @@ namespace FintrakBanking.Interfaces.Credit
         decimal GetCollateralSearchChargeAmount(int stateId);
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
+        IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(int scheduleId);
     }
 }
