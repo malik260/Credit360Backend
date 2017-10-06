@@ -314,35 +314,44 @@ namespace FintrakBanking.Repositories.Customer
             if (entity == null)
                 return false;
 
-            var existStingTempGroup = context.tbl_Temp_Customer_Group.Where(x => x.GroupCode.ToLower() ==
+            var existingTempGroup = context.tbl_Temp_Customer_Group.FirstOrDefault(x => x.GroupCode.ToLower() ==
             entity.groupCode.ToLower() && x.IsCurrent == true &&
             x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
 
-            if (existStingTempGroup.Any())
-            {
-                foreach (var item in existStingTempGroup)
-                {
-                    item.IsCurrent = false;
-                    item.DateTimeUpdated = DateTime.Now;
-                }
-            }
-
-            var targetGroup = this.context.tbl_Customer_Group.Find(customerGroupId);
-
             var unApprovedCustomerGroupEdit = context.tbl_Temp_Customer_Group.Where(x => x.IsCurrent == true
-            && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && x.GroupCode.ToLower() == targetGroup.GroupCode.ToLower());
-
-            tbl_Temp_Customer_Group tempCustomerGroup;
-
+                                                                                         && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && x.GroupCode.ToLower() == entity.groupCode.ToLower());
             if (unApprovedCustomerGroupEdit.Any())
             {
                 throw new Exception("Customer group is already undergoing approval");
             }
+
+            tbl_Temp_Customer_Group tempCustomerGroup = new tbl_Temp_Customer_Group();
+
+            if (existingTempGroup != null)
+            {
+                //foreach (var item in existStingTempGroup)
+                //{
+                //    item.IsCurrent = false;
+                //    item.DateTimeUpdated = DateTime.Now;
+                //}
+                var tempGroupToUpdate = existingTempGroup;
+
+                tempGroupToUpdate.GroupCode = entity.groupCode;
+                tempGroupToUpdate.GroupName = entity.groupName;
+                tempGroupToUpdate.GroupDescription = entity.groupDescription;
+                tempGroupToUpdate.CreatedBy = entity.createdBy;
+                tempGroupToUpdate.DateTimeUpdated = DateTime.Now;
+                tempGroupToUpdate.CompanyId = entity.companyId;
+                tempGroupToUpdate.ApprovalStatusId = (int)ApprovalStatusEnum.Pending;
+                tempGroupToUpdate.IsCurrent = true;
+            }
             else
             {
+                var targetGroup = this.context.tbl_Customer_Group.Find(customerGroupId);
+
                 tempCustomerGroup = new tbl_Temp_Customer_Group()
                 {
-                    GroupCode = targetGroup.GroupCode,
+                    GroupCode = targetGroup?.GroupCode,
                     GroupName = entity.groupName,
                     GroupDescription = entity.groupDescription,
                     CreatedBy = entity.createdBy,
@@ -373,15 +382,19 @@ namespace FintrakBanking.Repositories.Customer
 
             var output = this.SaveAll();
 
+            var targetGroupId = existingTempGroup?.CustomerGroupId ?? tempCustomerGroup.CustomerGroupId;
+
             var approvalEntity = new ApprovalViewModel
             {
                 staffId = entity.createdBy,
                 companyId = entity.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                targetId = tempCustomerGroup.CustomerGroupId,
+                targetId = targetGroupId,
                 operationId = (int)OperationsEnum.CustomerGroupCreation,
-                BranchId = entity.userBranchId
+                BranchId = entity.userBranchId,
+                externalInitialization = true
             };
+
             var response = workFlow.LogForApproval(approvalEntity);
 
             if (response)
