@@ -60,28 +60,48 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
-
-        //[HttpGet]
-        //[Route("loan-search/")]
-        //public HttpResponseMessage SearchForLoan(string searchQuery)
-        //{
-        //    try
-        //    {
-        //        var data = loanRepo.SearchForLoan(searchQuery);
-        //        if (data == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = false, message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = true, result = data });
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //              new { success = false, message = ex.Message });
-        //    }
-        //}
+        [HttpGet]
+        [Route("loan-operationtype/")]
+        public HttpResponseMessage GetOperationTypeByLoanId(int scheduleId)
+        {
+            try
+            {
+                var data = repo.GetOperationTypeByLoanId(scheduleId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("loan-search/")]
+        public HttpResponseMessage SearchForLoan(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchForLoan(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [Route("loan-guarantor/")]

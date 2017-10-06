@@ -7,6 +7,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Data.Entity.Validation;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Setups.General
@@ -30,7 +31,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private bool SaveAll()
         {
-            return this.context.SaveChanges() > 0;
+            try
+            {
+                return this.context.SaveChanges() > 0;
+            }
+            catch (DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new DbEntityValidationException(errorMessages);
+            }
         }
 
         public bool AddDepartment(DepartmentViewModel entity)
@@ -41,6 +50,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 BranchId = entity.BranchId,
                 CreatedBy = entity.createdBy,
                 DateTimeCreated = DateTime.Now,
+                DepartmentCode = entity.DepartmentCode,
                 DepartmentName = entity.DepartmentName,
                 Description = entity.Description
             };
@@ -55,7 +65,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
                 ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime =DateTime.Now
+                SystemDateTime = DateTime.Now
             };
 
             auditTrail.AddAuditTrail(audit);

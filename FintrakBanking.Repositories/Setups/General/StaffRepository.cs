@@ -269,7 +269,7 @@ on c.DepartmentId equals dept.DepartmentId
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------  
 
-            var output = await context.SaveChangesAsync() > 0;
+            var output = context.SaveChanges() > 0;
 
             var entity = new ApprovalViewModel
             {
