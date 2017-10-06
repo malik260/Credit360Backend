@@ -626,6 +626,24 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
+                foreach (var item in model.currencies)
+                {
+                    item.createdBy = model.createdBy;
+                    item.companyId = model.companyId;
+                }
+
+                foreach (var item in model.collaterals)
+                {
+                    item.createdBy = model.createdBy;
+                    item.companyId = model.companyId;
+                }
+
+                foreach (var item in model.fees)
+                {
+                    item.createdBy = model.createdBy;
+                    item.companyId = model.companyId;
+                }
+
                 var staff = await repo.UpdateProduct(productId, model);
 
                 if (staff)
