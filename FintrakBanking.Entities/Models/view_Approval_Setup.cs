@@ -11,79 +11,97 @@ namespace FintrakBanking.Entities.Models
         [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int GroupId { get; set; }
+        public int StaffLevelId { get; set; }
 
         [Key]
         [Column(Order = 1)]
-        [StringLength(150)]
-        public string GroupName { get; set; }
-
-        [Key]
-        [Column(Order = 2)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int CompanyId { get; set; }
-
-        [Key]
-        [Column(Order = 3)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int ApprovalLevelId { get; set; }
-
-        [Key]
-        [Column(Order = 4)]
-        [StringLength(150)]
-        public string LevelName { get; set; }
-
-        [Key]
-        [Column(Order = 5)]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int Position { get; set; }
-
-        [Key]
-        [Column(Order = 6, TypeName = "money")]
-        public decimal LevelMaximumAmount { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? InvestmentGradeAmount { get; set; }
-
-        public int? Tenor { get; set; }
-
-        [Key]
-        [Column(Order = 7)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int StaffId { get; set; }
 
         [Key]
-        [Column(Order = 8, TypeName = "money")]
-        public decimal StaffMaximumAmount { get; set; }
+        [Column(Order = 2)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int ApprovalLevelId { get; set; }
 
         [Key]
-        [Column(Order = 9)]
+        [Column(Order = 3, TypeName = "money")]
+        public decimal MaximumAmount { get; set; }
+
+        [Key]
+        [Column(Order = 4)]
         [StringLength(50)]
         public string StaffCode { get; set; }
 
         [Key]
-        [Column(Order = 10)]
+        [Column(Order = 5)]
         [StringLength(50)]
-        public string StaffFirstName { get; set; }
+        public string FirstName { get; set; }
 
         [Key]
-        [Column(Order = 11)]
+        [Column(Order = 6)]
         [StringLength(50)]
-        public string StaffLastName { get; set; }
+        public string LastName { get; set; }
 
         [Key]
-        [Column(Order = 12)]
+        [Column(Order = 7)]
         [StringLength(50)]
         public string Username { get; set; }
 
         [Key]
-        [Column(Order = 13)]
+        [Column(Order = 8)]
+        [StringLength(150)]
+        public string LevelName { get; set; }
+
+        [Key]
+        [Column(Order = 9)]
+        [StringLength(150)]
+        public string GroupName { get; set; }
+
+        [Key]
+        [Column(Order = 10)]
+        [StringLength(150)]
+        public string OperationName { get; set; }
+
+        [Key]
+        [Column(Order = 11)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int OperationId { get; set; }
 
         [Key]
-        [Column(Order = 14)]
-        [StringLength(150)]
-        public string OperationName { get; set; }
+        [Column(Order = 12)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int LevelPosition { get; set; }
+
+        [Key]
+        [Column(Order = 13)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int GroupPosition { get; set; }
+
+        [StringLength(50)]
+        public string ProductCode { get; set; }
+
+        [StringLength(50)]
+        public string ProductName { get; set; }
+
+        [StringLength(50)]
+        public string ProductClassName { get; set; }
+
+        public short? ProductId { get; set; }
+
+        public short? ProductClassId { get; set; }
+
+        [Key]
+        [Column(Order = 14, TypeName = "money")]
+        public decimal MinimumAmount { get; set; }
+
+        [Key]
+        [Column(Order = 15)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int NumberOfUsers { get; set; }
+
+        [Key]
+        [Column(Order = 16)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int NumberOfApprovals { get; set; }
     }
 }

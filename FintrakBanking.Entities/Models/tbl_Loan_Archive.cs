@@ -15,9 +15,9 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime ChangeEffectiveDate { get; set; }
 
-        public bool IsApplied { get; set; }
+        public short ChangeTypeId { get; set; }
 
-        public int OperationId { get; set; }
+        public bool IsApplied { get; set; }
 
         [Required]
         [StringLength(500)]
@@ -119,6 +119,8 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? DisburseDate { get; set; }
 
+        public int? OperationId { get; set; }
+
         public int? CustomerGroupId { get; set; }
 
         public short LoanTypeId { get; set; }
@@ -204,8 +206,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Frequency_Type tbl_Frequency_Type2 { get; set; }
 
-        public virtual tbl_Operations tbl_Operations { get; set; }
-
         public virtual tbl_Product tbl_Product { get; set; }
 
         public virtual tbl_Staff tbl_Staff { get; set; }
@@ -223,6 +223,8 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Loan_Schedule_Type tbl_Loan_Schedule_Type { get; set; }
 
         public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
+
+        public virtual tbl_Loan_Change_Type tbl_Loan_Change_Type { get; set; }
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
     }
