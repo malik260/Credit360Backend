@@ -22,6 +22,8 @@ namespace FintrakBanking.Entities.Models
 
         public int LoanApplicationId { get; set; }
 
+        public int CustomerId { get; set; }
+
         public short Proposed_ProductId { get; set; }
 
         public int Proposed_Tenor { get; set; }
@@ -29,7 +31,7 @@ namespace FintrakBanking.Entities.Models
         public double Proposed_InterestRate { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal Proposed_Principal_Amount { get; set; }
+        public decimal Proposed_Amount { get; set; }
 
         public short Approved_ProductId { get; set; }
 
@@ -38,7 +40,11 @@ namespace FintrakBanking.Entities.Models
         public double Approved_InterestRate { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal Approved_Principal_Amount { get; set; }
+        public decimal Approved_Amount { get; set; }
+
+        public short CurrencyId { get; set; }
+
+        public double ExchangeRate { get; set; }
 
         public short SubSectorId { get; set; }
 
@@ -57,6 +63,10 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
+
+        public virtual tbl_Currency tbl_Currency { get; set; }
+
+        public virtual tbl_Customer tbl_Customer { get; set; }
 
         public virtual tbl_Product tbl_Product { get; set; }
 

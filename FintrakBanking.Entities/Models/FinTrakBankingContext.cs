@@ -915,7 +915,7 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Currency>()
-                .HasMany(e => e.tbl_Loan_Application)
+                .HasMany(e => e.tbl_Loan_Application_Detail)
                 .WithRequired(e => e.tbl_Currency)
                 .WillCascadeOnDelete(false);
 
@@ -1076,6 +1076,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Customer>()
                 .HasMany(e => e.tbl_Customer_Client_Supplier)
+                .WithRequired(e => e.tbl_Customer)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Customer>()
+                .HasMany(e => e.tbl_Loan_Application_Detail)
                 .WithRequired(e => e.tbl_Customer)
                 .WillCascadeOnDelete(false);
 
@@ -2490,11 +2495,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan_Application_Detail>()
-                .Property(e => e.Proposed_Principal_Amount)
+                .Property(e => e.Proposed_Amount)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan_Application_Detail>()
-                .Property(e => e.Approved_Principal_Amount)
+                .Property(e => e.Approved_Amount)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan_Application_Detail>()

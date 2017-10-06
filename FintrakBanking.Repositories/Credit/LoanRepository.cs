@@ -2119,69 +2119,67 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetAppraisalMemorandumProcessedLoanApplications(int companyId)
         {
-            var data = (from a in context.tbl_Loan_Application
+            var data = (from a in context.tbl_Loan_Application_Detail
+                        join ab in context.tbl_Loan_Application on a.LoanApplicationId equals ab.LoanApplicationId
                         join c in context.tbl_Credit_Appraisal_Memorandum
                         on a.LoanApplicationId equals c.LoanApplicationId
-                        join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
-                        where a.CompanyId == companyId && a.Deleted == false && a.ApplicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted
+                        join cust in context.tbl_Customer on ab.CustomerId equals cust.CustomerId
+                        where ab.CompanyId == companyId && a.Deleted == false && ab.ApplicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted
                         select new CamProcessedLoanViewModel
                         {
-                            approvalStatusId = a.ApprovalStatusId,
-                            loanApplicationId = a.LoanApplicationId,
-                            applicationReferenceNumber = a.ApplicationReferenceNumber,
-                            casaAccountId = a.CasaAccountId,
-                            customerId = a.CustomerId ?? 0,
+                            approvalStatusId = ab.ApprovalStatusId,
+                            loanApplicationId = ab.LoanApplicationId,
+                            applicationReferenceNumber = ab.ApplicationReferenceNumber,
+                            casaAccountId = ab.CasaAccountId,
+                            customerId = ab.CustomerId ?? 0,
                             customerCode = cust.CustomerCode,
-                            customerName = a.CustomerId.HasValue ? a.tbl_Customer.FirstName + " " + a.tbl_Customer.MiddleName + " " + a.tbl_Customer.LastName : "",
+                            customerName = ab.CustomerId.HasValue ? ab.tbl_Customer.FirstName + " " + ab.tbl_Customer.MiddleName + " " + ab.tbl_Customer.LastName : "",
 
-                            customerGroupId = a.CustomerGroupId,
-                            customerGroupName = a.CustomerGroupId.HasValue ? a.tbl_Customer_Group.GroupName : "",
-                            customerGroupCode = a.tbl_Customer_Group.GroupCode,
-                            customerSensitivityLevelId = a.tbl_Customer.CustomerSensitivityLevelId,
+                            customerGroupId = ab.CustomerGroupId,
+                            customerGroupName = ab.CustomerGroupId.HasValue ? ab.tbl_Customer_Group.GroupName : "",
+                            customerGroupCode = ab.tbl_Customer_Group.GroupCode,
+                            customerSensitivityLevelId = ab.tbl_Customer.CustomerSensitivityLevelId,
 
-                            loanInformation = a.LoanInformation,
-                            companyId = a.CompanyId,
-                            branchId = a.BranchId,
-                            branchName = a.tbl_Branch.BranchName,
+                            loanInformation = ab.LoanInformation,
+                            companyId = ab.CompanyId,
+                            branchId = ab.BranchId,
+                            branchName = ab.tbl_Branch.BranchName,
                             subSectorId = a.SubSectorId,
 
                             //tenor = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().Tenor,
                             //TODO:                       //tenor = a.Tenor,
-                            relationshipOfficerId = a.RelationshipOfficerId,
-                            relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-                            relationshipManagerId = a.RelationshipManagerId,
-                            relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
+                            relationshipOfficerId = ab.RelationshipOfficerId,
+                            relationshipOfficerName = ab.tbl_Staff.FirstName + " " + ab.tbl_Staff.MiddleName + " " + ab.tbl_Staff.LastName,
+                            relationshipManagerId = ab.RelationshipManagerId,
+                            relationshipManagerName = ab.tbl_Staff.FirstName + " " + ab.tbl_Staff.MiddleName + " " + ab.tbl_Staff.LastName,
 
                             currencyId = a.CurrencyId,
                             currencyCode = a.tbl_Currency.CurrencyCode,
-                            loanTypeId = a.LoanTypeId,
-                            loanTypeName = a.tbl_Loan_Type.LoanTypeName,
-                            //loanStatusId = a.LoanStatusId,
-                            //loanStatusName = a.tbl_Loan_Type.AccountStatus,
+                            loanTypeId = ab.LoanTypeId,
+                            loanTypeName = ab.tbl_Loan_Type.LoanTypeName,
                             camReference = c.CAMRef,
                             appraisalMemorandumId = c.AppraisalMemorandumId,
-                            //loanDetails = c.LoanDetails,
-                            //TODO:                     productId = (short)a.ProductId,
-                            //TODO:                     productTypeId = a.tbl_Product.ProductTypeId,
-                            //TODO:                      productTypeName = a.tbl_Product.tbl_Product_Type.ProductTypeName,
-                            //TODO:                      productName = a.tbl_Product.ProductName,
+                            productId = (short)a.Approved_ProductId,
+                            productTypeId = a.tbl_Product.ProductTypeId,
+                            productTypeName = a.tbl_Product.tbl_Product_Type.ProductTypeName,
+                            productName = a.tbl_Product.ProductName,
 
-                            misCode = a.MISCode,
-                            teamMisCode = a.TeamMISCode,
+                            misCode = ab.MISCode,
+                            teamMisCode = ab.TeamMISCode,
 
                             //interestRate = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().InterestRate,
-                            interestRate = a.InterestRate,
-                            isRealatedParty = a.IsRelatedParty,
-                            isPoliticallyExposed = a.IsPoliticallyExposed,
-                            submittedForAppraisal = a.SubmittedForAppraisal,
+                            interestRate = ab.InterestRate,
+                            isRealatedParty = ab.IsRelatedParty,
+                            isPoliticallyExposed = ab.IsPoliticallyExposed,
+                            submittedForAppraisal = ab.SubmittedForAppraisal,
                             //principalAmount = c.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Where(x => x.AppraisalMemorandumId == c.AppraisalMemorandumId).OrderByDescending(x => x.AppraisalMemorandumLoanDetailId).FirstOrDefault().PrincipalAmount,
-                            //TODO:                      principalAmount = a.PrincipalAmount,
+                            approvedAmount = a.Approved_Amount,
 
-                            createdBy = a.CreatedBy,
-                            applicationDate = a.ApplicationDate,
+                            createdBy = ab.CreatedBy,
+                            applicationDate = ab.ApplicationDate,
                             dateTimeCreated = a.DateTimeCreated,
 
-                            loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId,
+                            loanPreliminaryEvaluationId = ab.LoanPreliminaryEvaluationId,
                             exchangeRate = a.ExchangeRate,
 
                         }).ToList().Where(l => !context.tbl_Loan.AsEnumerable()

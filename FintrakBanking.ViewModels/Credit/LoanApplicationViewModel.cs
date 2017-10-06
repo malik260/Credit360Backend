@@ -32,9 +32,12 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
         public DateTime applicationDate { get; set; }
-        public decimal principalAmount { get; set; }
+        public decimal applicationAmount { get; set; }
+        public decimal approvedAmount { get; set; }
+        public int applicationTenor { get; set; }
         public double interestRate { get; set; }
-        public int tenor { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime expiryDate { get; set; }
         public string customerAccount { get; set; }
         public short tenorModeId { get; set; }
         public string loanInformation { get; set; }
@@ -60,7 +63,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManagerName { get; set; }
         public string tenorModeName { get; set; }
 
-        public string amount { get { return this.principalAmount.ToString("#,#.00#"); } }
+        //public string amount { get { return this.principalAmount.ToString("#,#.00#"); } }
         public string applicantName { get { return this.customerName + "" + this.customerGroupName; } }
 
         public int? loanPreliminaryEvaluationId { get; set; }
