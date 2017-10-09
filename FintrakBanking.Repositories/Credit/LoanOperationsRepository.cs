@@ -1620,8 +1620,9 @@ namespace FintrakBanking.Repositories.Credit
                              effectiveDate = a.EffectiveDate,
                              maturityDate = a.MaturityDate,
                              bookingDate = a.BookingDate,
-                             principalAmount = a.PrincipalAmount,
-                             approvedAmount = a.ApprovedAmount,
+
+                             principalAmount = a.PrincipalAmount,                           
+
                              principalInstallmentLeft = a.PrincipalInstallmentLeft,
                              interestInstallmentLeft = a.InterestInstallmentLeft,
                              approvalStatusId = a.ApprovalStatusId,
@@ -2358,7 +2359,7 @@ namespace FintrakBanking.Repositories.Credit
                              maturityDate = a.MaturityDate,
                              bookingDate = a.BookingDate,
                              principalAmount = a.PrincipalAmount,
-                             approvedAmount = a.ApprovedAmount,
+
                              principalInstallmentLeft = a.PrincipalInstallmentLeft,
                              interestInstallmentLeft = a.InterestInstallmentLeft,
                              approvalStatusId = a.ApprovalStatusId,

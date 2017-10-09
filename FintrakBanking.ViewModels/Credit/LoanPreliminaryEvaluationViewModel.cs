@@ -17,7 +17,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string preliminaryEvaluationCode { get; set; }
         public short branchId { get; set; }
         public string branchName { get; set; }
-        public int customerId { get; set; }
+        public int? customerId { get; set; }
         public string customerName { get; set; }
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }

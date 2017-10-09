@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public short ProductId { get; set; }
 
-        public int? CompanyId { get; set; }
+        public int CompanyId { get; set; }
 
         public int ChargeFeeId { get; set; }
 

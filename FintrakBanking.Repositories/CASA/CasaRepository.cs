@@ -288,6 +288,22 @@ namespace FintrakBanking.Repositories.CASA
             return allCustomer;
         }
 
+        public IEnumerable<GroupCustomerMembersViewModel> GetGroupMembersByGroupId(int customerId, int companyId)
+        {
+            var customerGroupMapping = from b in context.tbl_CASA 
+                                       where b.CustomerId == customerId &&  b.Deleted == false && b.CompanyId == companyId
+                                       select new GroupCustomerMembersViewModel
+                                       {
+                                           customerId = b.CustomerId,                                          
+                                           customerCode = b.tbl_Customer.CustomerCode,
+                                           lastName = b.tbl_Customer.LastName,
+                                           firstName = b.tbl_Customer.FirstName,
+                                       
+                                       };
+
+            return customerGroupMapping;
+        }
+
         private IQueryable<CasaCustomerSearchViewModel> GetAllAccounts()
         {
             var data = (from casa in context.tbl_CASA

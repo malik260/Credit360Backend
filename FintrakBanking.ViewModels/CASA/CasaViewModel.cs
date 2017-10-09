@@ -17,11 +17,13 @@ namespace FintrakBanking.ViewModels.CASA
         public string productCode { get; set; }
         public string productName { get; set; }
         //public int companyId { get; set; }
+        public string accountDetail { get { return (this.productAccountNumber +"(" + this.productAccountName +")"); } }
         public short branchId { get; set; }
         public string branchCode { get; set; }
         public string branchName { get; set; }
         public bool isCurrentAccount { get; set; }
         public int tenor { get; set; }
+        public int currencyId { get; set; }
         public decimal interestRate { get; set; }
         public DateTime effectiveDate { get; set; }
         public DateTime terminalDate { get; set; }

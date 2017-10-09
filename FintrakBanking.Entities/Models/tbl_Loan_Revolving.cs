@@ -58,9 +58,6 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal OverdraftLimit { get; set; }
 
-        [Column(TypeName = "money")]
-        public decimal ApprovedAmount { get; set; }
-
         public int ApprovalStatusId { get; set; }
 
         [StringLength(50)]

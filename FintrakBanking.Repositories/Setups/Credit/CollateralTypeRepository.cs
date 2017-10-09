@@ -42,8 +42,9 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         collateralTypeName = m.CollateralTypeName,
                         chargeGLAccountId = m.ChargeGLAccountId,
                         requireInsurancePolicy = m.RequireInsurancePolicy,
-                        details = m.Details
-                    });
+                        details = m.Details,
+                         position = m.Position 
+                    }).OrderBy(m=> m.position );
         }
 
         public IEnumerable<CollateralTypeViewModel> GetCollateralTypes()
