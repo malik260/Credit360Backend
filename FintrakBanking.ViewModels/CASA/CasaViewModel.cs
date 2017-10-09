@@ -12,6 +12,7 @@ namespace FintrakBanking.ViewModels.CASA
         public string productAccountName { get; set; }
         public int customerId { get; set; }
         public string customerCode { get; set; }
+        public string customerName { get; set; }
         public int productId { get; set; }
         public string productCode { get; set; }
         public string productName { get; set; }
@@ -28,6 +29,8 @@ namespace FintrakBanking.ViewModels.CASA
         public DateTime actionDate { get; set; }
         public short accountStatusId { get; set; }
         public int operationId { get; set; }
+        public int currencyId { get; set; }
+        public string currency { get; set; }
         public decimal availableBalance { get; set; }
         public decimal ledgerBalance { get; set; }
         public int relationshipManagerId { get; set; }
