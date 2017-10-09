@@ -1,23 +1,24 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.CASA;
+using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using FintrakBanking.ViewModels.CASA;
-using FintrakBanking.Common.Enum;
-using System.ComponentModel.Composition;
-using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.Interfaces.CreditLimitValidations;
 
 namespace FintrakBanking.Repositories.CASA
-{ 
+{
     public class CasaRepository : ICasaRepository
     {
         private FinTrakBankingContext context;
+        private ICreditLimitValidationsRepository creditLimitRepo;
 
-        public CasaRepository(FinTrakBankingContext _context)
+        public CasaRepository(FinTrakBankingContext _context, ICreditLimitValidationsRepository _creditLimitRepo)
         {
             this.context = _context;
+            this.creditLimitRepo = _creditLimitRepo;
         }
 
         private bool SaveAll()
@@ -27,9 +28,9 @@ namespace FintrakBanking.Repositories.CASA
 
         public int GetCasaAccountId(string accountNumber, int companyId)
         {
-          var  CasaAccount =   ( context.tbl_CASA.Where(d => d.OldProductAccountNumber3 == accountNumber ||
-          d.OldProductAccountNumber2 == accountNumber || d.OldProductAccountNumber1 == accountNumber ||
-          d.ProductAccountNumber == accountNumber && d.CompanyId == companyId)).AsQueryable().SingleOrDefault();
+            var CasaAccount = (context.tbl_CASA.Where(d => d.OldProductAccountNumber3 == accountNumber ||
+        d.OldProductAccountNumber2 == accountNumber || d.OldProductAccountNumber1 == accountNumber ||
+        d.ProductAccountNumber == accountNumber && d.CompanyId == companyId)).AsQueryable().SingleOrDefault();
             return CasaAccount.CasaAccountId;
         }
 
@@ -136,20 +137,21 @@ namespace FintrakBanking.Repositories.CASA
                         deleted = data.Deleted,
                         deletedBy = data.DeletedBy,
                         dateTimeDeleted = data.DateTimeDeleted
-
                     }).FirstOrDefault();
         }
+
         public IEnumerable<dynamic> GetAllCustomerAccountByCustomerId(int customerId, int companyId)
         {
-            var  data=  (from a in context.tbl_CASA
-                    where a.CustomerId == customerId && a.CompanyId == companyId //orderby account.AccountCode ascending, account.AccountName ascending
-                         select new 
+            var data = (from a in context.tbl_CASA
+                        where a.CustomerId == customerId && a.CompanyId == companyId //orderby account.AccountCode ascending, account.AccountName ascending
+                        select new
 
-                    {   casaAccountId = a.CasaAccountId,
-                        productAccountNumber = a.ProductAccountNumber + "(" + a.ProductAccountName + ")",
-                        productAccountName = a.ProductAccountName,
-                        availableBalance =a.AvailableBalance
-                    });
+                        {
+                            casaAccountId = a.CasaAccountId,
+                            productAccountNumber = a.ProductAccountNumber + "(" + a.ProductAccountName + ")",
+                            productAccountName = a.ProductAccountName,
+                            availableBalance = a.AvailableBalance
+                        });
             return data;
         }
 
@@ -208,7 +210,7 @@ namespace FintrakBanking.Repositories.CASA
                         //dateTimeUpdated = data.DateTimeUpdated,
                         //deleted = data.Deleted,
                         //deletedBy = data.DeletedBy,
-                        //dateTimeDeleted = data.DateTimeDeleted                        
+                        //dateTimeDeleted = data.DateTimeDeleted
                     });
         }
 
@@ -268,7 +270,6 @@ namespace FintrakBanking.Repositories.CASA
                                   relationshipOfficerId = casa.RelationshipOfficerId ?? 0
                               };
 
-
                 if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
                 {
                     allCustomer = allCustomer
@@ -278,8 +279,6 @@ namespace FintrakBanking.Repositories.CASA
                         || x.accountNumber.Contains(searchQuery));
                 }
             }
-
-
 
             return allCustomer;
         }
@@ -319,7 +318,9 @@ namespace FintrakBanking.Repositories.CASA
                             customerGroupName = custGroup.tbl_Customer_Group.GroupName ?? "None",
                             taxIdentificationNumber = cust.TaxNumber,
                             registrationNumber = cust.tbl_Customer_CompanyInfomation.FirstOrDefault(x => x.CustomerId == cust.CustomerId).RegistrationNumber,
-                            isBlackList = context.tbl_Customer_Blacklist.Where(x => x.CustomerId == cust.CustomerId).Any(),
+                            isBlackList = context.tbl_Customer_Blacklist.Any(x => x.CustomerId == cust.CustomerId),
+                            isOnWatchList = context.tbl_Loan_PrudentialGuideline.Any(x => x.tbl_Loan.Any(l => l.CustomerId == cust.CustomerId) && x.PrudentialGuidelineStatusId == (int)LoanPrudentialStatusEnum.WatchList),
+                            isCamsol = context.tbl_Loan_Camsol.Any(x => context.tbl_Loan.Any(l => l.TermLoanId == x.LoanId && l.CustomerId == cust.CustomerId)),
                             customerTypeId = cust.CustomerTypeId,
                             customerTypeName = cust.tbl_Customer_Type.Name,
                             customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == casa.CustomerId).Select(b => new CustomerBvnViewModels()
@@ -353,11 +354,40 @@ namespace FintrakBanking.Repositories.CASA
                                 firstname = s.Firstname,
                                 surname = s.Surname
                             }).ToList(),
+                            customerClients = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == casa.CustomerId &&
+                            cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
+                            .Select(cs => new CustomerClientOrSupplierViewModels()
+                            {
+                                client_SupplierId = cs.Client_SupplierId,
+                                clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                                firstName = cs.FirstName,
+                                middleName = cs.MiddleName,
+                                lastName = cs.LastName,
+                                client_SupplierAddress = cs.Address,
+                                client_SupplierPhoneNumber = cs.PhoneNumber,
+                                client_SupplierEmail = cs.EmailAddress,
+                                client_SupplierTypeId = cs.Client_SupplierTypeId,
+                                client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                            }).ToList(),
+                            customerSuppliers = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == casa.CustomerId &&
+                            cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                             .Select(cs => new CustomerSupplierViewModels()
+                             {
+                                 client_SupplierId = cs.Client_SupplierId,
+                                 clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                                 firstName = cs.FirstName,
+                                 middleName = cs.MiddleName,
+                                 lastName = cs.LastName,
+                                 client_SupplierAddress = cs.Address,
+                                 client_SupplierPhoneNumber = cs.PhoneNumber,
+                                 client_SupplierEmail = cs.EmailAddress,
+                                 client_SupplierTypeId = cs.Client_SupplierTypeId,
+                                 client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                             }).ToList(),
                         });
 
             return data;
         }
-
 
         public IQueryable<CasaCustomerSearchViewModel> SearchForCustomerAccount(int companyId, string searchQuery)
         {
@@ -378,21 +408,15 @@ namespace FintrakBanking.Repositories.CASA
                 );
             }
 
+            //foreach (var item in allCustomers)
+            //{
+            //    item.isBlackList = creditLimitRepo.ValidateBlackList(item.customerId) > 0;
+            //    item.isOnWatchList = creditLimitRepo.ValidateWatchList(item.customerId) > 0;
+            //    item.isCamsol = creditLimitRepo.ValidateCamsol(item.customerId) > 0;
+            //}
+
             return allCustomers;
         }
 
-        private bool validateBlacklist(int customerId)
-        {
-            var check = context.tbl_Customer_BVN.Where(x => x.CustomerId == customerId);
-
-            if (check.Any())
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-       
     }
 }

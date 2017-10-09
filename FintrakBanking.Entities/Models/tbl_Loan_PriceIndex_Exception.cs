@@ -17,7 +17,5 @@ namespace FintrakBanking.Entities.Models
         public int CreatedBy { get; set; }
 
         public DateTime DateTimeCreated { get; set; }
-
-        public virtual tbl_Loan tbl_Loan { get; set; }
     }
 }

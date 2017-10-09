@@ -37,7 +37,7 @@ namespace FintrakBanking.ViewModels.CASA
         public decimal overdraftAmount { get; set; }
         public decimal overdraftInterestRate { get; set; }
         public DateTime overdraftExpiryDate { get; set; }
-        public bool ?  hasOverdraft { get; set; }
+        public bool? hasOverdraft { get; set; }
         public decimal lienAmount { get; set; }
         public bool hasLien { get; set; }
         public short postNoStatusId { get; set; }
@@ -45,19 +45,21 @@ namespace FintrakBanking.ViewModels.CASA
         public string oldProductAccountNumber2 { get; set; }
         public string oldProductAccountNumber3 { get; set; }
         public string refreshBatchId { get; set; }
-        public DateTime ? lastRefreshDatetime { get; set; }
-        public short ? aprovalStatusId { get; set; }
+        public DateTime? lastRefreshDatetime { get; set; }
+        public short? aprovalStatusId { get; set; }
     }
 
-    public class CasaCustomerSearchViewModel: CasaViewModel
+    public class CasaCustomerSearchViewModel : CasaViewModel
     {
         public CasaCustomerSearchViewModel()
         {
             customerBvnInformation = new List<CustomerBvnViewModels>();
             customerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
             customerCompanyShareholders = new List<CustomerCompanyShareholdersViewModels>();
+            customerClients = new List<CustomerClientOrSupplierViewModels>();
+            customerSuppliers = new List<CustomerSupplierViewModels>();
         }
-        
+
         public int productClassId { get; set; }
         public string productClassName { get; set; }
         public int customerSectorId { get; set; }
@@ -79,5 +81,8 @@ namespace FintrakBanking.ViewModels.CASA
         public int? customerGroupId { get; set; }
         public bool isCamsol { get; set; }
         public string customerGroupName { get; set; }
+        public List<CustomerClientOrSupplierViewModels> customerClients { get; set; }
+        public List<CustomerSupplierViewModels> customerSuppliers { get; set; }
+        public bool isOnWatchList { get; set; }
     }
 }

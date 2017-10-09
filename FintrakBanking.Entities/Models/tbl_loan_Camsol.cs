@@ -26,7 +26,5 @@ namespace FintrakBanking.Entities.Models
         public string Type { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
-
-        public virtual tbl_Loan tbl_Loan { get; set; }
     }
 }

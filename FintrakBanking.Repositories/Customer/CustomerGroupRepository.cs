@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FintrakBanking.Interfaces.CreditLimitValidations;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -21,18 +22,21 @@ namespace FintrakBanking.Repositories.Customer
         private IAuditTrailRepository auditTrail;
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
+        private ICreditLimitValidationsRepository creditLimitRepo;
 
         public CustomerGroupRepository(FinTrakBankingContext _context,
                                         IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail,
                                         IWorkflow _workFlow,
-                                        IApprovalLevelStaffRepository _level)
+                                        IApprovalLevelStaffRepository _level,
+            ICreditLimitValidationsRepository _creditLimitRepo)
         {
             this.context = _context;
             this.genSetup = _genSetup;
             auditTrail = _auditTrail;
             workFlow = _workFlow;
             level = _level;
+            creditLimitRepo = _creditLimitRepo;
         }
 
         private bool SaveAll()
@@ -972,7 +976,11 @@ namespace FintrakBanking.Repositories.Customer
                                 accountHolder = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
                                 companyId = s.tbl_Customer.CompanyId,
                                 branchId = s.tbl_Customer.BranchId,
-                                isBlackListed = context.tbl_Customer_Blacklist.Where(x => x.CustomerId == s.CustomerId).Any(),
+                                isBlackList = context.tbl_Customer_Blacklist.Any(x => x.CustomerId == s.CustomerId),
+                                isOnWatchList = context.tbl_Loan_PrudentialGuideline.Any(x => x.tbl_Loan.Any(l => l.CustomerId == s.CustomerId) && x.PrudentialGuidelineStatusId == (int)LoanPrudentialStatusEnum.WatchList),
+                                isCamsol = context.tbl_Loan_Camsol.Any(x => context.tbl_Loan.Any(l => l.TermLoanId == x.LoanId && l.CustomerId == s.CustomerId)),
+                                taxIdentificationNumber = s.tbl_Customer.TaxNumber,
+                                registrationNumber = s.tbl_Customer.tbl_Customer_CompanyInfomation.FirstOrDefault(x => x.CustomerId == s.CustomerId).RegistrationNumber,
                                 customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == s.CustomerId).Select(b => new CustomerBvnViewModels()
                                 {
                                     bankVerificationNumber = b.BankVerificationNumber,
@@ -1001,7 +1009,37 @@ namespace FintrakBanking.Repositories.Customer
                                     customerId = x.CustomerId,
                                     firstname = x.Firstname,
                                     surname = x.Surname
-                                }).ToList()
+                                }).ToList(),
+                                customerClients = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == s.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
+                                    .Select(cs => new CustomerClientOrSupplierViewModels()
+                                    {
+                                        client_SupplierId = cs.Client_SupplierId,
+                                        clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                                        firstName = cs.FirstName,
+                                        middleName = cs.MiddleName,
+                                        lastName = cs.LastName,
+                                        client_SupplierAddress = cs.Address,
+                                        client_SupplierPhoneNumber = cs.PhoneNumber,
+                                        client_SupplierEmail = cs.EmailAddress,
+                                        client_SupplierTypeId = cs.Client_SupplierTypeId,
+                                        client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                                    }).ToList(),
+                                customerSuppliers = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == s.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                                    .Select(cs => new CustomerSupplierViewModels()
+                                    {
+                                        client_SupplierId = cs.Client_SupplierId,
+                                        clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                                        firstName = cs.FirstName,
+                                        middleName = cs.MiddleName,
+                                        lastName = cs.LastName,
+                                        client_SupplierAddress = cs.Address,
+                                        client_SupplierPhoneNumber = cs.PhoneNumber,
+                                        client_SupplierEmail = cs.EmailAddress,
+                                        client_SupplierTypeId = cs.Client_SupplierTypeId,
+                                        client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                                    }).ToList(),
+                                //relationshipOfficerId = context.tbl_Staff.FirstOrDefault(),
+                                //relationshipManagerId = ,
                             }).ToList(),
                         });
 
@@ -1022,9 +1060,19 @@ namespace FintrakBanking.Repositories.Customer
                 allGroups = GellAllCustomerGroupMappings()
                     //.Where(c => c.companyId == companyId)
                     .Where(x => x.customerGroupName.Contains(searchQuery)
-                    || x.customerGroupCode.Contains(searchQuery)
-                );
+                                || x.customerGroupCode.Contains(searchQuery)
+                    );
             }
+
+            //foreach (var item in allGroups)
+            //{
+            //    foreach (var grpMap in item.customerGroupMappings)
+            //    {
+            //        grpMap.isBlackList = creditLimitRepo.ValidateBlackList(grpMap.customerId) > 0;
+            //        grpMap.isOnWatchList = creditLimitRepo.ValidateWatchList(grpMap.customerId) > 0;
+            //        grpMap.isCamsol = creditLimitRepo.ValidateCamsol(grpMap.customerId) > 0;
+            //    }
+            //}
 
             return allGroups;
         }

@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         {
             var watchlist = (from a in context.tbl_Loan
                              join b in context.tbl_Loan_PrudentialGuideline on a.ExternalPrudentialGuidelineStatusId equals b.PrudentialGuidelineStatusId
-                             where a.CustomerId == customerId  //loan.customerId
+                             where a.CustomerId == customerId && b.PrudentialGuidelineStatusId == (int)LoanPrudentialStatusEnum.WatchList
                              select a);
             int watchlistresults = watchlist.Count();
 
@@ -48,7 +48,8 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public int ValidateCamsol(int customerId)
         {
             var camsol = (from a in context.tbl_Loan_Camsol
-                          where a.tbl_Loan.CustomerId == customerId
+                          join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
+                          where b.CustomerId == customerId
                           select a);
             int camsolresults = camsol.Count();
 
@@ -267,7 +268,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var outstandingbal = from a in context.tbl_Loan
                                  join c in context.tbl_Sub_Sector on a.SubSectorId equals c.SubSectorId
                                  where  a.SubSectorId == c.SubSectorId && a.LoanStatusId == (short) LoanStatusEnum.Active
-                                 let sumPrincipalAmount = context.tbl_Loan.Where(a => a.tbl_Sub_Sector.SectorId == sectorId).Sum(a => a.OutstandingPrincipal)
+                                 let sumPrincipalAmount = context.tbl_Loan.Where(x => x.tbl_Sub_Sector.SectorId == sectorId).Sum(x => x.OutstandingPrincipal)
                                  select sumPrincipalAmount;
 
             var limitAmount = from a in context.tbl_Limit_Detail
