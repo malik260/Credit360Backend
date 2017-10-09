@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Customer;
+﻿using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.Finance;
 using System;
 using System.Collections.Generic;
@@ -287,14 +288,21 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string loanDetails { get; set; }
         public string camReference { get; set; }
+        public List<CasaViewModel> customerAccounts { get; set; }
         public int appraisalMemorandumId { get; set; }
         public string customerCode { get; set; }
         public int casaAccountId { get; set; }
         public string loanStatusName { get; set; }
+        public string sectorName { get; set; }
+        public string subSectorName { get; set; }
+        public string sectorSubSectorName { get {return (this.sectorName + "/" + this.subSectorName); } } 
         public short productTypeId { get; set; }
         public string productTypeName { get; set; }
         public int customerSensitivityLevelId { get; set; }
         public string camDocumentation { get; set; }
+        public decimal groupApprovedAmount { get; set; }
+        public int approvedTenor { get; set; }
+        public decimal ? customerAvailableAmount { get; set; }
         public short applicationStatusId { get; set; }
     }
 

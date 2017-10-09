@@ -24,23 +24,23 @@ namespace FintrakBanking.Entities.Models
 
         public int CustomerId { get; set; }
 
-        public short Proposed_ProductId { get; set; }
+        public short ProposedProductId { get; set; }
 
-        public int Proposed_Tenor { get; set; }
+        public int ProposedTenor { get; set; }
 
-        public double Proposed_InterestRate { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal Proposed_Amount { get; set; }
-
-        public short Approved_ProductId { get; set; }
-
-        public int Approved_Tenor { get; set; }
-
-        public double Approved_InterestRate { get; set; }
+        public double ProposedInterestRate { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal Approved_Amount { get; set; }
+        public decimal ProposedAmount { get; set; }
+
+        public short ApprovedProductId { get; set; }
+
+        public int ApprovedTenor { get; set; }
+
+        public double ApprovedInterestRate { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal ApprovedAmount { get; set; }
 
         public short CurrencyId { get; set; }
 

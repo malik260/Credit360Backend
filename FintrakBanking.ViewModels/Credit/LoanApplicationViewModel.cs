@@ -14,6 +14,7 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
 
@@ -64,7 +65,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string tenorModeName { get; set; }
 
         //public string amount { get { return this.principalAmount.ToString("#,#.00#"); } }
-        public string applicantName { get { return this.customerName + "" + this.customerGroupName; } }
+        public string applicantName { get { return this.customerName + "(" + this.customerGroupName + ")"; } }
 
         public int? loanPreliminaryEvaluationId { get; set; }
         public double exchangeRate { get; set; }

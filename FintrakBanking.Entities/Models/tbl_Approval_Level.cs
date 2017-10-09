@@ -27,7 +27,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(150)]
         public string LevelName { get; set; }
 
-        public int? GroupId { get; set; }
+        public int GroupId { get; set; }
 
         public int Position { get; set; }
 

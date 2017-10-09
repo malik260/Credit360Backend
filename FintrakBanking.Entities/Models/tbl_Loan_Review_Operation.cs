@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         public int OperationTypeId { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime ProposedEffectiveDate { get; set; }
+        public DateTime EffectiveDate { get; set; }
 
         [Required]
         public string ReviewDetails { get; set; }
@@ -48,15 +48,6 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "money")]
         public decimal? Fee_Charges { get; set; }
-
-        [StringLength(50)]
-        public string TerminationAndReBook { get; set; }
-
-        [StringLength(50)]
-        public string CompleteWriteOff { get; set; }
-
-        [StringLength(50)]
-        public string CancelUndisbursedLoan { get; set; }
 
         public int ApprovalStatusId { get; set; }
 

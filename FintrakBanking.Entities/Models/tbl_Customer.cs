@@ -108,7 +108,11 @@ namespace FintrakBanking.Entities.Models
 
         public int? RelationshipOfficerId { get; set; }
 
-        public bool PoliticallyExposedPerson { get; set; }
+        public bool IsPoliticallyExposed { get; set; }
+
+        public bool IsInvestmentGrade { get; set; }
+
+        public bool IsRealatedParty { get; set; }
 
         [StringLength(200)]
         public string MISCode { get; set; }
