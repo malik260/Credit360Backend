@@ -268,9 +268,9 @@ namespace FintrakBanking.Repositories.Credit
                 InterestRate = entity.interestRate,
                 EffectiveDate = entity.effectiveDate,
                 MaturityDate = entity.maturityDate,
-                BookingDate = entity.bookingDate,
+                BookingDate = entity.bookingDate, 
                 OverdraftLimit = entity.overdraftLimit,
-                ApprovedAmount = entity.approvedAmount,
+               // ApprovedAmount = entity.approvedAmount,
                 ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
                 LoanStatusId = entity.loanStatusId,
                 IsDisbursed = false,
@@ -370,8 +370,8 @@ namespace FintrakBanking.Repositories.Credit
                 TeamMISCode = entity.teamMisCode,
                 EffectiveDate = entity.effectiveDate,
                 MaturityDate = entity.maturityDate,
-                BookingDate = entity.bookingDate,
-                ApprovedAmount = entity.approvedAmount,
+                BookingDate = entity.bookingDate, 
+              //  ApprovedAmount = entity.approvedAmount,
                 ContingentAmount = entity.contingentAmount,
                 ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
                 LoanStatusId = entity.loanStatusId,
@@ -500,7 +500,7 @@ namespace FintrakBanking.Repositories.Credit
                 InterestInstallmentLeft = 0,
 
                 ScheduleTypeId = entity.loanScheduleInput.scheduleMethodId,
-                ApprovedAmount = Convert.ToDecimal(entity.loanScheduleInput.principalAmount),
+              //  ApprovedAmount = Convert.ToDecimal(entity.loanScheduleInput.principalAmount),
                 OperationId = (int)OperationsEnum.TermLoanBooking,
 
                 EquityContribution = 0,
@@ -836,7 +836,7 @@ namespace FintrakBanking.Repositories.Credit
                             disbursedBy = ln.DisbursedBy,
                             disburserComment = ln.DisburserComment,
                             disburseDate = ln.DisburseDate,
-                            approvedAmount = ln.ApprovedAmount,
+                            //approvedAmount = ln.ApprovedAmount,
                             customerGroupId = ln.CustomerGroupId,
                             operationId = ln.OperationId,
                             loanTypeId = ln.LoanTypeId,
@@ -1429,7 +1429,7 @@ namespace FintrakBanking.Repositories.Credit
                             disbursedBy = l.DisbursedBy,
                             disburserComment = l.DisburserComment,
                             disburseDate = l.DisburseDate,
-                            approvedAmount = l.ApprovedAmount,
+                           // approvedAmount = l.ApprovedAmount,
                             //creditAppraisalCompleted = l.CreditAppraisalCompleted,
                             operationId = l.OperationId,
                             //hasLien = l.HasLien,
@@ -1544,7 +1544,7 @@ namespace FintrakBanking.Repositories.Credit
                         disbursedBy = data.DisbursedBy,
                         disburserComment = data.DisburserComment,
                         disburseDate = data.DisburseDate,
-                        approvedAmount = data.ApprovedAmount,
+                        //approvedAmount = data.ApprovedAmount,
                         operationId = data.OperationId,
                         customerGroupId = data.CustomerGroupId,
                         loanTypeId = data.LoanTypeId,
@@ -1607,7 +1607,7 @@ namespace FintrakBanking.Repositories.Credit
                         disbursedBy = data.DisbursedBy,
                         disburserComment = data.DisburserComment,
                         disburseDate = data.DisburseDate,
-                        approvedAmount = data.ApprovedAmount,
+                        //approvedAmount = data.ApprovedAmount,
                         operationId = data.OperationId,
                         customerGroupId = data.CustomerGroupId,
                         loanTypeId = data.LoanTypeId,
@@ -2153,9 +2153,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
                             relationshipManagerId = a.RelationshipManagerId,
                             relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-
-                            currencyId = a.CurrencyId,
-                            currencyCode = a.tbl_Currency.CurrencyCode,
+ 
                             loanTypeId = a.LoanTypeId,
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
                             //loanStatusId = a.LoanStatusId,
@@ -2183,8 +2181,8 @@ namespace FintrakBanking.Repositories.Credit
                             applicationDate = a.ApplicationDate,
                             dateTimeCreated = a.DateTimeCreated,
 
-                            loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId,
-                            exchangeRate = a.ExchangeRate,
+                            loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId
+                            
 
                         }).ToList().Where(l => !context.tbl_Loan.AsEnumerable()
 
@@ -2276,7 +2274,7 @@ namespace FintrakBanking.Repositories.Credit
                             select new CurrentCustomerExposure
                             {
                                 facilityType = a.tbl_Product.ProductName,
-                                existingLimit = a.ApprovedAmount,
+                                existingLimit = a.PrincipalAmount,
                                 proposedLimit = a.OutstandingInterest,
                                 PastDueObligationsInterest = ((System.Decimal?)(
                               a.AllowForceDebitRepayment == false ? (System.Decimal?)

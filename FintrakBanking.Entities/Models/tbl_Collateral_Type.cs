@@ -38,6 +38,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? ChargeGLAccountId { get; set; }
 
+        public int Position { get; set; }
+
         public int CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
@@ -49,8 +51,6 @@ namespace FintrakBanking.Entities.Models
         public bool Deleted { get; set; }
 
         public int? DeletedBy { get; set; }
-
-        public int Position { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
 

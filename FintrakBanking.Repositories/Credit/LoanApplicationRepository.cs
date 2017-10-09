@@ -263,7 +263,7 @@ namespace FintrakBanking.Repositories.Credit
                 RelationshipOfficerId = loan.relationshipOfficerId,
                 RelationshipManagerId = loan.relationshipManagerId,
                 MISCode = loan.misCode,
-                CurrencyId = loan.currencyId,
+              //  CurrencyId = loan.currencyId,
                 SubSectorId = (short)loan.subSectorId,
                 TeamMISCode = loan.teamMisCode,
                 InterestRate = loan.interestRate,
@@ -278,7 +278,7 @@ namespace FintrakBanking.Repositories.Credit
                 SystemDateTime = DateTime.Now,
                 ApplicationStatusId = (short)LoanApplicationStatusEnum.ApplicationCompleted,
 
-                ExchangeRate = loan.exchangeRate,
+               // ExchangeRate = loan.exchangeRate,
                 LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,
                 CustomerId = loan.customerId,
                 SubmittedForAppraisal = loan.submittedForAppraisal
@@ -478,7 +478,7 @@ namespace FintrakBanking.Repositories.Credit
                             //TODO refactor                      productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                             customerGroupId = x.a.CustomerGroupId,
                             loanTypeId = x.a.LoanTypeId,
-                            currencyId = x.a.CurrencyId,
+                         //   currencyId = x.a.CurrencyId,
                             //loanStatusId = x.a.LoanStatusId,
                             relationshipOfficerId = x.a.RelationshipOfficerId,
                             relationshipManagerId = x.a.RelationshipManagerId,
@@ -556,7 +556,7 @@ namespace FintrakBanking.Repositories.Credit
                 //TODO refactor          productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                 customerGroupId = x.a.CustomerGroupId,
                 loanTypeId = x.a.LoanTypeId,
-                currencyId = x.a.CurrencyId,
+                //currencyId = x.a.CurrencyId,
                 //loanStatusId = x.a.LoanStatusId,
                 relationshipOfficerId = x.a.RelationshipOfficerId,
                 relationshipManagerId = x.a.RelationshipManagerId,
@@ -649,8 +649,8 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerName =
                                 a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
 
-                            currencyId = a.CurrencyId,
-                            currencyCode = a.tbl_Currency.CurrencyCode,
+                            //currencyId = a.CurrencyId,
+                            //currencyCode = a.tbl_Currency.CurrencyCode,
                             loanTypeId = a.LoanTypeId,
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
                             //loanStatusId = a.LoanStatusId,
@@ -678,7 +678,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = a.DateTimeCreated,
 
                             loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId,
-                            exchangeRate = a.ExchangeRate,
+                            //exchangeRate = a.ExchangeRate,
                             applicationStatusId = a.ApplicationStatusId
                         });
 
