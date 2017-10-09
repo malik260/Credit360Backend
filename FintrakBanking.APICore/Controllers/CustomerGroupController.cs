@@ -334,6 +334,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+        [HttpGet]
+        [Route("customer-group-members/{groupid}")]
+        public HttpResponseMessage GetGroupMembersByGroupId(int groupid)
+        {
+            try
+            {
+                var data = repo.GetGroupMembersByGroupId(groupid, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
 
         [HttpGet]
         [Route("customer-group-mapping/{groupMapId}")]

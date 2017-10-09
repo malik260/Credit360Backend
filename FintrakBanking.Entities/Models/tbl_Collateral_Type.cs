@@ -50,6 +50,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? DeletedBy { get; set; }
 
+        public int Position { get; set; }
+
         public DateTime? DateTimeDeleted { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

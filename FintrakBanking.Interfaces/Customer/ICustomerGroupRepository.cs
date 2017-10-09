@@ -42,6 +42,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool UpdateCustomerGroupMappingForApproval(int groupMapId, CustomerGroupMappingViewModel entity);
         bool DeleteCustomerGroupMapping(int groupMapId, UserInfo user);
 
+        IEnumerable<GroupCustomerMembersViewModel> GetGroupMembersByGroupId(int customerGroupId, int companyId);
         IQueryable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery);
         #endregion
     }

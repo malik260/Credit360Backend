@@ -689,6 +689,22 @@ namespace FintrakBanking.Repositories.Customer
             return customerGroupMapping;
         }
 
+
+        public IEnumerable<GroupCustomerMembersViewModel> GetGroupMembersByGroupId(int customerGroupId, int companyId)
+        {
+            var customerGroupMapping = from a in context.tbl_Customer_Group_Mapping join b in context.tbl_CASA on a.CustomerId equals b.CustomerId
+                                       where a.CustomerGroupId == customerGroupId && a.Deleted == false && b.CompanyId == companyId
+                                       select new GroupCustomerMembersViewModel
+                                       {                                              
+                                           customerId = b.CustomerId,                                          
+                                           customerCode = b.tbl_Customer.CustomerCode,
+                                           lastName = b.tbl_Customer.LastName,  
+                                           firstName =  b.tbl_Customer.FirstName                                        
+                                       };
+
+            return customerGroupMapping;
+        }
+
         public bool DeleteCustomerGroupMaping(int groupMapId, UserInfo user)
         {
             var groupMap = context.tbl_Customer_Group_Mapping.Find(groupMapId);
