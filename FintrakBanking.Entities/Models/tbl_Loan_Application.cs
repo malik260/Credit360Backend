@@ -13,13 +13,11 @@ namespace FintrakBanking.Entities.Models
         public tbl_Loan_Application()
         {
             tbl_Credit_Appraisal_Memorandum = new HashSet<tbl_Credit_Appraisal_Memorandum>();
-            tbl_Loan = new HashSet<tbl_Loan>();
             tbl_Loan_Condition_Precedent = new HashSet<tbl_Loan_Condition_Precedent>();
+            tbl_Loan_Application_Detail = new HashSet<tbl_Loan_Application_Detail>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Loan_Collateral_Mapping = new HashSet<tbl_Loan_Collateral_Mapping>();
-            tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
             tbl_Loan_Application_Collateral = new HashSet<tbl_Loan_Application_Collateral>();
-            tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
             tbl_Risk_Assessment = new HashSet<tbl_Risk_Assessment>();
         }
 
@@ -38,15 +36,9 @@ namespace FintrakBanking.Entities.Models
 
         public short BranchId { get; set; }
 
-        public short CurrencyId { get; set; }
-
-        public short ProductId { get; set; }
-
         public short SubSectorId { get; set; }
 
         public int CasaAccountId { get; set; }
-
-        public double ExchangeRate { get; set; }
 
         public int? CustomerGroupId { get; set; }
 
@@ -59,12 +51,23 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime ApplicationDate { get; set; }
 
-        [Column(TypeName = "money")]
-        public decimal PrincipalAmount { get; set; }
-
         public double InterestRate { get; set; }
 
-        public int Tenor { get; set; }
+        public int ApplicationTenor { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? EffectiveDate { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? ExpiryDate { get; set; }
+
+        public int? OperationId { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal ApplicationAmount { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? ApprovedAmount { get; set; }
 
         [Required]
         public string LoanInformation { get; set; }
@@ -79,7 +82,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsInvestmentGrade { get; set; }
 
-        public bool IsRealatedParty { get; set; }
+        public bool IsRelatedParty { get; set; }
 
         public bool IsPoliticallyExposed { get; set; }
 
@@ -115,13 +118,11 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Company tbl_Company { get; set; }
 
-        public virtual tbl_Currency tbl_Currency { get; set; }
-
         public virtual tbl_Customer tbl_Customer { get; set; }
 
         public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
 
-        public virtual tbl_Product tbl_Product { get; set; }
+        public virtual tbl_Operations tbl_Operations { get; set; }
 
         public virtual tbl_Staff tbl_Staff { get; set; }
 
@@ -133,10 +134,10 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Credit_Appraisal_Memorandum> tbl_Credit_Appraisal_Memorandum { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+        public virtual ICollection<tbl_Loan_Condition_Precedent> tbl_Loan_Condition_Precedent { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Condition_Precedent> tbl_Loan_Condition_Precedent { get; set; }
+        public virtual ICollection<tbl_Loan_Application_Detail> tbl_Loan_Application_Detail { get; set; }
 
         public virtual tbl_Loan_Application_Status tbl_Loan_Application_Status { get; set; }
 
@@ -151,13 +152,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Loan_Collateral_Mapping> tbl_Loan_Collateral_Mapping { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Application_Collateral> tbl_Loan_Application_Collateral { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Risk_Assessment> tbl_Risk_Assessment { get; set; }

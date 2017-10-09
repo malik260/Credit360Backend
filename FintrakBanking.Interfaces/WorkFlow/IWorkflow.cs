@@ -8,7 +8,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
 {
     public interface IWorkflow
     {
-        Task<bool> LogActivity();
+        bool LogActivity();
+        //Task<bool> LogActivity();
         int OperationId { set; }
         int? ProductClassId { set; }
         int? ProductId { set; }

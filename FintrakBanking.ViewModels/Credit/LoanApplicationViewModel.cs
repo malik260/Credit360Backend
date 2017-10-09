@@ -16,6 +16,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
+        public int? operationId { get; set; }
 
         public short branchId { get; set; }
         
@@ -42,7 +43,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string misCode { get; set; }
         public string teamMisCode { get; set; }
         public bool submittedForAppraisal { get; set; }
-        public bool isRealatedParty { get; set; }
+        public bool isRelatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public int approvalStatusId { get; set; }
 
@@ -73,6 +74,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public string lastComment { get; set; }
         public int approvalTrailId { get; set; }
+        public decimal? approvedAmount { get; set; }
+        public short applicationStatusId { get; set; }
     }
 
     public class CollateralLenPlacementViewModel : GeneralEntity

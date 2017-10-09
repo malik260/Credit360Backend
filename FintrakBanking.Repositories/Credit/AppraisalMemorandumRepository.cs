@@ -35,15 +35,15 @@ namespace FintrakBanking.Repositories.Credit
 
             var groupMappings = context.tbl_Approval_Group_Mapping.Where(x => 
                 x.OperationId == (int)OperationsEnum.CAM
-                && x.ProductClassId == appl.tbl_Product.ProductClassId
-                && x.ProductId == appl.ProductId
+            //&& x.ProductClassId == appl.tbl_Product.ProductClassId // ---- REFACTOR!!!
+            //&& x.ProductId == appl.ProductId // ---- REFACTOR!!!
             );
 
             if (groupMappings.Any() == false)
             {
                 groupMappings = context.tbl_Approval_Group_Mapping.Where(x => 
                     x.OperationId == (int)OperationsEnum.CAM
-                    && x.ProductClassId == appl.tbl_Product.ProductClassId
+                //&& x.ProductClassId == appl.tbl_Product.ProductClassId // ---- REFACTOR!!!
                 );
             }
 
@@ -90,7 +90,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.tbl_Loan_Application.Find(model.loanApplicationId);
 
-            int approvalLevelId = GetFirstApprovalLevelId(appl.ProductId, appl.tbl_Product.ProductClassId, model.createdBy);
+            int approvalLevelId = GetFirstApprovalLevelId(
+                //appl.ProductId, 
+                //appl.tbl_Product.ProductClassId, 
+                model.createdBy);
 
             var memo = context.tbl_Credit_Appraisal_Memorandum.Where(x => x.LoanApplicationId == model.loanApplicationId).SingleOrDefault();
 
@@ -154,19 +157,19 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        private int GetFirstApprovalLevelId(short productId, int productClassId, int staffId = 0)
+        private int GetFirstApprovalLevelId(/*short productId, int productClassId, */int staffId = 0) // ---- REFACTOR!!!
         {
             var groupMappings = context.tbl_Approval_Group_Mapping.Where(x =>
-                x.OperationId == (int)OperationsEnum.CAM
-                && x.ProductClassId == productClassId
-                && x.ProductId == productId
+                x.OperationId == (int)OperationsEnum.CAM // GIVEN ---- REFACTOR!!!
+                //&& x.ProductClassId == productClassId
+                //&& x.ProductId == productId
             );
 
             if (groupMappings.Any() == false)
             {
                 groupMappings = context.tbl_Approval_Group_Mapping.Where(x =>
-                    x.OperationId == (int)OperationsEnum.CAM
-                    && x.ProductClassId == productClassId
+                    x.OperationId == (int)OperationsEnum.CAM// GIVEN ---- REFACTOR!!!
+                                                            //&& x.ProductClassId == productClassId
                 );
             }
 
@@ -226,7 +229,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public async Task<bool> ForwardAppraisalMemorandum(ForwardViewModel model)
+        public bool ForwardAppraisalMemorandum(ForwardViewModel model)
         {
             var operationId = (int)OperationsEnum.CAM;
 
@@ -246,7 +249,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Tenor = model.tenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
             // log
-            await workflow.LogActivity();
+            workflow.LogActivity();
+            //await workflow.LogActivity();
 
             if (workflow.Saved)
             {
@@ -284,16 +288,24 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Authorised) // loan details
                     {
-                        context.tbl_Credit_Appraisal_Memorandum_Loan_Detail.Add(new tbl_Credit_Appraisal_Memorandum_Loan_Detail
+                        var items = context.tbl_Loan_Application_Detail.Where(x => x.LoanApplicationId == memo.LoanApplicationId);
+
+                        foreach (var item in items)
                         {
-                            AppraisalMemorandumId = memo == null ? 0 : memo.AppraisalMemorandumId,
-                            PrincipalAmount = model.principal,
-                            InterestRate = model.rate,
-                            Tenor = model.tenor,
-                            CreatedBy = model.createdBy,
-                            DateTimeCreated = general.GetApplicationDate(),
-                            SystemDateTime = DateTime.Now,
-                        });
+                            var approved = model.lineItems.First(x => x.loanApplicationDetailId == item.LoanApplicationDetailId);
+                            if (approved != null)
+                            {
+                                item.ApprovedProductId = (short)approved.approvedProductId;
+                                item.ApprovedAmount = approved.approvedAmount;
+                                item.ApprovedInterestRate = approved.approvedRate;
+                                item.ApprovedTenor = approved.approvedTenor;
+                                item.StatusId = approved.statusId;
+                                item.ExchangeRate = approved.exchangeRate;
+                                item.LastUpdatedBy = model.createdBy;
+                                item.DateTimeUpdated = DateTime.Now;
+                            }
+                        }
+
                     }
                 }
 
@@ -328,13 +340,14 @@ namespace FintrakBanking.Repositories.Credit
                 }).OrderByDescending(x => x.approvalTrailId);
         }
 
-        public PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId) // PRIVILEGES
+        public PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId, int operationId = (int)OperationsEnum.CAM)
         {
             var privilege = new PrivilegeViewModel();
 
             var application = this.context.tbl_Loan_Application.Find(applicationId);
             var grants = context.tbl_Approval_Group_Mapping
-                                    .Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.tbl_Product.ProductClassId)
+                                    .Where(x => x.OperationId == operationId) 
+                                    //.Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.tbl_Product.ProductClassId) // REFACTOR!!!!!!!!!!!!
                                 .Select(x => x.tbl_Approval_Group)
                                 .SelectMany(x => x.tbl_Approval_Level)
                                 .SelectMany(x => x.tbl_Approval_Level_Staff)
@@ -379,32 +392,36 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public ApprovedLoanDetailViewModel GetApprovedLoanDetail(int applicationId)
+        public IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId)
         {
-            var detail = new ApprovedLoanDetailViewModel { principal = 0, tenor = 0, rate = 0, approver = "n/a" };
+            var details = context.tbl_Loan_Application.Where(x => x.LoanApplicationId == applicationId)
+                .SelectMany(x => x.tbl_Loan_Application_Detail)
+                .Select(x => new ApprovedLoanDetailViewModel
+                {
+                    loanApplicationDetailId = x.LoanApplicationDetailId,
+                    applicationId = x.LoanApplicationId,
+                    obligorName = x.tbl_Customer.FirstName + " " + x.tbl_Customer.MiddleName + " " + x.tbl_Customer.LastName,
+                    currencyCode = x.tbl_Currency.CurrencyCode,
 
-            var memo = context.tbl_Credit_Appraisal_Memorandum
-                .Join(context.tbl_Credit_Appraisal_Memorandum_Loan_Detail,
-                    a => a.AppraisalMemorandumId, b => b.AppraisalMemorandumId, (a, b) => new { a, b })
-                    .OrderByDescending(x => x.b.AppraisalMemorandumLoanDetailId)
-                .FirstOrDefault(x => x.a.LoanApplicationId == applicationId);
+                    proposedProductName = x.tbl_Product.ProductName,
+                    proposedTenor = x.ProposedTenor,
+                    proposedRate = x.ProposedInterestRate,
+                    proposedAmount = x.ProposedAmount,
+                    proposedProductId = x.ProposedProductId,
 
-            if (memo != null)
-            {
-                detail.principal = memo.b.PrincipalAmount;
-                detail.rate = memo.b.InterestRate;
-                detail.tenor = memo.b.Tenor;
-            }
-            else
-            {
-                var appl = context.tbl_Loan_Application.Find(applicationId);
-                detail.principal = appl.PrincipalAmount;
-                detail.rate = appl.InterestRate;
-                detail.tenor = appl.Tenor;
-            }
+                    approvedProductName = x.tbl_Product1.ProductName, // <----------take note of 1
+                    approvedTenor = x.ApprovedTenor,
+                    approvedRate = x.ApprovedInterestRate,
+                    approvedAmount = x.ApprovedAmount,
+                    approvedProductId = x.ApprovedProductId,
 
-            return detail;
+                    statusId = x.StatusId,
+                    exchangeRate = x.ExchangeRate,
+                });
+
+                return details;
         }
+        // tbl_Credit_Appraisal_Memorandum_Loan_Detail SHOULD LEAVE THE DB
 
         public IEnumerable<DocumentationViewModel> GetAllDocumentation(int applicationId)
         {
@@ -421,5 +438,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return documentation;
         }
+
+
     }
 }

@@ -1600,7 +1600,7 @@ namespace FintrakBanking.Repositories.Credit
                              branchId = a.BranchId,
                              currencyId = a.CurrencyId,
                              exchangeRate = a.ExchangeRate,
-                             loanApplicationId = a.LoanApplicationId,
+                             //loanApplicationId = a.LoanApplicationId,
                              loanReferenceNumber = a.LoanReferenceNumber,
                              subSectorId = a.SubSectorId,
                              principalFrequencyTypeId = (short)a.PrincipalFrequencyTypeId,
@@ -1634,7 +1634,7 @@ namespace FintrakBanking.Repositories.Credit
                              operationId = a.OperationId,
                              customerGroupId = a.CustomerGroupId,
                              loanTypeId = a.LoanTypeId,
-                             trancheBatchCode = a.TrancheBatchCode,
+                             //trancheBatchCode = a.TrancheBatchCode,
                              equityContribution = a.EquityContribution,
                              firstPrincipalPaymentDate = a.FirstPrincipalPaymentDate,
                              firstInterestPaymentDate = a.FirstInterestPaymentDate,
@@ -1713,7 +1713,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanScheduleArchive.DisbursedBy = item.disbursedBy;
                 addLoanScheduleArchive.DisburserComment = item.disburserComment;
                 addLoanScheduleArchive.DisburseDate = item.disburseDate;
-                addLoanScheduleArchive.OperationId = item.operationId;
+                //addLoanScheduleArchive.OperationId = item.operationId;
                 addLoanScheduleArchive.CustomerGroupId = item.customerGroupId;
                 addLoanScheduleArchive.LoanTypeId = item.loanTypeId;
                 addLoanScheduleArchive.TrancheBatchCode = item.trancheBatchCode;
@@ -2338,7 +2338,7 @@ namespace FintrakBanking.Repositories.Credit
                              branchId = a.BranchId,
                              currencyId = a.CurrencyId,
                              exchangeRate = a.ExchangeRate,
-                             loanApplicationId = a.LoanApplicationId,
+                             //loanApplicationId = a.LoanApplicationId,
                              loanReferenceNumber = a.LoanReferenceNumber,
                              subSectorId = a.SubSectorId,
                              principalFrequencyTypeId = (short)a.PrincipalFrequencyTypeId,
@@ -2372,7 +2372,7 @@ namespace FintrakBanking.Repositories.Credit
                              operationId = a.OperationId,
                              customerGroupId = a.CustomerGroupId,
                              loanTypeId = a.LoanTypeId,
-                             trancheBatchCode = a.TrancheBatchCode,
+                             //trancheBatchCode = a.TrancheBatchCode,
                              equityContribution = a.EquityContribution,
                              firstPrincipalPaymentDate = a.FirstPrincipalPaymentDate,
                              firstInterestPaymentDate = a.FirstInterestPaymentDate,
@@ -2451,7 +2451,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanScheduleArchive.DisbursedBy = item.disbursedBy;
                 addLoanScheduleArchive.DisburserComment = item.disburserComment;
                 addLoanScheduleArchive.DisburseDate = item.disburseDate;
-                addLoanScheduleArchive.OperationId = item.operationId;
+                //addLoanScheduleArchive.OperationId = item.operationId;
                 addLoanScheduleArchive.CustomerGroupId = item.customerGroupId;
                 addLoanScheduleArchive.LoanTypeId = item.loanTypeId;
                 addLoanScheduleArchive.TrancheBatchCode = item.trancheBatchCode;

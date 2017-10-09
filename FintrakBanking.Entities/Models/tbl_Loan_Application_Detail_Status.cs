@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Change_Type")]
-    public partial class tbl_Loan_Change_Type
+    [Table("credit.tbl_Loan_Application_Detail_Status")]
+    public partial class tbl_Loan_Application_Detail_Status
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Change_Type()
+        public tbl_Loan_Application_Detail_Status()
         {
-            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
+            tbl_Loan_Application_Detail = new HashSet<tbl_Loan_Application_Detail>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short ChangeTypeId { get; set; }
+        public short StatusId { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ChangeTypeName { get; set; }
+        public string StatusName { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+        public virtual ICollection<tbl_Loan_Application_Detail> tbl_Loan_Application_Detail { get; set; }
     }
 }

@@ -38,6 +38,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? ChargeGLAccountId { get; set; }
 
+        public int Position { get; set; }
+
         public int CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }

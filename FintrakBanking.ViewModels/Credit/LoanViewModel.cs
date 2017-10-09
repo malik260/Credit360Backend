@@ -336,16 +336,14 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    public class LoanCollateralMappingViewModel : CollateralCustomerViewModel
+    public class LoanCollateralMappingViewModel : CollateralViewModel
     {
         public int loanCollateralMappingId { get; set; }
         public int loanId { get; set; }
         public int loanApplicationId { get; set; }
 
     }
-
-
-
+    
     public class LoanGuarantorViewModel
     {
         public short loanGuarantorId { get; set; }
