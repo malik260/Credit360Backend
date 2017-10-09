@@ -31,10 +31,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool AddJobRequest(JobRequestViewModel model)
         {
+             
             var date = DateTime.Now;
             var applicationDate = general.GetApplicationDate();
-
-            var data = new tbl_Job_Request
+           
+           var data = new tbl_Job_Request
             {
                 JobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
                 JobTypeId = model.jobTypeId,
@@ -75,6 +76,9 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public string AddGlobalJobRequest(JobRequestViewModel model)
         {
+            if (model.receiverStaffId == model.createdBy)
+                throw new Exception("You cannot assign a job to yourself");
+
             var date = DateTime.Now;
             var applicationDate = general.GetApplicationDate();
 
@@ -97,7 +101,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 SystemArrivalDate = date,
             };
 
-            context.tbl_Job_Request.Add(data);
+            var job = context.tbl_Job_Request.Add(data);
 
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -113,8 +117,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
-
-            return data.JobRequestCode;
+            context.SaveChanges();
+            return job.JobRequestCode;
         }
 
         private string RequestCode()
@@ -229,6 +233,53 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //to = allstaff.GetStaffName(s => s.id == x.ReceiverStaffId),
                 //assignee = allstaff.GetStaffName(s => s.id == x.ReassignedTo),
             });
+        }
+
+        private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId)
+        {
+            var allstaff = this.context.tbl_Staff.Select(s => new //OperationStaffViewModel
+            {
+                id = s.StaffId,
+                name = s.LastName + " " + s.FirstName
+            });
+
+              return  context.tbl_Job_Request
+               .Where(t => ((t.ReceiverStaffId == staffId) || (t.SenderStaffId == staffId) || (t.ReassignedTo == staffId) ))
+               .Select(
+                  x =>
+                     new JobRequestViewModel
+                     {
+                    jobRequestId = x.JobRequestId,
+                    jobRequestCode = x.JobRequestCode,
+                    jobTypeId = x.JobTypeId,
+                    senderStaffId = x.SenderStaffId,
+                    receiverStaffId = x.ReceiverStaffId,
+                    reassignedTo = x.ReassignedTo,
+                    isReassigned = x.IsReassigned,
+                    isAcknowledged = x.IsAcknowledged,
+                    operationsId = x.OperationsId,
+                    requestStatusId = x.RequestStatusId,
+                    senderComment = x.SenderComment,
+                    responseComment = x.ResponseComment,
+                    arrivalDate = x.ArrivalDate,
+                    systemArrivalDate = x.SystemArrivalDate,
+                    reassignedDate = x.ReassignedDate,
+                    systemReassignedDate = x.SystemReassignedDate,
+                    responseDate = x.ResponseDate,
+                    systemResponseDate = x.SystemResponseDate,
+                    acknowledgementDate = x.AcknowledgementDate,
+                    systemAcknowledgementDate = x.SystemAcknowledgementDate,
+                    from = allstaff.FirstOrDefault(s => s.id == x.SenderStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.SenderStaffId).name,
+                    to = allstaff.FirstOrDefault(s => s.id == x.ReceiverStaffId) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.ReceiverStaffId).name,
+                    assignee = allstaff.FirstOrDefault(s => s.id == x.ReassignedTo) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.ReassignedTo).name,
+                    //from = allstaff.GetStaffName(s => s.id == x.SenderStaffId),
+                    //to = allstaff.GetStaffName(s => s.id == x.ReceiverStaffId),
+                    //assignee = allstaff.GetStaffName(s => s.id == x.ReassignedTo),
+                });
+        }
+        public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId)
+        {
+            return GetAllGlobalJobRequest(staffId); 
         }
 
         public JobRequestViewModel GetJobRequest(int jobRequestId)

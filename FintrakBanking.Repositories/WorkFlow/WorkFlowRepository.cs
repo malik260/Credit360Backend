@@ -236,7 +236,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var loan = context.tbl_Loan_Application.Where(c => c.CompanyId == entity.companyId && c.LoanApplicationId == entity.targetId);
                 if (loan.Any())
                 {
-                    amount = loan.SingleOrDefault().PrincipalAmount;
+                    amount = 0; //TODO: Refactor  loan.SingleOrDefault().PrincipalAmount;
                 }
             }
             if (entity.operationId == (int)OperationsEnum .TermLoanBooking)
@@ -258,7 +258,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var loan = context.tbl_Loan_Application.Where(c => c.CompanyId == entity.companyId && c.LoanApplicationId == entity.targetId);
                 if (loan.Any())
                 {
-                    tenor = loan.SingleOrDefault().Tenor;
+                    tenor = 0; //TODO: Refactor  loan.SingleOrDefault().Tenor;
                 }
             }
             if (entity.operationId == (int)OperationsEnum.TermLoanBooking)

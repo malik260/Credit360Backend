@@ -224,7 +224,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.sourceBranchId = model.branchId;
             debit.destinationBranchId = casa.BranchId;
 
-            var chargeGL = this.context.tbl_Collateral_Type.FirstOrDefault(x => x.CollateralTypeId == (int) CollateralTypeEnum.Property).ChargeGLAccountId.Value;
+            var chargeGL = this.context.tbl_Collateral_Type.FirstOrDefault(x => x.CollateralTypeId == (int)CollateralTypeEnum.Property).ChargeGLAccountId.Value;
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
             credit.glAccountId = chargeGL;
 

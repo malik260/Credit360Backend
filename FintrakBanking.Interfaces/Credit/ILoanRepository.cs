@@ -17,11 +17,11 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<LookupViewModel> GetAllLoanTypes();
 
-        //IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
+        IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
 
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
-        Task<string> AddLoanBooking(LoanViewModel entity);
+        string AddLoanBooking(LoanViewModel entity);
 
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
 
@@ -49,7 +49,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId);
 
-        Task<bool> GoForApproval(ApprovalViewModel entity);
+        bool GoForApproval(ApprovalViewModel entity);
 
         AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId);
 
@@ -64,5 +64,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId);
 
         List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId);
+        List<CurrentCustomerExposure> GetCurrentCustomerExposure(int customerId, int companyId);
     }
 }

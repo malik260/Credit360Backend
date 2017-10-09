@@ -205,7 +205,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [Route("loan-booking")]
-        public async Task<HttpResponseMessage> AddLoanBooking([FromBody] LoanViewModel entity)
+        public  HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
         {
             try
             {
@@ -217,7 +217,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = await repo.AddLoanBooking(entity);
+                var data =  repo.AddLoanBooking(entity);
                 if (data != "")
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The Loan booking was successful and and is waiting for approval.\r\n Loan Reference Number: " + data });
@@ -227,7 +227,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.InnerException.Message}" });
             }
         }
 
@@ -326,7 +326,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [Route("loan-booking/approval")]
-        public async Task<HttpResponseMessage> ApproveLoanBooking(ApprovalViewModel model)
+        public HttpResponseMessage ApproveLoanBooking(ApprovalViewModel model)
         {
             try
             {
@@ -337,7 +337,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var data = await repo.GoForApproval(model);
+                var data = repo.GoForApproval(model);
 
                 if (data)
                 {

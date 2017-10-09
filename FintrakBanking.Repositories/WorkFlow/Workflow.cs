@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -74,7 +76,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private List<WorkflowSetup> workflowSetup;
 
-        public async Task<bool> LogActivity()
+
+        public bool LogActivity()
         {
             if (Validation() == false) { return false; }
             if (Authorization() == false) { return false; }
@@ -98,7 +101,15 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (ResolveLevelConfigurations() == false) { return false; }
 
-            if (ProcessIsClosed()) { return false; }
+            if (ProcessIsClosed())
+            {
+                return false;
+            }
+            //else
+            //{
+            //    this.statusId = (int) ApprovalStatusEnum.Pending;
+            //    ContinueProcess(this.statusId); 
+            //}
 
             if (this.useOrganogram == true) { OrganogramRouting(); }
 
@@ -138,7 +149,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             context.tbl_Approval_Trail.Add(trail);
-            this.saved = await context.SaveChangesAsync() > 0;
+            this.saved =  context.SaveChanges() > 0;
+
 
             if (this.saved)
             {
@@ -336,6 +348,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void ContinueProcess(int status)
         {
             this.statusId = status;
+            //this.statusId = (int)ApprovalStatusEnum.Processing;
             this.newStateId = (int)ApprovalState.Processing;
         }
 
@@ -450,7 +463,13 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.nextLevelId == null && ActionIsApprovalDecision())
             {
-                this.newStateId = (int)ApprovalState.Ended;
+                this.statusId = (int)ApprovalStatusEnum.Approved;
+                this.newStateId = (int) ApprovalState.Ended;
+            }
+            else
+            {
+                this.statusId = (int) ApprovalStatusEnum.Pending;
+                this.newStateId = (int) ApprovalState.Processing;
             }
         }
 
@@ -522,6 +541,21 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             this.message = "Unauthorized action!";
             return false;
+        }
+
+        public bool LogForApproval(ApprovalViewModel model)
+        {
+            StaffId = model.staffId;
+            OperationId = model.operationId;
+            TargetId = model.targetId;
+            CompanyId = model.companyId;
+            Comment = model.comment;
+            ExternalInitialization = model.externalInitialization;
+            StatusId = model.approvalStatusId;
+
+            var response = LogActivity();
+
+            return response;
         }
     }
 

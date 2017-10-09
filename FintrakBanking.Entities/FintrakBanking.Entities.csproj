@@ -58,6 +58,7 @@
     <Compile Include="DocumentModels\tbl_Media_Job_Request_Documents.cs" />
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
+    <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
@@ -201,6 +202,8 @@
     <Compile Include="Models\tbl_LoanApplication_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Application.cs" />
     <Compile Include="Models\tbl_Loan_Application_Collateral.cs" />
+    <Compile Include="Models\tbl_Loan_Application_Detail.cs" />
+    <Compile Include="Models\tbl_Loan_Application_Detail_Status.cs" />
     <Compile Include="Models\tbl_Loan_Application_Status.cs" />
     <Compile Include="Models\tbl_Loan_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />

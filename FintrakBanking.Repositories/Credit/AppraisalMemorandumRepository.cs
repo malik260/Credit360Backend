@@ -35,15 +35,15 @@ namespace FintrakBanking.Repositories.Credit
 
             var groupMappings = context.tbl_Approval_Group_Mapping.Where(x => 
                 x.OperationId == (int)OperationsEnum.CAM
-                && x.ProductClassId == appl.tbl_Product.ProductClassId
-                && x.ProductId == appl.ProductId
+            //TODO refactor         && x.ProductClassId == appl.tbl_Product.ProductClassId
+            //TODO refactor         && x.ProductId == appl.ProductId
             );
 
             if (groupMappings.Any() == false)
             {
                 groupMappings = context.tbl_Approval_Group_Mapping.Where(x => 
                     x.OperationId == (int)OperationsEnum.CAM
-                    && x.ProductClassId == appl.tbl_Product.ProductClassId
+                   // && x.ProductClassId == appl.tbl_Product.ProductClassId
                 );
             }
 
@@ -90,7 +90,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.tbl_Loan_Application.Find(model.loanApplicationId);
 
-            int approvalLevelId = GetFirstApprovalLevelId(appl.ProductId, appl.tbl_Product.ProductClassId, model.createdBy);
+            int approvalLevelId = 0; //TODO refactorGetFirstApprovalLevelId(appl.ProductId, appl.tbl_Product.ProductClassId, model.createdBy);
 
             var memo = context.tbl_Credit_Appraisal_Memorandum.Where(x => x.LoanApplicationId == model.loanApplicationId).SingleOrDefault();
 
@@ -226,7 +226,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public async Task<bool> ForwardAppraisalMemorandum(ForwardViewModel model)
+        public  bool ForwardAppraisalMemorandum(ForwardViewModel model)
         {
             var operationId = (int)OperationsEnum.CAM;
 
@@ -246,7 +246,9 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Tenor = model.tenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
             // log
-            await workflow.LogActivity();
+
+             workflow.LogActivity();
+
 
             if (workflow.Saved)
             {
@@ -334,7 +336,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var application = this.context.tbl_Loan_Application.Find(applicationId);
             var grants = context.tbl_Approval_Group_Mapping
-                                    .Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.tbl_Product.ProductClassId)
+                                    .Where(x => x.OperationId == (int)OperationsEnum.CAM
+                          //TODO: Refactor  && x.ProductClassId == application.tbl_Product.ProductClassId
+                                    )
                                 .Select(x => x.tbl_Approval_Group)
                                 .SelectMany(x => x.tbl_Approval_Level)
                                 .SelectMany(x => x.tbl_Approval_Level_Staff)
@@ -398,9 +402,9 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var appl = context.tbl_Loan_Application.Find(applicationId);
-                detail.principal = appl.PrincipalAmount;
-                detail.rate = appl.InterestRate;
-                detail.tenor = appl.Tenor;
+                //TODO refactor          detail.principal = appl.PrincipalAmount;
+                //TODO refactor         detail.rate = appl.InterestRate;
+                //TODO refactor         detail.tenor = appl.Tenor;
             }
 
             return detail;
