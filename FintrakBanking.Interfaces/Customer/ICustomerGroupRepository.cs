@@ -56,6 +56,7 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool DeleteCustomerGroupMapping(int groupMapId, UserInfo user);
 
+        IEnumerable<GroupCustomerMembersViewModel> GetGroupMembersByGroupId(int customerGroupId, int companyId);
         IQueryable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery);
 
         #endregion tbl_Customer Group Mapping repository

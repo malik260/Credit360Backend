@@ -59,7 +59,6 @@
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\sysdiagram.cs" />
-    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -318,7 +317,6 @@
     <Compile Include="Models\tbl_Temp_Product_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Staff.cs" />
     <Compile Include="Models\tbl_Tenor_Mode.cs" />
-    <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

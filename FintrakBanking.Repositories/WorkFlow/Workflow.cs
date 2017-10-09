@@ -92,7 +92,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 this.currentStateId = request.ApprovalStateId;
                 this.requestStaffId = request.RequestStaffId;
-                if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
+                //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
                 this.fromLevelId = request.ToApprovalLevelId;
             } else
             {
@@ -101,15 +101,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (ResolveLevelConfigurations() == false) { return false; }
 
-            if (ProcessIsClosed())
-            {
-                return false;
-            }
-            //else
-            //{
-            //    this.statusId = (int) ApprovalStatusEnum.Pending;
-            //    ContinueProcess(this.statusId); 
-            //}
+            if (ProcessIsClosed()) { return false; }
 
             if (this.useOrganogram == true) { OrganogramRouting(); }
 
@@ -348,7 +340,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void ContinueProcess(int status)
         {
             this.statusId = status;
-            //this.statusId = (int)ApprovalStatusEnum.Processing;
             this.newStateId = (int)ApprovalState.Processing;
         }
 
@@ -492,6 +483,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                                && x.OperationId == this.operationId
                                && x.ProductClassId == this.productClassId
                            );
+            }
+
+            if (mappings.Any() == false)
+            {
+                throw new Exception("There is no approval workflow setup for the operation");
             }
 
             var approvalLevels = mappings

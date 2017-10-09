@@ -1617,8 +1617,9 @@ namespace FintrakBanking.Repositories.Credit
                              effectiveDate = a.EffectiveDate,
                              maturityDate = a.MaturityDate,
                              bookingDate = a.BookingDate,
-                             principalAmount = a.PrincipalAmount,
-                             //approvedAmount = a.ApprovedAmount,
+
+                             principalAmount = a.PrincipalAmount,                           
+
                              principalInstallmentLeft = a.PrincipalInstallmentLeft,
                              interestInstallmentLeft = a.InterestInstallmentLeft,
                              approvalStatusId = a.ApprovalStatusId,
@@ -2355,7 +2356,7 @@ namespace FintrakBanking.Repositories.Credit
                              maturityDate = a.MaturityDate,
                              bookingDate = a.BookingDate,
                              principalAmount = a.PrincipalAmount,
-                            // approvedAmount = a.ApprovedAmount,
+
                              principalInstallmentLeft = a.PrincipalInstallmentLeft,
                              interestInstallmentLeft = a.InterestInstallmentLeft,
                              approvalStatusId = a.ApprovalStatusId,
@@ -3261,7 +3262,7 @@ namespace FintrakBanking.Repositories.Credit
                 LoanId = model.loanId,
                 ProductTypeId = model.productTypeId,
                 OperationTypeId = model.operationTypeId,
-                //ProposedEffectiveDate = model.proposedEffectiveDate,
+
                 ReviewDetails = model.reviewDetails,
                 InterateRate = model.interateRate,
                 Prepayment = model.prepayment,

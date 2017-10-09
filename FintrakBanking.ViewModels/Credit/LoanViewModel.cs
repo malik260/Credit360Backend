@@ -343,7 +343,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool recurring { get; set; }
     }
 
-    public class LoanCollateralMappingViewModel : CollateralCustomerViewModel
+    public class LoanCollateralMappingViewModel : CollateralViewModel
     {
         public int loanCollateralMappingId { get; set; }
         public int loanId { get; set; }
