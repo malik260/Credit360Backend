@@ -3761,17 +3761,7 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.ShareValueAmountToUse)
                 .HasPrecision(19, 4);
 
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LevelMaximumAmount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.InvestmentGradeAmount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.StaffMaximumAmount)
-                .HasPrecision(19, 4);
+          
         }
     }
 }

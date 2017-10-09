@@ -2433,7 +2433,7 @@ namespace FintrakBanking.Repositories.Credit
                                            disbursedBy = a.DisbursedBy,
                                            disburserComment = a.DisburserComment,
                                            disburseDate = a.DisburseDate,
-                                           approvedAmount = a.ApprovedAmount,
+                                           //approvedAmount = a.ApprovedAmount,
                                            operationId = a.OperationId,
                                            operationName = context.tbl_Operations.FirstOrDefault(x => x.OperationId == a.OperationId).OperationName,
                                            subSectorName = a.tbl_Sub_Sector.Name,

@@ -31,7 +31,6 @@ namespace FintrakBanking.ViewModels.CASA
         public DateTime actionDate { get; set; }
         public short accountStatusId { get; set; }
         public int operationId { get; set; }
-        public int currencyId { get; set; }
         public string currency { get; set; }
         public decimal availableBalance { get; set; }
         public decimal ledgerBalance { get; set; }
