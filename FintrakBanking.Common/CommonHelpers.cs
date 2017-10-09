@@ -253,6 +253,7 @@ namespace FintrakBanking.Common
             }
             return sb.ToString();
         }
+
         public static int PasswordExpirationDays
         {
             get

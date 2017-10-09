@@ -13,8 +13,7 @@ using System.Text;
 
 namespace FintrakBanking.Repositories.Customer
 {
-    [Export(typeof(ICustomerFSRatioRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+  
     public class CustomerFSRatioRepository : ICustomerFSRatioRepository
     {
         private FinTrakBankingContext context;
@@ -161,7 +160,6 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
         #endregion
-
 
         #region tbl_Customer FS-Ratio-Detail
         public bool AddFSRatioDetail(CustomerFSRatioDetailViewModel model)
@@ -423,7 +421,6 @@ namespace FintrakBanking.Repositories.Customer
             return data;
         }
         #endregion
-
 
         #region tbl_Customer FS Ration Value Type
         public IEnumerable<CustomerFSRatioValueTypeViewModel> GetAllValueType()

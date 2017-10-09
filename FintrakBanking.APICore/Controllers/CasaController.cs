@@ -96,8 +96,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("account-number-name/{accountNumberOrName}")]
-        public HttpResponseMessage FindAccount(  string accountNumberOrName)
+        [Route("account-number-name/")]
+        public HttpResponseMessage FindAccount(string accountNumberOrName)
         {
               
                 try

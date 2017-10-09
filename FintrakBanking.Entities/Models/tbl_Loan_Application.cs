@@ -61,13 +61,13 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? ExpiryDate { get; set; }
 
-        public int? OperationId { get; set; }
+        public int OperationId { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ApplicationAmount { get; set; }
+        public decimal ApplicationAmount { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ApprovedAmount { get; set; }
+        public decimal ApprovedAmount { get; set; }
 
         [Required]
         public string LoanInformation { get; set; }

@@ -12,15 +12,18 @@ namespace FintrakBanking.ViewModels.CASA
         public string productAccountName { get; set; }
         public int customerId { get; set; }
         public string customerCode { get; set; }
+        public string customerName { get; set; }
         public int productId { get; set; }
         public string productCode { get; set; }
         public string productName { get; set; }
         //public int companyId { get; set; }
+        public string accountDetail { get { return (this.productAccountNumber +"(" + this.productAccountName +")"); } }
         public short branchId { get; set; }
         public string branchCode { get; set; }
         public string branchName { get; set; }
         public bool isCurrentAccount { get; set; }
         public int tenor { get; set; }
+        public int currencyId { get; set; }
         public decimal interestRate { get; set; }
         public DateTime effectiveDate { get; set; }
         public DateTime terminalDate { get; set; }
@@ -28,6 +31,7 @@ namespace FintrakBanking.ViewModels.CASA
         public DateTime actionDate { get; set; }
         public short accountStatusId { get; set; }
         public int operationId { get; set; }
+        public string currency { get; set; }
         public decimal availableBalance { get; set; }
         public decimal ledgerBalance { get; set; }
         public int relationshipManagerId { get; set; }

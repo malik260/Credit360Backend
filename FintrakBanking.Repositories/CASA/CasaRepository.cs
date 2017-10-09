@@ -37,8 +37,10 @@ namespace FintrakBanking.Repositories.CASA
         /// TODO: Implement server side filtering due to large number of records that may be returned
         public IEnumerable<CasaViewModel> FindAccount(string accountNumberOrName, int companyId)
         {
-            return (from data in context.tbl_CASA
-                    where data.CompanyId == companyId && (data.ProductAccountNumber == accountNumberOrName || data.ProductAccountName.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
+            return (from data in context.tbl_CASA join cust in context.tbl_Customer on data.CustomerId equals cust.CustomerId
+                    where data.CompanyId == companyId && (data.ProductAccountNumber.Contains(accountNumberOrName) || 
+                    cust.CustomerCode.Contains(accountNumberOrName) || cust.FirstName.Contains(accountNumberOrName) ||
+                 cust.LastName.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
                     select new CasaViewModel()
                     {
                         casaAccountId = data.CasaAccountId,
@@ -46,11 +48,13 @@ namespace FintrakBanking.Repositories.CASA
                         productAccountName = data.ProductAccountName,
                         customerId = data.CustomerId,
                         customerCode = data.tbl_Customer.CustomerCode,
+                        customerName = data.tbl_Customer.FirstName +" "+ data.tbl_Customer.LastName,
                         productId = data.ProductId,
                         productCode = data.tbl_Product.ProductCode,
                         productName = data.tbl_Product.ProductName,
                         companyId = data.CompanyId,
                         branchId = data.BranchId,
+                        currency = data.tbl_Currency.CurrencyName,
                         branchCode = data.tbl_Branch.BranchCode,
                         branchName = data.tbl_Branch.BranchName,
                         isCurrentAccount = data.IsCurrentAccount,
@@ -281,6 +285,22 @@ namespace FintrakBanking.Repositories.CASA
             }
 
             return allCustomer;
+        }
+
+        public IEnumerable<GroupCustomerMembersViewModel> GetGroupMembersByGroupId(int customerId, int companyId)
+        {
+            var customerGroupMapping = from b in context.tbl_CASA 
+                                       where b.CustomerId == customerId &&  b.Deleted == false && b.CompanyId == companyId
+                                       select new GroupCustomerMembersViewModel
+                                       {
+                                           customerId = b.CustomerId,                                          
+                                           customerCode = b.tbl_Customer.CustomerCode,
+                                           lastName = b.tbl_Customer.LastName,
+                                           firstName = b.tbl_Customer.FirstName,
+                                       
+                                       };
+
+            return customerGroupMapping;
         }
 
         private IQueryable<CasaCustomerSearchViewModel> GetAllAccounts()

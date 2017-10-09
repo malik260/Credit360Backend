@@ -49,7 +49,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId);
 
-        Task<bool> GoForApproval(ApprovalViewModel entity);
+        bool GoForApproval(ApprovalViewModel entity);
 
         AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId);
 
@@ -65,5 +65,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId);
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(int customerId, int companyId);
+        IEnumerable<LoanPaymentSchedulePeriodicViewModel> GetLoanScheduleByLoanId(int loanId);
     }
 }
