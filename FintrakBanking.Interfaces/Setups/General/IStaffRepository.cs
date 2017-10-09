@@ -17,7 +17,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         Task<bool> AddTempStaff(StaffInfoViewModel staffModel);
 
-        Task<bool> GoForApproval(ApprovalViewModel entity);
+        bool GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<StaffInfoViewModel> GetAllStaff();
 

@@ -1,5 +1,4 @@
-﻿
-using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
@@ -18,14 +17,16 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<LookupViewModel> GetAllLoanTypes();
 
+        IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
+
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
-        Task<string> AddLoanBooking(LoanViewModel entity);
+        string AddLoanBooking(LoanViewModel entity);
 
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
 
         LoanViewModel GetLoan(int loanId);
-        
+
         IEnumerable<LoanViewModel> FindLoan(string referenceNumberOrName, int companyId);
 
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
@@ -42,20 +43,27 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanChargeFeeViewModel> GetProductFees(int productId);
 
-        IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId );
+        IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId);
 
         IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId);
 
         IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId);
 
-        Task<bool> GoForApproval(ApprovalViewModel entity);
+        bool GoForApproval(ApprovalViewModel entity);
 
         AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId);
 
         IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId);
+
         IQueryable<CustomerSearchItemViewModels> SearchCustomerCollateral(int companyId, string searchQuery);
+
         IQueryable<CustomerViewModels> SearchForCustomerCollateral(int companyId, string searchQuery);
 
+        List<LoanGuarantorViewModel> GetLoanGuarantors(int loanId);
+
+        List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId);
+
+        List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId);
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(int customerId, int companyId);
     }
 }

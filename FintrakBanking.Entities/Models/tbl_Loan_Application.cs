@@ -67,7 +67,7 @@ namespace FintrakBanking.Entities.Models
         public decimal ApplicationAmount { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ApprovedAmount { get; set; }
+        public decimal ApprovedAmount { get; set; }
 
         [Required]
         public string LoanInformation { get; set; }

@@ -32,4 +32,21 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerCompanyShareholdersViewModels> customerCompanyShareholders { get; set; }
         public List<CustomerCompanyDirectorsViewModels> customerCompanyDirectors { get; set; }
     }
+
+
+    public class GroupCustomerMembersViewModel
+    {
+        public int    customerId { get; set; }
+        public string  lastName   { get; set; }
+        public string  firstName { get; set; }
+        public string customerName { get { return lastName + ' ' + firstName; } }
+        public string customerCode { get; set; }
+        //public string productAccountNumber { get; set; }
+        //public string productAccountName { get; set; }
+        //public decimal balance { get; set; }
+        //public int casaAccountId { get; set; }
+      //  public string accountStatusId { get; set; }
+    }
+
+
 }

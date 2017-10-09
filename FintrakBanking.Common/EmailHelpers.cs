@@ -8,26 +8,25 @@ namespace FintrakBanking.Common
 {
     public class EmailHelpers
     {
-        private void SendMail(string recipient, string messageSubject, string messageContent)
+        public void SendMail(string recipient, string additionalRecipient, string messageSubject, string messageContent, string templateUrl)
         {
-            var body = PopulateBody(messageContent, ConfigurationManager.AppSettings["AppLink"]);
+            var body = PopulateBody(messageContent, templateUrl);
 
-            SendHtmlFormattedEmail(recipient, messageSubject, body);
+            SendHtmlFormattedEmail(recipient, additionalRecipient, messageSubject, body);
         }
 
-        private static string PopulateBody(string description, string urlLink)
+        public static string PopulateBody(string description, string templateLink)
         {
             string body;
-            using (var reader = new StreamReader(HostingEnvironment.MapPath("~/EmailTemplates/AssignNewTask.html") ?? throw new InvalidOperationException()))
+            using (var reader = new StreamReader(HostingEnvironment.MapPath(templateLink) ?? throw new InvalidOperationException()))
             {
                 body = reader.ReadToEnd();
             }
             body = body.Replace("{Description}", description);
-            body = body.Replace("{Link}", urlLink);
             return body;
         }
 
-        public void SendHtmlFormattedEmail(string recepientEmail, string subject, string body)
+        private void SendHtmlFormattedEmail(string recepientEmail, string additionalRecipients, string subject, string body)
         {
             var smtpClient = new SmtpClient();
             var networkCred = new System.Net.NetworkCredential();
@@ -35,17 +34,18 @@ namespace FintrakBanking.Common
             {
                 mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["SupportEmailAddr"]);
                 mailMessage.To.Add(new MailAddress(recepientEmail));
+                mailMessage.Bcc.Add(new MailAddress(additionalRecipients));
                 mailMessage.Subject = subject;
                 mailMessage.Body = body;
                 mailMessage.IsBodyHtml = true;
                 mailMessage.Priority = MailPriority.High;
-                smtpClient.Host = ConfigurationManager.AppSettings["Host"];
-                smtpClient.EnableSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["EnableSsl"]);
+                smtpClient.Host = ConfigurationManager.AppSettings["smtpClient"];
+                smtpClient.EnableSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["enableSsl"]);
                 networkCred.UserName = ConfigurationManager.AppSettings["Username"];
                 networkCred.Password = ConfigurationManager.AppSettings["Password"];
                 smtpClient.UseDefaultCredentials = true;
                 smtpClient.Credentials = networkCred;
-                smtpClient.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
+                smtpClient.Port = int.Parse(ConfigurationManager.AppSettings["smtpPort"]);
                 smtpClient.Send(mailMessage);
             }
         }

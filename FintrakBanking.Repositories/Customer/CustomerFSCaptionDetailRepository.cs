@@ -11,9 +11,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Repositories.Customer
-{
-    [Export(typeof(ICustomerFSCaptionDetailRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+{ 
     public class CustomerFSCaptionDetailRepository : ICustomerFSCaptionDetailRepository
     {
         private FinTrakBankingContext context;

@@ -19,12 +19,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
 
         public short branchId { get; set; }
-        
         public short? productClassId { get; set; }
         public string productClassName { get; set; }
         public short productId { get; set; }
         public int? customerGroupId { get; set; }
-        public string customerGroupCode { get; set; } 
+        public string customerGroupCode { get; set; }
         public short loanTypeId { get; set; }
 
         public short currencyId { get; set; }
@@ -65,7 +64,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string amount { get { return this.principalAmount.ToString("#,#.00#"); } }
         public string applicantName { get { return this.customerName + "" + this.customerGroupName; } }
 
-        public int? loanPreliminaryEvaluationId { get; set; } 
+        public int? loanPreliminaryEvaluationId { get; set; }
         public double exchangeRate { get; set; }
         public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
 
@@ -76,6 +75,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalTrailId { get; set; }
         public decimal? approvedAmount { get; set; }
         public short applicationStatusId { get; set; }
+
+        public bool isCollateralBacked { get; set; }
     }
 
     public class CollateralLenPlacementViewModel : GeneralEntity

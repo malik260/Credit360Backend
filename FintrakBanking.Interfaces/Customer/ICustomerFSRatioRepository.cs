@@ -27,5 +27,7 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerFSRatioDivisorTypeViewModel> GetAllDivisorType();
         IEnumerable<CustomerFSRatioValueTypeViewModel> GetAllValueType();
         #endregion
+
+        List<CustomerFSRatioCaptionReportViewModel> GetCustomerFSRatioValues(int customerId);
     }
 }

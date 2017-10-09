@@ -42,8 +42,9 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         collateralTypeName = m.CollateralTypeName,
                         chargeGLAccountId = m.ChargeGLAccountId,
                         requireInsurancePolicy = m.RequireInsurancePolicy,
-                        details = m.Details
-                    });
+                        details = m.Details,
+                         position = m.Position 
+                    }).OrderBy(m=> m.position );
         }
 
         public IEnumerable<CollateralTypeViewModel> GetCollateralTypes()
@@ -61,7 +62,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         {
             var type = context.tbl_Collateral_Type.SingleOrDefault(c => c.CollateralTypeId == typeId);
 
-            type.ChargeGLAccountId = entity.chargeGLAccountId;
+            type.ChargeGLAccountId = (int)entity.chargeGLAccountId;
             type.RequireInsurancePolicy = entity.requireInsurancePolicy;
             type.DateTimeUpdated = genSetup.GetApplicationDate();
             type.LastUpdatedBy = entity.lastUpdatedBy;

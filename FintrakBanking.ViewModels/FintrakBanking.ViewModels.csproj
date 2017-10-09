@@ -64,9 +64,11 @@
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
     <Compile Include="Credit\LoanApplicationViewModel.cs" />
     <Compile Include="Credit\LoanDocumentViewModel.cs" />
+    <Compile Include="Credit\LoanOperationViewModel.cs" />
     <Compile Include="Credit\LoanPaymentScheduleInput.cs" />
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
     <Compile Include="Credit\LoanPreliminaryEvaluationViewModel.cs" />
+    <Compile Include="Credit\LoanReviewOperationViewModel.cs" />
     <Compile Include="Credit\LoanViewModel.cs" />
     <Compile Include="Credit\OfferLetterViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
@@ -122,6 +124,7 @@
     <Compile Include="Setups\General\CityViewModel.cs" />
     <Compile Include="Setups\General\CompanyViewModel.cs" />
     <Compile Include="Setups\General\CountryViewModel.cs" />
+    <Compile Include="Setups\General\MessageLogViewModel.cs" />
     <Compile Include="Setups\General\ProductChargeFeeViewModel.cs" />
     <Compile Include="Setups\General\PublicHolidayViewModel.cs" />
     <Compile Include="Setups\General\SectorViewModel.cs" />

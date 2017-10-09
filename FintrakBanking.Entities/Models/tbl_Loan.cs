@@ -9,6 +9,13 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.tbl_Loan")]
     public partial class tbl_Loan
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public tbl_Loan()
+        {
+            tbl_Loan_Schedule_Daily = new HashSet<tbl_Loan_Schedule_Daily>();
+            tbl_Loan_Schedule_Periodic = new HashSet<tbl_Loan_Schedule_Periodic>();
+        }
+
         [Key]
         public int TermLoanId { get; set; }
 
@@ -69,9 +76,6 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "money")]
         public decimal PrincipalAmount { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal ApprovedAmount { get; set; }
 
         public int PrincipalInstallmentLeft { get; set; }
 
@@ -197,6 +201,12 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Staff tbl_Staff1 { get; set; }
 
         public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Schedule_Periodic> tbl_Loan_Schedule_Periodic { get; set; }
 
         public virtual tbl_Loan_Application_Detail tbl_Loan_Application_Detail { get; set; }
 

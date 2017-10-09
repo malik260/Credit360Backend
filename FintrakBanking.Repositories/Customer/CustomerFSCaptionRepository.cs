@@ -13,8 +13,7 @@ using System.ComponentModel.Composition;
 
 namespace FintrakBanking.Repositories.Customer
 {
-    [Export(typeof(ICustomerFSCaptionRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+ 
     public class CustomerFSCaptionRepository : ICustomerFSCaptionRepository
     {
         private FinTrakBankingContext context;

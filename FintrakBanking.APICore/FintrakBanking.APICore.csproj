@@ -310,6 +310,7 @@
     <Compile Include="Controllers\CallMemoController.cs" />
     <Compile Include="Controllers\ConditionPrecedentController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
+    <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\FinanceTransactionController.cs" />
     <Compile Include="Controllers\CreditLimitValidationsController.cs" />
     <Compile Include="Controllers\CasaController.cs" />
@@ -441,6 +442,9 @@
     <Content Include="Content\first-bank-logo.png" />
     <Content Include="Content\first-bank-new-logo.jpg" />
     <Content Include="Content\firstbank.png" />
+    <Content Include="Content\Icons\first_bank_logo_kmH_icon.ico" />
+    <Content Include="Content\Icons\first_bank_new_logo_2sm_icon.ico" />
+    <Content Include="EmailTemplates\Monitoring.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -537,7 +541,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="EmailTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

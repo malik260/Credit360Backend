@@ -60,7 +60,9 @@ namespace FintrakBanking.Repositories.Customer
                 Nationality = entity.nationality,
                 Occupation = entity.occupation,
                 PlaceOfBirth = entity.placeOfBirth,
-                IsPoliticallyExposed = entity.politicallyExposedPerson,
+                IsPoliticallyExposed = entity.isPoliticallyExposed,
+                IsInvestmentGrade = entity.isInvestmentGrade,
+                IsRealatedParty = entity.isRealatedParty,
                 RelationshipOfficerId = entity.relationshipOfficerId,
                 Spouse = entity.spouse,
                 SubSectorId = entity.subSectorId,
@@ -794,7 +796,7 @@ namespace FintrakBanking.Repositories.Customer
                        nationality = a.Nationality,
                        occupation = a.Occupation,
                        placeOfBirth = a.PlaceOfBirth,
-                       politicallyExposedPerson = a.IsPoliticallyExposed,//.PoliticallyExposedPerson,
+                       isPoliticallyExposed = a.IsPoliticallyExposed,
                        relationshipOfficerId = a.RelationshipOfficerId.Value,
                        spouse = a.Spouse,
                        sectorId = a.tbl_Sub_Sector.tbl_Sector.SectorId,
@@ -1067,8 +1069,8 @@ namespace FintrakBanking.Repositories.Customer
                 customer.Nationality = entity.nationality;
                 customer.Occupation = entity.occupation;
                 customer.PlaceOfBirth = entity.placeOfBirth;
-                customer.IsPoliticallyExposed = entity.politicallyExposedPerson;
-                customer.RelationshipOfficerId = entity.relationshipOfficerId;
+                customer.IsInvestmentGrade = entity.isInvestmentGrade;
+                customer.IsRealatedParty = entity.isRealatedParty;             
                 customer.Spouse = entity.spouse;
                 customer.SubSectorId = entity.subSectorId;
                 customer.TaxNumber = entity.taxNumber;
