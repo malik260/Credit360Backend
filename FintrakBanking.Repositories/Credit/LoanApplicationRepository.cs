@@ -244,8 +244,12 @@ namespace FintrakBanking.Repositories.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-        public async Task<bool> AddLoanApplication(LoanApplicationViewModel loan)
+        public bool AddLoanApplication(LoanApplicationViewModel loan)
         {
+            try
+            {
+
+           
             bool isGroupLoan = false;
             int response = 0;
             if (loan.loanTypeId > (int)LoanTypeEnum.CustomerGroup)
@@ -268,8 +272,7 @@ namespace FintrakBanking.Repositories.Credit
                 CasaAccountId = casaAccountId,
                 RelationshipOfficerId = loan.relationshipOfficerId,
                 RelationshipManagerId = loan.relationshipManagerId,
-                MISCode = loan.misCode,
-                SubSectorId = (short)loan.subSectorId,
+                MISCode = loan.misCode,                
                 TeamMISCode = loan.teamMisCode,
                 InterestRate = loan.interestRate,
                 ApplicationDate = genSetup.GetApplicationDate(),
@@ -286,7 +289,8 @@ namespace FintrakBanking.Repositories.Credit
                 IsInvestmentGrade = loan.isInvestmentGrade,
                 LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,
                 CustomerId = loan.customerId,
-                SubmittedForAppraisal = loan.submittedForAppraisal
+                SubmittedForAppraisal = loan.submittedForAppraisal,
+                 OperationId =(int)OperationsEnum.LoanApplication
             };
 
             if (loan.LoanApplicationCollateral.Count > 0)
@@ -329,9 +333,15 @@ namespace FintrakBanking.Repositories.Credit
 
             //end of Audit section -------------------------------
 
-            response = await context.SaveChangesAsync();
+            response =  context.SaveChanges();
 
             return response > 0;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         private void LoanApplicationDetail(List<LoanApplicationDetailViewModel> entity)
@@ -347,14 +357,14 @@ namespace FintrakBanking.Repositories.Credit
                 CurrencyId = a.currencyId,
                 CustomerId = a.customerId,
                 LoanApplicationId = a.loanApplicationId,
-                StatusId = (short)LoanApplicationStatusEnum.AvailmentCompleted,
+                StatusId = (short)LoanApplicationDetailsStatusEnum.Pending,
                  
 
                 ProposedAmount = a.proposedAmount,
                 ProposedInterestRate = a.proposedInterestRate,
                 ProposedProductId = a.proposedProductId,
                 ProposedTenor = a.proposedTenor,
-
+                 
                 SubSectorId = a.subSectorId,
                 CreatedBy = a.createdBy,
                 DateTimeCreated = DateTime.Now
@@ -621,8 +631,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = a.CompanyId,
                             branchId = a.BranchId,
                             branchName = a.tbl_Branch.BranchName,
-                            subSectorId = a.SubSectorId,
-
+                            
                             approvedTenor = d.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName =
@@ -650,10 +659,10 @@ namespace FintrakBanking.Repositories.Credit
                             teamMisCode = a.TeamMISCode,
 
                             interestRate = d.InterestRate,
-                            isRealatedParty = a.IsRelatedParty,
+                          //  isRealatedParty = a.IsRelatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
                             submittedForAppraisal = a.SubmittedForAppraisal,
-                            principalAmount = d.PrincipalAmount,
+                            applicationAmount = d.PrincipalAmount ,
 
                             createdBy = a.CreatedBy,
                             applicationDate = a.ApplicationDate,
