@@ -292,7 +292,7 @@ namespace FintrakBanking.Repositories.Finance
 
             FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
 
-            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.CreditDailyInterestAccural;
+            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.DailyInterestAccural;
             dailyInterestAccrualTransaction.description = "Loan Daily Interest Accrual Posting";
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
@@ -363,7 +363,7 @@ namespace FintrakBanking.Repositories.Finance
 
             FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
 
-            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.CreditDailyInterestAccural;
+            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.DailyInterestAccural;
             dailyInterestAccrualTransaction.description = "Authorised Overdraft Daily Interest Accrual Posting";
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
@@ -433,7 +433,7 @@ namespace FintrakBanking.Repositories.Finance
 
             FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
 
-            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.CreditDailyInterestAccural;
+            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.DailyInterestAccural;
             dailyInterestAccrualTransaction.description = "Unauthorised Overdraft Daily Interest Accrual Posting";
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
@@ -503,7 +503,7 @@ namespace FintrakBanking.Repositories.Finance
 
             FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
 
-            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.CreditDailyInterestAccural;
+            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.DailyInterestAccural;
             dailyInterestAccrualTransaction.description = "Past Due Daily Interest Accrual Posting";
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
@@ -574,7 +574,7 @@ namespace FintrakBanking.Repositories.Finance
 
             FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
 
-            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.CreditDailyInterestAccural;
+            dailyInterestAccrualTransaction.operationId = (int)OperationsEnum.DailyInterestAccural;
             dailyInterestAccrualTransaction.description = "Past Due Daily Principal Accrual Posting";
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
@@ -886,7 +886,7 @@ namespace FintrakBanking.Repositories.Finance
 
             var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
 
-            loanTransaction.operationId = (int)OperationsEnum.ChargeReversal;
+            loanTransaction.operationId = (int)OperationsEnum.Fee_chargeChange;
             loanTransaction.description = "Charge Reversal";
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;

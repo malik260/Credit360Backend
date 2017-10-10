@@ -560,6 +560,7 @@ namespace FintrakBanking.Repositories.Credit
                         join d in context.tbl_Credit_Appraisal_Memorandum_Loan_Detail on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
                         join e in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals e.AppraisalMemorandumId
+                        join f in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals f.LoanApplicationId
                         where a.CompanyId == companyId && a.Deleted == false
                               && a.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
@@ -586,7 +587,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchName = a.tbl_Branch.BranchName,
                             subSectorId = a.SubSectorId,
 
-                            applicationTenor = d.Tenor,
+                            approvedTenor = d.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName =
                                 a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
@@ -594,8 +595,8 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerName =
                                 a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
 
-                            //currencyId = a.CurrencyId,
-                            //currencyCode = a.tbl_Currency.CurrencyCode,
+                            currencyId = f.CurrencyId,
+                            currencyCode = f.tbl_Currency.CurrencyCode,
                             loanTypeId = a.LoanTypeId,
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
                             //loanStatusId = a.LoanStatusId,
@@ -604,16 +605,16 @@ namespace FintrakBanking.Repositories.Credit
                             camDocumentation = e.CAMDocumentation,
                             appraisalMemorandumId = c.AppraisalMemorandumId,
                             //loanDetails = c.LoanDetails,
-                            //productId = (short)a.ProductId,
-                            //productTypeId = a.tbl_Product.ProductTypeId,
-                            //productTypeName = a.tbl_Product.tbl_Product_Type.ProductTypeName,
-                            //productName = a.tbl_Product.ProductName,
+                            productId = (short)f.ApprovedProductId,
+                            productTypeId = f.tbl_Product.ProductTypeId,
+                            productTypeName = f.tbl_Product.tbl_Product_Type.ProductTypeName,
+                            productName = f.tbl_Product.ProductName,
 
                             misCode = a.MISCode,
                             teamMisCode = a.TeamMISCode,
 
                             interestRate = d.InterestRate,
-                            isRelatedParty = a.IsRelatedParty,
+                            //isRealatedParty = a.IsRealatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
                             submittedForAppraisal = a.SubmittedForAppraisal,
                           //  principalAmount = d.PrincipalAmount,
@@ -623,8 +624,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = a.DateTimeCreated,
 
                             loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId,
-
-
+                            exchangeRate = f.ExchangeRate,
                             applicationStatusId = a.ApplicationStatusId
                         });
 
