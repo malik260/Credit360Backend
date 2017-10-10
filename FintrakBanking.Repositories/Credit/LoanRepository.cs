@@ -624,8 +624,6 @@ namespace FintrakBanking.Repositories.Credit
             financeTransaction.PostTransaction(inputTransactions);
         }
 
-
-
         //[OperationBehavior(TransactionScopeRequired = true)]
         //public LoanViewModel PostLoanDisbursment(LoanViewModel model)
         //{      
@@ -771,8 +769,10 @@ namespace FintrakBanking.Repositories.Credit
 
         //}
 
-        public IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId)
-        {
+
+        public IEnumerable<LoanViewModel> GetTermLoanBookingAwaitingApproval(int staffId, int companyId)
+        { 
+
             var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.TermLoanBooking);
             //var levelResult = level.GetAllAssignedApprovalLevelStaff(companyId);
             int staffApprovalLevelId = 0;
@@ -792,6 +792,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanViewModel()
                         {
                             loanId = ln.TermLoanId,
+                            operationId = (int)OperationsEnum.TermLoanBooking,
                             customerId = ln.CustomerId,
                             productId = ln.ProductId,
                             casaAccountId = ln.CasaAccountId,
@@ -834,7 +835,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedAmount = ln.tbl_Loan_Application_Detail.ApprovedAmount,
 
                             customerGroupId = ln.CustomerGroupId,
-                            operationId = ln.OperationId,
+                           // operationId = ln.OperationId,
                             loanTypeId = ln.LoanTypeId,
                             equityContribution = ln.EquityContribution,
                             subSectorId = ln.SubSectorId,
@@ -879,6 +880,197 @@ namespace FintrakBanking.Repositories.Credit
                             creatorName = ln.tbl_Staff.LastName + " " + ln.tbl_Staff.FirstName + " (" + ln.tbl_Staff.StaffCode + ")",
                             dateTimeCreated = ln.DateTimeCreated,
                             comment = "",
+                            
+
+                            //isCamsol 
+                            //loanCovenant 
+                            //loanChargeFee 
+                            //loanGuarantor 
+                            //loanCollateral 
+                        });
+                    
+            return data;
+        }
+
+        public IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanBookingAwaitingApproval(int staffId, int companyId)
+        {
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.RevolvingLoanBooking);
+            //var levelResult = level.GetAllAssignedApprovalLevelStaff(companyId);
+            int staffApprovalLevelId = 0;
+
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            var data = (from ln in context.tbl_Loan_Revolving
+                        join coy in context.tbl_Company on ln.CompanyId equals coy.CompanyId
+                        join br in context.tbl_Branch on ln.BranchId equals br.BranchId
+                        join atrail in context.tbl_Approval_Trail on ln.RevolvingLoanId equals atrail.TargetId
+                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
+                              && atrail.OperationId == (int)OperationsEnum.TermLoanBooking
+                              && atrail.ToApprovalLevelId == staffApprovalLevelId
+                              && atrail.ResponseStaffId == null
+                        orderby ln.RevolvingLoanId descending
+
+                        select new RevolvingLoanViewModel()
+                        {
+                            loanId = ln.RevolvingLoanId,
+                            operationId = (int)OperationsEnum.RevolvingLoanBooking,
+                            customerId = ln.CustomerId,
+                            productId = ln.ProductId,
+                            casaAccountId = ln.CasaAccountId,
+                            loanApplicationDetailId = (int)ln.LoanApplicationDetailId,
+
+                            branchId = ln.BranchId,
+                            loanReferenceNumber = ln.LoanReferenceNumber,
+                            applicationReferenceNumber = ln.tbl_Loan_Application_Detail.tbl_Loan_Application.ApplicationReferenceNumber,
+
+                            relationshipOfficerId = ln.RelationshipOfficerId,
+                            relationshipManagerId = ln.RelationshipManagerId,
+                            misCode = ln.MISCode,
+                            teamMiscode = ln.TeamMISCode,
+                            interestRate = ln.InterestRate,
+                            effectiveDate = ln.EffectiveDate,
+                            maturityDate = ln.MaturityDate,
+                            bookingDate = ln.BookingDate,
+                           
+                            approvalStatusId = ln.ApprovalStatusId,
+                            approvedBy = ln.ApprovedBy,
+                            approverComment = ln.ApproverComment,
+                            dateApproved = ln.DateApproved,
+                            //loanStatusId = ln.LoanStatusId,
+                           
+                            isDisbursed = ln.IsDisbursed,
+                            disbursedBy = ln.DisbursedBy,
+                            disburserComment = ln.DisburserComment,
+                            disburseDate = ln.DisburseDate,
+
+                            approvedAmount = ln.tbl_Loan_Application_Detail.ApprovedAmount,
+
+                            customerGroupId = ln.CustomerGroupId,
+                            // operationId = ln.OperationId,
+                            loanTypeId = ln.LoanTypeId,
+                            
+                            subSectorId = ln.SubSectorId,
+                            subSectorName = ln.tbl_Sub_Sector.Name,
+                            SectorName = ln.tbl_Sub_Sector.tbl_Sector.Name,
+
+                            dischargeLetter = ln.DischargeLetter,
+                            suspendInterest = ln.SuspendInterest,
+
+                            customerSensitivityLevelId = ln.CustomerSensitivityLevelId,
+                            customerSensitivityLevelName = ln.tbl_Customer_Sensitivity_Level.Description,
+                            firstName = ln.tbl_Customer.FirstName,
+                            middleName = ln.tbl_Customer.MiddleName,
+                            lastName = ln.tbl_Customer.LastName,
+                            customerCode = ln.tbl_Customer.CustomerCode,
+                            productAccountNumber = ln.tbl_Product.tbl_Chart_Of_Account.AccountCode,
+                            productAccountName = ln.tbl_Product.tbl_Chart_Of_Account.AccountName,
+                            loanTypeName = ln.tbl_Loan_Type.LoanTypeName,
+                            customerName = ln.tbl_Customer.LastName + " " + ln.tbl_Customer.FirstName + " " + ln.tbl_Customer.MiddleName,
+                            currencyId = ln.CurrencyId,
+
+                            branchName = ln.tbl_Branch.BranchName,
+                            relationshipOfficerName = ln.tbl_Staff.FirstName + " " + ln.tbl_Staff.MiddleName + " " + ln.tbl_Staff.LastName,
+                            relationshipManagerName = ln.tbl_Staff.FirstName + " " + ln.tbl_Staff.MiddleName + " " + ln.tbl_Staff.LastName,
+
+                            productName = ln.tbl_Product.ProductName,
+
+                            createdBy = ln.CreatedBy,
+                            creatorName = ln.tbl_Staff.LastName + " " + ln.tbl_Staff.FirstName + " (" + ln.tbl_Staff.StaffCode + ")",
+                            dateTimeCreated = ln.DateTimeCreated,
+                            comment = "",
+
+                            //isCamsol 
+                            //loanCovenant 
+                            //loanChargeFee 
+                            //loanGuarantor 
+                            //loanCollateral 
+                        });
+            return data.ToList();
+        }
+
+        public IEnumerable<ContingentLoanViewModel> GetContingentLoanBookingAwaitingApproval(int staffId, int companyId)
+        {
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.ContigentLoanBooking);
+            //var levelResult = level.GetAllAssignedApprovalLevelStaff(companyId);
+            int staffApprovalLevelId = 0;
+
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            var data = (from ln in context.tbl_Loan_Contingent
+                        join coy in context.tbl_Company on ln.CompanyId equals coy.CompanyId
+                        join br in context.tbl_Branch on ln.BranchId equals br.BranchId
+                        join atrail in context.tbl_Approval_Trail on ln.ContingentLoanId equals atrail.TargetId
+                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
+                              && atrail.OperationId == (int)OperationsEnum.TermLoanBooking
+                              && atrail.ToApprovalLevelId == staffApprovalLevelId
+                              && atrail.ResponseStaffId == null
+                        orderby ln.ContingentLoanId descending
+
+                        select new ContingentLoanViewModel()
+                        {
+                            loanId = ln.ContingentLoanId,
+                            operationId = (int)OperationsEnum.ContigentLoanBooking,
+                            customerId = ln.CustomerId,
+                            productId = ln.ProductId,
+                            casaAccountId = ln.CasaAccountId,
+                            loanApplicationDetailId = (int)ln.LoanApplicationDetailId,
+
+                            branchId = ln.BranchId,
+                            loanReferenceNumber = ln.LoanReferenceNumber,
+                            applicationReferenceNumber = ln.tbl_Loan_Application_Detail.tbl_Loan_Application.ApplicationReferenceNumber,
+
+                            relationshipOfficerId = ln.RelationshipOfficerId,
+                            relationshipManagerId = ln.RelationshipManagerId,
+                            misCode = ln.MISCode,
+                            teamMiscode = ln.TeamMISCode,
+                            effectiveDate = ln.EffectiveDate,
+                            maturityDate = ln.MaturityDate,
+                            bookingDate = ln.BookingDate,
+
+                            approvalStatusId = ln.ApprovalStatusId,
+                            approvedBy = ln.ApprovedBy,
+                            approverComment = ln.ApproverComment,
+                            dateApproved = ln.DateApproved,
+                            //loanStatusId = ln.LoanStatusId,
+
+                            isDisbursed = ln.IsDisbursed,
+                            disbursedBy = ln.DisbursedBy,
+                            disburserComment = ln.DisburserComment,
+                            disburseDate = ln.DisburseDate,
+
+                            approvedAmount = ln.tbl_Loan_Application_Detail.ApprovedAmount,
+
+                            customerGroupId = ln.CustomerGroupId,
+                            // operationId = ln.OperationId,
+                            loanTypeId = ln.LoanTypeId,
+
+                            subSectorId = ln.SubSectorId,
+                            subSectorName = ln.tbl_Sub_Sector.Name,
+                            SectorName = ln.tbl_Sub_Sector.tbl_Sector.Name,
+                            dischargeLetter = ln.DischargeLetter,
+
+                            customerSensitivityLevelId = ln.CustomerSensitivityLevelId,
+                            customerSensitivityLevelName = ln.tbl_Customer_Sensitivity_Level.Description,
+                            firstName = ln.tbl_Customer.FirstName,
+                            middleName = ln.tbl_Customer.MiddleName,
+                            lastName = ln.tbl_Customer.LastName,
+                            customerCode = ln.tbl_Customer.CustomerCode,
+                            productAccountNumber = ln.tbl_Product.tbl_Chart_Of_Account.AccountCode,
+                            productAccountName = ln.tbl_Product.tbl_Chart_Of_Account.AccountName,
+                            loanTypeName = ln.tbl_Loan_Type.LoanTypeName,
+                            customerName = ln.tbl_Customer.LastName + " " + ln.tbl_Customer.FirstName + " " + ln.tbl_Customer.MiddleName,
+                            currencyId = ln.CurrencyId,
+
+                            branchName = ln.tbl_Branch.BranchName,
+                            relationshipOfficerName = ln.tbl_Staff.FirstName + " " + ln.tbl_Staff.MiddleName + " " + ln.tbl_Staff.LastName,
+                            relationshipManagerName = ln.tbl_Staff.FirstName + " " + ln.tbl_Staff.MiddleName + " " + ln.tbl_Staff.LastName,
+
+                            productName = ln.tbl_Product.ProductName,
+
+                            createdBy = ln.CreatedBy,
+                            creatorName = ln.tbl_Staff.LastName + " " + ln.tbl_Staff.FirstName + " (" + ln.tbl_Staff.StaffCode + ")",
+                            dateTimeCreated = ln.DateTimeCreated,
+                            comment = "",
 
                             //isCamsol 
                             //loanCovenant 
@@ -889,26 +1081,9 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        //public bool GoForApproval(ApprovalViewModel entity)
-        //{
-        //    entity.operationId = (int)OperationsEnum.ProductCreation;
-
-        //    entity.externalInitialization = false;
-
-        //    workflow.LogForApproval(entity);
-
-        //    if (workflow.NewState == (int)ApprovalState.Ended)
-        //    {
-        //        return ApproveProduct(entity.targetId, (short)workflow.StatusId, entity);
-        //    }
-
-        //    return false;
-        //}
-
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            //entity.comment = " Okay";
-            //entity.approvalStatusId = (short)ApprovalStatusEnum.Approved;
+            
             entity.operationId = (int)OperationsEnum.TermLoanBooking;
 
             entity.externalInitialization = false;
@@ -920,12 +1095,20 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.LogForApproval(entity);
                     if (workflow.Saved)
                     {
-                        var loanBookingCompleted = ApproveTermLoanBooking(entity.targetId, (short)workflow.StatusId, entity);
 
-                        if (loanBookingCompleted) trans.Commit();
-                        else trans.Rollback();
+                        var loanBookingCompleted = ApproveLoanBooking(entity.targetId, (short)workflow.StatusId, entity);
 
-                        return loanBookingCompleted;
+                        try {
+                            trans.Commit();
+                            if (workflow.NewState != (int)ApprovalState.Ended) return false;
+                            else return true;
+                        }
+                        catch (Exception e) {
+                            trans.Rollback();
+                            throw new Exception("Approval failed. " + e.Message);
+                        }
+                        
+
                     }
                     else
                     {
@@ -1092,12 +1275,17 @@ namespace FintrakBanking.Repositories.Credit
             return loanModel;
         }
 
-        private bool ApproveTermLoanBooking(int loanId, short approvalStatusId, ApprovalViewModel user)
+        private bool ApproveLoanBooking(int loanId, short approvalStatusId, ApprovalViewModel user)
         {
             var loanRecord = context.tbl_Loan.Find(loanId);
 
-            if (workflow.NewState != (int)ApprovalState.Ended)
-                loanRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
+            if(workflow.NewState != (int)ApprovalState.Ended)
+            {
+                if(loanRecord.ApprovalStatusId != (int)ApprovalStatusEnum.Processing)
+                    loanRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
+            }
+                
+
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
@@ -1139,8 +1327,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.auditTrail.AddAuditTrail(audit);
                 // Audit Section ---------------------------
             }
-
-            return this.context.SaveChanges() > 0;
+           
+            return  this.context.SaveChanges() > 0;
         }
 
         public FinanceTransactionViewModel BuildLoanDisbursmentPosting(LoanViewModel model)
@@ -2128,7 +2316,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             customerAccounts = (from k in context.tbl_CASA
                                                 where k.Deleted == false
-                                                && k.CustomerId == d.CustomerId  //TODO: Uncomment
+                                                && k.CustomerId == d.CustomerId  
                                                 select (
                                  new CasaViewModel
                                  {
@@ -2197,17 +2385,19 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = m.LoanPreliminaryEvaluationId,
                             exchangeRate = d.ExchangeRate,
                         }).ToList();
-            int position = 0;
+            int position = 0; int dataCount = data.Count();
             foreach (var item in data)
             {
                 if (!item.customerAvailableAmount.HasValue)
                     item.customerAvailableAmount = item.approvedAmount;
 
                 if (item.customerAvailableAmount == 0)
-                {
-                    //data.RemoveAt(position);
-                }
+                    data.RemoveAt(position);
+
                 position++;
+
+                if(dataCount == position || position > dataCount)
+                    break;
             }
 
             return data.ToList();
