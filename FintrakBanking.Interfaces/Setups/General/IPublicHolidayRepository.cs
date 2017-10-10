@@ -9,12 +9,13 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IPublicHolidayRepository
     {
-        bool isHolidayExist(DateTime description);
+        bool DoesHolidayExist(DateTime date, int countryId);
         PublicHolidayViewModel GetPublicHoliday(int id);
         IEnumerable<PublicHolidayViewModel> GetAllPublicHoliday();
         IEnumerable<PublicHolidayViewModel> GetAllPublicHolidayByCompanyId(int id);
         bool AddPublicHoliday(PublicHolidayViewModel model);
         bool UpdatePublicHoliday(PublicHolidayViewModel model, int id);
 
+        bool AddWeekendsInTheYear(PublicHolidayViewModel model);
     }
 }
