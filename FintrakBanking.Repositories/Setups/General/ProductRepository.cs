@@ -815,7 +815,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ProductTypeId = productModel.ProductTypeId,
                         ProductCategoryId = productModel.ProductCategoryId,
                         ProductClassId = productModel.ProductClassId,
-                        ProductCode = GenerateProductCode(productModel.CompanyId),
+                        ProductCode = productModel.ProductCode,
                         ProductName = productModel.ProductName,
                         ProductDescription = productModel.ProductDescription,
 
