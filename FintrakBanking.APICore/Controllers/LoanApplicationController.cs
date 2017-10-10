@@ -436,7 +436,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repoLoanPEN.GetAllLoanPreliminaryEvaluations();
+                var data = repoLoanPEN.GetAllLoanSingleCustomerPreliminaryEvaluations();
 
                 if (!data.Any())
                 {

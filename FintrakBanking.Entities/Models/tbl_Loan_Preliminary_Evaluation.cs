@@ -155,6 +155,5 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
 
-        public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
     }
 }

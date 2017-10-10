@@ -40,7 +40,7 @@ namespace FintrakBanking.ReportObjects
 
             var loanDetails = (from a in context.tbl_Loan_Application
                                join b in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals b.LoanApplicationId
-                               join c in context.tbl_Product on b.Approved_ProductId equals c.ProductId
+                               join c in context.tbl_Product on b.ApprovedProductId equals c.ProductId
                                join d in context.tbl_Customer on b.CustomerId equals d.CustomerId
                                where a.ApplicationReferenceNumber.ToLower() == applicationRefNumber.ToLower() &&
                                      b.StatusId == (int)ApprovalStatusEnum.Approved
@@ -49,8 +49,8 @@ namespace FintrakBanking.ReportObjects
                                    productName = c.ProductName,
                                    customerName = d.FirstName + ' ' + d.LastName,
                                    currencyName = b.tbl_Currency.CurrencyName,
-                                   tenor = b.Approved_Tenor,
-                                   interestRate = b.Approved_InterestRate
+                                   tenor = b.ApprovedTenor,
+                                   interestRate = b.ApprovedInterestRate
                                }).ToList();
 
             if (loanDetails != null)
