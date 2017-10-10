@@ -121,7 +121,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         countryId = coy.CountryId,
                         branchName = br.BranchName,
                         companyName = coy.Name
-
                     }).ToListAsync();
 
                 return data;

@@ -9,13 +9,17 @@ namespace FintrakBanking.Interfaces.Credit
     {
         Task<LoanPreliminaryEvaluationViewModel> AddPreliminaryEvaluation(LoanPreliminaryEvaluationViewModel model);
 
+        Task<LoanPreliminaryEvaluationViewModel> AddMultiplePreliminaryEvaluation(List<LoanPreliminaryEvaluationViewModel> model);
+
         IEnumerable<LoanPreliminaryEvaluationViewModel> GetPreliminaryEvaluationsAwaitingApproval(int staffId, int companyId);
 
-        Task<bool> GoForApproval(ApprovalViewModel entity);
+        bool GoForApproval(ApprovalViewModel entity);
 
-        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanPreliminaryEvaluations();
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanSingleCustomerPreliminaryEvaluations(int loanTypeId);
 
-       Task<bool> UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model);
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanGroupCustomerPreliminaryEvaluations(int loanTypeId);
+
+        Task<bool> UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model);
 
         bool SendPreliminaryEvaluationForLoanApplication(int loanPenId, LoanPreliminaryEvaluationViewModel model);
     }

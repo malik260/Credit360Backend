@@ -79,7 +79,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = a.CompanyId,
                             branchId = (short)a.BranchId,
                             branchName = a.tbl_Branch.BranchName,
-                            tenor = a.ApplicationTenor,
+                            //tenor = a.ApplicationTenor,
                             //tenorModeId = a.TenorModeId,
                             //tenorModeName = a.tbl_Tenor_Mode.TenorModeName,
                             relationshipOfficerId = a.RelationshipOfficerId,
@@ -99,7 +99,7 @@ namespace FintrakBanking.Repositories.Credit
                             isRelatedParty = a.IsRelatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
                             submittedForAppraisal = a.SubmittedForAppraisal,
-                            principalAmount = a.ApplicationAmount,
+                            //principalAmount = a.ApplicationAmount,
                             customerGroupId = a.CustomerGroupId ?? 0,
                             customerGroupName = a.CustomerGroupId.HasValue ? a.tbl_Customer_Group.GroupName : "",
                             loanTypeId = a.LoanTypeId,
@@ -178,7 +178,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanInformation = a.LoanInformation,
                             companyId = a.CompanyId,
                             branchId = (short)a.BranchId,
-                            tenor = a.ApplicationTenor,
+                            //tenor = a.ApplicationTenor,
                             // tenorModeId = a.TenorModeId,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipManagerId = a.RelationshipManagerId,
@@ -190,7 +190,7 @@ namespace FintrakBanking.Repositories.Credit
                             interestRate = a.InterestRate,
                             isRelatedParty = a.IsRelatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
-                            principalAmount = a.ApplicationAmount,
+                            //principalAmount = a.ApplicationAmount,
                             customerGroupId = a.CustomerGroupId.Value,
                             loanTypeId = a.LoanTypeId,
                             //loanStatusId = a.LoanStatusId,
@@ -260,7 +260,7 @@ namespace FintrakBanking.Repositories.Credit
                 //LoanStatusId = loanStatusId,
                 CompanyId = loan.companyId,
                 BranchId = (short)loan.branchId,
-                ApplicationTenor = loan.tenor,
+               // ApplicationTenor = loan.tenor,
                 CasaAccountId = casaAccountId,
                 RelationshipOfficerId = loan.relationshipOfficerId,
                 RelationshipManagerId = loan.relationshipManagerId,
@@ -270,7 +270,7 @@ namespace FintrakBanking.Repositories.Credit
                 TeamMISCode = loan.teamMisCode,
                 InterestRate = loan.interestRate,
                 //ProductId = loan.productId,
-                ApplicationAmount = loan.principalAmount,
+                //ApplicationAmount = loan.principalAmount,
                 ApplicationDate = genSetup.GetApplicationDate(),
                 LoanInformation = loan.loanInformation,
                 IsRelatedParty = loan.isRelatedParty,
@@ -417,14 +417,16 @@ namespace FintrakBanking.Repositories.Credit
                             //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                             customerGroupId = x.a.CustomerGroupId,
                             loanTypeId = x.a.LoanTypeId,
+
                             //currencyId = x.a.CurrencyId,
+
                             relationshipOfficerId = x.a.RelationshipOfficerId,
                             relationshipManagerId = x.a.RelationshipManagerId,
                             applicationDate = x.a.ApplicationDate,
-                            principalAmount = x.a.ApplicationAmount,
+                            //principalAmount = x.a.ApplicationAmount,
                             approvedAmount = x.a.ApprovedAmount,
                             interestRate = x.a.InterestRate,
-                            tenor = x.a.ApplicationTenor,
+                            //tenor = x.a.ApplicationTenor,
                             lastComment = y.Comment,
                             currentApprovalStateId = y.ApprovalStateId,
                             currentApprovalLevelId = y.ToApprovalLevelId,
@@ -495,14 +497,16 @@ namespace FintrakBanking.Repositories.Credit
                 //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                 customerGroupId = x.a.CustomerGroupId,
                 loanTypeId = x.a.LoanTypeId,
+
                 //currencyId = x.a.CurrencyId,
+
                 relationshipOfficerId = x.a.RelationshipOfficerId,
                 relationshipManagerId = x.a.RelationshipManagerId,
                 applicationDate = x.a.ApplicationDate,
-                principalAmount = x.a.ApplicationAmount,
+                //principalAmount = x.a.ApplicationAmount,
                 approvedAmount = x.a.ApprovedAmount,
                 interestRate = x.a.InterestRate,
-                tenor = x.a.ApplicationTenor,
+                //tenor = x.a.ApplicationTenor,
                 lastComment = x.b.Comment,
                 currentApprovalStateId = x.b.ApprovalStateId,
                 currentApprovalLevelId = x.b.ToApprovalLevelId,
@@ -556,6 +560,7 @@ namespace FintrakBanking.Repositories.Credit
                         join d in context.tbl_Credit_Appraisal_Memorandum_Loan_Detail on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
                         join e in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals e.AppraisalMemorandumId
+                        join f in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals f.LoanApplicationId
                         where a.CompanyId == companyId && a.Deleted == false
                               && a.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
@@ -582,7 +587,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchName = a.tbl_Branch.BranchName,
                             subSectorId = a.SubSectorId,
 
-                            tenor = d.Tenor,
+                            approvedTenor = d.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName =
                                 a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
@@ -590,36 +595,36 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipManagerName =
                                 a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
 
-                            //currencyId = a.CurrencyId,
-                            //currencyCode = a.tbl_Currency.CurrencyCode,
+                            currencyId = f.CurrencyId,
+                            currencyCode = f.tbl_Currency.CurrencyCode,
                             loanTypeId = a.LoanTypeId,
                             loanTypeName = a.tbl_Loan_Type.LoanTypeName,
-                            //loanStatusId = a.LoanStatusId,
-                            //loanStatusName = a.tbl_Loan_Type.AccountStatus,
+                            loanStatusId = a.ApplicationStatusId,
+                            loanStatusName = a.tbl_Loan_Application_Status.ApplicationStatusName,
                             camReference = c.CAMRef,
                             camDocumentation = e.CAMDocumentation,
                             appraisalMemorandumId = c.AppraisalMemorandumId,
                             //loanDetails = c.LoanDetails,
-                            //productId = (short)a.ProductId,
-                            //productTypeId = a.tbl_Product.ProductTypeId,
-                            //productTypeName = a.tbl_Product.tbl_Product_Type.ProductTypeName,
-                            //productName = a.tbl_Product.ProductName,
+                            productId = (short)f.ApprovedProductId,
+                            productTypeId = f.tbl_Product.ProductTypeId,
+                            productTypeName = f.tbl_Product.tbl_Product_Type.ProductTypeName,
+                            productName = f.tbl_Product.ProductName,
 
                             misCode = a.MISCode,
                             teamMisCode = a.TeamMISCode,
 
                             interestRate = d.InterestRate,
-                            isRelatedParty = a.IsRelatedParty,
+                            //isRealatedParty = a.IsRealatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
                             submittedForAppraisal = a.SubmittedForAppraisal,
-                            principalAmount = d.PrincipalAmount,
+                            approvedAmount = f.ApprovedAmount,
 
                             createdBy = a.CreatedBy,
                             applicationDate = a.ApplicationDate,
                             dateTimeCreated = a.DateTimeCreated,
 
                             loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId,
-                            //exchangeRate = a.ra,
+                            exchangeRate = f.ExchangeRate,
                             applicationStatusId = a.ApplicationStatusId
                         });
 

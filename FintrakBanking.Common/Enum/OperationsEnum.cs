@@ -5,24 +5,30 @@ using System.Text;
 namespace FintrakBanking.Common.Enum
 {
     public enum OperationsEnum
-    {        
-        TermLoanBooking = 1,
-        LoanApplication = 2,
+    {
+        //setup operations
         StaffCreation = 3,
         UserCreation = 4,
         ProductCreation = 5,
-        CAM = 6,
         ChartOfAccountCreation = 7,
         CustomerGroupCreation = 8,
-        LoanPreliminaryEvaluation = 9,
         FeeCreation = 10,
+
+        //loan origination operations
+        TermLoanBooking = 1,
+        LoanApplication = 2,
+        CAM = 6,
+        LoanPreliminaryEvaluation = 9,        
         CollateralSearch = 12,
         RevolvingLoanBooking = 13,
         ContigentLoanBooking = 14,
-        CreditDailyInterestAccural = 15,
+        DailyInterestAccural = 15,
+
         LoanRepayment = 16,
-        ChargeReversal = 17,
-        LoanPrepayment  = 18,
+        //ChargeReversal = 17,
+        //LoanPrepayment  = 18,
+
+        //Loan management operations
         ContractualInterestRateChange = 19,
         OverdraftSubAllocation = 20,
         Prepayment = 21,
@@ -34,8 +40,10 @@ namespace FintrakBanking.Common.Enum
         CASAAccountChange = 27,
         OverdraftTopup = 28,
         Fee_chargeChange = 29,
-        TerminateandRebook = 30,
+        TerminateAndRebook = 30,
         CompleteWriteOff = 31,
-        CancelUndisbursedLoan = 32
+        CancelUndisbursedLoan = 32,
+        InterestSuspension = 33
+
     }
 }
