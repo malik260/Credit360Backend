@@ -205,7 +205,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string subSectorName { get; set; }
-        public string SectorName { get; set; }
+        //public string SectorName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string productName { get; set; }
@@ -292,7 +292,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public string productAccountNumber { get; set; }
         public string comment { get; set; }
-        public string SectorName { get; set; }
+       // public string SectorName { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
 

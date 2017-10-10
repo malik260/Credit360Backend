@@ -951,7 +951,7 @@ namespace FintrakBanking.Repositories.Credit
                             
                             subSectorId = ln.SubSectorId,
                             subSectorName = ln.tbl_Sub_Sector.Name,
-                            SectorName = ln.tbl_Sub_Sector.tbl_Sector.Name,
+                            //SectorName = ln.tbl_Sub_Sector.tbl_Sector.Name,
 
                             dischargeLetter = ln.DischargeLetter,
                             suspendInterest = ln.SuspendInterest,
@@ -1046,7 +1046,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             subSectorId = ln.SubSectorId,
                             subSectorName = ln.tbl_Sub_Sector.Name,
-                            SectorName = ln.tbl_Sub_Sector.tbl_Sector.Name,
+                            //SectorName = ln.tbl_Sub_Sector.tbl_Sector.Name,
                             dischargeLetter = ln.DischargeLetter,
 
                             customerSensitivityLevelId = ln.CustomerSensitivityLevelId,
