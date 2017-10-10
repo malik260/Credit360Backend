@@ -4,6 +4,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
@@ -25,10 +26,11 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private ILoanScheduleRepository loanSchedule;
         private IWorkFlowRepository workFlow;
+        private IApprovalLevelStaffRepository level;
         public LoanOperationsRepository(
 
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
-            ILoanScheduleRepository _loanSchedule, IWorkFlowRepository _workFlow)
+            ILoanScheduleRepository _loanSchedule, IWorkFlowRepository _workFlow, IApprovalLevelStaffRepository _level)
         {
 
             this.context = _context;
@@ -37,6 +39,7 @@ namespace FintrakBanking.Repositories.Credit
             this.auditTrail = _auditTrail;
             this.loanSchedule = _loanSchedule;
             this.workFlow = _workFlow;
+            this.level = _level;
         }
 
 
@@ -1617,7 +1620,9 @@ namespace FintrakBanking.Repositories.Credit
                              effectiveDate = a.EffectiveDate,
                              maturityDate = a.MaturityDate,
                              bookingDate = a.BookingDate,
+
                              principalAmount = a.PrincipalAmount,                           
+
                              principalInstallmentLeft = a.PrincipalInstallmentLeft,
                              interestInstallmentLeft = a.InterestInstallmentLeft,
                              approvalStatusId = a.ApprovalStatusId,
@@ -2354,7 +2359,7 @@ namespace FintrakBanking.Repositories.Credit
                              maturityDate = a.MaturityDate,
                              bookingDate = a.BookingDate,
                              principalAmount = a.PrincipalAmount,
-                            
+
                              principalInstallmentLeft = a.PrincipalInstallmentLeft,
                              interestInstallmentLeft = a.InterestInstallmentLeft,
                              approvalStatusId = a.ApprovalStatusId,
@@ -2564,7 +2569,7 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
             var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == loanInput.productId);
-            var penalCharge = context.tbl_Charge_Fee.FirstOrDefault(x => x.OperationId == (int)OperationsEnum.LoanPrepayment);
+            var penalCharge = context.tbl_Charge_Fee.FirstOrDefault(x => x.OperationId == (int)OperationsEnum.Prepayment);
             if (loanInput.principalAmount == loanInput.payAmount)
             {
                 var refNo = this.context.tbl_Loan.Where(x => x.TermLoanId == loanInput.loanId).FirstOrDefault().LoanReferenceNumber;
@@ -3216,42 +3221,71 @@ namespace FintrakBanking.Repositories.Credit
                         operationTypeName = data.OperationName
                     });
         }
-        public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(int scheduleId)
+        public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId)
         {
-            if (scheduleId == (int)LoanScheduleTypeEnum.IrregularSchedule)
-            {
-                return (from data in context.tbl_Operations
-                        where data.OperationTypeId == (int)OperationTypeEnum.LoanManagement &&
-                        data.OperationId != (int)OperationsEnum.InterestandPrincipalFrequencyChange &&
-                         data.OperationId != (int)OperationsEnum.InterestFrequencyChange &&
-                           data.OperationId != (int)OperationsEnum.PrincipalFrequencyChange
-                        select new LoanOperationTypeViewModel()
-                        {
-                            operationTypeId = data.OperationId,
-                            operationTypeName = data.OperationName
-                        });
-            }
-            else if (scheduleId == (int)LoanScheduleTypeEnum.BallonPayment)
-            {
-                return (from data in context.tbl_Operations
-                        where data.OperationTypeId == (int)OperationTypeEnum.LoanManagement &&
-                        data.OperationId != (int)OperationsEnum.InterestandPrincipalFrequencyChange &&
-                         data.OperationId != (int)OperationsEnum.InterestFrequencyChange &&
-                           data.OperationId != (int)OperationsEnum.PrincipalFrequencyChange
-                        select new LoanOperationTypeViewModel()
-                        {
-                            operationTypeId = data.OperationId,
-                            operationTypeName = data.OperationName
-                        });
-            }
-            return (from data in context.tbl_Operations
-                    where data.OperationTypeId == (int)OperationTypeEnum.LoanManagement
-                    select new LoanOperationTypeViewModel()
-                    {
-                        operationTypeId = data.OperationId,
-                        operationTypeName = data.OperationName
-                    });
+            var loanOperations = (from data in context.tbl_Operations
+                                  where data.OperationTypeId == (int)OperationTypeEnum.LoanManagement
+                                  select new LoanOperationTypeViewModel()
+                                  {
+                                      operationTypeId = data.OperationId,
+                                      operationTypeName = data.OperationName
+                                  });
 
+            List<OperationsEnum> operationList = new List<OperationsEnum>();
+
+            if (productTypeId == LoanProductTypeEnum.TermLoan || productTypeId == LoanProductTypeEnum.SelfLiquidating)
+            {
+                if ((scheduleTypeId == LoanScheduleTypeEnum.Annuity) || (scheduleTypeId == LoanScheduleTypeEnum.ConstantPrincipalAndInterest))
+                {
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+                else if (scheduleTypeId == LoanScheduleTypeEnum.IrregularSchedule)
+                {
+                    operationList.Add(OperationsEnum.InterestandPrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.PrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.InterestFrequencyChange);
+                    operationList.Add(OperationsEnum.InterestSuspension);
+                    operationList.Add(OperationsEnum.TenorChange);
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+                else if (scheduleTypeId == LoanScheduleTypeEnum.BulletPayment)
+                {
+                    operationList.Add(OperationsEnum.InterestSuspension);
+                    operationList.Add(OperationsEnum.InterestandPrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.PrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.InterestFrequencyChange);
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+                else if (scheduleTypeId == LoanScheduleTypeEnum.BallonPayment)
+                {
+                    operationList.Add(OperationsEnum.InterestandPrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.PrincipalFrequencyChange);
+                    operationList.Add(OperationsEnum.OverdraftTopup);
+                    operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                    loanOperations = loanOperations.Where(x => !operationList.Contains((OperationsEnum)x.operationTypeId));
+                }
+            }
+            else if (productTypeId == LoanProductTypeEnum.RevolvingLoan)
+            {
+                operationList.Add(OperationsEnum.TenorChange);
+                operationList.Add(OperationsEnum.OverdraftTopup);
+                operationList.Add(OperationsEnum.OverdraftSubAllocation);
+                operationList.Add(OperationsEnum.TerminateAndRebook);
+
+                loanOperations = loanOperations.Where(x => operationList.Contains((OperationsEnum)x.operationTypeId));
+            }
+            else if (productTypeId == LoanProductTypeEnum.ContingentLiability)
+            {
+
+            }
+
+            return loanOperations;
         }
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
@@ -3260,7 +3294,7 @@ namespace FintrakBanking.Repositories.Credit
                 LoanId = model.loanId,
                 ProductTypeId = model.productTypeId,
                 OperationTypeId = model.operationTypeId,
-                EffectiveDate = model.proposedEffectiveDate,                 
+                EffectiveDate = model.proposedEffectiveDate,
                 ReviewDetails = model.reviewDetails,
                 InterateRate = model.interateRate,
                 Prepayment = model.prepayment,
@@ -3289,42 +3323,74 @@ namespace FintrakBanking.Repositories.Credit
                 ApplicationDate = generalSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
-            
+
             //end of Audit section -----------------------
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.ContractualInterestRateChange, model.companyId))
+            using (var trans = context.Database.BeginTransaction())
             {
-                using (var trans = context.Database.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        context.tbl_Loan_Review_Operation.Add(data);
-                        auditTrail.AddAuditTrail(audit);
-                        var output = context.SaveChanges() > 0;
+                    context.tbl_Loan_Review_Operation.Add(data);
+                    auditTrail.AddAuditTrail(audit);
+                    var output = context.SaveChanges() > 0;
 
-                        var approvalModel = new ApprovalViewModel
-                        {
-                            staffId = model.createdBy,
-                            companyId = model.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = model.loanId,
-                            operationId = (int)OperationsEnum.RevolvingLoanBooking,
-                            BranchId = model.userBranchId
-                        };
-                        var response =  workFlow.LogForApproval(approvalModel);
-                        trans.Commit();
-
-                        return output;
-                    }
-                   
-                    catch (Exception ex)
+                    var approvalModel = new ApprovalViewModel
                     {
-                        trans.Rollback();
-                        return false;
-                        throw new Exception(ex.Message);
-                    }
+                        staffId = model.createdBy,
+                        companyId = model.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        targetId = model.loanId,
+                        operationId = (int)OperationsEnum.RevolvingLoanBooking,
+                        BranchId = model.userBranchId
+                    };
+                    var response = workFlow.LogForApproval(approvalModel);
+                    trans.Commit();
+
+                    return output;
+                }
+
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    return false;
+                    throw new Exception(ex.Message);
                 }
             }
-            return false;
+        }
+        public IEnumerable<LoanReviewOperationViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId)
+        {
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.ContractualInterestRateChange);
+            //var levelResult = level.GetAllAssignedApprovalLevelStaff(companyId);
+            int staffApprovalLevelId = 0;
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            var data = (from op in context.tbl_Loan_Review_Operation
+                        join atrail in context.tbl_Approval_Trail on op.LoanId equals atrail.TargetId
+                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
+                              && atrail.ToApprovalLevelId == staffApprovalLevelId
+                              && atrail.ResponseStaffId == null
+                        orderby op.LoanId descending
+                        select new LoanReviewOperationViewModel
+                        {
+                            loanId = op.LoanId,
+                            productTypeId = op.ProductTypeId,
+                            operationTypeId = op.OperationTypeId,
+                            proposedEffectiveDate = op.EffectiveDate,
+                            reviewDetails = op.ReviewDetails,
+                            interateRate = op.InterateRate,
+                            prepayment = op.Prepayment,
+                            principalFrequencyTypeId =op.PrincipalFrequencyTypeId,
+                            interestFrequencyTypeId = op.InterestFrequencyTypeId,
+                            principalFirstPaymentDate = op.PrincipalFirstPaymentDate,
+                            interestFirstPaymentDate = op.InterestFirstPaymentDate,
+                            tenor = op.Tenor,
+                            cASA_AccountId = op.CASA_AccountId,
+                            overDraftTopup = op.OverDraftTopup,
+                            fee_Charges = op.Fee_Charges,
+                            approvalStatusId =op.ApprovalStatusId,
+                            createdBy =op.CreatedBy,
+                           // dateCreated = op.DateCreated
+                        }).ToList();
+            return data;
         }
     }
 }

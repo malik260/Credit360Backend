@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Customer;
+﻿using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.Finance;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? approvedAmount { get; set; }
         public bool creditAppraisalCompleted { get; set; }
         public int? operationId { get; set; }
+        public string operationName {get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
 
@@ -90,6 +92,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public string productAccountNumber { get; set; }
         public int currencyId { get; set; }
+        public string currency { get; set; }
         public short accurialBasis { get; set; }
         public double integralFeeAmount { get; set; }
         public short firstDayType { get; set; }
@@ -120,7 +123,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string subSectorName { get; set; }
-        public string SectorName { get; set; }
+        public string sectorName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string productName { get; set; }
@@ -202,13 +205,21 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string subSectorName { get; set; }
-        public string SectorName { get; set; }
+        //public string SectorName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string productName { get; set; }
         public string customerSensitivityLevelName { get; set; }
         public string customerName { get; set; }
         public string loanStatusName { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string teamMiscode { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string productAccountNumber { get; set; }
+        public string comment { get; set; }
         //.............End of Other Attributes...........//
 
         //......Loan Relational Table View Mapping Models..............//
@@ -266,14 +277,22 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string subSectorName { get; set; }
-        public string SectorName { get; set; }
+        public string sectorName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string productName { get; set; }
         public string customerSensitivityLevelName { get; set; }
         public string customerName { get; set; }
         public string loanStatusName { get; set; }
-
+        public string applicationReferenceNumber { get; set; }
+        public string teamMiscode { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string productAccountNumber { get; set; }
+        public string comment { get; set; }
+       // public string SectorName { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
 
@@ -287,15 +306,21 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string loanDetails { get; set; }
         public string camReference { get; set; }
+        public List<CasaViewModel> customerAccounts { get; set; }
         public int appraisalMemorandumId { get; set; }
         public string customerCode { get; set; }
         public int casaAccountId { get; set; }
         public string loanStatusName { get; set; }
+        public string sectorName { get; set; }
+        public string subSectorName { get; set; }
+        public string sectorSubSectorName { get {return (this.sectorName + "/" + this.subSectorName); } } 
         public short productTypeId { get; set; }
         public string productTypeName { get; set; }
         public int customerSensitivityLevelId { get; set; }
         public string camDocumentation { get; set; }
-        public short applicationStatusId { get; set; }
+        public decimal groupApprovedAmount { get; set; }
+        public int approvedTenor { get; set; }
+        public decimal ? customerAvailableAmount { get; set; }
     }
 
     public class AppraisalMemorandumLoanDetailViewModel
@@ -335,7 +360,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool recurring { get; set; }
     }
 
-    public class LoanCollateralMappingViewModel : CollateralCustomerViewModel
+    public class LoanCollateralMappingViewModel : CollateralViewModel
     {
         public int loanCollateralMappingId { get; set; }
         public int loanId { get; set; }

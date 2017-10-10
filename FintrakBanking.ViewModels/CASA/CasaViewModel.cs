@@ -12,15 +12,18 @@ namespace FintrakBanking.ViewModels.CASA
         public string productAccountName { get; set; }
         public int customerId { get; set; }
         public string customerCode { get; set; }
+        public string customerName { get; set; }
         public int productId { get; set; }
         public string productCode { get; set; }
         public string productName { get; set; }
         //public int companyId { get; set; }
+        public string accountDetail { get { return (this.productAccountNumber +"(" + this.productAccountName +")"); } }
         public short branchId { get; set; }
         public string branchCode { get; set; }
         public string branchName { get; set; }
         public bool isCurrentAccount { get; set; }
         public int tenor { get; set; }
+        public int currencyId { get; set; }
         public decimal interestRate { get; set; }
         public DateTime effectiveDate { get; set; }
         public DateTime terminalDate { get; set; }
@@ -28,6 +31,7 @@ namespace FintrakBanking.ViewModels.CASA
         public DateTime actionDate { get; set; }
         public short accountStatusId { get; set; }
         public int operationId { get; set; }
+        public string currency { get; set; }
         public decimal availableBalance { get; set; }
         public decimal ledgerBalance { get; set; }
         public int relationshipManagerId { get; set; }
@@ -37,7 +41,7 @@ namespace FintrakBanking.ViewModels.CASA
         public decimal overdraftAmount { get; set; }
         public decimal overdraftInterestRate { get; set; }
         public DateTime overdraftExpiryDate { get; set; }
-        public bool ?  hasOverdraft { get; set; }
+        public bool? hasOverdraft { get; set; }
         public decimal lienAmount { get; set; }
         public bool hasLien { get; set; }
         public short postNoStatusId { get; set; }
@@ -45,19 +49,21 @@ namespace FintrakBanking.ViewModels.CASA
         public string oldProductAccountNumber2 { get; set; }
         public string oldProductAccountNumber3 { get; set; }
         public string refreshBatchId { get; set; }
-        public DateTime ? lastRefreshDatetime { get; set; }
-        public short ? aprovalStatusId { get; set; }
+        public DateTime? lastRefreshDatetime { get; set; }
+        public short? aprovalStatusId { get; set; }
     }
 
-    public class CasaCustomerSearchViewModel: CasaViewModel
+    public class CasaCustomerSearchViewModel : CasaViewModel
     {
         public CasaCustomerSearchViewModel()
         {
             customerBvnInformation = new List<CustomerBvnViewModels>();
             customerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
             customerCompanyShareholders = new List<CustomerCompanyShareholdersViewModels>();
+            customerClients = new List<CustomerClientOrSupplierViewModels>();
+            customerSuppliers = new List<CustomerSupplierViewModels>();
         }
-        
+
         public int productClassId { get; set; }
         public string productClassName { get; set; }
         public int customerSectorId { get; set; }
@@ -79,5 +85,8 @@ namespace FintrakBanking.ViewModels.CASA
         public int? customerGroupId { get; set; }
         public bool isCamsol { get; set; }
         public string customerGroupName { get; set; }
+        public List<CustomerClientOrSupplierViewModels> customerClients { get; set; }
+        public List<CustomerSupplierViewModels> customerSuppliers { get; set; }
+        public bool isOnWatchList { get; set; }
     }
 }

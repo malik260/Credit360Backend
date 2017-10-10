@@ -154,5 +154,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
+
     }
 }

@@ -1059,21 +1059,47 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion New 
 
-        /*  
-         *  db changes
-         *  
-         *  tbl_Collateral_Customer
-         *      Add
-         *          int CollateralSubTypeId
-         *          
-         *   tbl_Collateral_Deposit
-         *      Remove
-         *          CompanyId
-         *          CollateralSubTypeId
-         *          AccountType
-         *      Change
-         *          ExistingLienAmount datatype to (bit)
-         */
+        public IEnumerable<ActiveCustomerCollateralViewModel> GetActiveCustomerCollateral(int customerId) // REFACTOR PROJECTION
+        {
+            // tbl_Customer --> tbl_Collateral_Customer --> tbl_Loan_Application --> tbl_Loan_Collateral_Mapping
+
+            var collaterals = context.tbl_Customer.Where(x => x.CustomerId == customerId)
+                .Join(context.tbl_Collateral_Customer, c => c.CustomerId, o => o.CustomerId, (c, o) => new { Customer = c, Collateral = o })
+                .Join(context.tbl_Loan_Application, cc => cc.Collateral.CustomerId, a => a.CustomerId, (cc, a) => new { CustomerCollateral = cc, Application = a })
+                .Join(context.tbl_Loan_Collateral_Mapping, ca => ca.Application.LoanApplicationId, m => m.LoanApplicationId, (ca, m) => new { CollateralApplication = ca, Mapping = m })
+                .Select(x => new ActiveCustomerCollateralViewModel
+                {
+                    customerId = x.CollateralApplication.Application.CustomerId,
+                    collateralCustomerId = x.Mapping.CollateralCustomerId,
+                    //currencyId = x.CollateralApplication.Application.CurrencyId,
+                    //productId = x.CollateralApplication.Application.ProductId,
+                    loanTypeId = x.CollateralApplication.Application.LoanTypeId,
+                    loanCollateralMappingId = x.Mapping.LoanCollateralMappingId,
+                    //loanId = x.Mapping.LoanId,
+                    loanApplicationId = x.Mapping.LoanApplicationId,
+                    //productTypeId = x.Mapping.ProductTypeId,
+                    customerCode = x.CollateralApplication.CustomerCollateral.Customer.CustomerCode,
+                    firstName = x.CollateralApplication.CustomerCollateral.Customer.FirstName,
+                    middleName = x.CollateralApplication.CustomerCollateral.Customer.MiddleName,
+                    lastName = x.CollateralApplication.CustomerCollateral.Customer.LastName,
+                    collateralCode = x.Mapping.tbl_Collateral_Customer.CollateralCode,
+                    allowSharing = x.Mapping.tbl_Collateral_Customer.AllowSharing,
+                    isLocationBased = x.Mapping.tbl_Collateral_Customer.IsLocationBased,
+                    valuationCycle = x.Mapping.tbl_Collateral_Customer.ValuationCycle,
+                    hairCut = x.Mapping.tbl_Collateral_Customer.HairCut,
+                    collateralTypeId = x.Mapping.tbl_Collateral_Customer.CollateralTypeId,
+                    applicationReferenceNumber = x.CollateralApplication.Application.ApplicationReferenceNumber,
+                    applicationDate = x.CollateralApplication.Application.ApplicationDate,
+                    //principalAmount = x.CollateralApplication.Application.PrincipalAmount,
+                    interestRate = x.CollateralApplication.Application.InterestRate,
+                    //exchangeRate = x.CollateralApplication.Application.ExchangeRate,
+                    //tenor = x.CollateralApplication.Application.Tenor,
+                    loanInformation = x.CollateralApplication.Application.LoanInformation,
+                })
+                .Distinct();
+
+            return collaterals;
+        }
 
         #region Collateral Customer 
 
