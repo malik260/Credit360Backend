@@ -281,7 +281,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.SaveAll();
         }
 
-        #region tbl_Product Region
+        #region Product Region
 
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {

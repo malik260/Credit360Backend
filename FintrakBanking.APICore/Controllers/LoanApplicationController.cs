@@ -368,12 +368,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (model.sentForEvaluation)
                 {
                     model.isCurrent = true;
-                    responseMessage = "Preliminary evaluation note created successfully, now awaiting approval";
                 }
                 else
                 {
                     model.isCurrent = false;
-                    responseMessage = "Preliminary evaluation note created successfully";
                 }
 
                 var response = await repoLoanPEN.AddPreliminaryEvaluation(model);
@@ -384,11 +382,8 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = $"{responseMessage}" });
                 }
-                else
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Preliminary evaluation note not created" });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Preliminary evaluation note not created" });
             }
             catch (Exception ex)
             {
@@ -431,7 +426,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-preliminary-evaluation/{loanTypeId}")]
+        [Route("loan-preliminary-evaluation/loan-type/{loanTypeId}")]
         public HttpResponseMessage GetAllLoanPreliminaryEvaluationsByLoanType(int loanTypeId)
         {
             try
