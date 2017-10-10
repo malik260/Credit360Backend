@@ -21,6 +21,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string Description { get; set; }
 
+        public bool IsActive { get; set; }
+
         public virtual tbl_Country tbl_Country { get; set; }
     }
 }
