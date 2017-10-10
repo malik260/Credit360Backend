@@ -1277,12 +1277,31 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool ApproveLoanBooking(int loanId, short approvalStatusId, ApprovalViewModel user)
         {
-            var loanRecord = context.tbl_Loan.Find(loanId);
+            var loanRecord =  context.tbl_Loan.Find(loanId);
+            var revolvingLoanRecord = context.tbl_Loan_Revolving.Find(loanId);
+            var contingentLoanRecord = context.tbl_Loan_Contingent.Find(loanId);
+                
 
-            if(workflow.NewState != (int)ApprovalState.Ended)
+            if (workflow.NewState != (int)ApprovalState.Ended)
             {
-                if(loanRecord.ApprovalStatusId != (int)ApprovalStatusEnum.Processing)
-                    loanRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
+                if(user.operationId == (int)LoanProductTypeEnum.TermLoan)
+                {
+                    if (loanRecord.ApprovalStatusId != (int)ApprovalStatusEnum.Processing)
+                        loanRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
+                }
+
+                if (user.operationId == (int)LoanProductTypeEnum.ContingentLiability)
+                {
+                    if (contingentLoanRecord.ApprovalStatusId != (int)ApprovalStatusEnum.Processing)
+                        contingentLoanRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
+                }
+
+                if (user.operationId == (int)LoanProductTypeEnum.RevolvingLoan)
+                {
+                    if (revolvingLoanRecord.ApprovalStatusId != (int)ApprovalStatusEnum.Processing)
+                        revolvingLoanRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
+                }
+
             }
                 
 
@@ -1298,7 +1317,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationRecord.ApplicationStatusId = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                 //=======================================================================
 
-                if (loanRecord.tbl_Product.tbl_Product_Type.ProductTypeId == (int)LoanProductTypeEnum.TermLoan)
+                if (user.operationId == (int)LoanProductTypeEnum.TermLoan)
                 {
                     //...................Build Schedule Model & Call Schedule Repo Add Function....................
                     var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
