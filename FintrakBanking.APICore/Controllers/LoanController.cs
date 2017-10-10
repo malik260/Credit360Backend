@@ -304,13 +304,55 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("loan-booking/awaiting-approval")]
+        [Route("loan-booking/term/awaiting-approval")]
         public HttpResponseMessage GetLoanBookingAwaitingApproval()
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetLoanBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetTermLoanBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-booking/revolving/awaiting-approval")]
+        public HttpResponseMessage GetRevolvingLoanBookingAwaitingApproval()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetRevolvingLoanBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-booking/contingent/awaiting-approval")]
+        public HttpResponseMessage GetContingentLoanBookingAwaitingApproval()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetContingentLoanBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (data.Any() == false)
                 {

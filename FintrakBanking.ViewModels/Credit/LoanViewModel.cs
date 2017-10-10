@@ -210,6 +210,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerSensitivityLevelName { get; set; }
         public string customerName { get; set; }
         public string loanStatusName { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string teamMiscode { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string productAccountNumber { get; set; }
+        public string comment { get; set; }
         //.............End of Other Attributes...........//
 
         //......Loan Relational Table View Mapping Models..............//
@@ -274,7 +282,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerSensitivityLevelName { get; set; }
         public string customerName { get; set; }
         public string loanStatusName { get; set; }
-
+        public string applicationReferenceNumber { get; set; }
+        public string teamMiscode { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string productAccountNumber { get; set; }
+        public string comment { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
 
