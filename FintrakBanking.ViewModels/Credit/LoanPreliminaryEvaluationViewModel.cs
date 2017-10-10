@@ -69,5 +69,6 @@ namespace FintrakBanking.ViewModels.Credit
         public List<CustomerClientOrSupplierViewModels> customerClients { get; set; }
         public List<CustomerSupplierViewModels> customerSuppliers { get; set; }
         public string customerGroupName { get; set; }
+        public List<CustomerGroupMappingViewModel> customerGroupMappings { get; set; }
     }
 }
