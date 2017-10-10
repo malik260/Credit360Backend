@@ -448,12 +448,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan/preliminary-evaluation/awaiting-approval")]
-        public HttpResponseMessage GetLoanPreliminaryEvaluationsForAppproval()
+        [Route("loan/preliminary-evaluation/awaiting-approval/loan-type/{loanTypeId}")]
+        public HttpResponseMessage GetLoanPreliminaryEvaluationsForAppprovalByLoanType(int loanTypeId)
         {
             try
             {
-                var data = repoLoanPEN.GetPreliminaryEvaluationsAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repoLoanPEN.GetLoanPreliminaryEvaluationsAwaitingApprovalByLoanTypeId(token.GetStaffId, token.GetCompanyId, loanTypeId);
 
                 if (!data.Any())
                 {
