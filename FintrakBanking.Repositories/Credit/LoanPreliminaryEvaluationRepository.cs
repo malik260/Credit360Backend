@@ -472,7 +472,22 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanSingleCustomerPreliminaryEvaluations(int loanTypeId)
+        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetLoanPreliminaryEvaluationsByLoanTypeId(int loanTypeId)
+        {
+            switch (loanTypeId)
+            {
+                case (int)LoanTypeEnum.Single:
+                    return GetAllSingleCustomerLoanPreliminaryEvaluations();
+
+                case (int)LoanTypeEnum.CustomerGroup:
+                    return GetAllGroupCustomerLoanPreliminaryEvaluations();
+
+                default:
+                    return new List<LoanPreliminaryEvaluationViewModel>();
+            }
+        }
+
+        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllSingleCustomerLoanPreliminaryEvaluations()
         {
             var data = (from p in context.tbl_Loan_Preliminary_Evaluation
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
@@ -590,15 +605,133 @@ namespace FintrakBanking.Repositories.Credit
                             sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == p.SubSectorId).SectorId ?? 0,
                         });
 
- 
+
 
             return data;
         }
 
-        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanGroupCustomerPreliminaryEvaluations(
-            int loanTypeId)
+        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllGroupCustomerLoanPreliminaryEvaluations()
         {
-            throw new NotImplementedException();
+            var data = (from p in context.tbl_Loan_Preliminary_Evaluation
+                        join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
+                        join br in context.tbl_Branch on p.BranchId equals br.BranchId
+                        where p.IsCurrent == false && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending
+                        select new LoanPreliminaryEvaluationViewModel()
+                        {
+                            companyId = p.CompanyId,
+                            companyName = p.tbl_Company.Name,
+                            loanPreliminaryEvaluationId = p.LoanPreliminaryEvaluationId,
+                            preliminaryEvaluationCode = p.PreliminaryEvaluationCode,
+                            bankRole = p.BankRole,
+                            branchId = br.BranchId,
+                            branchName = br.BranchName,
+                            businessProfile = p.BusinessProfile,
+                            clientDescription = p.ClientDescription,
+                            collateralArrangement = p.CollateralArrangement,
+                            commercialViabilityAssessment = p.CommercialViabilityAssessment,
+                            customerGroupId = p.CustomerGroupId.Value,
+                            customerGroupName = p.tbl_Customer_Group.GroupName,
+                            customerGroupCode = p.tbl_Customer_Group.GroupCode,
+                            environmentalImpact = p.EnvironmentalImpact,
+                            existingExposure = p.ExistingExposure,
+                            implementationArrangements = p.ImplementationArrangements,
+                            marketDemand = p.MarketDemand,
+                            ownershipStructure = p.OwnershipStructure,
+                            portfolioStrategicAlignment = p.PortfolioStrategicAlignment,
+                            projectDescription = p.ProjectDescription,
+                            projectFinancingPlan = p.ProjectFinancingPlan,
+                            proposedTermsAndConditions = p.ProposedTermsAndConditions,
+                            risksAndConcerns = p.RisksAndConcerns,
+                            prudentialExposureLimitImplications = p.PrudentialExposureLimitImplications,
+                            relationshipManagerId = p.RelationshipManagerId,
+                            relationshipOfficerId = p.RelationshipOfficerId,
+                            customerGroupMappings = context.tbl_Customer_Group_Mapping.Where(x => x.CustomerGroupId == p.CustomerGroupId).Select(s => new CustomerGroupMappingViewModel()
+                            {
+                                customerId = p.CustomerId.Value,
+                                customerName = p.tbl_Customer.FirstName + " " + p.tbl_Customer.LastName,
+                                customerCode = p.tbl_Customer.CustomerCode,
+                                //customerAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == p.CustomerId).ProductAccountNumber,
+                                //customerTypeId = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == p.CustomerId).CustomerTypeId,
+                                taxIdentificationNumber = p.TaxIdentificationNumber,
+                                registrationNumber = p.RegistrationNumber,
+                                customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == p.CustomerId).Select(b => new CustomerBvnViewModels()
+                                {
+                                    bankVerificationNumber = b.BankVerificationNumber,
+                                    customerBvnid = b.CustomerBVNId,
+                                    firstname = b.Firstname,
+                                    isValidBvn = b.IsValidBVN,
+                                    isPoliticallyExposed = b.IsPoliticallyExposed,
+                                    surname = b.Surname
+                                }).ToList(),
+                                customerCompanyDirectors = context.tbl_Customer_Company_Director
+                                    .Where(cd => cd.CustomerId == p.CustomerId && cd.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
+                                .Select(x => new CustomerCompanyDirectorsViewModels()
+                                {
+                                    bankVerificationNumber = x.CustomerBVN,
+                                    companyDirectorTypeId = x.CompanyDirectorTypeId,
+                                    companyDirectorTypeName = x.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                    customerId = x.CustomerId,
+                                    firstname = x.Firstname,
+                                    surname = x.Surname
+                                }).ToList(),
+                                customerCompanyShareholders = context.tbl_Customer_Company_Director
+                                    .Where(cc => cc.CustomerId == p.CustomerId && cc.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
+                                .Select(cs => new CustomerCompanyShareholdersViewModels()
+                                {
+                                    bankVerificationNumber = cs.CustomerBVN,
+                                    companyDirectorTypeId = cs.CompanyDirectorTypeId,
+                                    companyDirectorTypeName = cs.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                    customerId = cs.CustomerId,
+                                    firstname = cs.Firstname,
+                                    surname = cs.Surname
+                                }).ToList(),
+                                customerClients = context.tbl_Customer_Client_Supplier
+                                    .Where(cs => cs.CustomerId == p.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
+                                .Select(cs => new CustomerClientOrSupplierViewModels()
+                                {
+                                    client_SupplierId = cs.Client_SupplierId,
+                                    clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                                    firstName = cs.FirstName,
+                                    middleName = cs.MiddleName,
+                                    lastName = cs.LastName,
+                                    client_SupplierAddress = cs.Address,
+                                    client_SupplierPhoneNumber = cs.PhoneNumber,
+                                    client_SupplierEmail = cs.EmailAddress,
+                                    client_SupplierTypeId = cs.Client_SupplierTypeId,
+                                    client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                                }).ToList(),
+                                customerSuppliers = context.tbl_Customer_Client_Supplier
+                                    .Where(cs => cs.CustomerId == p.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                                .Select(cs => new CustomerSupplierViewModels()
+                                {
+                                    client_SupplierId = cs.Client_SupplierId,
+                                    clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                                    firstName = cs.FirstName,
+                                    middleName = cs.MiddleName,
+                                    lastName = cs.LastName,
+                                    client_SupplierAddress = cs.Address,
+                                    client_SupplierPhoneNumber = cs.PhoneNumber,
+                                    client_SupplierEmail = cs.EmailAddress,
+                                    client_SupplierTypeId = cs.Client_SupplierTypeId,
+                                    client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                                }).ToList(),
+                            }).ToList(),
+                            approvalStatusId = p.ApprovalStatusId,
+                            dateTimeCreated = p.DateTimeCreated,
+                            sentForLoanApplication = p.SentForLoanApplication,
+                            sentForEvaluation = p.SentForEvaluation,
+                            loanAmount = p.LoanAmount,
+                            loanTypeId = p.LoanTypeId,
+                            loanTypeName = p.tbl_Loan_Type.LoanTypeName,
+                            productClassId = p.ProductClassId,
+                            productClassName = p.tbl_Product_Class.ProductClassName,
+                            subSectorId = p.SubSectorId,
+                            subSectorName = p.tbl_Sub_Sector.Name,
+                            sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == p.SubSectorId).SectorId ?? 0,
+                        });
+
+            return data;
         }
 
         public async Task<bool> UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)

@@ -15,12 +15,14 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool GoForApproval(ApprovalViewModel entity);
 
-        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanSingleCustomerPreliminaryEvaluations(int loanTypeId);
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllSingleCustomerLoanPreliminaryEvaluations();
 
-        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanGroupCustomerPreliminaryEvaluations(int loanTypeId);
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllGroupCustomerLoanPreliminaryEvaluations();
 
         Task<bool> UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model);
 
         bool SendPreliminaryEvaluationForLoanApplication(int loanPenId, LoanPreliminaryEvaluationViewModel model);
+
+        IEnumerable<LoanPreliminaryEvaluationViewModel>GetLoanPreliminaryEvaluationsByLoanTypeId(int loanTypeId);
     }
 }
