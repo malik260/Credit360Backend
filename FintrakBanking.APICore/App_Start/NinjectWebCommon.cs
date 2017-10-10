@@ -177,6 +177,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICallMemoRepository>().To<CallMemoRepository>();
             kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
             kernel.Bind<IEmailAndAlertsRepository>().To<EmailAndAlertsRepository>();
+            kernel.Bind<IEndOfDayRepository>().To<EndOfDayRepository>();
         }
     }
 }
