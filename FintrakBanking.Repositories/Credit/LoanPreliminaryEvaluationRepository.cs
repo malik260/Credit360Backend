@@ -493,7 +493,7 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
                         where p.IsCurrent == false && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
-                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending && p.LoanTypeId == (short)LoanTypeEnum.Single
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
@@ -616,7 +616,7 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
                         where p.IsCurrent == false && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
-                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending && p.LoanTypeId == (short)LoanTypeEnum.CustomerGroup 
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
@@ -648,13 +648,17 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = p.RelationshipOfficerId,
                             customerGroupMappings = context.tbl_Customer_Group_Mapping.Where(x => x.CustomerGroupId == p.CustomerGroupId).Select(s => new CustomerGroupMappingViewModel()
                             {
-                                customerId = p.CustomerId.Value,
-                                customerName = p.tbl_Customer.FirstName + " " + p.tbl_Customer.LastName,
-                                customerCode = p.tbl_Customer.CustomerCode,
+                                customerId = s.CustomerId,
+                                customerName = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
+                                customerCode = s.tbl_Customer.CustomerCode,
                                 //customerAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == p.CustomerId).ProductAccountNumber,
                                 //customerTypeId = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == p.CustomerId).CustomerTypeId,
-                                taxIdentificationNumber = p.TaxIdentificationNumber,
-                                registrationNumber = p.RegistrationNumber,
+                                customerType = s.tbl_Customer.tbl_Customer_Type.Name,
+                                relationshipTypeId = s.RelationshipTypeId,
+                                relationshipTypeName = s.tbl_Customer_Group_RelationshipType.RelationshipTypeName,
+                                productAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == s.CustomerId).ProductAccountNumber,
+                                taxIdentificationNumber = s.tbl_Customer.TaxNumber,
+                                registrationNumber = s.tbl_Customer.tbl_Customer_CompanyInfomation.FirstOrDefault(x => x.CustomerId == s.CustomerId).RegistrationNumber,
                                 customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == p.CustomerId).Select(b => new CustomerBvnViewModels()
                                 {
                                     bankVerificationNumber = b.BankVerificationNumber,
