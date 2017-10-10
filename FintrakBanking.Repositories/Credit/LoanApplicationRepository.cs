@@ -662,7 +662,7 @@ namespace FintrakBanking.Repositories.Credit
                           //  isRealatedParty = a.IsRelatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
                             submittedForAppraisal = a.SubmittedForAppraisal,
-                            applicationAmount = d.PrincipalAmount ,
+                            approvedAmount = d.PrincipalAmount,
 
                             createdBy = a.CreatedBy,
                             applicationDate = a.ApplicationDate,

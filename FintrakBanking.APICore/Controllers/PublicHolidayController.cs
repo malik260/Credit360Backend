@@ -52,27 +52,60 @@ namespace FintrakBanking.APICore.Controllers
 
 
         }
+
         [HttpPost]
         [Route("public-holiday")]
         public HttpResponseMessage AddPublicHoliday([FromBody] PublicHolidayViewModel entity)
         {
             try
             {
-                if (repo.isHolidayExist(entity.Date))
+                if (repo.DoesHolidayExist(entity.date, token.GetCountryId))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { suucess = false, message = $"{entity.Description} with {entity.Date.ToString("dd/mm/yy")} already exists" });
+                       new { success = false, message = $"{entity.description} with {entity.date.ToString("dd/mm/yy")} already exists" });
                 }
                 entity.createdBy = token.GetStaffId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.companyId = token.GetCompanyId;
-                entity.CountryId = token.GetCountryId;
+                entity.countryId = token.GetCountryId;
                 var data = repo.AddPublicHoliday(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = entity, message = "Public Holiday has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "An unknown error has occured" });
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"An unhandled error occured {ex.Message}" });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("public-holiday/weekends-in-a-year")]
+        public HttpResponseMessage AddWeekendsInTheYear([FromBody] PublicHolidayViewModel entity)
+        {
+            try
+            {
+               
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
+                entity.countryId = token.GetCountryId;
+
+                var data = repo.AddWeekendsInTheYear(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = entity, message = "Added all weekends in the year successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,

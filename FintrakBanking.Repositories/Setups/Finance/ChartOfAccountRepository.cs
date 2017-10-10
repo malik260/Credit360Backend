@@ -499,7 +499,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
             var targetAccountId = 0;
 
             var existingTempAccount = context.tbl_Temp_Chart_Of_Account.FirstOrDefault(x => x.AccountCode.ToLower() == accountModel.accountCode.ToLower() && x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
-            var existingTempCurrencies = context.tbl_Temp_Chart_Of_Account_Currency.Where(x => x.GLAccountId == existingTempAccount.GLAccountId).ToList();
+
+            var existingTempCurrencies = new List<tbl_Temp_Chart_Of_Account_Currency>();
 
             tbl_Temp_Chart_Of_Account tempAccount = new tbl_Temp_Chart_Of_Account();
             List<tbl_Temp_Chart_Of_Account_Currency> tempCurrencies = new List<tbl_Temp_Chart_Of_Account_Currency>();
@@ -512,28 +513,18 @@ namespace FintrakBanking.Repositories.Setups.Finance
             {
                 throw new Exception("Chart of Account is already undergoing approval");
             }
-
-            if (existingTempCurrencies.Count > 0)
-            {
-                foreach (var curr in existingTempCurrencies)
-                {
-                    context.tbl_Temp_Chart_Of_Account_Currency.Remove(curr);
-                }
-            }
-
+            
             if (existingTempAccount != null)
             {
-                //foreach (var item in existingTempAccount)
-                //{
-                //    item.IsCurrent = false;
-                //    item.DateTimeUpdated = DateTime.Now;
-                //}
+                existingTempCurrencies = context.tbl_Temp_Chart_Of_Account_Currency.Where(x => x.GLAccountId == existingTempAccount.GLAccountId).ToList();
 
-                //foreach (var item in existingTempCurrencies)
-                //{
-                //    item.IsCurrent = false;
-                //    item.DateTimeUpdated = DateTime.Now;
-                //}
+                if (existingTempCurrencies.Count > 0)
+                {
+                    foreach (var curr in existingTempCurrencies)
+                    {
+                        context.tbl_Temp_Chart_Of_Account_Currency.Remove(curr);
+                    }
+                }
 
                 foreach (var item in accountModel.currencies)
                 {
