@@ -64,7 +64,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string customerAccountNumber { get; set; }
         public short? customerTypeId { get; set; }
-        public int customerGroupId { get; set; }
+        public int? customerGroupId { get; set; }
         public string customerGroupCode { get; set; }
         public List<CustomerClientOrSupplierViewModels> customerClients { get; set; }
         public List<CustomerSupplierViewModels> customerSuppliers { get; set; }

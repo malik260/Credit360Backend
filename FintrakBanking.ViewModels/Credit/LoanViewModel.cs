@@ -321,7 +321,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal groupApprovedAmount { get; set; }
         public int approvedTenor { get; set; }
         public decimal ? customerAvailableAmount { get; set; }
-        public short applicationStatusId { get; set; }
     }
 
     public class AppraisalMemorandumLoanDetailViewModel

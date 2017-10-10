@@ -472,7 +472,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanPreliminaryEvaluations()
+        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanSingleCustomerPreliminaryEvaluations(int loanTypeId)
         {
             var data = (from p in context.tbl_Loan_Preliminary_Evaluation
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
@@ -499,7 +499,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerGroupName = p.tbl_Customer_Group.GroupName,
                             customerGroupCode = p.tbl_Customer_Group.GroupCode,
                             customerAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == p.CustomerId).ProductAccountNumber,
-                            customerTypeId = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == p.CustomerId).CustomerTypeId,
+                            //customerTypeId = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == p.CustomerId).CustomerTypeId,
                             environmentalImpact = p.EnvironmentalImpact,
                             existingExposure = p.ExistingExposure,
                             implementationArrangements = p.ImplementationArrangements,
@@ -546,36 +546,36 @@ namespace FintrakBanking.Repositories.Credit
                                 firstname = s.Firstname,
                                 surname = s.Surname
                             }).ToList(),
-                           // customerClients = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == p.CustomerId &&
-                           //cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
-                           // .Select(cs => new CustomerClientOrSupplierViewModels()
-                           // {
-                           //     client_SupplierId = cs.Client_SupplierId,
-                           //     clientOrSupplierName = cs.FirstName + " " + cs.LastName,
-                           //     firstName = cs.FirstName,
-                           //     middleName = cs.MiddleName,
-                           //     lastName = cs.LastName,
-                           //     client_SupplierAddress = cs.Address,
-                           //     client_SupplierPhoneNumber = cs.PhoneNumber,
-                           //     client_SupplierEmail = cs.EmailAddress,
-                           //     client_SupplierTypeId = cs.Client_SupplierTypeId,
-                           //     client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
-                           // }).ToList(),
-                           // customerSuppliers = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == p.CustomerId &&
-                           // cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
-                           //  .Select(cs => new CustomerSupplierViewModels()
-                           //  {
-                           //      client_SupplierId = cs.Client_SupplierId,
-                           //      clientOrSupplierName = cs.FirstName + " " + cs.LastName,
-                           //      firstName = cs.FirstName,
-                           //      middleName = cs.MiddleName,
-                           //      lastName = cs.LastName,
-                           //      client_SupplierAddress = cs.Address,
-                           //      client_SupplierPhoneNumber = cs.PhoneNumber,
-                           //      client_SupplierEmail = cs.EmailAddress,
-                           //      client_SupplierTypeId = cs.Client_SupplierTypeId,
-                           //      client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
-                           //  }).ToList(),
+                            customerClients = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == p.CustomerId &&
+                           cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
+                            .Select(cs => new CustomerClientOrSupplierViewModels()
+                            {
+                                client_SupplierId = cs.Client_SupplierId,
+                                clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                                firstName = cs.FirstName,
+                                middleName = cs.MiddleName,
+                                lastName = cs.LastName,
+                                client_SupplierAddress = cs.Address,
+                                client_SupplierPhoneNumber = cs.PhoneNumber,
+                                client_SupplierEmail = cs.EmailAddress,
+                                client_SupplierTypeId = cs.Client_SupplierTypeId,
+                                client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                            }).ToList(),
+                            customerSuppliers = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == p.CustomerId &&
+                            cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                             .Select(cs => new CustomerSupplierViewModels()
+                             {
+                                 client_SupplierId = cs.Client_SupplierId,
+                                 clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                                 firstName = cs.FirstName,
+                                 middleName = cs.MiddleName,
+                                 lastName = cs.LastName,
+                                 client_SupplierAddress = cs.Address,
+                                 client_SupplierPhoneNumber = cs.PhoneNumber,
+                                 client_SupplierEmail = cs.EmailAddress,
+                                 client_SupplierTypeId = cs.Client_SupplierTypeId,
+                                 client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                             }).ToList(),
                             approvalStatusId = p.ApprovalStatusId,
                             dateTimeCreated = p.DateTimeCreated,
                             sentForLoanApplication = p.SentForLoanApplication,
@@ -590,9 +590,16 @@ namespace FintrakBanking.Repositories.Credit
                             sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == p.SubSectorId).SectorId ?? 0,
                         });
 
+ 
+
             return data;
         }
 
+        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanGroupCustomerPreliminaryEvaluations(
+            int loanTypeId)
+        {
+            throw new NotImplementedException();
+        }
 
         public async Task<bool> UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model)
         {
