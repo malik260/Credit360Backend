@@ -26,7 +26,9 @@ namespace FintrakBanking.Entities.Models
 
         public short BranchId { get; set; }
 
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
+
+        public int? CustomerGroupId { get; set; }
 
         public int RelationshipOfficerId { get; set; }
 
@@ -138,6 +140,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Customer tbl_Customer { get; set; }
 
+        public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
+
         public virtual tbl_Product_Class tbl_Product_Class { get; set; }
 
         public virtual tbl_Staff tbl_Staff { get; set; }
@@ -150,5 +154,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
+
     }
 }

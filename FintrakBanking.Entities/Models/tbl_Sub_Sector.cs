@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public tbl_Sub_Sector()
         {
             tbl_Customer = new HashSet<tbl_Customer>();
+            tbl_Loan_Application_Detail = new HashSet<tbl_Loan_Application_Detail>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
@@ -37,6 +38,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Customer> tbl_Customer { get; set; }
 
         public virtual tbl_Sector tbl_Sector { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Application_Detail> tbl_Loan_Application_Detail { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }

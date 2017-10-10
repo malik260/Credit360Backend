@@ -212,7 +212,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response = await repoApply.AddLoanApplication(entity);
                 if (response)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation completed successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "The loan application completed successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
@@ -399,7 +399,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("loan/preliminary-evaluation/approval")]
-        public async Task<HttpResponseMessage> ApprovePreliminaryEvaluation(ApprovalViewModel model)
+        public HttpResponseMessage ApprovePreliminaryEvaluation(ApprovalViewModel model)
         {
             try
             {
@@ -410,7 +410,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var data = await repoLoanPEN.GoForApproval(model);
+                var data = repoLoanPEN.GoForApproval(model);
 
                 if (data)
                 {
@@ -432,11 +432,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("loan-preliminary-evaluation")]
-        public HttpResponseMessage GetLoanPreliminaryEvaluations()
+        public HttpResponseMessage GetLoanPreliminaryEvaluations(int loanTypeId)
         {
             try
             {
-                var data = repoLoanPEN.GetAllLoanPreliminaryEvaluations();
+                var data = repoLoanPEN.GetAllLoanSingleCustomerPreliminaryEvaluations(loanTypeId);
 
                 if (!data.Any())
                 {

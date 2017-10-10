@@ -58,7 +58,7 @@
     <Compile Include="DocumentModels\tbl_Media_Job_Request_Documents.cs" />
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\sysdiagrams.cs" />
+    <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -201,10 +201,11 @@
     <Compile Include="Models\tbl_LoanApplication_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Application.cs" />
     <Compile Include="Models\tbl_Loan_Application_Collateral.cs" />
+    <Compile Include="Models\tbl_Loan_Application_Detail.cs" />
+    <Compile Include="Models\tbl_Loan_Application_Detail_Status.cs" />
     <Compile Include="Models\tbl_Loan_Application_Status.cs" />
     <Compile Include="Models\tbl_Loan_Archive.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
-    <Compile Include="Models\tbl_Loan_Change_Type.cs" />
     <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />
     <Compile Include="Models\tbl_Loan_Condition_Precedent.cs" />
@@ -315,7 +316,6 @@
     <Compile Include="Models\tbl_Temp_Product_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Staff.cs" />
     <Compile Include="Models\tbl_Tenor_Mode.cs" />
-    <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

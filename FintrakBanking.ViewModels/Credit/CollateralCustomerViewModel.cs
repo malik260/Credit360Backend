@@ -209,38 +209,38 @@ namespace FintrakBanking.ViewModels.Credit
         public string controlName { get; set; }
     }
 
-    public class CollateralCustomerViewModel : GeneralEntity
-    {
-        public int collateralCustomerId { get; set; }
-        public int collateralId { get; set; }
-        public int collateralTypeId { get; set; }
-        public string collateralType { get; set; }
-        public string collateralCode { get; set; }
-        public short currencyId { get; set; }
-        public string currency { get; set; }
-        public bool allowSharing { get; set; }
-        public bool isLocationBased { get; set; }
-        public int? valuationCycle { get; set; }
-        public double hairCut { get; set; }
-        public int customerId { get; set; }
-        public string customerName { get; set; }
-        public string camRefNumber { get; set; }
-        public int approvalStatus { get; set; }
-        public DateTime? dateActedOn { get; set; }
-        public int? actedOnBy { get; set; }
-        public CollateralDepositViewModel collateralDeposit { get; set; }
-        public CollateralCasaViewModel collateralCasa { get; set; }
-        public CollateralPlantsAndEquipmentViewModel collateralMachineDetail { get; set; }
-        public CollateralMarketableSecurityViewModel collateralMarketableSecurity { get; set; }
-        public CollateralPropertyViewModel collateralProperty { get; set; }
-        public CollateralSecurityViewModel collateralSecurity { get; set; }
-        public CollateralPreciousMetalViewModel collateralPreciousMetal { get; set; }
-        public CollateralInsurancePolicyViewModel collateralInsurancePolicy { get; set; }
-        public CollateralGauranteeViewModel collateralGaurantee { get; set; }
-        public CollateralVehicleViewModel collateralVehicle { get; set; }
-        public CollateralMiscellaneousViewModel collateralMiscellaneous { get; set; }
-        public CollateralCustomerPolicyViewModel collateralCustomerPolicy { get; set; }
-    }
+    //public class CollateralCustomerViewModel : GeneralEntity
+    //{
+    //    public int collateralCustomerId { get; set; }
+    //    public int collateralId { get; set; }
+    //    public int collateralTypeId { get; set; }
+    //    public string collateralType { get; set; }
+    //    public string collateralCode { get; set; }
+    //    public short currencyId { get; set; }
+    //    public string currency { get; set; }
+    //    public bool allowSharing { get; set; }
+    //    public bool isLocationBased { get; set; }
+    //    public int? valuationCycle { get; set; }
+    //    public double hairCut { get; set; }
+    //    public int customerId { get; set; }
+    //    public string customerName { get; set; }
+    //    public string camRefNumber { get; set; }
+    //    public int approvalStatus { get; set; }
+    //    public DateTime? dateActedOn { get; set; }
+    //    public int? actedOnBy { get; set; }
+    //    public CollateralDepositViewModel collateralDeposit { get; set; }
+    //    public CollateralCasaViewModel collateralCasa { get; set; }
+    //    public CollateralPlantsAndEquipmentViewModel collateralMachineDetail { get; set; }
+    //    public CollateralMarketableSecurityViewModel collateralMarketableSecurity { get; set; }
+    //    public CollateralPropertyViewModel collateralProperty { get; set; }
+    //    public CollateralSecurityViewModel collateralSecurity { get; set; }
+    //    public CollateralPreciousMetalViewModel collateralPreciousMetal { get; set; }
+    //    public CollateralInsurancePolicyViewModel collateralInsurancePolicy { get; set; }
+    //    public CollateralGauranteeViewModel collateralGaurantee { get; set; }
+    //    public CollateralVehicleViewModel collateralVehicle { get; set; }
+    //    public CollateralMiscellaneousViewModel collateralMiscellaneous { get; set; }
+    //    public CollateralCustomerPolicyViewModel collateralCustomerPolicy { get; set; }
+    //}
 
     public class CollateralDepositViewModel
     {
@@ -524,5 +524,41 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipManagerId { get; set; }
         public string customerName { get { return $"{this.firstName} {this.lastName}"; } }
         public CollateralViewModel customerCollateral { get; set; }
+    }
+
+    public class ActiveCustomerCollateralViewModel// : GeneralEntity
+    {
+        public int? customerId { get; set; }
+        public int collateralCustomerId { get; set; }
+        public int collateralTypeId { get; set; }
+        public short collateralSubTypeId { get; set; }
+        public short currencyId { get; set; }
+        public short productId { get; set; }
+        public int? customerGroupId { get; set; }
+        public short loanTypeId { get; set; }
+        public int relationshipManagerId { get; set; }
+        public int loanCollateralMappingId { get; set; }
+        public int loanId { get; set; }
+        public int loanApplicationId { get; set; }
+        public short productTypeId { get; set; }
+        public string customerCode { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string occupation { get; set; }
+        public string collateralCode { get; set; }
+        public bool allowSharing { get; set; }
+        public bool isLocationBased { get; set; }
+        public int? valuationCycle { get; set; }
+        public double hairCut { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public DateTime applicationDate { get; set; }
+        public decimal principalAmount { get; set; }
+        public double interestRate { get; set; }
+        public double exchangeRate { get; set; }
+        public int tenor { get; set; }
+        public string loanInformation { get; set; }
+        public bool isInvestmentGrade { get; set; }
+        public bool isPoliticallyExposed { get; set; }
     }
 }

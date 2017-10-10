@@ -12,6 +12,8 @@ namespace FintrakBanking.ViewModels.Customer
             customerBvnInformation = new List<CustomerBvnViewModels>();
             customerCompanyShareholders = new List<CustomerCompanyShareholdersViewModels>();
             customerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
+            customerClients = new List<CustomerClientOrSupplierViewModels>();
+            customerSuppliers = new List<CustomerSupplierViewModels>();
         }
         public int customerGroupMappingId { get; set; }
         public int customerId { get; set; }
@@ -26,10 +28,33 @@ namespace FintrakBanking.ViewModels.Customer
         public string productAccountNumber { get; set; }
         public string accountHolder { get; set; }
         public short branchId { get; set; }
-        public bool isBlackListed { get; set; }
 
         public List<CustomerBvnViewModels> customerBvnInformation { get; set; }
         public List<CustomerCompanyShareholdersViewModels> customerCompanyShareholders { get; set; }
         public List<CustomerCompanyDirectorsViewModels> customerCompanyDirectors { get; set; }
+        public List<CustomerClientOrSupplierViewModels> customerClients { get; set; }
+        public List<CustomerSupplierViewModels> customerSuppliers { get; set; }
+        public string taxIdentificationNumber { get; set; }
+        public string registrationNumber { get; set; }
+        public bool isBlackList { get; set; }
+        public bool isOnWatchList { get; set; }
+        public bool isCamsol { get; set; }
     }
+
+
+    public class GroupCustomerMembersViewModel
+    {
+        public int    customerId { get; set; }
+        public string  lastName   { get; set; }
+        public string  firstName { get; set; }
+        public string customerName { get { return lastName + ' ' + firstName; } }
+        public string customerCode { get; set; }
+        //public string productAccountNumber { get; set; }
+        //public string productAccountName { get; set; }
+        //public decimal balance { get; set; }
+        //public int casaAccountId { get; set; }
+      //  public string accountStatusId { get; set; }
+    }
+
+
 }

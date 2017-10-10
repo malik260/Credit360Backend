@@ -28,19 +28,16 @@ namespace FintrakBanking.APICore.Controllers
         private ICustomerCollateralRepository repo;
         private ICollateralDocumentRepository document;
         private ICollateralTypeRepository type;
-        //IErrorLogRepository errorLogger;
 
         public CustomerCollateralController(
             ICustomerCollateralRepository repo,
             ICollateralTypeRepository type,
             ICollateralDocumentRepository document
-            //IErrorLogRepository _errorLogger
             )
         {
             this.repo = repo;
             this.type = type;
             this.document = document;
-            //errorLogger = _errorLogger;
         }
 
         #region New
@@ -205,9 +202,21 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpGet, Route("customer-collateral/active/{customerId}")]
+        public HttpResponseMessage GetActiveCustomerCollateral(int customerId)
+        {
+            try
+            {
+                var response = repo.GetActiveCustomerCollateral(customerId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
         #endregion New
-
-
 
 
         #region Collateral 

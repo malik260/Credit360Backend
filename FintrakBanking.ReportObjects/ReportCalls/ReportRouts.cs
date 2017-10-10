@@ -47,7 +47,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         public string GetWorkflowDefinition(int operationId, int companyId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/BranchLimitMonitoring.aspx?companyId=" + companyId.ToString() + "&operationId=" + operationId.ToString();
+            path = reportPath + "ReportViews/Workflow.aspx?companyId=" + companyId.ToString() + "&operationId=" + operationId.ToString();
             return path;
         }
     }

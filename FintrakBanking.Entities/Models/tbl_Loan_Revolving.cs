@@ -24,9 +24,9 @@ namespace FintrakBanking.Entities.Models
 
         public short CurrencyId { get; set; }
 
-        public double ExchangeRate { get; set; }
+        public int LoanApplicationDetailId { get; set; }
 
-        public int LoanApplicationId { get; set; }
+        public double ExchangeRate { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -57,9 +57,6 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "money")]
         public decimal OverdraftLimit { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal ApprovedAmount { get; set; }
 
         public int ApprovalStatusId { get; set; }
 
@@ -136,7 +133,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
 
-        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+        public virtual tbl_Loan_Application_Detail tbl_Loan_Application_Detail { get; set; }
 
         public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline { get; set; }
 

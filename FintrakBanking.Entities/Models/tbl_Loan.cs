@@ -12,18 +12,8 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_Loan()
         {
-            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Camsol = new HashSet<tbl_Loan_Camsol>();
-            tbl_Loan_Force_Debit = new HashSet<tbl_Loan_Force_Debit>();
-            tbl_Loan_Past_Due = new HashSet<tbl_Loan_Past_Due>();
-            tbl_Loan_PriceIndex_Exception = new HashSet<tbl_Loan_PriceIndex_Exception>();
-            tbl_Loan_Schedule_Daily_Archive = new HashSet<tbl_Loan_Schedule_Daily_Archive>();
             tbl_Loan_Schedule_Daily = new HashSet<tbl_Loan_Schedule_Daily>();
-            tbl_Loan_Schedule_Daily_Temp = new HashSet<tbl_Loan_Schedule_Daily_Temp>();
-            tbl_Loan_Schedule_Irregular_Input = new HashSet<tbl_Loan_Schedule_Irregular_Input>();
-            tbl_Loan_Schedule_Periodic_Archive = new HashSet<tbl_Loan_Schedule_Periodic_Archive>();
             tbl_Loan_Schedule_Periodic = new HashSet<tbl_Loan_Schedule_Periodic>();
-            tbl_Loan_Schedule_Periodic_Temp = new HashSet<tbl_Loan_Schedule_Periodic_Temp>();
         }
 
         [Key]
@@ -39,21 +29,21 @@ namespace FintrakBanking.Entities.Models
 
         public int CompanyId { get; set; }
 
+        public int? LoanApplicationDetailId { get; set; }
+
         public int CasaAccountId { get; set; }
 
         public short BranchId { get; set; }
+
+        public short SubSectorId { get; set; }
 
         public short CurrencyId { get; set; }
 
         public double ExchangeRate { get; set; }
 
-        public int LoanApplicationId { get; set; }
-
         [Required]
         [StringLength(50)]
         public string LoanReferenceNumber { get; set; }
-
-        public short SubSectorId { get; set; }
 
         public short? PrincipalFrequencyTypeId { get; set; }
 
@@ -86,9 +76,6 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "money")]
         public decimal PrincipalAmount { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal ApprovedAmount { get; set; }
 
         public int PrincipalInstallmentLeft { get; set; }
 
@@ -128,9 +115,6 @@ namespace FintrakBanking.Entities.Models
         public int? CustomerGroupId { get; set; }
 
         public short LoanTypeId { get; set; }
-
-        [StringLength(50)]
-        public string TrancheBatchCode { get; set; }
 
         [Column(TypeName = "money")]
         public decimal EquityContribution { get; set; }
@@ -219,42 +203,12 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Camsol> tbl_Loan_Camsol { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Force_Debit> tbl_Loan_Force_Debit { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Past_Due> tbl_Loan_Past_Due { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_PriceIndex_Exception> tbl_Loan_PriceIndex_Exception { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Schedule_Daily_Archive> tbl_Loan_Schedule_Daily_Archive { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Schedule_Daily_Temp> tbl_Loan_Schedule_Daily_Temp { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Schedule_Irregular_Input> tbl_Loan_Schedule_Irregular_Input { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Schedule_Periodic_Archive> tbl_Loan_Schedule_Periodic_Archive { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Schedule_Periodic> tbl_Loan_Schedule_Periodic { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Schedule_Periodic_Temp> tbl_Loan_Schedule_Periodic_Temp { get; set; }
-
-        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+        public virtual tbl_Loan_Application_Detail tbl_Loan_Application_Detail { get; set; }
 
         public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline { get; set; }
 

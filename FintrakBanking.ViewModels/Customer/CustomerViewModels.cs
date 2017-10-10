@@ -6,6 +6,7 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerViewModels : GeneralEntity
     {
+         
         public CustomerViewModels()
         {
             CustomerAddresses = new List<CustomerAddressViewModels>();
@@ -46,7 +47,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string occupation { get; set; }
         public short customerTypeId { get; set; }
         public int relationshipOfficerId { get; set; }
-        public bool politicallyExposedPerson { get; set; }
+        public bool isPoliticallyExposed { get; set; }
         public string misCode { get; set; }
         public string misStaff { get; set; }
         public int approvalStatus { get; set; }
@@ -60,7 +61,8 @@ namespace FintrakBanking.ViewModels.Customer
         public short sectorId { get; set; }
         public string sectorName { get; set; }
         public string taxNumber { get; set; }
-
+        public bool isInvestmentGrade { get; set; }
+        public bool isRealatedParty { get; set; }
         public List<CustomerAddressViewModels> CustomerAddresses { get; set; }
         public List<CustomerBvnViewModels> CustomerBvn { get; set; }
         public List<CustomerCompanyInfomationViewModels> CustomerCompanyInfomation { get; set; }

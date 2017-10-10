@@ -7,6 +7,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.APICore.core;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -60,28 +61,48 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
-
-        //[HttpGet]
-        //[Route("loan-search/")]
-        //public HttpResponseMessage SearchForLoan(string searchQuery)
-        //{
-        //    try
-        //    {
-        //        var data = loanRepo.SearchForLoan(searchQuery);
-        //        if (data == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = false, message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = true, result = data });
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //              new { success = false, message = ex.Message });
-        //    }
-        //}
+        [HttpGet]
+        [Route("loan-operationtype/")]
+        public HttpResponseMessage GetOperationTypeByLoanId(int productTypeId, int scheduleTypeId)
+        {
+            try
+            {
+                var data = repo.GetOperationTypeByLoanId((LoanProductTypeEnum)productTypeId, (LoanScheduleTypeEnum)scheduleTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("loan-search/")]
+        public HttpResponseMessage SearchForLoan(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchForLoan(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [Route("loan-guarantor/")]
@@ -148,7 +169,47 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [Route("loan-schedule-details/")]
+        public HttpResponseMessage GetOperationTypeByLoanId(int loanId)
+        {
+            try
+            {
+                var data = loanRepo.GetLoanScheduleByLoanId(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("loan-operation/awaiting-approval")]
+        public HttpResponseMessage GetLoanBookingAwaitingApproval()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetLoanOperationAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         [HttpPost]
         [Route("add-loan-review")]
         public HttpResponseMessage AddOperationReview([FromBody] LoanReviewOperationViewModel model)

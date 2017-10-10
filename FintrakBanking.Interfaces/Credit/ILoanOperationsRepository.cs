@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
@@ -15,12 +16,18 @@ namespace FintrakBanking.Interfaces.Credit
         decimal GetCollateralSearchChargeAmount(int stateId);
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
+
         IEnumerable<DailyInterestAccrualViewModel> GetDailyTeamLoansInterestAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> GetDailyAuthorisedOverdraftInterestAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> GetDailyUnauthorisedOverdraftInterestAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> GetDailyPastDueInterestAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> GetDailyPastDuePrincipalAccrual(DateTime applicationDate);
 
+
+
+        // IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(int scheduleId);
+        IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId);
+        IEnumerable<LoanReviewOperationViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId);
 
     }
 }
