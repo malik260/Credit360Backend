@@ -632,22 +632,18 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var productModel = context.tbl_Temp_Product.Find(productId);
             var productToUpdate = context.tbl_Product.FirstOrDefault(x => x.ProductCode == productModel.ProductCode);
-            //var productModelToUpdate = productToUpdate.FirstOrDefault();
 
             var currModel = context.tbl_Temp_Product_Currency.Where(c => c.ProductId == productModel.ProductId && c.Deleted == false);
-            var currListToUpdate = context.tbl_Product_Currency.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false);
+            var currListToUpdate = new List<tbl_Product_Currency>();
 
             var feeModel =
                 context.tbl_Temp_Product_Charge_Fee.Where(c => c.ProductId == productModel.ProductId && c.Deleted == false);
-            var feeListToUpdate =
-                context.tbl_Product_Charge_Fee.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false);
+            var feeListToUpdate = new List<tbl_Product_Charge_Fee>();
 
             var collateralModel =
                 context.tbl_Temp_Product_CollateralType.Where(c =>
                     c.ProductId == productModel.ProductId && c.Deleted == false);
-            var collateralListToUpdate =
-                context.tbl_Product_CollateralType.Where(x =>
-                    x.ProductId == productToUpdate.ProductId && x.Deleted == false);
+            var collateralListToUpdate = new List<tbl_Product_CollateralType>();
 
             List<tbl_Product_Charge_Fee> productFees = new List<tbl_Product_Charge_Fee>();
             List<tbl_Product_CollateralType> productCollateral = new List<tbl_Product_CollateralType>();
@@ -655,6 +651,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (productToUpdate != null) //Update existing product with tempProduct record
             {
+                currListToUpdate = context.tbl_Product_Currency.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+
+                feeListToUpdate =
+               context.tbl_Product_Charge_Fee.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+
+                collateralListToUpdate =
+                context.tbl_Product_CollateralType.Where(x =>
+                    x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+
                 // remove exisiting records for currencies
                 foreach (var curr in currListToUpdate)
                 {

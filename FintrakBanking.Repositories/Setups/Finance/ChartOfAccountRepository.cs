@@ -71,12 +71,14 @@ namespace FintrakBanking.Repositories.Setups.Finance
             var existingAccount = accountToUpdate.FirstOrDefault();
 
             var currModel = context.tbl_Temp_Chart_Of_Account_Currency.Where(c => c.GLAccountId == accountModel.GLAccountId && c.Deleted == false);
-            var currListToUpdate = context.tbl_Chart_Of_Account_Currency.Where(x => x.GLAccountId == existingAccount.GLAccountId && x.Deleted == false);
+            var currListToUpdate = new List<tbl_Chart_Of_Account_Currency>();
 
             List<tbl_Chart_Of_Account_Currency> coaCurrencies = new List<tbl_Chart_Of_Account_Currency>();
 
             if (existingAccount != null) //Update existing account with tempAccount record
             {
+                currListToUpdate = context.tbl_Chart_Of_Account_Currency.Where(x => x.GLAccountId == existingAccount.GLAccountId && x.Deleted == false).ToList();
+                    
                 foreach (var curr in currListToUpdate)
                 {
                     context.tbl_Chart_Of_Account_Currency.Remove(curr);

@@ -177,7 +177,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("loan/application")]
-        public async Task<HttpResponseMessage> LoanBooking([FromBody] LoanApplicationViewModel entity)
+        public    HttpResponseMessage  LoanBooking([FromBody] LoanApplicationViewModel entity)
         {
             try
             {
@@ -202,15 +202,15 @@ namespace FintrakBanking.APICore.Controllers
 
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
+                entity.createdBy = token.GetStaffId;                
                 entity.companyId = token.GetCompanyId;
                 entity.branchId = (short)token.GetBranchId;
 
                 entity.misCode = "001";
                 entity.teamMisCode = "004";
 
-                var response = await repoApply.AddLoanApplication(entity);
-                if (response)
+                var response =   repoApply.AddLoanApplication(entity);
+                if (response != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "The loan application completed successfully" });
                 }
