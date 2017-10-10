@@ -11,6 +11,7 @@ namespace FintrakBanking.ViewModels.Credit
         public LoanApplicationViewModel()
         {
             LoanApplicationCollateral = new List<LoanApplicationCollateralViewModel>();
+            LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
         }
 
         public int loanApplicationId { get; set; }
@@ -44,7 +45,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isRealatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public int approvalStatusId { get; set; }
-
+         
         public int approvalLevelId { get; set; }
 
         public short subSectorId { get; set; }
@@ -66,7 +67,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanPreliminaryEvaluationId { get; set; }
         public double exchangeRate { get; set; }
         public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
-
+        public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }
         public int? currentApprovalStateId { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public string currentApprovalLevel { get; set; }
@@ -93,6 +94,51 @@ namespace FintrakBanking.ViewModels.Credit
         public short productClassId { get; set; }
         public string productClassName { get; set; }
         public short productClassTypeId { get; set; }
+    }
+
+    public class LoanApplicationDetailViewModel : GeneralEntity
+    {
+
+        public int loanApplicationDetailId { get; set; }
+
+        public int loanApplicationId { get; set; }
+
+        public int customerId { get; set; }
+
+        public short proposedProductId { get; set; }
+
+        public int proposedTenor { get; set; }
+
+        public double proposedInterestRate { get; set; }
+
+        public decimal proposedAmount { get; set; }
+
+        public short approvedProductId { get; set; }
+
+        public int approvedTenor { get; set; }
+
+        public double approvedInterestRate { get; set; }
+
+        public decimal approvedAmount { get; set; }
+
+        public short currencyId { get; set; }
+
+        public string currencyName { get; set; }
+
+        public double exchangeRate { get; set; }
+
+        public decimal exchangeAmount { get { return (decimal)exchangeRate * proposedAmount; } }
+
+        public short subSectorId { get; set; }
+
+        public short statusId { get; set; }
+
+        public int casaAccountId { get; set; }
+
+        public short sectorId { get; set; }
+
+        public short productClassId { get; set; }
+
     }
 
 }

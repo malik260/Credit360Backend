@@ -1482,13 +1482,13 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Product>()
                 .HasMany(e => e.tbl_Loan_Application_Detail)
                 .WithRequired(e => e.tbl_Product)
-                .HasForeignKey(e => e.Proposed_ProductId)
+                .HasForeignKey(e => e.ProposedProductId)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Product>()
                 .HasMany(e => e.tbl_Loan_Application_Detail1)
                 .WithRequired(e => e.tbl_Product1)
-                .HasForeignKey(e => e.Approved_ProductId)
+                .HasForeignKey(e => e.ApprovedProductId)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Product>()
@@ -2507,11 +2507,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan_Application_Detail>()
-                .Property(e => e.Proposed_Amount)
+                .Property(e => e.ProposedAmount)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan_Application_Detail>()
-                .Property(e => e.Approved_Amount)
+                .Property(e => e.ApprovedAmount)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan_Application_Detail>()

@@ -70,7 +70,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     select new LookupViewModel()
                     {
                         lookupId = data.CurrencyId,
-                        lookupName = data.CurrencyCode + " -- " + data.CurrencyName
+                        lookupName = data.CurrencyCode + " -- " + data.CurrencyName,
+                         lookupTypeName = data.CurrencyCode
                     });
         }
 
