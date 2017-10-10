@@ -432,11 +432,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("loan-preliminary-evaluation")]
-        public HttpResponseMessage GetLoanPreliminaryEvaluations(int loanTypeId)
+        public HttpResponseMessage GetLoanPreliminaryEvaluations()
         {
             try
             {
-                var data = repoLoanPEN.GetAllLoanSingleCustomerPreliminaryEvaluations(loanTypeId);
+                var data = repoLoanPEN.GetAllLoanSingleCustomerPreliminaryEvaluations(1);
 
                 if (!data.Any())
                 {
