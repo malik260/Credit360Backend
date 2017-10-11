@@ -473,19 +473,24 @@ namespace FintrakBanking.Repositories.Setups.General
                             currencyId = pc.CurrencyId,
                             currencyName = pc.tbl_Currency.CurrencyCode + " -- " + pc.tbl_Currency.CurrencyName
                         }).ToList(),
-                        fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == c.ProductId && curr.Deleted == false).Select(pf => new ProductFeeViewModel()
+                        fees = context.tbl_Temp_Product_Charge_Fee.Where(curr => curr.ProductId == c.ProductId && c.Deleted == false).Select(pf => new ProductFeeViewModel()
                         {
-                            productId = c.ProductId,
                             productFeeId = pf.ProductFeeId,
-                            feeId = pf.ProductFeeId,
+                            productId = pf.ProductId,
+                            feeId = pf.ChargeFeeId,
+                            feeName = pf.tbl_Charge_Fee.ChargeFeeName,
+                            feeIntervalName = pf.tbl_Charge_Fee.tbl_Fee_Interval.FeeIntervalName,
+                            feeTargetName = pf.tbl_Charge_Fee.tbl_Fee_Target.FeeTargetName,
+                            feeTypeName = pf.tbl_Charge_Fee.tbl_Fee_Type.FeeTypeName,
+                            glAccountCode = pf.tbl_Charge_Fee.tbl_Chart_Of_Account.AccountCode,
+                            glAccountName = pf.tbl_Charge_Fee.tbl_Chart_Of_Account.AccountName,
+                            companyId = pf.CompanyId,
+
                             rateValue = pf.RateValue,
                             dependentAmount = pf.DependentAmount,
-                            feeName = pf.tbl_Fee.FeeName,
-                            feeIntervalName = pf.tbl_Fee.tbl_Fee_Interval.FeeIntervalName,
-                            feeTargetName = pf.tbl_Fee.tbl_Fee_Target.FeeTargetName,
-                            feeTypeName = pf.tbl_Fee.tbl_Fee_Type.FeeTypeName,
-                            glAccountCode = pf.tbl_Fee.tbl_Chart_Of_Account.AccountCode,
-                            glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
+
+                            createdBy = pf.CreatedBy,
+                            dateTimeCreated = pf.DateTimeCreated,
 
                         }).ToList(),
                         collaterals = context.tbl_Temp_Product_CollateralType.Where(coll => coll.ProductId == c.ProductId && coll.Deleted == false).Select(prodColl => new ProductCollateralTypeViewModel()
@@ -761,6 +766,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingProduct.ScheduleTypeId = productModel.ScheduleTypeId;
 
                     existingProduct.tbl_Product_Currency = productCurrencies;
+                    existingProduct.tbl_Product_Charge_Fee = productFees;
+                    existingProduct.tbl_Product_CollateralType = productCollateral;
                     existingProduct.Approved = true;
                     existingProduct.ApprovedBy = productModel.CreatedBy;
                 }
@@ -1254,9 +1261,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (existingTempProduct != null)
             {
-                existingProductCurrencies = context.tbl_Temp_Product_Currency.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
-                existingProductFees = context.tbl_Temp_Product_Charge_Fee.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
-                existingProductCollateral = context.tbl_Temp_Product_CollateralType.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
+                existingProductCurrencies = context.tbl_Temp_Product_Currency.Where(x => x.ProductId == productId).ToList();
+                existingProductFees = context.tbl_Temp_Product_Charge_Fee.Where(x => x.ProductId == productId).ToList();
+                existingProductCollateral = context.tbl_Temp_Product_CollateralType.Where(x => x.ProductId == productId).ToList();
 
                 // Remove exisiting product fees, currency and collaterals
                 if (existingProductCurrencies.Count > 0)
@@ -1499,7 +1506,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     output = await context.SaveChangesAsync() > 0;
 
-                    targetProductId = existingTempProduct?.ProductId ?? tempProduct.ProductId;
+                    targetProductId = tempProduct != null ? tempProduct.ProductId : productId ;
 
                     var entity = new ApprovalViewModel
                     {

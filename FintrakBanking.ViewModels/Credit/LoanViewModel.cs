@@ -133,6 +133,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string pricipalFrequencyTypeName { get; set; }
         public string interestFrequencyTypeName { get; set; }
         public string comment { get; set; }
+        public string relationshipManagerEmail { get; set; }
+        public string relationshipOfficerEmail { get; set; }
 
         //............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
