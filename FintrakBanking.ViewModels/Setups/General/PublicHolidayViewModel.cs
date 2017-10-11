@@ -8,14 +8,16 @@ namespace FintrakBanking.ViewModels.Setups.General
 {
    public class PublicHolidayViewModel : GeneralEntity
     {
-        public int PublicHolidayId { get; set; }
+        public int publicHolidayId { get; set; }
 
-        public int CountryId { get; set; }
+        public int countryId { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime date { get; set; }
 
-        public string CountryName { get; set; }
+        public string countryName { get; set; }
 
-        public string Description { get; set; }
+        public string description { get; set; }
+
+        public bool isActive { get; set; }
     }
 }

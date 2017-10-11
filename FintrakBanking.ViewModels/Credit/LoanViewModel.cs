@@ -29,6 +29,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
+        public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
 
         public short branchId { get; set; }
@@ -163,6 +164,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short branchId { get; set; }
         public short currencyId { get; set; }
         public double exchangeRate { get; set; }
+        public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         public string loanReferenceNumber { get; set; }
         public short subSectorId { get; set; }
@@ -205,13 +207,21 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string subSectorName { get; set; }
-        public string SectorName { get; set; }
+        //public string SectorName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string productName { get; set; }
         public string customerSensitivityLevelName { get; set; }
         public string customerName { get; set; }
         public string loanStatusName { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string teamMiscode { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string productAccountNumber { get; set; }
+        public string comment { get; set; }
         //.............End of Other Attributes...........//
 
         //......Loan Relational Table View Mapping Models..............//
@@ -226,6 +236,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class ContingentLoanViewModel : GeneralEntity
     {
         public int loanId { get; set; }
+        public int loanApplicationId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
         public int casaAccountId { get; set; }
@@ -276,7 +287,15 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerSensitivityLevelName { get; set; }
         public string customerName { get; set; }
         public string loanStatusName { get; set; }
-
+        public string applicationReferenceNumber { get; set; }
+        public string teamMiscode { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string productAccountNumber { get; set; }
+        public string comment { get; set; }
+       // public string SectorName { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
 
@@ -305,7 +324,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal groupApprovedAmount { get; set; }
         public int approvedTenor { get; set; }
         public decimal ? customerAvailableAmount { get; set; }
-        public short applicationStatusId { get; set; }
     }
 
     public class AppraisalMemorandumLoanDetailViewModel
@@ -355,7 +373,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanGuarantorViewModel
     {
         public short loanGuarantorId { get; set; }
-        public int loanId { get; set; }
+        public int loanApplicationId { get; set; }
         public string fullName { get; set; }
         public string firstname { get; set; }
         public string lastname { get; set; }
@@ -430,10 +448,21 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short dayCountConventionId { get; set; }
 
-        public decimal dailyAccuralAmount { get; set; }
+        public double dailyAccuralAmount { get; set; }
 
         public decimal availableBalance { get; set; }
 
         public int daysInAYear { get; set; }
+
+
+
+
+    }
+
+
+    public class SubAllocationViewModel 
+    {
+        public int fromLoanId  { get; set; }
+        public decimal fromAmount  { get; set; }
     }
 }

@@ -25,10 +25,8 @@ namespace FintrakBanking.Common.Enum
         DailyInterestAccural = 15,
 
         LoanRepayment = 16,
-        //ChargeReversal = 17,
-        //LoanPrepayment  = 18,
-
-        //Loan management operations
+        ChargeReversal = 17,
+        LoanPrepayment = 18,
         ContractualInterestRateChange = 19,
         OverdraftSubAllocation = 20,
         Prepayment = 21,
@@ -43,7 +41,10 @@ namespace FintrakBanking.Common.Enum
         TerminateAndRebook = 30,
         CompleteWriteOff = 31,
         CancelUndisbursedLoan = 32,
-        InterestSuspension = 33
+        InterestSuspension = 33,
+        LoanTermination = 34
+
+
 
     }
 }

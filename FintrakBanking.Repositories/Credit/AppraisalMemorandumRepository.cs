@@ -287,9 +287,12 @@ namespace FintrakBanking.Repositories.Credit
                         memo.IsCompleted = true;
                     }
 
-                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Authorised) // loan details
+                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Authorised) // approving authority
                     {
                         var items = context.tbl_Loan_Application_Detail.Where(x => x.LoanApplicationId == memo.LoanApplicationId);
+
+                        var approvedAmount = items.Where(x => x.StatusId != (int)ApprovalStatusEnum.Disapproved).Sum(x => x.ApprovedAmount);
+                        appl.ApprovedAmount = approvedAmount;
 
                         foreach (var item in items)
                         {

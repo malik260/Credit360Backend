@@ -60,6 +60,8 @@
     <Compile Include="Enum\CASAPostNoStatusEnum.cs" />
     <Compile Include="Enum\LimitValueTypeEnum.cs" />
     <Compile Include="Enum\LoanApplicationStatusEnum.cs" />
+    <Compile Include="Enum\LoanDetailsStatusEnum.cs" />
+    <Compile Include="Enum\LoanPrudentialStatusEnum.cs" />
     <Compile Include="Enum\LoanScheduleTypeEnum.cs" />
     <Compile Include="Enum\LoanStatusEnum.cs" />
     <Compile Include="Enum\LoanTransactionTypeEnum.cs" />

@@ -8,6 +8,8 @@ using FintrakBanking.APICore.core;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
@@ -17,12 +19,15 @@ namespace FintrakBanking.APICore.Controllers
     {
         private ILoanOperationsRepository repo;
         private ILoanRepository loanRepo;
+        private IEndOfDayRepository repoEOD;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public LoanOperationsController(ILoanOperationsRepository _repo,
+            IEndOfDayRepository _repoEOD,
             ILoanRepository _loanRepo)
         {
             this.repo = _repo;
+            this.repoEOD = _repoEOD;
             this.loanRepo = _loanRepo;
         }
 
@@ -62,6 +67,7 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
         [HttpGet]
         [Route("loan-operationtype/")]
         public HttpResponseMessage GetOperationTypeByLoanId(int productTypeId, int scheduleTypeId)
@@ -83,6 +89,29 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("end-of-day")]
+        public HttpResponseMessage RunEndOfDay([FromBody] EndOfDayViewModel model)
+        {
+            try
+            {
+                var data = repoEOD.RunEndOfDay(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                               new { success = true, message = "End of day transaction completed successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                               new { success = false, message = "End of day transaction failed" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpGet]
         [Route("loan-search/")]
         public HttpResponseMessage SearchForLoan(string searchQuery)
@@ -170,6 +199,8 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+
         [HttpGet]
         [Route("loan-schedule-details/")]
         public HttpResponseMessage GetOperationTypeByLoanId(int loanId)

@@ -11,6 +11,8 @@ namespace FintrakBanking.ViewModels.Credit
             customerBvnInformation = new List<CustomerBvnViewModels>();
             customerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
             customerCompanyShareholders = new List<CustomerCompanyShareholdersViewModels>();
+            customerClients = new List<CustomerClientOrSupplierViewModels>();
+            customerSuppliers = new List<CustomerSupplierViewModels>();
         }
 
         public int loanPreliminaryEvaluationId { get; set; }
@@ -62,5 +64,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanTypeName { get; set; }
         public string customerAccountNumber { get; set; }
         public short? customerTypeId { get; set; }
+        public int? customerGroupId { get; set; }
+        public string customerGroupCode { get; set; }
+        public List<CustomerClientOrSupplierViewModels> customerClients { get; set; }
+        public List<CustomerSupplierViewModels> customerSuppliers { get; set; }
+        public string customerGroupName { get; set; }
+        public List<CustomerGroupMappingViewModel> customerGroupMappings { get; set; }
     }
 }
