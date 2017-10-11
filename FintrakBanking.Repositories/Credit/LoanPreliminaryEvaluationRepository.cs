@@ -331,9 +331,8 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.tbl_Branch on pen.BranchId equals br.BranchId
                         join atrail in context.tbl_Approval_Trail on pen.LoanPreliminaryEvaluationId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && pen.IsCurrent == true
-                            && atrail.ResponseStaffId == null
+                            && pen.LoanTypeId == (short)LoanTypeEnum.Single && atrail.ResponseStaffId == null
                               && atrail.OperationId == (int)OperationsEnum.LoanPreliminaryEvaluation && atrail.ToApprovalLevelId == staffApprovalLevelId
-                              && pen.LoanTypeId == (short)LoanTypeEnum.Single
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.CompanyId,
@@ -455,9 +454,8 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.tbl_Branch on pen.BranchId equals br.BranchId
                         join atrail in context.tbl_Approval_Trail on pen.LoanPreliminaryEvaluationId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && pen.IsCurrent == true
-                            && atrail.ResponseStaffId == null
+                              && pen.LoanTypeId == (short)LoanTypeEnum.CustomerGroup && atrail.ResponseStaffId == null
                               && atrail.OperationId == (int)OperationsEnum.LoanPreliminaryEvaluation && atrail.ToApprovalLevelId == staffApprovalLevelId
-                              && pen.LoanTypeId == (short)LoanTypeEnum.CustomerGroup
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.CompanyId,
@@ -632,8 +630,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from p in context.tbl_Loan_Preliminary_Evaluation
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
-                        where p.IsCurrent == false && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
-                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending && p.LoanTypeId == (short)LoanTypeEnum.Single
+                        where p.IsCurrent == false && p.LoanTypeId == (short)LoanTypeEnum.Single && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending 
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
@@ -755,8 +753,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from p in context.tbl_Loan_Preliminary_Evaluation
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
-                        where p.IsCurrent == false && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
-                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending && p.LoanTypeId == (short)LoanTypeEnum.CustomerGroup 
+                        where p.IsCurrent == false && p.LoanTypeId == (short)LoanTypeEnum.CustomerGroup && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending 
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
