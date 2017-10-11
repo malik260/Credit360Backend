@@ -37,6 +37,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Daily_Accrual = new HashSet<tbl_Daily_Accrual>();
             tbl_Finance_EndOfDay = new HashSet<tbl_Finance_EndOfDay>();
             tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
+            tbl_FinanceCurrentDate = new HashSet<tbl_FinanceCurrentDate>();
             tbl_Limit = new HashSet<tbl_Limit>();
             tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
@@ -256,6 +257,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_FinanceCurrentDate> tbl_FinanceCurrentDate { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Limit> tbl_Limit { get; set; }

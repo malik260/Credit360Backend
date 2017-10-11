@@ -50,7 +50,9 @@ namespace FintrakBanking.ReportObjects
                                    customerName = d.FirstName + ' ' + d.LastName,
                                    currencyName = b.tbl_Currency.CurrencyName,
                                    tenor = b.ApprovedTenor,
-                                   interestRate = b.ApprovedInterestRate
+                                   interestRate = b.ApprovedInterestRate,
+                                   loanAmount = b.ApprovedAmount,
+                                   exchangeRate = (float)b.ExchangeRate
                                }).ToList();
 
             if (loanDetails != null)

@@ -37,8 +37,6 @@ namespace FintrakBanking.Entities.Models
 
         public short BranchId { get; set; }
 
-        public short SubSectorId { get; set; }
-
         public int CasaAccountId { get; set; }
 
         public int? CustomerGroupId { get; set; }
@@ -128,8 +126,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Staff tbl_Staff { get; set; }
 
         public virtual tbl_Staff tbl_Staff1 { get; set; }
-
-        public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Credit_Appraisal_Memorandum> tbl_Credit_Appraisal_Memorandum { get; set; }
