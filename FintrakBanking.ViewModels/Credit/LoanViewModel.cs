@@ -448,10 +448,21 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short dayCountConventionId { get; set; }
 
-        public decimal dailyAccuralAmount { get; set; }
+        public double dailyAccuralAmount { get; set; }
 
         public decimal availableBalance { get; set; }
 
         public int daysInAYear { get; set; }
+
+
+
+
+    }
+
+
+    public class SubAllocationViewModel 
+    {
+        public int fromLoanId  { get; set; }
+        public decimal fromAmount  { get; set; }
     }
 }
