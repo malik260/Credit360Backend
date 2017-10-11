@@ -81,11 +81,13 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (Validation() == false) { return false; }
             if (Authorization() == false) { return false; }
-            
+
             var request = context.tbl_Approval_Trail.Where(x =>
                                 x.CompanyId == this.companyId
                                 && x.OperationId == this.operationId
-                                && x.TargetId == this.targetId
+                                && x.TargetId == this.targetId &&
+                                x.ResponseStaffId == null &&
+                                (x.ApprovalStateId != (int)ApprovalState.Ended)
                             ).OrderByDescending(x => x.ApprovalTrailId).FirstOrDefault();
 
             if (request != null)
@@ -94,7 +96,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestStaffId = request.RequestStaffId;
                 //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
                 this.fromLevelId = request.ToApprovalLevelId;
-            } else
+            }
+            else
             {
                 this.currentStateId = (int)ApprovalState.Initiation;
             }
@@ -112,7 +115,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             CheckApprovalLimits();
 
-            SetState(); 
+            SetState();
 
             this.applicationDate = GetApplicationDate();
 
@@ -141,7 +144,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             context.tbl_Approval_Trail.Add(trail);
-            this.saved =  context.SaveChanges() > 0;
+            this.saved = context.SaveChanges() > 0;
 
 
             if (this.saved)
@@ -401,7 +404,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (WithinAllLimits() == true)
                 {
                     this.EndProcess((int)ApprovalStatusEnum.Approved);
-                } else
+                }
+                else
                 {
                     this.statusId = (int)ApprovalStatusEnum.Authorised;
                 }
@@ -442,10 +446,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var setup = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
 
-            var level = setup.FirstOrDefault(x=>x.Staff.First().StaffId == staffId);
+            var level = setup.FirstOrDefault(x => x.Staff.First().StaffId == staffId);
 
-            return WithinTenorLimit(level) == true 
-                && WithinMaximumLimit(level) == true 
+            return WithinTenorLimit(level) == true
+                && WithinMaximumLimit(level) == true
                 && WithinInvestmentGradeLimit(level) == true
                 && WithinPoliticallyExposedLimit(level) == true;
         }
@@ -455,12 +459,12 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.nextLevelId == null && ActionIsApprovalDecision())
             {
                 this.statusId = (int)ApprovalStatusEnum.Approved;
-                this.newStateId = (int) ApprovalState.Ended;
+                this.newStateId = (int)ApprovalState.Ended;
             }
             else
             {
-                this.statusId = (int) ApprovalStatusEnum.Pending;
-                this.newStateId = (int) ApprovalState.Processing;
+                this.statusId = (int)ApprovalStatusEnum.Pending;
+                this.newStateId = (int)ApprovalState.Processing;
             }
         }
 

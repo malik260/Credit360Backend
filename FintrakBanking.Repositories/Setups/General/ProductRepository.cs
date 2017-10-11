@@ -1020,6 +1020,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CompanyId = item.companyId,
                     CreatedBy = (int)item.createdBy,
                     DateTimeCreated = genSetup.GetApplicationDate(),
+                    Deleted = false,
                 };
                 chargeFees.Add(productFees);
             }
@@ -1032,7 +1033,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     CollateralTypeId = item.collateralTypeId,
                     CompanyId = productModel.companyId,
                     CreatedBy = item.createdBy,
-                    DateTimeCreated = genSetup.GetApplicationDate()
+                    DateTimeCreated = genSetup.GetApplicationDate(),
+                    Deleted = false,
                 };
                 collaterals.Add(productCollaterals);
             }
@@ -1075,7 +1077,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 DateTimeCreated = DateTime.Now,
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                 IsCurrent = true,
-
+                Deleted = false,
                 tbl_Temp_Product_Currency = currencies,
 
                 IsMultipleCurency = productModel.currencies.Any(),
@@ -1261,9 +1263,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (existingTempProduct != null)
             {
-                existingProductCurrencies = context.tbl_Temp_Product_Currency.Where(x => x.ProductId == productId).ToList();
-                existingProductFees = context.tbl_Temp_Product_Charge_Fee.Where(x => x.ProductId == productId).ToList();
-                existingProductCollateral = context.tbl_Temp_Product_CollateralType.Where(x => x.ProductId == productId).ToList();
+                existingProductCurrencies = context.tbl_Temp_Product_Currency.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
+                existingProductFees = context.tbl_Temp_Product_Charge_Fee.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
+                existingProductCollateral = context.tbl_Temp_Product_CollateralType.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
 
                 // Remove exisiting product fees, currency and collaterals
                 if (existingProductCurrencies.Count > 0)
@@ -1313,6 +1315,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         CompanyId = item.companyId,
                         CreatedBy = (int)item.createdBy,
                         DateTimeCreated = genSetup.GetApplicationDate(),
+                        Deleted = false
                     };
                     productFees.Add(fee);
                 }
@@ -1373,6 +1376,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductToUpdate.ScheduleTypeId = productModel.scheduleTypeId;
                 tempProductToUpdate.IsCurrent = true;
                 tempProductToUpdate.DateTimeUpdated = DateTime.Now;
+                tempProductToUpdate.Deleted = false;
 
                 tempProductToUpdate.tbl_Temp_Product_Currency = productCurrencies;
                 tempProductToUpdate.tbl_Temp_Product_Charge_Fee = productFees;
@@ -1466,7 +1470,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DateTimeCreated = DateTime.Now,
                     ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                     IsCurrent = true,
-
+                    Deleted = false,
                     AllowCustomerAccountForceDebit = productModel.allowCustomerAccountForceDebit,
                     AllowScheduleTypeOverride = productModel.allowScheduleTypeOverride,
                     AllowMoratorium = productModel.allowMoratorium,
@@ -1506,7 +1510,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     output = await context.SaveChangesAsync() > 0;
 
-                    targetProductId = tempProduct != null ? tempProduct.ProductId : productId ;
+                    targetProductId = existingTempProduct?.ProductId ?? tempProduct.ProductId;
 
                     var entity = new ApprovalViewModel
                     {
