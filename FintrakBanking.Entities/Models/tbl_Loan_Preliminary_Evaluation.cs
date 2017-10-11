@@ -134,6 +134,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
+        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+
         public virtual tbl_Branch tbl_Branch { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
@@ -154,6 +156,5 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
 
         public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
-
     }
 }

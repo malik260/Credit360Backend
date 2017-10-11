@@ -281,7 +281,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.SaveAll();
         }
 
-        #region tbl_Product Region
+        #region Product Region
 
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {
@@ -632,22 +632,18 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var productModel = context.tbl_Temp_Product.Find(productId);
             var productToUpdate = context.tbl_Product.FirstOrDefault(x => x.ProductCode == productModel.ProductCode);
-            //var productModelToUpdate = productToUpdate.FirstOrDefault();
 
             var currModel = context.tbl_Temp_Product_Currency.Where(c => c.ProductId == productModel.ProductId && c.Deleted == false);
-            var currListToUpdate = context.tbl_Product_Currency.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false);
+            var currListToUpdate = new List<tbl_Product_Currency>();
 
             var feeModel =
                 context.tbl_Temp_Product_Charge_Fee.Where(c => c.ProductId == productModel.ProductId && c.Deleted == false);
-            var feeListToUpdate =
-                context.tbl_Product_Charge_Fee.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false);
+            var feeListToUpdate = new List<tbl_Product_Charge_Fee>();
 
             var collateralModel =
                 context.tbl_Temp_Product_CollateralType.Where(c =>
                     c.ProductId == productModel.ProductId && c.Deleted == false);
-            var collateralListToUpdate =
-                context.tbl_Product_CollateralType.Where(x =>
-                    x.ProductId == productToUpdate.ProductId && x.Deleted == false);
+            var collateralListToUpdate = new List<tbl_Product_CollateralType>();
 
             List<tbl_Product_Charge_Fee> productFees = new List<tbl_Product_Charge_Fee>();
             List<tbl_Product_CollateralType> productCollateral = new List<tbl_Product_CollateralType>();
@@ -655,6 +651,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (productToUpdate != null) //Update existing product with tempProduct record
             {
+                currListToUpdate = context.tbl_Product_Currency.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+
+                feeListToUpdate =
+               context.tbl_Product_Charge_Fee.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+
+                collateralListToUpdate =
+                context.tbl_Product_CollateralType.Where(x =>
+                    x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+
                 // remove exisiting records for currencies
                 foreach (var curr in currListToUpdate)
                 {
@@ -810,7 +815,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ProductTypeId = productModel.ProductTypeId,
                         ProductCategoryId = productModel.ProductCategoryId,
                         ProductClassId = productModel.ProductClassId,
-                        ProductCode = GenerateProductCode(productModel.CompanyId),
+                        ProductCode = productModel.ProductCode,
                         ProductName = productModel.ProductName,
                         ProductDescription = productModel.ProductDescription,
 
@@ -932,43 +937,51 @@ namespace FintrakBanking.Repositories.Setups.General
                                                                   && x.IsCurrent == true && x.CompanyId == productModel.companyId
                                                                   && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
 
-            var existingProductCurrencies = context.tbl_Temp_Product_Currency.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false);
+            var existingProductCurrencies = new List<tbl_Temp_Product_Currency>();
+            var existingProductFees = new List<tbl_Temp_Product_Charge_Fee>();
+            var existingProductCollateral = new List<tbl_Temp_Product_CollateralType>();
 
-            var exisitingProductFees =
-                context.tbl_Temp_Product_Charge_Fee.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false);
+            //if (existingTempProduct != null)
+            //{
+            //    existingProductCurrencies = context.tbl_Temp_Product_Currency.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false).ToList();
 
-            var exisitingProductCollateral =
-                context.tbl_Temp_Product_CollateralType.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false);
+            //    existingProductFees =
+            //        context.tbl_Temp_Product_Charge_Fee.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false).ToList();
+
+            //    existingProductCollateral =
+            //        context.tbl_Temp_Product_CollateralType.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false).ToList();
+            //}
+
 
             if (existingTempProduct != null)
             {
                 throw new Exception("Product Information already exist and is undergoing approval");
             }
             
-            // Remove exisiting product fees, currency and collaterals
-            if (existingProductCurrencies.Any())
-            {
-                foreach (var curr in existingProductCurrencies)
-                {
-                    context.tbl_Temp_Product_Currency.Remove(curr);
-                }
-            }
+            //// Remove exisiting product fees, currency and collaterals
+            //if (existingProductCurrencies.Any())
+            //{
+            //    foreach (var curr in existingProductCurrencies)
+            //    {
+            //        context.tbl_Temp_Product_Currency.Remove(curr);
+            //    }
+            //}
 
-            if (exisitingProductFees.Any())
-            {
-                foreach (var fee in exisitingProductFees)
-                {
-                    context.tbl_Temp_Product_Charge_Fee.Remove(fee);
-                }
-            }
+            //if (existingProductFees.Any())
+            //{
+            //    foreach (var fee in existingProductFees)
+            //    {
+            //        context.tbl_Temp_Product_Charge_Fee.Remove(fee);
+            //    }
+            //}
 
-            if (exisitingProductCollateral.Any())
-            {
-                foreach (var coll in exisitingProductCollateral)
-                {
-                    context.tbl_Temp_Product_CollateralType.Remove(coll);
-                }
-            }
+            //if (existingProductCollateral.Any())
+            //{
+            //    foreach (var coll in existingProductCollateral)
+            //    {
+            //        context.tbl_Temp_Product_CollateralType.Remove(coll);
+            //    }
+            //}
 
             List<tbl_Temp_Product_Currency> currencies = new List<tbl_Temp_Product_Currency>();
             List<tbl_Temp_Product_Charge_Fee> chargeFees = new List<tbl_Temp_Product_Charge_Fee>();
@@ -1220,9 +1233,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         productModel.productCode.ToLower() && x.IsCurrent == true
                             && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
 
-            var existingProductCurrencies = context.tbl_Temp_Product_Currency.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
-            var exisitingProductFees = context.tbl_Temp_Product_Charge_Fee.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
-            var exisitingProductCollateral = context.tbl_Temp_Product_CollateralType.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
+            var existingProductCurrencies = new List<tbl_Temp_Product_Currency>();
+            var existingProductFees = new List<tbl_Temp_Product_Charge_Fee>();
+            var existingProductCollateral = new List<tbl_Temp_Product_CollateralType>();
 
             List<tbl_Temp_Product_Charge_Fee> productFees = new List<tbl_Temp_Product_Charge_Fee>();
             List<tbl_Temp_Product_CollateralType> productCollaterals = new List<tbl_Temp_Product_CollateralType>();
@@ -1239,33 +1252,37 @@ namespace FintrakBanking.Repositories.Setups.General
                 throw new Exception("Product is already undergoing approval");
             }
 
-            // Remove exisiting product fees, currency and collaterals
-            if (existingProductCurrencies.Count > 0)
-            {
-                foreach (var curr in existingProductCurrencies)
-                {
-                    context.tbl_Temp_Product_Currency.Remove(curr);
-                }
-            }
-
-            if (exisitingProductFees.Count > 0)
-            {
-                foreach (var fee in exisitingProductFees)
-                {
-                    context.tbl_Temp_Product_Charge_Fee.Remove(fee);
-                }
-            }
-
-            if (exisitingProductCollateral.Count > 0)
-            {
-                foreach (var coll in exisitingProductCollateral)
-                {
-                    context.tbl_Temp_Product_CollateralType.Remove(coll);
-                }
-            }
-
             if (existingTempProduct != null)
             {
+                existingProductCurrencies = context.tbl_Temp_Product_Currency.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
+                existingProductFees = context.tbl_Temp_Product_Charge_Fee.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
+                existingProductCollateral = context.tbl_Temp_Product_CollateralType.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
+
+                // Remove exisiting product fees, currency and collaterals
+                if (existingProductCurrencies.Count > 0)
+                {
+                    foreach (var curr in existingProductCurrencies)
+                    {
+                        context.tbl_Temp_Product_Currency.Remove(curr);
+                    }
+                }
+
+                if (existingProductFees.Count > 0)
+                {
+                    foreach (var fee in existingProductFees)
+                    {
+                        context.tbl_Temp_Product_Charge_Fee.Remove(fee);
+                    }
+                }
+
+                if (existingProductCollateral.Count > 0)
+                {
+                    foreach (var coll in existingProductCollateral)
+                    {
+                        context.tbl_Temp_Product_CollateralType.Remove(coll);
+                    }
+                }
+
                 foreach (var item in productModel.currencies)
                 {
                     var productCurrency = new tbl_Temp_Product_Currency

@@ -59,5 +59,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
         public int LoanApplicationId { get; set; }
+
     }
 }

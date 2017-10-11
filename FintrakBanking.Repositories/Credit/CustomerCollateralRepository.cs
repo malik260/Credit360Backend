@@ -354,6 +354,7 @@ namespace FintrakBanking.Repositories.Credit
                 currency = x.tbl_Currency.CurrencyName,
                 collateralTypeName = x.tbl_Collateral_Type.CollateralTypeName,
                 collateralCode = x.CollateralCode,
+                collateralValue = x.CollateralValue,
                 camRefNumber = x.CamRefNumber,
                 allowSharing = x.AllowSharing,
                 isLocationBased = x.IsLocationBased,
@@ -395,7 +396,7 @@ namespace FintrakBanking.Repositories.Credit
                 valuationCycle = x.ValuationCycle,
                 haircut = x.HairCut,
                 approvalStatus = x.ApprovalStatus,
-                //collateralValue = GetCollateralValue(x.CollateralTypeId, x.CollateralCustomerId) 
+                collateralValue = x.CollateralValue
 
             })
             .OrderByDescending(x => x.collateralId)
