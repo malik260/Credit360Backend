@@ -503,11 +503,8 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = $"{responseMessage}" });
                 }
-                else
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Preliminary evaluation note not updated" });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Preliminary evaluation note not updated" });
             }
             catch (Exception ex)
             {
