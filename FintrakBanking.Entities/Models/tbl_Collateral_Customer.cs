@@ -54,6 +54,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? ValuationCycle { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal CollateralValue { get; set; }
+
         public double HairCut { get; set; }
 
         public int CustomerId { get; set; }

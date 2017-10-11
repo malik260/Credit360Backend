@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,8 @@ namespace FintrakBanking.Interfaces.CASA
 
         IQueryable<CasaCustomerSearchViewModel> SearchForCustomerAccount(int companyId, string searchQuery);
 
+        IEnumerable<dynamic> GetAllCustomerAccountByCustomerId(int customerId, int companyId);
+
+       
     }
 }

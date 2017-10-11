@@ -205,6 +205,12 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
+                foreach (var curr in model.currencies)
+                {
+                    curr.createdBy = model.createdBy;
+                    curr.companyId = model.companyId;
+                }
+
                 var account = repo.UpdateAccount(accountId, model);
                 if (account)
                 {
@@ -224,7 +230,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("approval")]
-        public async Task<HttpResponseMessage> GoForApprovalAsync([FromBody]ApprovalViewModel entity)
+        public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
             try
             {
@@ -235,7 +241,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
 
-                var data = await repo.GoForApproval(entity);
+                var data = repo.GoForApproval(entity);
 
                 if (data)
                 {
@@ -354,6 +360,30 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
                 }
                   
+        }
+
+        [HttpGet]
+        [Route("classes")]
+        public HttpResponseMessage GetChartOfAccountClasses()
+        {
+            try
+            {
+                var data = repo.GetChartOfAccountClasses();
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, result = data.ToList(), message = "No records found!" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = ex.Message });
+            }
+
         }
     }
 }

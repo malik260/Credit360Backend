@@ -11,19 +11,21 @@ namespace FintrakBanking.ViewModels.Credit
         public LoanApplicationViewModel()
         {
             LoanApplicationCollateral = new List<LoanApplicationCollateralViewModel>();
+            LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
         }
 
         public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int? customerId { get; set; }
+        public int? operationId { get; set; }
 
         public short branchId { get; set; }
-        
         public short? productClassId { get; set; }
         public string productClassName { get; set; }
         public short productId { get; set; }
         public int? customerGroupId { get; set; }
-        public string customerGroupCode { get; set; } 
+        public string customerGroupCode { get; set; }
         public short loanTypeId { get; set; }
 
         public short currencyId { get; set; }
@@ -33,19 +35,22 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
         public DateTime applicationDate { get; set; }
-        public decimal principalAmount { get; set; }
+        public decimal applicationAmount { get; set; }
+        public decimal approvedAmount { get; set; }
+        public int applicationTenor { get; set; }
         public double interestRate { get; set; }
-        public int tenor { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime expiryDate { get; set; }
         public string customerAccount { get; set; }
         public short tenorModeId { get; set; }
         public string loanInformation { get; set; }
         public string misCode { get; set; }
         public string teamMisCode { get; set; }
         public bool submittedForAppraisal { get; set; }
-        public bool isRealatedParty { get; set; }
+        public bool isRelatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public int approvalStatusId { get; set; }
-
+         
         public int approvalLevelId { get; set; }
 
         public short subSectorId { get; set; }
@@ -61,18 +66,22 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManagerName { get; set; }
         public string tenorModeName { get; set; }
 
-        public string amount { get { return this.principalAmount.ToString("#,#.00#"); } }
-        public string applicantName { get { return this.customerName + "" + this.customerGroupName; } }
+        //public string amount { get { return this.principalAmount.ToString("#,#.00#"); } }
+        public string applicantName { get { return this.customerName + "(" + this.customerGroupName + ")"; } }
 
-        public int? loanPreliminaryEvaluationId { get; set; } 
+        public int? loanPreliminaryEvaluationId { get; set; }
         public double exchangeRate { get; set; }
         public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
-
+        public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }
         public int? currentApprovalStateId { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public string currentApprovalLevel { get; set; }
         public string lastComment { get; set; }
         public int approvalTrailId { get; set; }
+       // public decimal? approvedAmount { get; set; }
+        public short applicationStatusId { get; set; }
+
+        public bool isCollateralBacked { get; set; }
     }
 
     public class CollateralLenPlacementViewModel : GeneralEntity
@@ -92,6 +101,51 @@ namespace FintrakBanking.ViewModels.Credit
         public short productClassId { get; set; }
         public string productClassName { get; set; }
         public short productClassTypeId { get; set; }
+    }
+
+    public class LoanApplicationDetailViewModel : GeneralEntity
+    {
+
+        public int loanApplicationDetailId { get; set; }
+
+        public int loanApplicationId { get; set; }
+
+        public int customerId { get; set; }
+
+        public short proposedProductId { get; set; }
+
+        public int proposedTenor { get; set; }
+
+        public double proposedInterestRate { get; set; }
+
+        public decimal proposedAmount { get; set; }
+
+        public short approvedProductId { get; set; }
+
+        public int approvedTenor { get; set; }
+
+        public double approvedInterestRate { get; set; }
+
+        public decimal approvedAmount { get; set; }
+
+        public short currencyId { get; set; }
+
+        public string currencyName { get; set; }
+
+        public double exchangeRate { get; set; }
+
+        public decimal exchangeAmount { get { return (decimal)exchangeRate * proposedAmount; } }
+
+        public short subSectorId { get; set; }
+
+        public short statusId { get; set; }
+
+        public int casaAccountId { get; set; }
+
+        public short sectorId { get; set; }
+
+        public short productClassId { get; set; }
+
     }
 
 }

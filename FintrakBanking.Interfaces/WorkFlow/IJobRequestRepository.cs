@@ -13,8 +13,10 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId);
 
         IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId);
+        IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId);
 
         bool AddJobRequest(JobRequestViewModel model);
+        string AddGlobalJobRequest(JobRequestViewModel model);
 
         bool ReplyJobRequest(JobRequestViewModel model, int jobRequestId);
 
@@ -29,5 +31,11 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         // staff
         IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId);
+
+        bool AddJobDocument(RequestDocumentViewModel model, byte[] file);
+        bool UpdateJobDocument(RequestDocumentViewModel model, int documentId);
+        IEnumerable<RequestDocumentViewModel> GetAllJobDocument();
+        RequestDocumentViewModel GetJobDocument(int documentId);
+        IEnumerable<RequestDocumentViewModel> GetJobRequestDocument(string jobRequestCode);
     }
 }

@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    
+    [Export(typeof(IPublicHolidayRepository))]
+    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class PublicHolidayRepository : IPublicHolidayRepository
     {
         private IAuditTrailRepository auditTrail;
@@ -27,7 +28,6 @@ namespace FintrakBanking.Repositories.Setups.General
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
         }
-
         public PublicHolidayViewModel GetPublicHoliday(int id)
         {
             var holiday = context.tbl_Public_Holiday.Find(id);
@@ -36,26 +36,29 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 return new PublicHolidayViewModel()
                 {
-                    PublicHolidayId = holiday.PublicHolidayId,
-                    CountryId = holiday.CountryId,
-                    Date = holiday.Date,
-                    CountryName = context.tbl_Country.FirstOrDefault(x => x.CountryId == holiday.CountryId).Name ?? string.Empty,
-                    Description = holiday.Description
+                    publicHolidayId = holiday.PublicHolidayId,
+                    countryId = holiday.CountryId,
+                    date = holiday.Date,
+                    countryName = context.tbl_Country.FirstOrDefault(x => x.CountryId == holiday.CountryId).Name ?? string.Empty,
+                    description = holiday.Description,
+                    isActive = holiday.IsActive
                 };
             }
 
             return new PublicHolidayViewModel();
         }
 
+
         public IEnumerable<PublicHolidayViewModel> GetAllPublicHoliday()
         {
             var holidays = context.tbl_Public_Holiday.Select(x => new PublicHolidayViewModel
             {
-                PublicHolidayId = x.PublicHolidayId,
-                CountryId = x.CountryId,
-                Date = x.Date,
-                CountryName = context.tbl_Country.FirstOrDefault(k => k.CountryId == x.CountryId).Name ?? string.Empty,
-                Description = x.Description
+                publicHolidayId = x.PublicHolidayId,
+                countryId = x.CountryId,
+                date = x.Date,
+                countryName = context.tbl_Country.FirstOrDefault(k => k.CountryId == x.CountryId).Name ?? string.Empty,
+                description = x.Description,
+                isActive = x.IsActive
             }).ToList();
 
             return holidays;
@@ -69,43 +72,124 @@ namespace FintrakBanking.Repositories.Setups.General
                             where b.CompanyId == id
                             select new PublicHolidayViewModel
                             {
-                                PublicHolidayId = a.PublicHolidayId,
-                                CountryId = a.CountryId,
-                                Date = a.Date,
-                                CountryName = b.Name ?? string.Empty,
-                                Description = a.Description
+                                publicHolidayId = a.PublicHolidayId,
+                                countryId = a.CountryId,
+                                date = a.Date,
+                                countryName = b.Name ?? string.Empty,
+                                description = a.Description,
+                                isActive = a.IsActive
                             });
 
             return holidays;
         }
-        public bool isHolidayExist(DateTime description)
+
+        public bool DoesHolidayExist(DateTime date, int countryId)
         {
-            return context.tbl_Public_Holiday.Any(x => x.Date == description.Date);
+            return context.tbl_Public_Holiday.Any(x => x.Date == date.Date);
         }
+
+        public DateTime GetNextWorkDay(DateTime date, int countryId)
+        {
+            var nextWorkDay = date.AddDays(1);
+
+            while (DoesHolidayExist(nextWorkDay, countryId) == false)
+            {
+                nextWorkDay = nextWorkDay.AddDays(1);
+            }
+
+            return nextWorkDay;
+        }
+
+        public bool AddWeekendsInTheYear(PublicHolidayViewModel model)
+        {
+            List<tbl_Public_Holiday> datesToAdd =  new List<tbl_Public_Holiday>();
+            List<DateTime> datesToUpdate = new List<DateTime>();
+
+
+            DateTime startDate = new DateTime(model.date.Year, 1, 1);
+            DateTime endDate = new DateTime(model.date.Year, 12, 31);
+            var weekEndInfo = "weekend date";
+
+            TimeSpan diff = endDate - startDate;
+            int days = diff.Days;
+            for (var i = 0; i <= days; i++)
+            {
+                var currentDate = startDate.AddDays(i);
+                if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    if (DoesHolidayExist(currentDate, model.countryId) == false)
+                    {
+                        datesToAdd.Add(new tbl_Public_Holiday { CountryId = model.countryId, Date = currentDate, IsActive = true, Description = weekEndInfo });
+                    }
+                    else
+                    {
+                        datesToUpdate.Add(currentDate);
+                    }
+                }
+
+            }
+
+            if(datesToAdd.Count > 0)
+               this.context.tbl_Public_Holiday.AddRange(datesToAdd);
+
+            if(datesToUpdate.Count > 0)
+            {
+                var result = from a in context.tbl_Public_Holiday
+                             where a.CountryId == model.countryId && datesToUpdate.Contains(a.Date)
+                             select a;
+
+                foreach (var item in result)
+                {
+                    item.IsActive = true;
+                    item.Description = weekEndInfo;
+                }
+            }
+
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.PublicHolidayAdded,
+                StaffId = (int)model.createdBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"Added all weekends in the year : '{model.date.Year}",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            var response = context.SaveChanges();
+
+            return response != 0;
+        }
+
+
         public bool AddPublicHoliday(PublicHolidayViewModel model)
         {
             var holiday = new tbl_Public_Holiday()
             {
-                CountryId = model.CountryId,
-                Date = model.Date,
-                Description = model.Description
+                CountryId = model.countryId,
+                Date = model.date,
+                Description = model.description,
+                IsActive = true
             };
 
             this.context.tbl_Public_Holiday.Add(holiday);
-            ///---Audit Section ---------------------------
-           var audit = new tbl_Audit
-           {
-               AuditTypeId = (short)AuditTypeEnum.PublicHolidayAdded,
-               StaffId = (int)model.createdBy,
-               BranchId = (short)model.userBranchId,
-               Detail = $"Added Holiday: '{model.Description}' with Id: {model.PublicHolidayId} ",
-               IPAddress = model.userIPAddress,
-               Url = model.applicationUrl,
-               ApplicationDate = genSetup.GetApplicationDate(),
-               SystemDateTime = DateTime.Now
-           };
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.PublicHolidayAdded,
+                StaffId = (int)model.createdBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"Added Holiday: '{model.description}' with Id: {model.publicHolidayId} ",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
             this.auditTrail.AddAuditTrail(audit);
-            ///-----end of Audit section -------------------------------
+            //end of Audit section -------------------------------
             var response = context.SaveChanges();
             return response != 0;
         }
@@ -117,15 +201,17 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (holiday != null)
             {
-                holiday.Date = model.Date;
-                holiday.Description = model.Description;
+                holiday.Date = model.date;
+                holiday.Description = model.description;
+                holiday.IsActive = model.isActive;
+
                 // Audit Section ---------------------------
                 var audit = new tbl_Audit
                 {
                     AuditTypeId = (short)AuditTypeEnum.PublicHolidayUpdated,
                     StaffId = (int)model.createdBy,
                     BranchId = (short)model.userBranchId,
-                    Detail = $"Updated branch: '{model.Description}' with CountryId: {model.CountryId} ",
+                    Detail = $"Updated branch: '{model.description}' with CountryId: {model.countryId} ",
                     IPAddress = model.userIPAddress,
                     Url = model.applicationUrl,
                     ApplicationDate = genSetup.GetApplicationDate(),

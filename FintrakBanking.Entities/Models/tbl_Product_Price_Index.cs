@@ -27,6 +27,10 @@ namespace FintrakBanking.Entities.Models
 
         public double PriceIndexRate { get; set; }
 
+        public int Duration { get; set; }
+
+        public bool AllowAutomaticRepricing { get; set; }
+
         [Required]
         [StringLength(500)]
         public string PriceIndexDescription { get; set; }

@@ -7,6 +7,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Data.Entity.Validation;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Setups.General
@@ -30,7 +31,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private bool SaveAll()
         {
-            return this.context.SaveChanges() > 0;
+            try
+            {
+                return this.context.SaveChanges() > 0;
+            }
+            catch (DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new DbEntityValidationException(errorMessages);
+            }
         }
 
         public bool AddDepartment(DepartmentViewModel entity)
@@ -41,6 +50,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 BranchId = entity.BranchId,
                 CreatedBy = entity.createdBy,
                 DateTimeCreated = DateTime.Now,
+                DepartmentCode = entity.DepartmentCode,
                 DepartmentName = entity.DepartmentName,
                 Description = entity.Description
             };
@@ -55,7 +65,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
                 ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime =DateTime.Now
+                SystemDateTime = DateTime.Now
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -93,6 +103,100 @@ namespace FintrakBanking.Repositories.Setups.General
                               });
             return department;
         }
+
+        private IQueryable<DepartmentCustomersViewModel> SearchDepartments(int companyId) 
+        {
+            var department = (from d in context.tbl_Department
+                              join c in context.tbl_Staff on d.DepartmentId equals c.DepartmentId
+                              where c.CompanyId ==  companyId
+                              select new DepartmentCustomersViewModel()
+                              {
+                                  createdBy = d.CreatedBy.Value,
+                                  BranchId = d.BranchId,
+                                  BranchName = context.tbl_Branch.FirstOrDefault(x => x.BranchId == (short)d.BranchId).BranchName,
+                                  DepartmentName = d.DepartmentName,
+                                  DepartmentCode = d.DepartmentCode,
+                                  Description = d.Description,
+                                  DepartmentId = d.DepartmentId,
+                                  firstname = c.FirstName,
+                                  lastname = c.LastName,
+                                  staffId = c.StaffId,
+                                  middlename = c.MiddleName,
+                                  fullname = c.LastName + " " + c.FirstName + " " + c.MiddleName,
+                                  rankName = c.tbl_Staff_Rank.RankName,
+                                  jobTitleName = c.tbl_Staff_JobTitle.JobTitleName
+                              });
+            return department;
+        }
+
+        public IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery)
+        {
+            IQueryable<DepartmentCustomersViewModel> allstaff = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allstaff = SearchDepartments(companyId)
+                    .Where(x => x.firstname.Contains(searchQuery)
+               || x.lastname.Contains(searchQuery)
+               || x.middlename.Contains(searchQuery)
+                );
+            }
+
+            return allstaff;
+        }
+
+
+        public IQueryable<DepartmentCustomersViewModel> SearchDepartment(int departmentId, int companyId, string searchQuery)
+        {
+            if (departmentId == 0) return null;
+            IQueryable<DepartmentCustomersViewModel> allDepartmentStaff = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+           
+                allDepartmentStaff = from s in context.tbl_Staff
+                              join dept in context.tbl_Department on s.DepartmentId equals dept.DepartmentId
+                              where dept.Deleted == false && dept.DepartmentId == departmentId && s.CompanyId == companyId
+                              select new DepartmentCustomersViewModel
+                              {
+                                  createdBy = dept.CreatedBy.Value,
+                                  BranchId = dept.BranchId,
+                                  BranchName = context.tbl_Branch.FirstOrDefault(x => x.BranchId == (short)dept.BranchId).BranchName,
+                                  DepartmentName = dept.DepartmentName,
+                                  DepartmentCode = dept.DepartmentCode,
+                                  Description = dept.Description,
+                                  DepartmentId = dept.DepartmentId,
+                                  firstname = s.FirstName,
+                                  lastname = s.LastName,
+                                  middlename = s.MiddleName,
+                                  fullname = s.LastName +" "+ s.FirstName + " "+ s.MiddleName,
+                                  staffId = s.StaffId,
+                                  rankName = s.tbl_Staff_Rank.RankName,
+                                  jobTitleName = s.tbl_Staff_JobTitle.JobTitleName
+                              };
+
+                if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+                {
+                    allDepartmentStaff = allDepartmentStaff
+                        .Where(x => x.firstname.ToLower().Contains(searchQuery)
+                        || x.middlename.ToLower().Contains(searchQuery)
+                        || x.lastname.ToLower().Contains(searchQuery)
+                             );
+                }
+          
+
+
+
+            return allDepartmentStaff;
+        }
+        //IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string searchQuery)
 
         /// <summary>
         ///

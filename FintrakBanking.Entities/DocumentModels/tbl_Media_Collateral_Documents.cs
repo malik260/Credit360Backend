@@ -11,8 +11,6 @@ namespace FintrakBanking.Entities.DocumentModels
         [Key]
         public int DocumentId { get; set; }
 
-        public int CollateralCustomerId { get; set; }
-
         [Required]
         [StringLength(400)]
         public string FileName { get; set; }
@@ -30,7 +28,8 @@ namespace FintrakBanking.Entities.DocumentModels
         [StringLength(100)]
         public string DocumentCode { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CollateralCustomerId { get; set; }
 
+        public int CreatedBy { get; set; }
     }
 }

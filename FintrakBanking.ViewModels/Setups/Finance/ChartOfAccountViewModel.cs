@@ -33,6 +33,8 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public List<ChartOfAccountCurrencyViewModel> currencies { get; set; }
 
         public string accountDetail { get { return this.accountCode + " -- " + this.accountName + " -- " + accountCategoryName; } }
+
+        public short glClassId { get; set; }
     }
 
     public class ChartOfAccountCurrencyViewModel: GeneralEntity
@@ -41,5 +43,11 @@ namespace FintrakBanking.ViewModels.Setups.Finance
         public int glaccountCurrencyId { get; set; }
         public short currencyId { get; set; }
         public string currencyName { get; set; }
+    }
+
+    public class ChartOfAccountClassViewModel: GeneralEntity
+    {
+        public short glClassId { get; set; }
+        public string glClassName { get; set; }
     }
 }

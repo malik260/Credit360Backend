@@ -47,4 +47,22 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string name { get; set; }
         public int groupId { get; set; }
     }
+
+    public class RequestDocumentViewModel : GeneralEntity
+    {
+        public int documentId { get; set; }
+        public int targetId { get; set; }
+        public int operationId { get; set; }
+        public string targetReferenceNumber { get; set; }
+        public string jobRequestCode { get; set; }
+        public string documentTitle { get; set; }
+        public short documentTypeId { get; set; }
+        public byte[] fileData { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public DateTime systemDateTime { get; set; }
+        public string physicalFileNumber { get; set; }
+        public string physicalLocation { get; set; }
+
+    }
 }

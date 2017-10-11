@@ -15,10 +15,12 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isCompleted { get; set; }
         public bool riskRated { get; set; }
         public string camDocumentation { get; set; }
-        public string loanDetails { get; set; }
+        //public string loanDetails { get; set; }
         public bool politicalyExposed { get; set; }
         public string comment { get; set; }
         public decimal loanAmount { get; set; }
+        public int approvalLevelId { get; set; }
+        public int documentationId { get; set; }
     }
 
     public class ForwardViewModel : GeneralEntity
@@ -36,15 +38,31 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal principal { get; set; }
         public double rate { get; set; }
         public int tenor { get; set; }
+        public bool investmentGrade { get; set; }
+        public List<ApprovedLoanDetailViewModel> lineItems { get; set; }
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity
     {
+        public int loanApplicationDetailId { get; set; }
         public int applicationId { get; set; }
-        public decimal principal { get; set; }
-        public double rate { get; set; }
-        public int tenor { get; set; }
-        public string approver { get; set; }
+        public string obligorName { get; set; }
+        public int approvedTenor { get; set; }
+        public double approvedRate { get; set; }
+        public decimal approvedAmount { get; set; }
+        //public int productId { get; set; }
+        public string approvedProductName { get; set; }
+        public short statusId { get; set; }
+        public double exchangeRate { get; set; }
+        public string currencyCode { get; set; }
+        public string proposedProductName { get; set; }
+        public int proposedTenor { get; set; }
+        public double proposedRate { get; set; }
+        public decimal proposedAmount { get; set; }
+        //public double proposedExchangeRate { get; set; }
+        //public double approvedExchangeRate { get; set; }
+        public short proposedProductId { get; set; }
+        public short approvedProductId { get; set; }
     }
 
     public class PrivilegeViewModel : GeneralEntity
@@ -61,5 +79,13 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal investmentGradeApprovalLimit { get; set; }
         public List<int> userApprovalLevelIds { get; set; }
         public int maximumTenor { get; set; }
+    }
+
+    public class DocumentationViewModel : GeneralEntity
+    {
+        public int documentationId { get; set; }
+        public string documentation { get; set; }
+        public int appraisalMemorandumId { get; set; }
+        public int approvalLevelId { get; set; }
     }
 }

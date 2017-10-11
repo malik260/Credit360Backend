@@ -10,6 +10,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ICustomerCollateralRepository
     {
+        #region Collateral
+
         Task<bool> AddCollateral(CollateralViewModel entity);
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int companyId);
@@ -17,25 +19,16 @@ namespace FintrakBanking.Interfaces.Credit
         CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId);
 
         IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId);
+        IEnumerable<ActiveCustomerCollateralViewModel> GetActiveCustomerCollateral(int customerId);
 
-        //#region Collateral
-        //Task<bool> AddCollateralCustomer(CollateralCustomerViewModel entity);
-        //Task<bool> DeleteCollateralCustomer(int collateralCustomerId, UserInfo user);
-        //Task<bool> UpdateCollateralCustomer(int collateralCustomerId, CollateralCustomerViewModel entity);
-        //IEnumerable<CollateralCustomerViewModel> GetCollateralCustomer(int customerId, int companyId);
-        //bool IsCollateralDocExists(string docName);
         Task<bool> AddCollateralValuer(CollateralValuersViewModel entity);
         Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id);
-        //#endregion Collateral
+
+        #endregion Collateral
 
         #region Collateral Type
         IEnumerable<CollateralTypeViewModel> GetCollateralType();
         #endregion End of Collateral Type 
-
-        //#region Miscellaneous Notes
-        //Task<bool> DeleteCollateralMiscellaneousNotes(int miscNoteId, UserInfo user);
-        //Task<bool> UpdateCollateralMiscellaneousNotes(int miscNoteId, CollateralMiscellaneousNotesViewModel entity);
-        //#endregion Miscellaneous Notes
 
         #region Seniority Of Claims
         Task<bool> AddCollateralSeniorityOfClaims(CollateralSeniorityOfClaimsViewModel entity);
@@ -46,16 +39,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         #region Listing Functions
         IEnumerable<CollateralValueBaseTypeViewModel> GetCollateralValueBaseType();
-
         IEnumerable<CollateralValuersViewModel> GetCollateralValuer(int companyId);
-
         IEnumerable<CollateralValuerTypeViewModel> GetCollateralValuerType();
-
-        //CollateralCustomerPolicyViewModel GetCollateralCustomerPolicyByCollateralCustomerId(short collateralCustomerId);
-
-        // IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes();
-
-        //IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypeByCollateralTypeId(short collateralTypeId);
         #endregion End Of Listing Functions
 
     }

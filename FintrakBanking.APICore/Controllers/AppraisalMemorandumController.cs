@@ -29,7 +29,22 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAppraisalMemorandumByLoanApplicationId(loanApplicationId);
+                var data = repo.GetAppraisalMemorandum(loanApplicationId,token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("appraisal-memorandum/loan-application/{loanApplicationId}/documentation")]
+        public HttpResponseMessage GetAppraisalMemorandumDocumentation(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetAllDocumentation(loanApplicationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -59,7 +74,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 
@@ -90,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("appraisal-memorandum/forward")]
-        public async Task<HttpResponseMessage> ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
+        public HttpResponseMessage ForwardAppraisalMemorandum([FromBody] ForwardViewModel entity)
         {
             try
             {
@@ -99,7 +114,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var response = await repo.ForwardAppraisalMemorandum(entity);
+                var response = repo.ForwardAppraisalMemorandum(entity);
 
                 if (response == true)
                 {
@@ -110,7 +125,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 
@@ -130,12 +145,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("appraisal-memorandum/privilege/{loanApplicationId}")]
-        public HttpResponseMessage GetUserPrivilege(int loanApplicationId)
+        [Route("appraisal-memorandum/privilege/{loanApplicationId}/operation/{operationId}")]
+        public HttpResponseMessage GetUserPrivilege(int loanApplicationId, int operationId)
         {
             try
             {
-                var data = repo.GetUserPrivilege(token.GetStaffId, loanApplicationId);
+                var data = repo.GetUserPrivilege(token.GetStaffId, loanApplicationId, operationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)

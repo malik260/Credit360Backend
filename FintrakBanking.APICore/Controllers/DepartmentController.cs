@@ -88,6 +88,50 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("department-staff/")]
+        public HttpResponseMessage SearchForDepartmentStaff(string searchQuery)
+        {
+            try
+            {
+                var data = repo.SearchForDepartmentStaff(token.GetCompanyId, searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("department/search")]
+        public HttpResponseMessage SearchDepartment(string q, string t)
+        {
+            try
+            {
+
+                var data = repo.SearchDepartment(int.Parse(t), token.GetCompanyId, q).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
         [HttpPost]
         [Route("department/{departmentId}")]
         public HttpResponseMessage GetDepartment(int departmentId)

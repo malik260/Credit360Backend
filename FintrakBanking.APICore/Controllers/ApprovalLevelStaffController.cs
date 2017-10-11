@@ -141,7 +141,7 @@ namespace FintrakBanking.APICore.Controllers
         #region Workflow Tracker
 
         [HttpGet]
-        [Route("work-flow-tracker/operationId/{id}/targetId/{targetId}")]
+        [Route("work-flow-tracker/operation/{operationId}/target/{targetId}")]
         public async Task<HttpResponseMessage> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId)
         {
             try

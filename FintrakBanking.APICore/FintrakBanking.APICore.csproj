@@ -310,6 +310,7 @@
     <Compile Include="Controllers\CallMemoController.cs" />
     <Compile Include="Controllers\ConditionPrecedentController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
+    <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\FinanceTransactionController.cs" />
     <Compile Include="Controllers\CreditLimitValidationsController.cs" />
     <Compile Include="Controllers\CasaController.cs" />
@@ -415,6 +416,13 @@
     <Compile Include="Reports\ReportViews\BranchLimitMonitoring.aspx.designer.cs">
       <DependentUpon>BranchLimitMonitoring.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\Workflow.aspx.cs">
+      <DependentUpon>Workflow.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\Workflow.aspx.designer.cs">
+      <DependentUpon>Workflow.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\SectorialLimitMonitoring.aspx.cs">
       <DependentUpon>SectorialLimitMonitoring.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -434,6 +442,9 @@
     <Content Include="Content\first-bank-logo.png" />
     <Content Include="Content\first-bank-new-logo.jpg" />
     <Content Include="Content\firstbank.png" />
+    <Content Include="Content\Icons\first_bank_logo_kmH_icon.ico" />
+    <Content Include="Content\Icons\first_bank_new_logo_2sm_icon.ico" />
+    <Content Include="EmailTemplates\Monitoring.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -444,6 +455,7 @@
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
+    <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -529,7 +541,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="EmailTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -579,6 +590,7 @@
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
+    <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

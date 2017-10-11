@@ -43,6 +43,33 @@ namespace FintrakBanking.APICore.Controllers
              
         }
 
+       
+        [Route("customer-accounts/{customerId}")]
+        public HttpResponseMessage GetAllCustomerAccountByCustomerId(int customerId)
+        {
+            try
+            {
+                var data = repo.GetAllCustomerAccountByCustomerId(customerId, token.GetCompanyId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+
         [HttpGet]
         [Route("customer/{customerId}")]
         public HttpResponseMessage GetAccountByCustomerId(  int customerId)
@@ -69,8 +96,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("account-number-name/{accountNumberOrName}")]
-        public HttpResponseMessage FindAccount(  string accountNumberOrName)
+        [Route("account-number-name/")]
+        public HttpResponseMessage FindAccount(string accountNumberOrName)
         {
               
                 try
@@ -136,5 +163,7 @@ namespace FintrakBanking.APICore.Controllers
                 } 
 
         }
+
+ 
     }
 } 

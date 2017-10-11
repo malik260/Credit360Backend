@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Customer;
+﻿using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.Finance;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
         public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
 
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
@@ -62,9 +64,10 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? approvedAmount { get; set; }
         public bool creditAppraisalCompleted { get; set; }
         public int? operationId { get; set; }
+        public string operationName {get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
-        public string trancheBatchCode { get; set; }
+
         public decimal equityContribution { get; set; }
         public short subSectorId { get; set; }
         public DateTime? firstPrincipalPaymentDate { get; set; }
@@ -78,10 +81,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool dischargeLetter { get; set; }
         public bool suspendInterest { get; set; }
         public bool booked { get; set; }
-        public bool ? scheduled { get; set; }
-        public bool ? isScheduledPrepayment { get; set; }
-        public decimal ? scheduledPrepaymentAmount { get; set; }
-        public DateTime ? scheduledPrepaymentDate { get; set; }
+        public bool? scheduled { get; set; }
+        public bool? isScheduledPrepayment { get; set; }
+        public decimal? scheduledPrepaymentAmount { get; set; }
+        public DateTime? scheduledPrepaymentDate { get; set; }
         public short scheduledPrepaymentFrequencyTypeId { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public string firstName { get; set; }
@@ -90,6 +93,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public string productAccountNumber { get; set; }
         public int currencyId { get; set; }
+        public string currency { get; set; }
         public short accurialBasis { get; set; }
         public double integralFeeAmount { get; set; }
         public short firstDayType { get; set; }
@@ -100,25 +104,27 @@ namespace FintrakBanking.ViewModels.Credit
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
         public int customerRiskRatingId { get; set; }
-       // public double productPriceIndexRate { get; set; }
+
+        // public double productPriceIndexRate { get; set; }
         public bool allowForceDebitRepayment { get; set; }
 
         //.............Fee Attribute.....................//
         public double exchangeRate { get; set; }
+
         public DateTime paymentDate { get; set; }
         public decimal totalAmount { get; set; }
         public int chargeFeeId { get; set; }
 
-
         //.............Other Attributes................//
         public int productTypeId { get; set; }
+
         public string productTypeName { get; set; }
         public string creatorName { get; set; }
         public string productAccountName { get; set; }
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string subSectorName { get; set; }
-        public string SectorName { get; set; }
+        public string sectorName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string productName { get; set; }
@@ -126,28 +132,27 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerName { get; set; }
         public string pricipalFrequencyTypeName { get; set; }
         public string interestFrequencyTypeName { get; set; }
-
+        public string comment { get; set; }
 
         //............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
-        //............End of Loan Repayment Schedule Model.....................//
 
+        //............End of Loan Repayment Schedule Model.....................//
 
         //...........Other Loans Types Model........................//
         public RevolvingLoanViewModel revolvingLoanInput { get; set; }
+
         public ContingentLoanViewModel contingentLoanInput { get; set; }
         //...........End of Other Loans Types Model.................//
 
-
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
+
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
 
         //......End f Loan Relational Table View Mapping Models......//
-
-
     }
 
     public class RevolvingLoanViewModel : GeneralEntity
@@ -160,6 +165,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short currencyId { get; set; }
         public double exchangeRate { get; set; }
         public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
         public string loanReferenceNumber { get; set; }
         public short subSectorId { get; set; }
         public int relationshipOfficerId { get; set; }
@@ -194,40 +200,50 @@ namespace FintrakBanking.ViewModels.Credit
 
         //.............Other Attributes................//
         public int productTypeId { get; set; }
+
         public string productTypeName { get; set; }
         public string creatorName { get; set; }
         public string productAccountName { get; set; }
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string subSectorName { get; set; }
-        public string SectorName { get; set; }
+        //public string SectorName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string productName { get; set; }
         public string customerSensitivityLevelName { get; set; }
         public string customerName { get; set; }
         public string loanStatusName { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string teamMiscode { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string productAccountNumber { get; set; }
+        public string comment { get; set; }
         //.............End of Other Attributes...........//
 
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
+
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         //......End f Loan Relational Table View Mapping Models......//
-
     }
 
     public class ContingentLoanViewModel : GeneralEntity
     {
         public int loanId { get; set; }
+        public int loanApplicationId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
         public int casaAccountId { get; set; }
         public short branchId { get; set; }
         public short currencyId { get; set; }
         public double exchangeRate { get; set; }
-        public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
         public string loanReferenceNumber { get; set; }
         public short subSectorId { get; set; }
         public int relationshipOfficerId { get; set; }
@@ -257,42 +273,57 @@ namespace FintrakBanking.ViewModels.Credit
 
         //.............Other Attributes................//
         public int productTypeId { get; set; }
+
         public string productTypeName { get; set; }
         public string creatorName { get; set; }
         public string productAccountName { get; set; }
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string subSectorName { get; set; }
-        public string SectorName { get; set; }
+        public string sectorName { get; set; }
         public string relationshipOfficerName { get; set; }
         public string relationshipManagerName { get; set; }
         public string productName { get; set; }
         public string customerSensitivityLevelName { get; set; }
         public string customerName { get; set; }
         public string loanStatusName { get; set; }
-
+        public string applicationReferenceNumber { get; set; }
+        public string teamMiscode { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string productAccountNumber { get; set; }
+        public string comment { get; set; }
+       // public string SectorName { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
+
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         //......End f Loan Relational Table View Mapping Models......//
-
     }
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
         public string loanDetails { get; set; }
         public string camReference { get; set; }
+        public List<CasaViewModel> customerAccounts { get; set; }
         public int appraisalMemorandumId { get; set; }
         public string customerCode { get; set; }
         public int casaAccountId { get; set; }
         public string loanStatusName { get; set; }
+        public string sectorName { get; set; }
+        public string subSectorName { get; set; }
+        public string sectorSubSectorName { get {return (this.sectorName + "/" + this.subSectorName); } } 
         public short productTypeId { get; set; }
         public string productTypeName { get; set; }
         public int customerSensitivityLevelId { get; set; }
         public string camDocumentation { get; set; }
-        public short applicationStatusId { get; set; }
+        public decimal groupApprovedAmount { get; set; }
+        public int approvedTenor { get; set; }
+        public decimal ? customerAvailableAmount { get; set; }
     }
 
     public class AppraisalMemorandumLoanDetailViewModel
@@ -306,15 +337,14 @@ namespace FintrakBanking.ViewModels.Credit
         public double interestRate { get; set; }
 
         public int tenor { get; set; }
-
     }
-
 
     public class LoanChargeFeeViewModel : ChargeRangeViewModel
 
     {
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
+        public short productTypeId { get; set; }
         public int loanId { get; set; }
         public int productId { get; set; }
         public string chargeFeeName { get; set; }
@@ -329,37 +359,32 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal newFeeAmount { get; set; }
         public decimal feeAmountDiff { get; set; }
         public int casaAccountId { get; set; }
-        public bool required {get; set;}
+        public bool required { get; set; }
         public bool recurring { get; set; }
-
     }
 
-    public class LoanCollateralMappingViewModel : CollateralCustomerViewModel
+    public class LoanCollateralMappingViewModel : CollateralViewModel
     {
         public int loanCollateralMappingId { get; set; }
         public int loanId { get; set; }
         public int loanApplicationId { get; set; }
-
     }
-
-
 
     public class LoanGuarantorViewModel
     {
-    public short loanGuarantorId { get; set; }
-    public int loanId { get; set; }
-    public string fullName { get; set; }
-    public string firstname { get; set; }
-    public string lastname { get; set; }
-    public string middlename { get; set; }
-    public string phoneNumber1 { get; set; }
-    public string phoneNumber2 { get; set; }
-    public string address { get; set; }
-    public string relationship { get; set; }
-    public int? relationshipDuration { get; set; }
-    public string emailAddress { get; set; }
-    public string bvn { get; set; }
-
+        public short loanGuarantorId { get; set; }
+        public int loanApplicationId { get; set; }
+        public string fullName { get; set; }
+        public string firstname { get; set; }
+        public string lastname { get; set; }
+        public string middlename { get; set; }
+        public string phoneNumber1 { get; set; }
+        public string phoneNumber2 { get; set; }
+        public string address { get; set; }
+        public string relationship { get; set; }
+        public int? relationshipDuration { get; set; }
+        public string emailAddress { get; set; }
+        public string bvn { get; set; }
     }
 
     public class LoanSearchViewModel
@@ -368,9 +393,31 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanName { get; set; }
         public string loanReferenceNumber { get; set; }
         public string productAccountNumber { get; set; }
-
     }
 
+    public class LoanCovenantDetailViewModel : GeneralEntity
+    {
+        public int loanCovenantDetailId { get; set; }
+        public string covenantDetail { get; set; }
+        public int loanId { get; set; }
+        public short covenantTypeId { get; set; }
+        public short? frequencyTypeId { get; set; }
+        public decimal? covenantAmount { get; set; }
+        public DateTime covenantDate { get; set; }
+        public string covenantTypeName { get; set; }
+        public string frequencyTypeName { get; set; }
+        public string loanRef { get; set; }
+        public string productName { get; set; }
+        public int casaId { get; set; }
+        public int maximumDrawDownDuration { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime? dueDate { get; set; }
+        public string loanRefNumber { get; set; }
+        public string relationshipManager { get; set; }
+        public string managerEmail { get; set; }
+        public string relationshipOfficer { get; set; }
+        public string officerEmail { get; set; }
+    }
 
     public class DailyInterestAccrualViewModel : GeneralEntity
 
@@ -418,5 +465,4 @@ namespace FintrakBanking.ViewModels.Credit
         public int fromLoanId  { get; set; }
         public decimal fromAmount  { get; set; }
     }
-
 }

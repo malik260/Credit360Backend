@@ -25,12 +25,14 @@
      
         <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetSectorLoanAmountLimit" TypeName="FintrakBanking.ReportObjects.ReportingObjects.LimitsMonitoringReportsObjects">
             <SelectParameters>
-                <asp:ControlParameter ControlID="companyId" Name="companyId" PropertyName="Text" Type="Int32" />
+                <asp:ControlParameter ControlID="operationId" Name="operationId" PropertyName="Text" Type="Int32" />
+                  <asp:ControlParameter ControlID="companyId" Name="companyId" PropertyName="Text" Type="Int32" />
             </SelectParameters>
         </asp:ObjectDataSource>
         </div> 
          
         <asp:Label ID="companyId" runat="server" Visible ="False"  ></asp:Label>
+        <asp:Label ID="operationId" runat="server" Visible ="False"  ></asp:Label>
     </form>
 </body>
 </html>

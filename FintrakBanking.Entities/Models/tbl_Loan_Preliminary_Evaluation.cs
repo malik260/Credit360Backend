@@ -26,7 +26,9 @@ namespace FintrakBanking.Entities.Models
 
         public short BranchId { get; set; }
 
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
+
+        public int? CustomerGroupId { get; set; }
 
         public int RelationshipOfficerId { get; set; }
 
@@ -132,11 +134,15 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
+        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+
         public virtual tbl_Branch tbl_Branch { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
 
         public virtual tbl_Customer tbl_Customer { get; set; }
+
+        public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
 
         public virtual tbl_Product_Class tbl_Product_Class { get; set; }
 

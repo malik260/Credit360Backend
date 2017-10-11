@@ -12,6 +12,10 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int FinanceDateId { get; set; }
 
+        public int CompanyId { get; set; }
+
         public DateTime CurrentDate { get; set; }
+
+        public virtual tbl_Company tbl_Company { get; set; }
     }
 }

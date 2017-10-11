@@ -60,7 +60,5 @@ namespace FintrakBanking.Entities.Models
         public int? LastUpdatedBy { get; set; }
 
         public DateTime? DateTimeUpdated { get; set; }
-
-        public virtual tbl_Loan tbl_Loan { get; set; }
     }
 }

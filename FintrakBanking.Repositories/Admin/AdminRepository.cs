@@ -1,36 +1,34 @@
-﻿using FintrakBanking.Interfaces.Admin;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using FintrakBanking.ViewModels.Admin;
-using FintrakBanking.ViewModels.Setups.General;
-using System.Threading.Tasks;
-using FintrakBanking.Entities.Models;
-using FintrakBanking.Common;
 using System.Linq;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Common.Enum;
-using System.ComponentModel.Composition;
-using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.WorkFlow;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels;
-using FintrakBanking.Interfaces.Setups.Approval;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Admin
 {
     public class AdminRepository : IAdminRepository
     {
         private FinTrakBankingContext context;
-        private IWorkFlowRepository workFlow;
+        private IWorkflow workFlow;
         private IAuditTrailRepository auditTrail;
-        IGeneralSetupRepository genSetup;
+        private IGeneralSetupRepository genSetup;
         private IApprovalLevelStaffRepository level;
 
         public AdminRepository(FinTrakBankingContext _context,
             IAuditTrailRepository _auditTrail,
             IGeneralSetupRepository _genSetup,
-            IWorkFlowRepository _workFlow,
+            IWorkflow _workFlow,
             IApprovalLevelStaffRepository _level)
         {
             this.context = _context;
@@ -41,26 +39,25 @@ namespace FintrakBanking.Repositories.Admin
         }
 
         #region Users
+
         public bool isUserExist(string username)
         {
             return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username.ToLower());
         }
 
-        public async Task<bool> GoForApproval(ApprovalViewModel entity)
+        public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.UserCreation;
 
-            var response = await workFlow.GoForApproval(entity);
+            entity.externalInitialization = false;
 
-            if (response.Item1)
-            {
-                return ApproveUser(entity.targetId, response.Item2.approvalStatusId, entity);
-            }
-            else
-            {
-                return false;
-            }
+            var response = workFlow.LogForApproval(entity);
 
+            if (response)
+            {
+                return ApproveUser(entity.targetId, (int)ApprovalStatusEnum.Approved, entity);
+            }
+            return false;
         }
 
         private bool ApproveUser(int userid, short approvalStatusId, UserInfo user)
@@ -177,42 +174,40 @@ namespace FintrakBanking.Repositories.Admin
                 SystemDateTime = DateTime.Now
             };
 
-            if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
+            using (var trans = context.Database.BeginTransaction())
             {
-                using (var trans = context.Database.BeginTransaction())
+                try
                 {
-                    try
+                    context.tbl_Profile_User.Add(_user);
+                    auditTrail.AddAuditTrail(audit);
+
+                    output = await context.SaveChangesAsync() > 0;
+
+                    var entity = new ApprovalViewModel
                     {
-                        context.tbl_Profile_User.Add(_user);
-                        auditTrail.AddAuditTrail(audit);
+                        staffId = user.createdBy,
+                        companyId = user.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        targetId = _user.UserId,
+                        operationId = (int)OperationsEnum.UserCreation,
+                        BranchId = user.userBranchId,
+                        externalInitialization = true
+                    };
+                    var response = workFlow.LogForApproval(entity);
 
-                        output = await context.SaveChangesAsync() > 0;
-
-                        var entity = new ApprovalViewModel
-                        {
-                            staffId = user.createdBy,
-                            companyId = user.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = _user.UserId,
-                            operationId = (int)OperationsEnum.UserCreation,
-                            BranchId = user.userBranchId
-                        };
-                        var response = await workFlow.LogForApproval(entity);
+                    if (response)
+                    {
                         trans.Commit();
                     }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw new Exception(ex.Message);
-                    }
+
+                    return output;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
                 }
             }
-            else
-            {
-                throw new Exception("Approval route have not been defined for this operation");
-            }
-
-            return output;
         }
 
         public IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId)
@@ -229,6 +224,7 @@ namespace FintrakBanking.Repositories.Admin
                         join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
                         join atrail in context.tbl_Approval_Trail on c.UserId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
+                              && atrail.ResponseStaffId == null
                               && atrail.OperationId == (int)OperationsEnum.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new UserViewModel()
                         {
@@ -264,10 +260,11 @@ namespace FintrakBanking.Repositories.Admin
                                 userId = a.UserId,
                                 activityName = a.tbl_Profile_Activity.ActivityName
                             }).ToList()
-                        });
+                        }).GroupBy(x => x.user_id).Select(g => g.FirstOrDefault());
 
             return data;
         }
+
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {
             return from ap in context.tbl_Approval_Status
@@ -319,8 +316,8 @@ namespace FintrakBanking.Repositories.Admin
         {
             throw new NotImplementedException();
         }
-        #endregion
 
+        #endregion Users
 
         #region Group
 
@@ -405,9 +402,7 @@ namespace FintrakBanking.Repositories.Admin
             return response != 0;
         }
 
-
-
-        #endregion
+        #endregion Group
 
         #region Activies
 
@@ -427,7 +422,6 @@ namespace FintrakBanking.Repositories.Admin
                                           activityParentId = x.ActivityParentId
                                       }).ToList()
                    };
-
         }
 
         public IEnumerable<GroupVModel> GetGroupActivities()
@@ -454,10 +448,8 @@ namespace FintrakBanking.Repositories.Admin
                                               canEdit = ga.CanEdit.Value,
                                               canView = ga.CanView.Value
                                           }).ToList()
-
                         });
             return data;
-
         }
 
         public bool AddAccessToActivity(int id, ActivitiesUpdateVm model)
@@ -565,46 +557,42 @@ namespace FintrakBanking.Repositories.Admin
                     SystemDateTime = DateTime.Now
                 };
 
-                if (workFlow.CheckRouteForOperation((int)OperationsEnum.UserCreation, user.companyId))
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    using (var trans = context.Database.BeginTransaction())
+                    try
                     {
-                        try
+                        auditTrail.AddAuditTrail(audit);
+
+                        output = await context.SaveChangesAsync() > 0;
+
+                        var entity = new ApprovalViewModel
                         {
-                            auditTrail.AddAuditTrail(audit);
+                            staffId = user.createdBy,
+                            companyId = user.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = userId,
+                            operationId = (int)OperationsEnum.UserCreation,
+                            BranchId = user.userBranchId,
+                            externalInitialization = true
+                        };
 
-                            output = await context.SaveChangesAsync() > 0;
+                        var response = workFlow.LogForApproval(entity);
 
-                            var entity = new ApprovalViewModel
-                            {
-                                staffId = user.createdBy,
-                                companyId = user.companyId,
-                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                targetId = userId,
-                                operationId = (int)OperationsEnum.UserCreation,
-                                BranchId = user.userBranchId
-                            };
-                            var response = await workFlow.LogForApproval(entity);
+                        if (response)
+                        {
                             trans.Commit();
                         }
-                        catch (Exception ex)
-                        {
-                            trans.Rollback();
-                            throw new Exception(ex.Message);
-                        }
+
+                        return output;
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new Exception(ex.Message);
                     }
                 }
-                else
-                {
-                    throw new Exception("Approval route have not been defined for this operation");
-                }
-
-                return output;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         public List<string> GetUserActivities(int userId)
@@ -634,6 +622,6 @@ namespace FintrakBanking.Repositories.Admin
             }
         }
 
-        #endregion
+        #endregion Activies
     }
 }
