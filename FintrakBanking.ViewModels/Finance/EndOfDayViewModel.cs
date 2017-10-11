@@ -8,6 +8,6 @@ namespace FintrakBanking.ViewModels.Finance
 {
     public class EndOfDayViewModel : GeneralEntity
     {
-        public DateTime date { get; set; }
+        //public DateTime date { get; set; }
     }
 }
