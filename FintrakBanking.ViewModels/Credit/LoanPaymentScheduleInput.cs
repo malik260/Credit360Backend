@@ -29,6 +29,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short newInterestFrequency { get; set; }
         public DateTime newPrincipalFirstpaymentDate { get; set; }
         public DateTime newInterestFirstpaymentDate { get; set; }
+        public Double payInterest{ get; set; }
+        public Double newInterest{ get; set; }
 
 
         public List<IrregularLoanScheduleInputViewModel> irregularPaymentSchedule { get; set; }

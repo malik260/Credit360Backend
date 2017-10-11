@@ -13,8 +13,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    [Export(typeof(IPublicHolidayRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+    
     public class PublicHolidayRepository : IPublicHolidayRepository
     {
         private IAuditTrailRepository auditTrail;
@@ -28,6 +27,7 @@ namespace FintrakBanking.Repositories.Setups.General
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
         }
+
         public PublicHolidayViewModel GetPublicHoliday(int id)
         {
             var holiday = context.tbl_Public_Holiday.Find(id);
@@ -92,20 +92,20 @@ namespace FintrakBanking.Repositories.Setups.General
             };
 
             this.context.tbl_Public_Holiday.Add(holiday);
-            // Audit Section ---------------------------
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.PublicHolidayAdded,
-                StaffId = (int)model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Holiday: '{model.Description}' with Id: {model.PublicHolidayId} ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
+            ///---Audit Section ---------------------------
+           var audit = new tbl_Audit
+           {
+               AuditTypeId = (short)AuditTypeEnum.PublicHolidayAdded,
+               StaffId = (int)model.createdBy,
+               BranchId = (short)model.userBranchId,
+               Detail = $"Added Holiday: '{model.Description}' with Id: {model.PublicHolidayId} ",
+               IPAddress = model.userIPAddress,
+               Url = model.applicationUrl,
+               ApplicationDate = genSetup.GetApplicationDate(),
+               SystemDateTime = DateTime.Now
+           };
             this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------
+            ///-----end of Audit section -------------------------------
             var response = context.SaveChanges();
             return response != 0;
         }

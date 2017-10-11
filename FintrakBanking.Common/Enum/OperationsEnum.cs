@@ -23,5 +23,7 @@ namespace FintrakBanking.Common.Enum
         LoanRepayment = 16,
         ChargeReversal = 17,
         LoanPrepayment  = 18,
+        LoanTermination = 19,
+        InterestSuspension = 20,
     }
 }
