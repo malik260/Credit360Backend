@@ -31,6 +31,10 @@ namespace FintrakBanking.ReportObjects
                 return offerLetterDetails;
             }
 
+            GetLoanApplicationDetail(applicationRefNumber);
+
+            GetLoanApplicationConditionPrecident(applicationRefNumber);
+
             return new OfferLetterViewModel();
         }
 

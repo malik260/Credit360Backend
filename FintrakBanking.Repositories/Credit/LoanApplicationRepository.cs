@@ -603,7 +603,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.tbl_Loan_Application
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
-                        join d in context.tbl_Credit_Appraisal_Memorandum_Loan_Detail on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
+                        //join d in context.tbl_Credit_Appraisal_Memorandum_Loan_Detail on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
                         join e in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals e.AppraisalMemorandumId
                         join f in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals f.LoanApplicationId
@@ -632,7 +632,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchId = a.BranchId,
                             branchName = a.tbl_Branch.BranchName,
                             
-                            approvedTenor = d.Tenor,
+                            approvedTenor = f.ApprovedTenor,
                             relationshipOfficerId = a.RelationshipOfficerId,
                             relationshipOfficerName =
                                 a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
@@ -658,11 +658,11 @@ namespace FintrakBanking.Repositories.Credit
                             misCode = a.MISCode,
                             teamMisCode = a.TeamMISCode,
 
-                            interestRate = d.InterestRate,
+                            interestRate = f.ApprovedInterestRate,
                           //  isRealatedParty = a.IsRelatedParty,
                             isPoliticallyExposed = a.IsPoliticallyExposed,
                             submittedForAppraisal = a.SubmittedForAppraisal,
-                            approvedAmount = d.PrincipalAmount,
+                            approvedAmount = f.ApprovedAmount,
 
                             createdBy = a.CreatedBy,
                             applicationDate = a.ApplicationDate,
