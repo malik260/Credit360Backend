@@ -48,6 +48,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return new PublicHolidayViewModel();
         }
 
+
         public IEnumerable<PublicHolidayViewModel> GetAllPublicHoliday()
         {
             var holidays = context.tbl_Public_Holiday.Select(x => new PublicHolidayViewModel
@@ -85,6 +86,18 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool DoesHolidayExist(DateTime date, int countryId)
         {
             return context.tbl_Public_Holiday.Any(x => x.Date == date.Date);
+        }
+
+        public DateTime GetNextWorkDay(DateTime date, int countryId)
+        {
+            var nextWorkDay = date.AddDays(1);
+
+            while (DoesHolidayExist(nextWorkDay, countryId) == false)
+            {
+                nextWorkDay = nextWorkDay.AddDays(1);
+            }
+
+            return nextWorkDay;
         }
 
         public bool AddWeekendsInTheYear(PublicHolidayViewModel model)

@@ -18,6 +18,7 @@ namespace FintrakBanking.Entities.Models
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Loan_Collateral_Mapping = new HashSet<tbl_Loan_Collateral_Mapping>();
             tbl_Loan_Application_Collateral = new HashSet<tbl_Loan_Application_Collateral>();
+            tbl_Loan_Guarantor = new HashSet<tbl_Loan_Guarantor>();
             tbl_Risk_Assessment = new HashSet<tbl_Risk_Assessment>();
         }
 
@@ -153,6 +154,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Application_Collateral> tbl_Loan_Application_Collateral { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Guarantor> tbl_Loan_Guarantor { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Risk_Assessment> tbl_Risk_Assessment { get; set; }
