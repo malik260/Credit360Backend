@@ -1293,7 +1293,7 @@ namespace FintrakBanking.Repositories.Credit
                 var guarantor = new tbl_Loan_Guarantor
                 {
                     ProductTypeId = productTypeId,
-                    LoanId = loanId,
+                    LoanApplicationId = loanId,
                     Firstname = entity.firstname,
                     Lastname = entity.lastname,
                     Middlename = entity.middlename,
@@ -1834,7 +1834,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanGuarantorViewModel> GetLoanGuarantors(int loanId)
         {
             var data = (from c in context.tbl_Loan_Guarantor
-                        where c.LoanId == loanId
+                        where c.LoanApplicationId == loanId
                         select new LoanGuarantorViewModel
                         {
                             loanGuarantorId = c.LoanGuarantorId,
@@ -2447,6 +2447,7 @@ namespace FintrakBanking.Repositories.Credit
                                            firstPrincipalPaymentDate = a.FirstPrincipalPaymentDate,
                                            firstInterestPaymentDate = a.FirstInterestPaymentDate,
                                            outstandingPrincipal = a.OutstandingPrincipal,
+                                           outstandingInterest = a.OutstandingInterest,
                                            principalAdditionCount = a.PrincipalAdditionCount ?? 0,
                                            principalReductionCount = a.PrincipalReductionCount ?? 0,
                                            fixedPrincipal = a.FixedPrincipal,

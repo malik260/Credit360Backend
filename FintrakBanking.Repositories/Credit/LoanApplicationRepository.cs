@@ -266,7 +266,7 @@ namespace FintrakBanking.Repositories.Credit
                 RelationshipManagerId = loan.relationshipManagerId,
                 MISCode = loan.misCode,
                 //CurrencyId = loan.currencyId,
-                SubSectorId = (short)loan.subSectorId,
+                //SubSectorId = (short)loan.subSectorId,
                 TeamMISCode = loan.teamMisCode,
                 InterestRate = loan.interestRate,
                 //ProductId = loan.productId,
@@ -584,7 +584,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = a.CompanyId,
                             branchId = a.BranchId,
                             branchName = a.tbl_Branch.BranchName,
-                            subSectorId = a.SubSectorId,
+                           // subSectorId = a.SubSectorId,
 
                             applicationTenor = d.Tenor,
                             relationshipOfficerId = a.RelationshipOfficerId,

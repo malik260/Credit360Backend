@@ -183,6 +183,7 @@
     <Compile Include="Models\tbl_Fee_Target.cs" />
     <Compile Include="Models\tbl_Fee_Type.cs" />
     <Compile Include="Models\tbl_FinanceCurrentDate.cs" />
+    <Compile Include="Models\tbl_Finance_EndOfDay.cs" />
     <Compile Include="Models\tbl_Finance_Transaction.cs" />
     <Compile Include="Models\tbl_Financial_Statement_Caption.cs" />
     <Compile Include="Models\tbl_Financial_Statement_Type.cs" />
