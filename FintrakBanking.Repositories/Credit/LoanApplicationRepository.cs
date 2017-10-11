@@ -608,69 +608,71 @@ namespace FintrakBanking.Repositories.Credit
                         join e in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals e.AppraisalMemorandumId
                         join f in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals f.LoanApplicationId
                         where a.CompanyId == companyId && a.Deleted == false
-                              && a.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
+                              && f.StatusId == (int)ApprovalStatusEnum.Approved 
+                              group a by new
+                              {
+                                  a.LoanApplicationId, a.ApplicationReferenceNumber, f.ApprovedAmount, a.LoanTypeId, a.ApplicationStatusId,
+                                  c.CAMRef, e.CAMDocumentation, a.ApplicationDate, a.RelationshipManagerId, a.RelationshipOfficerId,
+                                  cust.FirstName, cust.LastName, cust.MiddleName
+                              } into g
                         select new CamProcessedLoanViewModel
                         {
-                            approvalStatusId = a.ApprovalStatusId,
-                            loanApplicationId = a.LoanApplicationId,
-                            applicationReferenceNumber = a.ApplicationReferenceNumber,
-                            casaAccountId = a.CasaAccountId,
-                            customerId = a.CustomerId ?? 0,
-                            customerCode = cust.CustomerCode,
-                            customerName =
-                                a.CustomerId.HasValue
-                                    ? a.tbl_Customer.FirstName + " " + a.tbl_Customer.MiddleName + " " + a.tbl_Customer.LastName
-                                    : "",
+                            //approvalStatusId = ,
+                            loanApplicationId = g.Key.LoanApplicationId,
+                            applicationReferenceNumber = g.Key.ApplicationReferenceNumber,
+                            //casaAccountId = a.CasaAccountId,
+                            //customerId = a.CustomerId ?? 0,
+                            //customerCode = cust.CustomerCode,
+                            customerName = g.Key.FirstName + " " + g.Key.MiddleName + " " + g.Key.LastName,
+                            //customerGroupId = a.CustomerGroupId,
+                            //customerGroupName = a.CustomerGroupId.HasValue ? a.tbl_Customer_Group.GroupName : "",
+                            //customerGroupCode = a.tbl_Customer_Group.GroupCode,
+                            //customerSensitivityLevelId = a.tbl_Customer.CustomerSensitivityLevelId,
 
-                            customerGroupId = a.CustomerGroupId,
-                            customerGroupName = a.CustomerGroupId.HasValue ? a.tbl_Customer_Group.GroupName : "",
-                            customerGroupCode = a.tbl_Customer_Group.GroupCode,
-                            customerSensitivityLevelId = a.tbl_Customer.CustomerSensitivityLevelId,
-
-                            loanInformation = a.LoanInformation,
-                            companyId = a.CompanyId,
-                            branchId = a.BranchId,
-                            branchName = a.tbl_Branch.BranchName,
+                            //loanInformation = a.LoanInformation,
+                            //companyId = a.CompanyId,
+                            //branchId = a.BranchId,
+                            //branchName = a.tbl_Branch.BranchName,
                             
-                            approvedTenor = f.ApprovedTenor,
-                            relationshipOfficerId = a.RelationshipOfficerId,
-                            relationshipOfficerName =
-                                a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-                            relationshipManagerId = a.RelationshipManagerId,
-                            relationshipManagerName =
-                                a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
+                            //approvedTenor = f.ApprovedTenor,
+                            relationshipOfficerId = g.Key.RelationshipOfficerId,
+                            //relationshipOfficerName =
+                            //    a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
+                            relationshipManagerId = g.Key.RelationshipManagerId,
+                            //relationshipManagerName =
+                            //    a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
 
                             //currencyId = a.CurrencyId,
                             //currencyCode = a.tbl_Currency.CurrencyCode,
-                            loanTypeId = a.LoanTypeId,
-                            loanTypeName = a.tbl_Loan_Type.LoanTypeName,
+                            loanTypeId = g.Key.LoanTypeId,
+                            loanTypeName = context.tbl_Loan_Type.FirstOrDefault(x => x.LoanTypeId == g.Key.LoanTypeId).LoanTypeName,
                             //loanStatusId = a.LoanStatusId,
                             //loanStatusName = a.tbl_Loan_Type.AccountStatus,
-                            camReference = c.CAMRef,
-                            camDocumentation = e.CAMDocumentation,
-                            appraisalMemorandumId = c.AppraisalMemorandumId,
+                            camReference = g.Key.CAMRef,
+                            camDocumentation = g.Key.CAMDocumentation,
+                            //appraisalMemorandumId = c.AppraisalMemorandumId,
                             //loanDetails = c.LoanDetails,
                             //TODO refactor                 productId = (short)a.ProductId,
                             //TODO refactor                 productTypeId = a.tbl_Product.ProductTypeId,
                             //TODO refactor                  productTypeName = a.tbl_Product.tbl_Product_Type.ProductTypeName,
                             //TODO refactor                 productName = a.tbl_Product.ProductName,
 
-                            misCode = a.MISCode,
-                            teamMisCode = a.TeamMISCode,
+                           // misCode = a.MISCode,
+                            //teamMisCode = a.TeamMISCode,
 
-                            interestRate = f.ApprovedInterestRate,
+                            //interestRate = f.ApprovedInterestRate,
                           //  isRealatedParty = a.IsRelatedParty,
-                            isPoliticallyExposed = a.IsPoliticallyExposed,
-                            submittedForAppraisal = a.SubmittedForAppraisal,
-                            approvedAmount = f.ApprovedAmount,
+                            //isPoliticallyExposed = a.IsPoliticallyExposed,
+                            //submittedForAppraisal = a.SubmittedForAppraisal,
+                            approvedAmount = g.Sum(x => x.ApprovedAmount),
 
-                            createdBy = a.CreatedBy,
-                            applicationDate = a.ApplicationDate,
-                            dateTimeCreated = a.DateTimeCreated,
+                            //createdBy = a.CreatedBy,
+                            applicationDate = g.Key.ApplicationDate,
+                            //dateTimeCreated = a.DateTimeCreated,
 
-                            loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId,
+                            //loanPreliminaryEvaluationId = a.LoanPreliminaryEvaluationId,
                             //exchangeRate = a.ExchangeRate,
-                            applicationStatusId = a.ApplicationStatusId
+                            applicationStatusId = g.Key.ApplicationStatusId
                         });
 
             //var models = data.Where(r => !context.tbl_Loan.AsEnumerable().Any(c => r.loanApplicationId == c.LoanApplicationId &&
@@ -759,7 +761,6 @@ namespace FintrakBanking.Repositories.Credit
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
-
             return data;
         }
 
@@ -768,7 +769,6 @@ namespace FintrakBanking.Repositories.Credit
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
-
             return data;
         }
 
@@ -777,7 +777,6 @@ namespace FintrakBanking.Repositories.Credit
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.CAMCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
-
             return data;
         }
 
