@@ -29,6 +29,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
+        public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
 
         public short branchId { get; set; }
@@ -163,6 +164,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short branchId { get; set; }
         public short currencyId { get; set; }
         public double exchangeRate { get; set; }
+        public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         public string loanReferenceNumber { get; set; }
         public short subSectorId { get; set; }
@@ -234,6 +236,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class ContingentLoanViewModel : GeneralEntity
     {
         public int loanId { get; set; }
+        public int loanApplicationId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
         public int casaAccountId { get; set; }
@@ -370,7 +373,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanGuarantorViewModel
     {
         public short loanGuarantorId { get; set; }
-        public int loanId { get; set; }
+        public int loanApplicationId { get; set; }
         public string fullName { get; set; }
         public string firstname { get; set; }
         public string lastname { get; set; }

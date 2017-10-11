@@ -2517,10 +2517,6 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Loan_Application)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<tbl_Loan_Application>()
-                .HasMany(e => e.tbl_Loan_Guarantor)
-                .WithRequired(e => e.tbl_Loan_Application)
-                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan_Application>()
                 .HasMany(e => e.tbl_Risk_Assessment)
