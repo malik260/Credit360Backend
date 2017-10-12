@@ -14,13 +14,13 @@ namespace FintrakBanking.Interfaces.Setups.Finance
 
         IEnumerable<LookupViewModel> GetFinancialSatementCaptionLookup();
 
-        ChartOfAccountViewModel GetAccountViewModel(short accountId);
+        ChartOfAccountViewModel GetAccountByAccountId(short accountId);
         ChartOfAccountViewModel GetTempAccountDetail(int accountId);
         IEnumerable<ChartOfAccountViewModel> GetAccountsAwaitingApprovals(int accountId, int companyId);
         bool GoForApproval(ApprovalViewModel entity);
         Task<bool> AddTempAccount(ChartOfAccountViewModel account);
         bool IsAccountCodeAlreadyExist(string accountCode);
-        bool IsAccountExist(string accountCode);
+        bool IsTempAccountExist(string accountCode);
         bool UpdateAccount(short accountId, ChartOfAccountViewModel account);
 
         bool DeleteAccount(short accountId, UserInfo user);

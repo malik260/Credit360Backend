@@ -1077,7 +1077,7 @@ namespace FintrakBanking.Repositories.Customer
                     //.Where(c => c.companyId == companyId)
                     .Where(x => x.customerGroupName.Contains(searchQuery)
                                 || x.customerGroupCode.Contains(searchQuery)
-                    );
+                    ).Take(10);
             }
 
             //foreach (var item in allGroups)
