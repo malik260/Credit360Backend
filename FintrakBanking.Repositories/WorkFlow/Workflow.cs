@@ -86,8 +86,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 x.CompanyId == this.companyId
                                 && x.OperationId == this.operationId
                                 && x.TargetId == this.targetId &&
-                                x.ResponseStaffId == null && x.ToApprovalLevelId != null &&
-                                (x.ApprovalStateId != (int)ApprovalState.Ended)
+                                x.ResponseStaffId == null &&
+                                (x.ApprovalStateId != (int)ApprovalState.Ended && x.ResponseDate == null)
                             ).OrderByDescending(x => x.ApprovalTrailId).FirstOrDefault();
 
             if (request != null)

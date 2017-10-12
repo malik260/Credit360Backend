@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -127,6 +128,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              //MisInfoCode = c.MISC,
                              SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
                              //State = c.State.StateName
+                             CityId = c.CityId
                          });
             return staff;
         }
@@ -185,7 +187,7 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <returns></returns>
         public async Task<bool> UpdateStaff(int staffid, StaffInfoViewModel staffModel)
         {
-            var existingTempStaff = context.tbl_Temp_Staff.FirstOrDefault(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower() && x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existingTempStaff = context.tbl_Temp_Staff.FirstOrDefault(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower() && x.IsCurrent == false && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
 
             var unApprovedStaffEdit = context.tbl_Temp_Staff.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending &&
                                                                         x.StaffCode.ToLower() == staffModel.StaffCode.ToLower());
@@ -530,7 +532,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 MiddleName = staffModel.MiddleName,
                 CompanyId = staffModel.companyId,
                 LastName = staffModel.LastName,
-                StaffCode = staffModel.StaffCode,
+                StaffCode = StaticHelpers.GetUniqueKey(6),
                 JobTitleId = staffModel.JobTitleId,
                 RankId = staffModel.RankId,
                 Address = staffModel.Address,
