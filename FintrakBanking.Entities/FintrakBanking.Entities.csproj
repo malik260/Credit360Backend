@@ -58,7 +58,7 @@
     <Compile Include="DocumentModels\tbl_Media_Job_Request_Documents.cs" />
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
-    <Compile Include="Models\sysdiagram.cs" />
+    <Compile Include="Models\sysdiagrams.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
     <Compile Include="Models\tbl_Account_Category.cs" />
     <Compile Include="Models\tbl_Account_Type.cs" />
@@ -183,6 +183,7 @@
     <Compile Include="Models\tbl_Fee_Target.cs" />
     <Compile Include="Models\tbl_Fee_Type.cs" />
     <Compile Include="Models\tbl_FinanceCurrentDate.cs" />
+    <Compile Include="Models\tbl_Finance_EndOfDay.cs" />
     <Compile Include="Models\tbl_Finance_Transaction.cs" />
     <Compile Include="Models\tbl_Financial_Statement_Caption.cs" />
     <Compile Include="Models\tbl_Financial_Statement_Type.cs" />
@@ -325,5 +326,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

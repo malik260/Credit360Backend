@@ -31,7 +31,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaff(int companyId)
         {
             var data = (from a in context.tbl_Approval_Level_Staff
-                            //join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
+                            join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
                             //join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupId
                         where a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
                         && a.Deleted == false
