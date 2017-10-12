@@ -31,6 +31,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int casaAccountId { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
+        
 
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
@@ -341,7 +342,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int tenor { get; set; }
     }
 
-    public class LoanChargeFeeViewModel : ChargeRangeViewModel
+    public class LoanChargeFeeViewModel : ChargeRangeViewModel //GeneralEntity //ChargeRangeViewModel
 
     {
         public int productFeeId { get; set; }
