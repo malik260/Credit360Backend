@@ -50,6 +50,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int requestStaffId;
         private int neededNumberOfApproval;
         private bool externalInitialization = false;
+        private bool keepPending = false;
         private bool vote = false;
         private bool politicallyExposed = false;
 
@@ -73,9 +74,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         public string Message { get { return message; } }
         public bool Saved { get { return saved; } }
         public int NewState { get { return newStateId; } }
+        public bool KeepPending { set { keepPending = value; } }
 
         private List<WorkflowSetup> workflowSetup;
-
 
         public bool LogActivity()
         {
@@ -414,7 +415,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool WithinTenorLimit(WorkflowSetup setup)
         {
-            if (tenor == 0 && setup.Tenor == 0) { return true; }
+            if (tenor == 0 && setup.Tenor < 1) { return true; }
             if (tenor > 0 && setup.Tenor >= tenor) { return true; }
             return false;
         }
@@ -458,10 +459,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.nextLevelId == null && ActionIsApprovalDecision())
             {
-                this.statusId = (int)ApprovalStatusEnum.Approved;
-                this.newStateId = (int)ApprovalState.Ended;
+                this.EndProcess(this.statusId);
             }
-            else
+
+            if (this.keepPending == true)
             {
                 this.statusId = (int)ApprovalStatusEnum.Pending;
                 this.newStateId = (int)ApprovalState.Processing;
@@ -561,11 +562,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
     public class WorkflowSetup
     {
-        public IEnumerable<tbl_Approval_Level_Staff> Staff { get; set; }
-        public tbl_Approval_Level Level { get; set; }
-        public tbl_Approval_Group Group { get; set; }
-        public tbl_Approval_Group_Mapping Mapping { get; set; }
-
         public int GroupPosition { get; set; }
 
         public int LevelPosition { get; set; }
@@ -595,5 +591,13 @@ namespace FintrakBanking.Repositories.WorkFlow
         public decimal MaximumAmount { get; set; }
 
         public decimal? InvestmentGradeAmount { get; set; }
+
+        public tbl_Approval_Level Level { get; set; }
+
+        public tbl_Approval_Group Group { get; set; }
+
+        public tbl_Approval_Group_Mapping Mapping { get; set; }
+
+        public IEnumerable<tbl_Approval_Level_Staff> Staff { get; set; }
     }
 }

@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeUpdated { get; set; }
 
-        public bool? Deleted { get; set; }
+        public bool Deleted { get; set; }
 
         public int? DeletedBy { get; set; }
 

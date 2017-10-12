@@ -11,7 +11,18 @@ namespace FintrakBanking.Entities.Models
             : base("name=FinTrakBankingContext")
         {
         }
-
+        public override int SaveChanges()
+        {
+            try
+            {
+                return base.SaveChanges();
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new System.Data.Entity.Validation.DbEntityValidationException(errorMessages);
+            }
+        }
         public virtual DbSet<tbl_Accounting_Standard> tbl_Accounting_Standard { get; set; }
         public virtual DbSet<tbl_AccreditedConsultant> tbl_AccreditedConsultant { get; set; }
         public virtual DbSet<tbl_AccreditedConsultant_State> tbl_AccreditedConsultant_State { get; set; }
@@ -227,7 +238,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Solicitor> tbl_Solicitor { get; set; }
         public virtual DbSet<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Approval> tbl_Approval { get; set; }
         public virtual DbSet<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
@@ -340,6 +351,17 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Approval_Trail)
                 .WithRequired(e => e.tbl_Approval_Status)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Status>()
+                .HasMany(e => e.tbl_Loan_Application_Detail)
+                .WithRequired(e => e.tbl_Approval_Status)
+                .HasForeignKey(e => e.StatusId)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Status>()
+                .HasMany(e => e.tbl_Loan_Collateral_Mapping)
+                .WithOptional(e => e.tbl_Approval_Status)
+                .HasForeignKey(e => e.ReleaseApprovalStatusId);
 
             modelBuilder.Entity<tbl_Approval_Status>()
                 .HasMany(e => e.tbl_Loan_Preliminary_Evaluation)
@@ -2519,6 +2541,16 @@ namespace FintrakBanking.Entities.Models
 
 
             modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Loan_Guarantor)
+                .WithRequired(e => e.tbl_Loan_Application)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Loan_Guarantor)
+                .WithRequired(e => e.tbl_Loan_Application)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
                 .HasMany(e => e.tbl_Risk_Assessment)
                 .WithRequired(e => e.tbl_Loan_Application)
                 .WillCascadeOnDelete(false);
@@ -2539,11 +2571,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Loan_Application_Detail>()
                 .HasMany(e => e.tbl_Loan_Revolving)
                 .WithRequired(e => e.tbl_Loan_Application_Detail)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Loan_Application_Detail_Status>()
-                .HasMany(e => e.tbl_Loan_Application_Detail)
-                .WithRequired(e => e.tbl_Loan_Application_Detail_Status)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan_Application_Status>()

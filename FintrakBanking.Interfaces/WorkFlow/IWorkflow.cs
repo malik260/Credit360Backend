@@ -25,6 +25,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool PoliticallyExposed { set; }
         bool SmsNotification { set; }
         bool ExternalInitialization { set; }
+        bool KeepPending { set; }
         string Message { get; }
         bool Saved { get; }
 

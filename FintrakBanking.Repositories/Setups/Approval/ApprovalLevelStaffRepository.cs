@@ -31,7 +31,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaff(int companyId)
         {
             var data = (from a in context.tbl_Approval_Level_Staff
-                            //join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
+                            join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
                             //join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupId
                         where a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
                         && a.Deleted == false
@@ -118,13 +118,21 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaffById(int StaffLevelId, int companyId)
         {
-            return GetApprovalLevelStaff(companyId).Where(c => c.approvalLevelId == StaffLevelId);
+            var data = GetApprovalLevelStaff(companyId).Where(c => c.approvalLevelId == StaffLevelId);
+
+            return data;
         }
 
         public ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId, int operationId)
         {
             var levelStaff = GetAllDetailedApprovalLevelStaff(companyId);
             return levelStaff.Where(c => c.staffId == staffId && c.operationId == operationId).FirstOrDefault();
+        }
+
+        public ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId)
+        {
+            var levelStaff = GetAllDetailedApprovalLevelStaff(companyId);
+            return levelStaff.Where(c => c.staffId == staffId).FirstOrDefault();
         }
 
         public bool AddApprovalLevelStaff(ApprovalLevelStaffViewModel model)
