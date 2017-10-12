@@ -5,14 +5,14 @@ using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -20,7 +20,7 @@ namespace FintrakBanking.Repositories.Setups.General
     {
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
-        IGeneralSetupRepository genSetup;
+        private IGeneralSetupRepository genSetup;
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
 
@@ -90,12 +90,9 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<StaffInfoViewModel> GetAllStaff()
         {
             var staff = (from c in context.tbl_Staff
-                         join br in context.tbl_Branch
-on c.BranchId equals br.BranchId
-                         join coy in context.tbl_Company
-on br.CompanyId equals coy.CompanyId
-                         join dept in context.tbl_Department
-on c.DepartmentId equals dept.DepartmentId
+                         join br in context.tbl_Branch on c.BranchId equals br.BranchId
+                         join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
+                         join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
                          select new StaffInfoViewModel()
                          {
                              StaffId = c.StaffId,
@@ -128,9 +125,10 @@ on c.DepartmentId equals dept.DepartmentId
                              RankId = c.RankId,
                              BranchName = br.BranchName,
                              DepartmentName = dept.DepartmentName,
-                             // MisInfoCode = c.Misinfo.Misname,
+                             //MisInfoCode = c.MISC,
                              SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
-                             // State = c.State.StateName
+                             //State = c.State.StateName
+                             CityId = c.CityId
                          });
             return staff;
         }
@@ -189,7 +187,7 @@ on c.DepartmentId equals dept.DepartmentId
         /// <returns></returns>
         public async Task<bool> UpdateStaff(int staffid, StaffInfoViewModel staffModel)
         {
-            var existingTempStaff = context.tbl_Temp_Staff.FirstOrDefault(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower() && x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existingTempStaff = context.tbl_Temp_Staff.FirstOrDefault(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower() && x.IsCurrent == false && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
 
             var unApprovedStaffEdit = context.tbl_Temp_Staff.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending &&
                                                                         x.StaffCode.ToLower() == staffModel.StaffCode.ToLower());
@@ -238,7 +236,7 @@ on c.DepartmentId equals dept.DepartmentId
                 tempStaffToUpdate.StateId = staffModel.StateId;
                 tempStaffToUpdate.CityId = staffModel.CityId;
                 tempStaffToUpdate.Staffsignature = staffModel.Staffsignature;
-                tempStaffToUpdate.ApprovalStatusId = (int) ApprovalStatusEnum.Pending;
+                tempStaffToUpdate.ApprovalStatusId = (int)ApprovalStatusEnum.Pending;
                 tempStaffToUpdate.IsCurrent = true;
             }
             else
@@ -300,7 +298,7 @@ on c.DepartmentId equals dept.DepartmentId
                 try
                 {
                     this.auditTrail.AddAuditTrail(audit);
-                    //end of Audit section -------------------------------  
+                    //end of Audit section -------------------------------
 
                     var output = await context.SaveChangesAsync() > 0;
 
@@ -360,9 +358,8 @@ on c.DepartmentId equals dept.DepartmentId
             };
 
             this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------  
+            //end of Audit section -------------------------------
             return this.SaveAll();
-
         }
 
         /// <summary>
@@ -394,15 +391,12 @@ on c.DepartmentId equals dept.DepartmentId
             }
 
             return false;
-
         }
 
         private bool ApproveStaff(int staffid, short approvalStatusId, UserInfo user)
         {
-
             var staffModel = context.tbl_Temp_Staff.Find(staffid);
             var staffToUpdate = context.tbl_Staff.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower());
-
 
             if (staffToUpdate.Any()) //Update existing staff with tempStaff record
             {
@@ -438,6 +432,7 @@ on c.DepartmentId equals dept.DepartmentId
                     existingStaff.StateId = staffModel.StateId;
                     existingStaff.CityId = staffModel.CityId;
                     existingStaff.Staffsignature = staffModel.Staffsignature;
+                    existingStaff.Deleted = false;
                 }
             }
             else //Insert a new staff record into the real staff table
@@ -537,7 +532,7 @@ on c.DepartmentId equals dept.DepartmentId
                 MiddleName = staffModel.MiddleName,
                 CompanyId = staffModel.companyId,
                 LastName = staffModel.LastName,
-                StaffCode = staffModel.StaffCode,
+                StaffCode = StaticHelpers.GetUniqueKey(6),
                 JobTitleId = staffModel.JobTitleId,
                 RankId = staffModel.RankId,
                 Address = staffModel.Address,
@@ -563,7 +558,6 @@ on c.DepartmentId equals dept.DepartmentId
                 Staffsignature = staffModel.Staffsignature,
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                 IsCurrent = true
-
             };
             // Audit Section ---------------------------
             var audit = new tbl_Audit
@@ -583,7 +577,7 @@ on c.DepartmentId equals dept.DepartmentId
                 try
                 {
                     auditTrail.AddAuditTrail(audit);
-                    this.context.tbl_Temp_Staff.Add(staff);
+                    context.tbl_Temp_Staff.Add(staff);
                     output = await context.SaveChangesAsync() > 0;
 
                     var entity = new ApprovalViewModel
@@ -619,7 +613,7 @@ on c.DepartmentId equals dept.DepartmentId
             return context.tbl_Staff.Any(x => x.StaffCode.ToLower() == staffCode.ToLower());
         }
 
-        public bool IsStaffExist(string staffCode)
+        public bool IsTempStaffExist(string staffCode)
         {
             return context.tbl_Temp_Staff.Any(x => x.StaffCode.ToLower() == staffCode.ToLower() && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && x.IsCurrent == true);
         }
@@ -676,8 +670,7 @@ on c.DepartmentId equals dept.DepartmentId
                         DepartmentName = dept.DepartmentName,
                         OperationId = atrail.OperationId,
                         SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description
-
-                    }).GroupBy(x => x.StaffId).Select(g => g.FirstOrDefault()); 
+                    }).GroupBy(x => x.StaffId).Select(g => g.FirstOrDefault());
         }
 
         public StaffDetailsModel GetTempStaffDetail(int staffId)
@@ -728,14 +721,12 @@ on c.DepartmentId equals dept.DepartmentId
                         DepartmentName = dept.DepartmentName,
                         ApprovalStatusId = c.ApprovalStatusId,
                         SensitivityLevel = context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
-
                     }).FirstOrDefault();
-
         }
 
         public StaffDetailsModel GetStaffDetail(string staffCode, int companyId)
         {
-            return GetStaffDetails(companyId).Where(x => x.StaffCode == staffCode && x.companyId == companyId).Single();
+            return GetStaffDetails(companyId).FirstOrDefault(x => x.StaffCode == staffCode && x.companyId == companyId);
         }
 
         //public IEnumerable<StaffDetailsModel> GetTempStaffDetails()
@@ -887,13 +878,11 @@ on c.DepartmentId equals dept.DepartmentId
                         lastName = o.LastName,
                         staffCode = o.StaffCode,
                     })
-                    .Take(12)
-                ;
+                    .Take(12);
+                
             }
 
             return staff;
         }
     }
-
-
 }

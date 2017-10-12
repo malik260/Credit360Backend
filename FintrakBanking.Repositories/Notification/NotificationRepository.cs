@@ -3,6 +3,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Notification;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.ViewModels.Notification;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -36,7 +37,7 @@ namespace FintrakBanking.Repositories.Notification
                     log = (from c in context.tbl_Approval_Trail
                            where c.CompanyId == companyId &&
                            c.OperationId == level.operationId &&
-                            c.ApprovalStatusId == (int)ApprovalStatusEnum.Pending  && c.ResponseStaffId == null &&
+                            c.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ResponseStaffId == null &&
                            c.ToApprovalLevelId == level.approvalLevelId
                            group c by c.OperationId into d
                            select new NotificationViewModel
@@ -54,6 +55,11 @@ namespace FintrakBanking.Repositories.Notification
                 }
             }
             return logs;
+        }
+
+        public IEnumerable<NotificationViewModel> GetNotificationForFinalState()
+        {
+            throw new NotImplementedException();
         }
     }
 }

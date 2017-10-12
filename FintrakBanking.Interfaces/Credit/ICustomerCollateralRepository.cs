@@ -24,6 +24,9 @@ namespace FintrakBanking.Interfaces.Credit
         Task<bool> AddCollateralValuer(CollateralValuersViewModel entity);
         Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id);
 
+        bool ReleaseCollateral(int collateralMappingId, int staffId, GeneralEntity model);
+        bool ApproveCollateralRelease(int collateralMappingId, int staffId, GeneralEntity model);
+
         #endregion Collateral
 
         #region Collateral Type

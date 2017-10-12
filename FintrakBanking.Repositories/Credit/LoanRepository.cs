@@ -2536,6 +2536,7 @@ namespace FintrakBanking.Repositories.Credit
                                            firstPrincipalPaymentDate = a.FirstPrincipalPaymentDate,
                                            firstInterestPaymentDate = a.FirstInterestPaymentDate,
                                            outstandingPrincipal = a.OutstandingPrincipal,
+                                           outstandingInterest = a.OutstandingInterest,
                                            principalAdditionCount = a.PrincipalAdditionCount ?? 0,
                                            principalReductionCount = a.PrincipalReductionCount ?? 0,
                                            fixedPrincipal = a.FixedPrincipal,
