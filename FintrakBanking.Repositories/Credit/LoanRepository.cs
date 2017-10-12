@@ -2261,7 +2261,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeId = m.LoanTypeId,
                             loanTypeName = m.tbl_Loan_Type.LoanTypeName,
                             camReference = m.tbl_Credit_Appraisal_Memorandum.FirstOrDefault().CAMRef,
-                            productId = (short)d.ApprovedProductId,
+                            productId = d.ApprovedProductId,
                             productTypeId = d.tbl_Product.ProductTypeId,
                             productTypeName = d.tbl_Product.tbl_Product_Type.ProductTypeName,
                             productName = d.tbl_Product.ProductName,

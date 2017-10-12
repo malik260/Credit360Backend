@@ -12,6 +12,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public short LoanGuarantorId { get; set; }
 
+        public int LoanApplicationId { get; set; }
+
         public short ProductTypeId { get; set; }
 
         [StringLength(50)]
@@ -58,7 +60,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateTimeDeleted { get; set; }
 
         public virtual tbl_Product_Type tbl_Product_Type { get; set; }
-        public int LoanApplicationId { get; set; }
 
+        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
     }
 }
