@@ -99,32 +99,40 @@ namespace FintrakBanking.Repositories.Setups.General
             return result;
         }
 
-        public async Task<UserViewModel> FindUserByUserNameAndPassword(string username,string password)
+        public UserViewModel FindUserByUserNameAndPassword(string username,string password)
         {
-            var _user = await context.tbl_Profile_User.Where(x => x.Username == username && x.Password == password).ToListAsync();
+            var _user = context.tbl_Profile_User.Where(x => x.Username == username && x.Password == password).ToList();
 
             if (_user.Count > 0)
             {
-                var data = await (from p in context.tbl_Profile_User
-                    join st in context.tbl_Staff on p.StaffId equals st.StaffId
-                    join br in context.tbl_Branch on st.BranchId equals br.BranchId
-                    join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
-                    where p.Username == username && p.Password == password
-                    select new UserViewModel
-                    {
-                        companyId = coy.CompanyId,
-                        staffId = p.StaffId,
-                        user_id = p.UserId,
-                        username = p.Username,
-                        staffName = st.FirstName + " " + st.MiddleName + " " + st.LastName,
-                        branchId = st.BranchId.Value,
-                        countryId = coy.CountryId,
-                        branchName = br.BranchName,
-                        companyName = coy.Name
-                    }).FirstAsync();
+                try
+                {
+                    var data = (from p in context.tbl_Profile_User
+                        join st in context.tbl_Staff on p.StaffId equals st.StaffId
+                        join br in context.tbl_Branch on st.BranchId equals br.BranchId
+                        join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
+                        where p.Username == username && p.Password == password
+                        select new UserViewModel
+                        {
+                            companyId = coy.CompanyId,
+                            staffId = p.StaffId,
+                            user_id = p.UserId,
+                            username = p.Username,
+                            staffName = st.FirstName + " " + st.MiddleName + " " + st.LastName,
+                            branchId = st.BranchId.Value,
+                            countryId = coy.CountryId,
+                            branchName = br.BranchName,
+                            companyName = coy.Name
+                        }).First();
 
-                return data;
+                    return data;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
             }
+
             return null;
         }
 
