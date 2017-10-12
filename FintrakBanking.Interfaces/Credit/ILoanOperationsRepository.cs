@@ -3,8 +3,8 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
-using System;
 using FintrakBanking.ViewModels.WorkFlow;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 //using FintrakBanking.ViewModels.Operations;
@@ -30,7 +30,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetApprovedLoanOperationReview();
         IEnumerable<ApprovalTrailDetailsViewModel> GetApprovalDetails(int loanId, int OperationId);
-        IEnumerable<LoanReviewOperationViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId);
+       // IEnumerable<LoanReviewOperationViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId);
         bool LoanCancellation(int loanId, DateTime applicationDate, int staffId);
         void OverdraftTopUp(int loanId, decimal amount);
         IEnumerable<LimitSuspensionViewModel> NPLByBranchSuspension();
