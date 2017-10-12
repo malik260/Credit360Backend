@@ -99,9 +99,9 @@ namespace FintrakBanking.Repositories.Setups.General
             return result;
         }
 
-        public async Task<List<UserViewModel>> FindUserByUserNameAndPassword(string username,string password)
+        public async Task<UserViewModel> FindUserByUserNameAndPassword(string username,string password)
         {
-            var _user = context.tbl_Profile_User.Where(x => x.Username == username && x.Password == password).ToList();
+            var _user = await context.tbl_Profile_User.Where(x => x.Username == username && x.Password == password).ToListAsync();
 
             if (_user.Count > 0)
             {
@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         countryId = coy.CountryId,
                         branchName = br.BranchName,
                         companyName = coy.Name
-                    }).ToListAsync();
+                    }).FirstAsync();
 
                 return data;
             }

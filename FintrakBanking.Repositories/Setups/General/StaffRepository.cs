@@ -876,8 +876,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         lastName = o.LastName,
                         staffCode = o.StaffCode,
                     })
-                    .Take(12)
-                ;
+                    .Take(12);
+                
             }
 
             return staff;

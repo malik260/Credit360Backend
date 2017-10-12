@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Wrong username or password" });
                 }
 
-                var currUser = foundUser.First();
+                var currUser = foundUser;
 
                 DateTime now = DateTime.Now;
                 var userActivities = this._adminRepo.GetUserActivities(currUser.user_id);
