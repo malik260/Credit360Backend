@@ -118,13 +118,21 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaffById(int StaffLevelId, int companyId)
         {
-            return GetApprovalLevelStaff(companyId).Where(c => c.approvalLevelId == StaffLevelId);
+            var data = GetApprovalLevelStaff(companyId).Where(c => c.approvalLevelId == StaffLevelId);
+
+            return data;
         }
 
         public ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId, int operationId)
         {
             var levelStaff = GetAllDetailedApprovalLevelStaff(companyId);
             return levelStaff.Where(c => c.staffId == staffId && c.operationId == operationId).FirstOrDefault();
+        }
+
+        public ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId)
+        {
+            var levelStaff = GetAllDetailedApprovalLevelStaff(companyId);
+            return levelStaff.Where(c => c.staffId == staffId).FirstOrDefault();
         }
 
         public bool AddApprovalLevelStaff(ApprovalLevelStaffViewModel model)

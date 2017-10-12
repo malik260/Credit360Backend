@@ -405,7 +405,7 @@ namespace FintrakBanking.Repositories.Credit
                 valuationCycle = x.ValuationCycle,
                 haircut = x.HairCut,
                 approvalStatus = x.ApprovalStatus,
-                //collateralValue = GetCollateralValue(x.CollateralTypeId, x.CollateralCustomerId) 
+                //collateralValue = x.CollateralValue
 
             })
             .OrderByDescending(x => x.collateralId)

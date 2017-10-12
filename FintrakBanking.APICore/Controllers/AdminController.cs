@@ -191,7 +191,7 @@ namespace FintrakBanking.APICore.Controllers
             {
 
 
-                if (repo.iSGroupExist(group.groupName))
+                if (repo.isGroupExist(group.groupName))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { suucess = false, message = $"{group.groupName} already exit" });

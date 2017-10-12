@@ -29,7 +29,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         Task<bool> UpdateApprovalStatus(ApprovalViewModel entity);
 
-        Task<bool> AddLoanApplication(LoanApplicationViewModel loan);
+        bool AddLoanApplication(LoanApplicationViewModel loan);
 
         //IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
 

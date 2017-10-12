@@ -11,16 +11,24 @@ namespace FintrakBanking.Interfaces.Credit
 
         Task<LoanPreliminaryEvaluationViewModel> AddMultiplePreliminaryEvaluation(List<LoanPreliminaryEvaluationViewModel> model);
 
-        IEnumerable<LoanPreliminaryEvaluationViewModel> GetPreliminaryEvaluationsAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetSingleCustomerPreliminaryEvaluationsAwaitingApproval(int staffId, int companyId);
+
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetGroupCustomerPreliminaryEvaluationsAwaitingApproval(
+            int staffId, int companyId);
 
         bool GoForApproval(ApprovalViewModel entity);
 
-        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanSingleCustomerPreliminaryEvaluations(int loanTypeId);
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllSingleCustomerLoanPreliminaryEvaluations();
 
-        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllLoanGroupCustomerPreliminaryEvaluations(int loanTypeId);
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllGroupCustomerLoanPreliminaryEvaluations();
 
         Task<bool> UpdatePreliminaryEvaluation(int loanPenId, LoanPreliminaryEvaluationViewModel model);
 
         bool SendPreliminaryEvaluationForLoanApplication(int loanPenId, LoanPreliminaryEvaluationViewModel model);
+
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetLoanPreliminaryEvaluationsByLoanTypeId(int loanTypeId);
+
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetLoanPreliminaryEvaluationsAwaitingApprovalByLoanTypeId(
+            int staffId, int companyId, int loanTypeId);
     }
 }

@@ -199,6 +199,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int? actedOnBy { get; set; }
         public string collateralSubType { get; set; }
         public string customerName { get; set; }
+        public int relationshipManagerId { get; set; }
+        public string relationshipManager { get; set; }
+        public string relationshipManagerEmail { get; set; }
     }
 
     public class MiscellaneousNote

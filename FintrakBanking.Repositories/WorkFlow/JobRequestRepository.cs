@@ -279,7 +279,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
         public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId)
         {
-            return GetAllGlobalJobRequest(staffId); 
+            return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId); 
         }
 
         public JobRequestViewModel GetJobRequest(int jobRequestId)
