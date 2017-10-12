@@ -19,6 +19,7 @@ namespace FintrakBanking.APICore.Controllers
     public class ProductFeeController : ApiControllerBase
     {
         private IProductFeeRepository repo;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public ProductFeeController(IProductFeeRepository _repo)
         {
@@ -31,7 +32,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetFeeByProduct(productId);
+                var data = repo.GetAllMappedFeeByProduct(productId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -52,7 +53,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetFeeByProduct(productId);
+                var data = repo.GetAllMappedFeeByProduct(productId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -135,7 +136,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var productFeeinfo = repo.GetProductFeeAwaitingApprovals(tempProductId);
 
                 if (productFeeinfo == null)
@@ -158,7 +158,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = Request.RequestUri.Host;
                 model.applicationUrl = HttpContext.Current.Request.Path;
@@ -176,9 +175,8 @@ namespace FintrakBanking.APICore.Controllers
                                         message = "product fee has been created successfully"
                                     });
                 }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                    new { success = false, message = "product fee not created" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "product fee not created" });
             }
             catch (System.Exception ex)
             {
@@ -193,17 +191,14 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
-
                 var recordId = repo.AddMultipleProductFee(model);
                 if (recordId >= 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                                         new { success = true, result = recordId, message = "product fee(s) has been created successfully" });
                 }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                        new { success = false, message = "product fee not created" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "product fee not created" });
             }
             catch (System.Exception ex)
             {
@@ -261,8 +256,6 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                var token = new TokenDecryptionHelper();
-
                 UserInfo user = new UserInfo()
                 {
                     BranchId = token.GetBranchId,

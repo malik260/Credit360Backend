@@ -226,7 +226,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = $"A staff with {model.StaffCode} already exist" });
                 }
-                if (repo.IsStaffExist(model.StaffCode))
+                if (repo.IsTempStaffExist(model.StaffCode))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = $"A staff with {model.StaffCode} already exist waiting for approval" });

@@ -29,7 +29,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool IsStaffCodeAlreadyExist(string staffCode);
 
-        bool IsStaffExist(string staffCode);
+        bool IsTempStaffExist(string staffCode);
 
         StaffInfoViewModel GetStaffById(int staffId);
 

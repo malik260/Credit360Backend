@@ -9,20 +9,6 @@
       </ConnectionProperties>
       <rd:DataSourceID>34b68954-4729-4654-b962-a2c6ad5d9603</rd:DataSourceID>
     </DataSource>
-    <DataSource Name="FintrakBankingReportObjects">
-      <ConnectionProperties>
-        <DataProvider>System.Data.DataSet</DataProvider>
-        <ConnectString>/* Local Connection */</ConnectString>
-      </ConnectionProperties>
-      <rd:DataSourceID>680e8878-7f29-4327-99fb-7ac89e4dca37</rd:DataSourceID>
-    </DataSource>
-    <DataSource Name="FintrakBankingReportObjects1">
-      <ConnectionProperties>
-        <DataProvider>System.Data.DataSet</DataProvider>
-        <ConnectString>/* Local Connection */</ConnectString>
-      </ConnectionProperties>
-      <rd:DataSourceID>a44e12e5-a36a-4c69-b394-4bc09d37dec2</rd:DataSourceID>
-    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="OfferLetterDetails">
@@ -63,7 +49,7 @@
     </DataSet>
     <DataSet Name="OfferLetterLoanDetail">
       <Query>
-        <DataSourceName>FintrakBankingReportObjects</DataSourceName>
+        <DataSourceName>Credit</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -153,16 +139,17 @@
         </Field>
       </Fields>
       <rd:DataSetInfo>
-        <rd:DataSetName>FintrakBanking.ReportObjects</rd:DataSetName>
-        <rd:TableName>OfferLetterInfo</rd:TableName>
-        <rd:ObjectDataSourceSelectMethod>GetLoanApplicationDetail</rd:ObjectDataSourceSelectMethod>
-        <rd:ObjectDataSourceSelectMethodSignature>System.Collections.Generic.List`1[FintrakBanking.ViewModels.Credit.OfferLetterDetailViewModel] GetLoanApplicationDetail(System.String)</rd:ObjectDataSourceSelectMethodSignature>
-        <rd:ObjectDataSourceType>FintrakBanking.ReportObjects.OfferLetterInfo, FintrakBanking.ReportObjects, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:DataSetName>Credit</rd:DataSetName>
+        <rd:SchemaPath>C:\Users\Tosin\Documents\Visual Studio 2017\Projects\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
+        <rd:TableName>OfferLetter</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
     <DataSet Name="OfferLetterConditionPrecident">
       <Query>
-        <DataSourceName>FintrakBankingReportObjects1</DataSourceName>
+        <DataSourceName>Credit</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -224,11 +211,12 @@
         </Field>
       </Fields>
       <rd:DataSetInfo>
-        <rd:DataSetName>FintrakBanking.ReportObjects</rd:DataSetName>
-        <rd:TableName>OfferLetterInfo</rd:TableName>
-        <rd:ObjectDataSourceSelectMethod>GetLoanApplicationConditionPrecident</rd:ObjectDataSourceSelectMethod>
-        <rd:ObjectDataSourceSelectMethodSignature>System.Collections.Generic.List`1[FintrakBanking.ViewModels.Credit.OfferLetterConditionPrecidentViewModel] GetLoanApplicationConditionPrecident(System.String)</rd:ObjectDataSourceSelectMethodSignature>
-        <rd:ObjectDataSourceType>FintrakBanking.ReportObjects.OfferLetterInfo, FintrakBanking.ReportObjects, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+        <rd:DataSetName>Credit</rd:DataSetName>
+        <rd:SchemaPath>C:\Users\Tosin\Documents\Visual Studio 2017\Projects\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
+        <rd:TableName>OfferLetter</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>
@@ -271,10 +259,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>15.16074cm</Top>
+            <Top>14.52574cm</Top>
             <Left>0.51278cm</Left>
             <Height>1.12169cm</Height>
-            <Width>16.41996cm</Width>
+            <Width>17.84044cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -307,10 +295,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>13.955cm</Top>
+            <Top>13.32cm</Top>
             <Left>0.51492cm</Left>
             <Height>1.13518cm</Height>
-            <Width>16.4196cm</Width>
+            <Width>17.8383cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -344,10 +332,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>11.97663cm</Top>
+            <Top>11.30635cm</Top>
             <Left>0.51261cm</Left>
-            <Height>1.83726cm</Height>
-            <Width>16.42013cm</Width>
+            <Height>1.90781cm</Height>
+            <Width>17.84061cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -377,7 +365,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>=Fields!interestRate.Value</Value>
+                    <Value>=Sum(Fields!interestRate.Value, "OfferLetterLoanDetail")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -416,10 +404,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>10.32458cm</Top>
-            <Left>0.51492cm</Left>
+            <Top>9.68958cm</Top>
+            <Left>0.51718cm</Left>
             <Height>1.51094cm</Height>
-            <Width>16.42013cm</Width>
+            <Width>17.8383cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -471,7 +459,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>=Sum(Fields!baseCurrencyLoanAmount.Value)</Value>
+                    <Value>=Sum(Fields!baseCurrencyLoanAmount.Value, "OfferLetterLoanDetail")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -497,7 +485,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>=Fields!currencyName.Value</Value>
+                    <Value>=First(Fields!currencyName.Value, "OfferLetterLoanDetail")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -530,7 +518,7 @@
             <Top>3.72594cm</Top>
             <Left>0.51492cm</Left>
             <Height>1.54445cm</Height>
-            <Width>16.42013cm</Width>
+            <Width>17.8383cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -591,7 +579,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>=Fields!customerName.Value</Value>
+                    <Value>=First(Fields!customerName.Value, "OfferLetterDetails")</Value>
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -631,7 +619,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Fields!customerAddress.Value</Value>
+                    <Value>=First(Fields!customerAddress.Value, "OfferLetterDetails")</Value>
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -694,58 +682,25 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Textbox Name="Textbox2">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>In order for the loan to be processed, please ensure you meet the following conditions:</Value>
-                    <Style>
-                      <FontFamily>Garamond</FontFamily>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <Top>3.17565in</Top>
-            <Left>0.20272in</Left>
-            <Height>0.26067in</Height>
-            <Width>6.46462in</Width>
-            <ZIndex>9</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Tablix Name="Tablix1">
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.90071in</Width>
+                  <Width>2.06241in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.8979in</Width>
+                  <Width>2.46126in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.12111in</Width>
+                  <Width>0.93772in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.54399in</Width>
+                  <Width>1.56336in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.27373in</Height>
+                  <Height>0.27836in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -817,7 +772,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox27">
+                        <Textbox Name="Textbox3">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -835,7 +790,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox27</rd:DefaultName>
+                          <rd:DefaultName>Textbox3</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -851,7 +806,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox31">
+                        <Textbox Name="Textbox1">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -869,7 +824,7 @@
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox31</rd:DefaultName>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -886,7 +841,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.45081in</Height>
+                  <Height>0.45544in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -923,24 +878,27 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="baseCurrencyLoanAmount">
+                        <Textbox Name="loanAmount">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!baseCurrencyLoanAmount.Value</Value>
+                                  <Value>=Fields!loanAmount.Value</Value>
                                   <Style>
                                     <FontFamily>GARAmond</FontFamily>
                                     <FontSize>11pt</FontSize>
+                                    <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>baseCurrencyLoanAmount</rd:DefaultName>
+                          <rd:DefaultName>loanAmount</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -970,7 +928,9 @@
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>tenor</rd:DefaultName>
@@ -1003,7 +963,9 @@
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>interestRate</rd:DefaultName>
@@ -1023,7 +985,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.27894in</Height>
+                  <Height>0.28357in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -1071,10 +1033,13 @@
                                   <Style>
                                     <FontFamily>GARAmond</FontFamily>
                                     <FontSize>11pt</FontSize>
+                                    <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox26</rd:DefaultName>
@@ -1093,7 +1058,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox30">
+                        <Textbox Name="Textbox10">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1106,18 +1071,13 @@
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
-                                <TextRun>
-                                  <Value> days</Value>
-                                  <Style>
-                                    <FontFamily>GARAmond</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                  </Style>
-                                </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox30</rd:DefaultName>
+                          <rd:DefaultName>Textbox10</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1133,7 +1093,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox40">
+                        <Textbox Name="Textbox7">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1154,10 +1114,12 @@
                                   </Style>
                                 </TextRun>
                               </TextRuns>
-                              <Style />
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox40</rd:DefaultName>
+                          <rd:DefaultName>Textbox7</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1198,10 +1160,10 @@
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
             <Top>2.13051in</Top>
-            <Left>0.20363in</Left>
-            <Height>1.00347in</Height>
-            <Width>6.46371in</Width>
-            <ZIndex>10</ZIndex>
+            <Left>0.20181in</Left>
+            <Height>1.01737in</Height>
+            <Width>7.02475in</Width>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1267,7 +1229,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!conditionPrecident.Value</Value>
+                                  <Value>=First(Fields!conditionPrecident.Value, "OfferLetterConditionPrecident")</Value>
                                   <Style>
                                     <FontFamily>garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1311,11 +1273,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionPrecident</DataSetName>
-            <Top>3.47799in</Top>
-            <Left>0.20307in</Left>
-            <Height>0.53125in</Height>
+            <Top>3.21411in</Top>
+            <Left>0.20181in</Left>
+            <Height>0.53124in</Height>
             <Width>5.40418in</Width>
-            <ZIndex>11</ZIndex>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1323,10 +1285,10 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>6.93614in</Height>
+        <Height>6.26947in</Height>
         <Style />
       </Body>
-      <Width>6.90901in</Width>
+      <Width>7.52567in</Width>
       <Page>
         <PageHeader>
           <Height>1.14111in</Height>
@@ -1337,7 +1299,7 @@
               <Source>Embedded</Source>
               <Value>firstbanknewlogo</Value>
               <Sizing>FitProportional</Sizing>
-              <Left>5.53936in</Left>
+              <Left>6.03936in</Left>
               <Height>1.14111in</Height>
               <Width>1.12798in</Width>
               <Style>
@@ -1398,7 +1360,7 @@
               <Value>firstbanklogo</Value>
               <Sizing>FitProportional</Sizing>
               <Top>0.06944in</Top>
-              <Left>5.64458in</Left>
+              <Left>6.26958in</Left>
               <Height>0.88677in</Height>
               <Width>1.02276in</Width>
               <Style>

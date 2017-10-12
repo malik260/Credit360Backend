@@ -586,7 +586,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
-    <EmbeddedResource Include="Reports\Credit\OfferLetter.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetter.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />

@@ -7,9 +7,9 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IProductFeeRepository
     {
-        IEnumerable<ProductFeeViewModel> GetFeeByProduct(int productId);
-
         IEnumerable<ProductFeeViewModel> GetAllMappedFeeByProduct(int productId);
+
+        IEnumerable<ProductFeeViewModel> GetAllMappedFeeByTempProduct(int productId);
 
         IEnumerable<ChargeFeeViewModel> GetUnmappedFeeToProduct(int productId);
 

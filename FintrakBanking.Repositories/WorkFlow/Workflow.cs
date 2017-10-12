@@ -50,6 +50,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int requestStaffId;
         private int neededNumberOfApproval;
         private bool externalInitialization = false;
+        private bool keepPending = false;
         private bool vote = false;
         private bool politicallyExposed = false;
 
@@ -73,19 +74,21 @@ namespace FintrakBanking.Repositories.WorkFlow
         public string Message { get { return message; } }
         public bool Saved { get { return saved; } }
         public int NewState { get { return newStateId; } }
+        public bool KeepPending { set { keepPending = value; } }
 
         private List<WorkflowSetup> workflowSetup;
-
 
         public bool LogActivity()
         {
             if (Validation() == false) { return false; }
             if (Authorization() == false) { return false; }
-            
+
             var request = context.tbl_Approval_Trail.Where(x =>
                                 x.CompanyId == this.companyId
                                 && x.OperationId == this.operationId
-                                && x.TargetId == this.targetId
+                                && x.TargetId == this.targetId &&
+                                x.ResponseStaffId == null &&
+                                (x.ApprovalStateId != (int)ApprovalState.Ended && x.ResponseDate == null)
                             ).OrderByDescending(x => x.ApprovalTrailId).FirstOrDefault();
 
             if (request != null)
@@ -94,7 +97,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestStaffId = request.RequestStaffId;
                 //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
                 this.fromLevelId = request.ToApprovalLevelId;
-            } else
+            }
+            else
             {
                 this.currentStateId = (int)ApprovalState.Initiation;
             }
@@ -112,7 +116,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             CheckApprovalLimits();
 
-            SetState(); 
+            SetState();
 
             this.applicationDate = GetApplicationDate();
 
@@ -141,7 +145,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             context.tbl_Approval_Trail.Add(trail);
-            this.saved =  context.SaveChanges() > 0;
+            this.saved = context.SaveChanges() > 0;
 
 
             if (this.saved)
@@ -401,7 +405,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (WithinAllLimits() == true)
                 {
                     this.EndProcess((int)ApprovalStatusEnum.Approved);
-                } else
+                }
+                else
                 {
                     this.statusId = (int)ApprovalStatusEnum.Authorised;
                 }
@@ -410,7 +415,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool WithinTenorLimit(WorkflowSetup setup)
         {
-            if (tenor == 0 && setup.Tenor == 0) { return true; }
+            if (tenor == 0 && setup.Tenor < 1) { return true; }
             if (tenor > 0 && setup.Tenor >= tenor) { return true; }
             return false;
         }
@@ -442,10 +447,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var setup = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
 
-            var level = setup.FirstOrDefault(x=>x.Staff.First().StaffId == staffId);
+            var level = setup.FirstOrDefault(x => x.Staff.First().StaffId == staffId);
 
-            return WithinTenorLimit(level) == true 
-                && WithinMaximumLimit(level) == true 
+            return WithinTenorLimit(level) == true
+                && WithinMaximumLimit(level) == true
                 && WithinInvestmentGradeLimit(level) == true
                 && WithinPoliticallyExposedLimit(level) == true;
         }
@@ -454,13 +459,13 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.nextLevelId == null && ActionIsApprovalDecision())
             {
-                this.statusId = (int)ApprovalStatusEnum.Approved;
-                this.newStateId = (int) ApprovalState.Ended;
+                this.EndProcess(this.statusId);
             }
-            else
+
+            if (this.keepPending == true)
             {
-                this.statusId = (int) ApprovalStatusEnum.Pending;
-                this.newStateId = (int) ApprovalState.Processing;
+                this.statusId = (int)ApprovalStatusEnum.Pending;
+                this.newStateId = (int)ApprovalState.Processing;
             }
         }
 
@@ -557,11 +562,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
     public class WorkflowSetup
     {
-        public IEnumerable<tbl_Approval_Level_Staff> Staff { get; set; }
-        public tbl_Approval_Level Level { get; set; }
-        public tbl_Approval_Group Group { get; set; }
-        public tbl_Approval_Group_Mapping Mapping { get; set; }
-
         public int GroupPosition { get; set; }
 
         public int LevelPosition { get; set; }
@@ -591,5 +591,13 @@ namespace FintrakBanking.Repositories.WorkFlow
         public decimal MaximumAmount { get; set; }
 
         public decimal? InvestmentGradeAmount { get; set; }
+
+        public tbl_Approval_Level Level { get; set; }
+
+        public tbl_Approval_Group Group { get; set; }
+
+        public tbl_Approval_Group_Mapping Mapping { get; set; }
+
+        public IEnumerable<tbl_Approval_Level_Staff> Staff { get; set; }
     }
 }

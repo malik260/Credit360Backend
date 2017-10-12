@@ -16,17 +16,30 @@
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-        <rsweb:ReportViewer ID="offerLetterReport" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="605px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="704px">
+        <rsweb:ReportViewer ID="offerLetterReport" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
             <LocalReport ReportPath="Reports\Credit\OfferLetter.rdlc">
                 <DataSources>
-                    <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="OfferLetterDetails" />
+                    <rsweb:ReportDataSource DataSourceId="odsOfferLetter" Name="OfferLetterDetails" />
+                    <rsweb:ReportDataSource DataSourceId="odsOfferLetterDetails" Name="OfferLetterLoanDetail" />
+                    <rsweb:ReportDataSource DataSourceId="odsOfferLetterConditionPrecedent" Name="OfferLetterConditionPrecident" />
                 </DataSources>
             </LocalReport>
         </rsweb:ReportViewer>
     
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.OfferLetterInfo">
+        <asp:ObjectDataSource ID="odsOfferLetter" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.OfferLetterInfo">
             <SelectParameters>
-                <asp:QueryStringParameter DefaultValue="1505916064" Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+            </SelectParameters>
+        </asp:ObjectDataSource>
+    
+        <asp:ObjectDataSource ID="odsOfferLetterDetails" runat="server" SelectMethod="GetLoanApplicationDetail" TypeName="FintrakBanking.ReportObjects.OfferLetterInfo">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+            </SelectParameters>
+        </asp:ObjectDataSource>
+        <asp:ObjectDataSource ID="odsOfferLetterConditionPrecedent" runat="server" SelectMethod="GetLoanApplicationConditionPrecident" TypeName="FintrakBanking.ReportObjects.OfferLetterInfo">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
             </SelectParameters>
         </asp:ObjectDataSource>
     

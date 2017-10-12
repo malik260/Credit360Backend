@@ -133,6 +133,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string pricipalFrequencyTypeName { get; set; }
         public string interestFrequencyTypeName { get; set; }
         public string comment { get; set; }
+        public string relationshipManagerEmail { get; set; }
+        public string relationshipOfficerEmail { get; set; }
 
         //............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
@@ -448,10 +450,21 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short dayCountConventionId { get; set; }
 
-        public decimal dailyAccuralAmount { get; set; }
+        public double dailyAccuralAmount { get; set; }
 
         public decimal availableBalance { get; set; }
 
         public int daysInAYear { get; set; }
+
+
+
+
+    }
+
+
+    public class SubAllocationViewModel 
+    {
+        public int fromLoanId  { get; set; }
+        public decimal fromAmount  { get; set; }
     }
 }
