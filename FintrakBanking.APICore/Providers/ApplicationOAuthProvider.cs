@@ -29,12 +29,15 @@ namespace FintrakBanking.APICore.Providers
             //var origin = context.OwinContext.Request.Headers["Origin"];
 
             var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
-            var userVM = new UserViewModel();
+            var userVM = new UserViewModel
+            {
+                password = context.Password.EncryptSha512(StaticHelpers.EncryptionKey),
+                username = context.UserName
+            };
 
-            userVM.password = StaticHelpers.EncryptSha512(context.Password, StaticHelpers.EncryptionKey);
-            userVM.username = context.UserName;
             var _authRepo = new AuthenticationRepository(repo);
-            var user = await _authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password);
+
+            var user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password)).Result;
             if (user == null)
             {
                 context.SetError("invalid_grant", "The user name or password is incorrect.");
@@ -42,7 +45,7 @@ namespace FintrakBanking.APICore.Providers
             }
 
             var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
-            var currUser = user.First();
+            var currUser = user;
 
             currIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
             currIdentity.AddClaim(new Claim("username", currUser.username));
@@ -63,8 +66,12 @@ namespace FintrakBanking.APICore.Providers
                 });
 
             var ticket = new AuthenticationTicket(currIdentity, props);
+
             context.Validated(ticket);
+
             context.Request.Context.Authentication.SignIn(currIdentity);
+
+            await Task.CompletedTask;
         }
 
         public override Task TokenEndpoint(OAuthTokenEndpointContext context)
