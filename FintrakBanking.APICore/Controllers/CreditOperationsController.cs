@@ -289,14 +289,22 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-                if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
+                if (model.principalFirstPaymentDate < model.proposedEffectiveDate)    
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Principal First Payment Date cannot be less than Effective date" });
+                }
+                if (model.interestFirstPaymentDate < model.proposedEffectiveDate)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Interest First Payment Date cannot be less than Effective date" });
+                }
+                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false,  message = "The requested operation already exist and going through approval" });
                 }
                     var response = repo.AddOperationReview(model);
                 if (response)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }

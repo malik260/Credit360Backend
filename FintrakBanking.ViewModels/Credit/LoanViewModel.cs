@@ -57,6 +57,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? dateApproved { get; set; }
         public short loanStatusId { get; set; }
         public short scheduleTypeId { get; set; }
+        public string scheduleTypeName { get; set; }
         public bool isDisbursed { get; set; }
         public string disbursedBy { get; set; }
         public string disburserComment { get; set; }
