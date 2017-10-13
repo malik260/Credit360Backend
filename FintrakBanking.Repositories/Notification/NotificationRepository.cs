@@ -71,9 +71,9 @@ namespace FintrakBanking.Repositories.Notification
                         select new NotificationViewModel
                         {
                             messageCount = d.Count(),
-                            message = "You have " + d.Count().ToString() + " " +
+                            message = d.Count().ToString() + " " +
                                       context.tbl_Operations.FirstOrDefault(c => c.OperationId == d
-                                                                                     .Select(f => f.OperationId).FirstOrDefault()).OperationName + " request awaiting your action",
+                                                                                     .Select(f => f.OperationId).FirstOrDefault()).OperationName + " request have been completed",
                             operationURL = d.Select(h => h.tbl_Operations.OperationURL).FirstOrDefault()
                         }).FirstOrDefault();
                     if (log != null)

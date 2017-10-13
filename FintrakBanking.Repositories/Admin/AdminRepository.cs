@@ -51,18 +51,18 @@ namespace FintrakBanking.Repositories.Admin
 
             entity.externalInitialization = false;
 
-            var response = workFlow.LogForApproval(entity);
+            workFlow.LogForApproval(entity);
 
-            if (response)
+            if (workFlow.NewState == (int)ApprovalState.Ended)
             {
-                return ApproveUser(entity.targetId, (int)ApprovalStatusEnum.Approved, entity);
+                return ApproveUser(entity.targetId, (short)workFlow.StatusId, entity);
             }
             return false;
         }
 
-        private bool ApproveUser(int userid, short approvalStatusId, UserInfo user)
+        private bool ApproveUser(int userId, short approvalStatusId, UserInfo user)
         {
-            var userRecord = context.tbl_Profile_User.Find(userid);
+            var userRecord = context.tbl_Profile_User.Find(userId);
 
             if (userRecord != null)
             {
