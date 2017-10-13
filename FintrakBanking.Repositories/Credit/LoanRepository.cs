@@ -354,6 +354,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
 
+            if (entity.loanScheduleInput.scheduleMethodId == (short) LoanScheduleTypeEnum.BulletPayment)
+            {
+                entity.loanScheduleInput.principalFrequency = null;
+                entity.loanScheduleInput.interestFrequency = null;
+            }
+
             var data = new tbl_Loan
             {
                 LoanApplicationDetailId = entity.loanApplicationDetailId,
@@ -457,7 +463,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     //...................Adding Audit...............................
                     var dataCount = context.SaveChanges();
-
+                    
                     var approvalModel = new ForwardViewModel
                     {
                         createdBy = entity.createdBy,
@@ -519,6 +525,11 @@ namespace FintrakBanking.Repositories.Credit
             inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
 
             financeTransaction.PostTransaction(inputTransactions);
+
+            //...................Updating Loan Application Status....................
+            var loanRecord = context.tbl_Loan.Find(entity.loanId);
+            if(loanRecord != null) loanRecord.LoanStatusId = 1;
+            //=======================================================================
         }
 
         //[OperationBehavior(TransactionScopeRequired = true)]
@@ -700,15 +711,15 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = ln.tbl_Loan_Application_Detail.tbl_Loan_Application.ApplicationReferenceNumber,
 
                             //tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
-                            principalFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
-                            pricipalFrequencyTypeName = ln.tbl_Frequency_Type.Description,
-                            interestFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
-                            interestFrequencyTypeName = ln.tbl_Frequency_Type.Description,
+                            //principalFrequencyTypeId = ln.PrincipalFrequencyTypeId ?? 0,
+                            pricipalFrequencyTypeName = ln.tbl_Frequency_Type.Description ?? null,
+                           // interestFrequencyTypeId = ln.PrincipalFrequencyTypeId ?? 0,
+                            interestFrequencyTypeName = ln.tbl_Frequency_Type.Description ?? null,
 
                             principalNumberOfInstallment = ln.PrincipalNumberOfInstallment,
                             interestNumberOfInstallment = ln.InterestNumberOfInstallment,
-                            relationshipOfficerId = ln.RelationshipOfficerId,
-                            relationshipManagerId = ln.RelationshipManagerId,
+                            //relationshipOfficerId = ln.RelationshipOfficerId,
+                            //relationshipManagerId = ln.RelationshipManagerId,
                             misCode = ln.MISCode,
                             teamMiscode = ln.TeamMISCode,
                             interestRate = ln.InterestRate,
@@ -981,7 +992,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool GoForApproval(ApprovalViewModel entity)
         {
             
-            entity.operationId = (int)OperationsEnum.TermLoanBooking;
+           // entity.operationId = (int)OperationsEnum.TermLoanBooking;
 
             entity.externalInitialization = false;
 
@@ -989,10 +1000,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-                    workflow.LogForApproval(entity);
-                    if (workflow.Saved)
+                    
+                    if (workflow.LogForApproval(entity))
                     {
-
                         var loanBookingCompleted = ApproveLoanBooking(entity.targetId, (short)workflow.StatusId, entity);
 
                         try {
@@ -1008,7 +1018,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        return false;
+                        throw new Exception("Approval Failed. ") ;
                     }
                 }
                 catch (Exception ex)
@@ -1045,6 +1055,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 integraFeeAmount = integraFeeAmount + (double)record.FeeAmount;
             }
+            if(loanScheduleData.ScheduleTypeId == (short)LoanScheduleTypeEnum.BulletPayment)
+            {
+                loanScheduleData.PrincipalFrequencyTypeId = null;
+                loanScheduleData.InterestFrequencyTypeId = null;
+                
+            }
             var scheduleModel = new LoanPaymentScheduleInputViewModel
             {
                 scheduleMethodId = loanScheduleData.ScheduleTypeId,
@@ -1052,8 +1068,8 @@ namespace FintrakBanking.Repositories.Credit
                 principalAmount = (double)loanScheduleData.PrincipalAmount,
                 effectiveDate = applicationDate,
                 interestRate = loanScheduleData.InterestRate,
-                principalFrequency = (short)loanScheduleData.PrincipalFrequencyTypeId,
-                interestFrequency = (short)loanScheduleData.InterestFrequencyTypeId,
+                principalFrequency = loanScheduleData.PrincipalFrequencyTypeId,
+                interestFrequency = loanScheduleData.InterestFrequencyTypeId,
                 tenor = (loanScheduleData.MaturityDate - loanScheduleData.EffectiveDate).Days,
                 principalFirstpaymentDate = (DateTime)loanScheduleData.FirstPrincipalPaymentDate,
                 interestFirstpaymentDate = (DateTime)loanScheduleData.FirstInterestPaymentDate,
@@ -1109,6 +1125,12 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var loanRecord = context.tbl_Loan.Find(loanId);
+            if(loanRecord.ScheduleTypeId == (short)LoanScheduleTypeEnum.BulletPayment)
+            {
+                loanRecord.PrincipalFrequencyTypeId = null;
+                loanRecord.InterestFrequencyTypeId = null;
+            }
+        
             var loanModel = new LoanViewModel
             {
                 loanId = loanRecord.TermLoanId,
@@ -1122,8 +1144,8 @@ namespace FintrakBanking.Repositories.Credit
                 loanReferenceNumber = loanRecord.LoanReferenceNumber,
                 applicationReferenceNumber = loanRecord.tbl_Loan_Application_Detail.tbl_Loan_Application.ApplicationReferenceNumber,
 
-                principalFrequencyTypeId = (short)loanRecord.PrincipalFrequencyTypeId,
-                interestFrequencyTypeId = (short)loanRecord.InterestFrequencyTypeId,
+                principalFrequencyTypeId = loanRecord.PrincipalFrequencyTypeId,
+                interestFrequencyTypeId = loanRecord.InterestFrequencyTypeId,
                 principalNumberOfInstallment = loanRecord.PrincipalNumberOfInstallment,
                 interestNumberOfInstallment = loanRecord.InterestNumberOfInstallment,
                 
@@ -2252,7 +2274,6 @@ namespace FintrakBanking.Repositories.Credit
                                      isCurrentAccount = k.IsCurrentAccount,
                                      tenor = (int)k.Tenor,
                                  })).ToList(),
-
                             loanInformation = m.LoanInformation,
                             companyId = m.CompanyId,
                             branchId = m.BranchId,
@@ -2281,18 +2302,18 @@ namespace FintrakBanking.Repositories.Credit
                             misCode = m.MISCode,
                             teamMisCode = m.TeamMISCode,
 
-                            interestRate = m.InterestRate,
+                            interestRate = d.ApprovedInterestRate,
                             isRelatedParty = m.IsRelatedParty,
                             isPoliticallyExposed = m.IsPoliticallyExposed,
                             submittedForAppraisal = m.SubmittedForAppraisal,
                             approvedAmount = d.ApprovedAmount,
                             groupApprovedAmount = m.ApprovedAmount,
 
-                            customerAvailableAmount = d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.TermLoan
-                             || d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.TermLoan
+                            customerAvailableAmount = (d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.TermLoan
+                                                      || d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
                              ? (d.ApprovedAmount - d.tbl_Loan.Where(tl => tl.LoanApplicationDetailId == d.LoanApplicationDetailId).Sum(s => s.PrincipalAmount)) :
                             (
-                                d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.RevolvingLoan
+                                (d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
                                         ? (d.ApprovedAmount - d.tbl_Loan_Revolving
                                             .Where(tl => tl.LoanApplicationDetailId == d.LoanApplicationDetailId).Sum(s => s.OverdraftLimit)) :
                                 (d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.ContingentLiability
@@ -2308,20 +2329,19 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = m.LoanPreliminaryEvaluationId,
                             exchangeRate = d.ExchangeRate,
                         }).ToList();
-            int position = 0; int dataCount = data.Count()-1;
+
+            // data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+           
             foreach (var item in data)
             {
-                if (!item.customerAvailableAmount.HasValue)
-                    item.customerAvailableAmount = item.approvedAmount;
-
-                //if (item.customerAvailableAmount == 0)
-                //    data.RemoveAt(position);
-
-                position++;
-
-                if (dataCount == position || position > dataCount)
-                    break;
+                if(item.customerAvailableAmount != 0)
+                {
+                    if (!item.customerAvailableAmount.HasValue)
+                        item.customerAvailableAmount = item.approvedAmount;
+                }
+                
             }
+
 
             return data.ToList();
         }
