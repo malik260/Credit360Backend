@@ -21,7 +21,9 @@ namespace FintrakBanking.ReportObjects
                         join b in context.tbl_Loan_Schedule_Periodic on a.TermLoanId equals b.LoanId
                         where a.CompanyId == companyId && a.IsDisbursed == true &&( a.DisburseDate >= startDate && a.DisburseDate <= endDate)
                         select new LoanInformation()
-                        { customerId = a.CustomerId, tearmLoanId = a.TermLoanId ,
+                        { customerId = a.CustomerId,
+                        
+                            tearmLoanId = a.TermLoanId ,
                             branchName = a.tbl_Branch.BranchName,
                             branchCode = a.tbl_Branch.BranchCode,
                             customerCode = a.tbl_Customer.CustomerCode,
@@ -34,6 +36,7 @@ namespace FintrakBanking.ReportObjects
                             frequancy = context.tbl_Loan_Schedule_Periodic .Where(c=> c.LoanId == a.TermLoanId ).Count()-1,
                             frequencyType = a.tbl_Frequency_Type.Mode,
                             companyName = a.tbl_Company.Name,
+                            companylogo = a.tbl_Company.LogoPath,
                             effectiveDate = a.EffectiveDate,
                             interestRate = a.InterestRate,
                             maturityDate = a.MaturityDate,
@@ -78,6 +81,7 @@ namespace FintrakBanking.ReportObjects
                             frequancy = context.tbl_Loan_Schedule_Periodic.Where(c => c.LoanId == a.TermLoanId).Count() - 1,
                             frequencyType = a.tbl_Frequency_Type.Mode,
                             companyName = company.Name,
+                            companylogo = company.LogoPath,
                             effectiveDate = a.EffectiveDate,
                             interestRate = a.InterestRate,
                             maturityDate = a.MaturityDate,

@@ -354,13 +354,14 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Approval_Status>()
+ 
                 .HasMany(e => e.tbl_Loan_Application_Detail)
                 .WithRequired(e => e.tbl_Approval_Status)
                 .HasForeignKey(e => e.StatusId)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Approval_Status>()
-                .HasMany(e => e.tbl_Loan_Collateral_Mapping)
+   .HasMany(e => e.tbl_Loan_Collateral_Mapping)
                 .WithOptional(e => e.tbl_Approval_Status)
                 .HasForeignKey(e => e.ReleaseApprovalStatusId);
 
