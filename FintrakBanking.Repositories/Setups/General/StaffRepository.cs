@@ -884,5 +884,39 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return staff;
         }
+
+        public IQueryable<simpleStaffModel> SearchStaffbyDepartmentId(string searchQuery, int companyId, int departmentId)
+        {
+            IQueryable<simpleStaffModel> staff = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                staff =
+                    context.tbl_Staff.Where(x => x.Deleted == false)// && x.c == companyId)
+                    .Where(x => x.FirstName.ToLower().Contains(searchQuery)
+                    || x.MiddleName.ToLower().Contains(searchQuery)
+                    || x.LastName.ToLower().Contains(searchQuery)
+                    || x.StaffCode.Contains(searchQuery)
+                    && x.DepartmentId == departmentId)
+                    .Select(o => new simpleStaffModel
+                    {
+                        staffId = o.StaffId,
+                        firstName = o.FirstName,
+                        middleName = o.MiddleName,
+                        lastName = o.LastName,
+                        staffCode = o.StaffCode,
+                    })
+                    .Take(12)
+                ;
+            }
+
+            return staff;
+        }
+
     }
 }

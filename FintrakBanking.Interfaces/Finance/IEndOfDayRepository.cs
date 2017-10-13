@@ -10,6 +10,8 @@ namespace FintrakBanking.Interfaces.Finance
     public interface IEndOfDayRepository
     {
         bool RunEndOfDay(EndOfDayViewModel model);
-        
+        IEnumerable<FinanceEndofdayViewModel> GetFinanceEndofday(int companyId);
+
+
     }
 }

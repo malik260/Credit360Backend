@@ -9,8 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace FintrakBanking.Repositories.Finance
 {
@@ -21,6 +20,17 @@ namespace FintrakBanking.Repositories.Finance
         private IAuditTrailRepository auditTrail;
         private ILoanOperationsRepository loanOperation;
         private IPublicHolidayRepository publicHoliday;
+
+        public EndOfDayRepository(FinTrakBankingContext _context, IGeneralSetupRepository _generalSetup,
+                                    ILoanOperationsRepository _loanOperation, IPublicHolidayRepository _publicHoliday,
+                                    IAuditTrailRepository _auditTrail)
+        {
+            this.context = _context;
+            this.generalSetup=_generalSetup;
+            this.publicHoliday = _publicHoliday;
+            this.auditTrail = _auditTrail;
+            this.loanOperation = _loanOperation;
+        }
 
 
         [OperationBehavior(TransactionScopeRequired = true)]
@@ -68,6 +78,21 @@ namespace FintrakBanking.Repositories.Finance
             return true;            
         }
 
+
+        public IEnumerable<FinanceEndofdayViewModel> GetFinanceEndofday(int companyId)
+        {
+            var financeEod = (from e in context.tbl_Finance_EndOfDay
+                              where e.CompanyId == companyId // e.EndDateTime == null && e.StartDateTime == null
+                              select new FinanceEndofdayViewModel()
+                              {
+                                  endOfDayId = e.EndOfDayId,
+                                  date = e.Date,
+                                  startDateTime = e.StartDateTime,
+                                  endDateTime = e.EndDateTime,
+                                  createdBy = e.CreatedBy,
+                              });
+            return financeEod;
+        }
 
         [OperationBehavior(TransactionScopeRequired = true)]
         public void ProcessEndOfDay(DateTime date, int companyId, int staffId)
