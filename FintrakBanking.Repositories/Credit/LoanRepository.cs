@@ -2252,7 +2252,6 @@ namespace FintrakBanking.Repositories.Credit
                                      isCurrentAccount = k.IsCurrentAccount,
                                      tenor = (int)k.Tenor,
                                  })).ToList(),
-
                             loanInformation = m.LoanInformation,
                             companyId = m.CompanyId,
                             branchId = m.BranchId,
@@ -2281,18 +2280,18 @@ namespace FintrakBanking.Repositories.Credit
                             misCode = m.MISCode,
                             teamMisCode = m.TeamMISCode,
 
-                            interestRate = m.InterestRate,
+                            interestRate = d.ApprovedInterestRate,
                             isRelatedParty = m.IsRelatedParty,
                             isPoliticallyExposed = m.IsPoliticallyExposed,
                             submittedForAppraisal = m.SubmittedForAppraisal,
                             approvedAmount = d.ApprovedAmount,
                             groupApprovedAmount = m.ApprovedAmount,
 
-                            customerAvailableAmount = d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.TermLoan
-                             || d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.TermLoan
+                            customerAvailableAmount = (d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.TermLoan
+                                                      || d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
                              ? (d.ApprovedAmount - d.tbl_Loan.Where(tl => tl.LoanApplicationDetailId == d.LoanApplicationDetailId).Sum(s => s.PrincipalAmount)) :
                             (
-                                d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.RevolvingLoan
+                                (d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
                                         ? (d.ApprovedAmount - d.tbl_Loan_Revolving
                                             .Where(tl => tl.LoanApplicationDetailId == d.LoanApplicationDetailId).Sum(s => s.OverdraftLimit)) :
                                 (d.tbl_Product.ProductTypeId == (short)LoanProductTypeEnum.ContingentLiability
@@ -2308,19 +2307,17 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = m.LoanPreliminaryEvaluationId,
                             exchangeRate = d.ExchangeRate,
                         }).ToList();
-            int position = 0; int dataCount = data.Count()-1;
+
+            // data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+           
             foreach (var item in data)
             {
-                if (!item.customerAvailableAmount.HasValue)
-                    item.customerAvailableAmount = item.approvedAmount;
-
-                //if (item.customerAvailableAmount == 0)
-                //    data.RemoveAt(position);
-
-                position++;
-
-                if (dataCount == position || position > dataCount)
-                    break;
+                if(item.customerAvailableAmount != 0)
+                {
+                    if (!item.customerAvailableAmount.HasValue)
+                        item.customerAvailableAmount = item.approvedAmount;
+                }
+                
             }
 
             return data.ToList();
