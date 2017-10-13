@@ -3849,6 +3849,7 @@ namespace FintrakBanking.Repositories.Credit
                         join tt in context.tbl_Operations on op.OperationTypeId equals tt.OperationId
                         join atrail in context.tbl_Approval_Trail on op.LoanId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
+                        && atrail.OperationId == op.OperationTypeId
                         && atrail.ToApprovalLevelId == staffApprovalLevelId
                         && atrail.ResponseStaffId == null
                         orderby op.LoanId descending
@@ -3858,16 +3859,16 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = ln.CustomerId,
                             productId = ln.ProductId,
                             casaAccountId = ln.CasaAccountId,
-                            //  loanApplicationDetailId = (int)ln.LoanApplicationDetailId,
+                          // loanApplicationDetailId = (int)ln.LoanApplicationDetailId,
 
                             branchId = ln.BranchId,
                             loanReferenceNumber = ln.LoanReferenceNumber,
-                            //applicationReferenceNumber = ln.tbl_Loan_Application_Detail.tbl_Loan_Application.ApplicationReferenceNumber,
+                            applicationReferenceNumber = ln.tbl_Loan_Application_Detail.tbl_Loan_Application.ApplicationReferenceNumber,
 
                             ////tenor = (ln.MaturityDate - ln.EffectiveDate).Days,
-                            principalFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
+                            principalFrequencyTypeId = ln.PrincipalFrequencyTypeId != null ? (short)ln.PrincipalFrequencyTypeId : (short)0,
                             pricipalFrequencyTypeName = ln.tbl_Frequency_Type.Description,
-                            interestFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
+                            interestFrequencyTypeId = ln.InterestFrequencyTypeId != null ? (short)ln.InterestFrequencyTypeId : (short)0,
                             interestFrequencyTypeName = ln.tbl_Frequency_Type.Description,
 
                             principalNumberOfInstallment = ln.PrincipalNumberOfInstallment,
@@ -3961,9 +3962,9 @@ namespace FintrakBanking.Repositories.Credit
                             branchId = ln.BranchId,
                             loanReferenceNumber = ln.LoanReferenceNumber,
                             //applicationReferenceNumber = ln.tbl_Loan_Application_Detail.tbl_Loan_Application.ApplicationReferenceNumber,
-                            principalFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
+                            principalFrequencyTypeId = ln.PrincipalFrequencyTypeId != null ? (short)ln.PrincipalFrequencyTypeId : (short)0,
                             pricipalFrequencyTypeName = ln.tbl_Frequency_Type.Description,
-                            interestFrequencyTypeId = ln.PrincipalFrequencyTypeId.Value,
+                            interestFrequencyTypeId = ln.InterestFrequencyTypeId != null ? (short)ln.InterestFrequencyTypeId : (short)0,
                             interestFrequencyTypeName = ln.tbl_Frequency_Type.Description,
 
                             principalNumberOfInstallment = ln.PrincipalNumberOfInstallment,
@@ -4067,8 +4068,6 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)OperationsEnum.ContractualInterestRateChange;
-
             entity.externalInitialization = false;
 
             workFlow.LogForApproval(entity);
@@ -4083,7 +4082,10 @@ namespace FintrakBanking.Repositories.Credit
         }
         private bool ApproveLoanReview(int loanId, ApprovalViewModel user)
         {
-            var reviewRecord = (from s in context.tbl_Loan_Review_Operation where s.LoanId == loanId select s).FirstOrDefault();
+            var reviewRecord = (from s in context.tbl_Loan_Review_Operation
+                                where s.LoanId == loanId && s.OperationTypeId == user.operationId 
+                               && s.ApprovalStatusId != (int)ApprovalStatusEnum.Approved
+                                && s.OperationCompleted == false select s).FirstOrDefault();
 
             if (workFlow.NewState != (int)ApprovalState.Ended)
                 reviewRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
