@@ -1147,6 +1147,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columncustomerCode;
             
+            private global::System.Data.DataColumn columncompanyLogo;
+            
             private global::System.Data.DataColumn columncustomerName;
             
             private global::System.Data.DataColumn columnbranchName;
@@ -1186,8 +1188,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             private global::System.Data.DataColumn columnfrequancy;
             
             private global::System.Data.DataColumn columnfrequencyType;
-            
-            private global::System.Data.DataColumn columncompanylogo;
             
             private global::System.Data.DataColumn columnclosePrincipalAmount;
             
@@ -1261,6 +1261,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public global::System.Data.DataColumn customerCodeColumn {
                 get {
                     return this.columncustomerCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn companyLogoColumn {
+                get {
+                    return this.columncompanyLogo;
                 }
             }
             
@@ -1426,14 +1434,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn companylogoColumn {
-                get {
-                    return this.columncompanylogo;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn closePrincipalAmountColumn {
                 get {
                     return this.columnclosePrincipalAmount;
@@ -1483,6 +1483,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string tearmLoanId, 
                         string companyName, 
                         string customerCode, 
+                        string companyLogo, 
                         string customerName, 
                         string branchName, 
                         string loanRefrenceNumber, 
@@ -1503,7 +1504,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string accountNumber, 
                         string frequancy, 
                         string frequencyType, 
-                        string companylogo, 
                         string closePrincipalAmount) {
                 loanInformationRow rowloanInformationRow = ((loanInformationRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
@@ -1512,6 +1512,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         tearmLoanId,
                         companyName,
                         customerCode,
+                        companyLogo,
                         customerName,
                         branchName,
                         loanRefrenceNumber,
@@ -1532,7 +1533,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         accountNumber,
                         frequancy,
                         frequencyType,
-                        companylogo,
                         closePrincipalAmount};
                 rowloanInformationRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowloanInformationRow);
@@ -1561,6 +1561,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columntearmLoanId = base.Columns["tearmLoanId"];
                 this.columncompanyName = base.Columns["companyName"];
                 this.columncustomerCode = base.Columns["customerCode"];
+                this.columncompanyLogo = base.Columns["companyLogo"];
                 this.columncustomerName = base.Columns["customerName"];
                 this.columnbranchName = base.Columns["branchName"];
                 this.columnloanRefrenceNumber = base.Columns["loanRefrenceNumber"];
@@ -1581,7 +1582,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnaccountNumber = base.Columns["accountNumber"];
                 this.columnfrequancy = base.Columns["frequancy"];
                 this.columnfrequencyType = base.Columns["frequencyType"];
-                this.columncompanylogo = base.Columns["companylogo"];
                 this.columnclosePrincipalAmount = base.Columns["closePrincipalAmount"];
             }
             
@@ -1598,6 +1598,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columncompanyName);
                 this.columncustomerCode = new global::System.Data.DataColumn("customerCode", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncustomerCode);
+                this.columncompanyLogo = new global::System.Data.DataColumn("companyLogo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncompanyLogo);
                 this.columncustomerName = new global::System.Data.DataColumn("customerName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncustomerName);
                 this.columnbranchName = new global::System.Data.DataColumn("branchName", typeof(string), null, global::System.Data.MappingType.Element);
@@ -1638,8 +1640,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnfrequancy);
                 this.columnfrequencyType = new global::System.Data.DataColumn("frequencyType", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnfrequencyType);
-                this.columncompanylogo = new global::System.Data.DataColumn("companylogo", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncompanylogo);
                 this.columnclosePrincipalAmount = new global::System.Data.DataColumn("closePrincipalAmount", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnclosePrincipalAmount);
                 this.columnproductName.Caption = "firstName";
@@ -1647,6 +1647,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columntearmLoanId.Caption = "firstName";
                 this.columncompanyName.Caption = "firstName";
                 this.columncustomerCode.Caption = "firstName";
+                this.columncompanyLogo.Caption = "branchCode";
                 this.columncustomerName.Caption = "firstName";
                 this.columnbranchName.Caption = "firstName";
                 this.columnloanRefrenceNumber.Caption = "firstName";
@@ -1663,7 +1664,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnaccountNumber.Caption = "closePrincipalAmount";
                 this.columnfrequancy.Caption = "closePrincipalAmount";
                 this.columnfrequencyType.Caption = "closePrincipalAmount";
-                this.columncompanylogo.Caption = "branchCode";
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2078,6 +2078,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnsla;
             
+            private global::System.Data.DataColumn columncompanyLogo;
+            
             private global::System.Data.DataColumn columnresponseDate;
             
             private global::System.Data.DataColumn columnresponseStaffName;
@@ -2099,8 +2101,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             private global::System.Data.DataColumn columnsystemArrivalDate;
             
             private global::System.Data.DataColumn columnsystemResponseDate;
-            
-            private global::System.Data.DataColumn columncompanylogo;
             
             private global::System.Data.DataColumn columntimespan;
             
@@ -2213,6 +2213,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn companyLogoColumn {
+                get {
+                    return this.columncompanyLogo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn responseDateColumn {
                 get {
                     return this.columnresponseDate;
@@ -2301,14 +2309,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn companylogoColumn {
-                get {
-                    return this.columncompanylogo;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn timespanColumn {
                 get {
                     return this.columntimespan;
@@ -2370,6 +2370,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string approvalStatus, 
                         string companyName, 
                         string sla, 
+                        string companyLogo, 
                         string responseDate, 
                         string responseStaffName, 
                         string responseStaffCode, 
@@ -2381,7 +2382,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string approvalStatusId, 
                         string systemArrivalDate, 
                         string systemResponseDate, 
-                        string companylogo, 
                         string timespan, 
                         string reportDate) {
                 GroupWorkFlowSetupRow rowGroupWorkFlowSetupRow = ((GroupWorkFlowSetupRow)(this.NewRow()));
@@ -2395,6 +2395,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         approvalStatus,
                         companyName,
                         sla,
+                        companyLogo,
                         responseDate,
                         responseStaffName,
                         responseStaffCode,
@@ -2406,7 +2407,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         approvalStatusId,
                         systemArrivalDate,
                         systemResponseDate,
-                        companylogo,
                         timespan,
                         reportDate};
                 rowGroupWorkFlowSetupRow.ItemArray = columnValuesArray;
@@ -2440,6 +2440,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnapprovalStatus = base.Columns["approvalStatus"];
                 this.columncompanyName = base.Columns["companyName"];
                 this.columnsla = base.Columns["sla"];
+                this.columncompanyLogo = base.Columns["companyLogo"];
                 this.columnresponseDate = base.Columns["responseDate"];
                 this.columnresponseStaffName = base.Columns["responseStaffName"];
                 this.columnresponseStaffCode = base.Columns["responseStaffCode"];
@@ -2451,7 +2452,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnapprovalStatusId = base.Columns["approvalStatusId"];
                 this.columnsystemArrivalDate = base.Columns["systemArrivalDate"];
                 this.columnsystemResponseDate = base.Columns["systemResponseDate"];
-                this.columncompanylogo = base.Columns["companylogo"];
                 this.columntimespan = base.Columns["timespan"];
                 this.columnreportDate = base.Columns["reportDate"];
             }
@@ -2477,6 +2477,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columncompanyName);
                 this.columnsla = new global::System.Data.DataColumn("sla", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnsla);
+                this.columncompanyLogo = new global::System.Data.DataColumn("companyLogo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncompanyLogo);
                 this.columnresponseDate = new global::System.Data.DataColumn("responseDate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnresponseDate);
                 this.columnresponseStaffName = new global::System.Data.DataColumn("responseStaffName", typeof(string), null, global::System.Data.MappingType.Element);
@@ -2499,8 +2501,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnsystemArrivalDate);
                 this.columnsystemResponseDate = new global::System.Data.DataColumn("systemResponseDate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnsystemResponseDate);
-                this.columncompanylogo = new global::System.Data.DataColumn("companylogo", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncompanylogo);
                 this.columntimespan = new global::System.Data.DataColumn("timespan", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columntimespan);
                 this.columnreportDate = new global::System.Data.DataColumn("reportDate", typeof(string), null, global::System.Data.MappingType.Element);
@@ -2514,6 +2514,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnapprovalStatus.Caption = "reportDate ";
                 this.columncompanyName.Caption = "reportDate ";
                 this.columnsla.Caption = "reportDate ";
+                this.columncompanyLogo.Caption = "branchCode";
                 this.columnresponseDate.Caption = "reportDate ";
                 this.columnresponseStaffName.Caption = "reportDate ";
                 this.columnresponseStaffCode.Caption = "reportDate ";
@@ -2525,7 +2526,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnapprovalStatusId.Caption = "reportDate ";
                 this.columnsystemArrivalDate.Caption = "reportDate ";
                 this.columnsystemResponseDate.Caption = "reportDate ";
-                this.columncompanylogo.Caption = "branchCode";
                 this.columntimespan.Caption = "reportDate ";
             }
             
@@ -2670,11 +2670,11 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnallowOverride;
             
+            private global::System.Data.DataColumn columncompanyLogo;
+            
             private global::System.Data.DataColumn columnUsage;
             
             private global::System.Data.DataColumn columncompanyName;
-            
-            private global::System.Data.DataColumn columncompanyLogo;
             
             private global::System.Data.DataColumn columnsectorId;
             
@@ -2753,6 +2753,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn companyLogoColumn {
+                get {
+                    return this.columncompanyLogo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn UsageColumn {
                 get {
                     return this.columnUsage;
@@ -2764,14 +2772,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public global::System.Data.DataColumn companyNameColumn {
                 get {
                     return this.columncompanyName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn companyLogoColumn {
-                get {
-                    return this.columncompanyLogo;
                 }
             }
             
@@ -2820,7 +2820,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public SectorialLimitsRow AddSectorialLimitsRow(string Name, string Code, string Limit, string Balance, string allowOverride, string Usage, string companyName, string companyLogo, string sectorId) {
+            public SectorialLimitsRow AddSectorialLimitsRow(string Name, string Code, string Limit, string Balance, string allowOverride, string companyLogo, string Usage, string companyName, string sectorId) {
                 SectorialLimitsRow rowSectorialLimitsRow = ((SectorialLimitsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         Name,
@@ -2828,9 +2828,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         Limit,
                         Balance,
                         allowOverride,
+                        companyLogo,
                         Usage,
                         companyName,
-                        companyLogo,
                         sectorId};
                 rowSectorialLimitsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowSectorialLimitsRow);
@@ -2859,9 +2859,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnLimit = base.Columns["Limit"];
                 this.columnBalance = base.Columns["Balance"];
                 this.columnallowOverride = base.Columns["allowOverride"];
+                this.columncompanyLogo = base.Columns["companyLogo"];
                 this.columnUsage = base.Columns["Usage"];
                 this.columncompanyName = base.Columns["companyName"];
-                this.columncompanyLogo = base.Columns["companyLogo"];
                 this.columnsectorId = base.Columns["sectorId"];
             }
             
@@ -2878,12 +2878,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnBalance);
                 this.columnallowOverride = new global::System.Data.DataColumn("allowOverride", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnallowOverride);
+                this.columncompanyLogo = new global::System.Data.DataColumn("companyLogo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncompanyLogo);
                 this.columnUsage = new global::System.Data.DataColumn("Usage", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnUsage);
                 this.columncompanyName = new global::System.Data.DataColumn("companyName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncompanyName);
-                this.columncompanyLogo = new global::System.Data.DataColumn("companyLogo", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncompanyLogo);
                 this.columnsectorId = new global::System.Data.DataColumn("sectorId", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnsectorId);
                 this.columnName.Caption = "sectorId";
@@ -2891,9 +2891,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnLimit.Caption = "sectorId";
                 this.columnBalance.Caption = "sectorId";
                 this.columnallowOverride.Caption = "sectorId";
+                this.columncompanyLogo.Caption = "branchCode";
                 this.columnUsage.Caption = "sectorId";
                 this.columncompanyName.Caption = "sectorId";
-                this.columncompanyLogo.Caption = "branchCode";
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3560,7 +3560,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn currencyNameColumn {
                 get {
                     return this.columncurrencyName;
@@ -3643,8 +3642,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public OfferLetterDetailRow AddOfferLetterDetailRow(int loanApplicationId, string productName, string customerName) {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public OfferLetterDetailRow AddOfferLetterDetailRow(int loanApplicationId, string productName, string customerName, string currencyName, string loanAmount, string exchangeRate, string baseCurrencyLoanAmount, string tenor, string interestRate) {
                 OfferLetterDetailRow rowOfferLetterDetailRow = ((OfferLetterDetailRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         loanApplicationId,
@@ -4448,6 +4447,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string companyLogo {
+                get {
+                    try {
+                        return ((string)(this[this.tableloanInformation.companyLogoColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'companyLogo\' in table \'loanInformation\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableloanInformation.companyLogoColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string customerName {
                 get {
                     try {
@@ -4771,22 +4786,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string companylogo {
-                get {
-                    try {
-                        return ((string)(this[this.tableloanInformation.companylogoColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'companylogo\' in table \'loanInformation\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableloanInformation.companylogoColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string closePrincipalAmount {
                 get {
                     try {
@@ -4860,6 +4859,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetcustomerCodeNull() {
                 this[this.tableloanInformation.customerCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscompanyLogoNull() {
+                return this.IsNull(this.tableloanInformation.companyLogoColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcompanyLogoNull() {
+                this[this.tableloanInformation.companyLogoColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5100,18 +5111,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetfrequencyTypeNull() {
                 this[this.tableloanInformation.frequencyTypeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IscompanylogoNull() {
-                return this.IsNull(this.tableloanInformation.companylogoColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetcompanylogoNull() {
-                this[this.tableloanInformation.companylogoColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5359,6 +5358,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string companyLogo {
+                get {
+                    try {
+                        return ((string)(this[this.tableGroupWorkFlowSetup.companyLogoColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'companyLogo\' in table \'GroupWorkFlowSetup\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableGroupWorkFlowSetup.companyLogoColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string responseDate {
                 get {
                     try {
@@ -5542,22 +5557,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string companylogo {
-                get {
-                    try {
-                        return ((string)(this[this.tableGroupWorkFlowSetup.companylogoColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'companylogo\' in table \'GroupWorkFlowSetup\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableGroupWorkFlowSetup.companylogoColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string timespan {
                 get {
                     try {
@@ -5698,6 +5697,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscompanyLogoNull() {
+                return this.IsNull(this.tableGroupWorkFlowSetup.companyLogoColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcompanyLogoNull() {
+                this[this.tableGroupWorkFlowSetup.companyLogoColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsresponseDateNull() {
                 return this.IsNull(this.tableGroupWorkFlowSetup.responseDateColumn);
             }
@@ -5830,18 +5841,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IscompanylogoNull() {
-                return this.IsNull(this.tableGroupWorkFlowSetup.companylogoColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetcompanylogoNull() {
-                this[this.tableGroupWorkFlowSetup.companylogoColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IstimespanNull() {
                 return this.IsNull(this.tableGroupWorkFlowSetup.timespanColumn);
             }
@@ -5961,6 +5960,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string companyLogo {
+                get {
+                    try {
+                        return ((string)(this[this.tableSectorialLimits.companyLogoColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'companyLogo\' in table \'SectorialLimits\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableSectorialLimits.companyLogoColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string Usage {
                 get {
                     try {
@@ -5988,22 +6003,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 }
                 set {
                     this[this.tableSectorialLimits.companyNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string companyLogo {
-                get {
-                    try {
-                        return ((string)(this[this.tableSectorialLimits.companyLogoColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'companyLogo\' in table \'SectorialLimits\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableSectorialLimits.companyLogoColumn] = value;
                 }
             }
             
@@ -6085,6 +6084,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscompanyLogoNull() {
+                return this.IsNull(this.tableSectorialLimits.companyLogoColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcompanyLogoNull() {
+                this[this.tableSectorialLimits.companyLogoColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsUsageNull() {
                 return this.IsNull(this.tableSectorialLimits.UsageColumn);
             }
@@ -6105,18 +6116,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetcompanyNameNull() {
                 this[this.tableSectorialLimits.companyNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IscompanyLogoNull() {
-                return this.IsNull(this.tableSectorialLimits.companyLogoColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetcompanyLogoNull() {
-                this[this.tableSectorialLimits.companyLogoColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
