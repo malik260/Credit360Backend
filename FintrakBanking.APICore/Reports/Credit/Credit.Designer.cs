@@ -3489,6 +3489,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columncustomerName;
             
+            private global::System.Data.DataColumn columncurrencyName;
+            
+            private global::System.Data.DataColumn columnloanAmount;
+            
+            private global::System.Data.DataColumn columnexchangeRate;
+            
+            private global::System.Data.DataColumn columnbaseCurrencyLoanAmount;
+            
+            private global::System.Data.DataColumn columntenor;
+            
+            private global::System.Data.DataColumn columninterestRate;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public OfferLetterDetailDataTable() {
@@ -3548,6 +3560,55 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn currencyNameColumn {
+                get {
+                    return this.columncurrencyName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn loanAmountColumn {
+                get {
+                    return this.columnloanAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn exchangeRateColumn {
+                get {
+                    return this.columnexchangeRate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn baseCurrencyLoanAmountColumn {
+                get {
+                    return this.columnbaseCurrencyLoanAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn tenorColumn {
+                get {
+                    return this.columntenor;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn interestRateColumn {
+                get {
+                    return this.columninterestRate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -3582,13 +3643,19 @@ namespace FintrakBanking.APICore.Reports.Credit {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public OfferLetterDetailRow AddOfferLetterDetailRow(int loanApplicationId, string productName, string customerName) {
                 OfferLetterDetailRow rowOfferLetterDetailRow = ((OfferLetterDetailRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         loanApplicationId,
                         productName,
-                        customerName};
+                        customerName,
+                        currencyName,
+                        loanAmount,
+                        exchangeRate,
+                        baseCurrencyLoanAmount,
+                        tenor,
+                        interestRate};
                 rowOfferLetterDetailRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowOfferLetterDetailRow);
                 return rowOfferLetterDetailRow;
@@ -3614,6 +3681,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnloanApplicationId = base.Columns["loanApplicationId"];
                 this.columnproductName = base.Columns["productName"];
                 this.columncustomerName = base.Columns["customerName"];
+                this.columncurrencyName = base.Columns["currencyName"];
+                this.columnloanAmount = base.Columns["loanAmount"];
+                this.columnexchangeRate = base.Columns["exchangeRate"];
+                this.columnbaseCurrencyLoanAmount = base.Columns["baseCurrencyLoanAmount"];
+                this.columntenor = base.Columns["tenor"];
+                this.columninterestRate = base.Columns["interestRate"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3625,6 +3698,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnproductName);
                 this.columncustomerName = new global::System.Data.DataColumn("customerName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncustomerName);
+                this.columncurrencyName = new global::System.Data.DataColumn("currencyName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncurrencyName);
+                this.columnloanAmount = new global::System.Data.DataColumn("loanAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnloanAmount);
+                this.columnexchangeRate = new global::System.Data.DataColumn("exchangeRate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnexchangeRate);
+                this.columnbaseCurrencyLoanAmount = new global::System.Data.DataColumn("baseCurrencyLoanAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbaseCurrencyLoanAmount);
+                this.columntenor = new global::System.Data.DataColumn("tenor", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntenor);
+                this.columninterestRate = new global::System.Data.DataColumn("interestRate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columninterestRate);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -6546,6 +6631,103 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string currencyName {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.currencyNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'currencyName\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.currencyNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string loanAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.loanAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'loanAmount\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.loanAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string exchangeRate {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.exchangeRateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'exchangeRate\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.exchangeRateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string baseCurrencyLoanAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.baseCurrencyLoanAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'baseCurrencyLoanAmount\' in table \'OfferLetterDetail\' is DBN" +
+                                "ull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.baseCurrencyLoanAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string tenor {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.tenorColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'tenor\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.tenorColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string interestRate {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.interestRateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'interestRate\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.interestRateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsloanApplicationIdNull() {
                 return this.IsNull(this.tableOfferLetterDetail.loanApplicationIdColumn);
             }
@@ -6578,6 +6760,78 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetcustomerNameNull() {
                 this[this.tableOfferLetterDetail.customerNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscurrencyNameNull() {
+                return this.IsNull(this.tableOfferLetterDetail.currencyNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcurrencyNameNull() {
+                this[this.tableOfferLetterDetail.currencyNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsloanAmountNull() {
+                return this.IsNull(this.tableOfferLetterDetail.loanAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetloanAmountNull() {
+                this[this.tableOfferLetterDetail.loanAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsexchangeRateNull() {
+                return this.IsNull(this.tableOfferLetterDetail.exchangeRateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetexchangeRateNull() {
+                this[this.tableOfferLetterDetail.exchangeRateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbaseCurrencyLoanAmountNull() {
+                return this.IsNull(this.tableOfferLetterDetail.baseCurrencyLoanAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbaseCurrencyLoanAmountNull() {
+                this[this.tableOfferLetterDetail.baseCurrencyLoanAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IstenorNull() {
+                return this.IsNull(this.tableOfferLetterDetail.tenorColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SettenorNull() {
+                this[this.tableOfferLetterDetail.tenorColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsinterestRateNull() {
+                return this.IsNull(this.tableOfferLetterDetail.interestRateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetinterestRateNull() {
+                this[this.tableOfferLetterDetail.interestRateColumn] = global::System.Convert.DBNull;
             }
         }
         

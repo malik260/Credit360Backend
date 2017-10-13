@@ -30,8 +30,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public void SendAlertsForCovenantsApproachingDueDate()
         {
-            //var data = context.tbl_Loan_Covenant_Detail
-            //    .Where(c => SqlFunctions.DateDiff("DAY", c.CovenantDate, c.NextCovenantDate) == 4).ToList();
             var data = (from a in context.tbl_Loan_Covenant_Detail
                         join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
                         join c in context.tbl_Staff on b.RelationshipManagerId equals c.StaffId
@@ -96,7 +94,7 @@ namespace FintrakBanking.Repositories.Credit
                         FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
                         ToAddress = item.officerEmail,
                         DateTimeReceived = DateTime.Now,
-                        SendOnDateTime = (DateTime)item.dueDate
+                        SendOnDateTime = item.dueDate.Value
                     };
 
                     SaveMessageDetails(messageModel);
@@ -212,14 +210,54 @@ namespace FintrakBanking.Repositories.Credit
                             collateralSubType = e.CollateralSubTypeName,
                             customerName = b.FirstName + " " + b.LastName,
                             propertyName = f.PropertyName,
-                            lastValuationDate = f.LastValuationDate
+                            lastValuationDate = f.LastValuationDate,
+                            relationshipManagerId = a.CreatedBy,
+                            relationshipManager = c.FirstName + " " + c.LastName,
+                            relationshipManagerEmail = c.Email
                         }).ToList();
 
             try
             {
                 foreach (var item in data)
                 {
-                    Console.WriteLine(item);
+                    var recipient = item.relationshipManagerEmail;
+
+                    var messageSubject = "FIRSTBANKONLINE (REMINDER) - COLLATERAL DUE FOR RE-EVALUATION";
+
+                    var dataTable =
+                        "<table><tr><th>Collateral Code</th><th>Collateral Type</th>" +
+                        "<th>Collateral Sub Type</th><th>Property</th><th>Last Valuation Date</th></tr>" +
+                        $"<tr><td>{item.collateralCode}</td><td>{item.collateralType}</td><td>{item.collateralSubType}</td>" +
+                        $"<td>{item.propertyName}</td><td>{item.lastValuationDate}</td></tr>";
+
+                    dataTable = dataTable + "</table>";
+
+                    var messageContent = $"Dear {item.relationshipManager}, <br /><br />" +
+                                         "This is to bring your attention the following collaterals " +
+                                         "which are due for revaluation. <br /><br />" +
+                                         $"{dataTable}";
+
+                    var templateUrl = "~/EmailTemplates/Monitoring.html";
+
+                    var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+
+                    var messageModel = new MessageLogViewModel()
+                    {
+                        //MessageId = model.MessageId,
+                        MessageSubject = messageSubject,
+                        MessageBody = mailBody,
+                        MessageStatusId = (short)MessageStatusEnum.Pending,
+                        MessageTypeId = (short)MessageTypeEnum.Email,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = item.relationshipManagerEmail,
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = (DateTime)item.lastValuationDate
+                    };
+
+                    SaveMessageDetails(messageModel);
+
+                    emailHelpers.SendMail(recipient, null, messageSubject, messageContent, templateUrl);
+
                 }
             }
             catch (Exception ex)
@@ -241,7 +279,33 @@ namespace FintrakBanking.Repositories.Credit
                         where b.NPLDate != null
                         select new LoanViewModel
                         {
+                            applicationReferenceNumber = a.ApplicationReferenceNumber,
+                            loanReferenceNumber = b.LoanReferenceNumber,
+                            bookingDate = b.BookingDate,
+                            disburseDate = b.DisburseDate,
+                            nplDate = b.NPLDate.Value,
+                            outstandingInterest = b.OutstandingInterest,
+                            outstandingPrincipal = b.OutstandingPrincipal,
+                            loanTypeName = context.tbl_Loan_Type.FirstOrDefault(x => x.LoanTypeId == b.LoanTypeId).LoanTypeName,
+                            relationshipManagerId = b.RelationshipOfficerId,
+                            relationshipManagerName = b.tbl_Staff.FirstName + " " + b.tbl_Staff.LastName,
+                            relationshipManagerEmail = b.tbl_Staff.Email,
+                            relationshipOfficerId = b.RelationshipOfficerId,
+                            relationshipOfficerName = b.tbl_Staff1.FirstName + " " + b.tbl_Staff1.LastName,
+                            relationshipOfficerEmail = b.tbl_Staff1.Email
                         }).ToList();
+
+            try
+            {
+                foreach (var item in data)
+                {
+                    Console.WriteLine(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         #endregion NPL Monitoring

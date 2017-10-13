@@ -11,6 +11,9 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.media;
 using FintrakBanking.Interfaces.Setups.Credit;
+using System.Data.Entity;
+using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -22,13 +25,15 @@ namespace FintrakBanking.Repositories.Credit
         private IProductRepository product;
         private IMediaRepository media;
         private ICollateralTypeRepository collateralType;
+        private IWorkflow workflow;
 
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
             IGeneralSetupRepository _genSetup,
             IAuditTrailRepository _auditTrail, IProductRepository _product,
             IMediaRepository _media,
-            ICollateralTypeRepository _collateralType
+            ICollateralTypeRepository _collateralType,
+            IWorkflow workflow
             )
         {
             this.context = _context;
@@ -37,6 +42,7 @@ namespace FintrakBanking.Repositories.Credit
             this.product = _product;
             this.media = _media;
             this.collateralType = _collateralType;
+            this.workflow = workflow;
         }
 
         #region New 
@@ -131,6 +137,7 @@ namespace FintrakBanking.Repositories.Credit
                 CollateralTypeId = model.collateralTypeId,
                 CollateralSubTypeId = model.collateralSubTypeId,
                 CollateralCode = model.collateralCode,
+                CollateralValue = model.collateralValue,
                 CompanyId = model.companyId,
                 AllowSharing = model.allowSharing,
                 IsLocationBased = model.isLocationBased,
@@ -157,6 +164,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.CollateralTypeId = model.collateralTypeId;
             collateral.CollateralSubTypeId = model.collateralSubTypeId;
             collateral.CollateralCode = model.collateralCode;
+            collateral.CollateralValue = model.collateralValue;
             collateral.AllowSharing = model.allowSharing;
             collateral.IsLocationBased = model.isLocationBased;
             collateral.ValuationCycle = model.valuationCycle;
@@ -318,8 +326,8 @@ namespace FintrakBanking.Repositories.Credit
                 PolicyReferenceNumber = entity.referenceNumber,
                 InsuranceCompanyName = entity.insuranceCompany,
                 SumInsured = entity.sumInsured,
-                StartDate = entity.startDate,
-                EndDate = entity.expiryDate,
+                StartDate = (DateTime)entity.startDate,
+                EndDate = (DateTime)entity.expiryDate,
             });
         }
 
@@ -332,8 +340,8 @@ namespace FintrakBanking.Repositories.Credit
             collateral.PolicyReferenceNumber = entity.referenceNumber;
             collateral.InsuranceCompanyName = entity.insuranceCompany;
             collateral.SumInsured = entity.sumInsured;
-            collateral.StartDate = entity.startDate;
-            collateral.EndDate = entity.expiryDate;
+            collateral.StartDate = (DateTime)entity.startDate;
+            collateral.EndDate = (DateTime)entity.expiryDate;
         }
 
         // GET MAIN INFO
@@ -354,6 +362,7 @@ namespace FintrakBanking.Repositories.Credit
                 currency = x.tbl_Currency.CurrencyName,
                 collateralTypeName = x.tbl_Collateral_Type.CollateralTypeName,
                 collateralCode = x.CollateralCode,
+                collateralValue = x.CollateralValue,
                 camRefNumber = x.CamRefNumber,
                 allowSharing = x.AllowSharing,
                 isLocationBased = x.IsLocationBased,
@@ -389,13 +398,14 @@ namespace FintrakBanking.Repositories.Credit
                 currency = x.tbl_Currency.CurrencyName,
                 currencyCode = x.tbl_Currency.CurrencyCode,
                 collateralCode = x.CollateralCode,
+                collateralValue = x.CollateralValue,
                 camRefNumber = x.CamRefNumber,
                 allowSharing = x.AllowSharing,
                 isLocationBased = x.IsLocationBased,
                 valuationCycle = x.ValuationCycle,
                 haircut = x.HairCut,
                 approvalStatus = x.ApprovalStatus,
-                //collateralValue = GetCollateralValue(x.CollateralTypeId, x.CollateralCustomerId) 
+                //collateralValue = x.CollateralValue
 
             })
             .OrderByDescending(x => x.collateralId)
@@ -767,7 +777,7 @@ namespace FintrakBanking.Repositories.Credit
                 GuarantorAddress = entity.guarantorAddress,
                 GuarantorReferenceNumber = entity.guarantorReferenceNumber,
                 GuaranteeValue = entity.guaranteeValue,
-                StartDate = entity.startDate,
+                StartDate = (DateTime)entity.startDate,
                 EndDate = entity.endDate,
                 Remark = entity.remark,
             });
@@ -784,7 +794,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.GuarantorAddress = entity.guarantorAddress;
             collateral.GuarantorReferenceNumber = entity.guarantorReferenceNumber;
             collateral.GuaranteeValue = entity.guaranteeValue;
-            collateral.StartDate = entity.startDate;
+            collateral.StartDate = (DateTime)entity.startDate;
             collateral.EndDate = entity.endDate;
             collateral.Remark = entity.remark;
         }
@@ -1077,12 +1087,15 @@ namespace FintrakBanking.Repositories.Credit
                     loanCollateralMappingId = x.Mapping.LoanCollateralMappingId,
                     //loanId = x.Mapping.LoanId,
                     loanApplicationId = x.Mapping.LoanApplicationId,
+                    isReleased = x.Mapping.IsReleased,
+                    releaseApprovalStatusId = (short)x.Mapping.ReleaseApprovalStatusId,
                     //productTypeId = x.Mapping.ProductTypeId,
                     customerCode = x.CollateralApplication.CustomerCollateral.Customer.CustomerCode,
                     firstName = x.CollateralApplication.CustomerCollateral.Customer.FirstName,
                     middleName = x.CollateralApplication.CustomerCollateral.Customer.MiddleName,
                     lastName = x.CollateralApplication.CustomerCollateral.Customer.LastName,
                     collateralCode = x.Mapping.tbl_Collateral_Customer.CollateralCode,
+                    collateralValue = x.Mapping.tbl_Collateral_Customer.CollateralValue,
                     allowSharing = x.Mapping.tbl_Collateral_Customer.AllowSharing,
                     isLocationBased = x.Mapping.tbl_Collateral_Customer.IsLocationBased,
                     valuationCycle = x.Mapping.tbl_Collateral_Customer.ValuationCycle,
@@ -1096,10 +1109,83 @@ namespace FintrakBanking.Repositories.Credit
                     //tenor = x.CollateralApplication.Application.Tenor,
                     loanInformation = x.CollateralApplication.Application.LoanInformation,
                 })
+                .Where(x => x.isReleased == false)
                 .Distinct();
 
             return collaterals;
         }
+
+        public bool ReleaseCollateral(int collateralMappingId, int staffId, GeneralEntity model)
+        {
+            var mapping = context.tbl_Loan_Collateral_Mapping.Find(collateralMappingId);
+            context.Entry(mapping).State = EntityState.Modified;
+            mapping.ReleaseApprovalStatusId = (int)ApprovalStatusEnum.Pending;
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CollateralReleaseAction,
+                StaffId = model.createdBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"Collateral Release Action '{ mapping.tbl_Collateral_Customer.CollateralCode }' ",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            if (context.SaveChanges() > 0)
+            {
+                var approvalModel = new ApprovalViewModel
+                {
+                    staffId = model.createdBy,
+                    companyId = model.companyId,
+                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                    targetId = collateralMappingId,
+                    operationId = (int)OperationsEnum.CollateralRelease,
+                    BranchId = model.userBranchId,
+                    externalInitialization = true
+                };
+                var response = workflow.LogForApproval(approvalModel);
+                return true;
+            }
+            return false;
+        }
+
+        public bool ApproveCollateralRelease(int collateralMappingId, int staffId, GeneralEntity model)
+        {
+            var mapping = context.tbl_Loan_Collateral_Mapping.Find(collateralMappingId);
+            context.Entry(mapping).State = EntityState.Modified;
+            mapping.ReleaseApprovalStatusId = (int)ApprovalStatusEnum.Approved;
+            mapping.IsReleased = true;
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CollateralReleaseApproval,
+                StaffId = model.createdBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"Collateral Release Approval '{ mapping.tbl_Collateral_Customer.CollateralCode }' ",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            if (context.SaveChanges() > 0)
+            {
+                var approvalModel = new ApprovalViewModel();
+                approvalModel.operationId = (int)OperationsEnum.CollateralRelease;
+                workflow.LogForApproval(approvalModel);
+            }
+
+            return true;
+        }
+
 
         #region Collateral Customer 
 

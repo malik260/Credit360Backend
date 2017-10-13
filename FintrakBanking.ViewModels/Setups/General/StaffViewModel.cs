@@ -32,7 +32,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short? DepartmentId { get; set; }
         public string DepartmentName { get; set; }
         public int? StateId { get; set; }
-        public int CityId { get; set; }
+        public int? CityId { get; set; }
         public string CityName { get; set; }
         public string StateName { get; set; }
         public short CustomerSensitivityLevel { get; set; }

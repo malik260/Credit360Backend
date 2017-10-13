@@ -17,5 +17,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdatePublicHoliday(PublicHolidayViewModel model, int id);
 
         bool AddWeekendsInTheYear(PublicHolidayViewModel model);
+
+        DateTime GetNextWorkDay(DateTime date, int countryId);
     }
 }

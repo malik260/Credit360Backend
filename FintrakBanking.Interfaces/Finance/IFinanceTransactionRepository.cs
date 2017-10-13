@@ -42,5 +42,8 @@ namespace FintrakBanking.Interfaces.Finance
         FinanceTransactionViewModel BuildChargeReversalPosting(LoanChargeFeeViewModel model);
 
         FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
+
+        FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId,LoanPaymentScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
+        FinanceTransactionViewModel PostDailyInterestSuspension(DailyInterestAccrualViewModel model, int loanId, DateTime applicationDate, int staffId);
     }
 }

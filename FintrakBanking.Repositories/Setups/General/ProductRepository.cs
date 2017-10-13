@@ -281,7 +281,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.SaveAll();
         }
 
-        #region tbl_Product Region
+        #region Product Region
 
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {
@@ -473,19 +473,24 @@ namespace FintrakBanking.Repositories.Setups.General
                             currencyId = pc.CurrencyId,
                             currencyName = pc.tbl_Currency.CurrencyCode + " -- " + pc.tbl_Currency.CurrencyName
                         }).ToList(),
-                        fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == c.ProductId && curr.Deleted == false).Select(pf => new ProductFeeViewModel()
+                        fees = context.tbl_Temp_Product_Charge_Fee.Where(curr => curr.ProductId == c.ProductId && c.Deleted == false).Select(pf => new ProductFeeViewModel()
                         {
-                            productId = c.ProductId,
                             productFeeId = pf.ProductFeeId,
-                            feeId = pf.ProductFeeId,
+                            productId = pf.ProductId,
+                            feeId = pf.ChargeFeeId,
+                            feeName = pf.tbl_Charge_Fee.ChargeFeeName,
+                            feeIntervalName = pf.tbl_Charge_Fee.tbl_Fee_Interval.FeeIntervalName,
+                            feeTargetName = pf.tbl_Charge_Fee.tbl_Fee_Target.FeeTargetName,
+                            feeTypeName = pf.tbl_Charge_Fee.tbl_Fee_Type.FeeTypeName,
+                            glAccountCode = pf.tbl_Charge_Fee.tbl_Chart_Of_Account.AccountCode,
+                            glAccountName = pf.tbl_Charge_Fee.tbl_Chart_Of_Account.AccountName,
+                            companyId = pf.CompanyId,
+
                             rateValue = pf.RateValue,
                             dependentAmount = pf.DependentAmount,
-                            feeName = pf.tbl_Fee.FeeName,
-                            feeIntervalName = pf.tbl_Fee.tbl_Fee_Interval.FeeIntervalName,
-                            feeTargetName = pf.tbl_Fee.tbl_Fee_Target.FeeTargetName,
-                            feeTypeName = pf.tbl_Fee.tbl_Fee_Type.FeeTypeName,
-                            glAccountCode = pf.tbl_Fee.tbl_Chart_Of_Account.AccountCode,
-                            glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
+
+                            createdBy = pf.CreatedBy,
+                            dateTimeCreated = pf.DateTimeCreated,
 
                         }).ToList(),
                         collaterals = context.tbl_Temp_Product_CollateralType.Where(coll => coll.ProductId == c.ProductId && coll.Deleted == false).Select(prodColl => new ProductCollateralTypeViewModel()
@@ -632,22 +637,18 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var productModel = context.tbl_Temp_Product.Find(productId);
             var productToUpdate = context.tbl_Product.FirstOrDefault(x => x.ProductCode == productModel.ProductCode);
-            //var productModelToUpdate = productToUpdate.FirstOrDefault();
 
             var currModel = context.tbl_Temp_Product_Currency.Where(c => c.ProductId == productModel.ProductId && c.Deleted == false);
-            var currListToUpdate = context.tbl_Product_Currency.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false);
+            var currListToUpdate = new List<tbl_Product_Currency>();
 
             var feeModel =
                 context.tbl_Temp_Product_Charge_Fee.Where(c => c.ProductId == productModel.ProductId && c.Deleted == false);
-            var feeListToUpdate =
-                context.tbl_Product_Charge_Fee.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false);
+            var feeListToUpdate = new List<tbl_Product_Charge_Fee>();
 
             var collateralModel =
                 context.tbl_Temp_Product_CollateralType.Where(c =>
                     c.ProductId == productModel.ProductId && c.Deleted == false);
-            var collateralListToUpdate =
-                context.tbl_Product_CollateralType.Where(x =>
-                    x.ProductId == productToUpdate.ProductId && x.Deleted == false);
+            var collateralListToUpdate = new List<tbl_Product_CollateralType>();
 
             List<tbl_Product_Charge_Fee> productFees = new List<tbl_Product_Charge_Fee>();
             List<tbl_Product_CollateralType> productCollateral = new List<tbl_Product_CollateralType>();
@@ -655,6 +656,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (productToUpdate != null) //Update existing product with tempProduct record
             {
+                currListToUpdate = context.tbl_Product_Currency.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+
+                feeListToUpdate =
+               context.tbl_Product_Charge_Fee.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+
+                collateralListToUpdate =
+                context.tbl_Product_CollateralType.Where(x =>
+                    x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+
                 // remove exisiting records for currencies
                 foreach (var curr in currListToUpdate)
                 {
@@ -696,6 +706,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         CompanyId = (int)item.CompanyId,
                         CreatedBy = (int)item.CreatedBy,
                         DateTimeCreated = genSetup.GetApplicationDate(),
+                        Deleted = false
                     };
                     productFees.Add(feeList);
                 }
@@ -756,7 +767,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingProduct.ScheduleTypeId = productModel.ScheduleTypeId;
 
                     existingProduct.tbl_Product_Currency = productCurrencies;
+                    existingProduct.tbl_Product_Charge_Fee = productFees;
+                    existingProduct.tbl_Product_CollateralType = productCollateral;
                     existingProduct.Approved = true;
+                    existingProduct.Deleted = false;
                     existingProduct.ApprovedBy = productModel.CreatedBy;
                 }
             }
@@ -769,6 +783,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         //ProductId = c.ProductId,
                         CurrencyId = c.CurrencyId,
                         DateTimeCreated = genSetup.GetApplicationDate(),
+                        Deleted = false
                     };
                     productCurrencies.Add(curr);
                 }
@@ -785,6 +800,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         CompanyId = (int)item.CompanyId,
                         CreatedBy = (int)item.CreatedBy,
                         DateTimeCreated = genSetup.GetApplicationDate(),
+                        Deleted = false
                     };
                     productFees.Add(feeList);
                 }
@@ -797,7 +813,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         CollateralTypeId = item.CollateralTypeId,
                         CompanyId = item.CompanyId,
                         CreatedBy = item.CreatedBy,
-                        DateTimeCreated = genSetup.GetApplicationDate()
+                        DateTimeCreated = genSetup.GetApplicationDate(),
+                        Deleted = false
                     };
                     productCollateral.Add(productCollaterals);
                 }
@@ -810,7 +827,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ProductTypeId = productModel.ProductTypeId,
                         ProductCategoryId = productModel.ProductCategoryId,
                         ProductClassId = productModel.ProductClassId,
-                        ProductCode = GenerateProductCode(productModel.CompanyId),
+                        ProductCode = productModel.ProductCode,
                         ProductName = productModel.ProductName,
                         ProductDescription = productModel.ProductDescription,
 
@@ -856,6 +873,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         tbl_Product_CollateralType = productCollateral,
                         tbl_Product_Charge_Fee = productFees,
                         Approved = true,
+                        Deleted = false,
                         ApprovedBy = productModel.CreatedBy
                     };
                     context.tbl_Product.Add(product);
@@ -1008,6 +1026,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CompanyId = item.companyId,
                     CreatedBy = (int)item.createdBy,
                     DateTimeCreated = genSetup.GetApplicationDate(),
+                    Deleted = false,
                 };
                 chargeFees.Add(productFees);
             }
@@ -1020,7 +1039,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     CollateralTypeId = item.collateralTypeId,
                     CompanyId = productModel.companyId,
                     CreatedBy = item.createdBy,
-                    DateTimeCreated = genSetup.GetApplicationDate()
+                    DateTimeCreated = genSetup.GetApplicationDate(),
+                    Deleted = false,
                 };
                 collaterals.Add(productCollaterals);
             }
@@ -1063,7 +1083,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 DateTimeCreated = DateTime.Now,
                 ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                 IsCurrent = true,
-
+                Deleted = false,
                 tbl_Temp_Product_Currency = currencies,
 
                 IsMultipleCurency = productModel.currencies.Any(),
@@ -1225,7 +1245,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var existingTempProduct = context.tbl_Temp_Product
                     .FirstOrDefault(x => x.ProductCode.ToLower() ==
-                        productModel.productCode.ToLower() && x.IsCurrent == true
+                        productModel.productCode.ToLower() && x.IsCurrent == false
                             && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
 
             var existingProductCurrencies = new List<tbl_Temp_Product_Currency>();
@@ -1301,6 +1321,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         CompanyId = item.companyId,
                         CreatedBy = (int)item.createdBy,
                         DateTimeCreated = genSetup.GetApplicationDate(),
+                        Deleted = false
                     };
                     productFees.Add(fee);
                 }
@@ -1361,6 +1382,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductToUpdate.ScheduleTypeId = productModel.scheduleTypeId;
                 tempProductToUpdate.IsCurrent = true;
                 tempProductToUpdate.DateTimeUpdated = DateTime.Now;
+                tempProductToUpdate.Deleted = false;
 
                 tempProductToUpdate.tbl_Temp_Product_Currency = productCurrencies;
                 tempProductToUpdate.tbl_Temp_Product_Charge_Fee = productFees;
@@ -1454,7 +1476,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DateTimeCreated = DateTime.Now,
                     ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
                     IsCurrent = true,
-
+                    Deleted = false,
                     AllowCustomerAccountForceDebit = productModel.allowCustomerAccountForceDebit,
                     AllowScheduleTypeOverride = productModel.allowScheduleTypeOverride,
                     AllowMoratorium = productModel.allowMoratorium,

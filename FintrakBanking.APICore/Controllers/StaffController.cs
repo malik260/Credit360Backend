@@ -226,7 +226,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = $"A staff with {model.StaffCode} already exist" });
                 }
-                if (repo.IsStaffExist(model.StaffCode))
+                if (repo.IsTempStaffExist(model.StaffCode))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = $"A staff with {model.StaffCode} already exist waiting for approval" });
@@ -395,6 +395,29 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var token = new TokenDecryptionHelper();
                 var data = repo.SearchStaff(queryString, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                     new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new
+                    {
+                        success = false,
+                        message = ex.Message
+                    });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("staff/{departmentId}/search/")]
+        public HttpResponseMessage SearchStaffbyDepartmentId(string queryString, int departmentId)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repo.SearchStaffbyDepartmentId(queryString, token.GetCompanyId, departmentId);
                 return Request.CreateResponse(HttpStatusCode.OK,
                      new { success = true, result = data.ToList() });
             }

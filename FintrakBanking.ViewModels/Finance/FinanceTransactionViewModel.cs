@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 namespace FintrakBanking.ViewModels.Finance
 {
     public class FinanceTransactionViewModel : GeneralEntity
-    {  
+    {
+        public FinanceTransactionViewModel(){
+            transactionDetails = new List<FinanceTransactionDetailViewModel>();
+        }
+
         public string batchCode { get; set; }
         public int operationId { get; set; }
         public string description { get; set; }

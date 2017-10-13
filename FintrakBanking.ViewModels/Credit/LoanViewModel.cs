@@ -29,7 +29,9 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
+        public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
+        
 
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
@@ -132,6 +134,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string pricipalFrequencyTypeName { get; set; }
         public string interestFrequencyTypeName { get; set; }
         public string comment { get; set; }
+        public string relationshipManagerEmail { get; set; }
+        public string relationshipOfficerEmail { get; set; }
 
         //............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
@@ -163,6 +167,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short branchId { get; set; }
         public short currencyId { get; set; }
         public double exchangeRate { get; set; }
+        public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         public string loanReferenceNumber { get; set; }
         public short subSectorId { get; set; }
@@ -234,6 +239,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class ContingentLoanViewModel : GeneralEntity
     {
         public int loanId { get; set; }
+        public int loanApplicationId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
         public int casaAccountId { get; set; }
@@ -336,7 +342,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int tenor { get; set; }
     }
 
-    public class LoanChargeFeeViewModel : ChargeRangeViewModel
+    public class LoanChargeFeeViewModel : ChargeRangeViewModel //GeneralEntity //ChargeRangeViewModel
 
     {
         public int productFeeId { get; set; }
@@ -370,7 +376,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanGuarantorViewModel
     {
         public short loanGuarantorId { get; set; }
-        public int loanId { get; set; }
+        public int loanApplicationId { get; set; }
         public string fullName { get; set; }
         public string firstname { get; set; }
         public string lastname { get; set; }
@@ -445,10 +451,21 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short dayCountConventionId { get; set; }
 
-        public decimal dailyAccuralAmount { get; set; }
+        public double dailyAccuralAmount { get; set; }
 
         public decimal availableBalance { get; set; }
 
         public int daysInAYear { get; set; }
+
+
+
+
+    }
+
+
+    public class SubAllocationViewModel 
+    {
+        public int fromLoanId  { get; set; }
+        public decimal fromAmount  { get; set; }
     }
 }

@@ -51,6 +51,10 @@ namespace FintrakBanking.Entities.Models
 
         public int ApprovalStatusId { get; set; }
 
+        public bool IsManagementInterestRate { get; set; }
+
+        public bool OperationCompleted { get; set; }
+
         public int CreatedBy { get; set; }
 
         [Column(TypeName = "date")]

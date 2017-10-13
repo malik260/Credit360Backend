@@ -29,7 +29,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool IsStaffCodeAlreadyExist(string staffCode);
 
-        bool IsStaffExist(string staffCode);
+        bool IsTempStaffExist(string staffCode);
 
         StaffInfoViewModel GetStaffById(int staffId);
 
@@ -43,7 +43,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<simpleStaffModel> GetStaffNames(); 
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
 
-        IQueryable<simpleStaffModel> SearchStaff(string searchString, int companyId);
+        IQueryable<simpleStaffModel> SearchStaff(string searchString, int companyId); 
+        IQueryable<simpleStaffModel> SearchStaffbyDepartmentId(string searchString, int companyId, int departmentId);
 
     }
 }
