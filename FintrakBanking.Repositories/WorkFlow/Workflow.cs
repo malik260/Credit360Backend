@@ -553,6 +553,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             Comment = model.comment;
             ExternalInitialization = model.externalInitialization;
             StatusId = model.approvalStatusId;
+            KeepPending = model.keepPending;
 
             var response = LogActivity();
 
