@@ -2329,7 +2329,6 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = m.LoanPreliminaryEvaluationId,
                             exchangeRate = d.ExchangeRate,
                         }).ToList();
-<<<<<<< HEAD
 
             // data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
            
@@ -2342,14 +2341,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 
             }
-=======
-            //data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
-            //foreach (var item in data)
-            //{
-            //    if (!item.customerAvailableAmount.HasValue)
-            //        item.customerAvailableAmount = item.approvedAmount;
-            //}
->>>>>>> 44a11821a7e33a7e7af5ea8d0e5eb65e12c879c7
+
 
             return data.ToList();
         }
