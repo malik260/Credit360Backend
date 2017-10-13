@@ -156,6 +156,8 @@ namespace FintrakBanking.Common.Enum
         CollateralValuerAdded = 149,
         ConditionPrecedentAdded = 000,
         ConditionPrecedentUpdated = 000,
+        CollateralReleaseAction = 000,
+        CollateralReleaseApproval = 000,
         RanEndOfDay = 150
     };
 

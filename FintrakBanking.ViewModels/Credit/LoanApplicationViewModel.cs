@@ -82,6 +82,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short applicationStatusId { get; set; }
 
         public bool isCollateralBacked { get; set; }
+        public int tenor { get; set; }
     }
 
     public class CollateralLenPlacementViewModel : GeneralEntity

@@ -31,13 +31,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int casaAccountId { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
+        
 
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
-        public short principalFrequencyTypeId { get; set; }
-        public short interestFrequencyTypeId { get; set; }
+        public short ? principalFrequencyTypeId { get; set; }
+        public short ? interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
         public int interestNumberOfInstallment { get; set; }
         public int relationshipOfficerId { get; set; }
@@ -136,6 +137,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string comment { get; set; }
         public string relationshipManagerEmail { get; set; }
         public string relationshipOfficerEmail { get; set; }
+        public decimal customerAvailableAmount { get; set; }
 
         //............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
@@ -342,7 +344,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int tenor { get; set; }
     }
 
-    public class LoanChargeFeeViewModel : ChargeRangeViewModel
+    public class LoanChargeFeeViewModel : ChargeRangeViewModel //GeneralEntity //ChargeRangeViewModel
 
     {
         public int productFeeId { get; set; }

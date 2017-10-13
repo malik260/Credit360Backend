@@ -8,7 +8,7 @@ namespace FintrakBanking.ViewModels.Notification
 {
    public  class NotificationViewModel
     {
-        public int massageCount { get; set; }
+        public int messageCount { get; set; }
         public string message { get; set; }
         public string operationURL { get; set; }
     }

@@ -31,13 +31,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaff(int companyId)
         {
             var data = (from a in context.tbl_Approval_Level_Staff
-                            //join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
-                            //join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupId
+                        join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
+                        //join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupId
                         where a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
                         && a.Deleted == false
                         select new ApprovalLevelStaffViewModel
                         {
-
                             groupId = (int)a.tbl_Approval_Level.GroupId,
                             //operationId = c.OperationId,
                             maximumAmount = a.MaximumAmount,
@@ -70,7 +69,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
                         join c in context.tbl_Approval_Group on b.GroupId equals c.GroupId
                         join d in context.tbl_Approval_Group_Mapping on c.GroupId equals d.GroupId
-                        where a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
+                        where c.CompanyId == companyId
                         && a.Deleted == false
                         select new ApprovalLevelStaffViewModel
                         {
@@ -110,7 +109,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return data;
         }
 
-
         public IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaffByOperationId(int operationId, int companyId)
         {
             return GetApprovalLevelStaff(companyId).Where(c => c.operationId == operationId);
@@ -126,13 +124,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
         public ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId, int operationId)
         {
             var levelStaff = GetAllDetailedApprovalLevelStaff(companyId);
-            return levelStaff.Where(c => c.staffId == staffId && c.operationId == operationId).FirstOrDefault();
+            return levelStaff.FirstOrDefault(c => c.staffId == staffId && c.operationId == operationId);
         }
 
         public ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId)
         {
             var levelStaff = GetAllDetailedApprovalLevelStaff(companyId);
-            return levelStaff.Where(c => c.staffId == staffId).FirstOrDefault();
+            return levelStaff.FirstOrDefault(c => c.staffId == staffId);
         }
 
         public bool AddApprovalLevelStaff(ApprovalLevelStaffViewModel model)
@@ -164,7 +162,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 AuditTypeId = (short)AuditTypeEnum.ApprovalLevelStaffAdded,
                 StaffId = model.createdBy,
                 BranchId = (short)model.userBranchId,
-                Detail = $"Added Approval-Level '{audit_staff_level.LevelName}' for user code '{audit_staff.StaffCode}' .",
+                Detail = $"Added Approval-Level '{audit_staff_level?.LevelName}' for user code '{audit_staff?.StaffCode}' .",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
                 ApplicationDate = _genSetup.GetApplicationDate(),

@@ -17,7 +17,7 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/setup")]
     public class StaffController : ApiControllerBase
     {
-        TokenDecryptionHelper token = null;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
         private IStaffRepository repo;
         IErrorLogRepository errorLogger;
         public StaffController(IStaffRepository _repo,
@@ -59,7 +59,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetStaffAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
 
                 if (staffinfo == null)
@@ -82,7 +81,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetTempStaffDetail(staffId);
 
                 if (staffinfo == null)
@@ -108,7 +106,6 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetStaffDetail(staffCode, token.GetCompanyId);
 
                 if (staffinfo == null)
@@ -132,15 +129,14 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetStaffDetails(token.GetCompanyId);
 
-                if (staffinfo.ToList() == null)
+                if (staffinfo != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "No record found" });
             }
             catch (System.Exception ex)
             {
@@ -155,7 +151,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetStaffNames();
 
                 if (staffinfo == null)
@@ -163,7 +158,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
             }
             catch (System.Exception ex)
             {
@@ -178,9 +173,7 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                var token = new TokenDecryptionHelper();
                 var staffinfo = repo.GetApprovalStatus();
-
 
                 if (staffinfo != null)
                 {
@@ -204,8 +197,8 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var staffInfo = repo.GetStaffById(staffId);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo });
             }
             catch (System.Exception ex)
@@ -232,24 +225,11 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = $"A staff with {model.StaffCode} already exist waiting for approval" });
                 }
 
-
-
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
-
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = Request.RequestUri.Host;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-
-
-                var username = token.GetUsername;
-                var staffId = token.GetStaffId;
-                var companyId = token.GetCompanyId; //etc
-
-                //We can now use staffId extracted from the token as the created by
-                //We ca also get companyId too
 
                 var staff = await repo.AddTempStaff(model);
 
@@ -258,9 +238,8 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = staff, message = "Staff has been created successfully, now waiting for approval" });
                 }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "staff not created" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "staff not created" });
             }
             catch (System.Exception ex)
             {
@@ -273,29 +252,27 @@ namespace FintrakBanking.APICore.Controllers
         [Route("staff/{staffid}")]
         public async Task<HttpResponseMessage> UpdateStaffInfo(int staffid, [FromBody] StaffInfoViewModel model)
         {
-            string username = string.Empty;
             try
             {
-                var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
+                model.companyId = (short) token.GetCompanyId;
                 model.userIPAddress = Request.RequestUri.Host;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
 
-                username = token.GetUsername;
                 var staff = await repo.UpdateStaff(staffid, model);
+
                 if (staff)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = staff, message = "Staff has been updated successfully, now waiting for approval" });
                 }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "staff not created" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "staff not created" });
             }
             catch (System.Exception ex)
             {
-                errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, username);
+                errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
@@ -306,7 +283,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 UserInfo user = new UserInfo()
                 {
                     BranchId = token.GetBranchId,
@@ -321,9 +297,8 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = staff, message = "staff has been created successfully" });
                 }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "staff not created" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "staff not created" });
             }
             catch (System.Exception ex)
             {
@@ -338,7 +313,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-
                 var staffInfo = repo.GetAllStaff().SingleOrDefault(c => c.BranchId == branchId);
 
                 if (staffInfo == null)
@@ -362,7 +336,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 entity.BranchId = token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.staffId = token.GetStaffId;
@@ -393,8 +366,30 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var data = repo.SearchStaff(queryString, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                     new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new
+                    {
+                        success = false,
+                        message = ex.Message
+                    });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("staff/{departmentId}/search/")]
+        public HttpResponseMessage SearchStaffbyDepartmentId(string queryString, int departmentId)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repo.SearchStaffbyDepartmentId(queryString, token.GetCompanyId, departmentId);
                 return Request.CreateResponse(HttpStatusCode.OK,
                      new { success = true, result = data.ToList() });
             }

@@ -90,27 +90,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("end-of-day")]
-        public HttpResponseMessage RunEndOfDay([FromBody] EndOfDayViewModel model)
-        {
-            try
-            {
-                var data = repoEOD.RunEndOfDay(model);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = true, message = "End of day transaction completed successfully" });
-                }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "End of day transaction failed" });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
 
         [HttpGet]
         [Route("loan-search/")]

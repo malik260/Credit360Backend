@@ -3756,7 +3756,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool DoesOperationExist(int loanId, int operationTypeId)
         {
             var data = from a in context.tbl_Loan_Review_Operation where a.LoanId == loanId
-                       && a.OperationTypeId == operationTypeId && a.OperationCompleted == false select a;
+                       && a.OperationTypeId == operationTypeId //&& a.OperationCompleted == false
+                       select a;
             if (data.Any())
             {
                 return true;
@@ -3783,8 +3784,8 @@ namespace FintrakBanking.Repositories.Credit
                 OverDraftTopup = model.overDraftTopup,
                 Fee_Charges = model.fee_Charges,
                 ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-                IsManagementInterestRate = model.isManagementRate,
-                OperationCompleted = false,
+               // IsManagementInterestRate = model.isManagementRate,
+                //OperationCompleted = false,
                 CreatedBy = model.createdBy,
                 DateCreated = DateTime.Now
             };
@@ -3950,7 +3951,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from ln in context.tbl_Loan
                         join op in context.tbl_Loan_Review_Operation on ln.TermLoanId equals op.LoanId
-                        where op.ApprovalStatusId == (int)ApprovalStatusEnum.Approved && op.OperationCompleted == false
+                        where op.ApprovalStatusId == (int)ApprovalStatusEnum.Approved //&& op.OperationCompleted == false
                         orderby op.OperationTypeId descending
                         select new LoanReviewOperationApprovalViewModel
                         {

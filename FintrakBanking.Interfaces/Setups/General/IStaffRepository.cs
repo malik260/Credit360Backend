@@ -43,7 +43,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<simpleStaffModel> GetStaffNames(); 
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
 
-        IQueryable<simpleStaffModel> SearchStaff(string searchString, int companyId);
+        IQueryable<simpleStaffModel> SearchStaff(string searchString, int companyId); 
+        IQueryable<simpleStaffModel> SearchStaffbyDepartmentId(string searchString, int companyId, int departmentId);
 
     }
 }
