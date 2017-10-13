@@ -992,7 +992,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool GoForApproval(ApprovalViewModel entity)
         {
             
-            entity.operationId = (int)OperationsEnum.TermLoanBooking;
+           // entity.operationId = (int)OperationsEnum.TermLoanBooking;
 
             entity.externalInitialization = false;
 
@@ -1000,10 +1000,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-                    workflow.LogForApproval(entity);
-                    if (workflow.Saved)
+                    
+                    if (workflow.LogForApproval(entity))
                     {
-
                         var loanBookingCompleted = ApproveLoanBooking(entity.targetId, (short)workflow.StatusId, entity);
 
                         try {
@@ -1019,7 +1018,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        return false;
+                        throw new Exception("Approval Failed. ") ;
                     }
                 }
                 catch (Exception ex)
@@ -2331,12 +2330,12 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = m.LoanPreliminaryEvaluationId,
                             exchangeRate = d.ExchangeRate,
                         }).ToList();
-            data = (from a in data where a.customerAvailableAmount > 0 || a.customerAvailableAmount == null select a).ToList();
-            foreach (var item in data)
-            {
-                if (!item.customerAvailableAmount.HasValue)
-                    item.customerAvailableAmount = item.approvedAmount;
-            }
+            //data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+            //foreach (var item in data)
+            //{
+            //    if (!item.customerAvailableAmount.HasValue)
+            //        item.customerAvailableAmount = item.approvedAmount;
+            //}
 
             return data.ToList();
         }
