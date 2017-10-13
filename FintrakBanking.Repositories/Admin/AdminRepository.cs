@@ -76,9 +76,9 @@ namespace FintrakBanking.Repositories.Admin
                 // Audit Section ---------------------------
                 var audit = new tbl_Audit
                 {
-                    AuditTypeId = (short) AuditTypeEnum.UserApproved,
+                    AuditTypeId = (short)AuditTypeEnum.UserApproved,
                     StaffId = user.staffId,
-                    BranchId = (short) user.BranchId,
+                    BranchId = (short)user.BranchId,
                     Detail = $"Approved user '{userRecord.Username}'",
                     IPAddress = user.userIPAddress,
                     Url = user.applicationUrl,
@@ -226,7 +226,8 @@ namespace FintrakBanking.Repositories.Admin
                         join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
                         join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
                         join atrail in context.tbl_Approval_Trail on c.UserId equals atrail.TargetId
-                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
+                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
+                        //&& c.ApprovalStatus == false
                               && atrail.ResponseStaffId == null
                               && atrail.OperationId == (int)OperationsEnum.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new UserViewModel()

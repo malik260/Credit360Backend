@@ -23,7 +23,7 @@
             </LocalReport>
         </rsweb:ReportViewer>
      
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetWorkFlowDefinationByOperation" TypeName="FintrakBanking.ReportObjects.WorkFlowDesign">
+        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetWorkFlowDefination" TypeName="FintrakBanking.ReportObjects.WorkFlowDesign">
             <SelectParameters>
                 <asp:ControlParameter ControlID="operationId" DefaultValue="" Name="operationId" PropertyName="Text" Type="Int32" />
                 <asp:ControlParameter ControlID="companyId" Name="companyId" PropertyName="Text" Type="Int32" />
