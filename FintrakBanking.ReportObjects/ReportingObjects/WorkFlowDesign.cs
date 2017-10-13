@@ -50,48 +50,24 @@ namespace FintrakBanking.ReportObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var company = context.tbl_Company.Where(c => c.CompanyId == companyId).FirstOrDefault();
-                var result = (from a in context.tbl_Approval_Trail
-                              join b in context.tbl_Approval_Level on a.FromApprovalLevelId equals b.ApprovalLevelId
-                              join c in context.tbl_Approval_Group_Mapping on b.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().GroupOperationMappingId equals c.GroupOperationMappingId
-                              join d in context.tbl_Approval_Group on c.GroupId equals d.GroupId
-
-                              join e in context.tbl_Operations on c.OperationId equals e.OperationId
-
-
-
-                              join n in context.tbl_Approval_Level on a.ToApprovalLevelId equals n.ApprovalLevelId
-                              join m in context.tbl_Approval_Group_Mapping on n.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().GroupOperationMappingId equals m.GroupOperationMappingId
-                              join o in context.tbl_Approval_Group on m.GroupId equals o.GroupId
-
-                              join p in context.tbl_Operations on m.OperationId equals p.OperationId
-
-
-                              where a.OperationId == operationId && a.CompanyId == companyId && a.TargetId == targetId
-                              orderby a.TargetId descending
-                              select
-
-                         new WorkflowTrackerViewModel
-                         {
-                             groupName = d.GroupName,
-                             operationName = e.OperationName,
-                             companyName = company.Name,
-
-
-                             responseApprovalLevel = a.ToApprovalLevelId.HasValue ? n.LevelName : "N/A",// context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
-                             responseDate = (DateTime)(a.SystemResponseDateTime == null ? DateTime.Now : a.SystemResponseDateTime),
-                             responseStaffName = !a.ResponseStaffId.HasValue ? "Awaiting Action" : a.tbl_Staff1.FirstName + " " + a.tbl_Staff1.LastName,
-
-
-                             sla = b.SLAInterval,
-
-
-                             comment = a.Comment,
-                             requestStaffName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
-                             requestApprovalLevel = a.FromApprovalLevelId.HasValue ? b.LevelName : "N/A",// context.tbl_Approval_Level.FirstOrDefault(c => c.ApprovalLevelId == a.FromApprovalLevelId).LevelName,
-                             TargetId = a.TargetId,
-                             approvalStatus = context.tbl_Approval_Status.FirstOrDefault(c => c.ApprovalStatusId == a.ApprovalStatusId).ApprovalStatusName
-                         });
-                return result.ToList();
+                var approvalTrail = (from f in context.tbl_Approval_Trail
+                                     where f.TargetId == targetId && f.OperationId == operationId && f.CompanyId == companyId
+                                     orderby f.tbl_Approval_Level.tbl_Approval_Group.GroupId, f.tbl_Approval_Level.ApprovalLevelId
+                                     select new WorkflowTrackerViewModel()
+                                     {
+                                         companyName = company.Name ,
+                                         groupName = f.tbl_Approval_Level.tbl_Approval_Group.GroupName,
+                                         responseApprovalLevel = f.tbl_Approval_Level.LevelName,
+                                         operationName = f.tbl_Operations.OperationName,
+                                         arrivalDate = f.SystemArrivalDateTime,
+                                         sla = f.tbl_Approval_Level.SLAInterval,
+                                         responseDate = (DateTime)(f.SystemResponseDateTime == null ? DateTime.Now : f.SystemResponseDateTime),
+                                         comment = f.Comment,
+                                         TargetId = f.TargetId,
+                                         requestApprovalLevel = (Int64)((Int32?)f.FromApprovalLevelId ?? (Int32?)0) == 0 ? "Undefined Level Initiation" : (Int64)((Int32?)f.FromApprovalLevelId ?? (Int32?)0) > 0 ? ((from m in context.tbl_Approval_Level where m.ApprovalLevelId == f.FromApprovalLevelId select new { m.LevelName }).FirstOrDefault().LevelName) : null,
+                                         approvalStatus = ((from n in context.tbl_Approval_Status where n.ApprovalStatusId == f.ApprovalStatusId select new { n.ApprovalStatusName }).FirstOrDefault().ApprovalStatusName)
+                                     }).ToList();
+                return approvalTrail;
 
             }
         }
@@ -105,31 +81,40 @@ namespace FintrakBanking.ReportObjects
 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                //var data = (from a in context.tbl_Approval_Level_Staff
-                //            where
-                //              a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().OperationId == operationId &&
-                //              a.tbl_Approval_Level.IsActive == true && a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
-                //            orderby
-                //              a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position,
-                //              a.tbl_Approval_Level.Position,
-                //              a.ApprovalLevelId
-                //            select new WorkFlowViewModel()
-                //            {
-                //                operationName = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().tbl_Operations.OperationName,
-                //                groupName = a.tbl_Approval_Level.tbl_Approval_Group.GroupName,
-                //                vetoPower = a.VetoPower == true ? "Yes" : "No",
-                //                levelName = a.tbl_Approval_Level.LevelName,
-                //                username = (a.tbl_Staff.FirstName + "." + a.tbl_Staff.LastName).ToLower(),
-                //                scope = a.ProcessViewScopeId == 1 ? "Default" : a.ProcessViewScopeId == 2 ? "Group" : a.ProcessViewScopeId == 3 ? "global" : null,
-                //                grpPosition = a.tbl_Approval_Level.tbl_Approval_Group.tbl_Approval_Group_Mapping.FirstOrDefault().Position.ToString(),
-                //                levelPosition = a.tbl_Approval_Level.Position.ToString(),
-                //                canApprove = a.CanApprove == true ? "Yes" : "No",
-                //                canEdit = a.CanEdit == true ? "Yes" : "No",
-                //                canUploadFile = a.CanUploadFile == true ? "Yes" : "No",
-                //                canSendJobRequest = a.CanSendJobRequest == true ? "Yes" : "No",
+                 data = (from a in context.tbl_Approval_Group
+                            join b in context.tbl_Approval_Group_Mapping on a.GroupId equals b.GroupId
+                            join c in context.tbl_Approval_Level_Staff on a.GroupId equals c.tbl_Approval_Level.GroupId
+                            where c.tbl_Approval_Level.IsActive == true && a.CompanyId == companyId && b.OperationId == operationId
+                            group new { a,b,c, c.tbl_Approval_Level, c.tbl_Staff } by  new
+                            {
+                                LevelStaff = c,
+                                Staff = c.tbl_Staff,
+                                Level =   c.tbl_Approval_Level,
+                                b.tbl_Operations.OperationName,
+                                a.GroupName,
+                                b.Position ,
+                                c.VetoPower
+                            } into g
 
-                //                staffLevelId = a.StaffLevelId.ToString()
-                //            }).ToList();
+                         orderby g.Key.Level.Position  
+                         select new WorkFlowViewModel()
+                            {   
+                                operationName = g.Key.OperationName,
+                                groupName = g.Key.GroupName,
+                                vetoPower = g.Key.VetoPower == true ? "Yes" : "No",
+                                levelName = g.Key.Level .LevelName,
+                                username = (g.Key.Staff.FirstName  + " " + g.Key.Staff.LastName).ToUpper(),
+                                scope = g.Key.LevelStaff.ProcessViewScopeId == 1 ? "Default" : g.Key.LevelStaff.ProcessViewScopeId == 2 ? "Group" : g.Key.LevelStaff.ProcessViewScopeId == 3 ? "Global" : null,
+                                grpPosition = g.Key.Level.Position.ToString(),
+                                levelPosition = g.Key.Level .Position.ToString(),
+                                canApprove = g.Key.LevelStaff.CanApprove == true ? "Yes" : "No",
+                                canEdit = g.Key.LevelStaff.CanEdit == true ? "Yes" : "No",
+                                canUploadFile = g.Key.LevelStaff.CanUploadFile == true ? "Yes" : "No",
+                                canSendJobRequest = g.Key.LevelStaff.CanSendJobRequest == true ? "Yes" : "No",
+
+                                staffLevelId = g.Key.LevelStaff.StaffLevelId.ToString()
+                            }).ToList();
+
                 return data;
 
 

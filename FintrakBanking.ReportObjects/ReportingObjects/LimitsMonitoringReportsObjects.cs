@@ -17,7 +17,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
                 var output = (from Loan in context.tbl_Loan
                                join LimitDetail in context.tbl_Limit_Detail
-                                     on new { SubSectorId = (int)Loan.SubSectorId, LimitTypeId = 2 }
+                                     on new { SubSectorId = (int)Loan.SubSectorId, LimitTypeId =(int) LimitType.Sector }
                                  equals new { SubSectorId = LimitDetail.TargetId, LimitDetail.LimitTypeId } into LimitDetail_join
                                from LimitDetail in LimitDetail_join.DefaultIfEmpty()
 
