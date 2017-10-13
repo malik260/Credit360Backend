@@ -136,6 +136,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string comment { get; set; }
         public string relationshipManagerEmail { get; set; }
         public string relationshipOfficerEmail { get; set; }
+        public decimal customerAvailableAmount { get; set; }
 
         //............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
