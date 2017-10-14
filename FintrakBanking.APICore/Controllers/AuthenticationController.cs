@@ -186,18 +186,18 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("token")]
-        public async Task<HttpResponseMessage> GetToken([FromBody] TokenVM user)
+        public HttpResponseMessage GetToken([FromBody] TokenVM user)
         {
             try
             {
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
-                var foundUser = await repo.FindUserByUserNameAndPassword(user.username, user.password);
+                var foundUser = repo.FindUserByUserNameAndPassword(user.username, user.password);
                 if (foundUser == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Wrong username or password" });
                 }
 
-                var currUser = foundUser.First();
+                var currUser = foundUser;
 
                 DateTime now = DateTime.Now;
                 var userActivities = this._adminRepo.GetUserActivities(currUser.user_id);

@@ -261,7 +261,7 @@ namespace FintrakBanking.Repositories.Credit
                     AuditTypeId = (short)AuditTypeEnum.AppraisalMemorandumAdded,
                     StaffId = model.createdBy,
                     BranchId = (short)model.userBranchId,
-                    Detail = $"Forward AppraisalMemorandum '{ model.applicationId }' ",
+                    Detail = $"CAM: '{ model.applicationId }' ",
                     IPAddress = model.userIPAddress,
                     Url = model.applicationUrl,
                     ApplicationDate = general.GetApplicationDate(),
@@ -346,6 +346,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId, int operationId = (int)OperationsEnum.CAM)
         {
+            operationId = (int)OperationsEnum.CAM; // <--------------------- overide incoming for now
+
             var privilege = new PrivilegeViewModel();
 
             var application = this.context.tbl_Loan_Application.Find(applicationId);
@@ -385,7 +387,7 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.tbl_Staff.Select(s => new OperationStaffViewModel
             {
                 id = s.StaffId,
-                name = s.LastName + " " + s.FirstName
+                name = s.FirstName + " " + s.MiddleName + " " + s.LastName
             });
         }
 

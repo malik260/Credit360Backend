@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -89,27 +90,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("end-of-day")]
-        public HttpResponseMessage RunEndOfDay([FromBody] EndOfDayViewModel model)
-        {
-            try
-            {
-                var data = repoEOD.RunEndOfDay(model);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = true, message = "End of day transaction completed successfully" });
-                }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "End of day transaction failed" });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
 
         [HttpGet]
         [Route("loan-search/")]
@@ -227,8 +207,45 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.GetLoanOperationAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("loan-operation/approved-loan-review")]
+        public HttpResponseMessage GetApprovedLoanReviewed()
+        {
+            try
+            {
+                var data = repo.GetApprovedLoanOperationReview();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("loan-operation/approval-detail/")]
+        public HttpResponseMessage GetApprovalDetails(int loanId, int operationId)
+        {
+            try
+            {
+                var data = repo.GetApprovalDetails(loanId, operationId);
 
                 if (data == null)
                 {
@@ -251,14 +268,53 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-                var response = repo.AddOperationReview(model);
+                if (model.principalFirstPaymentDate < model.proposedEffectiveDate)    
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Principal First Payment Date cannot be less than Effective date" });
+                }
+                if (model.interestFirstPaymentDate < model.proposedEffectiveDate)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Interest First Payment Date cannot be less than Effective date" });
+                }
+                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false,  message = "The requested operation already exist and going through approval" });
+                }
+                    var response = repo.AddOperationReview(model);
                 if (response)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("operation-approval")]
+        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+                var data = repo.GoForApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation has been approved successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }

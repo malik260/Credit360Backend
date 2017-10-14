@@ -128,6 +128,28 @@ namespace FintrakBanking.Repositories.Setups.General
                               });
             return department;
         }
+        //SearchForDepartmentbyStaffId
+        public IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery , int departmentId)
+        {
+            IQueryable<DepartmentCustomersViewModel> allstaff = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allstaff = SearchDepartments(companyId)
+                    .Where(x => x.firstname.Contains(searchQuery)
+               || x.lastname.Contains(searchQuery)
+               || x.middlename.Contains(searchQuery)
+               && x.DepartmentId == departmentId
+                );
+            }
+
+            return allstaff;
+        }
 
         public IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery)
         {

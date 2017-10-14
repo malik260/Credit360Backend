@@ -425,7 +425,7 @@ namespace FintrakBanking.Repositories.CASA
                     .Where(x => x.accountHolder.Contains(searchQuery)
                || x.customerCode.Contains(searchQuery)
                || x.productAccountNumber.Contains(searchQuery)
-                );
+                ).Take(10);
             }
 
             //foreach (var item in allCustomers)

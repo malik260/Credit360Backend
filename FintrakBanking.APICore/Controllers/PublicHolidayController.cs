@@ -1,7 +1,9 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
@@ -17,12 +19,14 @@ namespace FintrakBanking.APICore.Controllers
     public class PublicHolidayController : ApiControllerBase
     {
         private readonly IPublicHolidayRepository repo;
+        private IEndOfDayRepository repoEOD;
         private readonly IAuditTrailRepository audit;
         public PublicHolidayController(IPublicHolidayRepository _repo,
-                                IAuditTrailRepository _audit)
+                                IAuditTrailRepository _audit, IEndOfDayRepository _repoEOD)
         {
             this.repo = _repo;
             this.audit = _audit;
+            this.repoEOD = _repoEOD;
         }
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
@@ -53,6 +57,7 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+       
         [HttpPost]
         [Route("public-holiday")]
         public HttpResponseMessage AddPublicHoliday([FromBody] PublicHolidayViewModel entity)

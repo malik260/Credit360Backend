@@ -29,11 +29,10 @@ namespace FintrakBanking.ViewModels.Credit
 
         // insurance
         public string referenceNumber { get; set; }
-
         public decimal sumInsured { get; set; }
         public string insuranceCompany { get; set; }
-        public DateTime startDate { get; set; }
-        public DateTime expiryDate { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? expiryDate { get; set; }
 
         // deposit
         public int collateralDepositId { get; set; }
@@ -200,6 +199,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int? actedOnBy { get; set; }
         public string collateralSubType { get; set; }
         public string customerName { get; set; }
+        public int relationshipManagerId { get; set; }
+        public string relationshipManager { get; set; }
+        public string relationshipManagerEmail { get; set; }
     }
 
     public class MiscellaneousNote
@@ -526,7 +528,7 @@ namespace FintrakBanking.ViewModels.Credit
         public CollateralViewModel customerCollateral { get; set; }
     }
 
-    public class ActiveCustomerCollateralViewModel// : GeneralEntity
+    public class ActiveCustomerCollateralViewModel : GeneralEntity
     {
         public int? customerId { get; set; }
         public int collateralCustomerId { get; set; }
@@ -560,5 +562,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanInformation { get; set; }
         public bool isInvestmentGrade { get; set; }
         public bool isPoliticallyExposed { get; set; }
+        public bool isReleased { get; set; }
+        public short releaseApprovalStatusId { get; set; }
+        public decimal collateralValue { get; set; }
     }
 }

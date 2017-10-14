@@ -51,40 +51,43 @@ namespace FintrakBanking.Repositories.Admin
 
             entity.externalInitialization = false;
 
-            var response = workFlow.LogForApproval(entity);
+            workFlow.LogForApproval(entity);
 
-            if (response)
+            if (workFlow.NewState == (int)ApprovalState.Ended)
             {
-                return ApproveUser(entity.targetId, (int)ApprovalStatusEnum.Approved, entity);
+                return ApproveUser(entity.targetId, (short)workFlow.StatusId, entity);
             }
             return false;
         }
 
-        private bool ApproveUser(int userid, short approvalStatusId, UserInfo user)
+        private bool ApproveUser(int userId, short approvalStatusId, UserInfo user)
         {
-            var userRecord = context.tbl_Profile_User.Find(userid);
+            var userRecord = context.tbl_Profile_User.Find(userId);
 
-            userRecord.IsLocked = false;
-            userRecord.IsActive = true;
-            userRecord.ApprovalStatusId = approvalStatusId;
-            userRecord.ApprovalStatus = true;
-            userRecord.DateApproved = DateTime.Now;
-            userRecord.DateTimeUpdated = DateTime.Now;
-
-            // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            if (userRecord != null)
             {
-                AuditTypeId = (short)AuditTypeEnum.UserApproved,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Approved user '{userRecord.Username}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
-            };
+                userRecord.IsLocked = false;
+                userRecord.IsActive = true;
+                userRecord.ApprovalStatusId = approvalStatusId;
+                userRecord.ApprovalStatus = true;
+                userRecord.DateApproved = DateTime.Now;
+                userRecord.DateTimeUpdated = DateTime.Now;
 
-            this.auditTrail.AddAuditTrail(audit);
+                // Audit Section ---------------------------
+                var audit = new tbl_Audit
+                {
+                    AuditTypeId = (short)AuditTypeEnum.UserApproved,
+                    StaffId = user.staffId,
+                    BranchId = (short)user.BranchId,
+                    Detail = $"Approved user '{userRecord.Username}'",
+                    IPAddress = user.userIPAddress,
+                    Url = user.applicationUrl,
+                    ApplicationDate = genSetup.GetApplicationDate(),
+                    SystemDateTime = DateTime.Now
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
             // Audit Section ---------------------------
 
             return this.context.SaveChanges() > 0;
@@ -223,7 +226,8 @@ namespace FintrakBanking.Repositories.Admin
                         join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
                         join dept in context.tbl_Department on c.tbl_Staff.DepartmentId equals dept.DepartmentId
                         join atrail in context.tbl_Approval_Trail on c.UserId equals atrail.TargetId
-                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatus == false
+                        where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
+                        //&& c.ApprovalStatus == false
                               && atrail.ResponseStaffId == null
                               && atrail.OperationId == (int)OperationsEnum.UserCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
                         select new UserViewModel()
@@ -247,7 +251,7 @@ namespace FintrakBanking.Repositories.Admin
                             lastUpdatedBy = c.CreatedBy,
                             dateTimeCreated = c.DateTimeCreated,
                             approvalStatus = c.ApprovalStatus,
-                            approvalStatusId = atrail.ApprovalStatusId,
+                            //approvalStatusId = atrail.ApprovalStatusId,
                             operationId = atrail.OperationId,
                             groupId = c.tbl_Profile_UserGroup.Where(x => x.UserId == c.UserId).Select(x => new UserGroupId
                             {
@@ -341,7 +345,7 @@ namespace FintrakBanking.Repositories.Admin
             //var tt = context.TblApprovalGroup.FromSql("[sp_getGroup] @p0, @p1", parameters: new[] { groupId, groupId });
         }
 
-        public bool iSGroupExist(string groupName)
+        public bool isGroupExist(string groupName)
         {
             return context.tbl_Profile_Group.Any(x => x.GroupName.ToLower() == groupName);
         }
@@ -379,9 +383,12 @@ namespace FintrakBanking.Repositories.Admin
         {
             var targetGroup = context.tbl_Profile_Group.Find(groupId);
 
-            targetGroup.GroupName = groupModel.groupName;
-            targetGroup.DateTimeUpdated = DateTime.Now;
-            targetGroup.LastUpdatedBy = groupModel.createdBy;
+            if (targetGroup != null)
+            {
+                targetGroup.GroupName = groupModel.groupName;
+                targetGroup.DateTimeUpdated = DateTime.Now;
+                targetGroup.LastUpdatedBy = groupModel.createdBy;
+            }
 
             var response = await context.SaveChangesAsync();
             // Audit Section ---------------------------
@@ -455,11 +462,14 @@ namespace FintrakBanking.Repositories.Admin
         public bool AddAccessToActivity(int id, ActivitiesUpdateVm model)
         {
             var targetActivity = context.tbl_Profile_Group_Activity.Find(id);
-            targetActivity.CanAdd = model.canAdd;
-            targetActivity.CanApprove = model.canApprove;
-            targetActivity.CanView = model.canView;
-            targetActivity.CanEdit = model.canEdit;
-            targetActivity.CanDelete = model.canDelete;
+            if (targetActivity != null)
+            {
+                targetActivity.CanAdd = model.canAdd;
+                targetActivity.CanApprove = model.canApprove;
+                targetActivity.CanView = model.canView;
+                targetActivity.CanEdit = model.canEdit;
+                targetActivity.CanDelete = model.canDelete;
+            }
 
             return context.SaveChanges() > 0;
         }

@@ -96,10 +96,10 @@ namespace FintrakBanking.APICore.Controllers
               
                 try
                 {
-                    //var accounts = repo.GetAccountViewModel(accountId);
+                    //var accounts = repo.GetAccountByAccountId(accountId);
                     //return Ok(accounts);
 
-                    var account = repo.GetAccountViewModel(accountId);
+                    var account = repo.GetAccountByAccountId(accountId);
                     if (account == null)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK,
@@ -160,7 +160,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = $"An Account with {model.accountCode} already exist" });
                 }
-                if (repo.IsAccountExist(model.accountCode))
+                if (repo.IsTempAccountExist(model.accountCode))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = $"An account with {model.accountCode} already exist waiting for approval" });

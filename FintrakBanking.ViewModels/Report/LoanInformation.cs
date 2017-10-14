@@ -25,6 +25,7 @@ namespace FintrakBanking.ViewModels.Reports
         public string customerCode { get; set; }
         public string loanTypeName { get; set; }
         public string companyName { get; set; }
+        public string companylogo { get; set; }
         public string loanRefrenceNumber { get; set; }
         public decimal principalAmount { get; set; }
         public double interestRate { get; set; }

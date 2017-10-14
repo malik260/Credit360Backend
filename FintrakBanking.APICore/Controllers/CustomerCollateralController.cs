@@ -216,6 +216,59 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("customer-collateral/release/{mappingId}")]
+        public HttpResponseMessage ReleaseCollateral(int mappingId)
+        {
+            try
+            {
+                GeneralEntity userInfo = new GeneralEntity()
+                {
+                    createdBy = token.GetStaffId,
+                    companyId = token.GetCompanyId,
+                    userBranchId = (short)token.GetBranchId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress,
+                };
+
+                var response = repo.ReleaseCollateral(mappingId, token.GetStaffId, userInfo);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("customer-collateral/release/{mappingId}/approve")]
+        public HttpResponseMessage ApproveCollateralRelease(int mappingId)
+        {
+            try
+            {
+                GeneralEntity userInfo = new GeneralEntity()
+                {
+                    createdBy = token.GetStaffId,
+                    companyId = token.GetCompanyId,
+                    userBranchId = (short)token.GetBranchId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress,
+                };
+                var response = repo.ApproveCollateralRelease(mappingId, token.GetStaffId, userInfo);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
         #endregion New
 
 

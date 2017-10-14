@@ -40,7 +40,7 @@ namespace FintrakBanking.Interfaces.Admin
 
         AppGroupViewModel GetSingleGroup(int groupId);
 
-        bool iSGroupExist(string groupName);
+        bool isGroupExist(string groupName);
 
         Task<bool> AddGroup(AppGroupViewModel group);
 
