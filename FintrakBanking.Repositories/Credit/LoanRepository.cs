@@ -348,7 +348,12 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
                 throw new Exception("Loan terminal date should be more than effective date");
 
-            if (entity.principalAmount > entity.customerAvailableAmount)
+            var totalPreviouslyBookedAmount = (from a in context.tbl_Loan.Where(x => x.LoanApplicationDetailId == entity.loanApplicationDetailId)
+                                 select a).Sum(s => s.PrincipalAmount);
+
+            var totalPrincipalAmount = totalPreviouslyBookedAmount + entity.principalAmount;
+
+            if (totalPrincipalAmount > entity.customerAvailableAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
    
 
@@ -725,7 +730,7 @@ namespace FintrakBanking.Repositories.Credit
                             effectiveDate = ln.EffectiveDate,
                             maturityDate = ln.MaturityDate,
                             bookingDate = ln.BookingDate,
-                            principalAmount = ln.OutstandingPrincipal, //\\\ln.PrincipalAmount,
+                            principalAmount = ln.PrincipalAmount,
                             principalInstallmentLeft = ln.PrincipalInstallmentLeft,
                             interestInstallmentLeft = ln.InterestInstallmentLeft,
                             approvalStatusId = ln.ApprovalStatusId,
