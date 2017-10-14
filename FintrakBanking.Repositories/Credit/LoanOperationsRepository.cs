@@ -4159,11 +4159,16 @@ namespace FintrakBanking.Repositories.Credit
         }
         private bool ApproveLoanReview(int loanId, ApprovalViewModel user)
         {
+            bool output = false;
             var reviewRecord = (from s in context.tbl_Loan_Review_Operation
-                                where s.LoanId == loanId && s.OperationTypeId == user.operationId 
+                                where s.LoanId == loanId && s.OperationTypeId == user.operationId
                                && s.ApprovalStatusId != (int)ApprovalStatusEnum.Approved
-                                && s.OperationCompleted == false select s).FirstOrDefault();
+                                && s.OperationCompleted == false
+                                select s).FirstOrDefault();
+            output = true;
 
+            return output;
+        }
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool LoanRephasementProcess(short loanReviewOperationsId, int loanId, int staffId)
         {
