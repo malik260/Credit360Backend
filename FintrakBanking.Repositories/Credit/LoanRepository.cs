@@ -1108,7 +1108,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanId = loanRecord.TermLoanId,
                 customerId = loanRecord.CustomerId,
                 productId = loanRecord.ProductId,
-                productPriceIndexRate = (decimal)loanRecord.ProductPriceIndexRate,
+                productPriceIndexRate = loanRecord.ProductPriceIndexRate,
                 casaAccountId = loanRecord.CasaAccountId,
                 loanApplicationDetailId = (int)loanRecord.LoanApplicationDetailId,
 

@@ -27,10 +27,12 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
-        public decimal productPriceIndexRate { get; set; }
+        //public decimal productPriceIndexRate { get; set; }
+        public double productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
+
 
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }

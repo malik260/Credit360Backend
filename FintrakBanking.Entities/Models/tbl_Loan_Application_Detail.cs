@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public tbl_Loan_Application_Detail()
         {
             tbl_Loan = new HashSet<tbl_Loan>();
+            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
             tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
         }
@@ -64,6 +65,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DateTimeDeleted { get; set; }
 
+        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+
         public virtual tbl_Currency tbl_Currency { get; set; }
 
         public virtual tbl_Customer tbl_Customer { get; set; }
@@ -79,7 +82,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
 
-        public virtual tbl_Loan_Application_Detail_Status tbl_Loan_Application_Detail_Status { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }

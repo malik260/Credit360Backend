@@ -263,5 +263,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
+
+        [HttpPost]
+        [Route("loanrephasement")]
+        public HttpResponseMessage LoanRephasementProcess([FromBody] LoanReviewOperationViewModel model)
+        {
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                var response = repo.LoanRephasementProcess((short)model.loanReviewOperationsId,model.loanId,model.createdBy);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Loan Rephasement Process was successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error with Loan Rephasement Process" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error with Loan Rephasement Process {e.Message}" });
+            }
+        }
     }
 }

@@ -28,7 +28,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string Parent_PastDueCode { get; set; }
 
-
         [Required]
         [StringLength(800)]
         public string Description { get; set; }
