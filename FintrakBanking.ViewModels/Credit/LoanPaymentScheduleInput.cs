@@ -11,11 +11,21 @@ namespace FintrakBanking.ViewModels.Credit
         public Double principalAmount { get; set; }
         public DateTime effectiveDate { get; set; }
         public double interestRate { get; set; }
-        public short ? principalFrequency { get; set; }
-        public short ? interestFrequency { get; set; }
-        public int tenor { get; set; }
-        public DateTime  principalFirstpaymentDate { get; set; }
-        public DateTime  interestFirstpaymentDate { get; set; }
+        public short? principalFrequency { get; set; } 
+        public short? interestFrequency { get; set; }
+        public int principalFrequencyTypeId { get; set; }
+        public int interestFrequencyTypeId { get; set; }
+        //public int tenor { get { return  }  }
+        private int _tenor;
+
+        public int tenor 
+        {
+            get { return (maturityDate - effectiveDate).Days; }
+            set { _tenor = value; }
+        }
+
+        public DateTime principalFirstpaymentDate { get; set; }
+        public DateTime interestFirstpaymentDate { get; set; }
         public DateTime maturityDate { get; set; }
         public short accurialBasis { get; set; }
         public double integralFeeAmount { get; set; }
@@ -31,6 +41,12 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime newInterestFirstpaymentDate { get; set; }
         public Double payInterest{ get; set; }
         public Double newInterest{ get; set; }
+
+        public int newTenor { get { return (maturityDate - newEffectiveDate).Days; } }
+        public DateTime newEffectiveDate { get; set; }
+        public decimal prepayment  { get; set; }
+        public int operationId { get; set; }
+
 
 
         public List<IrregularLoanScheduleInputViewModel> irregularPaymentSchedule { get; set; }
