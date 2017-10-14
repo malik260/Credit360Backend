@@ -325,19 +325,21 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                
-               //// token.GetStaffId;
-              
-               //var data = repo.GoForApproval(entity);
+       
+                if (entity.loanReviewOperationsId == 0 || entity.loanId == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Please reconfirm your request and try again" });
+                }
+                var data = repo.LoanRephasementProcess((short)entity.loanReviewOperationsId, entity.loanId, token.GetStaffId);
 
-               // if (data)
-               // {
-               //     return Request.CreateResponse(HttpStatusCode.OK,
-               //         new { success = true, message = "Operation has been approved successfully" });
-               // }
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation has been approved successfully" });
+                }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                    new { success = false, message = "Operation not successful" });
             }
             catch (System.Exception e)
             {
