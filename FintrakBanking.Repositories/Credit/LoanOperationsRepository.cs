@@ -3951,7 +3951,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from ln in context.tbl_Loan
                         join op in context.tbl_Loan_Review_Operation on ln.TermLoanId equals op.LoanId
-                        where op.ApprovalStatusId == (int)ApprovalStatusEnum.Approved //&& op.OperationCompleted == false
+                        where op.ApprovalStatusId == (int)ApprovalStatusEnum.Approved && op.OperationCompleted == false
                         orderby op.OperationTypeId descending
                         select new LoanReviewOperationApprovalViewModel
                         {

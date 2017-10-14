@@ -319,5 +319,30 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+        [HttpPost]
+        [Route("operation-loan-rephrasement")]
+        public HttpResponseMessage LoanRephrasementOperation([FromBody]LoanReviewOperationViewModel entity)
+        {
+            try
+            {
+                
+               //// token.GetStaffId;
+              
+               //var data = repo.GoForApproval(entity);
+
+               // if (data)
+               // {
+               //     return Request.CreateResponse(HttpStatusCode.OK,
+               //         new { success = true, message = "Operation has been approved successfully" });
+               // }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
     }
 }

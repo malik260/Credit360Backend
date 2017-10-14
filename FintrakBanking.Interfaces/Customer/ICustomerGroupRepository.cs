@@ -42,6 +42,8 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups);
 
+        bool AddCustomerGroupRelationshipTypes(LookupViewModel model);
+
         IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping();
 
         IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMappingByGroupId(int customerGroupId);

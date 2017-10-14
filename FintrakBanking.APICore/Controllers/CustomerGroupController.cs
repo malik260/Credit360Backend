@@ -393,6 +393,28 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
+        [HttpPost]
+        [Route("customer-relationship-type")]
+        public HttpResponseMessage AddCustomerGroupRelationshipTypes([FromBody] LookupViewModel entity)
+        {
+
+            try
+            {
+                var data = repo.AddCustomerGroupRelationshipTypes(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Created,
+                        new{ success = true,result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
 
         [HttpPut]
         [Route("customer-group-mapping/{groupMapId}")]
@@ -422,5 +444,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion
+
     }
 }

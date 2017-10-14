@@ -968,6 +968,23 @@ namespace FintrakBanking.Repositories.Customer
                        lookupName = a.RelationshipTypeName
                    };
         }
+        public bool AddCustomerGroupRelationshipTypes(LookupViewModel model )
+        {
+            if (model.lookupId > 0)
+            {
+                var type = context.tbl_Customer_Group_RelationshipType.FirstOrDefault(x=> x.RelationshipTypeId == model.lookupId);
+                type.RelationshipTypeName = model.lookupName;
+            }
+            else
+            {
+                var type = new tbl_Customer_Group_RelationshipType
+                {
+                    RelationshipTypeName = model.lookupName
+                };
+                context.tbl_Customer_Group_RelationshipType.Add(type);
+            }
+            return this.SaveAll();
+        }
 
         private IQueryable<CustomerGroupViewModel> GellAllCustomerGroupMappings()
         {
