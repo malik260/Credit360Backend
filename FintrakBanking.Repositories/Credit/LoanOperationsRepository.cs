@@ -1764,12 +1764,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.tbl_Loan
-                         where a.TermLoanId == loanId //&& a.LoanStatusId == (short)LoanStatusEnum.Active
+                         where a.TermLoanId == loanId && a.LoanStatusId == (short)LoanStatusEnum.Active
                          select new LoanViewModel()
                          {
                              loanId = a.TermLoanId,
                              productPriceIndexRate = a.ProductPriceIndexRate,
-                             //customerRiskRatingId = (int)a.CustomerRiskRatingId,
+                             customerRiskRatingId = a.CustomerRiskRatingId,
                              customerId = a.CustomerId,
                              productId = a.ProductId,
                              companyId = a.CompanyId,
@@ -1777,11 +1777,11 @@ namespace FintrakBanking.Repositories.Credit
                              branchId = a.BranchId,
                              currencyId = a.CurrencyId,
                              exchangeRate = a.ExchangeRate,
-                             loanApplicationDetailId = (int)a.LoanApplicationDetailId,
+                             loanApplicationDetailId = a.LoanApplicationDetailId,
                              loanReferenceNumber = a.LoanReferenceNumber,
                              subSectorId = a.SubSectorId,
-                             principalFrequencyTypeId = (short)a.PrincipalFrequencyTypeId,
-                             interestFrequencyTypeId = (short)a.InterestFrequencyTypeId,
+                             principalFrequencyTypeId = a.PrincipalFrequencyTypeId,
+                             interestFrequencyTypeId = a.InterestFrequencyTypeId,
                              principalNumberOfInstallment = a.PrincipalNumberOfInstallment,
                              interestNumberOfInstallment = a.InterestNumberOfInstallment,
                              relationshipOfficerId = a.RelationshipOfficerId,
@@ -1797,17 +1797,17 @@ namespace FintrakBanking.Repositories.Credit
                              principalInstallmentLeft = a.PrincipalInstallmentLeft,
                              interestInstallmentLeft = a.InterestInstallmentLeft,
                              approvalStatusId = a.ApprovalStatusId,
-                             //approvedBy = a.ApprovedBy,
-                             //approverComment = a.ApproverComment,
-                             //dateApproved = a.DateApproved,
+                             approvedBy = a.ApprovedBy,
+                             approverComment = a.ApproverComment,
+                             dateApproved = a.DateApproved,
                              loanStatusId = a.LoanStatusId,
                              scheduleTypeId = a.ScheduleTypeId,
                              scheduleDayCountConventionId = a.ScheduleDayCountConventionId,
                              scheduleDayInterestTypeId = a.ScheduleDayInterestTypeId,
                              isDisbursed = a.IsDisbursed,
-                             //disbursedBy = a.DisbursedBy,
-                             //disburserComment = a.DisburserComment,
-                             //disburseDate = a.DisburseDate,
+                             disbursedBy = a.DisbursedBy,
+                             disburserComment = a.DisburserComment,
+                             disburseDate = a.DisburseDate,
                              operationId = a.OperationId,
                              customerGroupId = a.CustomerGroupId,
                              loanTypeId = a.LoanTypeId,
@@ -1822,19 +1822,19 @@ namespace FintrakBanking.Repositories.Credit
                              profileLoan = a.ProfileLoan,
                              dischargeLetter = a.DischargeLetter,
                              suspendInterest = a.SuspendInterest,
-                             isScheduledPrepayment = (bool)a.IsScheduledPrepayment,
-                             allowForceDebitRepayment = (bool)a.AllowForceDebitRepayment,
-                             scheduledPrepaymentAmount = (decimal)a.ScheduledPrepaymentAmount,
-                             scheduledPrepaymentDate = (DateTime)a.ScheduledPrepaymentDate,
-                             //scheduledPrepaymentFrequencyTypeId = (short)a.ScheduledPrepaymentFrequencyTypeId,
+                             isScheduledPrepayment = a.IsScheduledPrepayment,
+                             allowForceDebitRepayment = a.AllowForceDebitRepayment,
+                             scheduledPrepaymentAmount = a.ScheduledPrepaymentAmount,
+                             scheduledPrepaymentDate = a.ScheduledPrepaymentDate,
+                             scheduledPrepaymentFrequencyTypeId = a.ScheduledPrepaymentFrequencyTypeId,
                              customerSensitivityLevelId = a.CustomerSensitivityLevelId,
-                             //internalPrudentialGuidelineStatusId = (int)a.InternalPrudentialGuidelineStatusId,
-                             //externalPrudentialGuidelineStatusId = (int)a.ExternalPrudentialGuidelineStatusId,
-                             //nplDate = (DateTime)a.NPLDate,
+                             internalPrudentialGuidelineStatusId = a.InternalPrudentialGuidelineStatusId,
+                             externalPrudentialGuidelineStatusId = a.ExternalPrudentialGuidelineStatusId,
+                             nplDate = a.NPLDate,
                              createdBy = a.CreatedBy,
                              dateTimeCreated = a.DateTimeCreated,
 
-                         });
+                         }).ToList();
 
             List<tbl_Loan_Archive> loanArchive = new List<tbl_Loan_Archive>();
 
@@ -1850,7 +1850,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.IsApplied = false;
                 addLoanArchive.ChangeReason = "Rephasement";
                 addLoanArchive.LoanId = item.loanId;
-                addLoanArchive.ProductPriceIndexRate = (double)item.productPriceIndexRate;
+                addLoanArchive.ProductPriceIndexRate = item.productPriceIndexRate;
                 addLoanArchive.CustomerRiskRatingId = item.customerRiskRatingId;
                 addLoanArchive.CustomerId = item.customerId;
                 addLoanArchive.ProductId = item.productId;
@@ -1953,7 +1953,7 @@ namespace FintrakBanking.Repositories.Credit
                              createdBy = a.CreatedBy,
                              dateTimeCreated = a.DateTimeCreated,
 
-                         });
+                         }).ToList();
 
             List<tbl_Loan_Schedule_Periodic_Archive> loanSchedulePeriodicArchive = new List<tbl_Loan_Schedule_Periodic_Archive>();
 
@@ -2038,7 +2038,7 @@ namespace FintrakBanking.Repositories.Credit
                              dateTimeCreated = a.DateTimeCreated,
 
 
-                         });
+                         }).ToList();
 
             List<tbl_Loan_Schedule_Daily_Archive> loanScheduleDailyArchive = new List<tbl_Loan_Schedule_Daily_Archive>();
 
@@ -2146,7 +2146,7 @@ namespace FintrakBanking.Repositories.Credit
                               effectiveInterestRate = a.EffectiveInterestRate,
                               createdBy = a.CreatedBy,
                               dateTimeCreated = a.DateTimeCreated,
-                          });
+                          }).ToList();
 
             List<tbl_Loan_Schedule_Periodic> loanSchedulePeriodic = new List<tbl_Loan_Schedule_Periodic>();
 
@@ -2312,10 +2312,10 @@ namespace FintrakBanking.Repositories.Credit
                 this.context.tbl_Loan_Schedule_Daily_Temp.AddRange(tblDailyScheduleTemp); ////change to Temp table
                 context.SaveChanges();
                 //----------update loan details -----------------------------------
-                //var loan = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == loanId);
-                //loan.MaturityDate = periodicScheduleTemp.Max(x => x.paymentDate);
-                //loan.PrincipalNumberOfInstallment = periodicScheduleTemp.Count() - 1;
-                //loan.InterestNumberOfInstallment = loan.PrincipalNumberOfInstallment;
+                var loan = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == loanId);
+                loan.MaturityDate = periodicScheduleTemp.Max(x => x.paymentDate);
+                loan.PrincipalNumberOfInstallment = periodicScheduleTemp.Count() - 1;
+                loan.InterestNumberOfInstallment = loan.PrincipalNumberOfInstallment;
                 //-------------------------------------------------
 
                 UpdatePeriodicSchedule(loanId, applicationDate);
@@ -2364,7 +2364,7 @@ namespace FintrakBanking.Repositories.Credit
                              createdBy = a.CreatedBy,
                              dateTimeCreated = a.DateTimeCreated,
 
-                         });
+                         }).ToList();
 
             List<tbl_Loan_Schedule_Periodic_Archive> loanSchedulePeriodicArchive = new List<tbl_Loan_Schedule_Periodic_Archive>();
 
@@ -2451,7 +2451,7 @@ namespace FintrakBanking.Repositories.Credit
                              dateTimeCreated = a.DateTimeCreated,
 
 
-                         });
+                         }).ToList();
 
             List<tbl_Loan_Schedule_Daily_Archive> loanScheduleDailyArchive = new List<tbl_Loan_Schedule_Daily_Archive>();
 
@@ -2511,15 +2511,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.tbl_Loan
-                             //where a.LoanStatusId == (short)LoanStatusEnum.Active
-                             // && !context.tbl_Loan_PriceIndex_Exception.Any(d => d.LoanId == a.TermLoanId)
-                         where !context.tbl_Loan_PriceIndex_Exception.Any(d => d.LoanId == a.TermLoanId)
+                         where a.LoanStatusId == (short)LoanStatusEnum.Active
+                          && !context.tbl_Loan_PriceIndex_Exception.Any(d => d.LoanId == a.TermLoanId)
+                         //where !context.tbl_Loan_PriceIndex_Exception.Any(d => d.LoanId == a.TermLoanId)
 
                          select new LoanViewModel()
                          {
                              loanId = a.TermLoanId,
                              productPriceIndexRate = a.ProductPriceIndexRate,
-                             //customerRiskRatingId = (int)a.CustomerRiskRatingId,
+                             customerRiskRatingId = a.CustomerRiskRatingId,
                              customerId = a.CustomerId,
                              productId = a.ProductId,
                              companyId = a.CompanyId,
@@ -2527,11 +2527,11 @@ namespace FintrakBanking.Repositories.Credit
                              branchId = a.BranchId,
                              currencyId = a.CurrencyId,
                              exchangeRate = a.ExchangeRate,
-                             loanApplicationDetailId = (int)a.LoanApplicationDetailId,
+                             loanApplicationDetailId = a.LoanApplicationDetailId,
                              loanReferenceNumber = a.LoanReferenceNumber,
                              subSectorId = a.SubSectorId,
-                             principalFrequencyTypeId = (short)a.PrincipalFrequencyTypeId,
-                             interestFrequencyTypeId = (short)a.InterestFrequencyTypeId,
+                             principalFrequencyTypeId = a.PrincipalFrequencyTypeId,
+                             interestFrequencyTypeId = a.InterestFrequencyTypeId,
                              principalNumberOfInstallment = a.PrincipalNumberOfInstallment,
                              interestNumberOfInstallment = a.InterestNumberOfInstallment,
                              relationshipOfficerId = a.RelationshipOfficerId,
@@ -2547,17 +2547,17 @@ namespace FintrakBanking.Repositories.Credit
                              principalInstallmentLeft = a.PrincipalInstallmentLeft,
                              interestInstallmentLeft = a.InterestInstallmentLeft,
                              approvalStatusId = a.ApprovalStatusId,
-                             //approvedBy = a.ApprovedBy,
-                             //approverComment = a.ApproverComment,
-                             //dateApproved = a.DateApproved,
+                             approvedBy = a.ApprovedBy,
+                             approverComment = a.ApproverComment,
+                             dateApproved = a.DateApproved,
                              loanStatusId = a.LoanStatusId,
                              scheduleTypeId = a.ScheduleTypeId,
                              scheduleDayCountConventionId = a.ScheduleDayCountConventionId,
                              scheduleDayInterestTypeId = a.ScheduleDayInterestTypeId,
                              isDisbursed = a.IsDisbursed,
-                             //disbursedBy = a.DisbursedBy,
-                             //disburserComment = a.DisburserComment,
-                             //disburseDate = a.DisburseDate,
+                             disbursedBy = a.DisbursedBy,
+                             disburserComment = a.DisburserComment,
+                             disburseDate = a.DisburseDate,
                              operationId = a.OperationId,
                              customerGroupId = a.CustomerGroupId,
                              loanTypeId = a.LoanTypeId,
@@ -2572,19 +2572,19 @@ namespace FintrakBanking.Repositories.Credit
                              profileLoan = a.ProfileLoan,
                              dischargeLetter = a.DischargeLetter,
                              suspendInterest = a.SuspendInterest,
-                             isScheduledPrepayment = (bool)a.IsScheduledPrepayment,
-                             allowForceDebitRepayment = (bool)a.AllowForceDebitRepayment,
-                             scheduledPrepaymentAmount = (decimal)a.ScheduledPrepaymentAmount,
-                             scheduledPrepaymentDate = (DateTime)a.ScheduledPrepaymentDate,
-                             //scheduledPrepaymentFrequencyTypeId = (short)a.ScheduledPrepaymentFrequencyTypeId,
+                             isScheduledPrepayment = a.IsScheduledPrepayment,
+                             allowForceDebitRepayment = a.AllowForceDebitRepayment,
+                             scheduledPrepaymentAmount = a.ScheduledPrepaymentAmount,
+                             scheduledPrepaymentDate = a.ScheduledPrepaymentDate,
+                             scheduledPrepaymentFrequencyTypeId = a.ScheduledPrepaymentFrequencyTypeId,
                              customerSensitivityLevelId = a.CustomerSensitivityLevelId,
-                             //internalPrudentialGuidelineStatusId = (int)a.InternalPrudentialGuidelineStatusId,
-                             //externalPrudentialGuidelineStatusId = (int)a.ExternalPrudentialGuidelineStatusId,
-                             //nplDate = (DateTime)a.NPLDate,
+                             internalPrudentialGuidelineStatusId = a.InternalPrudentialGuidelineStatusId,
+                             externalPrudentialGuidelineStatusId = a.ExternalPrudentialGuidelineStatusId,
+                             nplDate = a.NPLDate,
                              createdBy = a.CreatedBy,
                              dateTimeCreated = a.DateTimeCreated,
 
-                         });
+                         }).ToList();
 
             List<tbl_Loan_Archive> loanArchive = new List<tbl_Loan_Archive>();
 
@@ -2600,7 +2600,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.IsApplied = false;
                 addLoanArchive.ChangeReason = "Rephasement";
                 addLoanArchive.LoanId = item.loanId;
-                addLoanArchive.ProductPriceIndexRate = (double)item.productPriceIndexRate;
+                addLoanArchive.ProductPriceIndexRate = item.productPriceIndexRate;
                 addLoanArchive.CustomerRiskRatingId = item.customerRiskRatingId;
                 addLoanArchive.CustomerId = item.customerId;
                 addLoanArchive.ProductId = item.productId;
@@ -2793,7 +2793,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (LoanExist(loanId) > 0)
             {
-                    ArchiveLoan(loanId, loanId);/////loanId change this to OperationId
+                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
                     ArchivePeriodicSchedule(loanId);
                     ArchiveDailySchedule(loanId);
 
@@ -2919,12 +2919,9 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
 
-            if (loanInput.newPrincipalFrequency != loanInput.principalFrequency || loanInput.newInterestFrequency != loanInput.interestFrequency)
-            {
-
                 if (LoanExist(loanId) > 0)
                 {
-                    ArchiveLoan(loanId, loanId);/////loanId change this to OperationId
+                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
                     ArchivePeriodicSchedule(loanId);
                     ArchiveDailySchedule(loanId);
 
@@ -3036,7 +3033,6 @@ namespace FintrakBanking.Repositories.Credit
                     context.SaveChanges();
                     //-------------------------------------------------------
                 }
-            }
 
             output = true;
 
@@ -3049,20 +3045,17 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
 
-            if (loanInput.newPrincipalFirstpaymentDate != loanInput.principalFirstpaymentDate || loanInput.newInterestFirstpaymentDate != loanInput.interestFirstpaymentDate)
-            {
-
                 if (LoanExist(loanId) > 0)
                 {
-                    ArchiveLoan(loanId, loanId);/////loanId change this to OperationId
+                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
                     ArchivePeriodicSchedule(loanId);
                     ArchiveDailySchedule(loanId);
 
 
                     //----------generate and save periodic loan schedule -----------------------------------
 
-                    loanInput.principalFirstpaymentDate = loanInput.newPrincipalFirstpaymentDate;
-                    loanInput.interestFirstpaymentDate = loanInput.newInterestFirstpaymentDate;
+                    //loanInput.principalFirstpaymentDate = loanInput.newPrincipalFirstpaymentDate;
+                    //loanInput.interestFirstpaymentDate = loanInput.newInterestFirstpaymentDate;
 
                     List<LoanPaymentSchedulePeriodicViewModel> periodicScheduleTemp = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
 
@@ -3166,7 +3159,6 @@ namespace FintrakBanking.Repositories.Credit
                     context.SaveChanges();
                     //-------------------------------------------------------
                 }
-            }
 
             output = true;
 
@@ -4186,7 +4178,6 @@ namespace FintrakBanking.Repositories.Credit
                              principalAmount = (double)b.OutstandingPrincipal,
                              principalFrequency = b.PrincipalFrequencyTypeId,
                              interestFrequency = b.InterestFrequencyTypeId,
-                             //tenor = (int)(b.MaturityDate - b.EffectiveDate).Days,
                              principalFirstpaymentDate = (DateTime)b.FirstPrincipalPaymentDate,
                              interestFirstpaymentDate = (DateTime)b.FirstInterestPaymentDate,
                              interestRate = b.InterestRate,
@@ -4196,16 +4187,15 @@ namespace FintrakBanking.Repositories.Credit
                              firstDayType = b.ScheduleDayInterestTypeId,
                              integralFeeAmount = 0,
                              newEffectiveDate = a.EffectiveDate,
-                             //newTenor = (int)(b.MaturityDate - a.EffectiveDate).Days,
-                             //newInterestFrequency = (short)a.InterestFrequencyTypeId,
-                             //newPrincipalFrequency = (short)a.PrincipalFrequencyTypeId,
+                             newInterestFrequency = (short?)a.InterestFrequencyTypeId ?? (short)b.InterestFrequencyTypeId,
+                             newPrincipalFrequency = (short?)a.PrincipalFrequencyTypeId ?? (short)b.PrincipalFrequencyTypeId ,
                              newInterestFirstpaymentDate = (DateTime)a.InterestFirstPaymentDate,
                              newInterest = (double)a.InterateRate,
-                             //prepayment = (decimal)a.Prepayment,
+                             payAmount = (double?)a.Prepayment ??0,
                              operationId = a.OperationTypeId,
                              newPrincipalFirstpaymentDate = (DateTime)a.PrincipalFirstPaymentDate,
                              
-                         });
+                         }).ToList();
 
             foreach (var item in model)
             {
@@ -4215,7 +4205,6 @@ namespace FintrakBanking.Repositories.Credit
                                   && a.Date >= EntityFunctions.TruncateTime(item.newEffectiveDate)).Sum(a => (double?)a.UnEarnedFee ?? 0)
                                   select sumUnEarnedFee;
                 item.integralFeeAmount = (double?)unEarnedFee.FirstOrDefault()??0;
-                //var applicationDate = (DateTime)item.newEffectiveDate.Date.GetDateTimeFormats("yyyy-mm-dd");
                 string  appDate =  item.newEffectiveDate.ToString(@"yyyy-MM-dd");
                 var applicationDate = Convert.ToDateTime(appDate);
                 if ((int)OperationsEnum.ContractualInterestRateChange == item.operationId)
@@ -4223,8 +4212,6 @@ namespace FintrakBanking.Repositories.Credit
                     item.interestRate = item.newInterest;
                     item.effectiveDate = item.newEffectiveDate;
                     item.tenor = item.newTenor;
-                    //item.interestFrequency = item.newInterestFrequency;
-                    //item.principalFrequency = item.newPrincipalFrequency;
                     item.interestFirstpaymentDate = item.newInterestFirstpaymentDate;
                     item.principalFirstpaymentDate  = item.newPrincipalFirstpaymentDate;
 
@@ -4233,17 +4220,41 @@ namespace FintrakBanking.Repositories.Credit
                 }
                else if ((int)OperationsEnum.Prepayment == item.operationId)
                 {
+                    item.newAmount = item.principalAmount - item.payAmount;
+                    item.effectiveDate = item.newEffectiveDate;
+                    item.tenor = item.newTenor;
+                    item.interestFirstpaymentDate = item.newInterestFirstpaymentDate;
+                    item.principalFirstpaymentDate = item.newPrincipalFirstpaymentDate;
+
                     UpdateLoanPrepaymentSchedule(loanId, item, applicationDate, staffId);
                     updateLoanReviewOperation(loanReviewOperationsId, loanId);
                 }
                 else if ((int)OperationsEnum.PaymentDateChange == item.operationId)
                 {
+                    item.interestFirstpaymentDate = item.newInterestFirstpaymentDate;
+                    item.principalFirstpaymentDate = item.newPrincipalFirstpaymentDate;
+
                     PaymentDateChange(loanId, item, applicationDate, staffId);
                     updateLoanReviewOperation(loanReviewOperationsId, loanId);
                 }
                 else if ((int)OperationsEnum.PrincipalFrequencyChange == item.operationId || (int)OperationsEnum.InterestFrequencyChange == item.operationId
                     || (int)OperationsEnum.InterestandPrincipalFrequencyChange == item.operationId)
                 {
+                    if ((int)OperationsEnum.PrincipalFrequencyChange == item.operationId)
+                    {
+                        item.principalFrequency = item.newPrincipalFrequency;
+                        item.interestFrequency = item.interestFrequency;
+                    }
+                    if ((int)OperationsEnum.InterestFrequencyChange == item.operationId)
+                    {
+                        item.interestFrequency = item.newInterestFrequency;
+                        item.principalFrequency = item.principalFrequency;
+                    }
+                    if ((int)OperationsEnum.InterestandPrincipalFrequencyChange == item.operationId)
+                    {
+                        item.interestFrequency = item.newInterestFrequency;
+                        item.principalFrequency = item.newPrincipalFrequency;
+                    }
                     PaymentFrequencyChange(loanId, item, applicationDate, staffId);
                     updateLoanReviewOperation(loanReviewOperationsId, loanId);
                 }
@@ -4282,5 +4293,9 @@ namespace FintrakBanking.Repositories.Credit
 
             return output;
         }
+
+
+
+
     }
 }
