@@ -1753,7 +1753,16 @@ namespace FintrakBanking.Repositories.Credit
                 context.tbl_Loan_Schedule_Periodic_Temp.RemoveRange(removeLoan_Schedule_Periodic_Temp);
                
             }
-            context.SaveChanges();
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new System.Data.Entity.Validation.DbEntityValidationException(errorMessages);
+            }
+            //context.SaveChanges();
             output = true;
 
             return output;
@@ -1918,11 +1927,10 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.CreatedBy = item.createdBy;
                 addLoanArchive.DateTimeCreated = item.dateTimeCreated;
 
-                loanArchive.Add(addLoanArchive);
-
+                 loanArchive.Add(addLoanArchive);
             }
             //tbl_Loan
-            this.context.tbl_Loan_Archive.AddRange(loanArchive);
+           this.context.tbl_Loan_Archive.AddRange(loanArchive);
 
             context.SaveChanges();
             return model;
@@ -2216,7 +2224,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (LoanExist(loanId) > 0)
             {
-                DeleteLoanExist(loanId);
+               DeleteLoanExist(loanId);
                 ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
                 ArchivePeriodicSchedule(loanId);
                 ArchiveDailySchedule(loanId);
@@ -3853,8 +3861,8 @@ namespace FintrakBanking.Repositories.Credit
                 OverDraftTopup = model.overDraftTopup,
                 Fee_Charges = model.fee_Charges,
                 ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-               // IsManagementInterestRate = model.isManagementRate,
-                //OperationCompleted = false,
+                IsManagementInterestRate = model.isManagementRate,
+                OperationCompleted = false,
                 CreatedBy = model.createdBy,
                 DateCreated = DateTime.Now
             };
@@ -4020,7 +4028,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from ln in context.tbl_Loan
                         join op in context.tbl_Loan_Review_Operation on ln.TermLoanId equals op.LoanId
-                        where op.ApprovalStatusId == (int)ApprovalStatusEnum.Approved //&& op.OperationCompleted == false
+                        where op.ApprovalStatusId == (int)ApprovalStatusEnum.Approved && op.OperationCompleted == false
                         orderby op.OperationTypeId descending
                         select new LoanReviewOperationApprovalViewModel
                         {
@@ -4161,7 +4169,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return output;
         }
-        [OperationBehavior(TransactionScopeRequired = true)]
+       // [OperationBehavior(TransactionScopeRequired = true)]
         public bool LoanRephasementProcess(short loanReviewOperationsId, int loanId, int staffId)
         {
             bool output = false;
