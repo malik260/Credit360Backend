@@ -617,7 +617,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return AllProduct().SingleOrDefault(p => p.productCode == productCode && p.companyId == companyId);
         }
 
-        public async Task<bool> GoForApproval(ApprovalViewModel entity)
+        public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.ProductCreation;
 
@@ -625,15 +625,44 @@ namespace FintrakBanking.Repositories.Setups.General
 
             workFlow.LogForApproval(entity);
 
-            if (workFlow.NewState == (int)ApprovalState.Ended)
+            using (var trans = context.Database.BeginTransaction())
             {
-                return await ApproveProduct(entity.targetId, (short)workFlow.StatusId, entity);
-            }
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
 
-            return false;
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApproveProduct(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
         }
 
-        private async Task<bool> ApproveProduct(int productId, short approvalStatusId, UserInfo user)
+        private bool ApproveProduct(int productId, short approvalStatusId, UserInfo user)
         {
             var productModel = context.tbl_Temp_Product.Find(productId);
             var productToUpdate = context.tbl_Product.FirstOrDefault(x => x.ProductCode == productModel.ProductCode);
@@ -918,26 +947,24 @@ namespace FintrakBanking.Repositories.Setups.General
                 SystemDateTime = DateTime.Now
             };
 
-            using (var trans = context.Database.BeginTransaction())
+            try
             {
-                try
-                {
-                    context.tbl_Audit.Add(audit);
-                    // Audit Section ---------------------------
-                    var output = await context.SaveChangesAsync() > 0;
+                context.tbl_Audit.Add(audit);
+                // Audit Section ---------------------------
+                var output = context.SaveChanges() > 0;
 
-                    if (output)
-                    {
-                        trans.Commit();
-                    }
+                if (output)
+                {
                     return output;
                 }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
-                }
+
+                return false;
             }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
 
         public async Task<ProductViewModel> AddTempProduct(ProductViewModel productModel)
@@ -949,7 +976,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (productModel.currencies.Count < 1)
                     throw new Exception("Product Currency must be specified. Please select a principal GL with mapped currencies");
             }
-            
+
             bool output = false;
             var existingTempProduct = context.tbl_Temp_Product.FirstOrDefault(x => x.ProductCode.ToLower() == productModel.productCode.ToLower()
                                                                   && x.IsCurrent == true && x.CompanyId == productModel.companyId
@@ -975,7 +1002,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 throw new Exception("Product Information already exist and is undergoing approval");
             }
-            
+
             //// Remove exisiting product fees, currency and collaterals
             //if (existingProductCurrencies.Any())
             //{
@@ -1020,7 +1047,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     currencies.Add(productCurrency);
                 }
             }
-            
+
             //End of storing the product currencies
 
             if (productModel.fees != null)
@@ -1041,7 +1068,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     chargeFees.Add(productFees);
                 }
             }
-            
+
             if (productModel.collaterals != null)
             {
                 foreach (var item in productModel.collaterals)
@@ -1058,7 +1085,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     collaterals.Add(productCollaterals);
                 }
             }
-            
+
             var product = new tbl_Temp_Product()
             {
                 CompanyId = productModel.companyId,

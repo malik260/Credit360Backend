@@ -51,13 +51,41 @@ namespace FintrakBanking.Repositories.Admin
 
             entity.externalInitialization = false;
 
-            workFlow.LogForApproval(entity);
-
-            if (workFlow.NewState == (int)ApprovalState.Ended)
+            using (var trans = context.Database.BeginTransaction())
             {
-                return ApproveUser(entity.targetId, (short)workFlow.StatusId, entity);
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
+
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApproveUser(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
-            return false;
         }
 
         private bool ApproveUser(int userId, short approvalStatusId, UserInfo user)
@@ -72,25 +100,40 @@ namespace FintrakBanking.Repositories.Admin
                 userRecord.ApprovalStatus = true;
                 userRecord.DateApproved = DateTime.Now;
                 userRecord.DateTimeUpdated = DateTime.Now;
-
-                // Audit Section ---------------------------
-                var audit = new tbl_Audit
-                {
-                    AuditTypeId = (short)AuditTypeEnum.UserApproved,
-                    StaffId = user.staffId,
-                    BranchId = (short)user.BranchId,
-                    Detail = $"Approved user '{userRecord.Username}'",
-                    IPAddress = user.userIPAddress,
-                    Url = user.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
-                };
-
-                this.auditTrail.AddAuditTrail(audit);
+                
             }
-            // Audit Section ---------------------------
 
-            return this.context.SaveChanges() > 0;
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.UserApproved,
+                StaffId = user.staffId,
+                BranchId = (short)user.BranchId,
+                Detail = $"Approved user '{userRecord?.Username}'",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            try
+            {
+                auditTrail.AddAuditTrail(audit);
+                // Audit Section ---------------------------
+
+                var response = context.SaveChanges() > 0;
+
+                if (response)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
 
         public async Task<bool> CreateUser(AppUserViewModel user)
@@ -243,7 +286,7 @@ namespace FintrakBanking.Repositories.Admin
                             staffName = st.FirstName + " " + st.LastName,
                             IsFirstLoginAttempt = c.IsFirstLoginAttempt,
                             isActive = c.IsActive,
-                            IsLocked = c.IsLocked,
+                            isLocked = c.IsLocked,
                             failedLogonAttempt = c.FailedLogonAttempt,
                             securityQuestion = c.SecurityQuestion,
                             securityAnswer = c.SecurityAnswer,
@@ -307,7 +350,8 @@ namespace FintrakBanking.Repositories.Admin
                                      {
                                          activityId = a.ActivityId,
                                          userId = a.UserId
-                                     }).ToList()
+                                     }).ToList(),
+                        isLocked = u.IsLocked
                     });
         }
 
@@ -633,5 +677,6 @@ namespace FintrakBanking.Repositories.Admin
         }
 
         #endregion Activies
+
     }
 }

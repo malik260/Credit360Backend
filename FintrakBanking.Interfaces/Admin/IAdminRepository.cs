@@ -31,8 +31,8 @@ namespace FintrakBanking.Interfaces.Admin
         Task<bool> CreateUser(AppUserViewModel user);
 
         Task<bool> UpdateUser(int userId, AppUserViewModel user);
-        #endregion Users
 
+        #endregion Users
 
         #region Group
 

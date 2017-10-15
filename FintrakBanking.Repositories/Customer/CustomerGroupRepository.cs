@@ -434,9 +434,9 @@ namespace FintrakBanking.Repositories.Customer
             //Update existing customer group with tempCustomerGroup record
             if (customerGroupToUpdate.Any())
             {
-                existingCustomerGroup.GroupCode = customerGroupModel.GroupCode;
-                existingCustomerGroup.GroupName = customerGroupModel.GroupName;
-                existingCustomerGroup.GroupDescription = customerGroupModel.GroupDescription;
+                existingCustomerGroup.GroupCode = customerGroupModel?.GroupCode;
+                existingCustomerGroup.GroupName = customerGroupModel?.GroupName;
+                existingCustomerGroup.GroupDescription = customerGroupModel?.GroupDescription;
                 existingCustomerGroup.CreatedBy = customerGroupModel.CreatedBy;
                 existingCustomerGroup.DateTimeUpdated = DateTime.Now;
             }

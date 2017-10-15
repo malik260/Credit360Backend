@@ -21,10 +21,13 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         UserViewModel FindUserByUserNameAndPassword(string username, string password);
 
-        bool IsUserExit(string username);
+        bool IsUserExits(string username);
+
+        bool IsUserAccountValid(string username);
 
         //User Group
 
         IEnumerable<tbl_Profile_Group> GetAllGroups();
+
     }
 }

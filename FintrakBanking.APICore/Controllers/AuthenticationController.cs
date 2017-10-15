@@ -1,71 +1,73 @@
-
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Authentication;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Http;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/auth")]
     public class AuthenticationController : ApiController
     {
-        TokenDecryptionHelper token = null;
+        private TokenDecryptionHelper token = new TokenDecryptionHelper();
         private IAuthenticationRepository repo;
-        //private IConfigurationRoot _config;
-        IErrorLogRepository errorLogger;
+        private IAuditTrailRepository auditTrail;
+        private IErrorLogRepository errorLogger;
         private IAdminRepository _adminRepo;
+        private IGeneralSetupRepository _genSetup;
+        private FinTrakBankingContext context;
+
         public AuthenticationController(IAuthenticationRepository _repo,
-                                        //IConfigurationRoot config,
                                         IErrorLogRepository _errorLogger,
-                                        IAdminRepository adminRepo)
+                                        IAdminRepository adminRepo,
+                                        IAuditTrailRepository _auditTrail,
+            IGeneralSetupRepository genSetup, FinTrakBankingContext _context
+                                        )
         {
-            this.repo = _repo;
-            //this._config = config;
-            this._adminRepo = adminRepo;
-            this.errorLogger = _errorLogger;
+            repo = _repo;
+            _adminRepo = adminRepo;
+            errorLogger = _errorLogger;
+            auditTrail = _auditTrail;
+            _genSetup = genSetup;
+            context = _context;
         }
-
-
 
         [HttpGet]
         [Route("user")]
         public HttpResponseMessage GetAllUsers()
         {
-
             try
             {
-                //token = new TokenDecryptionHelper(this.HttpContext);
                 if (repo != null)
                 {
-                    var users = repo.GetAllUsers().ToList();
+                    var users = repo.GetAllUsers();
                     if (users == null)
                     {
-
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No user found" });
                     }
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = users });
-                    //return new { success = true, result = users });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = users.ToList() });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"No user found" });
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"No user found" });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                this.errorLogger.LogError(ex, this.Request.RequestUri.Host, "");// token.GetUsername);
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an internal error : { ex.Message}" });
             }
-            //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"No user found" });
         }
 
         [HttpPost]
@@ -74,27 +76,25 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                if (repo.IsUserExit(user.username.ToLower()))
+                if (repo.IsUserExits(user.username.ToLower()))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "A user with this username already exit" });
-
                 }
-                token = new TokenDecryptionHelper();
-                //user.staffId = token.GetStaffId;
+
                 user.createdBy = token.GetStaffId;
                 user.lastUpdatedBy = token.GetStaffId;
+
                 var response = await repo.CreateUser(user);
+
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.Created, new { success = true, result = user, message = "User has been created successfully" });
-
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-
             }
             catch (Exception ex)
             {
-                this.errorLogger.LogError(ex, this.Request.RequestUri.Host, "");// token.GetUsername);
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -106,23 +106,19 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                //token = new TokenDecryptionHelper(this.HttpContext);
                 var response = await repo.DeleteUser(userId);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation was successful" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-
-
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                this.errorLogger.LogError(ex, this.Request.RequestUri.Host, "");// token.GetUsername);
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
 
         [HttpPut]
         [Route("user/{userId}")]
@@ -135,39 +131,33 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "User has been successfully updated" });
                 }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error occured while updating user" });
             }
             catch (Exception ex)
             {
-                this.errorLogger.LogError(ex, this.Request.RequestUri.Host, "");// token.GetUsername);
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error occured while updating user" });
         }
 
         //Group
 
-        
         [HttpGet]
         [Route("group")]
         public HttpResponseMessage GetGroups()
         {
             try
             {
-                token = new TokenDecryptionHelper();
-                var staffId = token.GetStaffId;
-                var createdBy = token.GetStaffId;
-                var lastUpdatedBy = token.GetStaffId;
-                var username = token.GetUsername;
-
                 if (repo != null)
                 {
                     var groups = repo.GetAllGroups().Select(x => new
                     {
                         groupId = x.GroupId,
                         groupName = x.GroupName
-                    });
-                    if (groups == null)
+                    }).ToList();
+
+                    if (groups.Any() == false)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No group found" });
                     }
@@ -176,9 +166,9 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                this.errorLogger.LogError(ex, this.Request.RequestUri.Host, "");// token.GetUsername);
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -192,6 +182,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
                 var foundUser = repo.FindUserByUserNameAndPassword(user.username, user.password);
+
                 if (foundUser == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Wrong username or password" });
@@ -199,8 +190,24 @@ namespace FintrakBanking.APICore.Controllers
 
                 var currUser = foundUser;
 
-                DateTime now = DateTime.Now;
-                var userActivities = this._adminRepo.GetUserActivities(currUser.user_id);
+                var userActivities = _adminRepo.GetUserActivities(currUser.user_id);
+
+                var audit = new tbl_Audit()
+                {
+                    AuditTypeId = (short)AuditTypeEnum.LoggedIn,
+                    StaffId = currUser.staffId,
+                    BranchId = currUser.branchId,
+                    Detail = $"{currUser.username} logged in",
+                    IPAddress = CommonHelpers.GetUserIP(),
+                    Url = Request.RequestUri.AbsoluteUri,
+                    ApplicationDate = _genSetup.GetApplicationDate(),
+                    SystemDateTime = DateTime.Now,
+                    TargetId = -1
+                };
+
+                auditTrail.AddAuditTrail(audit);
+
+                context.SaveChanges();
 
                 // build the json response
                 return Request.CreateResponse(HttpStatusCode.OK, new
@@ -208,7 +215,7 @@ namespace FintrakBanking.APICore.Controllers
                     success = true,
                     access_token = user.encodedToken,
                     expiration = user.validTo,
-                    userInfo = new UserCoyInfo
+                    userInfo = new UserInfo
                     {
                         branchName = currUser.branchName,
                         companyName = currUser.companyName,
@@ -217,32 +224,60 @@ namespace FintrakBanking.APICore.Controllers
                         staffId = currUser.staffId
                     }
                 });
+                
             }
             catch (Exception ex)
             {
-                this.errorLogger.LogError(ex, this.Request.RequestUri.Host, "");// token.GetUsername);
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
-                //return new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
             }
         }
-    }
 
-    public class UserCoyInfo
-    {
-        public string companyName { get; set; }
-        public string branchName { get; set; }
-        public string UserName { get; set; }
-        public List<string> activities { get; set; }
-        public int staffId { get; set; }
-    }
 
-    public class TokenVM
-    {
-        public string username { get; set; }
-        public string password { get; set; }
-        public string encodedToken { get; set; }
-        public string validTo { get; set; }
+        [HttpPost]
+        [Route("logOut")]
+        public HttpResponseMessage LogOut()
+        {
+            try
+            {
+                var staffDetails = repo.GetSingleUserByUserName(token.GetUsername);
+
+                if (staffDetails == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "User Not Found" });
+                }
+
+                Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+
+                var audit = new tbl_Audit()
+                {
+                    AuditTypeId = (short)AuditTypeEnum.LoggedOut,
+                    StaffId = token.GetStaffId,
+                    BranchId = (short)token.GetBranchId,
+                    Detail = $"{token.GetUsername} logged out",
+                    IPAddress = CommonHelpers.GetUserIP(),
+                    Url = Request.RequestUri.AbsoluteUri,
+                    ApplicationDate = _genSetup.GetApplicationDate(),
+                    SystemDateTime = DateTime.Now,
+                    TargetId = -1
+                };
+
+                auditTrail.AddAuditTrail(audit);
+
+                context.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "User Logged Off" });
+
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
+            }
+            
+        }
+
+        private IAuthenticationManager Authentication => Request.GetOwinContext().Authentication;
     }
 }
-

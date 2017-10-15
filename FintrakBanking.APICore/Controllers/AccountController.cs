@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.ModelBinding;
+using FintrakBanking.APICore.JWTAuth;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
@@ -16,6 +17,12 @@ using Microsoft.Owin.Security.OAuth;
 using FintrakBanking.APICore.Models;
 using FintrakBanking.APICore.Providers;
 using FintrakBanking.APICore.Results;
+using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Setups.General;
+using Newtonsoft.Json.Linq;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -25,9 +32,20 @@ namespace FintrakBanking.APICore.Controllers
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
+        private TokenDecryptionHelper token = new TokenDecryptionHelper();
+        private IAuthenticationRepository repo;
+        private IAuditTrailRepository auditTrail;
+        private IGeneralSetupRepository _genSetup;
+        private FinTrakBankingContext context;
 
-        public AccountController()
+        public AccountController(IAuthenticationRepository _repo, 
+            IAuditTrailRepository _auditTrail,
+            IGeneralSetupRepository genSetup, FinTrakBankingContext _context)
         {
+            repo = _repo;
+            auditTrail = _auditTrail;
+            _genSetup = genSetup;
+            context = _context;
         }
 
         public AccountController(ApplicationUserManager userManager,
@@ -71,7 +89,29 @@ namespace FintrakBanking.APICore.Controllers
         public IHttpActionResult Logout()
         {
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
-            return Ok();
+
+            var audit = new tbl_Audit()
+            {
+                AuditTypeId = (short)AuditTypeEnum.LoggedOut,
+                StaffId = token.GetStaffId,
+                BranchId = (short)token.GetBranchId,
+                Detail = $"{token.GetUsername} logged out",
+                IPAddress = CommonHelpers.GetUserIP(),
+                Url = Request.RequestUri.AbsoluteUri,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now,
+                TargetId = -1
+            };
+
+            auditTrail.AddAuditTrail(audit);
+
+            context.SaveChanges();
+
+            var successObject = new { success = true, message = "User Logged Off" };
+
+            var successMessage = JToken.FromObject(successObject);
+            return Ok(successMessage);
+
         }
 
         // GET api/Account/ManageInfo?returnUrl=%2F&generateState=true
@@ -125,7 +165,7 @@ namespace FintrakBanking.APICore.Controllers
 
             IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword,
                 model.NewPassword);
-            
+
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
@@ -258,9 +298,9 @@ namespace FintrakBanking.APICore.Controllers
             if (hasRegistered)
             {
                 Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                
-                 ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    OAuthDefaults.AuthenticationType);
+
+                ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
+                   OAuthDefaults.AuthenticationType);
                 ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
                     CookieAuthenticationDefaults.AuthenticationType);
 
@@ -368,7 +408,7 @@ namespace FintrakBanking.APICore.Controllers
             result = await UserManager.AddLoginAsync(user.Id, info.Login);
             if (!result.Succeeded)
             {
-                return GetErrorResult(result); 
+                return GetErrorResult(result);
             }
             return Ok();
         }

@@ -69,7 +69,8 @@ namespace FintrakBanking.Repositories.Customer
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
                 ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                SystemDateTime = DateTime.Now,
+                TargetId = data.FSCaptionId 
             };
 
             this.auditTrail.AddAuditTrail(audit);

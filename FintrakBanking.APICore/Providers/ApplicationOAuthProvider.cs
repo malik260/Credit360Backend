@@ -37,39 +37,50 @@ namespace FintrakBanking.APICore.Providers
 
             var _authRepo = new AuthenticationRepository(repo);
 
-            var user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password)).Result;
-            if (user == null)
+            var isUserAccountValid = Task.FromResult(_authRepo.IsUserAccountValid(userVM.username)).Result;
+            if (isUserAccountValid)
             {
-                context.SetError("invalid_grant", "The user name or password is incorrect.");
-                return;
-            }
+                var user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
+                    .Result;
+                if (user == null)
+                {
+                    context.SetError("invalid_grant", "The user name or password is incorrect.");
+                    return;
+                }
 
-            var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
-            var currUser = user;
+                var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
+                var currUser = user;
 
-            currIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
-            currIdentity.AddClaim(new Claim("username", currUser.username));
-            currIdentity.AddClaim(new Claim("companyId", currUser.companyId.ToString()));
-            currIdentity.AddClaim(new Claim("staffId", currUser.staffId.ToString()));
-            currIdentity.AddClaim(new Claim("branchId", currUser.branchId.ToString()));
-            currIdentity.AddClaim(new Claim("countryId", currUser.countryId.ToString()));
-            currIdentity.AddClaim(new Claim("userId", currUser.user_id.ToString()));
+                currIdentity.AddClaim(new Claim(ClaimTypes.Name, context.UserName));
+                currIdentity.AddClaim(new Claim("username", currUser.username));
+                currIdentity.AddClaim(new Claim("companyId", currUser.companyId.ToString()));
+                currIdentity.AddClaim(new Claim("staffId", currUser.staffId.ToString()));
+                currIdentity.AddClaim(new Claim("branchId", currUser.branchId.ToString()));
+                currIdentity.AddClaim(new Claim("countryId", currUser.countryId.ToString()));
+                currIdentity.AddClaim(new Claim("userId", currUser.user_id.ToString()));
 
-            var today = DateTime.Now;
-            TimeSpan duration = new TimeSpan(exipredHr, 0, 0);
+                var today = DateTime.Now;
+                TimeSpan duration = new TimeSpan(exipredHr, 0, 0);
 
-            var props = new AuthenticationProperties(new Dictionary<string, string>
+                var props = new AuthenticationProperties(new Dictionary<string, string>
                 {
                     {
-                         "expiry_date", today.Add(duration).ToString()
+                        "expiry_date", today.Add(duration).ToString()
                     }
                 });
 
-            var ticket = new AuthenticationTicket(currIdentity, props);
+                var ticket = new AuthenticationTicket(currIdentity, props);
 
-            context.Validated(ticket);
+                context.Validated(ticket);
 
-            context.Request.Context.Authentication.SignIn(currIdentity);
+                context.Request.Context.Authentication.SignIn(currIdentity);
+            }
+            else
+            {
+                context.SetError("unauthorized_access", "Access is denied: You haven't been granted access to the system");
+                return;
+            }
+
 
             await Task.CompletedTask;
         }
