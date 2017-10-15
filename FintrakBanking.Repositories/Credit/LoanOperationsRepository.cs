@@ -2728,9 +2728,9 @@ namespace FintrakBanking.Repositories.Credit
                 var unEarnedFee = from d in context.tbl_Loan_Schedule_Daily
                                   where d.LoanId == item.loanId
                                   let sumUnEarnedFee = context.tbl_Loan_Schedule_Daily.Where(a => a.LoanId == item.loanId
-                                  && a.Date >= EntityFunctions.TruncateTime(applicationDate)).Sum(a => a.UnEarnedFee)
+                                  && a.Date >= EntityFunctions.TruncateTime(applicationDate)).Sum(a => (double)a.UnEarnedFee)
                                   select sumUnEarnedFee;
-                item.integralFeeAmount = (double)unEarnedFee.FirstOrDefault();
+                item.integralFeeAmount = unEarnedFee.FirstOrDefault();
 
                 UpdateLoanInterestSchedule(item.loanId, item, applicationDate, staffId);
             }
@@ -4220,9 +4220,10 @@ namespace FintrakBanking.Repositories.Credit
                 var unEarnedFee = from d in context.tbl_Loan_Schedule_Daily
                                   where d.LoanId == item.loanId
                                   let sumUnEarnedFee = context.tbl_Loan_Schedule_Daily.Where(a => a.LoanId == item.loanId
-                                  && a.Date >= EntityFunctions.TruncateTime(item.newEffectiveDate)).Sum(a => (double?)a.UnEarnedFee ?? 0)
+                                  && a.Date >= EntityFunctions.TruncateTime(item.newEffectiveDate)).Sum(a => (decimal?)a.UnEarnedFee ??0)
                                   select sumUnEarnedFee;
-                item.integralFeeAmount = (double?)unEarnedFee.FirstOrDefault()??0;
+
+                //item.integralFeeAmount = (double)unEarnedFee.FirstOrDefault();
                 //var applicationDate = (DateTime)item.newEffectiveDate.Date.GetDateTimeFormats("yyyy-mm-dd");
                 string  appDate =  item.newEffectiveDate.ToString(@"yyyy-MM-dd");
                 var applicationDate = Convert.ToDateTime(appDate);
