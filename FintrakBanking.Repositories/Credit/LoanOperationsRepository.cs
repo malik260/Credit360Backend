@@ -4169,7 +4169,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return output;
         }
-       // [OperationBehavior(TransactionScopeRequired = true)]
+       [OperationBehavior(TransactionScopeRequired = true)]
         public bool LoanRephasementProcess(short loanReviewOperationsId, int loanId, int staffId)
         {
             bool output = false;
