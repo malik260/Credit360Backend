@@ -65,7 +65,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool PoliticallyExposed { set { politicallyExposed = value; } }
         public bool Vote { set { vote = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
-        public int NextLevelId { set { nextLevelId = value; } }
+        public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
         public int? ProductId { set { productId = value; } }
         public int? ProductClassId { set { productClassId = value; } }
         public bool EmailNotification { set { emailNotification = value; } }
@@ -352,6 +352,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.statusId = status;
             this.newStateId = (int)ApprovalState.Ended;
             this.nextLevelId = null; // even if there are other higher level which have been resolve prior
+            this.keepPending = false;
         }
 
         private bool Validation()
@@ -447,7 +448,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var setup = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
 
-            var level = setup.FirstOrDefault(x => x.Staff.First().StaffId == staffId);
+            var level = setup.Where(x=>x.ApprovalLevelId==fromLevelId).FirstOrDefault();
+
+            if (level == null) { throw new Exception("User not in workflow setup!"); }
 
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true
@@ -553,6 +556,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             Comment = model.comment;
             ExternalInitialization = model.externalInitialization;
             StatusId = model.approvalStatusId;
+            KeepPending = model.keepPending;
 
             var response = LogActivity();
 

@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
-using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FintrakBanking.Repositories.Customer
-{ 
+{
     public class CustomerFSCaptionDetailRepository : ICustomerFSCaptionDetailRepository
     {
         private FinTrakBankingContext context;
@@ -27,53 +26,53 @@ namespace FintrakBanking.Repositories.Customer
             auditTrail = _auditTrail;
         }
 
-
         public bool AddCustomerFSCaptionDetail(CustomerFSCaptionDetailViewModel entity)
         {
-            var targetEntity = context.tbl_Customer_FS_Caption_Detail.FirstOrDefault(x => x.FSCaptionId == entity.fsCaptionId);
+            //var targetEntity = context.tbl_Customer_FS_Caption_Detail.FirstOrDefault(x => x.FSCaptionId == entity.fsCaptionId);
 
-            if (targetEntity != null)
+            //if (targetEntity != null)
+            //{
+            //    targetEntity.Deleted = false;
+            //    targetEntity.LastUpdatedBy = entity.createdBy;
+            //    targetEntity.DateTimeUpdated = DateTime.Now;
+            //}
+            //else
+            //{
+            //}
+
+            var data = new tbl_Customer_FS_Caption_Detail
             {
-                targetEntity.Deleted = false;
-                targetEntity.LastUpdatedBy = entity.createdBy;
-                targetEntity.DateTimeUpdated = DateTime.Now;
-            }
-            else
+                CustomerId = entity.customerId,
+                FSCaptionId = entity.fsCaptionId,
+                FSDate = entity.fsDate,
+                Amount = entity.amount,
+
+                CreatedBy = entity.createdBy,
+                DateTimeCreated = _genSetup.GetApplicationDate()
+            };
+
+            context.tbl_Customer_FS_Caption_Detail.Add(data);
+
+            // Audit Section ---------------------------
+            var captionInfo = context.tbl_Customer_FS_Caption.FirstOrDefault(x => x.FSCaptionId == data.FSCaptionId);
+            var caption = $"{captionInfo?.FSCaptionName} ({captionInfo?.FSCaptionCode})";
+            var customerInfo = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == data.CustomerId);
+            var customer = $"Cutomer with code: {customerInfo?.CustomerCode} ({customerInfo?.FirstName}  {customerInfo?.LastName})";
+
+            var audit = new tbl_Audit
             {
-                var data = new tbl_Customer_FS_Caption_Detail
-                {
-                    CustomerId = entity.customerId,
-                    FSCaptionId = entity.fsCaptionId,
-                    FSDate = entity.fsDate,
-                    Amount = entity.amount,
+                AuditTypeId = (short)AuditTypeEnum.CustomerFSCaptionDetailAdded,
+                StaffId = entity.createdBy,
+                BranchId = entity.userBranchId,
+                Detail = $"Added FS Caption Detail for customer {customer} and caption {caption} . Amount is { data.Amount:#,##0} with date {data.FSDate:dd/MM/yyyy}",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = _genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
 
-                    CreatedBy = entity.createdBy,
-                    DateTimeCreated = _genSetup.GetApplicationDate()
-                };
-
-                context.tbl_Customer_FS_Caption_Detail.Add(data);
-
-                // Audit Section ---------------------------
-                var captionInfo = context.tbl_Customer_FS_Caption.FirstOrDefault(x => x.FSCaptionId == data.FSCaptionId);
-                var caption = $"{captionInfo?.FSCaptionName} ({captionInfo?.FSCaptionCode})";
-                var customerInfo = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == data.CustomerId);
-                var customer = $"Cutomer with code: {customerInfo?.CustomerCode} ({customerInfo?.FirstName}  {customerInfo?.LastName})";
-
-                var audit = new tbl_Audit
-                {
-                    AuditTypeId = (short)AuditTypeEnum.CustomerFSCaptionDetailAdded,
-                    StaffId = entity.createdBy,
-                    BranchId = entity.userBranchId,
-                    Detail = $"Added FS Caption Detail for customer {customer} and caption {caption} . Amount is { data.Amount:#,##0} with date {data.FSDate:dd/MM/yyyy}",
-                    IPAddress = entity.userIPAddress,
-                    Url = entity.applicationUrl,
-                    ApplicationDate = _genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
-                };
-
-                auditTrail.AddAuditTrail(audit);
-                //end of Audit section -------------------------------
-            }
+            auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
 
             return context.SaveChanges() != 0;
         }
@@ -99,7 +98,6 @@ namespace FintrakBanking.Repositories.Customer
                 data.DeletedBy = user.createdBy;
                 data.DateTimeDeleted = _genSetup.GetApplicationDate();
 
-
                 // Audit Section ---------------------------
 
                 var captionInfo =
@@ -119,9 +117,9 @@ namespace FintrakBanking.Repositories.Customer
 
                 var audit = new tbl_Audit
                 {
-                    AuditTypeId = (short) AuditTypeEnum.CustomerFSCaptionDetailDeleted,
+                    AuditTypeId = (short)AuditTypeEnum.CustomerFSCaptionDetailDeleted,
                     StaffId = user.createdBy,
-                    BranchId = (short) user.BranchId,
+                    BranchId = (short)user.BranchId,
                     Detail =
                         $"Deleted FS Caption Detail for customer {customer} and caption {caption}. Amount is {data.Amount:#,##0} with date {data.FSDate:dd/MM/yyyy}",
                     IPAddress = user.userIPAddress,
@@ -148,13 +146,17 @@ namespace FintrakBanking.Repositories.Customer
             return true;
         }
 
-        public IEnumerable<CustomerFSCaptionDetailViewModel> GetCustomerFSCaptionDetail(int customerId)
+        public IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptionDetail(int customerId, short fsCaptionGroupId, DateTime fsDate)
         {
             var data = (from a in context.tbl_Customer_FS_Caption_Detail
-                        where a.CustomerId == customerId && a.tbl_Customer_FS_Caption.IsTotalLine == false && a.Deleted == false
-                        orderby a.FSDate, a.tbl_Customer_FS_Caption.FSCaptionGroupId, a.tbl_Customer_FS_Caption.FSTypeId, a.tbl_Customer_FS_Caption.Position
+                        where a.CustomerId == customerId && a.tbl_Customer_FS_Caption.FSCaptionGroupId == fsCaptionGroupId
+                        && a.FSDate == fsDate
+                        && a.tbl_Customer_FS_Caption.IsTotalLine == false
+                        && a.Deleted == false
+                        orderby a.FSDate, a.tbl_Customer_FS_Caption.FSCaptionGroupId,
+                        a.tbl_Customer_FS_Caption.FSTypeId, a.tbl_Customer_FS_Caption.Position
                         select new CustomerFSCaptionDetailViewModel
-                        {                                                        
+                        {
                             customerId = a.CustomerId,
                             customerCode = a.tbl_Customer.CustomerCode,
                             fsdetailId = a.FSDetailId,
@@ -231,8 +233,6 @@ namespace FintrakBanking.Repositories.Customer
 
             //end of Audit section -----------------------
             return context.SaveChanges() != 0;
-        }               
-
-        
+        }
     }
 }

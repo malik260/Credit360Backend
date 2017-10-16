@@ -23,8 +23,8 @@ namespace FintrakBanking.Repositories.Customer
         public CustomerFSRatioRepository ( FinTrakBankingContext _context, 
             IGeneralSetupRepository genSetup, IAuditTrailRepository _auditTrail)
         {
-            this.context = _context;
-            this._genSetup = genSetup;
+            context = _context;
+            _genSetup = genSetup;
             auditTrail = _auditTrail;
         }
 
@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdateFSRatioCaption(short ratioCaptionId, CustomerFSRatioCaptionViewModel model)
         {
-            var data = this.context.tbl_Customer_FS_Ratio_Caption.Find(ratioCaptionId);
+            var data = context.tbl_Customer_FS_Ratio_Caption.Find(ratioCaptionId);
             if (data == null) return false;
 
             data.Annualised = model.annualised;
@@ -95,7 +95,7 @@ namespace FintrakBanking.Repositories.Customer
                 SystemDateTime = DateTime.Now
             };
               
-            this.auditTrail.AddAuditTrail(audit);
+            auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -----------------------
             return context.SaveChanges() != 0;
@@ -128,7 +128,7 @@ namespace FintrakBanking.Repositories.Customer
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
             return context.SaveChanges() != 0;
@@ -154,7 +154,7 @@ namespace FintrakBanking.Repositories.Customer
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -----------------------
             return context.SaveChanges() != 0;
@@ -196,7 +196,7 @@ namespace FintrakBanking.Repositories.Customer
                     SystemDateTime = DateTime.Now
                 };
 
-                this.auditTrail.AddAuditTrail(audit);
+                auditTrail.AddAuditTrail(audit);
             }
 
             //end of Audit section -------------------------------
@@ -340,7 +340,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdateFSRatioDetail(int ratioDetailId, CustomerFSRatioDetailViewModel model)
         {
-            var data = this.context.tbl_Customer_FS_Ratio_Detail.Find(ratioDetailId);
+            var data = context.tbl_Customer_FS_Ratio_Detail.Find(ratioDetailId);
             if (data == null) return false;
 
             data.RatioCaptionId = model.ratioCaptionId;
@@ -367,7 +367,7 @@ namespace FintrakBanking.Repositories.Customer
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
             return context.SaveChanges() != 0;
@@ -398,7 +398,7 @@ namespace FintrakBanking.Repositories.Customer
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
             return context.SaveChanges() != 0;

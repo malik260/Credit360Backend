@@ -614,10 +614,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public ProductViewModel GetProductDetail(string productCode, int companyId)
         {
-            return AllProduct().Where(p => p.productCode == productCode && p.companyId == companyId).SingleOrDefault();
+            return AllProduct().SingleOrDefault(p => p.productCode == productCode && p.companyId == companyId);
         }
 
-        public async Task<bool> GoForApproval(ApprovalViewModel entity)
+        public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.ProductCreation;
 
@@ -625,15 +625,44 @@ namespace FintrakBanking.Repositories.Setups.General
 
             workFlow.LogForApproval(entity);
 
-            if (workFlow.NewState == (int)ApprovalState.Ended)
+            using (var trans = context.Database.BeginTransaction())
             {
-                return await ApproveProduct(entity.targetId, (short)workFlow.StatusId, entity);
-            }
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
 
-            return false;
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApproveProduct(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
         }
 
-        private async Task<bool> ApproveProduct(int productId, short approvalStatusId, UserInfo user)
+        private bool ApproveProduct(int productId, short approvalStatusId, UserInfo user)
         {
             var productModel = context.tbl_Temp_Product.Find(productId);
             var productToUpdate = context.tbl_Product.FirstOrDefault(x => x.ProductCode == productModel.ProductCode);
@@ -918,32 +947,35 @@ namespace FintrakBanking.Repositories.Setups.General
                 SystemDateTime = DateTime.Now
             };
 
-            using (var trans = context.Database.BeginTransaction())
+            try
             {
-                try
-                {
-                    context.tbl_Audit.Add(audit);
-                    // Audit Section ---------------------------
-                    var output = await context.SaveChangesAsync() > 0;
+                context.tbl_Audit.Add(audit);
+                // Audit Section ---------------------------
+                var output = context.SaveChanges() > 0;
 
-                    if (output)
-                    {
-                        trans.Commit();
-                    }
+                if (output)
+                {
                     return output;
                 }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
-                }
+
+                return false;
             }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
 
         public async Task<ProductViewModel> AddTempProduct(ProductViewModel productModel)
         {
-            if (productModel.currencies.Count < 1)
-                throw new Exception("Product Currency must be specified. Please select a principal GL with mapped currencies");
+            var isPrincipalGLRequired = context.tbl_Product_Type.Any(x => x.ProductTypeId == productModel.productTypeId && x.RequirePrincipalGL == true);
+
+            if (isPrincipalGLRequired)
+            {
+                if (productModel.currencies.Count < 1)
+                    throw new Exception("Product Currency must be specified. Please select a principal GL with mapped currencies");
+            }
 
             bool output = false;
             var existingTempProduct = context.tbl_Temp_Product.FirstOrDefault(x => x.ProductCode.ToLower() == productModel.productCode.ToLower()
@@ -970,7 +1002,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 throw new Exception("Product Information already exist and is undergoing approval");
             }
-            
+
             //// Remove exisiting product fees, currency and collaterals
             //if (existingProductCurrencies.Any())
             //{
@@ -1001,48 +1033,57 @@ namespace FintrakBanking.Repositories.Setups.General
             List<tbl_Temp_Product_CollateralType> collaterals = new List<tbl_Temp_Product_CollateralType>();
 
             //Storing the product currencies
-            foreach (var item in productModel.currencies)
+            if (productModel.currencies != null)
             {
-                var productCurrency = new tbl_Temp_Product_Currency
+                foreach (var item in productModel.currencies)
                 {
-                    //ProductId = (short)item.productId,
-                    CurrencyId = item.currencyId,
-                    CreatedBy = item.createdBy,
-                    DateTimeCreated = genSetup.GetApplicationDate()
-                };
-                currencies.Add(productCurrency);
+                    var productCurrency = new tbl_Temp_Product_Currency
+                    {
+                        //ProductId = (short)item.productId,
+                        CurrencyId = item.currencyId,
+                        CreatedBy = item.createdBy,
+                        DateTimeCreated = genSetup.GetApplicationDate()
+                    };
+                    currencies.Add(productCurrency);
+                }
             }
 
             //End of storing the product currencies
 
-            foreach (var item in productModel.fees)
+            if (productModel.fees != null)
             {
-                var productFees = new tbl_Temp_Product_Charge_Fee()
+                foreach (var item in productModel.fees)
                 {
-                    //ProductId = item.productId,
-                    ChargeFeeId = item.feeId,
-                    DependentAmount = item.dependentAmount,
-                    RateValue = item.rateValue,
-                    CompanyId = item.companyId,
-                    CreatedBy = (int)item.createdBy,
-                    DateTimeCreated = genSetup.GetApplicationDate(),
-                    Deleted = false,
-                };
-                chargeFees.Add(productFees);
+                    var productFees = new tbl_Temp_Product_Charge_Fee()
+                    {
+                        //ProductId = item.productId,
+                        ChargeFeeId = item.feeId,
+                        DependentAmount = item.dependentAmount,
+                        RateValue = item.rateValue,
+                        CompanyId = productModel.companyId,
+                        CreatedBy = (int)item.createdBy,
+                        DateTimeCreated = genSetup.GetApplicationDate(),
+                        Deleted = false,
+                    };
+                    chargeFees.Add(productFees);
+                }
             }
 
-            foreach (var item in productModel.collaterals)
+            if (productModel.collaterals != null)
             {
-                var productCollaterals = new tbl_Temp_Product_CollateralType()
+                foreach (var item in productModel.collaterals)
                 {
-                    //ProductId = item.productId,
-                    CollateralTypeId = item.collateralTypeId,
-                    CompanyId = productModel.companyId,
-                    CreatedBy = item.createdBy,
-                    DateTimeCreated = genSetup.GetApplicationDate(),
-                    Deleted = false,
-                };
-                collaterals.Add(productCollaterals);
+                    var productCollaterals = new tbl_Temp_Product_CollateralType()
+                    {
+                        //ProductId = item.productId,
+                        CollateralTypeId = item.collateralTypeId,
+                        CompanyId = productModel.companyId,
+                        CreatedBy = item.createdBy,
+                        DateTimeCreated = genSetup.GetApplicationDate(),
+                        Deleted = false,
+                    };
+                    collaterals.Add(productCollaterals);
+                }
             }
 
             var product = new tbl_Temp_Product()
@@ -1086,7 +1127,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 Deleted = false,
                 tbl_Temp_Product_Currency = currencies,
 
-                IsMultipleCurency = productModel.currencies.Any(),
+                IsMultipleCurency = productModel.currencies != null,
                 AllowCustomerAccountForceDebit = productModel.allowCustomerAccountForceDebit,
                 AllowMoratorium = productModel.allowMoratorium,
                 AllowScheduleTypeOverride = productModel.allowScheduleTypeOverride,
@@ -1318,7 +1359,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         ChargeFeeId = item.feeId,
                         DependentAmount = item.dependentAmount,
                         RateValue = item.rateValue,
-                        CompanyId = item.companyId,
+                        CompanyId = productModel.companyId,
                         CreatedBy = (int)item.createdBy,
                         DateTimeCreated = genSetup.GetApplicationDate(),
                         Deleted = false

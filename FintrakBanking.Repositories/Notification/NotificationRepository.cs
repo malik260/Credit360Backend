@@ -27,25 +27,23 @@ namespace FintrakBanking.Repositories.Notification
         public IEnumerable<NotificationViewModel> GetNotification(int staffId, int companyId)
         {
             List<NotificationViewModel> logs = new List<NotificationViewModel>();
-            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId);
+            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId).ToList();
             if (approvalLevel.Any())
             {
                 foreach (var level in approvalLevel)
                 {
-                    NotificationViewModel log = new NotificationViewModel();
-
-                    log = (from c in context.tbl_Approval_Trail
+                    var log = (from c in context.tbl_Approval_Trail
                            where c.CompanyId == companyId &&
-                           c.OperationId == level.operationId &&
-                            c.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ResponseStaffId == null &&
-                           c.ToApprovalLevelId == level.approvalLevelId
+                                 c.OperationId == level.operationId &&
+                                 c.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ResponseStaffId == null &&
+                                 c.ToApprovalLevelId == level.approvalLevelId
                            group c by c.OperationId into d
                            select new NotificationViewModel
                            {
-                               massageCount = d.Count(),
+                               messageCount = d.Count(),
                                message = "You have " + d.Count().ToString() + " " +
-                               context.tbl_Operations.FirstOrDefault(c => c.OperationId == d
-                             .Select(f => f.OperationId).FirstOrDefault()).OperationName + " request awaiting your action",
+                                         context.tbl_Operations.FirstOrDefault(c => c.OperationId == d
+                                                                                        .Select(f => f.OperationId).FirstOrDefault()).OperationName + " request awaiting your action",
                                operationURL = d.Select(h => h.tbl_Operations.OperationURL).FirstOrDefault()
                            }).FirstOrDefault();
                     if (log != null)
@@ -57,9 +55,34 @@ namespace FintrakBanking.Repositories.Notification
             return logs;
         }
 
-        public IEnumerable<NotificationViewModel> GetNotificationForFinalState()
+        public IEnumerable<NotificationViewModel> GetNotificationForFinalState(int staffId, int companyId)
         {
-            throw new NotImplementedException();
+            List<NotificationViewModel> logs = new List<NotificationViewModel>();
+            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId).ToList();
+            if (approvalLevel.Any())
+            {
+                foreach (var level in approvalLevel)
+                {
+                    var log = (from c in context.tbl_Approval_Trail
+                        where c.CompanyId == companyId &&
+                              c.OperationId == level.operationId &&
+                              c.ApprovalStateId == (int)ApprovalState.Ended && c.ResponseStaffId == null
+                        group c by c.OperationId into d
+                        select new NotificationViewModel
+                        {
+                            messageCount = d.Count(),
+                            message = d.Count().ToString() + " " +
+                                      context.tbl_Operations.FirstOrDefault(c => c.OperationId == d
+                                                                                     .Select(f => f.OperationId).FirstOrDefault()).OperationName + " request have been completed",
+                            operationURL = d.Select(h => h.tbl_Operations.OperationURL).FirstOrDefault()
+                        }).FirstOrDefault();
+                    if (log != null)
+                    {
+                        logs.Add(log);
+                    }
+                }
+            }
+            return logs;
         }
     }
 }

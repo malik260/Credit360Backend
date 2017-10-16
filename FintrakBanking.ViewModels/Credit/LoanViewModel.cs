@@ -27,18 +27,20 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
-        public decimal productPriceIndexRate { get; set; }
+        //public decimal productPriceIndexRate { get; set; }
+        public double productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         
 
+
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
-        public short principalFrequencyTypeId { get; set; }
-        public short interestFrequencyTypeId { get; set; }
+        public short ? principalFrequencyTypeId { get; set; }
+        public short ? interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
         public int interestNumberOfInstallment { get; set; }
         public int relationshipOfficerId { get; set; }
@@ -58,6 +60,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? dateApproved { get; set; }
         public short loanStatusId { get; set; }
         public short scheduleTypeId { get; set; }
+        public string scheduleTypeName { get; set; }
         public bool isDisbursed { get; set; }
         public string disbursedBy { get; set; }
         public string disburserComment { get; set; }
@@ -86,7 +89,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isScheduledPrepayment { get; set; }
         public decimal? scheduledPrepaymentAmount { get; set; }
         public DateTime? scheduledPrepaymentDate { get; set; }
-        public short scheduledPrepaymentFrequencyTypeId { get; set; }
+        public short? scheduledPrepaymentFrequencyTypeId { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public string firstName { get; set; }
         public string middleName { get; set; }
@@ -96,15 +99,15 @@ namespace FintrakBanking.ViewModels.Credit
         public int currencyId { get; set; }
         public string currency { get; set; }
         public short accurialBasis { get; set; }
-        public double integralFeeAmount { get; set; }
+        public decimal integralFeeAmount { get; set; }
         public short firstDayType { get; set; }
         public bool isCamsol { get; set; }
-        public int internalPrudentialGuidelineStatusId { get; set; }
-        public int externalPrudentialGuidelineStatusId { get; set; }
-        public DateTime nplDate { get; set; }
+        public int? internalPrudentialGuidelineStatusId { get; set; }
+        public int? externalPrudentialGuidelineStatusId { get; set; }
+        public DateTime? nplDate { get; set; }
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
-        public int customerRiskRatingId { get; set; }
+        public int? customerRiskRatingId { get; set; }
 
         // public double productPriceIndexRate { get; set; }
         public bool allowForceDebitRepayment { get; set; }
@@ -136,6 +139,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string comment { get; set; }
         public string relationshipManagerEmail { get; set; }
         public string relationshipOfficerEmail { get; set; }
+        public decimal customerAvailableAmount { get; set; }
 
         //............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }

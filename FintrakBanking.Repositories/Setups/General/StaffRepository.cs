@@ -383,14 +383,41 @@ namespace FintrakBanking.Repositories.Setups.General
 
             entity.externalInitialization = false;
 
-            workFlow.LogForApproval(entity);
-
-            if (workFlow.NewState == (int)ApprovalState.Ended)
+            using ( var trans = context.Database.BeginTransaction())
             {
-                return ApproveStaff(entity.targetId, (short)workFlow.StatusId, entity);
-            }
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
 
-            return false;
+                    if (workFlow.NewState == (int) ApprovalState.Ended)
+                    {
+                        var response = ApproveStaff(entity.targetId, (short) workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
         }
 
         private bool ApproveStaff(int staffid, short approvalStatusId, UserInfo user)
@@ -491,25 +518,21 @@ namespace FintrakBanking.Repositories.Setups.General
                 SystemDateTime = DateTime.Now
             };
 
-            using (var trans = context.Database.BeginTransaction())
+            try
             {
-                try
-                {
-                    context.tbl_Audit.Add(audit);
-                    // Audit Section ---------------------------
-                    var output = context.SaveChanges() > 0;
+                context.tbl_Audit.Add(audit);
+                // Audit Section ---------------------------
+                var output = context.SaveChanges() > 0;
 
-                    if (output)
-                    {
-                        trans.Commit();
-                    }
+                if (output)
+                {
                     return output;
                 }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
-                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
@@ -879,7 +902,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         staffCode = o.StaffCode,
                     })
                     .Take(12);
-                
+
             }
 
             return staff;

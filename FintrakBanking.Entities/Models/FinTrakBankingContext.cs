@@ -2533,13 +2533,18 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan_Application>()
-                .HasMany(e => e.tbl_Risk_Assessment)
+                .HasMany(e => e.tbl_Loan_Guarantor)
                 .WithRequired(e => e.tbl_Loan_Application)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<tbl_Loan_Application_Collateral>()
-                .HasMany(e => e.tbl_Loan_Application_Collateral_RefNo)
-                .WithRequired(e => e.tbl_Loan_Application_Collateral)
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Loan_Guarantor)
+                .WithRequired(e => e.tbl_Loan_Application)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Application>()
+                .HasMany(e => e.tbl_Risk_Assessment)
+                .WithRequired(e => e.tbl_Loan_Application)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Loan_Application_Detail>()
@@ -3228,6 +3233,18 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.CollateralSearchChargeAmount)
                 .HasPrecision(19, 4);
 
+            modelBuilder.Entity<tbl_Approval>()
+                .Property(e => e.Amount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_CASA_Lien>()
+                .Property(e => e.LienCreditAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_CASA_Lien>()
+                .Property(e => e.LienDebitAmount)
+                .HasPrecision(19, 4);
+
             modelBuilder.Entity<tbl_COT>()
                 .Property(e => e.COTAccountAmount)
                 .HasPrecision(19, 4);
@@ -3759,6 +3776,18 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Temp_Collateral_Stock>()
                 .Property(e => e.ShareValueAmountToUse)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.LevelMaximumAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.InvestmentGradeAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.StaffMaximumAmount)
                 .HasPrecision(19, 4);
         }
     }

@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using System;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,10 +22,13 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         UserViewModel FindUserByUserNameAndPassword(string username, string password);
 
-        bool IsUserExit(string username);
+        bool IsUserExits(string username);
 
-        //User Group
+        bool IsUserAccountValid(string username);
+
+        // Groups
 
         IEnumerable<tbl_Profile_Group> GetAllGroups();
+
     }
 }

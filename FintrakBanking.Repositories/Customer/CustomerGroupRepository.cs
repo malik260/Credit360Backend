@@ -434,9 +434,9 @@ namespace FintrakBanking.Repositories.Customer
             //Update existing customer group with tempCustomerGroup record
             if (customerGroupToUpdate.Any())
             {
-                existingCustomerGroup.GroupCode = customerGroupModel.GroupCode;
-                existingCustomerGroup.GroupName = customerGroupModel.GroupName;
-                existingCustomerGroup.GroupDescription = customerGroupModel.GroupDescription;
+                existingCustomerGroup.GroupCode = customerGroupModel?.GroupCode;
+                existingCustomerGroup.GroupName = customerGroupModel?.GroupName;
+                existingCustomerGroup.GroupDescription = customerGroupModel?.GroupDescription;
                 existingCustomerGroup.CreatedBy = customerGroupModel.CreatedBy;
                 existingCustomerGroup.DateTimeUpdated = DateTime.Now;
             }
@@ -616,16 +616,47 @@ namespace FintrakBanking.Repositories.Customer
         }
 
         ///TODO: Implement a more efficient method
-        public bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups)
+        public bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups, int createdBy, short userBranchId)
         {
             if (customerGroups.Count <= 0)
                 return false;
 
             foreach (CustomerGroupMappingViewModel item in customerGroups)
             {
-                AddCustomerGroupMapping(item);
+                var group = this.context.tbl_Customer_Group_Mapping.FirstOrDefault(x => x.CustomerId == item.customerId && x.CustomerGroupId == item.customerGroupId);
+                if (group == null)
+                {
+                    var groupMap = new tbl_Customer_Group_Mapping
+                    {
+                        CustomerId = item.customerId,
+                        CustomerGroupId = item.customerGroupId,
+                        RelationshipTypeId = item.relationshipTypeId,
+                        DateTimeCreated = DateTime.Now
+                    };
+                    context.tbl_Customer_Group_Mapping.Add(groupMap);
+                    // Audit Section ---------------------------
+                    var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
+                                                            .Select(x => new
+                                                            {
+                                                                customerName = x.FirstName + " " + x.LastName
+                                                            }).FirstOrDefault();
+                    var groupName = this.context.tbl_Customer_Group.FirstOrDefault(x => x.CustomerGroupId == item.customerGroupId).GroupName;
+                    var audit = new tbl_Audit
+                    {
+                        AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
+                        StaffId = createdBy,
+                        BranchId = userBranchId,
+                        Detail = $"Added Customer Group Mapping to customer: { customer } with code: {item.customerCode } to group  ( { groupName } ) ",
+                        //IPAddress = entity.userIPAddress,
+                        //Url = entity.applicationUrl,
+                        ApplicationDate = genSetup.GetApplicationDate(),
+                        SystemDateTime = DateTime.Now
+                    };
+                    this.auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -----------------------
+                    return context.SaveChanges() != 0;
+                }
             }
-
             return true;
         }
 
@@ -978,6 +1009,23 @@ namespace FintrakBanking.Repositories.Customer
                        lookupId = a.RelationshipTypeId,
                        lookupName = a.RelationshipTypeName
                    };
+        }
+        public bool AddCustomerGroupRelationshipTypes(LookupViewModel model )
+        {
+            if (model.lookupId > 0)
+            {
+                var type = context.tbl_Customer_Group_RelationshipType.FirstOrDefault(x=> x.RelationshipTypeId == model.lookupId);
+                type.RelationshipTypeName = model.lookupName;
+            }
+            else
+            {
+                var type = new tbl_Customer_Group_RelationshipType
+                {
+                    RelationshipTypeName = model.lookupName
+                };
+                context.tbl_Customer_Group_RelationshipType.Add(type);
+            }
+            return this.SaveAll();
         }
 
         private IQueryable<CustomerGroupViewModel> GellAllCustomerGroupMappings()
