@@ -13,5 +13,7 @@ namespace FintrakBanking.Interfaces.Notification
     {
       
         IEnumerable<NotificationViewModel> GetNotification(int staffId, int companyId);
+
+        IEnumerable<NotificationViewModel> GetNotificationForFinalState(int staffId, int companyId);
     }
 }

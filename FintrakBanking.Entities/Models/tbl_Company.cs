@@ -16,13 +16,13 @@ namespace FintrakBanking.Entities.Models
             tbl_Approval_Trail = new HashSet<tbl_Approval_Trail>();
             tbl_Branch = new HashSet<tbl_Branch>();
             tbl_CASA = new HashSet<tbl_CASA>();
+            tbl_CASA_Lien = new HashSet<tbl_CASA_Lien>();
             tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
             tbl_Checklist_Definition = new HashSet<tbl_Checklist_Definition>();
             tbl_MIS_Info = new HashSet<tbl_MIS_Info>();
             tbl_Product = new HashSet<tbl_Product>();
             tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
             tbl_Call_Memo_Limit = new HashSet<tbl_Call_Memo_Limit>();
-            tbl_CASA_Lien = new HashSet<tbl_CASA_Lien>();
             tbl_Chart_Of_Account = new HashSet<tbl_Chart_Of_Account>();
             tbl_Temp_Chart_Of_Account = new HashSet<tbl_Temp_Chart_Of_Account>();
             tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
@@ -182,6 +182,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_CASA> tbl_CASA { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -208,9 +211,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Call_Memo_Limit> tbl_Call_Memo_Limit { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Chart_Of_Account> tbl_Chart_Of_Account { get; set; }

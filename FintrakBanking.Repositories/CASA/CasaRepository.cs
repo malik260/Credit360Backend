@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using FintrakBanking.ViewModels.Finance;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -28,12 +29,24 @@ namespace FintrakBanking.Repositories.CASA
 
         public int GetCasaAccountId(string accountNumber, int companyId)
         {
+            int value = 0;
+            int.TryParse(accountNumber, out value);
+
             var CasaAccount = (context.tbl_CASA.Where(d => d.OldProductAccountNumber3 == accountNumber ||
-        d.OldProductAccountNumber2 == accountNumber || d.OldProductAccountNumber1 == accountNumber ||
-        d.ProductAccountNumber == accountNumber && d.CompanyId == companyId)).AsQueryable().SingleOrDefault();
+                d.OldProductAccountNumber2 == accountNumber || d.OldProductAccountNumber1 == accountNumber ||
+                d.CasaAccountId == (value) || d.ProductAccountNumber == accountNumber && d.CompanyId == companyId)
+                ).AsQueryable().SingleOrDefault();
             return CasaAccount.CasaAccountId;
         }
 
+        public CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId)
+        {
+            int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
+            var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
+
+            return new CasaBalanceViewModel {  accountName = $" {account.tbl_Customer.LastName } {account.tbl_Customer.FirstName} {account.tbl_Customer.MiddleName} " ,
+                availableBalance = account.AvailableBalance, ledgerBalance = account.LedgerBalance, accountNo = account.ProductAccountName, productName = account.tbl_Product.ProductName  };
+        }
         /// TODO: Implement server side filtering due to large number of records that may be returned
         public IEnumerable<CasaViewModel> FindAccount(string accountNumberOrName, int companyId)
         {

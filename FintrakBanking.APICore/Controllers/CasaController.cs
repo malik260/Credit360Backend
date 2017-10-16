@@ -29,21 +29,42 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("{accountId}")]
-        public HttpResponseMessage GetAccount(  int accountId)
-        { 
-                try
-                {
-                    CasaViewModel data = repo.GetAccount(accountId);
+        public HttpResponseMessage GetAccount(int accountId)
+        {
+            try
+            {
+                CasaViewModel data = repo.GetAccount(accountId);
+               
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-                }
-                catch (Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
-                }
-             
+               
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
-       
+        [HttpGet]
+        [Route("customer-accounts/balance/{accountNumber}")]
+        public HttpResponseMessage GetCASABalance(string accountNumber)
+        {
+            try
+            {
+                accountNumber = accountNumber.Replace("-", "");
+                var data = repo.GetCASABalance(accountNumber, token.GetCompanyId);
+                if (data != null)
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Account Number do not exist" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("customer-accounts/{customerId}")]
         public HttpResponseMessage GetAllCustomerAccountByCustomerId(int customerId)
         {

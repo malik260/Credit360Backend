@@ -539,25 +539,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-
-                foreach (var item in model.currencies)
-                {
-                    item.createdBy = model.createdBy;
-                    item.companyId = model.companyId;
-                }
-
-                foreach (var item in model.collaterals)
-                {
-                    item.createdBy = model.createdBy;
-                    item.companyId = model.companyId;
-                }
-
-                foreach (var item in model.fees)
-                {
-                    item.createdBy = model.createdBy;
-                    item.companyId = model.companyId;
-                }
-
+               
                 var product = await repo.AddTempProduct(model);
 
                 if (product != null)
@@ -626,24 +608,6 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                foreach (var item in model.currencies)
-                {
-                    item.createdBy = model.createdBy;
-                    item.companyId = model.companyId;
-                }
-
-                foreach (var item in model.collaterals)
-                {
-                    item.createdBy = model.createdBy;
-                    item.companyId = model.companyId;
-                }
-
-                foreach (var item in model.fees)
-                {
-                    item.createdBy = model.createdBy;
-                    item.companyId = model.companyId;
-                }
-
                 var staff = await repo.UpdateProduct(productId, model);
 
                 if (staff)
@@ -664,7 +628,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("product/approval")]
-        public async Task<HttpResponseMessage> GoForApprovalAsync([FromBody]ApprovalViewModel entity)
+        public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
         {
             try
             {
@@ -675,7 +639,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
 
-                var data = await repo.GoForApproval(entity);
+                var data = repo.GoForApproval(entity);
 
                 if (data)
                 {

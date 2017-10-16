@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
@@ -50,7 +51,9 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isRelatedParty { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public int approvalStatusId { get; set; }
-         
+
+        public decimal proposedAmount { get; set; }
+        public int proposedTenor { get; set; }
         public int approvalLevelId { get; set; }
 
         public short subSectorId { get; set; }
@@ -82,7 +85,17 @@ namespace FintrakBanking.ViewModels.Credit
         public short applicationStatusId { get; set; }
 
         public bool isCollateralBacked { get; set; }
+        
+        //private int _tenor;
+
         public int tenor { get; set; }
+        //{
+        //    get {  return (LoanApplicationDetail.Max(c => c.proposedTenor) / 12) * 365;
+        //         }
+        //    set { _tenor = value * (12 / 365); }
+        //}
+
+       
     }
 
     public class CollateralLenPlacementViewModel : GeneralEntity
@@ -123,7 +136,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short approvedProductId { get; set; }
 
-        public int approvedTenor { get; set; }
+        public int approvedTenor { get ; set; }
 
         public double approvedInterestRate { get; set; }
 

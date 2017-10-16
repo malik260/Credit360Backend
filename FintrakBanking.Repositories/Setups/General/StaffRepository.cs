@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -127,6 +128,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              //MisInfoCode = c.MISC,
                              SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
                              //State = c.State.StateName
+                             CityId = c.CityId
                          });
             return staff;
         }
@@ -185,7 +187,7 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <returns></returns>
         public async Task<bool> UpdateStaff(int staffid, StaffInfoViewModel staffModel)
         {
-            var existingTempStaff = context.tbl_Temp_Staff.FirstOrDefault(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower() && x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existingTempStaff = context.tbl_Temp_Staff.FirstOrDefault(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower() && x.IsCurrent == false && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
 
             var unApprovedStaffEdit = context.tbl_Temp_Staff.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending &&
                                                                         x.StaffCode.ToLower() == staffModel.StaffCode.ToLower());
@@ -381,14 +383,41 @@ namespace FintrakBanking.Repositories.Setups.General
 
             entity.externalInitialization = false;
 
-            workFlow.LogForApproval(entity);
-
-            if (workFlow.NewState == (int)ApprovalState.Ended)
+            using ( var trans = context.Database.BeginTransaction())
             {
-                return ApproveStaff(entity.targetId, (short)workFlow.StatusId, entity);
-            }
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
 
-            return false;
+                    if (workFlow.NewState == (int) ApprovalState.Ended)
+                    {
+                        var response = ApproveStaff(entity.targetId, (short) workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
         }
 
         private bool ApproveStaff(int staffid, short approvalStatusId, UserInfo user)
@@ -489,25 +518,21 @@ namespace FintrakBanking.Repositories.Setups.General
                 SystemDateTime = DateTime.Now
             };
 
-            using (var trans = context.Database.BeginTransaction())
+            try
             {
-                try
-                {
-                    context.tbl_Audit.Add(audit);
-                    // Audit Section ---------------------------
-                    var output = context.SaveChanges() > 0;
+                context.tbl_Audit.Add(audit);
+                // Audit Section ---------------------------
+                var output = context.SaveChanges() > 0;
 
-                    if (output)
-                    {
-                        trans.Commit();
-                    }
+                if (output)
+                {
                     return output;
                 }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
-                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 
@@ -530,7 +555,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 MiddleName = staffModel.MiddleName,
                 CompanyId = staffModel.companyId,
                 LastName = staffModel.LastName,
-                StaffCode = staffModel.StaffCode,
+                StaffCode = StaticHelpers.GetUniqueKey(6),
                 JobTitleId = staffModel.JobTitleId,
                 RankId = staffModel.RankId,
                 Address = staffModel.Address,
@@ -877,10 +902,44 @@ namespace FintrakBanking.Repositories.Setups.General
                         staffCode = o.StaffCode,
                     })
                     .Take(12);
-                
+
             }
 
             return staff;
         }
+
+        public IQueryable<simpleStaffModel> SearchStaffbyDepartmentId(string searchQuery, int companyId, int departmentId)
+        {
+            IQueryable<simpleStaffModel> staff = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                staff =
+                    context.tbl_Staff.Where(x => x.Deleted == false)// && x.c == companyId)
+                    .Where(x => x.FirstName.ToLower().Contains(searchQuery)
+                    || x.MiddleName.ToLower().Contains(searchQuery)
+                    || x.LastName.ToLower().Contains(searchQuery)
+                    || x.StaffCode.Contains(searchQuery)
+                    && x.DepartmentId == departmentId)
+                    .Select(o => new simpleStaffModel
+                    {
+                        staffId = o.StaffId,
+                        firstName = o.FirstName,
+                        middleName = o.MiddleName,
+                        lastName = o.LastName,
+                        staffCode = o.StaffCode,
+                    })
+                    .Take(12)
+                ;
+            }
+
+            return staff;
+        }
+
     }
 }

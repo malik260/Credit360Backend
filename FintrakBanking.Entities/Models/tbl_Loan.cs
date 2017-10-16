@@ -29,7 +29,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CompanyId { get; set; }
 
-        public int? LoanApplicationDetailId { get; set; }
+        public int LoanApplicationDetailId { get; set; }
 
         public int CasaAccountId { get; set; }
 
