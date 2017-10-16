@@ -1234,6 +1234,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //----------update loan details -----------------------------------
             var loan = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == loanId);
+            loan.EffectiveDate = loanInput.effectiveDate;
             loan.MaturityDate = periodicSchedule.Max(x => x.paymentDate);
             loan.PrincipalNumberOfInstallment = periodicSchedule.Count() -1;
             loan.InterestNumberOfInstallment = loan.PrincipalNumberOfInstallment;

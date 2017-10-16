@@ -6,6 +6,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
+    [Table("core.tbl_CASA_Lien")]
     public partial class tbl_CASA_Lien
     {
         [Key]

@@ -268,14 +268,22 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-                if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
+                if (model.principalFirstPaymentDate < model.proposedEffectiveDate)    
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Principal First Payment Date cannot be less than Effective date" });
+                }
+                if (model.interestFirstPaymentDate < model.proposedEffectiveDate)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Interest First Payment Date cannot be less than Effective date" });
+                }
+                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false,  message = "The requested operation already exist and going through approval" });
                 }
                     var response = repo.AddOperationReview(model);
                 if (response)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
@@ -305,6 +313,33 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("operation-loan-rephrasement")]
+        public HttpResponseMessage LoanRephrasementOperation([FromBody]LoanReviewOperationViewModel entity)
+        {
+            try
+            {
+       
+                if (entity.loanReviewOperationsId == 0 || entity.loanId == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Please reconfirm your request and try again" });
+                }
+                var data = repo.LoanRephasementProcess((short)entity.loanReviewOperationsId, entity.loanId, token.GetStaffId);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation has been approved successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Operation not successful" });
             }
             catch (System.Exception e)
             {
