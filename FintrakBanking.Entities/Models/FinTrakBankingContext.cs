@@ -3232,10 +3232,7 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Solicitor_State_Mapping>()
                 .Property(e => e.CollateralSearchChargeAmount)
                 .HasPrecision(19, 4);
-
-            modelBuilder.Entity<tbl_Approval>()
-                .Property(e => e.Amount)
-                .HasPrecision(19, 4);
+ 
 
             modelBuilder.Entity<tbl_CASA_Lien>()
                 .Property(e => e.LienCreditAmount)
@@ -3777,18 +3774,7 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Temp_Collateral_Stock>()
                 .Property(e => e.ShareValueAmountToUse)
                 .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LevelMaximumAmount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.InvestmentGradeAmount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.StaffMaximumAmount)
-                .HasPrecision(19, 4);
+             
         }
     }
 }
