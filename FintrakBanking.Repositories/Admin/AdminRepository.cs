@@ -357,14 +357,218 @@ namespace FintrakBanking.Repositories.Admin
 
         public UserViewModel GetSingleUser(int userId)
         {
-            throw new NotImplementedException();
+            var user = (from u in context.tbl_Profile_User
+                        join st in context.tbl_Staff
+                        on u.StaffId equals st.StaffId
+                        where u.UserId == userId
+                        select new UserViewModel()
+                        {
+                            user_id = u.UserId,
+                            staffId = u.StaffId,
+                            username = u.Username,
+                            isActive = u.IsActive,
+                            staffName = st.FirstName + " " + st.LastName,
+                            email = st.Email,
+                            password = u.Password,
+                            securityQuestion = u.SecurityQuestion,
+                            securityAnswer = u.SecurityAnswer
+                        }).SingleOrDefault();
+
+            if (user != null)
+            {
+
+                user.groupId = context.tbl_Profile_UserGroup.Where(x => x.UserId == user.user_id)
+                                        .Select(x => new UserGroupId
+                                        {
+                                            groupId = x.GroupId,
+                                            groupKey = x.tbl_Profile_Group.GroupName
+                                        })
+                            .ToList();
+            }
+
+            return user;
         }
 
         public UserViewModel GetSingleUserByUserName(string userName)
         {
-            throw new NotImplementedException();
+            return (from u in context.tbl_Profile_User
+                    join st in context.tbl_Staff
+                    on u.StaffId equals st.StaffId
+                    where u.Username == userName
+                    select new UserViewModel()
+                    {
+                        user_id = u.UserId,
+                        staffId = u.StaffId,
+                        username = u.Username,
+                        isActive = u.IsActive,
+                        staffName = st.FirstName + " " + st.MiddleName + " " + st.LastName,
+                        email = st.Email
+                    }).FirstOrDefault();
         }
 
+        public async Task<bool> UpdateUser(int userId, AppUserViewModel user)
+        {
+            bool output = false;
+            var targetUser = context.tbl_Profile_User.Find(userId);
+            if (targetUser != null)
+            {
+                // Removing existing groups and activities
+                var targetGroups = context.tbl_Profile_UserGroup.Where(x => x.UserId == userId).ToList();
+                var targetActivities = context.tbl_Profile_AdditionalActivity.Where(x => x.UserId == userId).ToList();
+                if (targetGroups.Any())
+                {
+                    foreach (var item in targetGroups)
+                    {
+                        context.tbl_Profile_UserGroup.Remove(item);
+                    }
+                }
+
+                if (targetActivities.Any())
+                {
+                    foreach (var item in targetActivities)
+                    {
+                        context.tbl_Profile_AdditionalActivity.Remove(item);
+                    }
+                }
+
+                List<tbl_Profile_UserGroup> userGroups = new List<tbl_Profile_UserGroup>();
+                List<tbl_Profile_AdditionalActivity> userActivities = new List<tbl_Profile_AdditionalActivity>();
+
+                if (user.group.Count > 0)
+                {
+                    foreach (var item in user.group)
+                    {
+                        var grpItem = new tbl_Profile_UserGroup()
+                        {
+                            GroupId = item.groupId,
+                            //UserId = userId,
+                            DateTimeCreated = DateTime.Now,
+                            CreatedBy = user.createdBy
+                        };
+
+                        userGroups.Add(grpItem);
+                    }
+                }
+
+                if (user.activities.Any())
+                {
+                    foreach (var item in user.activities)
+                    {
+                        var userActivity = new tbl_Profile_AdditionalActivity()
+                        {
+                            ActivityId = item.activityId,
+                            //UserId = _user.UserId,
+                            CanAdd = false,
+                            CanEdit = false,
+                            CanApprove = false,
+                            CanDelete = false,
+                            CanView = false,
+                            CreatedBy = user.createdBy,
+                            DateTimeCreated = DateTime.Now
+                        };
+
+                        userActivities.Add(userActivity);
+                    }
+                }
+
+                // Updating the target user
+                targetUser.StaffId = user.staffId;
+                targetUser.Username = user.username;
+                targetUser.IsFirstLoginAttempt = false;
+                targetUser.IsActive = false;
+                targetUser.IsLocked = true;
+                targetUser.FailedLogonAttempt = 0;
+                targetUser.CreatedBy = user.createdBy;
+                targetUser.LastUpdatedBy = user.createdBy;
+                targetUser.DateTimeUpdated = DateTime.Now;
+                targetUser.ApprovalStatusId = (int)ApprovalStatusEnum.Pending;
+                targetUser.ApprovalStatus = false;
+                targetUser.tbl_Profile_UserGroup = userGroups;
+                targetUser.tbl_Profile_AdditionalActivity = userActivities;
+
+                // Audit Section ---------------------------
+                var audit = new tbl_Audit
+                {
+                    AuditTypeId = (short)AuditTypeEnum.UserUpdated,
+                    StaffId = user.createdBy,
+                    BranchId = user.userBranchId,
+                    Detail = $"Updated User with username: '{user.username}'",
+                    IPAddress = user.userIPAddress,
+                    Url = user.applicationUrl,
+                    ApplicationDate = genSetup.GetApplicationDate(),
+                    SystemDateTime = DateTime.Now
+                };
+
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        auditTrail.AddAuditTrail(audit);
+
+                        output = await context.SaveChangesAsync() > 0;
+
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = user.createdBy,
+                            companyId = user.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = userId,
+                            operationId = (int)OperationsEnum.UserCreation,
+                            BranchId = user.userBranchId,
+                            externalInitialization = true
+                        };
+
+                        var response = workFlow.LogForApproval(entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+
+                        return output;
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new Exception(ex.Message);
+                    }
+                }
+            }
+            return false;
+        }
+
+        public Object ManageUserAccount(int userId, int lockStatus)
+        {
+            var userAccount = context.tbl_Profile_User.Find(userId);
+
+            try
+            {
+                if (userAccount != null && lockStatus == (int)UserAccountLockStatusEnum.Locked)
+                {
+                    userAccount.IsLocked = true;
+                    userAccount.IsActive = false;
+
+                    context.SaveChanges();
+
+                    return new { message = "User Account Locked" };
+                }
+                if (userAccount != null && lockStatus == (int)UserAccountLockStatusEnum.Unlocked)
+                {
+                    userAccount.IsLocked = false;
+                    userAccount.IsActive = true;
+
+                    context.SaveChanges();
+
+                    return new { message = "User Account Unlocked" };
+                }
+
+                return new { message = "No Account Found" };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         #endregion Users
 
         #region Group
@@ -518,137 +722,6 @@ namespace FintrakBanking.Repositories.Admin
             return context.SaveChanges() > 0;
         }
 
-        public async Task<bool> UpdateUser(int userId, AppUserViewModel user)
-        {
-            bool output = false;
-            var targetUser = context.tbl_Profile_User.Find(userId);
-            if (targetUser != null)
-            {
-                // Removing existing groups and activities
-                var targetGroups = context.tbl_Profile_UserGroup.Where(x => x.UserId == userId).ToList();
-                var targetActivities = context.tbl_Profile_AdditionalActivity.Where(x => x.UserId == userId).ToList();
-                if (targetGroups.Any())
-                {
-                    foreach (var item in targetGroups)
-                    {
-                        context.tbl_Profile_UserGroup.Remove(item);
-                    }
-                }
-
-                if (targetActivities.Any())
-                {
-                    foreach (var item in targetActivities)
-                    {
-                        context.tbl_Profile_AdditionalActivity.Remove(item);
-                    }
-                }
-
-                List<tbl_Profile_UserGroup> userGroups = new List<tbl_Profile_UserGroup>();
-                List<tbl_Profile_AdditionalActivity> userActivities = new List<tbl_Profile_AdditionalActivity>();
-
-                if (user.group.Count > 0)
-                {
-                    foreach (var item in user.group)
-                    {
-                        var grpItem = new tbl_Profile_UserGroup()
-                        {
-                            GroupId = item.groupId,
-                            //UserId = userId,
-                            DateTimeCreated = DateTime.Now,
-                            CreatedBy = user.createdBy
-                        };
-
-                        userGroups.Add(grpItem);
-                    }
-                }
-
-                if (user.activities.Any())
-                {
-                    foreach (var item in user.activities)
-                    {
-                        var userActivity = new tbl_Profile_AdditionalActivity()
-                        {
-                            ActivityId = item.activityId,
-                            //UserId = _user.UserId,
-                            CanAdd = false,
-                            CanEdit = false,
-                            CanApprove = false,
-                            CanDelete = false,
-                            CanView = false,
-                            CreatedBy = user.createdBy,
-                            DateTimeCreated = DateTime.Now
-                        };
-
-                        userActivities.Add(userActivity);
-                    }
-                }
-
-                // Updating the target user
-                targetUser.StaffId = user.staffId;
-                targetUser.Username = user.username;
-                targetUser.IsFirstLoginAttempt = false;
-                targetUser.IsActive = false;
-                targetUser.IsLocked = true;
-                targetUser.FailedLogonAttempt = 0;
-                targetUser.CreatedBy = user.createdBy;
-                targetUser.LastUpdatedBy = user.createdBy;
-                targetUser.DateTimeUpdated = DateTime.Now;
-                targetUser.ApprovalStatusId = (int)ApprovalStatusEnum.Pending;
-                targetUser.ApprovalStatus = false;
-                targetUser.tbl_Profile_UserGroup = userGroups;
-                targetUser.tbl_Profile_AdditionalActivity = userActivities;
-
-                // Audit Section ---------------------------
-                var audit = new tbl_Audit
-                {
-                    AuditTypeId = (short)AuditTypeEnum.UserUpdated,
-                    StaffId = user.createdBy,
-                    BranchId = user.userBranchId,
-                    Detail = $"Updated User with username: '{user.username}'",
-                    IPAddress = user.userIPAddress,
-                    Url = user.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
-                };
-
-                using (var trans = context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        auditTrail.AddAuditTrail(audit);
-
-                        output = await context.SaveChangesAsync() > 0;
-
-                        var entity = new ApprovalViewModel
-                        {
-                            staffId = user.createdBy,
-                            companyId = user.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = userId,
-                            operationId = (int)OperationsEnum.UserCreation,
-                            BranchId = user.userBranchId,
-                            externalInitialization = true
-                        };
-
-                        var response = workFlow.LogForApproval(entity);
-
-                        if (response)
-                        {
-                            trans.Commit();
-                        }
-
-                        return output;
-                    }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw new Exception(ex.Message);
-                    }
-                }
-            }
-            return false;
-        }
-
         public List<string> GetUserActivities(int userId)
         {
             var userGroupIds = context.tbl_Profile_UserGroup.Where(x => x.UserId == userId)
@@ -678,5 +751,11 @@ namespace FintrakBanking.Repositories.Admin
 
         #endregion Activies
 
+    }
+
+    public enum UserAccountLockStatusEnum
+    {
+        Locked = 1,
+        Unlocked = 2
     }
 }

@@ -224,7 +224,7 @@ namespace FintrakBanking.APICore.Controllers
                         staffId = currUser.staffId
                     }
                 });
-                
+
             }
             catch (Exception ex)
             {
@@ -233,7 +233,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
             }
         }
-
 
         [HttpPost]
         [Route("logOut")]
@@ -273,11 +272,12 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex)
             {
                 errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An unknown error occured {ex.Message}" });
             }
-            
+
         }
 
         private IAuthenticationManager Authentication => Request.GetOwinContext().Authentication;
+
     }
 }

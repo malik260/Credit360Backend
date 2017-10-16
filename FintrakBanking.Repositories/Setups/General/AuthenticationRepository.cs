@@ -123,7 +123,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                     countryId = coy.CountryId,
                                     branchName = br.BranchName,
                                     companyName = coy.Name,
-                                    
+
                                 }).First();
 
                     if (data == null)
@@ -151,7 +151,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool IsUserAccountValid(string username)
         {
-            var isValid = GetAllUsers().SingleOrDefault(x => x.username.ToLower() == username.ToLower() && x.isLocked == false && x.isActive == true);
+            var isValid = GetAllUsers().FirstOrDefault(x => x.username.ToLower() == username.ToLower() && x.isLocked == false && x.isActive == true);
 
             if (isValid != null)
             {
@@ -242,5 +242,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         email = st.Email
                     }).FirstOrDefault();
         }
+
     }
 }

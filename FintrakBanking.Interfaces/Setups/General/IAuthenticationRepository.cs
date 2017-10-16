@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using System;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool IsUserAccountValid(string username);
 
-        //User Group
+        // Groups
 
         IEnumerable<tbl_Profile_Group> GetAllGroups();
 
