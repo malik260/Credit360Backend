@@ -1,19 +1,19 @@
+using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Interfaces.Customer;
+using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FintrakBanking.Interfaces.Customer;
-using FintrakBanking.ViewModels.Customer;
-using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.ViewModels;
-using System.Web.Http;
-using System.Net.Http;
 using System.Net;
-using FintrakBanking.APICore.core;
+using System.Net.Http;
 using System.Web;
+using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    //[EnableCors("AllDomain")]
     [RoutePrefix("api/v1/customers")]
     public class CustomerFsController : ApiControllerBase
     {
@@ -21,355 +21,357 @@ namespace FintrakBanking.APICore.Controllers
         private ICustomerFSCaptionRepository _fsCaptionRepo;
         private ICustomerFSCaptionDetailRepository _fsDetailRepo;
         private ICustomerFSRatioRepository _fsRepo;
+        private TokenDecryptionHelper token = new TokenDecryptionHelper();
+        private IErrorLogRepository _errorLog;
 
         public CustomerFsController(ICustomerFSCaptionGroupRepository fsGroupRepo,
                                     ICustomerFSCaptionRepository fsCaptionRepo,
                                     ICustomerFSCaptionDetailRepository fsDetailRepo,
-                                    ICustomerFSRatioRepository fsRepo)
+                                    ICustomerFSRatioRepository fsRepo,
+            IErrorLogRepository errorLog
+                                    )
         {
-            this._fsGroupRepo = fsGroupRepo;
-            this._fsCaptionRepo = fsCaptionRepo;
-            this._fsDetailRepo = fsDetailRepo;
-            this._fsRepo = fsRepo;
+            _fsGroupRepo = fsGroupRepo;
+            _fsCaptionRepo = fsCaptionRepo;
+            _fsDetailRepo = fsDetailRepo;
+            _fsRepo = fsRepo;
+            _errorLog = errorLog;
         }
 
         #region Customer FS Caption Group
+
         [HttpPost]
         [Route("customer-fs-caption-group")]
-        public HttpResponseMessage AddCustomerFsCaptionGroup(  [FromBody] CustomerFSCaptionGroupViewModel entity)
-        { 
-                try
-                {
-                    var token = new TokenDecryptionHelper();
+        public HttpResponseMessage AddCustomerFsCaptionGroup([FromBody] CustomerFSCaptionGroupViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
 
-                    entity.userBranchId = (short)token.GetBranchId;
-                    entity.userIPAddress = Request.RequestUri.Host;
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    entity.createdBy = token.GetStaffId;
-                    entity.companyId = token.GetCompanyId;
-
-                    var data = _fsGroupRepo.AddCustomerFSCaptionGroup(entity);
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record has been created successfully" });
-                    }
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error creating this record" });
-                }
-                catch (Exception e)
+                var data = _fsGroupRepo.AddCustomerFSCaptionGroup(entity);
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error creating this record {e.Message}" });
+                        new { success = true, result = data, message = "The record has been created successfully" });
                 }
-             
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("customer-fs-caption-group")]
-        public HttpResponseMessage GetCustomerFsCaptionGroup( )
-        { 
-                try
-                {
-                    var token = new TokenDecryptionHelper();
-
-                    var data = _fsGroupRepo.GetCustomerFSCaptionGroup(token.GetCompanyId);
-                    if (!data.Any())
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = false, message = "No record found" });
-                    }
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, count = data.Count() });
-                }
-                catch (Exception e)
+        public HttpResponseMessage GetCustomerFsCaptionGroup()
+        {
+            try
+            {
+                var data = _fsGroupRepo.GetCustomerFSCaptionGroup(token.GetCompanyId);
+                if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"Error: {e.Message}" });
+                        new { success = false, message = "No record found" });
                 }
-             
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("customer-fs-caption-group/{fsCaptionGroupId}")]
-        public HttpResponseMessage GetCustomerFsCaptionGroupById(  short fsCaptionGroupId)
-        { 
-                try
-                {
-                    var data = _fsGroupRepo.GetCustomerFSCaptionGroupById(fsCaptionGroupId);
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, count = 1 });
-                }
-                catch (System.Exception ex)
-                {
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {ex.Message}" });
-                }
-             
+        public HttpResponseMessage GetCustomerFsCaptionGroupById(short fsCaptionGroupId)
+        {
+            try
+            {
+                var data = _fsGroupRepo.GetCustomerFSCaptionGroupById(fsCaptionGroupId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = 1 });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
-
 
         [HttpPut]
         [Route("customer-fs-caption-group/{fsCaptionGroupId}")]
-        public HttpResponseMessage UpdateCustomerFsCaptionGroup(  short fsCaptionGroupId, [FromBody] CustomerFSCaptionGroupViewModel entity)
-        { 
-                try
-                {
-                    var token = new TokenDecryptionHelper();
+        public HttpResponseMessage UpdateCustomerFsCaptionGroup(short fsCaptionGroupId, [FromBody] CustomerFSCaptionGroupViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
 
-                    entity.userBranchId = (short)token.GetBranchId;
-                    entity.userIPAddress = Request.RequestUri.Host;
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    entity.createdBy = token.GetStaffId;
-                    entity.companyId = token.GetCompanyId;
+                var data = _fsGroupRepo.UpdateCustomerFSCaptionGroup(fsCaptionGroupId, entity);
 
-                    var data = _fsGroupRepo.UpdateCustomerFSCaptionGroup(fsCaptionGroupId, entity);
-
-                    if (data)
-                    {
-
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record has been updated successfully" });
-
-                    }
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error updating this record" });
-                }
-                catch (Exception e)
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {e.Message}" });
+                        new { success = true, result = data, message = "The record has been updated successfully" });
                 }
-             
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
-        #endregion
+
+        #endregion Customer FS Caption Group
 
         #region Customer FS Caption
+
         [HttpPost]
         [Route("customer-fs-caption")]
-        public HttpResponseMessage AddCustomerFsCaption(  [FromBody] CustomerFSCaptionViewModel entity)
-        { 
-                try
+        public HttpResponseMessage AddCustomerFsCaption([FromBody] CustomerFSCaptionViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = _fsCaptionRepo.AddCustomerFSCaption(entity);
+                if (data)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    entity.userBranchId = (short)token.GetBranchId;
-                    entity.userIPAddress = Request.RequestUri.Host;
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    entity.createdBy = token.GetStaffId;
-                    entity.companyId = token.GetCompanyId;
-
-                    var data = _fsCaptionRepo.AddCustomerFSCaption(entity);
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record has been created successfully" });
-                    }
-
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error creating this record" });
+                        new { success = true, result = data, message = "The record has been created successfully" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error creating this record {e.Message}" });
-                } 
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("customer-fs-caption/group/{fsCaptionGroupId}")]
-        public HttpResponseMessage GetCustomerFsCaption(  short fsCaptionGroupId)
-        {  try
+        public HttpResponseMessage GetCustomerFsCaption(short fsCaptionGroupId)
+        {
+            try
+            {
+                var data = _fsCaptionRepo.GetCustomerFSCaption(fsCaptionGroupId);
+                if (!data.Any())
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    var data = _fsCaptionRepo.GetCustomerFSCaption(fsCaptionGroupId);
-                    if (!data.Any())
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = false, message = "No record found" });
-                    }
-
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, count = data.Count() });
+                        new { success = false, message = "No record found" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"Error: {e.Message}" });
-                } 
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("customer-fs-caption/{fsCaptionId}")]
-        public HttpResponseMessage GetCustomerFsCaptionById(  short fsCaptionId)
-        {  try
-                {
-                    var data = _fsCaptionRepo.GetCustomerFSCaptionById(fsCaptionId);
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, count = 1 });
-                }
-                catch (System.Exception ex)
-                {
+        public HttpResponseMessage GetCustomerFsCaptionById(short fsCaptionId)
+        {
+            try
+            {
+                var data = _fsCaptionRepo.GetCustomerFSCaptionById(fsCaptionId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = 1 });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {ex.Message}" });
-                }
-                 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
-
 
         //[HttpGet("customer-fs-caption/unmapped/{fsCaptionGroupId}/customer/{customerId}/date/{fsDate}")]
         [HttpGet]
         [Route("customer-fs-caption/unmapped")]
-        public HttpResponseMessage GetUnmappedCustomerFsCaption(  short fsCaptionGroupId, int customerId, DateTime fsDate)
-        {   try
+        public HttpResponseMessage GetUnmappedCustomerFsCaption(short fsCaptionGroupId, int customerId, DateTime fsDate)
+        {
+            try
+            {
+                var data = _fsCaptionRepo.GetUnmappedCustomerFSCaption(fsCaptionGroupId, customerId, fsDate);
+                if (!data.Any())
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    var data = _fsCaptionRepo.GetUnmappedCustomerFSCaption(fsCaptionGroupId, customerId, fsDate);
-                    if (!data.Any())
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = false, message = "No record found" });
-                    }
-
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, count = data.Count() });
+                        new { success = false, result = data, message = "No record found" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"Error: {e.Message}" });
-                } 
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpPut]
         [Route("customer-fs-caption/{fsCaptionId}")]
-        public HttpResponseMessage UpdateCustomerFsCaption(  int fsCaptionId, [FromBody] CustomerFSCaptionViewModel entity)
-        {  try
+        public HttpResponseMessage UpdateCustomerFsCaption(int fsCaptionId, [FromBody] CustomerFSCaptionViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = _fsCaptionRepo.UpdateCustomerFSCaption(fsCaptionId, entity);
+
+                if (data)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    entity.userBranchId = (short)token.GetBranchId;
-                    entity.userIPAddress = Request.RequestUri.Host;
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    entity.createdBy = token.GetStaffId;
-                    entity.companyId = token.GetCompanyId;
-
-                    var data = _fsCaptionRepo.UpdateCustomerFSCaption(fsCaptionId, entity);
-
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record has been updated successfully" });
-                    }
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error updating this record" });
+                        new { success = true, result = data, message = "The record has been updated successfully" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {e.Message}" });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
-        #endregion
+
+        #endregion Customer FS Caption
 
         #region Customer FS Caption Detail
+
         [HttpPost]
         [Route("customer-fs-caption-detail")]
-        public HttpResponseMessage AddCustomerFsCaptionDetail(  [FromBody] CustomerFSCaptionDetailViewModel entity)
-        { 
-                try
+        public HttpResponseMessage AddCustomerFsCaptionDetail([FromBody] CustomerFSCaptionDetailViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = _fsDetailRepo.AddCustomerFSCaptionDetail(entity);
+                if (data)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    entity.userBranchId = (short)token.GetBranchId;
-                    entity.userIPAddress = Request.RequestUri.Host;
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    entity.createdBy = token.GetStaffId;
-                    entity.companyId = token.GetCompanyId;
-
-                    var data = _fsDetailRepo.AddCustomerFSCaptionDetail(entity);
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record has been created successfully" });
-                    }
-
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error creating this record" });
+                        new { success = true, result = data, message = "The record has been created successfully" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error creating this record {e.Message}" });
-                } 
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
         }
 
         [HttpPost]
         [Route("customer-fs-caption-detail/multiple")]
-        public HttpResponseMessage AddMultipleCustomerFsCaptionDetail(  [FromBody] List<CustomerFSCaptionDetailViewModel> entities)
-        { 
-                try
+        public HttpResponseMessage AddMultipleCustomerFsCaptionDetail([FromBody] List<CustomerFSCaptionDetailViewModel> entities)
+        {
+            try
+            {
+                var userBranch = (short)token.GetBranchId;
+                var userIpAddress = Request.RequestUri.Host;
+                var applicationUrl = HttpContext.Current.Request.Path;
+                var createdBy = token.GetStaffId;
+
+                foreach (CustomerFSCaptionDetailViewModel entity in entities)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    var userBranch = (short)token.GetBranchId;
-                    var userIpAddress = Request.RequestUri.Host;
-                    var applicationUrl = HttpContext.Current.Request.Path;
-                    var createdBy = token.GetStaffId;
-
-                    foreach (CustomerFSCaptionDetailViewModel entity in entities)
-                    {
-                        entity.userBranchId = userBranch;
-                        entity.userIPAddress = userIpAddress;
-                        entity.applicationUrl = applicationUrl;
-                        entity.createdBy = createdBy;
-                    }
-
-                    var data = _fsDetailRepo.AddMultipleCustomerFSCaptionDetail(entities);
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record(s) has been created successfully" });
-                    }
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error creating these record(s)" });
+                    entity.userBranchId = userBranch;
+                    entity.userIPAddress = userIpAddress;
+                    entity.applicationUrl = applicationUrl;
+                    entity.createdBy = createdBy;
                 }
-                catch (Exception e)
+
+                var data = _fsDetailRepo.AddMultipleCustomerFSCaptionDetail(entities);
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error creating these record(s) {e.Message}" });
-                } 
+                        new { success = true, result = data, message = "The record(s) has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating these record(s)" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating these record(s) {ex.Message}" });
+            }
         }
 
         [HttpGet]
-        [Route("customer-fs-caption-detail/customer/{customerId}")]
-        public HttpResponseMessage GetCustomerFsCaptionDetail(  int customerId)
-        { try
+        [Route("customer-fs-caption-detail/customer")]
+        public HttpResponseMessage GetMappedCustomerFsCaptionDetail(short fsCaptionGroupId, int customerId, DateTime fsDate)
+        {
+            try
+            {
+                var data = _fsDetailRepo.GetMappedCustomerFsCaptionDetail(customerId, fsCaptionGroupId, fsDate);
+                if (!data.Any())
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    var data = _fsDetailRepo.GetCustomerFSCaptionDetail(customerId);
-                    if (!data.Any())
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = false, message = "No record found" });
-                    }
-
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, count = data.Count() });
+                        new { success = false, result = data, message = "No record found" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"Error: {e.Message}" });
-                } 
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpGet]
@@ -378,8 +380,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
-
                 var data = _fsRepo.GetCustomerFSRatioValues(customerId);
                 if (!data.Any())
                 {
@@ -390,502 +390,512 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {e.Message}" });
+                    new { success = false, message = $"Error: {ex.Message}" });
             }
         }
 
         [HttpGet]
         [Route("customer-fs-caption-detail/{fsDetailId}")]
-        public HttpResponseMessage GetCustomerFsCaptionById(  int fsDetailId)
-        { 
-                try
-                {
-                    var data = _fsDetailRepo.GetCustomerFSCaptionDetailById(fsDetailId);
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, count = 1 });
-                }
-                catch (System.Exception ex)
-                {
+        public HttpResponseMessage GetCustomerFsCaptionById(int fsDetailId)
+        {
+            try
+            {
+                var data = _fsDetailRepo.GetCustomerFSCaptionDetailById(fsDetailId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = 1 });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {ex.Message}" });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
-
 
         [HttpPut]
         [Route("customer-fs-caption-detail/{fsDetailId}")]
-        public HttpResponseMessage UpdateCustomerFsCaptionDetail(  int fsDetailId, [FromBody] CustomerFSCaptionDetailViewModel entity)
-        { 
-                try
+        public HttpResponseMessage UpdateCustomerFsCaptionDetail(int fsDetailId, [FromBody] CustomerFSCaptionDetailViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = _fsDetailRepo.UpdateCustomerFSCaptionDetail(fsDetailId, entity);
+
+                if (data)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    entity.userBranchId = (short)token.GetBranchId;
-                    entity.userIPAddress = Request.RequestUri.Host;
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    entity.createdBy = token.GetStaffId;
-                    entity.companyId = token.GetCompanyId;
-
-                    var data = _fsDetailRepo.UpdateCustomerFSCaptionDetail(fsDetailId, entity);
-
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record has been updated successfully" });
-                    }
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error updating this record" });
+                        new { success = true, result = data, message = "The record has been updated successfully" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {e.Message}" });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
 
         [HttpDelete]
         [Route("customer-fs-caption-detail/{fsdetailId}")]
-        public HttpResponseMessage DeleteCustomerFsCaptionDetail(  int fsdetailId)
-        { 
-                try
+        public HttpResponseMessage DeleteCustomerFsCaptionDetail(int fsdetailId)
+        {
+            try
+            {
+                var user = new UserInfo()
                 {
-                    var token = new TokenDecryptionHelper();
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host,
+                    createdBy = token.GetStaffId
+                };
 
-                    var user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        applicationUrl = HttpContext.Current.Request.Path,
-                        userIPAddress = Request.RequestUri.Host,
-                        createdBy = token.GetStaffId
-                    };
+                _fsDetailRepo.DeleteCustomerFSCaptionDetail(fsdetailId, user);
 
-                    _fsDetailRepo.DeleteCustomerFSCaptionDetail(fsdetailId, user);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = fsdetailId, message = "record has been deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = fsdetailId, message = "record has been deleted successfully" });
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpDelete]
         [Route("customer-fs-caption-detail/multiple/{fsdetailIds}")]
-        public HttpResponseMessage DeleteMultileCustomerFsCaptionDetail(  List<int> fsdetailIds)
-        { try
+        public HttpResponseMessage DeleteMultileCustomerFsCaptionDetail(List<int> fsdetailIds)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
                 {
-                    var token = new TokenDecryptionHelper();
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host
+                };
 
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        applicationUrl = HttpContext.Current.Request.Path,
-                        userIPAddress = Request.RequestUri.Host
-                    };
+                _fsDetailRepo.DeleteMultileCustomerFSCaptionDetail(fsdetailIds, user);
 
-                    _fsDetailRepo.DeleteMultileCustomerFSCaptionDetail(fsdetailIds, user);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = 1, message = "record(s) has been deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = 1, message = "record(s) has been deleted successfully" });
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
-        #endregion
+        #endregion Customer FS Caption Detail
 
         #region Customer FS Ratio Caption
+
         [HttpPost]
         [Route("customer-fs-ratio-caption")]
-        public HttpResponseMessage AddFsRatioCaption(  [FromBody] CustomerFSRatioCaptionViewModel model)
-        { 
-                try
+        public HttpResponseMessage AddFsRatioCaption([FromBody] CustomerFSRatioCaptionViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = _fsRepo.AddFSRatioCaption(model);
+                if (data)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    model.userBranchId = (short)token.GetBranchId;
-                    model.userIPAddress = Request.RequestUri.Host;
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-
-                    var data = _fsRepo.AddFSRatioCaption(model);
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record has been created successfully" });
-                    }
-
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error creating this record" });
+                        new { success = true, result = data, message = "The record has been created successfully" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error creating this record {e.Message}" });
-                } 
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-caption")]
-        public HttpResponseMessage GetFsRatioCaption( )
-        {  try
+        public HttpResponseMessage GetFsRatioCaption()
+        {
+            try
+            {
+                var data = _fsRepo.GetFSRatioCaption(token.GetCompanyId);
+                if (!data.Any())
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    var data = _fsRepo.GetFSRatioCaption(token.GetCompanyId);
-                    if (!data.Any())
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = false, message = "No record found" });
-                    }
-
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, count = data.Count() });
+                        new { success = false, message = "No record found" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"Error: {e.Message}" });
-                } 
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
-        public HttpResponseMessage GetFsRatioCaptionById(  short ratioCaptionId)
-        { 
-                try
-                {
-                    var data = _fsRepo.GetFSRatioCaptionById(ratioCaptionId);
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
-                }
-                catch (System.Exception ex)
-                {
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {ex.Message}" });
-                } 
+        public HttpResponseMessage GetFsRatioCaptionById(short ratioCaptionId)
+        {
+            try
+            {
+                var data = _fsRepo.GetFSRatioCaptionById(ratioCaptionId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
 
         [HttpPut]
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
-        public HttpResponseMessage UpdateFsRatioCaption(  short ratioCaptionId, [FromBody] CustomerFSRatioCaptionViewModel model)
-        { 
-                try
+        public HttpResponseMessage UpdateFsRatioCaption(short ratioCaptionId, [FromBody] CustomerFSRatioCaptionViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = _fsRepo.UpdateFSRatioCaption(ratioCaptionId, model);
+
+                if (data)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    model.userBranchId = (short)token.GetBranchId;
-                    model.userIPAddress = Request.RequestUri.Host;
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-
-                    var data = _fsRepo.UpdateFSRatioCaption(ratioCaptionId, model);
-
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record has been updated successfully" });
-
-                    }
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error updating this record" });
+                        new { success = true, result = data, message = "The record has been updated successfully" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {e.Message}" });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
 
         [HttpDelete]
         [Route("customer-fs-ratio-caption/{RatioCaptionId}")]
-        public HttpResponseMessage DeleteFsRatioCaption(  short ratioCaptionId)
-        { 
-                try
+        public HttpResponseMessage DeleteFsRatioCaption(short ratioCaptionId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
                 {
-                    var token = new TokenDecryptionHelper();
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host
+                };
 
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        applicationUrl = HttpContext.Current.Request.Path,
-                        userIPAddress = Request.RequestUri.Host
-                    };
+                _fsRepo.DeleteFSRatioCaption(ratioCaptionId, user);
 
-                    _fsRepo.DeleteFSRatioCaption(ratioCaptionId, user);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = ratioCaptionId, message = "record has been deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = ratioCaptionId, message = "record has been deleted successfully" });
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
         }
 
-        #endregion
+        #endregion Customer FS Ratio Caption
 
         #region FS Ratio Detail
+
         [HttpPost]
         [Route("customer-fs-ratio-detail")]
-        public HttpResponseMessage AddFsRatioDetail(  [FromBody] CustomerFSRatioDetailViewModel model)
-        { 
-                try
+        public HttpResponseMessage AddFsRatioDetail([FromBody] CustomerFSRatioDetailViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = _fsRepo.AddFSRatioDetail(model);
+                if (data)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    model.userBranchId = (short)token.GetBranchId;
-                    model.userIPAddress = Request.RequestUri.Host;
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-
-                    var data = _fsRepo.AddFSRatioDetail(model);
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record has been created successfully" });
-                    }
-
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error creating this record" });
+                        new { success = true, result = data, message = "The record has been created successfully" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error creating this record {e.Message}" });
-                } 
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
         }
 
         [HttpPost]
         [Route("customer-fs-ratio-detail/multiple")]
-        public HttpResponseMessage AddMultipleFsRatioDetail(  [FromBody] List<CustomerFSRatioDetailViewModel> models)
-        { 
-                try
+        public HttpResponseMessage AddMultipleFsRatioDetail([FromBody] List<CustomerFSRatioDetailViewModel> models)
+        {
+            try
+            {
+                var userBranch = (short)token.GetBranchId;
+                var userIpAddress = Request.RequestUri.Host;
+                var applicationUrl = HttpContext.Current.Request.Path;
+                var createdBy = token.GetStaffId;
+
+                foreach (CustomerFSRatioDetailViewModel model in models)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    var userBranch = (short)token.GetBranchId;
-                    var userIpAddress = Request.RequestUri.Host;
-                    var applicationUrl = HttpContext.Current.Request.Path;
-                    var createdBy = token.GetStaffId;
-
-                    foreach (CustomerFSRatioDetailViewModel model in models)
-                    {
-                        model.userBranchId = userBranch;
-                        model.userIPAddress = userIpAddress;
-                        model.applicationUrl = applicationUrl;
-                        model.createdBy = createdBy;
-                        model.companyId = token.GetCompanyId;
-                    }
-
-                    var data = _fsRepo.AddMultipleFSRatioDetail(models);
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record(s) has been created successfully" });
-                    }
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error creating these record(s)" });
+                    model.userBranchId = userBranch;
+                    model.userIPAddress = userIpAddress;
+                    model.applicationUrl = applicationUrl;
+                    model.createdBy = createdBy;
+                    model.companyId = token.GetCompanyId;
                 }
-                catch (Exception e)
+
+                var data = _fsRepo.AddMultipleFSRatioDetail(models);
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error creating these record(s) {e.Message}" });
-                } 
+                        new { success = true, result = data, message = "The record(s) has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating these record(s)" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating these record(s) {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-detail/ratio-caption/{ratioCaptionId}/caption-group/{fsCaptionGroupId}")]
-        public HttpResponseMessage GetFsRatioDetail(  short ratioCaptionId, short fsCaptionGroupId)
-        { 
-                try
+        public HttpResponseMessage GetFsRatioDetail(short ratioCaptionId, short fsCaptionGroupId)
+        {
+            try
+            {
+                var data = _fsRepo.GetFSRatioDetail(ratioCaptionId, fsCaptionGroupId, token.GetCompanyId);
+                if (!data.Any())
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    var data = _fsRepo.GetFSRatioDetail(ratioCaptionId, fsCaptionGroupId, token.GetCompanyId);
-                    if (!data.Any())
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                    }
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data , count = data.Count() });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-                }
-             
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-detail/{ratioDetailId}")]
-        public HttpResponseMessage GetFsRatioDetailById(  int ratioDetailId)
-        { 
-                try
-                {
-                    var data = _fsRepo.GetFSRatioDetailById(ratioDetailId);
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
-                }
-                catch (System.Exception ex)
-                {
+        public HttpResponseMessage GetFsRatioDetailById(int ratioDetailId)
+        {
+            try
+            {
+                var data = _fsRepo.GetFSRatioDetailById(ratioDetailId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {ex.Message}" });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
 
         [HttpPut]
         [Route("customer-fs-ratio-detail/{ratioDetailId}")]
-        public HttpResponseMessage UpdateFsRatioDetail(  int ratioDetailId, [FromBody] CustomerFSRatioDetailViewModel model)
-        {  try
+        public HttpResponseMessage UpdateFsRatioDetail(int ratioDetailId, [FromBody] CustomerFSRatioDetailViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = _fsRepo.UpdateFSRatioDetail(ratioDetailId, model);
+
+                if (data)
                 {
-                    var token = new TokenDecryptionHelper();
-
-                    model.userBranchId = (short)token.GetBranchId;
-                    model.userIPAddress = Request.RequestUri.Host;
-                    model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.createdBy = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
-
-                    var data = _fsRepo.UpdateFSRatioDetail(ratioDetailId, model);
-
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = true, result = data, message = "The record has been updated successfully" });
-                    }
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "There was an error updating this record" });
+                        new { success = true, result = data, message = "The record has been updated successfully" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"There was an error updating this record {e.Message}" });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
         }
 
         [HttpDelete]
         [Route("customer-fs-ratio-detail/{ratioDetailId}")]
-        public HttpResponseMessage DeleteFsRatioDetail(  int ratioDetailId)
-        {   try
+        public HttpResponseMessage DeleteFsRatioDetail(int ratioDetailId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
                 {
-                    var token = new TokenDecryptionHelper();
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host
+                };
 
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        applicationUrl = HttpContext.Current.Request.Path,
-                        userIPAddress = Request.RequestUri.Host
-                    };
+                _fsRepo.DeleteFSRatioDetail(ratioDetailId, user);
 
-                    _fsRepo.DeleteFSRatioDetail(ratioDetailId, user);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = ratioDetailId, message = "record has been deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = ratioDetailId, message = "record has been deleted successfully" });
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
         }
 
         [HttpDelete]
         [Route("customer-fs-ratio-detail/multiple/{ratioDetailId}")]
-        public HttpResponseMessage DeleteMultileFsRatioDetail(  List<int> ratioDetailIds)
-        { try
+        public HttpResponseMessage DeleteMultileFsRatioDetail(List<int> ratioDetailIds)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
                 {
-                    var token = new TokenDecryptionHelper();
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host
+                };
 
-                    UserInfo user = new UserInfo()
-                    {
-                        BranchId = token.GetBranchId,
-                        companyId = token.GetCompanyId,
-                        staffId = token.GetStaffId,
-                        applicationUrl = HttpContext.Current.Request.Path,
-                        userIPAddress = Request.RequestUri.Host
-                    };
+                _fsRepo.DeleteMultipleFSRatioDetail(ratioDetailIds, user);
 
-                    _fsRepo.DeleteMultipleFSRatioDetail(ratioDetailIds, user);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = 1, message = "record(s) has been deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = 1, message = "record(s) has been deleted successfully" });
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = ex.Message });
-                } 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-detail/divisor-type")]
-        public HttpResponseMessage GetAllDivisorType( )
-        {   try
+        public HttpResponseMessage GetAllDivisorType()
+        {
+            try
+            {
+                var data = _fsRepo.GetAllDivisorType();
+                if (!data.Any())
                 {
-
-                    var data = _fsRepo.GetAllDivisorType();
-                    if (!data.Any())
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = false, message = "No record found" });
-                    }
-
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, count = data.Count() });
+                        new { success = false, message = "No record found" });
                 }
-                catch (Exception e)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"Error: {e.Message}" });
-                } 
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpGet]
         [Route("customer-fs-ratio-detail/value-type")]
-        public HttpResponseMessage GetAllValueType( )
-        {  try
-                {
-                    var token = new TokenDecryptionHelper();
-
-                    var data = _fsRepo.GetAllValueType();
-                    if (!data.Any())
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                            new { success = false, message = "No record found" });
-                    }
-
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, count = data.Count() });
-                }
-                catch (Exception e)
+        public HttpResponseMessage GetAllValueType()
+        {
+            try
+            {
+                var data = _fsRepo.GetAllValueType();
+                if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = $"Error: {e.Message}" });
+                        new { success = false, message = "No record found" });
                 }
-             
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
-        #endregion
+
+        #endregion FS Ratio Detail
     }
 }

@@ -447,10 +447,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool WithinAllLimits()
         {
             var setup = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
-
-            var level = setup.Where(x=>x.ApprovalLevelId==fromLevelId).FirstOrDefault();
-
-            if (level == null) { throw new Exception("User not in workflow setup!"); }
+            var level = setup.Where(x => x.ApprovalLevelId == fromLevelId).FirstOrDefault();
+            if (level == null) { throw new Exception("The user is not in the workflow setup!"); }
 
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true
@@ -556,7 +554,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             Comment = model.comment;
             ExternalInitialization = model.externalInitialization;
             StatusId = model.approvalStatusId;
-            KeepPending = model.keepPending;
+            keepPending = model.keepPending;
 
             var response = LogActivity();
 

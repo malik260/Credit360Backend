@@ -57,9 +57,9 @@ namespace WinApp
             //decimal vCountry =  NunCountry.Value;
             DateTime vDate = dtpDate.Value;
             int vStaff = 1;
-            int vLoan  = 189;
+            int vLoan  = 201;
             decimal vAmount  = NunCountry.Value;
-            short vReview  = 27;
+            short vReview  = 33;
             //string vDesc = txtDesc.Text;
 
             //model.CountryId = 1;//(int)vCountry;

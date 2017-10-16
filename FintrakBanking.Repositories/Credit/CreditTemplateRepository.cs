@@ -34,7 +34,7 @@ namespace FintrakBanking.Repositories.Credit
                 TemplateTitle = model.templateTitle,
                 TemplateDocument = model.templateDocument,
                 ApprovalLevelId = model.approvalLevelId,
-                ProductClassId = model.productClassId,
+                //ProductClassId = model.productClassId,
                 CreatedBy = (int)model.createdBy,
                 DateTimeCreated = general.GetApplicationDate()
             };
@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Credit
             data.TemplateTitle = model.templateTitle;
             data.TemplateDocument = model.templateDocument;
             data.ApprovalLevelId = model.approvalLevelId;
-            data.ProductClassId = model.productClassId;
+            //data.ProductClassId = model.productClassId;
             data.LastUpdatedBy = model.lastUpdatedBy;
             data.DateTimeUpdated = general.GetApplicationDate();
 
@@ -102,7 +102,7 @@ namespace FintrakBanking.Repositories.Credit
                 templateTitle = x.TemplateTitle,
                 templateDocument = x.TemplateDocument,
                 approvalLevelId = x.ApprovalLevelId,
-                productClassId = x.ProductClassId,
+                //productClassId = x.ProductClassId,
             });
         }
 
@@ -122,7 +122,7 @@ namespace FintrakBanking.Repositories.Credit
                 templateTitle = data.TemplateTitle,
                 templateDocument = data.TemplateDocument,
                 approvalLevelId = data.ApprovalLevelId,
-                productClassId = data.ProductClassId,
+                //productClassId = data.ProductClassId,
             };
         }
 
@@ -132,6 +132,13 @@ namespace FintrakBanking.Repositories.Credit
                 x.approvalLevelId == levelId
                 && x.productClassId == productId
                 && x.companyId == companyId
+            );
+        }
+
+        public IEnumerable<CreditTemplateViewModel> GetCreditTemplateByLevelId(int levelId, int companyId)
+        {
+            return this.GetAllCreditTemplate().Where(x =>
+                x.approvalLevelId == levelId
             );
         }
 

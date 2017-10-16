@@ -28,6 +28,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddLoanDocument(LoanDocumentViewModel model, byte[] file)
         {
+            try
+            {
+
+           
             var data = new tbl_Media_Loan_Documents
             {
                 FileData = file,
@@ -61,6 +65,12 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId)

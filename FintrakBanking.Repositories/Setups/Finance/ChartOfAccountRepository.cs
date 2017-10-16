@@ -54,14 +54,41 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             entity.externalInitialization = false;
 
-            workFlow.LogForApproval(entity);
-
-            if (workFlow.NewState == (int)ApprovalState.Ended)
+            using (var trans = context.Database.BeginTransaction())
             {
-                return ApproveAccount(entity.targetId, (short)workFlow.StatusId, entity);
-            }
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
 
-            return false;
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApproveAccount(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
         }
 
         private bool ApproveAccount(int accountId, short approvalStatusId, UserInfo user)
@@ -177,25 +204,22 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 SystemDateTime = DateTime.Now
             };
 
-            using (var trans = context.Database.BeginTransaction())
+            try
             {
-                try
-                {
-                    context.tbl_Audit.Add(audit);
-                    // Audit Section ---------------------------
-                    var output = context.SaveChanges() > 0;
+                auditTrail.AddAuditTrail(audit);
+                // Audit Section ---------------------------
 
-                    if (output)
-                    {
-                        trans.Commit();
-                    }
-                    return output;
-                }
-                catch (Exception ex)
+                var response = context.SaveChanges() > 0;
+
+                if (response)
                 {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
+                    return true;
                 }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
 

@@ -2801,6 +2801,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (LoanExist(loanId) > 0)
             {
+                    DeleteLoanExist(loanId);
                     ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
                     ArchivePeriodicSchedule(loanId);
                     ArchiveDailySchedule(loanId);
@@ -2899,6 +2900,7 @@ namespace FintrakBanking.Repositories.Credit
                     this.context.tbl_Loan_Schedule_Periodic_Temp.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                     this.context.tbl_Loan_Schedule_Daily_Temp.AddRange(tblDailyScheduleTemp); ////change to Temp table
+                    context.SaveChanges();
 
                     //----------update loan details -----------------------------------
                     var loan = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == loanId);
@@ -2929,6 +2931,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (LoanExist(loanId) > 0)
                 {
+                    DeleteLoanExist(loanId);
                     ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
                     ArchivePeriodicSchedule(loanId);
                     ArchiveDailySchedule(loanId);
@@ -3028,7 +3031,7 @@ namespace FintrakBanking.Repositories.Credit
                     this.context.tbl_Loan_Schedule_Periodic_Temp.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                     this.context.tbl_Loan_Schedule_Daily_Temp.AddRange(tblDailyScheduleTemp); ////change to Temp table
-
+                    context.SaveChanges();
                     //----------update loan details -----------------------------------
                     var loan = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == loanId);
                     loan.MaturityDate = periodicScheduleTemp.Max(x => x.paymentDate);
@@ -3055,6 +3058,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (LoanExist(loanId) > 0)
                 {
+                    DeleteLoanExist(loanId);
                     ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
                     ArchivePeriodicSchedule(loanId);
                     ArchiveDailySchedule(loanId);
@@ -3154,7 +3158,7 @@ namespace FintrakBanking.Repositories.Credit
                     this.context.tbl_Loan_Schedule_Periodic_Temp.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                     this.context.tbl_Loan_Schedule_Daily_Temp.AddRange(tblDailyScheduleTemp); ////change to Temp table
-
+                    context.SaveChanges();
                     //----------update loan details -----------------------------------
                     var loan = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == loanId);
                     loan.MaturityDate = periodicScheduleTemp.Max(x => x.paymentDate);
@@ -3305,7 +3309,7 @@ namespace FintrakBanking.Repositories.Credit
             this.context.tbl_Loan_Schedule_Periodic.AddRange(tblPeriodicSchedule);////change to Temp table
 
             this.context.tbl_Loan_Schedule_Daily.AddRange(tblDailySchedule); ////change to Temp table
-
+            context.SaveChanges();
             //----------update loan details -----------------------------------
             var loan = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == loanId);
             loan.MaturityDate = periodicSchedule.Max(x => x.paymentDate);
@@ -4211,6 +4215,8 @@ namespace FintrakBanking.Repositories.Credit
                              payAmount = (double?)a.Prepayment ??0,
                              operationId = a.OperationTypeId,
                              newPrincipalFirstpaymentDate = (DateTime)a.PrincipalFirstPaymentDate,
+                             isManagementInterestRate = a.IsManagementInterestRate,
+                             newMaturityDate = a.EffectiveDate,// change to maturity date affter scarfolding
                              
                          }).ToList();
 
@@ -4237,11 +4243,23 @@ namespace FintrakBanking.Repositories.Credit
                 }
                else if ((int)OperationsEnum.Prepayment == item.operationId)
                 {
-                    item.newAmount = item.principalAmount - item.payAmount;
-                    item.effectiveDate = item.newEffectiveDate;
-                    item.tenor = item.newTenor;
-                    item.interestFirstpaymentDate = item.newInterestFirstpaymentDate;
-                    item.principalFirstpaymentDate = item.newPrincipalFirstpaymentDate;
+                    if(item.isManagementInterestRate == true)
+                    {
+                        item.maturityDate = item.newMaturityDate;
+                        item.newAmount = item.principalAmount - item.payAmount;
+                        item.effectiveDate = item.newEffectiveDate;
+                        item.tenor = item.newTenor;
+                        item.interestFirstpaymentDate = item.newInterestFirstpaymentDate;
+                        item.principalFirstpaymentDate = item.newPrincipalFirstpaymentDate;
+                    }
+                    else
+                    {
+                        item.newAmount = item.principalAmount - item.payAmount;
+                        item.effectiveDate = item.newEffectiveDate;
+                        item.tenor = item.newTenor;
+                        item.interestFirstpaymentDate = item.newInterestFirstpaymentDate;
+                        item.principalFirstpaymentDate = item.newPrincipalFirstpaymentDate;
+                    }
 
                     UpdateLoanPrepaymentSchedule(loanId, item, applicationDate, staffId);
                     updateLoanReviewOperation(loanReviewOperationsId, loanId);
@@ -4310,9 +4328,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return output;
         }
-
-
-
 
     }
 }

@@ -387,7 +387,6 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 try
                 {
-
                     workFlow.LogForApproval(entity);
                     var b = workFlow.NextLevelId ?? 0;
                     if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
@@ -519,15 +518,22 @@ namespace FintrakBanking.Repositories.Setups.General
                 SystemDateTime = DateTime.Now
             };
 
-            context.tbl_Audit.Add(audit);
-            // Audit Section ---------------------------
-            var output = context.SaveChanges() > 0;
-
-            if (output)
+            try
             {
-                return output;
+                context.tbl_Audit.Add(audit);
+                // Audit Section ---------------------------
+                var output = context.SaveChanges() > 0;
+
+                if (output)
+                {
+                    return output;
+                }
+                return false;
             }
-            return false;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<bool> AddTempStaff(StaffInfoViewModel staffModel)

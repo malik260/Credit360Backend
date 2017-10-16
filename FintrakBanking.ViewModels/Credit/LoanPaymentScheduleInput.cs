@@ -46,6 +46,10 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime newEffectiveDate { get; set; }
         public decimal prepayment  { get; set; }
         public int operationId { get; set; }
+        public bool isManagementInterestRate{ get; set; }
+        public DateTime newMaturityDate{ get; set; }
+        public int newTenorPrepayment{ get { return (newMaturityDate - newEffectiveDate).Days; } }
+
 
 
 
