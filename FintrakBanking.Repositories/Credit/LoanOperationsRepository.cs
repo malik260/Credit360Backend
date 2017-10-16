@@ -2801,6 +2801,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (LoanExist(loanId) > 0)
             {
+                    DeleteLoanExist(loanId);
                     ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
                     ArchivePeriodicSchedule(loanId);
                     ArchiveDailySchedule(loanId);
