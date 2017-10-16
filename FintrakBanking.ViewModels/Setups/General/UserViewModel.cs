@@ -30,7 +30,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string username { get; set; }
         public string password { get; set; }
         public bool? IsFirstLoginAttempt { get; set; }
-        public bool IsLocked { get; set; }
+        public bool isLocked { get; set; }
         public int? failedLogonAttempt { get; set; }
         public string securityQuestion { get; set; }
         public string securityAnswer { get; set; }

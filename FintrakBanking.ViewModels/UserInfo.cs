@@ -13,6 +13,10 @@ namespace FintrakBanking.ViewModels
         public string userIPAddress { get; set; }
         public DateTime SystemDateTime { get; set; }        
         public int createdBy { get; set; }
+        public string UserName { get; set; }
+        public List<string> activities { get; set; }
+        public string companyName { get; set; }
+        public string branchName { get; set; }
     }
 
 }

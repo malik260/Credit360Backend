@@ -75,7 +75,7 @@
     <Compile Include="Credit\ConditionPrecedentRepository.cs" />
     <Compile Include="Credit\CreditTemplateRepository.cs" />
     <Compile Include="Credit\CustomerCollateralRepository.cs" />
-    <Compile Include="Credit\EmailAndAlertsRepository.cs" />
+    <Compile Include="AppEmail\EmailAndAlertsRepository.cs" />
     <Compile Include="Credit\LimitRepository.cs" />
     <Compile Include="Credit\LoanApplicationRepository.cs" />
     <Compile Include="Credit\LoanCovenantRepository.cs" />

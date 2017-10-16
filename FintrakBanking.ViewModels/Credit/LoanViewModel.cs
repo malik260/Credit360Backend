@@ -99,7 +99,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int currencyId { get; set; }
         public string currency { get; set; }
         public short accurialBasis { get; set; }
-        public double integralFeeAmount { get; set; }
+        public decimal integralFeeAmount { get; set; }
         public short firstDayType { get; set; }
         public bool isCamsol { get; set; }
         public int? internalPrudentialGuidelineStatusId { get; set; }

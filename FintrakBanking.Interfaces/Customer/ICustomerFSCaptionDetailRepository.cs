@@ -8,7 +8,7 @@ namespace FintrakBanking.Interfaces.Customer
 {
     public interface ICustomerFSCaptionDetailRepository
     {
-        IEnumerable<CustomerFSCaptionDetailViewModel> GetCustomerFSCaptionDetail(int customerId);
+        IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptionDetail(int customerIdshort, short fsCaptionGroupId, DateTime fsDate);
         CustomerFSCaptionDetailViewModel GetCustomerFSCaptionDetailById(int fsdetailId);
 
         bool AddCustomerFSCaptionDetail(CustomerFSCaptionDetailViewModel entity);

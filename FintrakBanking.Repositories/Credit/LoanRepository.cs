@@ -348,8 +348,11 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
                 throw new Exception("Loan terminal date should be more than effective date");
 
-            var totalPreviouslyBookedAmount = (from a in context.tbl_Loan.Where(x => x.LoanApplicationDetailId == entity.loanApplicationDetailId)
-                                 select a).Sum(s => s.PrincipalAmount);
+            var principalAmount  = from a in context.tbl_Loan where a.LoanApplicationDetailId == entity.loanApplicationDetailId
+                                   let sumPrincipalAmount = context.tbl_Loan.Where(x => x.LoanApplicationDetailId == entity.loanApplicationDetailId).Sum(x => x.PrincipalAmount)
+                                   select sumPrincipalAmount;
+
+            var totalPreviouslyBookedAmount = principalAmount.FirstOrDefault();
 
             var totalPrincipalAmount = totalPreviouslyBookedAmount + entity.principalAmount;
 
@@ -1311,7 +1314,7 @@ namespace FintrakBanking.Repositories.Credit
                 companyId = loanRecord.CompanyId,
                 currencyId = loanRecord.CurrencyId,
                 accurialBasis = loanRecord.ScheduleDayCountConventionId,
-                integralFeeAmount = loanInputModel.integralFeeAmount,
+                integralFeeAmount = (decimal)loanInputModel.integralFeeAmount,
                 firstDayType = loanRecord.ScheduleDayInterestTypeId,
 
                 //loanScheduleInput = loanInputModel,
@@ -2379,7 +2382,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = d.ExchangeRate,
                         }).ToList();
 
-            // data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+             data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
            
             foreach (var item in data)
             {
