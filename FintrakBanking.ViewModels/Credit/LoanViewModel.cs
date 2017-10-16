@@ -89,7 +89,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isScheduledPrepayment { get; set; }
         public decimal? scheduledPrepaymentAmount { get; set; }
         public DateTime? scheduledPrepaymentDate { get; set; }
-        public short scheduledPrepaymentFrequencyTypeId { get; set; }
+        public short? scheduledPrepaymentFrequencyTypeId { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public string firstName { get; set; }
         public string middleName { get; set; }
@@ -99,15 +99,15 @@ namespace FintrakBanking.ViewModels.Credit
         public int currencyId { get; set; }
         public string currency { get; set; }
         public short accurialBasis { get; set; }
-        public double integralFeeAmount { get; set; }
+        public decimal integralFeeAmount { get; set; }
         public short firstDayType { get; set; }
         public bool isCamsol { get; set; }
-        public int internalPrudentialGuidelineStatusId { get; set; }
-        public int externalPrudentialGuidelineStatusId { get; set; }
-        public DateTime nplDate { get; set; }
+        public int? internalPrudentialGuidelineStatusId { get; set; }
+        public int? externalPrudentialGuidelineStatusId { get; set; }
+        public DateTime? nplDate { get; set; }
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
-        public int customerRiskRatingId { get; set; }
+        public int? customerRiskRatingId { get; set; }
 
         // public double productPriceIndexRate { get; set; }
         public bool allowForceDebitRepayment { get; set; }
