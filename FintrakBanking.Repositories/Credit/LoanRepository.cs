@@ -2382,7 +2382,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = d.ExchangeRate,
                         }).ToList();
 
-            // data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+             data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
            
             foreach (var item in data)
             {
