@@ -4169,7 +4169,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 reviewRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
             }
-            if (workFlow.NewState == (int)ApprovalState.Ended)
+           else if (workFlow.NewState == (int)ApprovalState.Ended)
             {
                 reviewRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Approved;
             }
