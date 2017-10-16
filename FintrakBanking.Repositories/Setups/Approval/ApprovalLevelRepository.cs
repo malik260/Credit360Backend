@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             dateTimeDeleted = a.DateTimeDeleted,
                             groupId = (int)a.GroupId,
                             operationId = d.OperationId
-                        }).GroupBy(x => x.approvalLevelId).Select(g => g.First()).ToList();
+                        }).GroupBy(x => x.approvalLevelId).Select(g => g.FirstOrDefault()).ToList();
 
             return data;
         }
@@ -128,6 +128,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
         public IEnumerable<ApprovalLevelViewModel> GetApprovalLevelByGroupId(int groupId, int companyId)
         {
             return GetApprovalLevel(companyId).Where(c => c.groupId == groupId);
+        }
+
+        public IEnumerable<ApprovalLevelViewModel> GetApprovalLevelByOperationId(int operationId, int companyId)
+        {
+            return GetAllDetailedApprovalLevel(companyId).Where(c => c.operationId == operationId);
         }
 
         public bool AddApprovalLevel(ApprovalLevelViewModel model)
@@ -243,6 +248,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             return context.SaveChanges() != 0;
         }
+
+        // ----------------------------APPROVAL TRAIL REPOSITORY ---------------------------------\\
 
         public async Task<bool> DeleteApprovalLevel(int id, UserInfo user)
         {
