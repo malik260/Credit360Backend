@@ -28,9 +28,5 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Temp_Customer_Group_Mapping> tbl_Temp_Customer_Group_Mapping { get; set; }
-
-        public virtual tbl_Customer_Group_RelationshipType tbl_Customer_Group_RelationshipType1 { get; set; }
-
-        public virtual tbl_Customer_Group_RelationshipType tbl_Customer_Group_RelationshipType2 { get; set; }
     }
 }

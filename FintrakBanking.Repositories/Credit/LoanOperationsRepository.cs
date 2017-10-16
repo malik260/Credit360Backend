@@ -3850,7 +3850,7 @@ namespace FintrakBanking.Repositories.Credit
                 OperationTypeId = model.operationTypeId,
                 EffectiveDate = model.proposedEffectiveDate,
                 ReviewDetails = model.reviewDetails,
-                InterateRate = model.interateRate,
+                InterateRate = (double) model.interateRate,
                 Prepayment = model.prepayment,
                 PrincipalFrequencyTypeId = model.principalFrequencyTypeId,
                 InterestFrequencyTypeId = model.interestFrequencyTypeId,
@@ -3963,13 +3963,13 @@ namespace FintrakBanking.Repositories.Credit
                             interestInstallmentLeft = ln.InterestInstallmentLeft,
                             approvalStatusId = op.ApprovalStatusId,
                             approvalStatusName = context.tbl_Approval_Status.FirstOrDefault(f => f.ApprovalStatusId == op.ApprovalStatusId).ApprovalStatusName,
-                            approvedBy = ln.ApprovedBy,
+                            approvedBy = (int)ln.ApprovedBy,
                             approverComment = ln.ApproverComment,
                             dateApproved = ln.DateApproved,
                             //loanStatusId = ln.LoanStatusId,
                             scheduleTypeId = ln.ScheduleTypeId,
                             isDisbursed = ln.IsDisbursed,
-                            disbursedBy = ln.DisbursedBy,
+                            disbursedBy = (int)ln.DisbursedBy,
                             disburserComment = ln.DisburserComment,
                             disburseDate = ln.DisburseDate,
 
@@ -4018,7 +4018,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationTypeName = context.tbl_Operations.FirstOrDefault(d => d.OperationId == op.OperationTypeId).OperationName,
                             newEffectiveDate = op.EffectiveDate,
                             reviewDetails = op.ReviewDetails,
-                            newInterateRate = op.InterateRate
+                            newInterateRate = (decimal) op.InterateRate
                         }).ToList();
             return data;
         }
@@ -4059,13 +4059,13 @@ namespace FintrakBanking.Repositories.Credit
                             interestInstallmentLeft = ln.InterestInstallmentLeft,
                             approvalStatusId = op.ApprovalStatusId,
                             approvalStatusName = context.tbl_Approval_Status.FirstOrDefault(f => f.ApprovalStatusId == op.ApprovalStatusId).ApprovalStatusName,
-                            approvedBy = ln.ApprovedBy,
+                            approvedBy = (int)ln.ApprovedBy,
                             approverComment = ln.ApproverComment,
                             dateApproved = ln.DateApproved,
                             //loanStatusId = ln.LoanStatusId,
                             scheduleTypeId = ln.ScheduleTypeId,
                             isDisbursed = ln.IsDisbursed,
-                            disbursedBy = ln.DisbursedBy,
+                            disbursedBy = (int)ln.DisbursedBy,
                             disburserComment = ln.DisburserComment,
                             disburseDate = ln.DisburseDate,
 
@@ -4114,7 +4114,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationTypeName = context.tbl_Operations.FirstOrDefault(d => d.OperationId == op.OperationTypeId).OperationName,
                             newEffectiveDate = op.EffectiveDate,
                             reviewDetails = op.ReviewDetails,
-                            newInterateRate = op.InterateRate,
+                            newInterateRate = (decimal)op.InterateRate,
                             prepayment = op.Prepayment,
                             newPrincipalFrequencyTypeId = op.PrincipalFrequencyTypeId,
                             newInterestFrequencyTypeId = op.InterestFrequencyTypeId,

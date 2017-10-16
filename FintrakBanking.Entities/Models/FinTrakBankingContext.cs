@@ -228,7 +228,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Solicitor> tbl_Solicitor { get; set; }
         public virtual DbSet<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
         public virtual DbSet<tbl_COT> tbl_COT { get; set; }
         public virtual DbSet<tbl_Loan_Document_Type> tbl_Loan_Document_Type { get; set; }
@@ -270,6 +270,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Deal_Type> tbl_Deal_Type { get; set; }
         public virtual DbSet<tbl_Stock> tbl_Stock { get; set; }
         public virtual DbSet<tbl_Temp_Collateral_Stock> tbl_Temp_Collateral_Stock { get; set; }
+        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1195,10 +1196,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Temp_Customer_Group_Mapping)
                 .WithRequired(e => e.tbl_Customer_Group_RelationshipType)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Customer_Group_RelationshipType>()
-                .HasOptional(e => e.tbl_Customer_Group_RelationshipType1)
-                .WithRequired(e => e.tbl_Customer_Group_RelationshipType2);
 
             modelBuilder.Entity<tbl_Customer_IdentificationModeType>()
                 .Property(e => e.IdentificationMode)
@@ -2540,6 +2537,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.tbl_Loan_Application)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<tbl_Loan_Application_Collateral>()
+                .Property(e => e.CollateralValue)
+                .HasPrecision(19, 4);
+
             modelBuilder.Entity<tbl_Loan_Application_Detail>()
                 .Property(e => e.ProposedAmount)
                 .HasPrecision(19, 4);
@@ -2688,10 +2689,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Loan_Revolving1)
                 .WithOptional(e => e.tbl_Loan_PrudentialGuideline1)
                 .HasForeignKey(e => e.InternalPrudentialGuidelineStatusId);
-
-            modelBuilder.Entity<tbl_Loan_Review_Operation>()
-                .Property(e => e.InterateRate)
-                .HasPrecision(18, 0);
 
             modelBuilder.Entity<tbl_Loan_Review_Operation>()
                 .Property(e => e.Prepayment)
@@ -3757,6 +3754,18 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Temp_Collateral_Stock>()
                 .Property(e => e.ShareValueAmountToUse)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.LevelMaximumAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.InvestmentGradeAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.StaffMaximumAmount)
                 .HasPrecision(19, 4);
         }
     }

@@ -118,8 +118,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 return addContingentLiability(contingentLoanInput);
             }
+            else
             {
-                return "The Product type is Invalid";
+                throw new Exception("The Product type is Invalid");
             }
         }
 
@@ -1130,6 +1131,10 @@ namespace FintrakBanking.Repositories.Credit
                     DisburseLoan(loanDisbursementModel);
 
                     loanRecord.LoanStatusId = 1;
+                    loanRecord.IsDisbursed = true;
+                    loanRecord.DisburseDate = DateTime.Now;
+                    loanRecord.DisbursedBy = user.createdBy;
+                    loanRecord.ApprovedBy = user.createdBy;
                     //==========================================================================================
 
 
@@ -2382,7 +2387,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = d.ExchangeRate,
                         }).ToList();
 
-             data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+             //data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
            
             foreach (var item in data)
             {

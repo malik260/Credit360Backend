@@ -379,7 +379,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanCollateral = new tbl_Loan_Application_Collateral()
                 {
-                    CertificateOfOwnership = item.certificateOfOwnership,
+                    CollateralReferenceNumber = item.certificateOfOwnership,
                     CityId = item.cityId,
                     CollateralTypeId = item.collateralTypeId,
                     CreatedBy = item.createdBy,

@@ -12,8 +12,14 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CustomerCollateralId { get; set; }
 
+        [Required]
         [StringLength(50)]
-        public string CertificateOfOwnership { get; set; }
+        public string CollateralReferenceNumber { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? CollateralValue { get; set; }
+
+        public bool? IsBankAccount { get; set; }
 
         public int? CityId { get; set; }
 
