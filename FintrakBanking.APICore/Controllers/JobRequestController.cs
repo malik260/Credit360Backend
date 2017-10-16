@@ -165,14 +165,14 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.AddGlobalJobRequest(entity);
                 if (data != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The request logged successfully." });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error logging this request" });
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error logging this request{ex.Message}", error = ex.InnerException });
             }
         }
 

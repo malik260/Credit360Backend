@@ -51,6 +51,19 @@ namespace FintrakBanking.ViewModels.Setups.General
     {
         public int StaffId { get; set; }
         public string StaffName { get; set; }
+
+
+    }
+
+
+    public class StaffMISViewModel
+    {
+        public int StaffId { get; set; }
+        public string StaffName { get; set; }
+
+
+        public int? MisinfoId { get; set; }
+        public string MisInfoCode { get; set; }
     }
 
     public class simpleStaffModel

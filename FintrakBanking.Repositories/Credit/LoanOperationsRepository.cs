@@ -1807,7 +1807,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.BranchId = item.branchId;
                 addLoanArchive.CurrencyId = (short)item.currencyId;
                 addLoanArchive.ExchangeRate = item.exchangeRate;
-                addLoanArchive.LoanApplicationId = item.loanApplicationId;
+                addLoanArchive.LoanApplicationDetailId = item.loanApplicationId;
                 addLoanArchive.LoanReferenceNumber = item.loanReferenceNumber;
                 addLoanArchive.SubSectorId = item.subSectorId;
                 addLoanArchive.PrincipalFrequencyTypeId = item.principalFrequencyTypeId;
@@ -1823,7 +1823,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.MaturityDate = item.maturityDate;
                 addLoanArchive.BookingDate = item.bookingDate;
                 addLoanArchive.PrincipalAmount = item.principalAmount;
-                addLoanArchive.ApprovedAmount = (decimal)item.approvedAmount;
+               // addLoanArchive.ApprovedAmount = (decimal)item.approvedAmount;
                 addLoanArchive.PrincipalInstallmentLeft = item.principalInstallmentLeft;
                 addLoanArchive.InterestInstallmentLeft = item.interestInstallmentLeft;
                 addLoanArchive.ApprovalStatusId = item.approvalStatusId;
@@ -2545,7 +2545,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanScheduleArchive.BranchId = item.branchId;
                 addLoanScheduleArchive.CurrencyId = (short)item.currencyId;
                 addLoanScheduleArchive.ExchangeRate = item.exchangeRate;
-                addLoanScheduleArchive.LoanApplicationId = item.loanApplicationId;
+                addLoanScheduleArchive.LoanApplicationDetailId = item.loanApplicationId;
                 addLoanScheduleArchive.LoanReferenceNumber = item.loanReferenceNumber;
                 addLoanScheduleArchive.SubSectorId = item.subSectorId;
                 addLoanScheduleArchive.PrincipalFrequencyTypeId = item.principalFrequencyTypeId;
@@ -2561,7 +2561,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanScheduleArchive.MaturityDate = item.maturityDate;
                 addLoanScheduleArchive.BookingDate = item.bookingDate;
                 addLoanScheduleArchive.PrincipalAmount = item.principalAmount;
-                addLoanScheduleArchive.ApprovedAmount = (decimal)item.approvedAmount;
+                //addLoanScheduleArchive.ApprovedAmount = (decimal)item.approvedAmount;
                 addLoanScheduleArchive.PrincipalInstallmentLeft = item.principalInstallmentLeft;
                 addLoanScheduleArchive.InterestInstallmentLeft = item.interestInstallmentLeft;
                 addLoanScheduleArchive.ApprovalStatusId = item.approvalStatusId;
