@@ -4173,7 +4173,16 @@ namespace FintrakBanking.Repositories.Credit
                                && s.ApprovalStatusId != (int)ApprovalStatusEnum.Approved
                                 && s.OperationCompleted == false
                                 select s).FirstOrDefault();
-            output = true;
+            if (workFlow.NewState != (int)ApprovalState.Ended)
+            {
+                reviewRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
+            }
+            if (workFlow.NewState == (int)ApprovalState.Ended)
+            {
+                reviewRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Approved;
+            }
+
+            output = context.SaveChanges() > 0;
 
             return output;
         }

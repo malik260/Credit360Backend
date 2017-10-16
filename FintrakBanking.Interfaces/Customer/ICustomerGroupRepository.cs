@@ -40,7 +40,8 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool AddTempCustomerGroupMapping(CustomerGroupMappingViewModel entity);
 
-        bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups);
+        //bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups);
+        bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups, int createdBy, short userBranchId);
 
         bool AddCustomerGroupRelationshipTypes(LookupViewModel model);
 
