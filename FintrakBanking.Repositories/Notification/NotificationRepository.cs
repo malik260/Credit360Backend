@@ -35,7 +35,8 @@ namespace FintrakBanking.Repositories.Notification
                     var log = (from c in context.tbl_Approval_Trail
                            where c.CompanyId == companyId &&
                                  c.OperationId == level.operationId &&
-                                 c.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ResponseStaffId == null &&
+                                 (c.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.ApprovalStatusId == (int)ApprovalState.Processing )
+                                 && c.ResponseStaffId == null &&
                                  c.ToApprovalLevelId == level.approvalLevelId
                            group c by c.OperationId into d
                            select new NotificationViewModel
@@ -58,7 +59,8 @@ namespace FintrakBanking.Repositories.Notification
         public IEnumerable<NotificationViewModel> GetNotificationForFinalState(int staffId, int companyId)
         {
             List<NotificationViewModel> logs = new List<NotificationViewModel>();
-            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId).ToList();
+            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId)
+                .ToList();
             if (approvalLevel.Any())
             {
                 foreach (var level in approvalLevel)
@@ -66,7 +68,9 @@ namespace FintrakBanking.Repositories.Notification
                     var log = (from c in context.tbl_Approval_Trail
                         where c.CompanyId == companyId &&
                               c.OperationId == level.operationId &&
-                              c.ApprovalStateId == (int)ApprovalState.Ended && c.ResponseStaffId == null
+                              (c.ApprovalStateId == (int)ApprovalState.Ended && c.ApprovalStatusId == (int)ApprovalStatusEnum.Approved)
+                              && c.ResponseStaffId == null && c.ToApprovalLevelId == null
+                              
                         group c by c.OperationId into d
                         select new NotificationViewModel
                         {
