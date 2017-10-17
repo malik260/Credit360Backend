@@ -71,12 +71,27 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-        private string GenerateLoanReferenceNumber(int customerId, int productId)
+        private string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId)
         {
             var customerCode = this.context.tbl_Customer.FirstOrDefault(x => x.CustomerId == customerId).CustomerCode;
             var productCode = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productId).ProductCode;
-            var data = ((this.context.tbl_Loan.Count(x => x.CustomerId == customerId && x.ProductId == productId)) + 1);
-            return $"{customerCode}-{productCode}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+            if (productTypeId == (int)LoanProductTypeEnum.TermLoan || productTypeId == (int)LoanProductTypeEnum.SelfLiquidating)
+            {
+                var data = ((this.context.tbl_Loan.Count(x => x.CustomerId == customerId && x.ProductId == productId)) + 1);
+                return $"{customerCode}-{productCode}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+            }
+            else if (productTypeId == (int)LoanProductTypeEnum.RevolvingLoan)
+            {
+                var data = ((this.context.tbl_Loan_Revolving.Count(x => x.CustomerId == customerId && x.ProductId == productId)) + 1);
+                return $"{customerCode}-{productCode}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+            }
+            else if (productTypeId == (int)LoanProductTypeEnum.ContingentLiability)
+            {
+                var data = ((this.context.tbl_Loan_Contingent.Count(x => x.CustomerId == customerId && x.ProductId == productId)) + 1);
+                return $"{customerCode}-{productCode}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+            }
+            else throw new Exception("Loan Product Type not defined for Loan Booking");
+
         }
 
         public string AddLoanBooking(LoanViewModel entity)
@@ -88,29 +103,13 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             // ...............CHECK IF THE LOAN RECORD IS A NON SCHEDULED LOAN....................//
-            else if (entity.productTypeId != (int)LoanProductTypeEnum.RevolvingLoan)
+            else if (entity.productTypeId == (int)LoanProductTypeEnum.RevolvingLoan)
             {
-                var revolvingLoanInput = entity.revolvingLoanInput;
-
-                revolvingLoanInput.loanApplicationDetailId = entity.loanApplicationDetailId;
-                revolvingLoanInput.loanApplicationId = entity.loanApplicationId;
-                revolvingLoanInput.companyId = entity.companyId;
-                revolvingLoanInput.createdBy = entity.createdBy;
-                revolvingLoanInput.branchId = entity.branchId;
-
-                return addRevolvingLoan(revolvingLoanInput);
+                return addRevolvingLoan(entity);
             }
-            else if (entity.productTypeId != (int)LoanProductTypeEnum.ContingentLiability)
+            else if (entity.productTypeId == (int)LoanProductTypeEnum.ContingentLiability)
             {
-                var contingentLoanInput = entity.contingentLoanInput;
-
-                contingentLoanInput.loanApplicationDetailId = entity.loanApplicationDetailId;
-                contingentLoanInput.loanApplicationId = entity.loanApplicationId;
-                contingentLoanInput.companyId = entity.companyId;
-                contingentLoanInput.createdBy = entity.createdBy;
-                contingentLoanInput.branchId = entity.branchId;
-
-                return addContingentLiability(contingentLoanInput);
+                return addContingentLiability(entity);
             }
             else
             {
@@ -118,45 +117,44 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private string addRevolvingLoan(RevolvingLoanViewModel entity)
+        private string addRevolvingLoan(LoanViewModel model)
         {
-            var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
+            var revolvingLoanInput = model.revolvingLoanInput;
+            var loanReferenceNumber = GenerateLoanReferenceNumber(model.customerId, model.productId, model.productTypeId);
             var data = new tbl_Loan_Revolving
             {
-                RevolvingLoanId = entity.loanId,
-                CustomerId = entity.customerId,
-                ProductId = entity.productId,
-                CasaAccountId = entity.casaAccountId,
-                BranchId = entity.branchId,
-                CurrencyId = entity.currencyId,
-                ExchangeRate = entity.exchangeRate,
-                LoanApplicationDetailId = entity.loanApplicationDetailId,
-                LoanReferenceNumber = entity.loanReferenceNumber,
-                SubSectorId = entity.subSectorId,
-                RelationshipOfficerId = entity.relationshipOfficerId,
-                RelationshipManagerId = entity.relationshipManagerId,
-                MISCode = entity.misCode,
-                TeamMISCode = entity.teamMisCode,
-                InterestRate = entity.interestRate,
-                EffectiveDate = entity.effectiveDate,
-                MaturityDate = entity.maturityDate,
-                BookingDate = entity.bookingDate, 
-                OverdraftLimit = entity.overdraftLimit,
+                CustomerId = model.customerId,
+                ProductId = model.productId,
+                CasaAccountId = model.casaAccountId,
+                BranchId = model.branchId,
+                CurrencyId = (short)model.currencyId,
+                ExchangeRate = revolvingLoanInput.exchangeRate,
+                LoanApplicationDetailId = model.loanApplicationDetailId,
+                LoanReferenceNumber = loanReferenceNumber,
+                SubSectorId = model.subSectorId,
+                RelationshipOfficerId = model.relationshipOfficerId,
+                RelationshipManagerId = model.relationshipManagerId,
+                MISCode = model.misCode,
+                TeamMISCode = model.teamMiscode,
+                InterestRate = model.interestRate,
+                EffectiveDate = model.effectiveDate,
+                MaturityDate = model.maturityDate,
+                BookingDate = model.bookingDate,
+                OverdraftLimit = revolvingLoanInput.overdraftLimit,
+                DayCountConventionId = model.scheduleDayCountConventionId,
 
                 ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-                LoanStatusId = entity.loanStatusId,
+                LoanStatusId = (int)LoanStatusEnum.Inactive,
                 IsDisbursed = false,
-                OperationId = (int)OperationsEnum.TermLoanBooking,
-                CustomerGroupId = entity.customerGroupId,
-                LoanTypeId = entity.loanTypeId,
-                TrancheBatchCode = entity.trancheBatchCode,
+                OperationId = (int)OperationsEnum.RevolvingLoanBooking,
+                CustomerGroupId = model.customerGroupId,
+                LoanTypeId = model.loanTypeId,
                 DischargeLetter = false,
                 SuspendInterest = false,
-                CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
-                InternalPrudentialGuidelineStatusId = entity.internalPrudentialGuidelineStatusId,
-                ExternalPrudentialGuidelineStatusId = entity.externalPrudentialGuidelineStatusId,
-                NPLDate = entity.nplDate,
-                CompanyId = entity.companyId
+                CustomerSensitivityLevelId = model.customerSensitivityLevelId,
+                CompanyId = model.companyId,
+                CreatedBy=model.createdBy,
+                DateTimeCreated = generalSetup.GetApplicationDate(),
 
             };
 
@@ -164,11 +162,11 @@ namespace FintrakBanking.Repositories.Credit
             var audit = new tbl_Audit
             {
                 AuditTypeId = (short)AuditTypeEnum.LoanBookingAdded,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
+                StaffId = model.createdBy,
+                BranchId = (short)model.branchId,
                 Detail = $"Applied for loan with reference number: {loanReferenceNumber}",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
                 ApplicationDate = generalSetup.GetApplicationDate(),
                 SystemDateTime = DateTime.Now
             };
@@ -183,34 +181,34 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.tbl_Loan_Revolving.Add(data);
 
                     //...................Saving Loan Collaterals Mapping.......................
-                    AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
+                   // AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
 
                     //...................Saving Loan Gaurantors................................
-                    AddLoanGuarantor(entity.loanGuarantor, (short)entity.productTypeId, entity.loanApplicationId);
+                    //AddLoanGuarantor(model.loanGuarantor, (short)model.productTypeId, model.loanApplicationId);
 
                     //...................Adding Audit...............................
-                    context.tbl_Audit.Add(audit);
+                    //context.tbl_Audit.Add(audit);
 
                     //........Save Changes...............
                     var dataCount = context.SaveChanges();
 
                     var approvalModel = new ForwardViewModel
                     {
-                        createdBy = entity.createdBy,
-                        companyId = entity.companyId,
+                        createdBy = model.createdBy,
+                        companyId = model.companyId,
                         applicationId = loan.RevolvingLoanId,
                         comment = "Please approve this Loan",
-                        amount = entity.approvedAmount,
+                        amount = revolvingLoanInput.approvedAmount,
                     };
 
                     //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                    if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                    if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, true, (int)ApprovalStatusEnum.Pending))
                     {
                         trans.Commit();
                         //............save Loan Covenant..........
-                        AddLoanCovenant(entity.loanCovenant, entity.loanApplicationDetailId, loan.RevolvingLoanId, (short)entity.productTypeId);
+                        AddLoanCovenant(model.loanCovenant, model.loanApplicationDetailId, loan.RevolvingLoanId, (short)model.productTypeId);
                         //............save Loan Fees..........
-                        AddLoanFees(entity.loanChargeFee, loan.RevolvingLoanId, (short)entity.productTypeId);
+                        AddLoanFees(model.loanChargeFee, loan.RevolvingLoanId, (short)model.productTypeId);
 
                         context.SaveChanges();
                     }
@@ -230,9 +228,10 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private string addContingentLiability(ContingentLoanViewModel entity)
+        private string addContingentLiability(LoanViewModel entity)
         {
-            var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
+            var contingentLoanInput = entity.contingentLoanInput;
+            var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId, entity.productTypeId);
             var data = new tbl_Loan_Contingent
             {
                 ContingentLoanId = entity.loanId,
@@ -240,7 +239,7 @@ namespace FintrakBanking.Repositories.Credit
                 ProductId = entity.productId,
                 CasaAccountId = entity.casaAccountId,
                 BranchId = entity.branchId,
-                CurrencyId = entity.currencyId,
+                CurrencyId = contingentLoanInput.currencyId,
                 ExchangeRate = entity.exchangeRate,
                 LoanApplicationDetailId = entity.loanApplicationDetailId,
                 LoanReferenceNumber = entity.loanReferenceNumber,
@@ -248,20 +247,19 @@ namespace FintrakBanking.Repositories.Credit
                 RelationshipOfficerId = entity.relationshipOfficerId,
                 RelationshipManagerId = entity.relationshipManagerId,
                 MISCode = entity.misCode,
-                TeamMISCode = entity.teamMisCode,
+                TeamMISCode = entity.teamMiscode,
                 EffectiveDate = entity.effectiveDate,
                 MaturityDate = entity.maturityDate,
 
                 BookingDate = entity.bookingDate,
 
-                ContingentAmount = entity.contingentAmount,
+                ContingentAmount = contingentLoanInput.contingentAmount,
                 ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-                LoanStatusId = entity.loanStatusId,
+                LoanStatusId = (int)LoanStatusEnum.Inactive,
                 IsDisbursed = false,
-                OperationId = (int)OperationsEnum.TermLoanBooking,
+                OperationId = (int)OperationsEnum.ContigentLoanBooking,
                 CustomerGroupId = entity.customerGroupId,
                 LoanTypeId = entity.loanTypeId,
-                TrancheBatchCode = entity.trancheBatchCode,
                 DischargeLetter = false,
                 CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
 
@@ -274,7 +272,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 AuditTypeId = (short)AuditTypeEnum.LoanBookingAdded,
                 StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
+                BranchId = (short)entity.branchId,
                 Detail = $"Applied for loan with reference number: {loanReferenceNumber}",
                 IPAddress = entity.userIPAddress,
                 Url = entity.applicationUrl,
@@ -308,11 +306,11 @@ namespace FintrakBanking.Repositories.Credit
                         companyId = entity.companyId,
                         applicationId = loan.ContingentLoanId,
                         comment = "Please approve this Loan",
-                        amount = entity.approvedAmount,
+                        amount = contingentLoanInput.approvedAmount,
                     };
 
                     //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                    if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                    if (LogApproval(approvalModel, (int)OperationsEnum.ContigentLoanBooking, true, (int)ApprovalStatusEnum.Pending))
                     {
                         //.....Commit transaction ............
                         trans.Commit();
@@ -359,7 +357,7 @@ namespace FintrakBanking.Repositories.Credit
                                   where a.ProductId == entity.productId
                                   select a.tbl_Product_Price_Index.PriceIndexRate).FirstOrDefault();
 
-            var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId);
+            var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId, entity.productTypeId);
 
             if (entity.loanScheduleInput.scheduleMethodId == (short) LoanScheduleTypeEnum.BulletPayment)
             {
@@ -815,7 +813,7 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.tbl_Branch on ln.BranchId equals br.BranchId
                         join atrail in context.tbl_Approval_Trail on ln.RevolvingLoanId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
-                              && atrail.OperationId == (int)OperationsEnum.TermLoanBooking
+                              && atrail.OperationId == (int)OperationsEnum.RevolvingLoanBooking
                               && atrail.ToApprovalLevelId == staffApprovalLevelId
                               && atrail.ResponseStaffId == null
                         orderby ln.RevolvingLoanId descending
@@ -823,7 +821,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new RevolvingLoanViewModel()
                         {
                             loanId = ln.RevolvingLoanId,
-                            operationId = (int)OperationsEnum.RevolvingLoanBooking,
+                            operationId = ln.OperationId,
                             customerId = ln.CustomerId,
                             productId = ln.ProductId,
                             casaAccountId = ln.CasaAccountId,
@@ -853,6 +851,7 @@ namespace FintrakBanking.Repositories.Credit
                             disburserComment = ln.DisburserComment,
                             disburseDate = ln.DisburseDate,
 
+                            overdraftLimit = ln.OverdraftLimit,
                             approvedAmount = ln.tbl_Loan_Application_Detail.ApprovedAmount,
 
                             customerGroupId = ln.CustomerGroupId,
@@ -911,7 +910,7 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.tbl_Branch on ln.BranchId equals br.BranchId
                         join atrail in context.tbl_Approval_Trail on ln.ContingentLoanId equals atrail.TargetId
                         where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
-                              && atrail.OperationId == (int)OperationsEnum.TermLoanBooking
+                              && atrail.OperationId == (int)OperationsEnum.ContigentLoanBooking
                               && atrail.ToApprovalLevelId == staffApprovalLevelId
                               && atrail.ResponseStaffId == null
                         orderby ln.ContingentLoanId descending
@@ -1041,19 +1040,19 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState != (int)ApprovalState.Ended)
             {
-                if (user.operationId == (int)LoanProductTypeEnum.TermLoan || user.operationId == (int)LoanProductTypeEnum.SelfLiquidating)
+                if (user.operationId == (int)OperationsEnum.TermLoanBooking)
                 {
                     if (loanRecord.ApprovalStatusId != (int)ApprovalStatusEnum.Processing)
                         loanRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
                 }
 
-                if (user.operationId == (int)LoanProductTypeEnum.ContingentLiability)
+                if (user.operationId == (int)OperationsEnum.ContigentLoanBooking)
                 {
                     if (contingentLoanRecord.ApprovalStatusId != (int)ApprovalStatusEnum.Processing)
                         contingentLoanRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
                 }
 
-                if (user.operationId == (int)LoanProductTypeEnum.RevolvingLoan)
+                if (user.operationId == (int)OperationsEnum.RevolvingLoanBooking)
                 {
                     if (revolvingLoanRecord.ApprovalStatusId != (int)ApprovalStatusEnum.Processing)
                         revolvingLoanRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
@@ -1069,7 +1068,7 @@ namespace FintrakBanking.Repositories.Credit
                 //=======================================================================
 
                 //...................Updating Loan Tables With Approved State Properties Values....................
-                if (user.operationId == (int)LoanProductTypeEnum.RevolvingLoan)
+                if (user.operationId == (int)OperationsEnum.RevolvingLoanBooking)
                 {
                     totalBookedAmount = (from a in context.tbl_Loan_Revolving.Where(x => x.LoanApplicationDetailId == loanRecord.LoanApplicationDetailId)
                                          select a).Sum(s => s.OverdraftLimit);
@@ -1084,7 +1083,7 @@ namespace FintrakBanking.Repositories.Credit
                     revolvingLoanRecord.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
                 }
 
-                if (user.operationId == (int)LoanProductTypeEnum.ContingentLiability)
+                if (user.operationId == (int)OperationsEnum.ContigentLoanBooking)
                 {
                     totalBookedAmount = (from a in context.tbl_Loan_Contingent.Where(x => x.LoanApplicationDetailId == loanRecord.LoanApplicationDetailId)
                                          select a).Sum(s => s.ContingentAmount);
@@ -1101,7 +1100,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 //================================================================== 
 
-                if (user.operationId == (int)LoanProductTypeEnum.TermLoan || user.operationId == (int)LoanProductTypeEnum.SelfLiquidating)
+                if (user.operationId == (int)OperationsEnum.TermLoanBooking )
                 {
                     loanRecord.DateApproved = DateTime.Now;
                     loanRecord.ApprovalStatusId = (int) ApprovalStatusEnum.Approved;
