@@ -125,6 +125,15 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 throw new Exception("Product group already exists!");
             }
+
+            var isProductCodeExist = context.tbl_Product_Group.Any(x =>
+                x.ProductGroupCode.ToLower() == productGroupModel.productGroupCode.ToLower());
+
+            if (isProductCodeExist)
+            {
+                throw new Exception("Product group with that code already exists!");
+            }
+
             var data = new tbl_Product_Group()
             {
                 ProductGroupCode = productGroupModel.productGroupCode,
