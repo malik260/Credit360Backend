@@ -91,7 +91,8 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<ProductGroupViewModel> GetAllProductGroup()
         {
             return (from p in context.tbl_Product_Group
-                    orderby p.ProductGroupName ascending //, p.ProductGroupCode ascending
+                    where p.Deleted == false
+                    orderby p.ProductGroupName
                     select new ProductGroupViewModel()
                     {
                         productGroupId = p.ProductGroupId,
@@ -113,6 +114,51 @@ namespace FintrakBanking.Repositories.Setups.General
                 productGroupCode = data.ProductGroupCode,
                 productGroupName = data.ProductGroupName
             };
+        }
+
+        public bool AddProductGroup(ProductGroupViewModel productGroupModel)
+        {
+            var isProductGroupExist = context.tbl_Product_Group.Any(x =>
+                x.ProductGroupName.ToLower() == productGroupModel.productGroupName.ToLower());
+
+            if (isProductGroupExist)
+            {
+                throw new Exception("Product group already exists!");
+            }
+            var data = new tbl_Product_Group()
+            {
+                ProductGroupCode = productGroupModel.productGroupCode,
+                ProductGroupName = productGroupModel.productGroupName,
+                CreatedBy = productGroupModel.createdBy,
+                DateTimeCreated = DateTime.Now,
+            };
+
+            this.context.tbl_Product_Group.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.ProductPriceIndexAdded,
+                StaffId = (int)productGroupModel.createdBy,
+                BranchId = (short)productGroupModel.userBranchId,
+                Detail = $"Added tbl_Product Group: '{productGroupModel.productGroupName}' ",
+                IPAddress = productGroupModel.userIPAddress,
+                Url = productGroupModel.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            var status = this.SaveAll();
+
+            if (status)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public bool UpdateProductGroup(int productGroupId, ProductGroupViewModel productGroup)
@@ -137,6 +183,37 @@ namespace FintrakBanking.Repositories.Setups.General
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
+            return this.SaveAll();
+        }
+
+        public bool DeleteProductGroup(int productGroupId, UserInfo user)
+        {
+            var data = context.tbl_Product_Group.Find(productGroupId);
+
+            if (data == null)
+                return false;
+
+            data.Deleted = true;
+            data.DateTimeDeleted = genSetup.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var productPriceIndex = this.context.tbl_Product_Group.FirstOrDefault(x => x.ProductGroupId == data.ProductGroupId);
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.ProductPriceIndexDeleted,
+                StaffId = user.staffId,
+                BranchId = (short)user.BranchId,
+                Detail = $"Deleted Product Group: '{productPriceIndex?.ProductGroupName}' with code '{productPriceIndex?.ProductGroupCode}' ",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now,
+                TargetId = productGroupId
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            // end of Audit section -------------------------------
             return this.SaveAll();
         }
 

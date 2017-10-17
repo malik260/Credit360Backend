@@ -52,7 +52,11 @@ namespace FintrakBanking.Interfaces.Setups.General
         ProductGroupViewModel GetProductGroupById(short productGroupId);
 
         bool UpdateProductGroup(int productGroupId, ProductGroupViewModel productGroup);
-        # endregion Product Group
+
+        bool AddProductGroup(ProductGroupViewModel productTypeModel);
+
+        bool DeleteProductGroup(int productGroupId, UserInfo user);
+        #endregion Product Group
 
         #region Product Type
         IEnumerable<ProductTypeViewModel> GetAllProductType();

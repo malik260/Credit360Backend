@@ -99,15 +99,14 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllProductGroup().ToList();
+                var data = repo.GetAllProductGroup();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-
-                    new { success = true, result = data });  //Ok(accounts);
+                    new { success = true, result = data.ToList() }); 
             }
             catch (System.Exception ex)
             {
@@ -115,7 +114,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //
         [HttpGet]
         [Route("product-group/{productGroupId}")]
         public HttpResponseMessage GetProductGroupById(short productGroupId)
@@ -133,6 +131,35 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("product-group")]
+        public HttpResponseMessage AddProductGroup([FromBody] ProductGroupViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.AddProductGroup(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "product group has been created successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "product group not created" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
             }
         }
 
@@ -170,6 +197,45 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("product-group/{productGroupId}")]
+        public HttpResponseMessage DeleteProductGroup(short productGroupId)
+        {
+            try
+            {
+                var account = repo.GetProductGroupById(productGroupId);
+
+                if (account == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+                var response = repo.DeleteProductGroup(productGroupId, user);
+
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = productGroupId, message = "Product group has been deleted successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Product group has not been deleted successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
@@ -321,8 +387,6 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
-
-                
 
                 UserInfo user = new UserInfo()
                 {
