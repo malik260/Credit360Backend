@@ -143,6 +143,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public IQueryable<ProductTypeViewModel> AllProductType()
         {
             return (from p in context.tbl_Product_Type
+                    where p.Deleted == false
                     select new ProductTypeViewModel()
                     {
                         productTypeId = p.ProductTypeId,
@@ -284,6 +285,37 @@ namespace FintrakBanking.Repositories.Setups.General
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
+            return this.SaveAll();
+        }
+
+        public bool DeleteProductType(int productTypeId, UserInfo user)
+        {
+            var data = this.context.tbl_Product_Type.Find(productTypeId);
+
+            if (data == null)
+                return false;
+
+            data.Deleted = true;
+            data.DateTimeDeleted = genSetup.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var productPriceIndex = this.context.tbl_Product_Type.FirstOrDefault(x => x.ProductTypeId == data.ProductTypeId);
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.ProductPriceIndexDeleted,
+                StaffId = user.staffId,
+                BranchId = (short)user.BranchId,
+                Detail = $"Deleted Product Type: '{data.ProductTypeName}' under group '{data.tbl_Product_Group.ProductGroupName}' ",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now,
+                TargetId = productTypeId
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            // end of Audit section -------------------------------
             return this.SaveAll();
         }
 
@@ -1658,7 +1690,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndex(int companyId)
         {
             return (from data in context.tbl_Product_Price_Index
-                    where data.CompanyId == companyId
+                    where data.CompanyId == companyId && data.Deleted == false
                     select new ProductPriceIndexViewModel()
                     {
                         productPriceIndexId = data.ProductPriceIndexId,
@@ -1680,14 +1712,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public ProductPriceIndexViewModel GetProductPriceIndexById(int productPriceIndexId, int companyId)
         {
-            return GetAllProductPriceIndex(companyId).Where(c => c.productPriceIndexId == productPriceIndexId).SingleOrDefault();
+            return GetAllProductPriceIndex(companyId).SingleOrDefault(c => c.productPriceIndexId == productPriceIndexId);
         }
 
         public ProductPriceIndexViewModel AddProductPriceIndex(ProductPriceIndexViewModel prodPriceIndex)
         {
-            var isProductPriceIndexEXist = context.tbl_Product_Price_Index.Any(x => x.PriceIndexName.ToLower() == prodPriceIndex.priceIndexName.ToLower());
+            var isProductPriceIndexExist = context.tbl_Product_Price_Index.Any(x => x.PriceIndexName.ToLower() == prodPriceIndex.priceIndexName.ToLower());
 
-            if (isProductPriceIndexEXist)
+            if (isProductPriceIndexExist)
             {
                 throw new Exception("Product price already exists!");
             }

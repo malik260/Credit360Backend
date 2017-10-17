@@ -64,6 +64,9 @@ namespace FintrakBanking.Interfaces.Setups.General
         short AddProductType(ProductTypeViewModel productType);
 
         bool UpdateProductType(int productTypeId, ProductTypeViewModel productType);
+
+        bool DeleteProductType(int productTypeId, UserInfo user);
+
         #endregion
     }
 }

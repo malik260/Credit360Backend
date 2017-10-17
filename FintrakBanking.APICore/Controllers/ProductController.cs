@@ -20,6 +20,7 @@ namespace FintrakBanking.APICore.Controllers
     public class ProductController : ApiControllerBase
     {
         private IProductRepository repo;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public ProductController(IProductRepository _repo)
         {
@@ -32,7 +33,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllProductCategory().ToList();
+                var data = repo.GetAllProductCategory();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -300,6 +301,47 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = productTypeId, message = "product type has been updated successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("product-type/{productTypeId}")]
+        public HttpResponseMessage DeleteProductType(short productTypeId)
+        {
+            try
+            {
+                var account = repo.GetProductTypeById(productTypeId);
+
+                if (account == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
+                
+
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+                var response = repo.DeleteProductType(productTypeId, user);
+
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = productTypeId, message = "Product type has been deleted successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, result = productTypeId, message = "Product type has not been deleted successfully" });
             }
             catch (System.Exception ex)
             {
