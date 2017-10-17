@@ -1011,8 +1011,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (isPrincipalGLRequired)
             {
-                if (productModel.currencies.Count < 1)
-                    throw new Exception("Product Currency must be specified. Please select a principal GL with mapped currencies");
+                if (productModel.currencies == null)
+                       throw new Exception("Product Currency must be specified. Please select a principal GL with mapped currencies");
             }
 
             bool output = false;
