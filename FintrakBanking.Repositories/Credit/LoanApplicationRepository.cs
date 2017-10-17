@@ -96,7 +96,7 @@ namespace FintrakBanking.Repositories.Credit
                             LoanApplicationCollateral = context.tbl_Loan_Application_Collateral.Where(d => d.LoanApplicationId == a.LoanApplicationId)
                              .Select(d => new LoanApplicationCollateralViewModel()
                              {
-                                 certificateOfOwnership = d.CertificateOfOwnership,
+                                 certificateOfOwnership = d.CollateralReferenceNumber,
                                  cityId = d.CityId,
                                  collateralTypeId = d.CollateralTypeId,
                                  customerCollateralId = d.CustomerCollateralId,
@@ -408,7 +408,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanCollateral = new tbl_Loan_Application_Collateral()
                 {
-                    CertificateOfOwnership = item.certificateOfOwnership,
+                    CollateralReferenceNumber = item.certificateOfOwnership,
                     CityId = item.cityId,
                     CollateralTypeId = item.collateralTypeId,
                     CreatedBy = item.createdBy,
