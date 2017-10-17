@@ -13,18 +13,12 @@ using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
-using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
-using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity.SqlServer;
-using System.Data.Entity.Validation;
 using System.Linq;
-using System.ServiceModel;
-using System.Threading.Tasks;
 //using XLeratorDLL_financial;
 
 namespace FintrakBanking.Repositories.Credit
