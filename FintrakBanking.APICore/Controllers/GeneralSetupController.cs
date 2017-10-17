@@ -15,11 +15,12 @@ namespace FintrakBanking.APICore.Controllers
     {
         private IGeneralSetupRepository repo;
         private ICollateralTypeRepository collateralRepo;
-
-        public GeneralSetupController(IGeneralSetupRepository _repo, ICollateralTypeRepository _collateralRepo)
+        private IStaffRepository staffRepo;
+        public GeneralSetupController(IGeneralSetupRepository _repo, ICollateralTypeRepository _collateralRepo, IStaffRepository _staffRepo)
         {
             this.repo = _repo;
             this.collateralRepo = _collateralRepo;
+            this.staffRepo = _staffRepo;
         }
 
         #region General Setups

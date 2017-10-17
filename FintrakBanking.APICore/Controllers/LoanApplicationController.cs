@@ -182,20 +182,22 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 //FinTrakBankingContext
+                if (entity.customerId.HasValue) {
 
-                if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
-                {
-                    throw new Exception("Customer '" + entity.customerName + "' has been CAMSOL");
-                }
+                    if (creditLimitValidationsRepository.ValidateCamsol(entity.customerId.Value) > 0)
+                    {
+                        throw new Exception("Customer '" + entity.customerName + "' has been CAMSOL");
+                    }
 
-                if (creditLimitValidationsRepository.ValidateWatchList(entity.customerId.Value) > 0)
-                {
-                    throw new Exception("Customer '" + entity.customerName + "' has been Watchlisted");
-                }
+                    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateWatchList(entity.customerId.Value) > 0)
+                    {
+                        throw new Exception("Customer '" + entity.customerName + "' has been Watchlisted");
+                    }
 
-                if (creditLimitValidationsRepository.ValidateBlackList(entity.customerId.Value) > 0)
-                {
-                    throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
+                    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateBlackList(entity.customerId.Value) > 0)
+                    {
+                        throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
+                    }
                 }
 
                 //var model =  creditLimitValidationsRepository.ValidateAmountByBranch1(entity.branchId).Difference;

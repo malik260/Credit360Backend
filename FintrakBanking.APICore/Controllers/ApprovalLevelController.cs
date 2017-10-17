@@ -93,9 +93,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("approval-level/group/{groupId}")]
-        public HttpResponseMessage GetApprovalLevelByOperationId(int groupId)
+        public HttpResponseMessage GetApprovalLevelByGroupId(int groupId)
         {
-
             try
             {
                 var data = repo.GetApprovalLevelByGroupId(groupId, token.GetCompanyId);
@@ -112,7 +111,21 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
+        }
 
+        [HttpGet]
+        [Route("approval-level/operation/{operationId}")]
+        public HttpResponseMessage GetApprovalLevelByOperationId(int operationId)
+        {
+            try
+            {
+                var data = repo.GetApprovalLevelByOperationId(operationId, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         [HttpPut]

@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Finance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,6 @@ namespace FintrakBanking.Interfaces.CASA
 
         IEnumerable<dynamic> GetAllCustomerAccountByCustomerId(int customerId, int companyId);
 
-       
+        CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId);
     }
 }

@@ -55,14 +55,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int principalInstallmentLeft { get; set; }
         public int interestInstallmentLeft { get; set; }
         public int approvalStatusId { get; set; }
-        public string approvedBy { get; set; }
+        public int ? approvedBy { get; set; }
         public string approverComment { get; set; }
         public DateTime? dateApproved { get; set; }
         public short loanStatusId { get; set; }
         public short scheduleTypeId { get; set; }
         public string scheduleTypeName { get; set; }
         public bool isDisbursed { get; set; }
-        public string disbursedBy { get; set; }
+        public int ? disbursedBy { get; set; }
         public string disburserComment { get; set; }
         public DateTime? disburseDate { get; set; }
         public decimal? approvedAmount { get; set; }
@@ -319,7 +319,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<CasaViewModel> customerAccounts { get; set; }
         public int appraisalMemorandumId { get; set; }
         public string customerCode { get; set; }
-        public int casaAccountId { get; set; }
+        public int? casaAccountId { get; set; }
         public string loanStatusName { get; set; }
         public string sectorName { get; set; }
         public string subSectorName { get; set; }

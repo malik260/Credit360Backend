@@ -24,7 +24,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         public string ReviewDetails { get; set; }
 
-        public decimal? InterateRate { get; set; }
+        public double? InterateRate { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? Prepayment { get; set; }
@@ -38,6 +38,9 @@ namespace FintrakBanking.Entities.Models
 
         [Column(TypeName = "date")]
         public DateTime? InterestFirstPaymentDate { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? MaturityDate { get; set; }
 
         public int? Tenor { get; set; }
 

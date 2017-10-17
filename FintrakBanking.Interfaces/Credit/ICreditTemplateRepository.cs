@@ -13,6 +13,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CreditTemplateViewModel> GetAllCreditTemplateByProductClass(int productClassId, int staffId);
 
+        IEnumerable<CreditTemplateViewModel> GetCreditTemplateByLevelId(int approvalLevelId, int companyId);
+
         bool AddCreditTemplate(CreditTemplateViewModel model);
 
         bool UpdateCreditTemplate(CreditTemplateViewModel model, int creditTemplateId);

@@ -192,6 +192,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public short AddProductType(ProductTypeViewModel productType)
         {
+            var isProductTypeExist = context.tbl_Product_Type.Any(x => x.ProductTypeName.ToLower() == productType.productTypeName.ToLower());
+
+            if (isProductTypeExist)
+            {
+                throw new Exception("Product type already exists!");
+            }
             var data = new tbl_Product_Type()
             {
                 ProductTypeName = productType.productTypeName,
@@ -1679,6 +1685,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public ProductPriceIndexViewModel AddProductPriceIndex(ProductPriceIndexViewModel prodPriceIndex)
         {
+            var isProductPriceIndexEXist = context.tbl_Product_Price_Index.Any(x => x.PriceIndexName.ToLower() == prodPriceIndex.priceIndexName.ToLower());
+
+            if (isProductPriceIndexEXist)
+            {
+                throw new Exception("Product price already exists!");
+            }
             var data = new tbl_Product_Price_Index()
             {
                 CompanyId = prodPriceIndex.companyId,

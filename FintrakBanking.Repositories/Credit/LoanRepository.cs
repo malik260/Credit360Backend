@@ -13,18 +13,12 @@ using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
-using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
-using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity.SqlServer;
-using System.Data.Entity.Validation;
 using System.Linq;
-using System.ServiceModel;
-using System.Threading.Tasks;
 //using XLeratorDLL_financial;
 
 namespace FintrakBanking.Repositories.Credit
@@ -118,8 +112,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 return addContingentLiability(contingentLoanInput);
             }
+            else
             {
-                return "The Product type is Invalid";
+                throw new Exception("The Product type is Invalid");
             }
         }
 
@@ -1130,6 +1125,10 @@ namespace FintrakBanking.Repositories.Credit
                     DisburseLoan(loanDisbursementModel);
 
                     loanRecord.LoanStatusId = 1;
+                    loanRecord.IsDisbursed = true;
+                    loanRecord.DisburseDate = DateTime.Now;
+                    loanRecord.DisbursedBy = user.createdBy;
+                    loanRecord.ApprovedBy = user.createdBy;
                     //==========================================================================================
 
 
@@ -2301,7 +2300,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationId = m.LoanApplicationId,
                             loanApplicationDetailId = d.LoanApplicationDetailId,
                             applicationReferenceNumber = m.ApplicationReferenceNumber,
-                            casaAccountId = m.CasaAccountId,
+                           // casaAccountId = m.CasaAccountId,
                             customerId = m.CustomerId ?? 0,
                             customerCode = cust.CustomerCode,
                             customerName = m.CustomerId.HasValue ? m.tbl_Customer.FirstName + " " + m.tbl_Customer.MiddleName + " " + m.tbl_Customer.LastName : "",
@@ -2382,7 +2381,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = d.ExchangeRate,
                         }).ToList();
 
-             data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+             //data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
            
             foreach (var item in data)
             {
