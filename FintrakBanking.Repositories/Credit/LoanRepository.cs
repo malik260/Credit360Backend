@@ -2467,56 +2467,64 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public List<CurrentCustomerExposure> GetCurrentCustomerExposure(int customerId, int companyId)
+        public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId)
         {
 
             try
             {
-                var data = (from a in context.tbl_Loan
-                            where
-                              a.CustomerId == customerId && a.CompanyId == companyId && a.ApprovalStatusId == (int)LoanStatusEnum.Active
-                            select new CurrentCustomerExposure
-                            {
-                                facilityType = a.tbl_Product.ProductName,
+                List<CurrentCustomerExposure> datalst = new List<CurrentCustomerExposure>();
 
-                                existingLimit = a.PrincipalAmount,
+                foreach (var item in  customer)
+                {
+                    
+                          var data = (from a in context.tbl_Loan
+                                      where
+                                        a.CustomerId == item.customerId && a.CompanyId == companyId && a.ApprovalStatusId == (int)LoanStatusEnum.Active
+                                      select new CurrentCustomerExposure
+                                      {
+                                          facilityType = a.tbl_Product.ProductName,
 
-                                proposedLimit = a.OutstandingInterest,
-                                PastDueObligationsInterest = ((System.Decimal?)(
-                              a.AllowForceDebitRepayment == false ? (System.Decimal?)
-                                (from c in context.tbl_Loan_Force_Debit
-                                 where c.LoanId == a.TermLoanId && c.TransactionTypeId == (byte)LoanTransactionTypeEnum.Interest
-                                 select new
-                                 {
-                                     DebitRepayment = (c.DebitAmount - c.CreditAmount)
-                                 }).Sum(p => p.DebitRepayment) :
-                              a.AllowForceDebitRepayment == false ? (System.Decimal?)
-                                (from c in context.tbl_Loan_Force_Debit
-                                 where c.LoanId == a.TermLoanId &&
-                                    c.TransactionTypeId == (byte)LoanTransactionTypeEnum.Interest
-                                 select new
-                                 {
-                                     DebitRepayment = (c.DebitAmount - c.CreditAmount)
-                                 }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
-                                PastDueObligationsPrincipal = ((System.Decimal?)(
-                              a.AllowForceDebitRepayment == false ?
-                                (from c in context.tbl_Loan_Force_Debit
-                                 where c.LoanId == a.TermLoanId && c.TransactionTypeId == (byte)LoanTransactionTypeEnum.Principal
-                                 select new
-                                 {
-                                     DebitRepayment = (c.DebitAmount - c.CreditAmount)
-                                 }).Sum(p => p.DebitRepayment) :
-                              a.AllowForceDebitRepayment == false ? (System.Decimal?)
-                                (from c in context.tbl_Loan_Force_Debit
-                                 where c.LoanId == a.TermLoanId && c.TransactionTypeId == (byte)LoanTransactionTypeEnum.Principal
-                                 select new
-                                 {
-                                     DebitRepayment = (c.DebitAmount - c.CreditAmount)
-                                 }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
-                                reviewDate = DateTime.Now
-                            });
+                                          existingLimit = a.PrincipalAmount,
 
-                return data.ToList();
+                                          proposedLimit = a.OutstandingInterest,
+                                          PastDueObligationsInterest = ((System.Decimal?)(
+                                        a.AllowForceDebitRepayment == false ? (System.Decimal?)
+                                          (from c in context.tbl_Loan_Force_Debit
+                                           where c.LoanId == a.TermLoanId && c.TransactionTypeId == (byte)LoanTransactionTypeEnum.Interest
+                                           select new
+                                           {
+                                               DebitRepayment = (c.DebitAmount - c.CreditAmount)
+                                           }).Sum(p => p.DebitRepayment) :
+                                        a.AllowForceDebitRepayment == false ? (System.Decimal?)
+                                          (from c in context.tbl_Loan_Force_Debit
+                                           where c.LoanId == a.TermLoanId &&
+                                              c.TransactionTypeId == (byte)LoanTransactionTypeEnum.Interest
+                                           select new
+                                           {
+                                               DebitRepayment = (c.DebitAmount - c.CreditAmount)
+                                           }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
+                                          PastDueObligationsPrincipal = ((System.Decimal?)(
+                                        a.AllowForceDebitRepayment == false ?
+                                          (from c in context.tbl_Loan_Force_Debit
+                                           where c.LoanId == a.TermLoanId && c.TransactionTypeId == (byte)LoanTransactionTypeEnum.Principal
+                                           select new
+                                           {
+                                               DebitRepayment = (c.DebitAmount - c.CreditAmount)
+                                           }).Sum(p => p.DebitRepayment) :
+                                        a.AllowForceDebitRepayment == false ? (System.Decimal?)
+                                          (from c in context.tbl_Loan_Force_Debit
+                                           where c.LoanId == a.TermLoanId && c.TransactionTypeId == (byte)LoanTransactionTypeEnum.Principal
+                                           select new
+                                           {
+                                               DebitRepayment = (c.DebitAmount - c.CreditAmount)
+                                           }).Sum(p => p.DebitRepayment) : null) ?? (System.Decimal?)0 ?? 0),
+                                          reviewDate = DateTime.Now
+                                      });
+                    if (data.Count() > 0)
+                        datalst.AddRange(data.ToList());
+                }
+
+                return datalst;
             }
             catch (Exception ex)
             {

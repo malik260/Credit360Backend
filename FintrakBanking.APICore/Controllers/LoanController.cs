@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Customer;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -60,14 +61,14 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //    }
         //}
 
-        [HttpGet]
-        [Route("current-exposure/customer/{id}")]
-        public HttpResponseMessage GetCurrentCustomerExposure(int id)
+        [HttpPost]
+        [Route("current-exposure/customer")]
+        public HttpResponseMessage GetCurrentCustomerExposure([FromBody] List<CustomerExposure> customer)
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetCurrentCustomerExposure(id, token.GetCompanyId);
+                var data = repo.GetCurrentCustomerExposure(customer, token.GetCompanyId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
