@@ -85,14 +85,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool DoesHolidayExist(DateTime date, int countryId)
         {
-            return context.tbl_Public_Holiday.Any(x => x.Date == date.Date);
+            var output = context.tbl_Public_Holiday.Any(x => x.Date == date.Date);
+            return output;
         }
 
         public DateTime GetNextWorkDay(DateTime date, int countryId)
         {
             var nextWorkDay = date.AddDays(1);
 
-            while (DoesHolidayExist(nextWorkDay, countryId) == false)
+            while (DoesHolidayExist(nextWorkDay, countryId) == true)
             {
                 nextWorkDay = nextWorkDay.AddDays(1);
             }

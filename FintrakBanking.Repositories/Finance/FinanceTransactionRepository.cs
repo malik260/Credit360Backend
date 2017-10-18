@@ -321,7 +321,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.destinationBranchId = model.branchId;
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+            credit.glAccountId = product.InterestIncomeExpenseGL.Value; 
 
             credit.sourceReferenceNumber = product.ProductCode;
             credit.casaAccountId = null;
@@ -353,7 +353,7 @@ namespace FintrakBanking.Repositories.Finance
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            //this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
             context.SaveChanges();
@@ -462,7 +462,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.destinationBranchId = model.branchId;
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+            credit.glAccountId = product.InterestIncomeExpenseGL.Value;
 
             credit.sourceReferenceNumber = product.ProductCode;
             credit.casaAccountId = null;

@@ -127,7 +127,7 @@ namespace FintrakBanking.Repositories.Credit
                             baseReferenceNumber = null,
                             dayCountConventionId = d.DayCountConventionId,
 
-                        });
+                        }).ToList();
 
             List<tbl_Daily_Accrual> transAccrual = new List<tbl_Daily_Accrual>();
 
@@ -170,7 +170,7 @@ namespace FintrakBanking.Repositories.Credit
                              currencyId = groupedQ.Key.CurrencyId,
                              exchangeRate = groupedQ.Key.ExchangeRate,
                              dailyAccuralAmount = (double)groupedQ.Sum(i => i.DailyAccuralAmount),
-                         });
+                         }).ToList();
 
 
 

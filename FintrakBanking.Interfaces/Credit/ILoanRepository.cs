@@ -48,7 +48,9 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId);
 
         IEnumerable<LoanViewModel> GetTermLoanBookingAwaitingApproval(int staffId, int companyId);
+
         IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanBookingAwaitingApproval(int staffId, int companyId);
+
         IEnumerable<ContingentLoanViewModel> GetContingentLoanBookingAwaitingApproval(int staffId, int companyId);
 
         bool GoForApproval(ApprovalViewModel entity);
@@ -66,7 +68,11 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId);
 
         List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId);
-        List<CurrentCustomerExposure> GetCurrentCustomerExposure(int customerId, int companyId);
+
+        //List<CurrentCustomerExposure> GetCurrentCustomerExposure(int customerId, int companyId);
+
+        List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
+
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> GetLoanScheduleByLoanId(int loanId);
     }
 }
