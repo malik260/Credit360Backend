@@ -311,6 +311,10 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         //......End f Loan Relational Table View Mapping Models......//
     }
+    public class CustomerExposure
+    {
+        public int customerId { get; set; }
+    }
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
