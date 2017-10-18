@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Net;
 using FintrakBanking.APICore.core;
 using System.Web;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -19,10 +20,11 @@ namespace FintrakBanking.APICore.Controllers
     public class ChecklistController : ApiControllerBase
     {
         private IChecklistRepository repo;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public ChecklistController(IChecklistRepository _repo)
         {
-            this.repo = _repo;
+            repo = _repo;
         }
 
         #region Checklist Definition
@@ -32,11 +34,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null; // new TokenDecryptionHelper(this.HttpContext);
-
                 model.userBranchId = (short)token.GetBranchId;
-                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                //model.applicationUrl = Request.Path.Value;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
@@ -64,16 +64,14 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                // new TokenDecryptionHelper(this.HttpContext);
                 var recordId = repo.AddMultipleChecklistDefinition(model);
                 if (recordId)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
       new { success = true, result = recordId, message = "Checklist Definitions has been created successfully" });
                 }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-      new { success = false, message = "Checklist Definition not created" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Checklist Definition not created" });
             }
 
             catch (Exception e)
@@ -90,16 +88,14 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 var recordId = repo.AddMultipleChecklistDefinitionWithMultipleItems(model);
                 if (recordId)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                new { success = true, result = recordId, message = "Checklist Definitions have been created successfully" });
                 }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-               new { success = false, message = "Checklist Definitions not created" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Checklist Definitions not created" });
             }
 
             catch (Exception e)
@@ -116,8 +112,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
-
                 var data = repo.GetAllChecklistDefinition();
                 if (data == null)
                 {
@@ -146,7 +140,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
            new { success = true, result = data, count = 1 });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
 
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -162,10 +156,9 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
                 model.userBranchId = (short)token.GetBranchId;
-                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                //model.applicationUrl = Request.Path.Value;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
@@ -195,15 +188,13 @@ namespace FintrakBanking.APICore.Controllers
 
             try
             {
-                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-
                 UserInfo user = new UserInfo()
                 {
                     BranchId = token.GetBranchId,
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
-                    // applicationUrl = Request.Path.Value,
-                    // userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = CommonHelpers.GetUserIP()
                 };
 
                 repo.DeleteChecklistDefinition(CheckListDefinitionId, user);
@@ -211,7 +202,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
              new { success = true, result = CheckListDefinitionId, message = "record has been deleted successfully" });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
              new { success = false, message = ex.Message });
@@ -227,11 +218,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-
                 model.userBranchId = (short)token.GetBranchId;
-                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                //model.applicationUrl = Request.Path.Value;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
@@ -259,8 +248,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
-
                 var data = repo.GetAllChecklistDetail();
                 if (!data.Any())
                 {
@@ -288,7 +275,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                new { success = true, result = data, count = 1 });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
 
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -302,9 +289,8 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
-                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.userIPAddress = CommonHelpers.GetUserIP();
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -334,15 +320,13 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-
                 UserInfo user = new UserInfo()
                 {
                     BranchId = token.GetBranchId,
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
-                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                    userIPAddress = CommonHelpers.GetUserIP()
                 };
 
                 repo.DeleteChecklistDetail(ChecklistId, user);
@@ -350,7 +334,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
              new { success = true, result = ChecklistId, message = "record has been deleted successfully" });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
              new { success = false, message = ex.Message });
@@ -366,10 +350,8 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
-
                 model.userBranchId = (short)token.GetBranchId;
-                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.userIPAddress = CommonHelpers.GetUserIP();
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -399,19 +381,16 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
-
                 var recordId = repo.AddMultipleChecklistItem(model);
                 if (recordId)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
               new { success = true, result = recordId, message = "Checklist items has been created successfully" });
                 }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-              new { success = false, message = "Checklist items not created" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Checklist items not created" });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
               new { success = false, message = ex.Message });
@@ -425,8 +404,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
-
                 var data = repo.GetAllChecklistItem();
                 if (!data.Any())
                 {
@@ -455,7 +432,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
               new { success = true, result = data, count = 1 });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
 
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -470,9 +447,8 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
                 model.userBranchId = (short)token.GetBranchId;
-                //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                model.userIPAddress = CommonHelpers.GetUserIP();
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
@@ -503,7 +479,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                TokenDecryptionHelper token = null;// new TokenDecryptionHelper(this.HttpContext);
 
                 UserInfo user = new UserInfo()
                 {
@@ -511,7 +486,7 @@ namespace FintrakBanking.APICore.Controllers
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
-                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                    userIPAddress = CommonHelpers.GetUserIP()
                 };
 
                 repo.DeleteChecklistItem(CheckListItemId, user);
@@ -519,7 +494,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
               new { success = true, result = CheckListItemId, message = "record has been deleted successfully" });
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
               new { success = false, message = ex.Message });
@@ -536,8 +511,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
-
                 var data = repo.GetAllChecklistStatus();
                 if (!data.Any())
                 {

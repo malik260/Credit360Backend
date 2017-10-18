@@ -1,16 +1,16 @@
-﻿using FintrakBanking.Common;
+﻿using System;
+using System.Configuration;
+using System.Data.Entity.SqlServer;
+using System.Linq;
+using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
-using System;
-using System.Configuration;
-using System.Data.Entity.SqlServer;
-using System.Linq;
 
-namespace FintrakBanking.Repositories.Credit
+namespace FintrakBanking.Repositories.AppEmail
 {
     public class EmailAndAlertsRepository : IEmailAndAlertsRepository
     {
@@ -257,7 +257,6 @@ namespace FintrakBanking.Repositories.Credit
                     SaveMessageDetails(messageModel);
 
                     emailHelpers.SendMail(recipient, null, messageSubject, messageContent, templateUrl);
-
                 }
             }
             catch (Exception ex)
