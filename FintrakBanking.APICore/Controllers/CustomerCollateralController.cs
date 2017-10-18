@@ -16,6 +16,7 @@ using System.Linq;
 using FintrakBanking.Interfaces.Setups.Credit;
 using System.Data.SqlClient;
 using System.IO;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -243,8 +244,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet, Route("customer-collateral/release/{mappingId}/approve")]
-        public HttpResponseMessage ApproveCollateralRelease(int mappingId)
+        [HttpGet, Route("collateral-release/pending-approval")]
+        public HttpResponseMessage GetPendingCustomerCollateralRelease()
+        {
+            try
+            {
+                var response = repo.GetPendingCustomerCollateralRelease();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpPost, Route("customer-collateral/release-approval")]
+        public HttpResponseMessage ApproveCollateralRelease([FromBody] ApprovalViewModel entity)
         {
             try
             {
@@ -256,7 +271,7 @@ namespace FintrakBanking.APICore.Controllers
                     applicationUrl = HttpContext.Current.Request.Path,
                     userIPAddress = HttpContext.Current.Request.UserHostAddress,
                 };
-                var response = repo.ApproveCollateralRelease(mappingId, token.GetStaffId, userInfo);
+                var response = repo.ApproveCollateralRelease(entity, token.GetStaffId, userInfo);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });

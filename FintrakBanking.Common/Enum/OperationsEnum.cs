@@ -42,8 +42,8 @@ namespace FintrakBanking.Common.Enum
         CompleteWriteOff = 31,
         CancelUndisbursedLoan = 32,
         InterestSuspension = 33,
+        LoanTermination = 34,
         CollateralRelease = 35,
-        LoanTermination = 34
 
 
 
