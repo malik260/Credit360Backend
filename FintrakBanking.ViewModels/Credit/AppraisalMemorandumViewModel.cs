@@ -63,6 +63,7 @@ namespace FintrakBanking.ViewModels.Credit
         //public double approvedExchangeRate { get; set; }
         public short proposedProductId { get; set; }
         public short approvedProductId { get; set; }
+        public decimal convertedApprovedAmount { get { return approvedAmount * (decimal)exchangeRate; } }
     }
 
     public class PrivilegeViewModel : GeneralEntity

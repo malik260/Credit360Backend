@@ -53,6 +53,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool keepPending = false;
         private bool vote = false;
         private bool politicallyExposed = false;
+        private bool deferredExecution = false;
 
         public int StaffId { set { staffId = value; } }
         public int TargetId { set { targetId = value; } }
@@ -75,6 +76,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool Saved { get { return saved; } }
         public int NewState { get { return newStateId; } }
         public bool KeepPending { set { keepPending = value; } }
+        public bool DeferredExecution { set { deferredExecution = value; } }
 
         private List<WorkflowSetup> workflowSetup;
 
@@ -86,21 +88,25 @@ namespace FintrakBanking.Repositories.WorkFlow
             var request = context.tbl_Approval_Trail.Where(x =>
                                 x.CompanyId == this.companyId
                                 && x.OperationId == this.operationId
-                                && x.TargetId == this.targetId &&
-                                x.ResponseStaffId == null &&
-                                (x.ApprovalStateId != (int)ApprovalState.Ended && x.ResponseDate == null)
+                                && x.TargetId == this.targetId 
+                                && x.ResponseStaffId == null 
+                                && (x.ApprovalStateId != (int)ApprovalState.Ended && x.ResponseDate == null)
                             ).OrderByDescending(x => x.ApprovalTrailId).FirstOrDefault();
 
-            if (request != null)
+            if (request == null)
+            {
+                if (ActionIsApprovalDecision())
+                {
+                    throw new Exception("Unable to resolve initiating level!");
+                }
+                this.currentStateId = (int)ApprovalState.Initiation;
+            }
+            else
             {
                 this.currentStateId = request.ApprovalStateId;
                 this.requestStaffId = request.RequestStaffId;
                 //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
                 this.fromLevelId = request.ToApprovalLevelId;
-            }
-            else
-            {
-                this.currentStateId = (int)ApprovalState.Initiation;
             }
 
             if (ResolveLevelConfigurations() == false) { return false; }
@@ -145,8 +151,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             context.tbl_Approval_Trail.Add(trail);
-            this.saved = context.SaveChanges() > 0;
+            
+            if (this.deferredExecution) { return true; }
 
+            this.saved = context.SaveChanges() > 0;
 
             if (this.saved)
             {
@@ -155,8 +163,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return true;
             }
 
-            this.message = "Unable to save record!";
-            return false;
+            throw new Exception("Unable to save record!");
         }
 
         private DateTime GetApplicationDate()
@@ -168,8 +175,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.staffId == this.requestStaffId)
             {
-                this.message = "Cannot act on self initiated process!";
-                return true;
+                throw new Exception("Cannot act on self initiated process!");
             }
             return false;
         }
@@ -178,39 +184,13 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.currentStateId == (int)ApprovalState.Ended)
             {
-                this.message = "Process is closed!";
-                return true;
+                throw new Exception("Process is closed!");
             }
             return false;
         }
 
         private bool ResolveLevelConfigurations()
         {
-            //var approvalLevels = context.tbl_Approval_Group_Mapping.Where(x => x.Deleted == false
-            //                    && x.OperationId == this.operationId
-            //                    && x.ProductClassId == this.productClassId
-            //                    && x.ProductId == this.productId
-            //                )
-            //                .Join(context.tbl_Approval_Group, m => m.GroupId, g => g.GroupId, (m, g) => new { m, g })
-            //                .Join(context.tbl_Approval_Level, mg => mg.m.GroupId, l => l.GroupId, (mg, l) => 
-            //                new { Mapping = mg.m, Level = l })
-            //                .Where(x => x.Level.IsActive == true)
-            //                .Select(x => new WorkflowSetup
-            //                {
-            //                    GroupPosition = x.Mapping.Position,
-            //                    LevelPosition = x.Level.Position,
-            //                    Staff = x.Level.tbl_Approval_Level_Staff,
-            //                    Level= x.Level,
-            //                    Group = x.Level.tbl_Approval_Group,
-            //                    Mapping = x.Mapping,
-            //                    CanRecieveSMS = x.Level.CanRecieveSMS,
-            //                    CanRecieveEmail = x.Level.CanRecieveEmail,
-            //                    ApprovalLevelId = x.Level.ApprovalLevelId,
-            //                    RouteViaStaffOrganogram = x.Level.RouteViaStaffOrganogram,
-            //                })
-            //                .OrderBy(x => x.GroupPosition)
-            //                .ThenBy(x => x.LevelPosition);
-
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
 
             WorkflowSetup next = null;
@@ -226,8 +206,21 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.useOrganogram = next.RouteViaStaffOrganogram;
                     return true;
                 }
-                this.message = "Unable to resolve initiating level. No setup for the specified operation!";
-                return false;
+                throw new Exception("Unable to resolve initiating level or there is no setup for the specified operation!");
+            }
+            else
+            {
+                // validate level and staff
+                var level = approvalLevels.Where(x => x.ApprovalLevelId == fromLevelId).FirstOrDefault();
+                if (level == null)
+                {
+                    throw new Exception("This Approval Level is not in the workflow setup!");
+                }
+                var staff = level.Staff.Where(x => x.StaffId == this.staffId);
+                if (staff.Any() == false)
+                {
+                    throw new Exception("This User is not in the workflow setup!");
+                }
             }
 
             if (this.fromLevelId == null) // && externalInitialization == false
@@ -235,8 +228,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var levelStaff = approvalLevels.SelectMany(x => x.Staff).Where(x => x.StaffId == this.staffId).FirstOrDefault(); // doing
                 if (levelStaff == null)
                 {
-                    this.message = "Unable to resolve initiating level. No setup for the specified operation!";
-                    return false;
+                    throw new Exception("Unable to resolve initiating level. No setup for the specified operation!");
                 }
                 this.fromLevelId = levelStaff.ApprovalLevelId;
                 this.neededNumberOfApproval = levelStaff.tbl_Approval_Level.NumberOfApprovals;
@@ -392,8 +384,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (levelStaff == null)
             {
-                this.message = "Staff do not exist in the current process flow!";
-                return null;
+                throw new Exception("Staff do not exist in the current process flow!");
             }
 
             return levelStaff.ApprovalLevelId;
@@ -541,8 +532,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return true;
             }
-            this.message = "Unauthorized action!";
-            return false;
+            throw new Exception("Unauthorized action!");
         }
 
         public bool LogForApproval(ApprovalViewModel model)
@@ -555,6 +545,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             ExternalInitialization = model.externalInitialization;
             StatusId = model.approvalStatusId;
             keepPending = model.keepPending;
+            deferredExecution = model.deferredExecution;
 
             var response = LogActivity();
 
@@ -603,3 +594,63 @@ namespace FintrakBanking.Repositories.WorkFlow
         public IEnumerable<tbl_Approval_Level_Staff> Staff { get; set; }
     }
 }
+
+/*
+Example usage:
+
+    (1)
+
+    Initialisation
+    --------------
+    workflow.StaffId = model.createdBy;
+    workflow.CompanyId = model.companyId;
+    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+    workflow.TargetId = collateralMappingId;
+    workflow.Comment = "Request for collateral release";
+    workflow.OperationId = (int)OperationsEnum.CollateralRelease;
+    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+    workflow.ExternalInitialization = true;
+    workflow.LogActivity();
+
+    return context.SaveChanges() > 0;
+
+    Approval
+    --------
+    workflow.StaffId = model.createdBy;
+    workflow.CompanyId = model.companyId;
+    workflow.StatusId = (short)entity.approvalStatusId;
+    workflow.TargetId = entity.targetId;
+    workflow.Comment = entity.comment;
+    workflow.OperationId = (int)OperationsEnum.CollateralRelease;
+    workflow.DeferredExecution = true;
+    workflow.LogActivity();
+
+    return context.SaveChanges() > 0;
+
+    (2)
+
+    // init
+    workflow.StaffId = model.createdBy;
+    workflow.OperationId = operationId;
+    workflow.TargetId = model.applicationId;
+    workflow.CompanyId = model.companyId;
+    workflow.Vote = model.vote;
+    workflow.ProductClassId = model.productClassId;
+    workflow.ProductId = model.productId;
+    workflow.NextLevelId = model.receiverLevelId;
+    workflow.StatusId = model.forwardAction;
+    workflow.Comment = model.comment;
+    workflow.Amount = model.amount;
+    workflow.InvestmentGrade = model.investmentGrade;
+    workflow.Tenor = model.tenor;
+    workflow.PoliticallyExposed = model.politicallyExposed;
+
+    // log
+    workflow.LogActivity();
+
+    if (workflow.Saved)
+    {
+        // do something
+    }
+
+*/
