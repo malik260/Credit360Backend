@@ -1132,7 +1132,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     loanRecord.LoanStatusId = 1;
                     loanRecord.IsDisbursed = true;
-                    loanRecord.DisburseDate = DateTime.Now;
+                    loanRecord.DisburseDate = generalSetup.GetApplicationDate();
                     loanRecord.DisbursedBy = user.createdBy;
                     loanRecord.ApprovedBy = user.createdBy;
                     //==========================================================================================
@@ -2385,6 +2385,64 @@ namespace FintrakBanking.Repositories.Credit
 
                             loanPreliminaryEvaluationId = m.LoanPreliminaryEvaluationId,
                             exchangeRate = d.ExchangeRate,
+                            loanGuarantor = (from g in context.tbl_Loan_Guarantor.Where(x=>x.LoanApplicationId == m.LoanApplicationId)
+                                            select (
+                                                     new LoanGuarantorViewModel
+                                                     {
+                                                         loanGuarantorId = g.LoanGuarantorId,
+                                                         firstname = g.Firstname,
+                                                         lastname = g.Lastname,
+                                                         middlename = g.Middlename,
+                                                         fullName = g.Firstname + " " +g.Middlename +" " +g.Lastname,
+                                                         emailAddress = g.EmailAddress,
+                                                         phoneNumber1 = g.PhoneNumber1,
+                                                         phoneNumber2 = g.PhoneNumber2,
+                                                         address = g.Address,
+                                                         bvn = g.BVN,
+                                                         relationship = g.Relationship,
+                                                         relationshipDuration = g.RelationshipDuration
+                                                     })).ToList(),
+                            loanChargeFee = (from f in context.tbl_Loan_Fee.Where(x => x.LoanId == d.tbl_Loan.Where(l=>l.TermLoanId == x.LoanId).FirstOrDefault().TermLoanId
+                                             || x.LoanId ==  d.tbl_Loan_Revolving.Where(l => l.RevolvingLoanId == x.LoanId).FirstOrDefault().RevolvingLoanId
+                                             || x.LoanId == d.tbl_Loan_Contingent.Where(l => l.ContingentLoanId == x.LoanId).FirstOrDefault().ContingentLoanId)
+                                             select (
+                                                      new LoanChargeFeeViewModel
+                                                      {
+                                                          loanChargeFeeId = f.LoanChargeFeeId,
+                                                          chargeFeeId = f.ChargeFeeId,
+                                                          feeAmount = f.FeeAmount,
+                                                          feeTypeName = f.tbl_Charge_Fee.ChargeFeeName,
+                                                          feeRateValue = f.FeeRateValue,
+                                                          isIntegralFee = f.IsIntegralFee,
+                                                          recurring = f.IsRecurring
+                                                            
+                                                      })).ToList(),
+                            loanCovenant = (from c in context.tbl_Loan_Covenant_Detail.Where(x => x.LoanId == d.tbl_Loan.Where(l => l.TermLoanId == x.LoanId).FirstOrDefault().TermLoanId
+                                             || x.LoanId == d.tbl_Loan_Revolving.Where(l => l.RevolvingLoanId == x.LoanId).FirstOrDefault().RevolvingLoanId
+                                             || x.LoanId == d.tbl_Loan_Contingent.Where(l => l.ContingentLoanId == x.LoanId).FirstOrDefault().ContingentLoanId)
+                                            select (
+                                                     new LoanCovenantDetailViewModel
+                                                     {
+                                                         loanCovenantDetailId = c.LoanCovenantDetailId,
+                                                         covenantTypeId = c.CovenantTypeId,
+                                                         covenantDetail = c.CovenantDetail,
+                                                         covenantAmount = c.CovenantAmount,
+                                                         covenantDate = c.CovenantDate
+
+                                                     })).ToList(),
+                            loanCollateral = (from cm in context.tbl_Loan_Collateral_Mapping.Where(x => x.LoanApplicationId == m.LoanApplicationId)
+                                              select (
+                                                       new LoanCollateralMappingViewModel
+                                                       {
+                                                           loanCollateralMappingId = cm.LoanCollateralMappingId,
+                                                           collateralCustomerId = cm.CollateralCustomerId,
+                                                           loanApplicationId = cm.LoanApplicationId,
+                                                           collateralValue = cm.tbl_Collateral_Customer.CollateralValue,
+                                                           currencyId = cm.tbl_Collateral_Customer.CurrencyId,
+                                                           currencyCode = cm.tbl_Collateral_Customer.tbl_Currency.CurrencyCode,
+                                                           currency = cm.tbl_Collateral_Customer.tbl_Currency.CurrencyName
+                                                       })).ToList(),
+
                         }).ToList();
 
              //data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
