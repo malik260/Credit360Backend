@@ -77,7 +77,7 @@ namespace FintrakBanking.APICore.Providers
             }
             else
             {
-                context.SetError("unauthorized_access", "Access is denied: You haven't been granted access to the system");
+                context.SetError("unauthorized_access", "Access denied: Please contact your administrator");
                 return;
             }
 

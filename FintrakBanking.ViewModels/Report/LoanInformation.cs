@@ -38,5 +38,30 @@ namespace FintrakBanking.ViewModels.Reports
         public decimal totalOutstanding { get { return (outstandingInterest + outstandingPrincipal); } }
     }
 
+    public class DisburstLoanViewModel
+    {
+        public double outstandingInterest { get; set; }
+        public decimal approvedInterestRate { get; set; }
+        private int da { get { return (maturitydate - effectiveDate).Days; } }
+        public int approvedTenor { get { return (int)(Math.Round(da * (decimal)(12.0 / 365.0))); } }
+        public double exchangeValue { get; set; }
+        public decimal productId { get; set; }
+        public string companyName { get; set; }
+        public string customerName { get; set; }
+        public string productName { get; set; }
+        public decimal approvedAmount { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public decimal amountDisbursed { get; set; }
+        public decimal outstandingPrincipal { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime maturitydate { get; set; }
+        public DateTime? disburseDate { get; set; }
+        public string facilityCurrency { get; set; }
+        public double exchangeRate { get; set; }
+        public string baseCurrency { get; set; }
+        public string logoPath { get; set; }
+        public string status { get; set; }
+
+    }
 
 }
