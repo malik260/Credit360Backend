@@ -234,7 +234,6 @@ namespace FintrakBanking.Repositories.Credit
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId, entity.productTypeId);
             var data = new tbl_Loan_Contingent
             {
-                ContingentLoanId = entity.loanId,
                 CustomerId = entity.customerId,
                 ProductId = entity.productId,
                 CasaAccountId = entity.casaAccountId,
@@ -242,7 +241,7 @@ namespace FintrakBanking.Repositories.Credit
                 CurrencyId = contingentLoanInput.currencyId,
                 ExchangeRate = entity.exchangeRate,
                 LoanApplicationDetailId = entity.loanApplicationDetailId,
-                LoanReferenceNumber = entity.loanReferenceNumber,
+                LoanReferenceNumber = loanReferenceNumber,
                 SubSectorId = entity.subSectorId,
                 RelationshipOfficerId = entity.relationshipOfficerId,
                 RelationshipManagerId = entity.relationshipManagerId,
@@ -262,6 +261,9 @@ namespace FintrakBanking.Repositories.Credit
                 LoanTypeId = entity.loanTypeId,
                 DischargeLetter = false,
                 CustomerSensitivityLevelId = entity.customerSensitivityLevelId,
+                CompanyId = entity.companyId,
+                CreatedBy = entity.createdBy,
+                DateTimeCreated = generalSetup.GetApplicationDate(),
 
 
             };
@@ -1070,7 +1072,7 @@ namespace FintrakBanking.Repositories.Credit
                 //...................Updating Loan Tables With Approved State Properties Values....................
                 if (user.operationId == (int)OperationsEnum.RevolvingLoanBooking)
                 {
-                    totalBookedAmount = (from a in context.tbl_Loan_Revolving.Where(x => x.LoanApplicationDetailId == loanRecord.LoanApplicationDetailId)
+                    totalBookedAmount = (from a in context.tbl_Loan_Revolving.Where(x => x.LoanApplicationDetailId == revolvingLoanRecord.LoanApplicationDetailId)
                                          select a).Sum(s => s.OverdraftLimit);
 
                     if(totalBookedAmount >= revolvingLoanRecord.tbl_Loan_Application_Detail.ApprovedAmount)
@@ -1085,7 +1087,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (user.operationId == (int)OperationsEnum.ContigentLoanBooking)
                 {
-                    totalBookedAmount = (from a in context.tbl_Loan_Contingent.Where(x => x.LoanApplicationDetailId == loanRecord.LoanApplicationDetailId)
+                    totalBookedAmount = (from a in context.tbl_Loan_Contingent.Where(x => x.LoanApplicationDetailId == contingentLoanRecord.LoanApplicationDetailId)
                                          select a).Sum(s => s.ContingentAmount);
 
                     if (totalBookedAmount >= contingentLoanRecord.tbl_Loan_Application_Detail.ApprovedAmount)
