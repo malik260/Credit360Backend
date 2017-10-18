@@ -11,6 +11,7 @@ using System.ServiceModel;
 using System.Collections.Generic;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -279,9 +280,10 @@ namespace FintrakBanking.Repositories.Finance
             else
             {
                 DateTime date = generalSetup.GetApplicationDate().Date;
-                var rate = this.context.tbl_Currency_Rate.FirstOrDefault(x => x.BaseCurrencyId ==
-                baseCurrency && x.CurrencyId == currencyId && x.Date == date).SellingRate;
-
+                var rate = (from x in this.context.tbl_Currency_Rate
+                            where x.CurrencyId == currencyId && x.Date == DbFunctions.TruncateTime(date)
+                            select x.SellingRate).FirstOrDefault();
+                 
                 return rate;
             }           
             
