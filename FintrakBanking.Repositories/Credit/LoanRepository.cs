@@ -1162,7 +1162,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if(totalBookedAmount >= revolvingLoanRecord.tbl_Loan_Application_Detail.ApprovedAmount)
                     {
-                        var loanApplicationRecord = context.tbl_Loan_Application.Find(loanRecord.tbl_Loan_Application_Detail.LoanApplicationId);
+                        var loanApplicationRecord = context.tbl_Loan_Application.Find(revolvingLoanRecord.tbl_Loan_Application_Detail.LoanApplicationId);
                         loanApplicationRecord.ApplicationStatusId = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                     }
 
@@ -1177,7 +1177,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (totalBookedAmount >= contingentLoanRecord.tbl_Loan_Application_Detail.ApprovedAmount)
                     {
-                        var loanApplicationRecord = context.tbl_Loan_Application.Find(loanRecord.tbl_Loan_Application_Detail.LoanApplicationId);
+                        var loanApplicationRecord = context.tbl_Loan_Application.Find(contingentLoanRecord.tbl_Loan_Application_Detail.LoanApplicationId);
                         loanApplicationRecord.ApplicationStatusId = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                     }
 
