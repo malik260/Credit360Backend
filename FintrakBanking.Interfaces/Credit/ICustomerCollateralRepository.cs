@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,8 @@ namespace FintrakBanking.Interfaces.Credit
         Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id);
 
         bool ReleaseCollateral(int collateralMappingId, int staffId, GeneralEntity model);
-        bool ApproveCollateralRelease(int collateralMappingId, int staffId, GeneralEntity model);
+        bool ApproveCollateralRelease(ApprovalViewModel entity, int staffId, GeneralEntity model);
+        IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease();
 
         #endregion Collateral
 

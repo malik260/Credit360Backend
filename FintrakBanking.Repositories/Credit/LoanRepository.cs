@@ -2582,6 +2582,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             currencyId = d.CurrencyId,
                             currencyCode = d.tbl_Currency.CurrencyCode,
+                            exchangeRate = d.ExchangeRate,
                             loanTypeId = m.LoanTypeId,
                             loanTypeName = m.tbl_Loan_Type.LoanTypeName,
                             camReference = m.tbl_Credit_Appraisal_Memorandum.FirstOrDefault().CAMRef,
@@ -2618,7 +2619,6 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = d.DateTimeCreated,
 
                             loanPreliminaryEvaluationId = m.LoanPreliminaryEvaluationId,
-                            exchangeRate = d.ExchangeRate,
                             loanGuarantor = (from g in context.tbl_Loan_Guarantor.Where(x=>x.LoanApplicationId == m.LoanApplicationId)
                                             select (
                                                      new LoanGuarantorViewModel
