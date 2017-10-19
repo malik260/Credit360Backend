@@ -8,6 +8,7 @@ namespace FintrakBanking.Interfaces.Admin
     public interface ICurrencyRateRepository
     {
         #region Currency Rate
+        CurrencyViewModel GetBaseCurrency(int companyId);
         IEnumerable<CurrencyViewModel> GetCurrency();
         IEnumerable<CurrencyRateViewModel> GetCurrencyRate();
         List<CurrencyRateViewModel> GetCurrencyRateById(short currencyRateId);

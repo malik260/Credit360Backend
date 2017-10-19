@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public tbl_CASA()
         {
             tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
+            tbl_Loan_Application_Collateral = new HashSet<tbl_Loan_Application_Collateral>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
             tbl_Loan_Archive1 = new HashSet<tbl_Loan_Archive>();
             tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
@@ -150,6 +151,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Loan_Application_Collateral> tbl_Loan_Application_Collateral { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }

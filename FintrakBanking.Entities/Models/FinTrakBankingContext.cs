@@ -205,6 +205,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_PrudentialGuideline> tbl_Loan_PrudentialGuideline { get; set; }
         public virtual DbSet<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
         public virtual DbSet<tbl_Loan_Review_Operation> tbl_Loan_Review_Operation { get; set; }
+        public virtual DbSet<tbl_Loan_Review_Operation_Irregular_Schedule> tbl_Loan_Review_Operation_Irregular_Schedule { get; set; }
         public virtual DbSet<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Category> tbl_Loan_Schedule_Category { get; set; }
         public virtual DbSet<tbl_Loan_Schedule_Daily> tbl_Loan_Schedule_Daily { get; set; }
@@ -2705,6 +2706,15 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Loan_Review_Operation>()
                 .Property(e => e.Fee_Charges)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Review_Operation>()
+                .HasMany(e => e.tbl_Loan_Review_Operation_Irregular_Schedule)
+                .WithRequired(e => e.tbl_Loan_Review_Operation)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Loan_Review_Operation_Irregular_Schedule>()
+                .Property(e => e.PaymentAmount)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan_Revolving>()
