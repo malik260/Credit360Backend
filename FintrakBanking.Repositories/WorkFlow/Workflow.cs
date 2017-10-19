@@ -88,8 +88,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             var request = context.tbl_Approval_Trail.Where(x =>
                                 x.CompanyId == this.companyId
                                 && x.OperationId == this.operationId
-                                && x.TargetId == this.targetId 
-                                && x.ResponseStaffId == null 
+                                && x.TargetId == this.targetId
+                                && x.ResponseStaffId == null
                                 && (x.ApprovalStateId != (int)ApprovalState.Ended && x.ResponseDate == null)
                             ).OrderByDescending(x => x.ApprovalTrailId).FirstOrDefault();
 
@@ -151,7 +151,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             context.tbl_Approval_Trail.Add(trail);
-            
+
             if (this.deferredExecution) { return true; }
 
             this.saved = context.SaveChanges() > 0;
@@ -208,20 +208,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 throw new Exception("Unable to resolve initiating level or there is no setup for the specified operation!");
             }
-            else
-            {
-                // validate level and staff
-                var level = approvalLevels.Where(x => x.ApprovalLevelId == fromLevelId).FirstOrDefault();
-                if (level == null)
-                {
-                    throw new Exception("This Approval Level is not in the workflow setup!");
-                }
-                var staff = level.Staff.Where(x => x.StaffId == this.staffId);
-                if (staff.Any() == false)
-                {
-                    throw new Exception("This User is not in the workflow setup!");
-                }
-            }
+
 
             if (this.fromLevelId == null) // && externalInitialization == false
             {
@@ -230,8 +217,21 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     throw new Exception("Unable to resolve initiating level. No setup for the specified operation!");
                 }
+
                 this.fromLevelId = levelStaff.ApprovalLevelId;
                 this.neededNumberOfApproval = levelStaff.tbl_Approval_Level.NumberOfApprovals;
+            }
+
+            // validate level and staff
+            var level = approvalLevels.Where(x => x.ApprovalLevelId == fromLevelId).FirstOrDefault();
+            if (level == null)
+            {
+                throw new Exception("This Approval Level is not in the workflow setup!");
+            }
+            var staff = level.Staff.Where(x => x.StaffId == this.staffId);
+            if (staff.Any() == false)
+            {
+                throw new Exception("This User is not in the workflow setup!");
             }
 
             if (this.nextLevelId == null) // && fromLevelId != null

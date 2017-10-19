@@ -631,7 +631,7 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
                         where p.IsCurrent == false && p.LoanTypeId == (short)LoanTypeEnum.Single && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
-                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending 
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
@@ -754,7 +754,7 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
                         where p.IsCurrent == false && p.LoanTypeId == (short)LoanTypeEnum.CustomerGroup && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
-                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending 
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
@@ -964,7 +964,7 @@ namespace FintrakBanking.Repositories.Credit
                             targetId = loanPenId,
                             operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
                             BranchId = model.userBranchId,
-                            externalInitialization = true
+                            //externalInitialization = true
                         };
 
                         var response = workFlow.LogForApproval(entity);
@@ -974,8 +974,11 @@ namespace FintrakBanking.Repositories.Credit
                             trans.Commit();
                         }
                     }
+                    else
+                    {
+                        trans.Commit();
+                    }
 
-                    trans.Commit();
                 }
                 catch (Exception ex)
                 {
