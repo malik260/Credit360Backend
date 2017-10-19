@@ -419,6 +419,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedTenor = x.ApprovedTenor,
                     approvedRate = x.ApprovedInterestRate,
                     approvedAmount = x.ApprovedAmount,
+                    //convertedApprovedAmount = x.ApprovedAmount * Convert.ToDecimal(x.ExchangeRate),
                     approvedProductId = x.ApprovedProductId,
 
                     statusId = x.StatusId,

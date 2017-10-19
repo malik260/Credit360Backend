@@ -136,7 +136,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short approvedProductId { get; set; }
 
-        public int approvedTenor { get; set; }
+        public int approvedTenor { get ; set; }
 
         public double approvedInterestRate { get; set; }
 

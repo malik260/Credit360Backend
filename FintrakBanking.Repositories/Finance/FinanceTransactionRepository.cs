@@ -11,6 +11,7 @@ using System.ServiceModel;
 using System.Collections.Generic;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -279,9 +280,10 @@ namespace FintrakBanking.Repositories.Finance
             else
             {
                 DateTime date = generalSetup.GetApplicationDate().Date;
-                var rate = this.context.tbl_Currency_Rate.FirstOrDefault(x => x.BaseCurrencyId ==
-                baseCurrency && x.CurrencyId == currencyId && x.Date == date).SellingRate;
-
+                var rate = (from x in this.context.tbl_Currency_Rate
+                            where x.CurrencyId == currencyId && x.Date == DbFunctions.TruncateTime(date)
+                            select x.SellingRate).FirstOrDefault();
+                 
                 return rate;
             }           
             
@@ -319,7 +321,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.destinationBranchId = model.branchId;
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+            credit.glAccountId = product.InterestIncomeExpenseGL.Value; 
 
             credit.sourceReferenceNumber = product.ProductCode;
             credit.casaAccountId = null;
@@ -351,7 +353,7 @@ namespace FintrakBanking.Repositories.Finance
                 SystemDateTime = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            //this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
             context.SaveChanges();
@@ -460,7 +462,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.destinationBranchId = model.branchId;
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+            credit.glAccountId = product.InterestIncomeExpenseGL.Value;
 
             credit.sourceReferenceNumber = product.ProductCode;
             credit.casaAccountId = null;

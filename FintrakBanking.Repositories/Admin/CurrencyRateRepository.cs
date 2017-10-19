@@ -72,6 +72,7 @@ namespace FintrakBanking.Repositories.Admin
         {
             var data = (from a in context.tbl_Currency_Rate
                         where a.CurrencyId == currencyRateId && a.Deleted == false
+                        
                         select new CurrencyRateViewModel
                         {
                             currencyRateId = a.CurrencyRateId,
@@ -84,7 +85,7 @@ namespace FintrakBanking.Repositories.Admin
                             date = a.Date,
                             dateTimeCreated = a.DateTimeCreated,
                             createdBy = a.CreatedBy
-                        }).ToList();
+                        }).OrderByDescending(x=>x.dateTimeCreated).ToList();
             return data;
         }
         public bool AddCurrencyRate(CurrencyRateViewModel model)
