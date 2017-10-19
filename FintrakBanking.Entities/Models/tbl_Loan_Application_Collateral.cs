@@ -12,12 +12,22 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CustomerCollateralId { get; set; }
 
-        [StringLength(50)]
-        public string CertificateOfOwnership { get; set; }
-
-        public int? CityId { get; set; }
+        public int LoanApplicationId { get; set; }
 
         public int CollateralTypeId { get; set; }
+
+        public int? CasaAccountId { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string CollateralReferenceNumber { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? CollateralValue { get; set; }
+
+        public bool? IsBankAccount { get; set; }
+
+        public int? CityId { get; set; }
 
         [StringLength(50)]
         public string DocumentTitle { get; set; }
@@ -39,8 +49,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string OtherInformations { get; set; }
 
-        public int LoanApplicationId { get; set; }
-
         public int CreatedBy { get; set; }
 
         public DateTime DateTimeCreated { get; set; }
@@ -56,6 +64,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateTimeDeleted { get; set; }
 
         public DateTime SystemDateTime { get; set; }
+
+        public virtual tbl_CASA tbl_CASA { get; set; }
 
         public virtual tbl_City tbl_City { get; set; }
 

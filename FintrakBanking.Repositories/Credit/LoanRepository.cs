@@ -2301,7 +2301,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationId = m.LoanApplicationId,
                             loanApplicationDetailId = d.LoanApplicationDetailId,
                             applicationReferenceNumber = m.ApplicationReferenceNumber,
-                            casaAccountId = m.CasaAccountId,
+                           // casaAccountId = m.CasaAccountId,
                             customerId = m.CustomerId ?? 0,
                             customerCode = cust.CustomerCode,
                             customerName = m.CustomerId.HasValue ? m.tbl_Customer.FirstName + " " + m.tbl_Customer.MiddleName + " " + m.tbl_Customer.LastName : "",

@@ -35,7 +35,17 @@ namespace FintrakBanking.Repositories.Admin
                         }).ToList();
             return data;
         }
-
+        public CurrencyViewModel GetBaseCurrency(int companyId)
+        {
+            var data = (from a in context.tbl_Company where a.CompanyId == companyId 
+                        select new CurrencyViewModel
+                        {
+                            currencyId = a.CurrencyId,
+                            currencyCode = a.tbl_Currency.CurrencyCode,
+                            currencyName = a.tbl_Currency.CurrencyCode +" - " + a.tbl_Currency.CurrencyName
+                        }).FirstOrDefault();
+            return data;
+        }
         public IEnumerable<CurrencyRateViewModel> GetCurrencyRate()
         {
             var data = (from a in context.tbl_Currency_Rate

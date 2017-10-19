@@ -55,6 +55,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool RequireScheduleType { get; set; }
 
+        public bool Deleted { get; set; }
+
+        public DateTime? DateTimeDeleted { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
 

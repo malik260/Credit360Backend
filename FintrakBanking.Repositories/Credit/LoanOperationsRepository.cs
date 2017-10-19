@@ -2758,7 +2758,7 @@ namespace FintrakBanking.Repositories.Credit
         public void updateLoanReviewOperation (short loanReviewOperationsId, int loanId)
         {
             tbl_Loan_Review_Operation result = (from p in context.tbl_Loan_Review_Operation
-                               where p.LoanId == loanId && p.LoanReviewOperationsId == loanReviewOperationsId
+                               where p.LoanId == loanId && p.LoanReviewOperationId == loanReviewOperationsId
                                                 select p).SingleOrDefault();
 
             result.OperationCompleted = true;
@@ -3843,6 +3843,24 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
+            List<tbl_Loan_Review_Operation_Irregular_Schedule> irregularSchedules = new List<tbl_Loan_Review_Operation_Irregular_Schedule>();
+            //Storing the Irregular Schedule Payment Plan
+            if (model.reviewIrregularSchedule != null)
+            {
+                foreach (var item in model.reviewIrregularSchedule)
+                {
+                    var irregularPlan = new tbl_Loan_Review_Operation_Irregular_Schedule
+                    {
+                   
+                        PaymentAmount = item.PaymentAmount,
+                        PaymentDate = item.PaymentDate,
+                        CreatedBy = model.createdBy,
+                        DateTimeCreated = DateTime.Now
+                    };
+                    irregularSchedules.Add(irregularPlan);
+                }
+            }
+
             var data = new tbl_Loan_Review_Operation
             {
                 LoanId = model.loanId,
@@ -3850,12 +3868,13 @@ namespace FintrakBanking.Repositories.Credit
                 OperationTypeId = model.operationTypeId,
                 EffectiveDate = model.proposedEffectiveDate,
                 ReviewDetails = model.reviewDetails,
-                InterateRate = model.interateRate,
+                InterateRate = (double?)model.interateRate,
                 Prepayment = model.prepayment,
                 PrincipalFrequencyTypeId = model.principalFrequencyTypeId,
                 InterestFrequencyTypeId = model.interestFrequencyTypeId,
                 PrincipalFirstPaymentDate = model.principalFirstPaymentDate,
                 InterestFirstPaymentDate = model.interestFirstPaymentDate,
+                MaturityDate = model.maturityDate,
                 Tenor = model.tenor,
                 CASA_AccountId = model.cASA_AccountId,
                 OverDraftTopup = model.overDraftTopup,
@@ -3864,7 +3883,8 @@ namespace FintrakBanking.Repositories.Credit
                 IsManagementInterestRate = model.isManagementRate,
                 OperationCompleted = false,
                 CreatedBy = model.createdBy,
-                DateCreated = DateTime.Now
+                DateCreated = DateTime.Now,
+                tbl_Loan_Review_Operation_Irregular_Schedule = irregularSchedules
             };
             // Audit Section ---------------------------
 
@@ -3873,7 +3893,7 @@ namespace FintrakBanking.Repositories.Credit
                 AuditTypeId = (short)AuditTypeEnum.LoanDocumentAdded,
                 StaffId = model.createdBy,
                 BranchId = model.userBranchId,
-                Detail = $"Added tbl_Loan_Review_Operation '{ data.LoanReviewOperationsId }' ",
+                Detail = $"Added tbl_Loan_Review_Operation '{ data.LoanReviewOperationId }' ",
                 IPAddress = model.userIPAddress,
                 Url = model.applicationUrl,
                 ApplicationDate = generalSetup.GetApplicationDate(),
@@ -3909,8 +3929,9 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    return false;
                     throw new Exception(ex.Message);
+                    return false;
+               
                 }
             }
         }
@@ -4018,7 +4039,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationTypeName = context.tbl_Operations.FirstOrDefault(d => d.OperationId == op.OperationTypeId).OperationName,
                             newEffectiveDate = op.EffectiveDate,
                             reviewDetails = op.ReviewDetails,
-                            newInterateRate = op.InterateRate
+                            newInterateRate = (decimal?)op.InterateRate
                         }).ToList();
             return data;
         }
@@ -4109,12 +4130,12 @@ namespace FintrakBanking.Repositories.Credit
                             productName = ln.tbl_Product.ProductName,
                             comment = "",
                             //Loan Review Operation
-                            loanReviewOperationsId = op.LoanReviewOperationsId,
+                            loanReviewOperationsId = op.LoanReviewOperationId,
                             operationTypeId = op.OperationTypeId,
                             operationTypeName = context.tbl_Operations.FirstOrDefault(d => d.OperationId == op.OperationTypeId).OperationName,
                             newEffectiveDate = op.EffectiveDate,
                             reviewDetails = op.ReviewDetails,
-                            newInterateRate = op.InterateRate,
+                          //  newInterateRate = op.InterateRate,
                             prepayment = op.Prepayment,
                             newPrincipalFrequencyTypeId = op.PrincipalFrequencyTypeId,
                             newInterestFrequencyTypeId = op.InterestFrequencyTypeId,

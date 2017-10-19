@@ -32,6 +32,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public DateTime? interestFirstPaymentDate { get; set; }
 
+        public DateTime? maturityDate { get; set; }
+
         public int? tenor { get; set; }
 
         public int? cASA_AccountId { get; set; }
@@ -51,8 +53,24 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isManagementRate { get; set; }
 
         public bool operationCompleted { get; set; }
+
+        public List<LoanReviewIrregularScheduleViewModel> reviewIrregularSchedule { get; set; }
     }
-    public class LoanReviewOperationApprovalViewModel
+    public class LoanReviewIrregularScheduleViewModel
+    {
+        public int IrregularScheduleInputId { get; set; }
+
+        public int LoanReviewOperationId { get; set; }
+
+        public DateTime PaymentDate { get; set; }
+
+        public decimal PaymentAmount { get; set; }
+
+        public int CreatedBy { get; set; }
+
+        public DateTime DateTimeCreated { get; set; }
+    }
+        public class LoanReviewOperationApprovalViewModel
     {
         public int loanId { get; set; }
         public int customerId { get; set; }
@@ -82,13 +100,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int interestInstallmentLeft { get; set; }
         public int approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
-        public string approvedBy { get; set; }
+        public int? approvedBy { get; set; }
         public string approverComment { get; set; }
         public DateTime? dateApproved { get; set; }
         public short loanStatusId { get; set; }
         public short scheduleTypeId { get; set; }
         public bool isDisbursed { get; set; }
-        public string disbursedBy { get; set; }
+        public int? disbursedBy { get; set; }
         public string disburserComment { get; set; }
         public DateTime? disburseDate { get; set; }
         public decimal? approvedAmount { get; set; }
