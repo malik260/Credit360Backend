@@ -112,15 +112,15 @@ namespace FintrakBanking.Repositories.Credit
                                  collateralType = d.tbl_Collateral_Type.CollateralTypeName,
                                  companyName = d.tbl_Loan_Application.tbl_Company.Name,
                                  applicationReferanceNumber = int.Parse(d.tbl_Loan_Application.ApplicationReferenceNumber),
-                                 applicationCollateralRefNo = context.tbl_Loan_Application_Collateral_RefNo.Where(b => b.CustomerCollateralId == d.CustomerCollateralId)
-                                      .Select(b => new LoanApplicationCollateralRefNoViewModel()
-                                      {
-                                          collateralRefNoId = b.CollateralRefNoId,
-                                          customerCollateralId = b.CustomerCollateralId,
-                                          documentNumber = b.DocumentNumber,
-                                          isBankAccount = b.IsBankAccount,
-                                          worth = b.Worth
-                                      }).ToList(),
+                                 //applicationCollateralRefNo = context.tbl_Loan_Application_Collateral_RefNo.Where(b => b.CustomerCollateralId == d.CustomerCollateralId)
+                                 //     .Select(b => new LoanApplicationCollateralRefNoViewModel()
+                                 //     {
+                                 //         collateralRefNoId = b.CollateralRefNoId,
+                                 //         customerCollateralId = b.CustomerCollateralId,
+                                 //         documentNumber = b.DocumentNumber,
+                                 //         isBankAccount = b.IsBankAccount,
+                                 //         worth = b.Worth
+                                 //     }).ToList(),
                              }).ToList(),
                             LoanApplicationDetail = context.tbl_Loan_Application_Detail.Where(c => c.LoanApplicationId == a.LoanApplicationId)
                              .Select(c => new LoanApplicationDetailViewModel()
@@ -429,22 +429,22 @@ namespace FintrakBanking.Repositories.Credit
 
                 if ( item.applicationCollateralRefNo.Count > 0)
                 {
-                    ApplicationCollateralRef(item.applicationCollateralRefNo);
+                   // ApplicationCollateralRef(item.applicationCollateralRefNo);
                 }
             }
         }
 
-        private void ApplicationCollateralRef(List<LoanApplicationCollateralRefNoViewModel> entity)
-        {
-           var item = entity.Select(c => new tbl_Loan_Application_Collateral_RefNo()
-            {
-                DocumentNumber = c.documentNumber,
-                IsBankAccount = c.isBankAccount,
-                Worth = c.worth,
-                CustomerCollateralId = c.customerCollateralId
-            });
-            context.tbl_Loan_Application_Collateral_RefNo.AddRange(item);
-        }
+        //private void ApplicationCollateralRef(List<LoanApplicationCollateralRefNoViewModel> entity)
+        //{
+        //   var item = entity.Select(c => new tbl_Loan_Application_Collateral()
+        //    {
+        //        DocumentNumber = c.documentNumber,
+        //        IsBankAccount = c.isBankAccount,
+        //        Worth = c.worth,
+        //        CustomerCollateralId = c.customerCollateralId
+        //    });
+        //    context.tbl_Loan_Application_Collateral.AddRange(item);
+        //}
 
         private string GenerateLoanReference(int customerId)
         {

@@ -271,7 +271,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Deal_Type> tbl_Deal_Type { get; set; }
         public virtual DbSet<tbl_Stock> tbl_Stock { get; set; }
         public virtual DbSet<tbl_Temp_Collateral_Stock> tbl_Temp_Collateral_Stock { get; set; }
-        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -3754,18 +3753,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Temp_Collateral_Stock>()
                 .Property(e => e.ShareValueAmountToUse)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LevelMaximumAmount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.InvestmentGradeAmount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.StaffMaximumAmount)
                 .HasPrecision(19, 4);
         }
     }
