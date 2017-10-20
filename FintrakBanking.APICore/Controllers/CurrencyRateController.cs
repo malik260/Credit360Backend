@@ -16,6 +16,7 @@ namespace FintrakBanking.APICore.Controllers
     public class CurrencyRateController : ApiControllerBase
     {
         private ICurrencyRateRepository repo;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public CurrencyRateController(ICurrencyRateRepository _repo)
         {
@@ -28,13 +29,28 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetCurrency()
         {
             try
-            {
+            { 
                 var data = repo.GetCurrency();
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
             }
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("base-currency")]
+        public HttpResponseMessage GetBaseCurrency()
+        {
+            try
+            {
+                var data = repo.GetBaseCurrency(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
@@ -51,6 +67,21 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
             }
 
+        }
+
+        [HttpGet]
+        [Route("currency-exchange-rate/{currencyId}")]
+        public HttpResponseMessage GetCurrentCurrencyExchangeRate(short currencyId)
+        {
+            try
+            {
+                var data = repo.GetCurrentCurrencyExchangeRate(currencyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet][Route("currency-rate/{currencyId}")]

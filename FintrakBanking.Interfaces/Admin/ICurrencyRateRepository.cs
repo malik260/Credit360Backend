@@ -9,6 +9,8 @@ namespace FintrakBanking.Interfaces.Admin
     {
         #region Currency Rate
         IEnumerable<CurrencyViewModel> GetCurrency();
+        CurrencyViewModel GetBaseCurrency(int companyId);
+        double GetCurrentCurrencyExchangeRate(short currencyId);
         IEnumerable<CurrencyRateViewModel> GetCurrencyRate();
         List<CurrencyRateViewModel> GetCurrencyRateById(short currencyRateId);
         bool AddCurrencyRate( CurrencyRateViewModel model);

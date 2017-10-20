@@ -370,6 +370,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string chargeFeeName { get; set; }
         public decimal feeRateValue { get; set; }
         public decimal feeDependentAmount { get; set; }
+        public decimal chargeAmount { get; set; }
         public decimal feeAmount { get; set; }
         public short feeIntervalId { get; set; }
         public string feeIntervalName { get; set; }
@@ -381,6 +382,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int casaAccountId { get; set; }
         public bool required { get; set; }
         public bool recurring { get; set; }
+        public int feeTargetId { get; set; }
+        public string feeTargetName { get; set; }
+        public bool byAmountRequired { get; set; }
     }
 
     public class LoanCollateralMappingViewModel : CollateralViewModel

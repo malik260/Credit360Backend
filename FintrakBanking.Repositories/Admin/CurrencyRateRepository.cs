@@ -36,6 +36,22 @@ namespace FintrakBanking.Repositories.Admin
             return data;
         }
 
+        public CurrencyViewModel GetBaseCurrency(int companyId)
+        {
+          var baseCurrency = (from a in context.tbl_Company
+             join c in context.tbl_Currency on a.CurrencyId equals c.CurrencyId
+             where a.CompanyId == companyId
+             select  new CurrencyViewModel
+             {
+                 currencyId = a.CurrencyId,
+                 currencyCode = c.CurrencyCode,
+                 currencyName = c.CurrencyName
+             });
+
+            return baseCurrency.FirstOrDefault();
+    }
+
+
         public IEnumerable<CurrencyRateViewModel> GetCurrencyRate()
         {
             var data = (from a in context.tbl_Currency_Rate
@@ -58,6 +74,12 @@ namespace FintrakBanking.Repositories.Admin
                         }).ToList();
             return data;
         }
+
+        public double GetCurrentCurrencyExchangeRate(short currencyId)
+        {
+            return (from a in context.tbl_Currency_Rate.Where(x=>x.CurrencyId == currencyId 
+                        && x.Deleted == false) select a.SellingRate).FirstOrDefault();
+        }
         public List<CurrencyRateViewModel> GetCurrencyRateById(short currencyRateId)
         {
             var data = (from a in context.tbl_Currency_Rate
@@ -78,6 +100,11 @@ namespace FintrakBanking.Repositories.Admin
                         }).OrderByDescending(x=>x.dateTimeCreated).ToList();
             return data;
         }
+
+
+
+
+
         public bool AddCurrencyRate(CurrencyRateViewModel model)
         {
             var data = new tbl_Currency_Rate
@@ -149,6 +176,7 @@ namespace FintrakBanking.Repositories.Admin
             //end of Audit section -----------------------
             return context.SaveChanges() != 0;
         }
+
         
     }
 }
