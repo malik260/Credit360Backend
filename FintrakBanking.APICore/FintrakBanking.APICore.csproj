@@ -427,6 +427,13 @@
     <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx.designer.cs">
       <DependentUpon>ApprovalTrailWithSLA1.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\DisburstedLoan.aspx.cs">
+      <DependentUpon>DisburstedLoan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DisburstedLoan.aspx.designer.cs">
+      <DependentUpon>DisburstedLoan.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\GrantedFacilities.aspx.cs">
       <DependentUpon>GrantedFacilities.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -488,6 +495,7 @@
     <Content Include="Reports\Credit\OfferLetter\TestReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx" />
+    <Content Include="Reports\ReportViews\DisburstedLoan.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
@@ -630,6 +638,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\Credit\OfferLetter\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DisburstedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />

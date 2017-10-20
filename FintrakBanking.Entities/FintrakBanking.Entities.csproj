@@ -226,6 +226,7 @@
     <Compile Include="Models\tbl_Loan_PrudentialGuideline.cs" />
     <Compile Include="Models\tbl_Loan_Relationship_Officer_History.cs" />
     <Compile Include="Models\tbl_Loan_Review_Operation.cs" />
+    <Compile Include="Models\tbl_Loan_Review_Operation_Irregular_Schedule.cs" />
     <Compile Include="Models\tbl_Loan_Revolving.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Category.cs" />
     <Compile Include="Models\tbl_Loan_Schedule_Daily.cs" />

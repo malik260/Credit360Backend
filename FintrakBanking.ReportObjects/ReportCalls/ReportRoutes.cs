@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Reports;
+using System;
 using System.Linq;
 namespace FintrakBanking.ReportObjects.ReportCalls
 {
@@ -50,6 +51,13 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/Workflow.aspx?companyId=" + companyId.ToString() + "&operationId=" + operationId.ToString();
             return path;
         }
+        public string GetDisburstLoans( DateTime  startDate, DateTime endDate, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/DisburstedLoan.aspx?companyId=" + companyId.ToString() + "&startDate=" + startDate + "&endDate=" + endDate;
+            return path;
+        }
+
     }
 
 }
