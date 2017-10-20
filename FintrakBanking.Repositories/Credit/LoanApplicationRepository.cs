@@ -410,7 +410,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     CollateralReferenceNumber = item.certificateOfOwnership,
                     CityId = item.cityId,
-                    CollateralTypeId = item.collateralTypeId,
+                    //CollateralTypeId = item.collateralTypeId,
                     CreatedBy = item.createdBy,
                     DateTimeCreated = genSetup.GetApplicationDate(),
                     OtherInformations = item.otherInformations,
@@ -420,7 +420,7 @@ namespace FintrakBanking.Repositories.Credit
                     NearestBusStop = item.nearestBusStop,
                     NearestLandmark = item.nearestLandmark,
                     DocumentTitle = item.documentTitle,
-                    LoanApplicationId = item.loanApplicationId,
+                    //LoanApplicationId = item.loanApplicationId,
                     SystemDateTime = DateTime.Now,
                     
                     
@@ -644,18 +644,21 @@ namespace FintrakBanking.Repositories.Credit
         private IQueryable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId)
         {
             var data = (from a in context.tbl_Loan_Application
+                        join b in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals b.LoanApplicationId
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
-                        //join d in context.tbl_Credit_Appraisal_Memorandum_Loan_Detail on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
+                        join d in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
                         join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
-                        join e in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals e.AppraisalMemorandumId
-                        join f in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals f.LoanApplicationId
+                        join cGrp in context.tbl_Customer_Group on a.CustomerGroupId equals cGrp.CustomerGroupId into grp from
+                        cGrp in grp.DefaultIfEmpty()
+         
                         where a.CompanyId == companyId && a.Deleted == false
-                              && f.StatusId == (int)ApprovalStatusEnum.Approved 
+                              && b.StatusId == (int)ApprovalStatusEnum.Approved 
                               group a by new
                               {
-                                  a.LoanApplicationId, a.ApplicationReferenceNumber, f.ApprovedAmount, a.LoanTypeId, a.ApplicationStatusId,
-                                  c.CAMRef, e.CAMDocumentation, a.ApplicationDate, a.RelationshipManagerId, a.RelationshipOfficerId,
-                                  cust.FirstName, cust.LastName, cust.MiddleName, cust.CustomerCode
+                                  a.LoanApplicationId, a.ApplicationReferenceNumber, b.ApprovedAmount, a.LoanTypeId, a.ApplicationStatusId,
+                                  c.CAMRef, d.CAMDocumentation, a.ApplicationDate, a.RelationshipManagerId, a.RelationshipOfficerId,
+                                  cust.FirstName, cust.LastName, cust.MiddleName, cust.CustomerCode, cGrp.CustomerGroupId,
+                                  cGrp.GroupName, cGrp.GroupCode
                               } into g
                         select new CamProcessedLoanViewModel
                         {
@@ -663,9 +666,9 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = g.Key.ApplicationReferenceNumber,
                             customerCode = g.Key.CustomerCode,
                             customerName = g.Key.FirstName + " " + g.Key.MiddleName + " " + g.Key.LastName,
-                            //customerGroupId = a.CustomerGroupId,
-                            //customerGroupName = a.CustomerGroupId.HasValue ? a.tbl_Customer_Group.GroupName : "",
-                            //customerGroupCode = a.tbl_Customer_Group.GroupCode,
+                            customerGroupId = g.Key.CustomerGroupId,
+                            customerGroupName = g.Key.GroupName,
+                            customerGroupCode = g.Key.GroupCode,
                             relationshipOfficerId = g.Key.RelationshipOfficerId,
                             //relationshipOfficerName =
                             //    a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,

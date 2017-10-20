@@ -319,6 +319,7 @@
     <Compile Include="Models\tbl_Temp_Product_Fee.cs" />
     <Compile Include="Models\tbl_Temp_Staff.cs" />
     <Compile Include="Models\tbl_Tenor_Mode.cs" />
+    <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
