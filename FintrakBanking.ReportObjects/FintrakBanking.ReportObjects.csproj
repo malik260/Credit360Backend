@@ -49,6 +49,7 @@
     <Compile Include="LoanMonitoring.cs" />
     <Compile Include="OfferLetterInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportCalls\IReportRouts.cs" />
     <Compile Include="ReportCalls\ReportRouts.cs" />
     <Compile Include="ReportingObjects\LimitsMonitoringReportsObjects.cs" />
     <Compile Include="ReportingObjects\LoanReportObjects.cs" />
