@@ -26,8 +26,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string Item { get; set; }
 
-        [StringLength(100)]
-        public string CreatedBy { get; set; }
+        public bool IsMandatory { get; set; }
+
+        public int? CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
 

@@ -89,8 +89,7 @@ namespace FintrakBanking.Entities.Models
 
         public int ApprovalStatusId { get; set; }
 
-        [StringLength(50)]
-        public string ApprovedBy { get; set; }
+        public int? ApprovedBy { get; set; }
 
         [StringLength(500)]
         public string ApproverComment { get; set; }
@@ -107,8 +106,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsDisbursed { get; set; }
 
-        [StringLength(50)]
-        public string DisbursedBy { get; set; }
+        public int? DisbursedBy { get; set; }
 
         [StringLength(500)]
         public string DisburserComment { get; set; }

@@ -114,7 +114,7 @@ namespace FintrakBanking.Entities.Models
 
         public short ProductClassId { get; set; }
 
-        public short SubSectorId { get; set; }
+        public short? SubSectorId { get; set; }
 
         public short LoanTypeId { get; set; }
 

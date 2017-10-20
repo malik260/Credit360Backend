@@ -82,13 +82,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int interestInstallmentLeft { get; set; }
         public int approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
-        public string approvedBy { get; set; }
+        public int? approvedBy { get; set; }
         public string approverComment { get; set; }
         public DateTime? dateApproved { get; set; }
         public short loanStatusId { get; set; }
         public short scheduleTypeId { get; set; }
         public bool isDisbursed { get; set; }
-        public string disbursedBy { get; set; }
+        public int? disbursedBy { get; set; }
         public string disburserComment { get; set; }
         public DateTime? disburseDate { get; set; }
         public decimal? approvedAmount { get; set; }

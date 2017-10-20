@@ -539,6 +539,17 @@ namespace FintrakBanking.Repositories.Credit
             financeTransaction.PostTransaction(inputTransactions);
         }
 
+        public void PostLoanFees(LoanViewModel entity)
+        {
+          
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
+
+            financeTransaction.PostTransaction(inputTransactions);
+        }
+
+
         //[OperationBehavior(TransactionScopeRequired = true)]
         //public LoanViewModel PostLoanDisbursment(LoanViewModel model)
         //{      
@@ -1231,7 +1242,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanCovenantList.Add(loanCovenant);
             };
 
-            var feeRecord = context.tbl_Loan_Fee.Where(x => x.LoanId == loanId).ToList();
+            var feeRecord = context.tbl_Loan_Fee.Where(x => x.LoanId == loanId && x.IsPosted == false).ToList();
             List<LoanChargeFeeViewModel> loanChargeFeeList = new List<LoanChargeFeeViewModel>();
             foreach (var fee in feeRecord)
             {
@@ -2301,7 +2312,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationId = m.LoanApplicationId,
                             loanApplicationDetailId = d.LoanApplicationDetailId,
                             applicationReferenceNumber = m.ApplicationReferenceNumber,
-                            casaAccountId = m.CasaAccountId,
+                            //casaAccountId = m.CasaAccountId,
                             customerId = m.CustomerId ?? 0,
                             customerCode = cust.CustomerCode,
                             customerName = m.CustomerId.HasValue ? m.tbl_Customer.FirstName + " " + m.tbl_Customer.MiddleName + " " + m.tbl_Customer.LastName : "",

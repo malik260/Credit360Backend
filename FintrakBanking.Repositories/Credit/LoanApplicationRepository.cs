@@ -269,7 +269,7 @@ namespace FintrakBanking.Repositories.Credit
                     LoanTypeId = loan.loanTypeId,
                     CompanyId = loan.companyId,
                     BranchId = (short)loan.branchId,
-                    CasaAccountId = casaAccountId,
+                    //CasaAccountId = casaAccountId,
                     RelationshipOfficerId = loan.relationshipOfficerId,
                     RelationshipManagerId = loan.relationshipManagerId,
                     MISCode = loan.misCode,
@@ -379,7 +379,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanCollateral = new tbl_Loan_Application_Collateral()
                 {
-                    CertificateOfOwnership = item.certificateOfOwnership,
+                    CollateralReferenceNumber = item.certificateOfOwnership,
                     CityId = item.cityId,
                     CollateralTypeId = item.collateralTypeId,
                     CreatedBy = item.createdBy,

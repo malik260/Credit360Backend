@@ -53,6 +53,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool GoForApproval(ApprovalViewModel entity);
 
+        void PostLoanFees(LoanViewModel entity);
+
         AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId);
 
         IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId);
