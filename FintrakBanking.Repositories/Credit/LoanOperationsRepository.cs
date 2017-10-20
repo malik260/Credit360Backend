@@ -714,7 +714,7 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingpastDue(DateTime applicationDate)
+        public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue (DateTime applicationDate)
 
         {
             var model = (from a in context.tbl_Loan_Schedule_Periodic
