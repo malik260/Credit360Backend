@@ -11,9 +11,9 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/report")]
     public class ReportsController : ApiControllerBase 
     {
-        IReportRouts repo;
+        IReportRoutes repo;
 
-        public ReportsController(IReportRouts _repo) {
+        public ReportsController(IReportRoutes _repo) {
 
             repo = _repo;
         }

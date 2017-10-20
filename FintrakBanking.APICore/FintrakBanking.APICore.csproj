@@ -363,23 +363,46 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
-    <Compile Include="Reports\Credit\Credit.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Credit.xsd</DependentUpon>
+    <Compile Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx.cs">
+      <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Reports\Credit\OfferLetter.aspx.cs">
+    <Compile Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx.designer.cs">
+      <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Credit\Monitoring\NplLoanMonitoring.aspx.cs">
+      <DependentUpon>NplLoanMonitoring.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\Monitoring\NplLoanMonitoring.aspx.designer.cs">
+      <DependentUpon>NplLoanMonitoring.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.aspx.cs">
+      <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.aspx.designer.cs">
+      <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Credit\Monitoring\SelfLiquidatingLoanExpiry.aspx.cs">
+      <DependentUpon>SelfLiquidatingLoanExpiry.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\Monitoring\SelfLiquidatingLoanExpiry.aspx.designer.cs">
+      <DependentUpon>SelfLiquidatingLoanExpiry.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\Credit\OfferLetter\OfferLetter.aspx.cs">
       <DependentUpon>OfferLetter.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Reports\Credit\OfferLetter.aspx.designer.cs">
+    <Compile Include="Reports\Credit\OfferLetter\OfferLetter.aspx.designer.cs">
       <DependentUpon>OfferLetter.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\Credit\TestReport.aspx.cs">
+    <Compile Include="Reports\Credit\OfferLetter\TestReport.aspx.cs">
       <DependentUpon>TestReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Reports\Credit\TestReport.aspx.designer.cs">
+    <Compile Include="Reports\Credit\OfferLetter\TestReport.aspx.designer.cs">
       <DependentUpon>TestReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx.cs">
@@ -456,8 +479,12 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Reports\Credit\OfferLetter.aspx" />
-    <Content Include="Reports\Credit\TestReport.aspx" />
+    <Content Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx" />
+    <Content Include="Reports\Credit\Monitoring\NplLoanMonitoring.aspx" />
+    <Content Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.aspx" />
+    <Content Include="Reports\Credit\Monitoring\SelfLiquidatingLoanExpiry.aspx" />
+    <Content Include="Reports\Credit\OfferLetter\OfferLetter.aspx" />
+    <Content Include="Reports\Credit\OfferLetter\TestReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx" />
     <Content Include="Reports\ReportViews\DisburstedLoan.aspx" />
@@ -500,17 +527,6 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <Content Include="Reports\Credit\Credit.xsc">
-      <DependentUpon>Credit.xsd</DependentUpon>
-    </Content>
-    <None Include="Reports\Credit\Credit.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>Credit.Designer.cs</LastGenOutput>
-    </None>
-    <Content Include="Reports\Credit\Credit.xss">
-      <DependentUpon>Credit.xsd</DependentUpon>
-    </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
@@ -594,10 +610,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
-    <EmbeddedResource Include="Reports\Credit\OfferLetter.rdlc">
+    <EmbeddedResource Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\Monitoring\NplLoanMonitoring.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\Monitoring\SelfLiquidatingLoanExpiry.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetter\OfferLetter.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetter\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisburstedLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />

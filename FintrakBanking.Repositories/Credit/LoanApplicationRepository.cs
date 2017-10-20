@@ -93,35 +93,35 @@ namespace FintrakBanking.Repositories.Credit
                             createdBy = a.CreatedBy,
                             applicationDate = a.ApplicationDate,
                             dateTimeCreated = a.DateTimeCreated,
-                            //LoanApplicationCollateral = context.tbl_Loan_Application_Collateral.Where(d => d.LoanApplicationId == a.LoanApplicationId)
-                            // .Select(d => new LoanApplicationCollateralViewModel()
-                            // {
-                            //     certificateOfOwnership = d.CollateralReferenceNumber,
-                            //     cityId = d.CityId,
-                            //     collateralTypeId = d.CollateralTypeId,
-                            //     customerCollateralId = d.CustomerCollateralId,
-                            //     documentTitle = d.DocumentTitle,
-                            //     latitude = d.Latitude,
-                            //     loanApplicationId = d.LoanApplicationId,
-                            //     locationAddress = d.LocationAddress,
-                            //     longitude = d.Longitude,
-                            //     nearestBusStop = d.NearestBusStop,
-                            //     nearestLandmark = d.NearestLandmark,
-                            //     otherInformations = d.OtherInformations,
-                            //     city = d.tbl_City.CityName,
-                            //     collateralType = d.tbl_Collateral_Type.CollateralTypeName,
-                            //     companyName = d.tbl_Loan_Application.tbl_Company.Name,
-                            //     applicationReferanceNumber = int.Parse(d.tbl_Loan_Application.ApplicationReferenceNumber),
-                            //     applicationCollateralRefNo = context.tbl_Loan_Application_Collateral_RefNo.Where(b => b.CustomerCollateralId == d.CustomerCollateralId)
-                            //          .Select(b => new LoanApplicationCollateralRefNoViewModel()
-                            //          {
-                            //              collateralRefNoId = b.CollateralRefNoId,
-                            //              customerCollateralId = b.CustomerCollateralId,
-                            //              documentNumber = b.DocumentNumber,
-                            //              isBankAccount = b.IsBankAccount,
-                            //              worth = b.Worth
-                            //          }).ToList(),
-                            // }).ToList(),
+                            LoanApplicationCollateral = context.tbl_Loan_Application_Collateral.Where(d => d.LoanApplicationId == a.LoanApplicationId)
+                             .Select(d => new LoanApplicationCollateralViewModel()
+                             {
+                                 certificateOfOwnership = d.CollateralReferenceNumber,
+                                 cityId = d.CityId,
+                                 collateralTypeId = d.CollateralTypeId,
+                                 customerCollateralId = d.CustomerCollateralId,
+                                 documentTitle = d.DocumentTitle,
+                                 latitude = d.Latitude,
+                                 loanApplicationId = d.LoanApplicationId,
+                                 locationAddress = d.LocationAddress,
+                                 longitude = d.Longitude,
+                                 nearestBusStop = d.NearestBusStop,
+                                 nearestLandmark = d.NearestLandmark,
+                                 otherInformations = d.OtherInformations,
+                                 city = d.tbl_City.CityName,
+                                 collateralType = d.tbl_Collateral_Type.CollateralTypeName,
+                                 companyName = d.tbl_Loan_Application.tbl_Company.Name,
+                                 applicationReferanceNumber = int.Parse(d.tbl_Loan_Application.ApplicationReferenceNumber),
+                                 //applicationCollateralRefNo = context.tbl_Loan_Application_Collateral_RefNo.Where(b => b.CustomerCollateralId == d.CustomerCollateralId)
+                                 //     .Select(b => new LoanApplicationCollateralRefNoViewModel()
+                                 //     {
+                                 //         collateralRefNoId = b.CollateralRefNoId,
+                                 //         customerCollateralId = b.CustomerCollateralId,
+                                 //         documentNumber = b.DocumentNumber,
+                                 //         isBankAccount = b.IsBankAccount,
+                                 //         worth = b.Worth
+                                 //     }).ToList(),
+                             }).ToList(),
                             LoanApplicationDetail = context.tbl_Loan_Application_Detail.Where(c => c.LoanApplicationId == a.LoanApplicationId)
                              .Select(c => new LoanApplicationDetailViewModel()
                              {
@@ -431,22 +431,22 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (item.applicationCollateralRefNo.Count > 0)
                 {
-                    ApplicationCollateralRef(item.applicationCollateralRefNo);
+                   // ApplicationCollateralRef(item.applicationCollateralRefNo);
                 }
             }
         }
 
-        private void ApplicationCollateralRef(List<LoanApplicationCollateralRefNoViewModel> entity)
-        {
-            var item = entity.Select(c => new tbl_Loan_Application_Collateral_RefNo()
-            {
-                DocumentNumber = c.documentNumber,
-                IsBankAccount = c.isBankAccount,
-                Worth = c.worth,
-                CustomerCollateralId = c.customerCollateralId
-            });
-            context.tbl_Loan_Application_Collateral_RefNo.AddRange(item);
-        }
+        //private void ApplicationCollateralRef(List<LoanApplicationCollateralRefNoViewModel> entity)
+        //{
+        //   var item = entity.Select(c => new tbl_Loan_Application_Collateral()
+        //    {
+        //        DocumentNumber = c.documentNumber,
+        //        IsBankAccount = c.isBankAccount,
+        //        Worth = c.worth,
+        //        CustomerCollateralId = c.customerCollateralId
+        //    });
+        //    context.tbl_Loan_Application_Collateral.AddRange(item);
+        //}
 
         private string GenerateLoanReference(int customerId)
         {
@@ -655,27 +655,14 @@ namespace FintrakBanking.Repositories.Credit
                         from cGrp in grp.DefaultIfEmpty()
 
                         where a.CompanyId == companyId && a.Deleted == false
-                              && b.StatusId == (int)ApprovalStatusEnum.Approved
-                        group a by new
-                        {
-                            a.LoanApplicationId,
-                            a.ApplicationReferenceNumber,
-                            b.ApprovedAmount,
-                            a.LoanTypeId,
-                            a.ApplicationStatusId,
-                            c.CAMRef,
-                            d.CAMDocumentation,
-                            a.ApplicationDate,
-                            a.RelationshipManagerId,
-                            a.RelationshipOfficerId,
-                            cust.FirstName,
-                            cust.LastName,
-                            cust.MiddleName,
-                            cust.CustomerCode,
-                            cGrp.CustomerGroupId,
-                            cGrp.GroupName,
-                            cGrp.GroupCode
-                        } into g
+                              && b.StatusId == (int)ApprovalStatusEnum.Approved 
+                              group a by new
+                              {
+                                  a.LoanApplicationId, a.ApplicationReferenceNumber, b.ApprovedAmount, a.LoanTypeId, a.ApplicationStatusId,
+                                  c.CAMRef, d.CAMDocumentation, a.ApplicationDate, a.RelationshipManagerId, a.RelationshipOfficerId,
+                                  cust.FirstName, cust.LastName, cust.MiddleName, cust.CustomerCode, cGrp.CustomerGroupId,
+                                  cGrp.GroupName, cGrp.GroupCode
+                              } into g
                         select new CamProcessedLoanViewModel
                         {
                             loanApplicationId = g.Key.LoanApplicationId,

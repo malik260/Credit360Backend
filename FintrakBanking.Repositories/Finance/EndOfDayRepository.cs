@@ -104,15 +104,15 @@ namespace FintrakBanking.Repositories.Finance
             endOfDay.CreatedBy = staffId;
             endOfDay.StartDateTime = DateTime.Now;
 
-            loanOperation.GetDailyTeamLoansInterestAccrual(date);
+            loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
 
-            loanOperation.GetDailyUnauthorisedOverdraftInterestAccrual(date);
+            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            loanOperation.GetDailyUnauthorisedOverdraftInterestAccrual(date);
+            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            loanOperation.GetDailyPastDueInterestAccrual(date);
+            loanOperation.ProcessDailyPastDueInterestAccrual(date);
 
-            loanOperation.GetDailyPastDuePrincipalAccrual(date);
+            loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
 
             endOfDay.EndDateTime = DateTime.Now;
 
