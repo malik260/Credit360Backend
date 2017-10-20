@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 namespace FintrakBanking.ReportObjects.ReportCalls
 {
-    public  class ReportRouts : IReportRouts
+    public  class ReportRoutes : IReportRoutes
     {
         string reportPath = "http://localhost:51336/Reports/";
         private IQueryable<tbl_Loan_Application> LoanApplication(int companyId)

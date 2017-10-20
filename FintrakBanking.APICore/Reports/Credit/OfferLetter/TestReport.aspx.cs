@@ -3,7 +3,7 @@ using FintrakBanking.APICore.JWTAuth;
 using Microsoft.Reporting.WebForms;
 using System;
 
-namespace FintrakBanking.APICore.Reports.Credit
+namespace FintrakBanking.APICore.Reports.Credit.OfferLetter
 {
     public partial class TestReport : System.Web.UI.Page
     {
