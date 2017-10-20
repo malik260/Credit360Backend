@@ -46,87 +46,85 @@ namespace FintrakBanking.Repositories.Customer
 
         #region customer KYC
 
-        //public IQueryable<KYCItemViewModel> GetKYCItems(int companyId)
-        //{
-        //    return (IQueryable<KYCItemViewModel>)context.tbl_KYC_Item.Where(d => d.tbl_Product.CompanyId == companyId).Select(d => new KYCItemViewModel
-        //    {
-        //        createdBy = d.CreatedBy,
-        //        productId = d.ProductId,
-        //        kYCItemId = d.KYCItemId,
-        //        item = d.Item,
-        //        dateTimeCreated = d.DateTimeCreated,
-        //        displayOrder = d.DisplayOrder,
-        //         isMandatory = d.IsMandatory,
-        //        productName = d.tbl_Product.ProductName
-        //    });
-        //}
+        public IEnumerable<KYCItemViewModel> GetKYCItems(int companyId)
+        {
+           var kycItem = (from d in context.tbl_KYC_Item where d.tbl_Product.CompanyId == companyId select new KYCItemViewModel
+            {
+                createdBy = (int)d.CreatedBy,
+                productId = (short)d.ProductId,
+                kYCItemId = d.KYCItemId,
+                item = d.Item,
+                isMandatory = d.IsMandatory,
+                dateTimeCreated = (DateTime)d.DateTimeCreated,
+                displayOrder = d.DisplayOrder,
+                productName = d.tbl_Product.ProductName
+            }).ToList();
+            return kycItem;
+        }
 
-        //public bool AddKycItem(KYCItemViewModel entity)
-        //{
-        //var data = new tbl_KYC_Item
-        //{
-        //    CreatedBy = entity.createdBy,
-        //    DateTimeCreated = genSetup.GetApplicationDate(),
-        //    DisplayOrder = entity.displayOrder,
-        //    Item = entity.item,
-        //    IsMandatory = entity.isMandatory,
-        //    KYCItemId = entity.kYCItemId,
-        //    ProductId = entity.productId
-        //};
-        //context.tbl_KYC_Item.Add(data);
-        // Audit Section ---------------------------
-        //var audit = new tbl_Audit
-        //{
-        //    AuditTypeId = (short)AuditTypeEnum.KYCitemAdd,
-        //    StaffId = entity.createdBy,
-        //    BranchId = (short)entity.userBranchId,
-        //    Detail = $"Added KYC Item: { entity.item  } ",
-        //    IPAddress = entity.userIPAddress,
-        //    Url = entity.applicationUrl,
-        //    ApplicationDate = genSetup.GetApplicationDate(),
-        //    SystemDateTime = DateTime.Now
-        //};
-        //this.auditTrail.AddAuditTrail(audit);
+        public bool AddKycItem(KYCItemViewModel entity)
+        {
+            var data = new tbl_KYC_Item
+            {
+                CreatedBy = entity.createdBy,
+                DateTimeCreated = genSetup.GetApplicationDate(),
+                DisplayOrder = entity.displayOrder,
+                Item = entity.item,
+               IsMandatory = entity.isMandatory,
+                KYCItemId = entity.kYCItemId,
+                ProductId = entity.productId
+            };
+            context.tbl_KYC_Item.Add(data);
+           // Audit Section ---------------------------
+           var audit = new tbl_Audit
+           {
+               AuditTypeId = (short)AuditTypeEnum.KYCItemAdded,
+               StaffId = entity.createdBy,
+               BranchId = (short)entity.userBranchId,
+               Detail = $"Added KYC Item: { entity.item  } ",
+               IPAddress = entity.userIPAddress,
+               Url = entity.applicationUrl,
+               ApplicationDate = genSetup.GetApplicationDate(),
+               SystemDateTime = DateTime.Now
+           };
+            this.auditTrail.AddAuditTrail(audit);
 
-        //end of Audit section -------------------------------
+           // end of Audit section -------------------------------
 
-        //    return context.SaveChanges() != 0;
+            return context.SaveChanges() != 0;
 
-        //}
+        }
 
-        //public bool UpdatedKycItem(int kYCItemId ,KYCItemViewModel entity)
-        //{
-        //    var data = context.tbl_KYC_Item.Where(c => c.KYCItemId == kYCItemId).SingleOrDefault();
+        public bool UpdatedKycItem(int kYCItemId, KYCItemViewModel entity)
+        {
+            var data = context.tbl_KYC_Item.Where(c => c.KYCItemId == kYCItemId).SingleOrDefault();
+           
+            data.DateTimeUpdated = DateTime.Now;
+            data.DisplayOrder = entity.displayOrder;
+            data.Item = entity.item;
+            data.LastUpdatedBy = entity.createdBy;
+            data.ProductId = entity.productId;
+           data.IsMandatory = entity.isMandatory;
 
-        //    data.CreatedBy = entity.createdBy;
-        //    data.DateTimeCreated = entity.dateTimeCreated;
-        //    data.DateTimeUpdated = entity.dateTimeUpdated;
-        //    data.DisplayOrder = entity.displayOrder;
-        //    data.Item = entity.item;
-        //    data.LastUpdatedBy = entity.lastUpdatedBy;
-        //    data.KYCItemId = entity.kYCItemId;
-        //    data.ProductId = entity.productId;
-        //    data.IsMandatory = entity.isMandatory;
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.KYCItemUpdated,
+                StaffId = entity.createdBy,
+                BranchId = (short)entity.userBranchId,
+                Detail = $"Updated KYC Item: { entity.item  } ",
+                IPAddress = entity.userIPAddress,
+                Url = entity.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
 
-        //    // Audit Section ---------------------------
-        //    var audit = new tbl_Audit
-        //    {
-        //        AuditTypeId = (short)AuditTypeEnum.KYCitemUpdated,
-        //        StaffId = entity.createdBy,
-        //        BranchId = (short)entity.userBranchId,
-        //        Detail = $"Updated KYC Item: { entity.item  } ",
-        //        IPAddress = entity.userIPAddress,
-        //        Url = entity.applicationUrl,
-        //        ApplicationDate = genSetup.GetApplicationDate(),
-        //        SystemDateTime = DateTime.Now
-        //    };
-        //    this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
 
-        //    //end of Audit section -------------------------------
+            return context.SaveChanges() != 0;
 
-        //    return context.SaveChanges() != 0;
-
-        //}
+        }
 
         #endregion customer KYC
 
@@ -162,8 +160,13 @@ namespace FintrakBanking.Repositories.Customer
 
             return context.SaveChanges() != 0;
         }
-
-        public bool AddTempCustomerGroup(CustomerGroupViewModel custGroupModel)
+        public bool DoesGroupNameExist(string groupName, string groupCode)
+        {
+            var exist = (from a in context.tbl_Customer_Group where
+                       a.GroupName == groupName || a.GroupCode == groupCode select a).Any();
+            return exist;
+        }
+            public bool AddTempCustomerGroup(CustomerGroupViewModel custGroupModel)
         {
             bool output = false;
 
@@ -620,7 +623,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (customerGroups.Count <= 0)
                 return false;
-
+            List<tbl_Customer_Group_Mapping> listOfMappedGroup = new List<tbl_Customer_Group_Mapping>();
             foreach (CustomerGroupMappingViewModel item in customerGroups)
             {
                 var group = this.context.tbl_Customer_Group_Mapping.FirstOrDefault(x => x.CustomerId == item.customerId && x.CustomerGroupId == item.customerGroupId);
@@ -631,16 +634,20 @@ namespace FintrakBanking.Repositories.Customer
                         CustomerId = item.customerId,
                         CustomerGroupId = item.customerGroupId,
                         RelationshipTypeId = item.relationshipTypeId,
+                        CreatedBy = createdBy,
+                        Deleted = false,
                         DateTimeCreated = DateTime.Now
                     };
-                    context.tbl_Customer_Group_Mapping.Add(groupMap);
+                    listOfMappedGroup.Add(groupMap);
+                  
                     // Audit Section ---------------------------
                     var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
                                                             .Select(x => new
                                                             {
                                                                 customerName = x.FirstName + " " + x.LastName
                                                             }).FirstOrDefault();
-                    var groupName = this.context.tbl_Customer_Group.FirstOrDefault(x => x.CustomerGroupId == item.customerGroupId).GroupName;
+                    var groupName = (from gr in this.context.tbl_Customer_Group where gr.CustomerGroupId == item.customerGroupId select gr.GroupName).FirstOrDefault();
+
                     var audit = new tbl_Audit
                     {
                         AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
@@ -654,10 +661,12 @@ namespace FintrakBanking.Repositories.Customer
                     };
                     this.auditTrail.AddAuditTrail(audit);
                     //end of Audit section -----------------------
-                    return context.SaveChanges() != 0;
+                  
                 }
             }
-            return true;
+            context.tbl_Customer_Group_Mapping.AddRange(listOfMappedGroup);
+            return context.SaveChanges() != 0;
+          
         }
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
@@ -1016,6 +1025,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 var type = context.tbl_Customer_Group_RelationshipType.FirstOrDefault(x=> x.RelationshipTypeId == model.lookupId);
                 type.RelationshipTypeName = model.lookupName;
+              
             }
             else
             {

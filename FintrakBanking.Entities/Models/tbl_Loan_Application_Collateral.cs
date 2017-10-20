@@ -9,11 +9,14 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.tbl_Loan_Application_Collateral")]
     public partial class tbl_Loan_Application_Collateral
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-       
-
         [Key]
         public int CustomerCollateralId { get; set; }
+
+        public int LoanApplicationId { get; set; }
+
+        public int CollateralTypeId { get; set; }
+
+        public int? CasaAccountId { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -25,8 +28,6 @@ namespace FintrakBanking.Entities.Models
         public bool? IsBankAccount { get; set; }
 
         public int? CityId { get; set; }
-
-        public int CollateralTypeId { get; set; }
 
         [StringLength(50)]
         public string DocumentTitle { get; set; }
@@ -46,11 +47,7 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(500)]
-        public string OtherInformations { get; set; }
-
-        public int? CasaAccountId { get; set; }
-
-        public int LoanApplicationId { get; set; }
+        public string OtherInformations { get; set; }         
 
         public int CreatedBy { get; set; }
 
@@ -67,6 +64,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DateTimeDeleted { get; set; }
 
         public DateTime SystemDateTime { get; set; }
+
+        public virtual tbl_CASA tbl_CASA { get; set; }
 
         public virtual tbl_City tbl_City { get; set; }
 

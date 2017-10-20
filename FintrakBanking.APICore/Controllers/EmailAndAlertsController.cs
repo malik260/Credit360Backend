@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.Interfaces.Setups.General;
 using System;
 using System.Net;
@@ -13,10 +14,12 @@ namespace FintrakBanking.APICore.Controllers
     {
         private IEmailAndAlertsRepository repo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
+        private IErrorLogRepository errorLog;
 
-        public EmailAndAlertsController(IEmailAndAlertsRepository _repo)
+        public EmailAndAlertsController(IEmailAndAlertsRepository _repo, IErrorLogRepository _errorLog)
         {
             repo = _repo;
+            errorLog = _errorLog;
         }
 
         [HttpGet]
@@ -31,6 +34,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
+                errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
             }
         }
@@ -47,6 +51,59 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
+                errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("send-alerts/collateral-property-revaluation")]
+        public HttpResponseMessage SendAlertsForCollateralPropertyRevaluation()
+        {
+            try
+            {
+                repo.SendAlertsForCollateralPropertyRevaluation();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
+            }
+            catch (Exception ex)
+            {
+                errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("send-alerts/npl-loans")]
+        public HttpResponseMessage SendAlertsForLoanNplMonitoring()
+        {
+            try
+            {
+                repo.SendAlertsForLoanNplMonitoring();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
+            }
+            catch (Exception ex)
+            {
+                errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("send-alerts/self-liquidating-loans-expiry")]
+        public HttpResponseMessage SendAlertsOnSelfLiquidatingLoanExpiry()
+        {
+            try
+            {
+                repo.SendAlertsOnSelfLiquidatingLoanExpiry();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
+            }
+            catch (Exception ex)
+            {
+                errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
             }
         }
