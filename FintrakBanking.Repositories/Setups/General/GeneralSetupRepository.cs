@@ -15,12 +15,11 @@ namespace FintrakBanking.Repositories.Setups.General
     public class GeneralSetupRepository : IGeneralSetupRepository
     {
         private FinTrakBankingContext context;
-        ICultureHelper cultureHelper;
-        public GeneralSetupRepository(FinTrakBankingContext _context,
-                                      ICultureHelper _cultureHelper)
+        public GeneralSetupRepository(FinTrakBankingContext _context)
         {
+
             this.context = _context;
-            this.cultureHelper = _cultureHelper;
+            
         }
 
         public DateTime GetApplicationDate()

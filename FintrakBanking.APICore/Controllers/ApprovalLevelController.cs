@@ -55,25 +55,25 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        //[HttpGet]
-        //[Route("approval-level")]
-        //public HttpResponseMessage GetAllApprovalLevel()
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetAllApprovalLevel(token.GetCompanyId);
-        //        if (data == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
+        [HttpGet]
+        [Route("approval-level/all")]
+        public HttpResponseMessage GetAllApprovalLevel()
+        {
+            try
+            {
+                var data = repo.GetAllApprovalLevel(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpGet]
         [Route("approval-level/approval-level/{id}")]

@@ -2490,7 +2490,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
         {
             var data = (from lac in context.tbl_Loan_Application_Collateral
-                        where lac.LoanApplicationId == loanApplicationId && lac.Deleted == false
+                        where lac.tbl_Loan_Application.LoanApplicationId == loanApplicationId && lac.Deleted == false
                         select new LoanApplicationCollateralViewModel()
                         {
                             customerCollateralId = lac.CustomerCollateralId,
