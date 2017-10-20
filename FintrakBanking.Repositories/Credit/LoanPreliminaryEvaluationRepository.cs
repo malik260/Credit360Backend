@@ -435,7 +435,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = pen.tbl_Loan_Type.LoanTypeName,
                             productClassId = pen.ProductClassId,
                             productClassName = pen.tbl_Product_Class.ProductClassName,
-                            subSectorId = pen.SubSectorId,
+                           // subSectorId = pen.SubSectorId,
                             subSectorName = pen.tbl_Sub_Sector.Name,
                             sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == pen.SubSectorId).SectorId ?? 0,
                         });
@@ -558,7 +558,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = pen.tbl_Loan_Type.LoanTypeName,
                             productClassId = pen.ProductClassId,
                             productClassName = pen.tbl_Product_Class.ProductClassName,
-                            subSectorId = pen.SubSectorId,
+                            //subSectorId = pen.SubSectorId,
                             subSectorName = pen.tbl_Sub_Sector.Name,
                             sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == pen.SubSectorId).SectorId ?? 0,
                         });
@@ -738,7 +738,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = p.tbl_Loan_Type.LoanTypeName,
                             productClassId = p.ProductClassId,
                             productClassName = p.tbl_Product_Class.ProductClassName,
-                            subSectorId = p.SubSectorId,
+                            //subSectorId = p.SubSectorId,
                             subSectorName = p.tbl_Sub_Sector.Name,
                             sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == p.SubSectorId).SectorId ?? 0,
                         });
@@ -868,7 +868,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanTypeName = p.tbl_Loan_Type.LoanTypeName,
                             productClassId = p.ProductClassId,
                             productClassName = p.tbl_Product_Class.ProductClassName,
-                            subSectorId = p.SubSectorId,
+                            //subSectorId = p.SubSectorId,
                             subSectorName = p.tbl_Sub_Sector.Name,
                             sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == p.SubSectorId).SectorId ?? 0,
                         });

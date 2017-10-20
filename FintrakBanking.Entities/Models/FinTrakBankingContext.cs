@@ -147,7 +147,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Call_Memo> tbl_Call_Memo { get; set; }
         public virtual DbSet<tbl_Call_Memo_Limit> tbl_Call_Memo_Limit { get; set; }
         public virtual DbSet<tbl_Call_Memo_Type> tbl_Call_Memo_Type { get; set; }
-        public virtual DbSet<tbl_Collateral_Additional_Info> tbl_Collateral_Additional_Info { get; set; }
         public virtual DbSet<tbl_Collateral_Casa> tbl_Collateral_Casa { get; set; }
         public virtual DbSet<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
         public virtual DbSet<tbl_Collateral_Deposit> tbl_Collateral_Deposit { get; set; }
@@ -182,7 +181,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan> tbl_Loan { get; set; }
         public virtual DbSet<tbl_Loan_Application> tbl_Loan_Application { get; set; }
         public virtual DbSet<tbl_Loan_Application_Collateral> tbl_Loan_Application_Collateral { get; set; }
-        public virtual DbSet<tbl_Loan_Application_Collateral_RefNo> tbl_Loan_Application_Collateral_RefNo { get; set; }
         public virtual DbSet<tbl_Loan_Application_Detail> tbl_Loan_Application_Detail { get; set; }
         public virtual DbSet<tbl_Loan_Application_Detail_Status> tbl_Loan_Application_Detail_Status { get; set; }
         public virtual DbSet<tbl_Loan_Application_Status> tbl_Loan_Application_Status { get; set; }
@@ -231,6 +229,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Risk_Rating> tbl_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Solicitor> tbl_Solicitor { get; set; }
         public virtual DbSet<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<tbl_Charges_ValueSource> tbl_Charges_ValueSource { get; set; }
         public virtual DbSet<tbl_COT> tbl_COT { get; set; }
         public virtual DbSet<tbl_Loan_Document_Type> tbl_Loan_Document_Type { get; set; }
@@ -1916,11 +1915,6 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Sub_Sector>()
-                .HasMany(e => e.tbl_Loan_Preliminary_Evaluation)
-                .WithRequired(e => e.tbl_Sub_Sector)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Sub_Sector>()
                 .HasMany(e => e.tbl_Loan_Revolving)
                 .WithRequired(e => e.tbl_Sub_Sector)
                 .WillCascadeOnDelete(false);
@@ -2520,16 +2514,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Loan_Application>()
                 .HasMany(e => e.tbl_Loan_Application_Collateral)
-                .WithRequired(e => e.tbl_Loan_Application)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Loan_Application>()
-                .HasMany(e => e.tbl_Loan_Guarantor)
-                .WithRequired(e => e.tbl_Loan_Application)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Loan_Application>()
-                .HasMany(e => e.tbl_Loan_Guarantor)
                 .WithRequired(e => e.tbl_Loan_Application)
                 .WillCascadeOnDelete(false);
 
@@ -3237,15 +3221,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Solicitor_State_Mapping>()
                 .Property(e => e.CollateralSearchChargeAmount)
                 .HasPrecision(19, 4);
- 
-
-            modelBuilder.Entity<tbl_CASA_Lien>()
-                .Property(e => e.LienCreditAmount)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<tbl_CASA_Lien>()
-                .Property(e => e.LienDebitAmount)
-                .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_COT>()
                 .Property(e => e.COTAccountAmount)
@@ -3779,7 +3754,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Temp_Collateral_Stock>()
                 .Property(e => e.ShareValueAmountToUse)
                 .HasPrecision(19, 4);
-
         }
     }
 }
