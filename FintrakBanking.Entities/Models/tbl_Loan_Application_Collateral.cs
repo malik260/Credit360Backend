@@ -10,10 +10,7 @@ namespace FintrakBanking.Entities.Models
     public partial class tbl_Loan_Application_Collateral
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Application_Collateral()
-        {
-            tbl_Loan_Application_Collateral_RefNo = new HashSet<tbl_Loan_Application_Collateral_RefNo>();
-        }
+       
 
         [Key]
         public int CustomerCollateralId { get; set; }
@@ -51,6 +48,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string OtherInformations { get; set; }
 
+        public int? CasaAccountId { get; set; }
+
         public int LoanApplicationId { get; set; }
 
         public int CreatedBy { get; set; }
@@ -74,8 +73,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application_Collateral_RefNo> tbl_Loan_Application_Collateral_RefNo { get; set; }
+         
     }
 }

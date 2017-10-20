@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Reports;
+using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -127,14 +128,14 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
-        [Route("loan-disburstloans/startdate/{startdate}/enddate/{enddate}")]
-        public HttpResponseMessage GetDisburstLoans(DateTime startDate, DateTime endDate)
+        [HttpPost]
+        [Route("loan-disburstloans")]
+        public HttpResponseMessage GetDisburstLoans(DateRange dateRange)
         {
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetDisburstLoans(startDate,endDate, token.GetCompanyId);
+                var data = repo.GetDisburstLoans(dateRange, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
