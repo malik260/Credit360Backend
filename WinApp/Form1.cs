@@ -75,17 +75,19 @@ namespace WinApp
             //loanOperation.NPLByBranchSuspension();
             //DateTime date = DateTime.Now.Date;
             //date.ToString("yyyy-MM-dd") = vDate.ToString("yyyy-MM-dd");
-            //loanOperation.GetDailyTeamLoansInterestAccrual(vDate);
+            //loanOperation.ProcessDailyTeamLoansInterestAccrual(vDate);
             //loanOperation.BuildLoanRepaymentPostingForceDebit(vDate);
             //loanOperation.BuildLoanRepaymentPostingPastDue(vDate);
             //loanOperation.GetDailyPastDueInterestAccrual(vDate);
             //loanOperation.InterestSuspension(vLoan, vDate, vStaff);
             //loanOperation.ArchiveLoan(vLoan, vStaff);
-            // loanOperation.BulkArchiveLoan(vStaff);
+            //loanOperation.BulkArchiveLoan(vStaff);
             //loanOperation.ArchivePeriodicSchedule(vLoan);
             //loanOperation.ArchiveDailySchedule(vLoan);
-           //loanOperation.UpdatePeriodicSchedule(vLoan, vDate);
-            loanOperation.LoanRephasementProcess(vReview,vLoan, vStaff);
+            //loanOperation.UpdatePeriodicSchedule(vLoan, vDate);
+            //loanOperation.LoanRephasementProcess(vReview,vLoan, vStaff);
+            //loanOperation.ProcessDailyAuthorisedOverdraftInterestAccrual(vDate);
+            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(vDate);
 
             MessageBox.Show("Successful", "Fintrak");
 

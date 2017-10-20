@@ -617,6 +617,17 @@ namespace FintrakBanking.Repositories.Credit
             financeTransaction.PostTransaction(inputTransactions);
         }
 
+        public void PostLoanFees(LoanViewModel entity)
+        {
+          
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
+
+            financeTransaction.PostTransaction(inputTransactions);
+        }
+
+
         //[OperationBehavior(TransactionScopeRequired = true)]
         //public LoanViewModel PostLoanDisbursment(LoanViewModel model)
         //{      
@@ -1361,7 +1372,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanCovenantList.Add(loanCovenant);
             };
 
-            var feeRecord = context.tbl_Loan_Fee.Where(x => x.LoanId == loanId).ToList();
+            var feeRecord = context.tbl_Loan_Fee.Where(x => x.LoanId == loanId && x.IsPosted == false).ToList();
             List<LoanChargeFeeViewModel> loanChargeFeeList = new List<LoanChargeFeeViewModel>();
             foreach (var fee in feeRecord)
             {
@@ -2572,7 +2583,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
         {
             var data = (from lac in context.tbl_Loan_Application_Collateral
-                        where lac.LoanApplicationId == loanApplicationId && lac.Deleted == false
+                        where lac.tbl_Loan_Application.LoanApplicationId == loanApplicationId && lac.Deleted == false
                         select new LoanApplicationCollateralViewModel()
                         {
                             customerCollateralId = lac.CustomerCollateralId,

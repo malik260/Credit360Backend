@@ -42,7 +42,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         private OfferLetterConditionPrecidentDataTable tableOfferLetterConditionPrecident;
         
-        private DisburstLoanDataTable tableDisburstLoan;
+        private DisburstedLoansDataTable tableDisburstedLoans;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -99,8 +99,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 if ((ds.Tables["OfferLetterConditionPrecident"] != null)) {
                     base.Tables.Add(new OfferLetterConditionPrecidentDataTable(ds.Tables["OfferLetterConditionPrecident"]));
                 }
-                if ((ds.Tables["DisburstLoan"] != null)) {
-                    base.Tables.Add(new DisburstLoanDataTable(ds.Tables["DisburstLoan"]));
+                if ((ds.Tables["DisburstedLoans"] != null)) {
+                    base.Tables.Add(new DisburstedLoansDataTable(ds.Tables["DisburstedLoans"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -214,9 +214,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public DisburstLoanDataTable DisburstLoan {
+        public DisburstedLoansDataTable DisburstedLoans {
             get {
-                return this.tableDisburstLoan;
+                return this.tableDisburstedLoans;
             }
         }
         
@@ -314,8 +314,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 if ((ds.Tables["OfferLetterConditionPrecident"] != null)) {
                     base.Tables.Add(new OfferLetterConditionPrecidentDataTable(ds.Tables["OfferLetterConditionPrecident"]));
                 }
-                if ((ds.Tables["DisburstLoan"] != null)) {
-                    base.Tables.Add(new DisburstLoanDataTable(ds.Tables["DisburstLoan"]));
+                if ((ds.Tables["DisburstedLoans"] != null)) {
+                    base.Tables.Add(new DisburstedLoansDataTable(ds.Tables["DisburstedLoans"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -404,10 +404,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
                     this.tableOfferLetterConditionPrecident.InitVars();
                 }
             }
-            this.tableDisburstLoan = ((DisburstLoanDataTable)(base.Tables["DisburstLoan"]));
+            this.tableDisburstedLoans = ((DisburstedLoansDataTable)(base.Tables["DisburstedLoans"]));
             if ((initTable == true)) {
-                if ((this.tableDisburstLoan != null)) {
-                    this.tableDisburstLoan.InitVars();
+                if ((this.tableDisburstedLoans != null)) {
+                    this.tableDisburstedLoans.InitVars();
                 }
             }
         }
@@ -438,8 +438,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             base.Tables.Add(this.tableOfferLetterDetail);
             this.tableOfferLetterConditionPrecident = new OfferLetterConditionPrecidentDataTable();
             base.Tables.Add(this.tableOfferLetterConditionPrecident);
-            this.tableDisburstLoan = new DisburstLoanDataTable();
-            base.Tables.Add(this.tableDisburstLoan);
+            this.tableDisburstedLoans = new DisburstedLoansDataTable();
+            base.Tables.Add(this.tableDisburstedLoans);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -498,7 +498,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        private bool ShouldSerializeDisburstLoan() {
+        private bool ShouldSerializeDisburstedLoans() {
             return false;
         }
         
@@ -585,7 +585,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         public delegate void OfferLetterConditionPrecidentRowChangeEventHandler(object sender, OfferLetterConditionPrecidentRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public delegate void DisburstLoanRowChangeEventHandler(object sender, DisburstLoanRowChangeEvent e);
+        public delegate void DisburstedLoansRowChangeEventHandler(object sender, DisburstedLoansRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -4151,7 +4151,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class DisburstLoanDataTable : global::System.Data.TypedTableBase<DisburstLoanRow> {
+        public partial class DisburstedLoansDataTable : global::System.Data.TypedTableBase<DisburstedLoansRow> {
             
             private global::System.Data.DataColumn columnapprovedInterestRate;
             
@@ -4195,8 +4195,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public DisburstLoanDataTable() {
-                this.TableName = "DisburstLoan";
+            public DisburstedLoansDataTable() {
+                this.TableName = "DisburstedLoans";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -4204,7 +4204,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal DisburstLoanDataTable(global::System.Data.DataTable table) {
+            internal DisburstedLoansDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -4221,7 +4221,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected DisburstLoanDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected DisburstedLoansDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -4397,33 +4397,33 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public DisburstLoanRow this[int index] {
+            public DisburstedLoansRow this[int index] {
                 get {
-                    return ((DisburstLoanRow)(this.Rows[index]));
+                    return ((DisburstedLoansRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event DisburstLoanRowChangeEventHandler DisburstLoanRowChanging;
+            public event DisburstedLoansRowChangeEventHandler DisburstedLoansRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event DisburstLoanRowChangeEventHandler DisburstLoanRowChanged;
+            public event DisburstedLoansRowChangeEventHandler DisburstedLoansRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event DisburstLoanRowChangeEventHandler DisburstLoanRowDeleting;
+            public event DisburstedLoansRowChangeEventHandler DisburstedLoansRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event DisburstLoanRowChangeEventHandler DisburstLoanRowDeleted;
+            public event DisburstedLoansRowChangeEventHandler DisburstedLoansRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void AddDisburstLoanRow(DisburstLoanRow row) {
+            public void AddDisburstedLoansRow(DisburstedLoansRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public DisburstLoanRow AddDisburstLoanRow(
+            public DisburstedLoansRow AddDisburstedLoansRow(
                         string approvedInterestRate, 
                         string approvedTenor, 
                         string exchangeValue, 
@@ -4444,7 +4444,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string status, 
                         string outstandingPrincipal, 
                         string outstandingInterest) {
-                DisburstLoanRow rowDisburstLoanRow = ((DisburstLoanRow)(this.NewRow()));
+                DisburstedLoansRow rowDisburstedLoansRow = ((DisburstedLoansRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         approvedInterestRate,
                         approvedTenor,
@@ -4466,15 +4466,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         status,
                         outstandingPrincipal,
                         outstandingInterest};
-                rowDisburstLoanRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowDisburstLoanRow);
-                return rowDisburstLoanRow;
+                rowDisburstedLoansRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowDisburstedLoansRow);
+                return rowDisburstedLoansRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                DisburstLoanDataTable cln = ((DisburstLoanDataTable)(base.Clone()));
+                DisburstedLoansDataTable cln = ((DisburstedLoansDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -4482,7 +4482,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new DisburstLoanDataTable();
+                return new DisburstedLoansDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4575,28 +4575,28 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public DisburstLoanRow NewDisburstLoanRow() {
-                return ((DisburstLoanRow)(this.NewRow()));
+            public DisburstedLoansRow NewDisburstedLoansRow() {
+                return ((DisburstedLoansRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new DisburstLoanRow(builder);
+                return new DisburstedLoansRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(DisburstLoanRow);
+                return typeof(DisburstedLoansRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.DisburstLoanRowChanged != null)) {
-                    this.DisburstLoanRowChanged(this, new DisburstLoanRowChangeEvent(((DisburstLoanRow)(e.Row)), e.Action));
+                if ((this.DisburstedLoansRowChanged != null)) {
+                    this.DisburstedLoansRowChanged(this, new DisburstedLoansRowChangeEvent(((DisburstedLoansRow)(e.Row)), e.Action));
                 }
             }
             
@@ -4604,8 +4604,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.DisburstLoanRowChanging != null)) {
-                    this.DisburstLoanRowChanging(this, new DisburstLoanRowChangeEvent(((DisburstLoanRow)(e.Row)), e.Action));
+                if ((this.DisburstedLoansRowChanging != null)) {
+                    this.DisburstedLoansRowChanging(this, new DisburstedLoansRowChangeEvent(((DisburstedLoansRow)(e.Row)), e.Action));
                 }
             }
             
@@ -4613,8 +4613,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.DisburstLoanRowDeleted != null)) {
-                    this.DisburstLoanRowDeleted(this, new DisburstLoanRowChangeEvent(((DisburstLoanRow)(e.Row)), e.Action));
+                if ((this.DisburstedLoansRowDeleted != null)) {
+                    this.DisburstedLoansRowDeleted(this, new DisburstedLoansRowChangeEvent(((DisburstedLoansRow)(e.Row)), e.Action));
                 }
             }
             
@@ -4622,14 +4622,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.DisburstLoanRowDeleting != null)) {
-                    this.DisburstLoanRowDeleting(this, new DisburstLoanRowChangeEvent(((DisburstLoanRow)(e.Row)), e.Action));
+                if ((this.DisburstedLoansRowDeleting != null)) {
+                    this.DisburstedLoansRowDeleting(this, new DisburstedLoansRowChangeEvent(((DisburstedLoansRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void RemoveDisburstLoanRow(DisburstLoanRow row) {
+            public void RemoveDisburstedLoansRow(DisburstedLoansRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -4656,7 +4656,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "DisburstLoanDataTable";
+                attribute2.FixedValue = "DisburstedLoansDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -7538,15 +7538,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class DisburstLoanRow : global::System.Data.DataRow {
+        public partial class DisburstedLoansRow : global::System.Data.DataRow {
             
-            private DisburstLoanDataTable tableDisburstLoan;
+            private DisburstedLoansDataTable tableDisburstedLoans;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal DisburstLoanRow(global::System.Data.DataRowBuilder rb) : 
+            internal DisburstedLoansRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableDisburstLoan = ((DisburstLoanDataTable)(this.Table));
+                this.tableDisburstedLoans = ((DisburstedLoansDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -7554,14 +7554,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string approvedInterestRate {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.approvedInterestRateColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.approvedInterestRateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'approvedInterestRate\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedInterestRate\' in table \'DisburstedLoans\' is DBNull." +
+                                "", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.approvedInterestRateColumn] = value;
+                    this[this.tableDisburstedLoans.approvedInterestRateColumn] = value;
                 }
             }
             
@@ -7570,14 +7571,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string approvedTenor {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.approvedTenorColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.approvedTenorColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'approvedTenor\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedTenor\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.approvedTenorColumn] = value;
+                    this[this.tableDisburstedLoans.approvedTenorColumn] = value;
                 }
             }
             
@@ -7586,14 +7587,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string exchangeValue {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.exchangeValueColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.exchangeValueColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'exchangeValue\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'exchangeValue\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.exchangeValueColumn] = value;
+                    this[this.tableDisburstedLoans.exchangeValueColumn] = value;
                 }
             }
             
@@ -7602,14 +7603,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string productId {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.productIdColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.productIdColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'productId\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'productId\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.productIdColumn] = value;
+                    this[this.tableDisburstedLoans.productIdColumn] = value;
                 }
             }
             
@@ -7618,14 +7619,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string companyName {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.companyNameColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.companyNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'companyName\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'companyName\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.companyNameColumn] = value;
+                    this[this.tableDisburstedLoans.companyNameColumn] = value;
                 }
             }
             
@@ -7634,14 +7635,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string customerName {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.customerNameColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.customerNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.customerNameColumn] = value;
+                    this[this.tableDisburstedLoans.customerNameColumn] = value;
                 }
             }
             
@@ -7650,14 +7651,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string productName {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.productNameColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.productNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.productNameColumn] = value;
+                    this[this.tableDisburstedLoans.productNameColumn] = value;
                 }
             }
             
@@ -7666,14 +7667,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string approvedAmount {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.approvedAmountColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.approvedAmountColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'approvedAmount\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedAmount\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.approvedAmountColumn] = value;
+                    this[this.tableDisburstedLoans.approvedAmountColumn] = value;
                 }
             }
             
@@ -7682,15 +7683,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string applicationReferenceNumber {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.applicationReferenceNumberColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.applicationReferenceNumberColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'applicationReferenceNumber\' in table \'DisburstLoan\' is DBNu" +
-                                "ll.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'applicationReferenceNumber\' in table \'DisburstedLoans\' is D" +
+                                "BNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.applicationReferenceNumberColumn] = value;
+                    this[this.tableDisburstedLoans.applicationReferenceNumberColumn] = value;
                 }
             }
             
@@ -7699,14 +7700,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string amountDisbursed {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.amountDisbursedColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.amountDisbursedColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'amountDisbursed\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'amountDisbursed\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.amountDisbursedColumn] = value;
+                    this[this.tableDisburstedLoans.amountDisbursedColumn] = value;
                 }
             }
             
@@ -7715,14 +7716,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string effectiveDate {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.effectiveDateColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.effectiveDateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'effectiveDate\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'effectiveDate\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.effectiveDateColumn] = value;
+                    this[this.tableDisburstedLoans.effectiveDateColumn] = value;
                 }
             }
             
@@ -7731,14 +7732,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string maturitydate {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.maturitydateColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.maturitydateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'maturitydate\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'maturitydate\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.maturitydateColumn] = value;
+                    this[this.tableDisburstedLoans.maturitydateColumn] = value;
                 }
             }
             
@@ -7747,14 +7748,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string disburseDate {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.disburseDateColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.disburseDateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'disburseDate\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'disburseDate\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.disburseDateColumn] = value;
+                    this[this.tableDisburstedLoans.disburseDateColumn] = value;
                 }
             }
             
@@ -7763,14 +7764,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string facilityCurrency {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.facilityCurrencyColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.facilityCurrencyColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'facilityCurrency\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityCurrency\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.facilityCurrencyColumn] = value;
+                    this[this.tableDisburstedLoans.facilityCurrencyColumn] = value;
                 }
             }
             
@@ -7779,14 +7780,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string exchangeRate {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.exchangeRateColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.exchangeRateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'exchangeRate\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'exchangeRate\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.exchangeRateColumn] = value;
+                    this[this.tableDisburstedLoans.exchangeRateColumn] = value;
                 }
             }
             
@@ -7795,14 +7796,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string baseCurrency {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.baseCurrencyColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.baseCurrencyColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'baseCurrency\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'baseCurrency\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.baseCurrencyColumn] = value;
+                    this[this.tableDisburstedLoans.baseCurrencyColumn] = value;
                 }
             }
             
@@ -7811,14 +7812,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string logoPath {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.logoPathColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.logoPathColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'logoPath\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'logoPath\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.logoPathColumn] = value;
+                    this[this.tableDisburstedLoans.logoPathColumn] = value;
                 }
             }
             
@@ -7827,14 +7828,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string status {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.statusColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.statusColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'status\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'status\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.statusColumn] = value;
+                    this[this.tableDisburstedLoans.statusColumn] = value;
                 }
             }
             
@@ -7843,14 +7844,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string outstandingPrincipal {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.outstandingPrincipalColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.outstandingPrincipalColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'outstandingPrincipal\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'outstandingPrincipal\' in table \'DisburstedLoans\' is DBNull." +
+                                "", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.outstandingPrincipalColumn] = value;
+                    this[this.tableDisburstedLoans.outstandingPrincipalColumn] = value;
                 }
             }
             
@@ -7859,255 +7861,255 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string outstandingInterest {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstLoan.outstandingInterestColumn]));
+                        return ((string)(this[this.tableDisburstedLoans.outstandingInterestColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'outstandingInterest\' in table \'DisburstLoan\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'outstandingInterest\' in table \'DisburstedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstLoan.outstandingInterestColumn] = value;
+                    this[this.tableDisburstedLoans.outstandingInterestColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsapprovedInterestRateNull() {
-                return this.IsNull(this.tableDisburstLoan.approvedInterestRateColumn);
+                return this.IsNull(this.tableDisburstedLoans.approvedInterestRateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetapprovedInterestRateNull() {
-                this[this.tableDisburstLoan.approvedInterestRateColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.approvedInterestRateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsapprovedTenorNull() {
-                return this.IsNull(this.tableDisburstLoan.approvedTenorColumn);
+                return this.IsNull(this.tableDisburstedLoans.approvedTenorColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetapprovedTenorNull() {
-                this[this.tableDisburstLoan.approvedTenorColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.approvedTenorColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsexchangeValueNull() {
-                return this.IsNull(this.tableDisburstLoan.exchangeValueColumn);
+                return this.IsNull(this.tableDisburstedLoans.exchangeValueColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetexchangeValueNull() {
-                this[this.tableDisburstLoan.exchangeValueColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.exchangeValueColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsproductIdNull() {
-                return this.IsNull(this.tableDisburstLoan.productIdColumn);
+                return this.IsNull(this.tableDisburstedLoans.productIdColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetproductIdNull() {
-                this[this.tableDisburstLoan.productIdColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.productIdColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IscompanyNameNull() {
-                return this.IsNull(this.tableDisburstLoan.companyNameColumn);
+                return this.IsNull(this.tableDisburstedLoans.companyNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetcompanyNameNull() {
-                this[this.tableDisburstLoan.companyNameColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.companyNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IscustomerNameNull() {
-                return this.IsNull(this.tableDisburstLoan.customerNameColumn);
+                return this.IsNull(this.tableDisburstedLoans.customerNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetcustomerNameNull() {
-                this[this.tableDisburstLoan.customerNameColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.customerNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsproductNameNull() {
-                return this.IsNull(this.tableDisburstLoan.productNameColumn);
+                return this.IsNull(this.tableDisburstedLoans.productNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetproductNameNull() {
-                this[this.tableDisburstLoan.productNameColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.productNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsapprovedAmountNull() {
-                return this.IsNull(this.tableDisburstLoan.approvedAmountColumn);
+                return this.IsNull(this.tableDisburstedLoans.approvedAmountColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetapprovedAmountNull() {
-                this[this.tableDisburstLoan.approvedAmountColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.approvedAmountColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsapplicationReferenceNumberNull() {
-                return this.IsNull(this.tableDisburstLoan.applicationReferenceNumberColumn);
+                return this.IsNull(this.tableDisburstedLoans.applicationReferenceNumberColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetapplicationReferenceNumberNull() {
-                this[this.tableDisburstLoan.applicationReferenceNumberColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.applicationReferenceNumberColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsamountDisbursedNull() {
-                return this.IsNull(this.tableDisburstLoan.amountDisbursedColumn);
+                return this.IsNull(this.tableDisburstedLoans.amountDisbursedColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetamountDisbursedNull() {
-                this[this.tableDisburstLoan.amountDisbursedColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.amountDisbursedColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IseffectiveDateNull() {
-                return this.IsNull(this.tableDisburstLoan.effectiveDateColumn);
+                return this.IsNull(this.tableDisburstedLoans.effectiveDateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SeteffectiveDateNull() {
-                this[this.tableDisburstLoan.effectiveDateColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.effectiveDateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsmaturitydateNull() {
-                return this.IsNull(this.tableDisburstLoan.maturitydateColumn);
+                return this.IsNull(this.tableDisburstedLoans.maturitydateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetmaturitydateNull() {
-                this[this.tableDisburstLoan.maturitydateColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.maturitydateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsdisburseDateNull() {
-                return this.IsNull(this.tableDisburstLoan.disburseDateColumn);
+                return this.IsNull(this.tableDisburstedLoans.disburseDateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetdisburseDateNull() {
-                this[this.tableDisburstLoan.disburseDateColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.disburseDateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsfacilityCurrencyNull() {
-                return this.IsNull(this.tableDisburstLoan.facilityCurrencyColumn);
+                return this.IsNull(this.tableDisburstedLoans.facilityCurrencyColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetfacilityCurrencyNull() {
-                this[this.tableDisburstLoan.facilityCurrencyColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.facilityCurrencyColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsexchangeRateNull() {
-                return this.IsNull(this.tableDisburstLoan.exchangeRateColumn);
+                return this.IsNull(this.tableDisburstedLoans.exchangeRateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetexchangeRateNull() {
-                this[this.tableDisburstLoan.exchangeRateColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.exchangeRateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsbaseCurrencyNull() {
-                return this.IsNull(this.tableDisburstLoan.baseCurrencyColumn);
+                return this.IsNull(this.tableDisburstedLoans.baseCurrencyColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetbaseCurrencyNull() {
-                this[this.tableDisburstLoan.baseCurrencyColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.baseCurrencyColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IslogoPathNull() {
-                return this.IsNull(this.tableDisburstLoan.logoPathColumn);
+                return this.IsNull(this.tableDisburstedLoans.logoPathColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetlogoPathNull() {
-                this[this.tableDisburstLoan.logoPathColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.logoPathColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsstatusNull() {
-                return this.IsNull(this.tableDisburstLoan.statusColumn);
+                return this.IsNull(this.tableDisburstedLoans.statusColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetstatusNull() {
-                this[this.tableDisburstLoan.statusColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.statusColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsoutstandingPrincipalNull() {
-                return this.IsNull(this.tableDisburstLoan.outstandingPrincipalColumn);
+                return this.IsNull(this.tableDisburstedLoans.outstandingPrincipalColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetoutstandingPrincipalNull() {
-                this[this.tableDisburstLoan.outstandingPrincipalColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.outstandingPrincipalColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsoutstandingInterestNull() {
-                return this.IsNull(this.tableDisburstLoan.outstandingInterestColumn);
+                return this.IsNull(this.tableDisburstedLoans.outstandingInterestColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetoutstandingInterestNull() {
-                this[this.tableDisburstLoan.outstandingInterestColumn] = global::System.Convert.DBNull;
+                this[this.tableDisburstedLoans.outstandingInterestColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -8421,22 +8423,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public class DisburstLoanRowChangeEvent : global::System.EventArgs {
+        public class DisburstedLoansRowChangeEvent : global::System.EventArgs {
             
-            private DisburstLoanRow eventRow;
+            private DisburstedLoansRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public DisburstLoanRowChangeEvent(DisburstLoanRow row, global::System.Data.DataRowAction action) {
+            public DisburstedLoansRowChangeEvent(DisburstedLoansRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public DisburstLoanRow Row {
+            public DisburstedLoansRow Row {
                 get {
                     return this.eventRow;
                 }

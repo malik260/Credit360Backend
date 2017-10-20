@@ -4,14 +4,12 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public partial class LoanApplicationCollateralViewModel : GeneralEntity
     {
-        public LoanApplicationCollateralViewModel()
-        {
-            applicationCollateralRefNo = new List<LoanApplicationCollateralRefNoViewModel>();
-        }
         public int customerCollateralId { get; set; }
-        public string certificateOfOwnership { get; set; }
+        public string collateralReferenceNumber { get; set; }
+        public decimal collateralValue { get; set; }
         public int? cityId { get; set; }
         public string city { get; set; }
+        public bool isBankAccount { get; set; }
         public int collateralTypeId { get; set; }
         public string collateralType  { get; set; }
         public string documentTitle { get; set; }
@@ -22,8 +20,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string nearestLandmark { get; set; }
         public string otherInformations { get; set; }
         public int loanApplicationId { get; set; }
-        public int applicationReferanceNumber{ get; set; }
-        public List<LoanApplicationCollateralRefNoViewModel> applicationCollateralRefNo { get; set; }
+      public int? casaAccountId { get; set; }
+
+
     }
 
 

@@ -23,7 +23,7 @@ namespace FintrakBanking.Entities.Models
 
         public int ApprovalLevelId { get; set; }
 
-        public short? ProductClassId { get; set; }
+        public short ProductClassId { get; set; }
 
         public int? LastUpdatedBy { get; set; }
 

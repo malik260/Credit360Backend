@@ -52,6 +52,7 @@ namespace FintrakBanking.Repositories.Admin
     }
 
 
+
         public IEnumerable<CurrencyRateViewModel> GetCurrencyRate()
         {
             var data = (from a in context.tbl_Currency_Rate

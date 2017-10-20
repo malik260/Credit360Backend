@@ -10,12 +10,13 @@ namespace FintrakBanking.Interfaces.Setups
     {
         #region Loan Checklist Definition
         IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition();
-        List<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId);
+        IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId);
         bool AddChecklistDefinition(ChecklistDefinitionViewModel model);
         bool AddMultipleChecklistDefinition(List<ChecklistDefinitionViewModel> models);
         bool AddMultipleChecklistDefinitionWithMultipleItems(ChecklistDefinitionViewModel model);
         bool UpdateChecklistDefinition(int CheckListDefinitionId, ChecklistDefinitionViewModel model);
         bool DeleteChecklistDefinition(int CheckListDefinitionId, UserInfo user);
+        IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevel(int approvalLevelId);
         #endregion
 
         #region Loan Checklist Detail
