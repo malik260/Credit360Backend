@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace  FintrakBanking.Interfaces.Reports
 {
-    public  interface IReportRouts
+    public  interface IReportRoutes
     {
         string GetWorkflowSLA(int loanApplicationId, int companyId);
         string GetLoanScheduleReport(int tearmLoanId, int companyId);
         string GetSectorLimitMonitoringReport(int companyId);
         string GetBranchLoanAmountLimit(int branchId, int companyId);
         string GetWorkflowDefinition(int operationId, int companyId);
+        string GetDisburstLoans(DateTime startDate, DateTime endDate, int companyId);
     }
 }

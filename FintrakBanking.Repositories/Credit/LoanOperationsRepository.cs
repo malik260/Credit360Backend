@@ -4913,6 +4913,24 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
+            List<tbl_Loan_Review_Operation_Irregular_Schedule> irregularSchedules = new List<tbl_Loan_Review_Operation_Irregular_Schedule>();
+            //Storing the Irregular Schedule Payment Plan
+            if (model.reviewIrregularSchedule != null)
+            {
+                foreach (var item in model.reviewIrregularSchedule)
+                {
+                    var irregularPlan = new tbl_Loan_Review_Operation_Irregular_Schedule
+                    {
+                   
+                        PaymentAmount = item.PaymentAmount,
+                        PaymentDate = item.PaymentDate,
+                        CreatedBy = model.createdBy,
+                        DateTimeCreated = DateTime.Now
+                    };
+                    irregularSchedules.Add(irregularPlan);
+                }
+            }
+
             var data = new tbl_Loan_Review_Operation
             {
                 LoanId = model.loanId,
@@ -4926,6 +4944,7 @@ namespace FintrakBanking.Repositories.Credit
                 InterestFrequencyTypeId = model.interestFrequencyTypeId,
                 PrincipalFirstPaymentDate = model.principalFirstPaymentDate,
                 InterestFirstPaymentDate = model.interestFirstPaymentDate,
+                MaturityDate = model.maturityDate,
                 Tenor = model.tenor,
                 CASA_AccountId = model.cASA_AccountId,
                 OverDraftTopup = model.overDraftTopup,
@@ -4934,7 +4953,8 @@ namespace FintrakBanking.Repositories.Credit
                 IsManagementInterestRate = model.isManagementRate,
                 OperationCompleted = false,
                 CreatedBy = model.createdBy,
-                DateCreated = DateTime.Now
+                DateCreated = DateTime.Now,
+                tbl_Loan_Review_Operation_Irregular_Schedule = irregularSchedules
             };
             // Audit Section ---------------------------
 
@@ -4979,8 +4999,9 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    return false;
                     throw new Exception(ex.Message);
+                    return false;
+               
                 }
             }
         }
@@ -5033,13 +5054,13 @@ namespace FintrakBanking.Repositories.Credit
                             interestInstallmentLeft = ln.InterestInstallmentLeft,
                             approvalStatusId = op.ApprovalStatusId,
                             approvalStatusName = context.tbl_Approval_Status.FirstOrDefault(f => f.ApprovalStatusId == op.ApprovalStatusId).ApprovalStatusName,
-                            approvedBy = ln.ApprovedBy,
+                            approvedBy = (int)ln.ApprovedBy,
                             approverComment = ln.ApproverComment,
                             dateApproved = ln.DateApproved,
                             //loanStatusId = ln.LoanStatusId,
                             scheduleTypeId = ln.ScheduleTypeId,
                             isDisbursed = ln.IsDisbursed,
-                            disbursedBy = ln.DisbursedBy,
+                            disbursedBy = (int)ln.DisbursedBy,
                             disburserComment = ln.DisburserComment,
                             disburseDate = ln.DisburseDate,
 
@@ -5129,13 +5150,13 @@ namespace FintrakBanking.Repositories.Credit
                             interestInstallmentLeft = ln.InterestInstallmentLeft,
                             approvalStatusId = op.ApprovalStatusId,
                             approvalStatusName = context.tbl_Approval_Status.FirstOrDefault(f => f.ApprovalStatusId == op.ApprovalStatusId).ApprovalStatusName,
-                            approvedBy = ln.ApprovedBy,
+                            approvedBy = (int)ln.ApprovedBy,
                             approverComment = ln.ApproverComment,
                             dateApproved = ln.DateApproved,
                             //loanStatusId = ln.LoanStatusId,
                             scheduleTypeId = ln.ScheduleTypeId,
                             isDisbursed = ln.IsDisbursed,
-                            disbursedBy = ln.DisbursedBy,
+                            disbursedBy = (int)ln.DisbursedBy,
                             disburserComment = ln.DisburserComment,
                             disburseDate = ln.DisburseDate,
 

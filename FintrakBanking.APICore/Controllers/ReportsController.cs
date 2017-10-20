@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Reports;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -10,9 +11,9 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/report")]
     public class ReportsController : ApiControllerBase 
     {
-        IReportRouts repo;
+        IReportRoutes repo;
 
-        public ReportsController(IReportRouts _repo) {
+        public ReportsController(IReportRoutes _repo) {
 
             repo = _repo;
         }
@@ -113,6 +114,27 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetWorkflowDefinition(id,token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("loan-disburstloans/startdate/{startdate}/enddate/{enddate}")]
+        public HttpResponseMessage GetDisburstLoans(DateTime startDate, DateTime endDate)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetDisburstLoans(startDate,endDate, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

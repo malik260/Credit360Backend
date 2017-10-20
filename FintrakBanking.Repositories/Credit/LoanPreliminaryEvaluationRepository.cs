@@ -87,7 +87,7 @@ namespace FintrakBanking.Repositories.Credit
                 CreatedBy = model.createdBy,
                 LoanAmount = model.loanAmount,
                 LoanTypeId = model.loanTypeId,
-                SubSectorId = model.subSectorId,
+                // SubSectorId = model.subSectorId,
                 ProductClassId = model.productClassId
             };
 
@@ -436,8 +436,8 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = pen.ProductClassId,
                             productClassName = pen.tbl_Product_Class.ProductClassName,
                             //subSectorId = pen.SubSectorId,
-                            subSectorName = pen.tbl_Sub_Sector.Name,
-                            sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == pen.SubSectorId).SectorId ?? 0,
+                            //subSectorName = pen.tbl_Sub_Sector.Name,
+                            //sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == pen.SubSectorId).SectorId ?? 0,
                         });
             return data;
         }
@@ -559,8 +559,8 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = pen.ProductClassId,
                             productClassName = pen.tbl_Product_Class.ProductClassName,
                             //subSectorId = pen.SubSectorId,
-                            subSectorName = pen.tbl_Sub_Sector.Name,
-                            sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == pen.SubSectorId).SectorId ?? 0,
+                            //subSectorName = pen.tbl_Sub_Sector.Name,
+                            //sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == pen.SubSectorId).SectorId ?? 0,
                         });
             return data;
         }
@@ -631,7 +631,7 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
                         where p.IsCurrent == false && p.LoanTypeId == (short)LoanTypeEnum.Single && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
-                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending 
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
@@ -739,8 +739,8 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = p.ProductClassId,
                             productClassName = p.tbl_Product_Class.ProductClassName,
                             //subSectorId = p.SubSectorId,
-                            subSectorName = p.tbl_Sub_Sector.Name,
-                            sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == p.SubSectorId).SectorId ?? 0,
+                            //subSectorName = p.tbl_Sub_Sector.Name,
+                            //sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == p.SubSectorId).SectorId ?? 0,
                         });
 
 
@@ -754,7 +754,7 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.tbl_Company on p.CompanyId equals coy.CompanyId
                         join br in context.tbl_Branch on p.BranchId equals br.BranchId
                         where p.IsCurrent == false && p.LoanTypeId == (short)LoanTypeEnum.CustomerGroup && p.SentForLoanApplication == false || p.ApprovalStatusId == (short)ApprovalStatusEnum.Approved
-                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending 
+                        && p.ApprovalStatusId == (short)ApprovalStatusEnum.Pending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.CompanyId,
@@ -869,8 +869,8 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = p.ProductClassId,
                             productClassName = p.tbl_Product_Class.ProductClassName,
                             //subSectorId = p.SubSectorId,
-                            subSectorName = p.tbl_Sub_Sector.Name,
-                            sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == p.SubSectorId).SectorId ?? 0,
+                            //subSectorName = p.tbl_Sub_Sector.Name,
+                            //sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == p.SubSectorId).SectorId ?? 0,
                         });
 
             return data;
@@ -923,7 +923,7 @@ namespace FintrakBanking.Repositories.Credit
                 penRecord.CreatedBy = model.createdBy;
                 penRecord.LoanAmount = model.loanAmount;
                 penRecord.LoanTypeId = model.loanTypeId;
-                penRecord.SubSectorId = model.subSectorId;
+                //penRecord.SubSectorId = model.subSectorId;
                 penRecord.ProductClassId = model.productClassId;
             }
             else
@@ -964,7 +964,7 @@ namespace FintrakBanking.Repositories.Credit
                             targetId = loanPenId,
                             operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
                             BranchId = model.userBranchId,
-                            externalInitialization = true
+                            //externalInitialization = true
                         };
 
                         var response = workFlow.LogForApproval(entity);
@@ -974,8 +974,11 @@ namespace FintrakBanking.Repositories.Credit
                             trans.Commit();
                         }
                     }
+                    else
+                    {
+                        trans.Commit();
+                    }
 
-                    trans.Commit();
                 }
                 catch (Exception ex)
                 {

@@ -1247,6 +1247,8 @@ namespace FintrakBanking.Repositories.Credit
             loan.MaturityDate = periodicSchedule.Max(x => x.paymentDate);
             loan.PrincipalNumberOfInstallment = periodicSchedule.Count() -1;
             loan.InterestNumberOfInstallment = loan.PrincipalNumberOfInstallment;
+            loan.OutstandingPrincipal = (decimal) loanInput.principalAmount;
+            loan.OutstandingInterest = (decimal) (periodicSchedule.Select(x => x.periodInterestAmount)).Sum();
             //-------------------------------------------------
 
             context.SaveChanges();

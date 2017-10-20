@@ -9,9 +9,9 @@ using System.Web;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
-using System.Threading.Tasks;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Customer;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -61,26 +61,26 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //    }
         //}
 
-        //[HttpGet]
-        //[Route("current-exposure/customer/{id}")]
-        //public HttpResponseMessage GetCurrentCustomerExposure(int id)
-        //{
-        //    try
-        //    {
-        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
-        //        var data = repo.GetCurrentCustomerExposure(id, token.GetCompanyId);
-        //        if (!data.Any())
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
+        [HttpPost]
+        [Route("current-exposure/customer")]
+        public HttpResponseMessage GetCurrentCustomerExposure([FromBody] List<CustomerExposure> customer)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetCurrentCustomerExposure(customer, token.GetCompanyId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpGet]
         [Route("runningloans/customer/{id}")]

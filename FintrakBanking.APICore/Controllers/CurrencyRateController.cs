@@ -16,7 +16,7 @@ namespace FintrakBanking.APICore.Controllers
     public class CurrencyRateController : ApiControllerBase
     {
         private ICurrencyRateRepository repo;
-
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
         public CurrencyRateController(ICurrencyRateRepository _repo)
         {
             this.repo = _repo;
@@ -35,6 +35,20 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("base-currency")]
+        public HttpResponseMessage GetBaseCurrency()
+        {
+            try
+            {
+                var data = repo.GetBaseCurrency(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
@@ -72,7 +86,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                    TokenDecryptionHelper token = new TokenDecryptionHelper();
                     model.createdBy = token.GetStaffId;
                     model.userBranchId = (short)token.GetBranchId;
                     //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
@@ -99,7 +112,6 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                    TokenDecryptionHelper token = new TokenDecryptionHelper();
                     model.userBranchId = (short)token.GetBranchId;
                     //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                     model.applicationUrl = HttpContext.Current.Request.Path;
@@ -109,7 +121,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data, data = "The record has been updated successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data, message = "The record has been updated successfully" });
 
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });

@@ -1,29 +1,32 @@
-﻿using FintrakBanking.Common;
+﻿using System;
+using System.Configuration;
+using System.Data.Entity.SqlServer;
+using System.Linq;
+using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
-using System;
-using System.Configuration;
-using System.Data.Entity.SqlServer;
-using System.Linq;
+using System.Data.Entity;
 
-namespace FintrakBanking.Repositories.Credit
+namespace FintrakBanking.Repositories.AppEmail
 {
     public class EmailAndAlertsRepository : IEmailAndAlertsRepository
     {
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
         private EmailHelpers emailHelpers;
+        private IGeneralSetupRepository genSetup;
 
         public EmailAndAlertsRepository(FinTrakBankingContext _context, IAuditTrailRepository _auditTrail,
-            EmailHelpers _emailHelpers)
+            EmailHelpers _emailHelpers, IGeneralSetupRepository _general)
         {
             context = _context;
             auditTrail = _auditTrail;
             emailHelpers = _emailHelpers;
+            genSetup = _general;
         }
 
         #region Covenant Monitoring
@@ -37,7 +40,7 @@ namespace FintrakBanking.Repositories.Credit
                         join e in context.tbl_Loan_Application_Detail on b.LoanApplicationDetailId equals e.LoanApplicationDetailId
                         join f in context.tbl_Frequency_Type on a.FrequencyTypeId equals f.FrequencyTypeId
                         join g in context.tbl_Loan_Covenant_Type on a.CovenantTypeId equals g.CovenantTypeId
-                        where SqlFunctions.DateDiff("DAY", a.CovenantDate, a.NextCovenantDate) == 4
+                        where DbFunctions.DiffDays(genSetup.GetApplicationDate(), a.NextCovenantDate) <= 10
                         select new LoanCovenantDetailViewModel
                         {
                             companyId = a.CompanyId,
@@ -50,7 +53,7 @@ namespace FintrakBanking.Repositories.Credit
                             frequencyTypeId = a.FrequencyTypeId,
                             frequencyTypeName = f.Mode,
                             loanId = a.LoanId,
-                            //loanRefNumber = e.ApplicationReferenceNumber,
+                            loanRefNumber = e.tbl_Loan_Application.ApplicationReferenceNumber,
                             relationshipManager = c.FirstName + " " + c.LastName,
                             managerEmail = c.Email,
                             relationshipOfficer = d.FirstName + " " + d.LastName,
@@ -92,7 +95,7 @@ namespace FintrakBanking.Repositories.Credit
                         MessageStatusId = (short)MessageStatusEnum.Pending,
                         MessageTypeId = (short)MessageTypeEnum.Email,
                         FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                        ToAddress = item.officerEmail,
+                        ToAddress = $"{item.officerEmail};{item.managerEmail}",
                         DateTimeReceived = DateTime.Now,
                         SendOnDateTime = item.dueDate.Value
                     };
@@ -117,7 +120,7 @@ namespace FintrakBanking.Repositories.Credit
                         join e in context.tbl_Loan_Application_Detail on b.LoanApplicationDetailId equals e.LoanApplicationDetailId
                         join f in context.tbl_Frequency_Type on a.FrequencyTypeId equals f.FrequencyTypeId
                         join g in context.tbl_Loan_Covenant_Type on a.CovenantTypeId equals g.CovenantTypeId
-                        where a.NextCovenantDate.Value >= DateTime.Now
+                        where a.NextCovenantDate.Value >= genSetup.GetApplicationDate()
                         select new LoanCovenantDetailViewModel
                         {
                             companyId = a.CompanyId,
@@ -130,7 +133,7 @@ namespace FintrakBanking.Repositories.Credit
                             frequencyTypeId = a.FrequencyTypeId,
                             frequencyTypeName = f.Mode,
                             loanId = a.LoanId,
-                            //loanRefNumber = e.ApplicationReferenceNumber,
+                            loanRefNumber = e.tbl_Loan_Application.ApplicationReferenceNumber,
                             relationshipManager = c.FirstName + " " + c.LastName,
                             managerEmail = c.Email,
                             relationshipOfficer = d.FirstName + " " + d.LastName,
@@ -172,7 +175,7 @@ namespace FintrakBanking.Repositories.Credit
                         MessageStatusId = (short)MessageStatusEnum.Pending,
                         MessageTypeId = (short)MessageTypeEnum.Email,
                         FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                        ToAddress = item.officerEmail,
+                        ToAddress = $"{item.officerEmail};{item.managerEmail}",
                         DateTimeReceived = DateTime.Now,
                         SendOnDateTime = (DateTime)item.dueDate
                     };
@@ -201,7 +204,7 @@ namespace FintrakBanking.Repositories.Credit
                         join e in context.tbl_Collateral_Type_Sub on a.CollateralSubTypeId equals e.CollateralSubTypeId
                         join f in context.tbl_Collateral_Immovable_Property on a.CollateralCustomerId equals f
                             .CollateralCustomerId
-                        where a.IsLocationBased
+                        where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LastValuationDate, a.ValuationCycle), genSetup.GetApplicationDate() ) <= 30)
                         select new CollateralViewModel
                         {
                             collateralTypeId = a.CollateralTypeId,
@@ -257,7 +260,6 @@ namespace FintrakBanking.Repositories.Credit
                     SaveMessageDetails(messageModel);
 
                     emailHelpers.SendMail(recipient, null, messageSubject, messageContent, templateUrl);
-
                 }
             }
             catch (Exception ex)
@@ -270,13 +272,13 @@ namespace FintrakBanking.Repositories.Credit
 
         #region NPL Monitoring
 
-        public void SendAlertsForNplMonitoring()
+        public void SendAlertsForLoanNplMonitoring()
         {
             var data = (from a in context.tbl_Loan_Application
                         join d in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals d.LoanApplicationId
                         join b in context.tbl_Loan on d.LoanApplicationDetailId equals b.LoanApplicationDetailId
                         join c in context.tbl_Loan_Revolving on d.LoanApplicationDetailId equals c.LoanApplicationDetailId
-                        where b.NPLDate != null
+                        where b.InternalPrudentialGuidelineStatusId != (int)LoanPrudentialStatusEnum.Performing
                         select new LoanViewModel
                         {
                             applicationReferenceNumber = a.ApplicationReferenceNumber,
@@ -286,7 +288,7 @@ namespace FintrakBanking.Repositories.Credit
                             nplDate = b.NPLDate.Value,
                             outstandingInterest = b.OutstandingInterest,
                             outstandingPrincipal = b.OutstandingPrincipal,
-                            loanTypeName = context.tbl_Loan_Type.FirstOrDefault(x => x.LoanTypeId == b.LoanTypeId).LoanTypeName,
+                            loanTypeName = b.tbl_Loan_Type.LoanTypeName,
                             relationshipManagerId = b.RelationshipOfficerId,
                             relationshipManagerName = b.tbl_Staff.FirstName + " " + b.tbl_Staff.LastName,
                             relationshipManagerEmail = b.tbl_Staff.Email,
@@ -299,7 +301,46 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach (var item in data)
                 {
-                    Console.WriteLine(item);
+                    var recipient = item.relationshipManagerEmail;
+
+                    var otherRecipient = item.relationshipOfficerEmail;
+
+                    var messageSubject = "FIRSTBANKONLINE (REMINDER) - NON-PERFORMING LOANS";
+
+                    var dataTable =
+                        "<table><tr><th>Loan Ref #</th><th>Loan Type</th><th>Outstanding Interest</th><th>Oustanding Principal</th>" +
+                        "<th>Booking Date</th><th>Disbursed Date</th></tr>" +
+                        $"<tr><td>{item.loanReferenceNumber}</td><td>{item.loanTypeName}</td>" +
+                        $"<td style='text-align:right;'>{item.outstandingInterest:f}</td><td style='text-align:right;'>{item.outstandingPrincipal:f}</td>" +
+                        $"<td>{item.bookingDate:d}</td><td>{item.disburseDate:d}</td></tr>";
+
+                    dataTable = dataTable + "</table>";
+
+                    var messageContent = $"Dear {item.relationshipOfficerName}, <br /><br />" +
+                                         "This is to bring your attention the following loans " +
+                                         "which are underperforming. <br /><br />" +
+                                         $"{dataTable}";
+
+                    var templateUrl = "~/EmailTemplates/Monitoring.html";
+
+                    var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+
+                    var messageModel = new MessageLogViewModel()
+                    {
+                        //MessageId = model.MessageId,
+                        MessageSubject = messageSubject,
+                        MessageBody = mailBody,
+                        MessageStatusId = (short)MessageStatusEnum.Pending,
+                        MessageTypeId = (short)MessageTypeEnum.Email,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = $"{item.relationshipOfficerEmail};{item.relationshipManagerEmail}",
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = DateTime.Now
+                    };
+
+                    SaveMessageDetails(messageModel);
+
+                    emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
                 }
             }
             catch (Exception ex)
@@ -310,7 +351,91 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion NPL Monitoring
 
-        public void SaveMessageDetails(MessageLogViewModel model)
+        #region LPO/CFF/IDF/Self-Liquidating Loans
+
+        public void SendAlertsOnSelfLiquidatingLoanExpiry()
+        {
+            var data = (from a in context.tbl_Loan
+                        join b in context.tbl_Product on a.ProductId equals b.ProductId
+                        join c in context.tbl_Product_Type on b.ProductTypeId equals c.ProductTypeId
+                        join d in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals d.LoanApplicationDetailId
+                        where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.SelfLiquidating && 
+                        DbFunctions.DiffDays(a.MaturityDate, genSetup.GetApplicationDate()) <= 30
+                        select new LoanViewModel
+                        {
+                            applicationReferenceNumber = d.tbl_Loan_Application.ApplicationReferenceNumber,
+                            loanReferenceNumber = a.LoanReferenceNumber,
+                            bookingDate = a.BookingDate,
+                            disburseDate = a.DisburseDate,
+                            maturityDate = a.MaturityDate,
+                            productName = b.ProductName,
+                            outstandingInterest = a.OutstandingInterest,
+                            outstandingPrincipal = a.OutstandingPrincipal,
+                            loanTypeName = a.tbl_Loan_Type.LoanTypeName,
+                            productTypeName = b.tbl_Product_Type.ProductTypeName,
+                            relationshipManagerId = a.RelationshipOfficerId,
+                            relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
+                            relationshipManagerEmail = a.tbl_Staff.Email,
+                            relationshipOfficerId = a.RelationshipOfficerId,
+                            relationshipOfficerName = a.tbl_Staff1.FirstName + " " + a.tbl_Staff1.LastName,
+                            relationshipOfficerEmail = a.tbl_Staff1.Email
+                        }).ToList();
+
+            try
+            {
+                foreach (var item in data)
+                {
+                    var recipient = item.relationshipManagerEmail;
+
+                    var otherRecipient = item.relationshipOfficerEmail;
+
+                    var messageSubject = "FIRSTBANKONLINE (REMINDER) - SELF-LIQUIDATING LOANs EXPIRED";
+
+                    var dataTable =
+                        "<table><tr><th>Loan Ref #</th><th>Product</th><th>Loan Type</th><th>Product Type</th><th>Outstanding Interest</th>" +
+                        "<th>Oustanding Principal</th></tr><th>Disbursed Date</th><th>Maturity Date</th>" +
+                        $"<tr><td>{item.loanReferenceNumber}</td><td>{item.productName}</td><td>{item.loanTypeName}</td><td>{item.productTypeName}</td>" +
+                        $"<td style='text-align:right;'>{item.outstandingInterest:f}</td><td style='text-align:right;'>{item.outstandingPrincipal:f}</td>" +
+                        $"<td>{item.maturityDate:d}</td><td>{item.disburseDate:d}</td></tr>";
+
+                    dataTable = dataTable + "</table>";
+
+                    var messageContent = $"Dear {item.relationshipOfficerName}, <br /><br />" +
+                                         "This is to bring your attention the following self-liquidating loans " +
+                                         "which are expired. <br /><br />" +
+                                         $"{dataTable}";
+
+                    var templateUrl = "~/EmailTemplates/Monitoring.html";
+
+                    var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+
+                    var messageModel = new MessageLogViewModel()
+                    {
+                        //MessageId = model.MessageId,
+                        MessageSubject = messageSubject,
+                        MessageBody = mailBody,
+                        MessageStatusId = (short)MessageStatusEnum.Pending,
+                        MessageTypeId = (short)MessageTypeEnum.Email,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = $"{item.relationshipOfficerEmail};{item.relationshipManagerEmail}",
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = DateTime.Now
+                    };
+
+                    SaveMessageDetails(messageModel);
+
+                    emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        #endregion LPO/CFF/IDF/Self-Liquidating Loans
+
+        public bool SaveMessageDetails(MessageLogViewModel model)
         {
             var message = new tbl_Message_Log()
             {
@@ -329,7 +454,13 @@ namespace FintrakBanking.Repositories.Credit
 
             try
             {
-                context.SaveChanges();
+                var response = context.SaveChanges() > 0;
+
+                if (response)
+                {
+                    return true;
+                }
+                return false;
             }
             catch (Exception ex)
             {

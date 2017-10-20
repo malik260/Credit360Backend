@@ -1,10 +1,11 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Reports;
+using System;
 using System.Linq;
 namespace FintrakBanking.ReportObjects.ReportCalls
 {
-    public  class ReportRouts : IReportRouts
+    public  class ReportRoutes : IReportRoutes
     {
         string reportPath = "http://localhost:51336/Reports/";
         private IQueryable<tbl_Loan_Application> LoanApplication(int companyId)
@@ -50,6 +51,13 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/Workflow.aspx?companyId=" + companyId.ToString() + "&operationId=" + operationId.ToString();
             return path;
         }
+        public string GetDisburstLoans( DateTime  startDate, DateTime endDate, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/DisburstedLoan.aspx?companyId=" + companyId.ToString() + "&startDate=" + startDate + "&endDate=" + endDate;
+            return path;
+        }
+
     }
 
 }
