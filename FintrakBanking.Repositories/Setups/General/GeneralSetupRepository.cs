@@ -1,33 +1,28 @@
 ﻿using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Helper;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 
 namespace FintrakBanking.Repositories.Setups.General
-{ 
+{
     public class GeneralSetupRepository : IGeneralSetupRepository
     {
         private FinTrakBankingContext context;
-        ICultureHelper cultureHelper;
-        public GeneralSetupRepository(FinTrakBankingContext _context,
-                                      ICultureHelper _cultureHelper)
+
+        public GeneralSetupRepository(FinTrakBankingContext _context)
         {
             this.context = _context;
-            this.cultureHelper = _cultureHelper;
         }
 
         public DateTime GetApplicationDate()
         {
-            return this.context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;            
+            return this.context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
         }
-
 
         public DateTime CalculateMaturityDate(DateTime effectiveDate, TenorModeEnum tenorModeId, int tenor)
         {
@@ -39,7 +34,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 output = effectiveDate.AddMonths(tenor);
             else if (tenorModeId == TenorModeEnum.Years)
                 output = effectiveDate.AddYears(tenor);
-
 
             return output;
         }
@@ -59,7 +53,6 @@ namespace FintrakBanking.Repositories.Setups.General
             return CommonHelpers.GetLoanReferanceNumber();
         }
 
-        
         /// <summary>
         /// Returns All tbl_Product group
         /// </summary>
@@ -71,21 +64,23 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         lookupId = data.CurrencyId,
                         lookupName = data.CurrencyCode + " -- " + data.CurrencyName,
-                         lookupTypeName = data.CurrencyCode
+                        lookupTypeName = data.CurrencyCode
                     });
         }
 
-        public IEnumerable<LookupViewModel> GetSector() {
-            return (from   data in context.tbl_Sector
+        public IEnumerable<LookupViewModel> GetSector()
+        {
+            return (from data in context.tbl_Sector
                     select new LookupViewModel()
                     {
-                        lookupId = data.SectorId ,
-                        lookupName = data.Name  
+                        lookupId = data.SectorId,
+                        lookupName = data.Name
                     });
         }
-        public IEnumerable<LookupViewModel> GetSubsector( )
+
+        public IEnumerable<LookupViewModel> GetSubsector()
         {
-            return (from data in context.tbl_Sub_Sector 
+            return (from data in context.tbl_Sub_Sector
                     select new LookupViewModel()
                     {
                         lookupId = data.SubSectorId,
@@ -175,7 +170,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<LookupViewModel> GetAllOperations()
         {
-            return (from data in context.tbl_Operations                    
+            return (from data in context.tbl_Operations
                     select new LookupViewModel()
                     {
                         lookupId = (short)data.OperationId,
@@ -220,7 +215,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
         //   public IEnumerable<LoanCovenantDetailViewModel>  Get
 
-
         public IEnumerable<SectorViewModel> GetAllSectors()
         {
             var data = (from cs in context.tbl_Sector
@@ -262,6 +256,5 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return data;
         }
-
     }
 }

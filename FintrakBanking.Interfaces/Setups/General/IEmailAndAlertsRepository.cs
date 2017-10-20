@@ -5,5 +5,11 @@
         void SendAlertsForCovenantsApproachingDueDate();
 
         void SendAlertsForCovenantsOverDue();
+
+        void SendAlertsForCollateralPropertyRevaluation();
+
+        void SendAlertsForLoanNplMonitoring();
+
+        void SendAlertsOnSelfLiquidatingLoanExpiry();
     }
 }

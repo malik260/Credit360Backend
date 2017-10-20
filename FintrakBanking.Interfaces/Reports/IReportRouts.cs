@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace  FintrakBanking.Interfaces.Reports
 {
-    public  interface IReportRouts
+    public  interface IReportRoutes
     {
         string GetWorkflowSLA(int loanApplicationId, int companyId);
         string GetLoanScheduleReport(int tearmLoanId, int companyId);

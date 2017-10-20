@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FintrakBanking.APICore.Reports.Credit {
+namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
     
     
-    public partial class TestReport {
+    public partial class SelfLiquidatingLoanExpiry {
         
         /// <summary>
         /// form1 control.
@@ -31,15 +31,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// rvBranchReport control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer rvBranchReport;
-        
-        /// <summary>
         /// ObjectDataSource1 control.
         /// </summary>
         /// <remarks>
@@ -47,5 +38,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSource1;
+        
+        /// <summary>
+        /// selfLiqLoanExpRv control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Microsoft.Reporting.WebForms.ReportViewer selfLiqLoanExpRv;
     }
 }

@@ -57,7 +57,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public List<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId)
+        public IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId)
         {
             var data = (from a in context.tbl_Checklist_Definition
                         where a.Deleted == false && CheckListDefinitionId == a.CheckListDefinitionId
@@ -80,6 +80,13 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevel(int approvalLevelId)
+        {
+            var data = GetAllChecklistDefinition().Where(x => x.approvalLevelId == approvalLevelId).ToList();
+
+            return data;
+        }
+
         public bool AddChecklistDefinition(ChecklistDefinitionViewModel model)
         {
             var data = new tbl_Checklist_Definition
@@ -97,8 +104,8 @@ namespace FintrakBanking.Repositories.Credit
 
             //Audit Section ---------------------------
 
-            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductClassId)).ProductName;
-            var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
+            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductClassId))?.ProductName;
+            var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId))?.CheckListItemName;
 
             var audit = new tbl_Audit
             {
@@ -154,8 +161,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 //Audit Section ---------------------------
 
-                var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductClassId)).ProductName;
-                var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
+                var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductClassId))?.ProductName;
+                var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId))?.CheckListItemName;
 
                 var audit = new tbl_Audit
                 {
@@ -258,6 +265,7 @@ namespace FintrakBanking.Repositories.Credit
                             targetTypeName = a.tbl_Checklist_TargetType.TargetTypeName,
                             targetId = a.TargetId,
                             checkListStatusId = a.CheckListStatusId,
+                            checkListStatusName = a.tbl_Checklist_Status.ChecklistStatusName,
                             checkedBy = a.CheckedBy,
                             deferedDate = a.DeferedDate,
                             remark = a.Remark,
