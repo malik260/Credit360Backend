@@ -650,7 +650,7 @@ namespace FintrakBanking.Repositories.Credit
                                   a.LoanApplicationId, a.ApplicationReferenceNumber, b.ApprovedAmount, a.LoanTypeId, a.ApplicationStatusId,
                                   c.CAMRef, d.CAMDocumentation, a.ApplicationDate, a.RelationshipManagerId, a.RelationshipOfficerId,
                                   cust.FirstName, cust.LastName, cust.MiddleName, cust.CustomerCode, cGrp.CustomerGroupId,
-                                  cGrp.GroupName, cGrp.GroupCode
+                                  cGrp.GroupName, cGrp.GroupCode, cust.SubSectorId
                               } into g
                         select new CamProcessedLoanViewModel
                         {
@@ -676,7 +676,8 @@ namespace FintrakBanking.Repositories.Credit
                             camDocumentation = g.Key.CAMDocumentation,
                             approvedAmount = g.Sum(x => x.ApprovedAmount),
                             applicationDate = g.Key.ApplicationDate,
-                            applicationStatusId = g.Key.ApplicationStatusId
+                            applicationStatusId = g.Key.ApplicationStatusId,
+                            subSectorId = g.Key.SubSectorId
                         });
 
             return data;

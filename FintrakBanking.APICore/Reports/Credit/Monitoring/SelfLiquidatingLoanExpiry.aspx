@@ -24,10 +24,7 @@
             </LocalReport>
         </rsweb:ReportViewer>
     
-        <asp:ObjectDataSource ID="odsSelfLiqLoanExp" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.OfferLetterInfo">
-            <SelectParameters>
-                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
-            </SelectParameters>
+        <asp:ObjectDataSource ID="odsSelfLiqLoanExp" runat="server" SelectMethod="SelfLiquidatingLoanExpiry" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring">
         </asp:ObjectDataSource>
     
     </div>
