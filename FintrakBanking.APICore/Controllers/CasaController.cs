@@ -88,7 +88,30 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("all-customer-accounts/{customerId}")]
+        public HttpResponseMessage GetAllCASAAccount(string  casaAccountNumber)
+        {
+            try
+            {
+                var data = repo.GetAllCASAAccount(casaAccountNumber, token.GetCompanyId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
 
+        }
 
 
         [HttpGet]

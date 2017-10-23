@@ -5,7 +5,7 @@ using FintrakBanking.Entities.Models;
 using System.Collections.Generic;
 using System;
 
-namespace FintrakBanking.ReportObjects
+namespace FintrakBanking.ReportObjects.Credit
 {
     public class OfferLetterInfo
     {
@@ -21,9 +21,9 @@ namespace FintrakBanking.ReportObjects
                                           companyName = context.tbl_Company.FirstOrDefault(x => x.CompanyId == a.CompanyId).Name,
                                           customerId = (int)a.CustomerId,
                                           customerName = a.tbl_Customer.Title + " " + a.tbl_Customer.FirstName + " " + a.tbl_Customer.LastName,
-                                          customerGroupName = a.tbl_Customer_Group.GroupName + " - " + a.tbl_Customer_Group.GroupCode,
                                           customerAddress = a.tbl_Customer.tbl_Customer_Address.FirstOrDefault().Address ?? string.Empty,
-                                          applicationDate = a.ApplicationDate
+                                          applicationDate = a.ApplicationDate,
+                                          customerGroupName = a.tbl_Customer_Group.GroupName + " - " + a.tbl_Customer_Group.GroupCode
                                       }).FirstOrDefault();
 
             if (offerLetterDetails != null)

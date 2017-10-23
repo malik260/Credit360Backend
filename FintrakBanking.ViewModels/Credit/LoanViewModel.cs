@@ -57,14 +57,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int principalInstallmentLeft { get; set; }
         public int interestInstallmentLeft { get; set; }
         public int approvalStatusId { get; set; }
-        public int ? approvedBy { get; set; }
+        public int? approvedBy { get; set; }
         public string approverComment { get; set; }
         public DateTime? dateApproved { get; set; }
         public short loanStatusId { get; set; }
         public short scheduleTypeId { get; set; }
         public string scheduleTypeName { get; set; }
         public bool isDisbursed { get; set; }
-        public int ? disbursedBy { get; set; }
+        public int? disbursedBy { get; set; }
         public string disburserComment { get; set; }
         public DateTime? disburseDate { get; set; }
         public decimal? approvedAmount { get; set; }
@@ -372,6 +372,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string chargeFeeName { get; set; }
         public decimal feeRateValue { get; set; }
         public decimal feeDependentAmount { get; set; }
+        public decimal chargeAmount { get; set; }
         public decimal feeAmount { get; set; }
         public short feeIntervalId { get; set; }
         public string feeIntervalName { get; set; }
@@ -383,6 +384,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int casaAccountId { get; set; }
         public bool required { get; set; }
         public bool recurring { get; set; }
+        public int feeTargetId { get; set; }
+        public string feeTargetName { get; set; }
+        public bool byAmountRequired { get; set; }
     }
 
     public class LoanCollateralMappingViewModel : CollateralViewModel

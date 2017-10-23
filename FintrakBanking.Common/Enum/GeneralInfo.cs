@@ -158,7 +158,9 @@ namespace FintrakBanking.Common.Enum
         ConditionPrecedentUpdated = 000,
         CollateralReleaseAction = 000,
         CollateralReleaseApproval = 000,
-        RanEndOfDay = 150
+        RanEndOfDay = 150,
+            KYCItemAdded = 151,
+        KYCItemUpdated = 152
     };
 
 

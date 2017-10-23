@@ -8,9 +8,9 @@ namespace FintrakBanking.Interfaces.Customer
 {
     public interface ICustomerGroupRepository
     {
-        //IQueryable<KYCItemViewModel> GetKYCItems(int companyId);
-        //bool AddKycItem(KYCItemViewModel entity);
-        //bool UpdatedKycItem(int KYCItemId ,KYCItemViewModel entity) ;
+         IEnumerable<KYCItemViewModel> GetKYCItems(int companyId);
+         bool AddKycItem(KYCItemViewModel entity);
+        bool UpdatedKycItem(int KYCItemId ,KYCItemViewModel entity) ;
 
         #region tbl_Customer Group Repository
 
@@ -35,6 +35,7 @@ namespace FintrakBanking.Interfaces.Customer
         #endregion tbl_Customer Group Repository
 
         #region tbl_Customer Group Mapping repository
+        bool DoesGroupNameExist(string groupName, string groupCode);
 
         bool AddCustomerGroupMapping(CustomerGroupMappingViewModel entity);
 

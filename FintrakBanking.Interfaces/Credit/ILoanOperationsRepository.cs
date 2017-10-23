@@ -20,11 +20,11 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
 
-        IEnumerable<DailyInterestAccrualViewModel> GetDailyTeamLoansInterestAccrual(DateTime applicationDate);
-        IEnumerable<DailyInterestAccrualViewModel> GetDailyAuthorisedOverdraftInterestAccrual(DateTime applicationDate);
-        IEnumerable<DailyInterestAccrualViewModel> GetDailyUnauthorisedOverdraftInterestAccrual(DateTime applicationDate);
-        IEnumerable<DailyInterestAccrualViewModel> GetDailyPastDueInterestAccrual(DateTime applicationDate);
-        IEnumerable<DailyInterestAccrualViewModel> GetDailyPastDuePrincipalAccrual(DateTime applicationDate);
+        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTeamLoansInterestAccrual(DateTime applicationDate);
+        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyAuthorisedOverdraftInterestAccrual(DateTime applicationDate);
+        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyUnauthorisedOverdraftInterestAccrual(DateTime applicationDate);
+        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyPastDueInterestAccrual(DateTime applicationDate);
+        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyPastDuePrincipalAccrual(DateTime applicationDate);
         // IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(int scheduleId);
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByLoanId(LoanProductTypeEnum productTypeId, LoanScheduleTypeEnum scheduleTypeId);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId);
@@ -33,15 +33,22 @@ namespace FintrakBanking.Interfaces.Credit
        // IEnumerable<LoanReviewOperationViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId);
         bool LoanCancellation(int loanId, DateTime applicationDate, int staffId);
         void OverdraftTopUp(int loanId, decimal amount);
-        IEnumerable<LimitSuspensionViewModel> NPLByBranchSuspension();
-        IEnumerable<LoanRepaymentViewModel> BuildLoanRepaymentPostingForceDebit(DateTime applicationDate);
-        IEnumerable<LoanRepaymentViewModel> BuildLoanRepaymentPostingPastDue(DateTime applicationDate);
+        IEnumerable<LimitSuspensionViewModel> ProcessNPLByBranchSuspension();
+        IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate);
+        IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue (DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> InterestSuspension(int loanId, DateTime applicationDate, int staffId);
         IEnumerable<LoanViewModel> ArchiveLoan(int loanId, int operationId);
         IEnumerable<LoanViewModel> BulkArchiveLoan(int priceindexId);
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId);
         IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId);
-        IEnumerable<LoanPaymentSchedulePeriodicViewModel> UpdatePeriodicSchedule(int loanId, DateTime applicationDate);
+        IEnumerable<LoanPaymentSchedulePeriodicViewModel> MergePeriodicSchedule (int loanId, DateTime applicationDate);
         bool LoanRephasementProcess(short loanReviewOperationsId, int loanId, int staffId);
+        IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForInterestReview(DateTime applicationDate, int loanId);
+        IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForBulkInterestReview(DateTime applicationDate);
+
+
+
+
+
     }
 }

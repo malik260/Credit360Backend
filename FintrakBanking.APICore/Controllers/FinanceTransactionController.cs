@@ -34,12 +34,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("getexchangerate/{currencyId}")]
-        public HttpResponseMessage GetExchangeRate(short currencyId)
+        [Route("getexchangerate/{currencyId}/{date}")]
+        public HttpResponseMessage GetExchangeRate(DateTime date, short currencyId)
         { 
                 try
                 {
-                    var data = repo.GetExchangeRate(currencyId, token.GetCompanyId);
+                    var data = repo.GetExchangeRate(date,currencyId, token.GetCompanyId);
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (Exception ex)

@@ -9,14 +9,14 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.tbl_Loan_Application_Collateral")]
     public partial class tbl_Loan_Application_Collateral
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Application_Collateral()
-        {
-            tbl_Loan_Application_Collateral_RefNo = new HashSet<tbl_Loan_Application_Collateral_RefNo>();
-        }
-
         [Key]
         public int CustomerCollateralId { get; set; }
+
+        public int LoanApplicationId { get; set; }
+
+        public int CollateralTypeId { get; set; }
+
+        public int? CasaAccountId { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -28,8 +28,6 @@ namespace FintrakBanking.Entities.Models
         public bool? IsBankAccount { get; set; }
 
         public int? CityId { get; set; }
-
-        public int CollateralTypeId { get; set; }
 
         [StringLength(50)]
         public string DocumentTitle { get; set; }
@@ -49,9 +47,7 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(500)]
-        public string OtherInformations { get; set; }
-
-        public int LoanApplicationId { get; set; }
+        public string OtherInformations { get; set; }         
 
         public int CreatedBy { get; set; }
 
@@ -69,13 +65,13 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime SystemDateTime { get; set; }
 
+        public virtual tbl_CASA tbl_CASA { get; set; }
+
         public virtual tbl_City tbl_City { get; set; }
 
         public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application_Collateral_RefNo> tbl_Loan_Application_Collateral_RefNo { get; set; }
+         
     }
 }

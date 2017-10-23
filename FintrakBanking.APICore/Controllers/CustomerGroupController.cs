@@ -42,7 +42,11 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
-
+                if (repo.DoesGroupNameExist(entity.groupName, entity.groupCode))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "The Group Code or Group Name you entered already exists" });
+                }
                 var data = repo.AddTempCustomerGroup(entity);
                 if (data)
                 {
@@ -405,7 +409,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.Created,
-                        new{ success = true,result = data, message = "The record has been created successfully" });
+                        new { success = true, result = data, message = "The record has been created successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error creating this record" });
@@ -445,6 +449,76 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion
+        #region KYC Item Setup
+        [HttpGet]
+        [Route("Kycitem")]
+        public HttpResponseMessage GetKYCItem()
+        {
+            try
+            {
 
+                var data = repo.GetKYCItems(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("Kycitem")]
+        public HttpResponseMessage AddKYCItem([FromBody] KYCItemViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.AddKycItem(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Created,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpPut]
+        [Route("Kycitem/{kYCItemId}")]
+        public HttpResponseMessage UpdateKYCItem(int kYCItemId, [FromBody] KYCItemViewModel entity)
+        {
+            try
+            {
+              
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.UpdatedKycItem(kYCItemId, entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been Updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+        #endregion
     }
 }

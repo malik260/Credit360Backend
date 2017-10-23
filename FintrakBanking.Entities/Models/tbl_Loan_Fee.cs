@@ -24,6 +24,8 @@ namespace FintrakBanking.Entities.Models
 
         public int ChargeFeeId { get; set; }
 
+        public bool IsPosted { get; set; }
+
         [Column(TypeName = "money")]
         public decimal FeeRateValue { get; set; }
 
