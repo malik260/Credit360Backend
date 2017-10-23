@@ -1444,6 +1444,7 @@ namespace FintrakBanking.Repositories.Credit
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
             var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
+            var product = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId && x.CompanyId == model.companyId);
 
             loanTransaction.operationId = (int)OperationsEnum.TermLoanBooking;
             loanTransaction.description = "Loan Disbursment Amount";
@@ -1460,7 +1461,7 @@ namespace FintrakBanking.Repositories.Credit
             loanTransaction.companyId = model.companyId;
 
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == product.ProductId).PrincipalBalanceGL.Value;
             debit.sourceReferenceNumber = model.loanReferenceNumber;
             debit.casaAccountId = null;
             debit.debitAmount = model.principalAmount;
@@ -1550,10 +1551,14 @@ namespace FintrakBanking.Repositories.Credit
                 credit.destinationBranchId = loanDetails.branchId;
 
 
-                feeTransaction.transactionDetails.Add(debit);
-                feeTransaction.transactionDetails.Add(credit);
+                if (item.feeAmount != 0)
+                {
+                    feeTransaction.transactionDetails.Add(debit);
+                    feeTransaction.transactionDetails.Add(credit);
+                    output.Add(feeTransaction);
+                }
 
-                output.Add(feeTransaction);
+
             }
 
             // Audit Section ---------------------------            

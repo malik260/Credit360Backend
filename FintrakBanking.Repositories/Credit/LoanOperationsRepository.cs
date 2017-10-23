@@ -771,6 +771,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDue.Date = item.paymentDate;
                     pastDue.TransactionTypeId = (byte)LoanTransactionTypeEnum.Principal;
                     pastDue.Parent_PastDueCode = item.loanRefNo;
+                    pastDue.ProductTypeId = product.ProductTypeId;
 
                     transPastDue.Add(pastDue);
 
@@ -829,6 +830,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDueInterest.Date = item.paymentDate;
                     pastDueInterest.TransactionTypeId = (byte)LoanTransactionTypeEnum.Interest;
                     pastDueInterest.Parent_PastDueCode = item.loanRefNo;
+                    pastDueInterest.ProductTypeId = product.ProductTypeId;
 
                     transPastDue.Add(pastDueInterest);
 
@@ -842,6 +844,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDuePrincipal.Date = item.paymentDate;
                     pastDuePrincipal.TransactionTypeId = (byte)LoanTransactionTypeEnum.Principal;
                     pastDuePrincipal.Parent_PastDueCode = item.loanRefNo;
+                    pastDuePrincipal.ProductTypeId = product.ProductTypeId;
 
                     transPastDue.Add(pastDuePrincipal);
 
@@ -930,7 +933,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDueInterest.Date = item.paymentDate;
                     pastDueInterest.TransactionTypeId = (byte)LoanTransactionTypeEnum.Interest;
                     pastDueInterest.Parent_PastDueCode = item.loanRefNo;
-                    pastDueInterest.ProductTypeId = item.productId;
+                    pastDueInterest.ProductTypeId = product.ProductTypeId;
 
                     transPastDue.Add(pastDueInterest);
 
@@ -944,7 +947,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDuePrincipal.Date = item.paymentDate;
                     pastDuePrincipal.TransactionTypeId = (byte)LoanTransactionTypeEnum.Principal;
                     pastDuePrincipal.Parent_PastDueCode = item.loanRefNo;
-                    pastDuePrincipal.ProductTypeId = item.productId;
+                    pastDuePrincipal.ProductTypeId = product.ProductTypeId;
 
                     transPastDue.Add(pastDuePrincipal);
 
@@ -1071,6 +1074,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == item.productId);
                 var forceDebitCode = CommonHelpers.GenerateRandomDigitCode(10);
+                item.createdBy = (int)SystemStaff.System;
                 //var casabalance = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == item.casaAccountId).AvailableBalance;
                 //if (casabalance < 0 )
                 //{
@@ -1126,6 +1130,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == item.productId);
                 var forceDebitCode = CommonHelpers.GenerateRandomDigitCode(10);
+                item.createdBy = (int)SystemStaff.System;
                 //var casabalance = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == item.casaAccountId).AvailableBalance;
                 //if (casabalance < 0)
                 //{
