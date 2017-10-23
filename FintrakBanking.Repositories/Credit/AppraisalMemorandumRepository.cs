@@ -244,34 +244,18 @@ namespace FintrakBanking.Repositories.Credit
             workflow.NextLevelId = model.receiverLevelId;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
+
             workflow.Amount = model.amount;
             workflow.InvestmentGrade = model.investmentGrade;
             workflow.Tenor = model.tenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
             // log
 
-             workflow.LogActivity();
-
-
-            if (workflow.Saved)
-            {
-                // Audit Section ---------------------------
-                var audit = new tbl_Audit
-                {
-                    AuditTypeId = (short)AuditTypeEnum.AppraisalMemorandumAdded,
-                    StaffId = model.createdBy,
-                    BranchId = (short)model.userBranchId,
-                    Detail = $"CAM: '{ model.applicationId }' ",
-                    IPAddress = model.userIPAddress,
-                    Url = model.applicationUrl,
-                    ApplicationDate = general.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
-                };
-                this.audit.AddAuditTrail(audit);
-                // End of Audit Section ---------------------
-
+            workflow.LogActivity();
+            
                 var appl = context.tbl_Loan_Application.Find(model.applicationId);
                 appl.ApprovalStatusId = workflow.StatusId;
+
                 if (appl.ApprovalStatusId == (int)ApprovalStatusEnum.Pending) // redundant block
                 {
                     appl.ApprovalStatusId = (int)ApprovalStatusEnum.Processing;
@@ -313,10 +297,22 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
 
-                context.SaveChanges();
-            }
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.AppraisalMemorandumAdded,
+                StaffId = model.createdBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"CAM: '{ model.applicationId }' ",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = general.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
 
-            return workflow.Saved;
+            return context.SaveChanges() > 0;
         }
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId)
@@ -406,6 +402,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     loanApplicationDetailId = x.LoanApplicationDetailId,
                     applicationId = x.LoanApplicationId,
+                    customerId = x.tbl_Customer.CustomerId,
                     obligorName = x.tbl_Customer.FirstName + " " + x.tbl_Customer.MiddleName + " " + x.tbl_Customer.LastName,
                     currencyCode = x.tbl_Currency.CurrencyCode,
 

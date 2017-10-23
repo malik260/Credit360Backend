@@ -144,7 +144,7 @@ namespace FintrakBanking.Repositories.Finance
                     trans.OperationId = mainItem.operationId;
                     trans.Description = mainItem.description;
                     trans.ValueDate = mainItem.valueDate;
-                    //trans.PostedDate = mainItem.transactionDate;
+                    trans.PostedDate = mainItem.transactionDate;
                     trans.CurrencyId = mainItem.currencyId;
                     trans.CurrencyRate = mainItem.currencyRate;
                     trans.PostedDateTime = DateTime.Now;

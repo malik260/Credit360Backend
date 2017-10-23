@@ -1115,6 +1115,43 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
+        public IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId) 
+        {
+            var collaterals = context.tbl_Customer
+                .Join(context.tbl_Collateral_Customer, c => c.CustomerId, o => o.CustomerId, (c, o) => new { Customer = c, Collateral = o })
+                .Join(context.tbl_Loan_Application, cc => cc.Collateral.CustomerId, a => a.CustomerId, (cc, a) => new { CustomerCollateral = cc, Application = a })
+                .Join(context.tbl_Loan_Collateral_Mapping, ca => ca.Application.LoanApplicationId, m => m.LoanApplicationId, (ca, m) => new { CollateralApplication = ca, Mapping = m })
+                .Select(x => new ActiveCustomerCollateralViewModel
+                {
+                    customerId = x.CollateralApplication.Application.CustomerId,
+                    collateralCustomerId = x.Mapping.CollateralCustomerId,
+                    loanTypeId = x.CollateralApplication.Application.LoanTypeId,
+                    loanCollateralMappingId = x.Mapping.LoanCollateralMappingId,
+                    loanApplicationId = x.Mapping.LoanApplicationId,
+                    isReleased = x.Mapping.IsReleased,
+                    releaseApprovalStatusId = (short)x.Mapping.ReleaseApprovalStatusId,
+                    customerCode = x.CollateralApplication.CustomerCollateral.Customer.CustomerCode,
+                    firstName = x.CollateralApplication.CustomerCollateral.Customer.FirstName,
+                    middleName = x.CollateralApplication.CustomerCollateral.Customer.MiddleName,
+                    lastName = x.CollateralApplication.CustomerCollateral.Customer.LastName,
+                    collateralCode = x.Mapping.tbl_Collateral_Customer.CollateralCode,
+                    collateralValue = x.Mapping.tbl_Collateral_Customer.CollateralValue,
+                    allowSharing = x.Mapping.tbl_Collateral_Customer.AllowSharing,
+                    isLocationBased = x.Mapping.tbl_Collateral_Customer.IsLocationBased,
+                    valuationCycle = x.Mapping.tbl_Collateral_Customer.ValuationCycle,
+                    hairCut = x.Mapping.tbl_Collateral_Customer.HairCut,
+                    collateralTypeId = x.Mapping.tbl_Collateral_Customer.CollateralTypeId,
+                    applicationReferenceNumber = x.CollateralApplication.Application.ApplicationReferenceNumber,
+                    applicationDate = x.CollateralApplication.Application.ApplicationDate,
+                    interestRate = x.CollateralApplication.Application.InterestRate,
+                    loanInformation = x.CollateralApplication.Application.LoanInformation,
+                })
+                .Where(x => x.isReleased == false)
+                .Distinct();
+
+            return collaterals;
+        }
+
         public bool ReleaseCollateral(int collateralMappingId, int staffId, GeneralEntity model)
         {
             var mapping = context.tbl_Loan_Collateral_Mapping.Find(collateralMappingId);
