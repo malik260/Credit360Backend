@@ -25,6 +25,9 @@
         </rsweb:ReportViewer>
     
         <asp:ObjectDataSource ID="odsSelfLiqLoanExp" runat="server" SelectMethod="SelfLiquidatingLoanExpiry" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="companyId" QueryStringField="companyId" Type="Int32" />
+            </SelectParameters>
         </asp:ObjectDataSource>
     
     </div>

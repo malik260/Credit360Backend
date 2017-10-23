@@ -11,7 +11,7 @@ namespace FintrakBanking.ReportObjects.Credit
     public class LoanMonitoring
     {
 
-        public static IEnumerable<CollateralViewModel> CollateralPropertyRevaluation()
+        public static IEnumerable<CollateralViewModel> CollateralPropertyRevaluation(int companyId)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
             var applDate = context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
@@ -24,6 +24,7 @@ namespace FintrakBanking.ReportObjects.Credit
                         join f in context.tbl_Collateral_Immovable_Property on a.CollateralCustomerId equals f
                             .CollateralCustomerId
                         where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LastValuationDate, a.ValuationCycle), applDate) <= 30)
+                        && a.CompanyId == companyId
                         select new CollateralViewModel
                         {
                             collateralTypeId = a.CollateralTypeId,
@@ -46,7 +47,7 @@ namespace FintrakBanking.ReportObjects.Credit
             return new List<CollateralViewModel>();
         }
 
-        public static IEnumerable<LoanCovenantDetailViewModel> CovenantsApproachingDueDate()
+        public static IEnumerable<LoanCovenantDetailViewModel> CovenantsApproachingDueDate(int companyId)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
             var applDate = context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
@@ -57,7 +58,8 @@ namespace FintrakBanking.ReportObjects.Credit
                         join e in context.tbl_Loan_Application_Detail on b.LoanApplicationDetailId equals e.LoanApplicationDetailId
                         join f in context.tbl_Frequency_Type on a.FrequencyTypeId equals f.FrequencyTypeId
                         join g in context.tbl_Loan_Covenant_Type on a.CovenantTypeId equals g.CovenantTypeId
-                        where DbFunctions.DiffDays(applDate, a.NextCovenantDate) <= 10
+                        where DbFunctions.DiffDays(applDate, a.NextCovenantDate) <= 10 
+                        && a.CompanyId == companyId
                         select new LoanCovenantDetailViewModel
                         {
                             companyId = a.CompanyId,
@@ -85,7 +87,7 @@ namespace FintrakBanking.ReportObjects.Credit
             return new List<LoanCovenantDetailViewModel>();
         }
 
-        public static IEnumerable<LoanViewModel> NplLoanMonitoring()
+        public static IEnumerable<LoanViewModel> NplLoanMonitoring(int companyId)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
             var data = (from a in context.tbl_Loan_Application
@@ -93,6 +95,7 @@ namespace FintrakBanking.ReportObjects.Credit
                         join b in context.tbl_Loan on d.LoanApplicationDetailId equals b.LoanApplicationDetailId
                         join c in context.tbl_Loan_Revolving on d.LoanApplicationDetailId equals c.LoanApplicationDetailId
                         where b.InternalPrudentialGuidelineStatusId != (int)LoanPrudentialStatusEnum.Performing
+                        && b.CompanyId == companyId
                         select new LoanViewModel
                         {
                             applicationReferenceNumber = a.ApplicationReferenceNumber,
@@ -122,7 +125,7 @@ namespace FintrakBanking.ReportObjects.Credit
             return new List<LoanViewModel>();
         }
 
-        public IEnumerable<LoanViewModel> SelfLiquidatingLoanExpiry()
+        public IEnumerable<LoanViewModel> SelfLiquidatingLoanExpiry(int companyId)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
             var applDate = context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
@@ -132,7 +135,8 @@ namespace FintrakBanking.ReportObjects.Credit
                         join c in context.tbl_Product_Type on b.ProductTypeId equals c.ProductTypeId
                         join d in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals d.LoanApplicationDetailId
                         where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.SelfLiquidating &&
-                        DbFunctions.DiffDays(a.MaturityDate, applDate) <= 30
+                        DbFunctions.DiffDays(a.MaturityDate, applDate) <= 30 
+                        && a.CompanyId == companyId
                         select new LoanViewModel
                         {
                             applicationReferenceNumber = d.tbl_Loan_Application.ApplicationReferenceNumber,

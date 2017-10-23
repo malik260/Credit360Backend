@@ -25,6 +25,9 @@
         </rsweb:ReportViewer>
     
         <asp:ObjectDataSource ID="odsCovDueDate" runat="server" SelectMethod="CovenantsApproachingDueDate" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="companyId" QueryStringField="companyId" Type="Int32" />
+            </SelectParameters>
         </asp:ObjectDataSource>
     
     </div>

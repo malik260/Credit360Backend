@@ -24,6 +24,9 @@
             </rsweb:ReportViewer>
         </div>
         <asp:ObjectDataSource ID="odsCollPropRev" runat="server" SelectMethod="CollateralPropertyRevaluation" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="companyId" QueryStringField="companyId" Type="Int32" />
+            </SelectParameters>
         </asp:ObjectDataSource>
     </form>
 </body>
