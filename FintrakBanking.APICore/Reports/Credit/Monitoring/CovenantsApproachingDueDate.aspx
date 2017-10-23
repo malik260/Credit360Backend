@@ -16,7 +16,7 @@
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-        <rsweb:ReportViewer ID="covDueDateRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
+        <rsweb:ReportViewer ID="covDueDateRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="887px">
             <LocalReport ReportPath="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc">
                 <DataSources>
                     <rsweb:ReportDataSource DataSourceId="odsCovDueDate" Name="CovenantDetails" />

@@ -15,7 +15,7 @@
         <div>
             <asp:ScriptManager ID="ScriptManager1" runat="server">
             </asp:ScriptManager>
-            <rsweb:ReportViewer ID="collPropRv" runat="server" Font-Names="Verdana" Font-Size="8pt" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="651px">
+            <rsweb:ReportViewer ID="collPropRv" runat="server" Font-Names="Verdana" Font-Size="8pt" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="888px">
                 <LocalReport ReportPath="Reports\Credit\Monitoring\CollateralPropertyRevaluation.rdlc">
                     <DataSources>
                         <rsweb:ReportDataSource DataSourceId="odsCollPropRev" Name="CollateralPropertyDetails" />

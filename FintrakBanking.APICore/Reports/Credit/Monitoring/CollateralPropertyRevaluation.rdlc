@@ -463,6 +463,7 @@
                                   <Value>=Fields!lastValuationDate.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
+                                    <Format>dd-mm-yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -481,6 +482,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -510,7 +512,7 @@
             <DataSetName>CollateralPropertyDetails</DataSetName>
             <Top>0.97222in</Top>
             <Left>0.04923in</Left>
-            <Height>0.83333in</Height>
+            <Height>0.83334in</Height>
             <Width>9.05208in</Width>
             <Style>
               <Border>
