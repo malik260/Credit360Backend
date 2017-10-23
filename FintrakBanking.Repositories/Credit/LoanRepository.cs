@@ -1894,18 +1894,19 @@ namespace FintrakBanking.Repositories.Credit
         public IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId)
         {
 
-            var loans = GetLoansByCompanyId(companyId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.companyId == customerId)
-                .Select(c => new LoanRepaymentScheduleViewModel()
+            var loans = GetLoansByCompanyId(companyId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.customerId == customerId)
+                .Select(c => new LoanRepaymentScheduleViewModel
                 {
-                    principalRepayment = (decimal)c.outstandingPrincipal,
-                    interestAccrual = (decimal)c.outstandingPrincipal,
+                    loanReferenceNumber = c.loanReferenceNumber,
+                    principalRepayment = c.outstandingPrincipal,
+                    interestAccrual = c.outstandingInterest,
                     customerId = c.customerId,
                     principalAmount = c.principalAmount,
                     effectiveDate = c.effectiveDate,
+                    maturityDate = c.maturityDate,
                     interestRate = c.interestRate,
                     loanId = c.loanId,
                     productName = c.productAccountName,
-                    tenor = c.tenor,
                     terminationDate = c.maturityDate
                 }).AsQueryable();
             return loans;
@@ -2066,7 +2067,6 @@ namespace FintrakBanking.Repositories.Credit
                     casaAccountId = o.CasaAccountId,
                     branchId = o.BranchId,
                     loanReferenceNumber = o.LoanReferenceNumber,
-                    //tenor = (o.MaturityDate - o.EffectiveDate).Days,
                     principalFrequencyTypeId = (short)o.PrincipalFrequencyTypeId,
                     interestFrequencyTypeId = (short)o.InterestFrequencyTypeId,
 
@@ -2090,6 +2090,8 @@ namespace FintrakBanking.Repositories.Credit
                     customerCode = o.tbl_Customer.CustomerCode,
                     productAccountNumber = o.tbl_CASA.ProductAccountNumber,
                     productAccountName = o.tbl_CASA.ProductAccountName,
+                    outstandingPrincipal = o.OutstandingPrincipal,
+                    outstandingInterest = o.OutstandingInterest,
                 }));
         }
       
