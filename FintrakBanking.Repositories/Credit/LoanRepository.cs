@@ -2540,19 +2540,19 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationId = m.LoanApplicationId,
                             loanApplicationDetailId = d.LoanApplicationDetailId,
                             applicationReferenceNumber = m.ApplicationReferenceNumber,
-                           // casaAccountId = m.CasaAccountId,
+                            //// casaAccountId = m.CasaAccountId,
                             customerId = m.CustomerId ?? 0,
                             customerCode = cust.CustomerCode,
                             customerName = m.CustomerId.HasValue ? m.tbl_Customer.FirstName + " " + m.tbl_Customer.MiddleName + " " + m.tbl_Customer.LastName : "",
 
-                            customerGroupId = m.CustomerGroupId,
+                            customerGroupId = m.CustomerGroupId.HasValue ? m.CustomerGroupId : 0,
                             customerGroupName = m.CustomerGroupId.HasValue ? m.tbl_Customer_Group.GroupName : "",
-                            customerGroupCode = m.tbl_Customer_Group.GroupCode,
-                            customerSensitivityLevelId = m.tbl_Customer.CustomerSensitivityLevelId,
+                            customerGroupCode = m.CustomerGroupId.HasValue ? m.tbl_Customer_Group.GroupCode : "",
+                            customerSensitivityLevelId = d.tbl_Customer.CustomerSensitivityLevelId,
 
                             customerAccounts = (from k in context.tbl_CASA
                                                 where k.Deleted == false
-                                                && k.CustomerId == d.CustomerId  
+                                                && k.CustomerId == d.CustomerId
                                                 select (
                                  new CasaViewModel
                                  {
@@ -2615,67 +2615,67 @@ namespace FintrakBanking.Repositories.Credit
                             ),
                             approvedTenor = d.ApprovedTenor,
                             createdBy = m.CreatedBy,
-                            applicationDate = m.ApplicationDate,
+                            applicationDate =m.ApplicationDate,
                             dateTimeCreated = d.DateTimeCreated,
 
-                            loanPreliminaryEvaluationId = m.LoanPreliminaryEvaluationId,
-                            loanGuarantor = (from g in context.tbl_Loan_Guarantor.Where(x=>x.LoanApplicationId == m.LoanApplicationId)
-                                            select (
-                                                     new LoanGuarantorViewModel
-                                                     {
-                                                         loanGuarantorId = g.LoanGuarantorId,
-                                                         firstname = g.Firstname,
-                                                         lastname = g.Lastname,
-                                                         middlename = g.Middlename,
-                                                         fullName = g.Firstname + " " +g.Middlename +" " +g.Lastname,
-                                                         emailAddress = g.EmailAddress,
-                                                         phoneNumber1 = g.PhoneNumber1,
-                                                         phoneNumber2 = g.PhoneNumber2,
-                                                         address = g.Address,
-                                                         bvn = g.BVN,
-                                                         relationship = g.Relationship,
-                                                         relationshipDuration = g.RelationshipDuration
-                                                     })).ToList(),
-                            loanChargeFee = (from f in context.tbl_Loan_Fee.Where(x => x.LoanId == d.tbl_Loan.Where(l=>l.TermLoanId == x.LoanId).FirstOrDefault().TermLoanId
-                                             || x.LoanId ==  d.tbl_Loan_Revolving.Where(l => l.RevolvingLoanId == x.LoanId).FirstOrDefault().RevolvingLoanId
-                                             || x.LoanId == d.tbl_Loan_Contingent.Where(l => l.ContingentLoanId == x.LoanId).FirstOrDefault().ContingentLoanId)
-                                             select (
-                                                      new LoanChargeFeeViewModel
-                                                      {
-                                                          loanChargeFeeId = f.LoanChargeFeeId,
-                                                          chargeFeeId = f.ChargeFeeId,
-                                                          feeAmount = f.FeeAmount,
-                                                          feeTypeName = f.tbl_Charge_Fee.ChargeFeeName,
-                                                          feeRateValue = f.FeeRateValue,
-                                                          isIntegralFee = f.IsIntegralFee,
-                                                          recurring = f.IsRecurring
+                            loanPreliminaryEvaluationId = m.LoanPreliminaryEvaluationId ?? 0,
+                            //loanGuarantor = (from g in context.tbl_Loan_Guarantor.Where(x=>x.LoanApplicationId == m.LoanApplicationId)
+                            //                select (
+                            //                         new LoanGuarantorViewModel
+                            //                         {
+                            //                             loanGuarantorId = g.LoanGuarantorId,
+                            //                             firstname = g.Firstname,
+                            //                             lastname = g.Lastname,
+                            //                             middlename = g.Middlename,
+                            //                             fullName = g.Firstname + " " +g.Middlename +" " +g.Lastname,
+                            //                             emailAddress = g.EmailAddress,
+                            //                             phoneNumber1 = g.PhoneNumber1,
+                            //                             phoneNumber2 = g.PhoneNumber2,
+                            //                             address = g.Address,
+                            //                             bvn = g.BVN,
+                            //                             relationship = g.Relationship,
+                            //                             relationshipDuration = g.RelationshipDuration
+                            //                         })).ToList(),
+                            //loanChargeFee = (from f in context.tbl_Loan_Fee.Where(x => x.LoanId == d.tbl_Loan.Where(l=>l.TermLoanId == x.LoanId).FirstOrDefault().TermLoanId
+                            //                 || x.LoanId ==  d.tbl_Loan_Revolving.Where(l => l.RevolvingLoanId == x.LoanId).FirstOrDefault().RevolvingLoanId
+                            //                 || x.LoanId == d.tbl_Loan_Contingent.Where(l => l.ContingentLoanId == x.LoanId).FirstOrDefault().ContingentLoanId)
+                            //                 select (
+                            //                          new LoanChargeFeeViewModel
+                            //                          {
+                            //                              loanChargeFeeId = f.LoanChargeFeeId,
+                            //                              chargeFeeId = f.ChargeFeeId,
+                            //                              feeAmount = f.FeeAmount,
+                            //                              feeTypeName = f.tbl_Charge_Fee.ChargeFeeName,
+                            //                              feeRateValue = f.FeeRateValue,
+                            //                              isIntegralFee = f.IsIntegralFee,
+                            //                              recurring = f.IsRecurring
                                                             
-                                                      })).ToList(),
-                            loanCovenant = (from c in context.tbl_Loan_Covenant_Detail.Where(x => x.LoanId == d.tbl_Loan.Where(l => l.TermLoanId == x.LoanId).FirstOrDefault().TermLoanId
-                                             || x.LoanId == d.tbl_Loan_Revolving.Where(l => l.RevolvingLoanId == x.LoanId).FirstOrDefault().RevolvingLoanId
-                                             || x.LoanId == d.tbl_Loan_Contingent.Where(l => l.ContingentLoanId == x.LoanId).FirstOrDefault().ContingentLoanId)
-                                            select (
-                                                     new LoanCovenantDetailViewModel
-                                                     {
-                                                         loanCovenantDetailId = c.LoanCovenantDetailId,
-                                                         covenantTypeId = c.CovenantTypeId,
-                                                         covenantDetail = c.CovenantDetail,
-                                                         covenantAmount = c.CovenantAmount,
-                                                         covenantDate = c.CovenantDate
+                            //                          })).ToList(),
+                            //loanCovenant = (from c in context.tbl_Loan_Covenant_Detail.Where(x => x.LoanId == d.tbl_Loan.Where(l => l.TermLoanId == x.LoanId).FirstOrDefault().TermLoanId
+                            //                 || x.LoanId == d.tbl_Loan_Revolving.Where(l => l.RevolvingLoanId == x.LoanId).FirstOrDefault().RevolvingLoanId
+                            //                 || x.LoanId == d.tbl_Loan_Contingent.Where(l => l.ContingentLoanId == x.LoanId).FirstOrDefault().ContingentLoanId)
+                            //                select (
+                            //                         new LoanCovenantDetailViewModel
+                            //                         {
+                            //                             loanCovenantDetailId = c.LoanCovenantDetailId,
+                            //                             covenantTypeId = c.CovenantTypeId,
+                            //                             covenantDetail = c.CovenantDetail,
+                            //                             covenantAmount = c.CovenantAmount,
+                            //                             covenantDate = c.CovenantDate
 
-                                                     })).ToList(),
-                            loanCollateral = (from cm in context.tbl_Loan_Collateral_Mapping.Where(x => x.LoanApplicationId == m.LoanApplicationId)
-                                              select (
-                                                       new LoanCollateralMappingViewModel
-                                                       {
-                                                           loanCollateralMappingId = cm.LoanCollateralMappingId,
-                                                           collateralCustomerId = cm.CollateralCustomerId,
-                                                           loanApplicationId = cm.LoanApplicationId,
-                                                           collateralValue = cm.tbl_Collateral_Customer.CollateralValue,
-                                                           currencyId = cm.tbl_Collateral_Customer.CurrencyId,
-                                                           currencyCode = cm.tbl_Collateral_Customer.tbl_Currency.CurrencyCode,
-                                                           currency = cm.tbl_Collateral_Customer.tbl_Currency.CurrencyName
-                                                       })).ToList(),
+                            //                         })).ToList(),
+                            //loanCollateral = (from cm in context.tbl_Loan_Collateral_Mapping.Where(x => x.LoanApplicationId == m.LoanApplicationId)
+                            //                  select (
+                            //                           new LoanCollateralMappingViewModel
+                            //                           {
+                            //                               loanCollateralMappingId = cm.LoanCollateralMappingId,
+                            //                               collateralCustomerId = cm.CollateralCustomerId,
+                            //                               loanApplicationId = cm.LoanApplicationId,
+                            //                               collateralValue = cm.tbl_Collateral_Customer.CollateralValue,
+                            //                               currencyId = cm.tbl_Collateral_Customer.CurrencyId,
+                            //                               currencyCode = cm.tbl_Collateral_Customer.tbl_Currency.CurrencyCode,
+                            //                               currency = cm.tbl_Collateral_Customer.tbl_Currency.CurrencyName
+                            //                           })).ToList(),
 
                         }).ToList();
 

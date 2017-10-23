@@ -647,7 +647,7 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals b.LoanApplicationId
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
                         join d in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
-                        join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
+                        join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId into g from cust in g.DefaultIfEmpty()
                         join cGrp in context.tbl_Customer_Group on a.CustomerGroupId equals cGrp.CustomerGroupId into grp from
                         cGrp in grp.DefaultIfEmpty()
          
