@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Reports;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,6 @@ namespace  FintrakBanking.Interfaces.Reports
         string GetSectorLimitMonitoringReport(int companyId);
         string GetBranchLoanAmountLimit(int branchId, int companyId);
         string GetWorkflowDefinition(int operationId, int companyId);
-        string GetDisburstLoans(DateTime startDate, DateTime endDate, int companyId);
+        string GetDisburstLoans(DateRange dateRange, int companyId);
     }
 }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Finance;
+using System.Text;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -37,6 +38,28 @@ namespace FintrakBanking.Repositories.CASA
                 d.CasaAccountId == (value) || d.ProductAccountNumber == accountNumber && d.CompanyId == companyId)
                 ).AsQueryable().SingleOrDefault();
             return CasaAccount.CasaAccountId;
+        }
+
+        public string GetAllCASAAccount(string casaAccountNumber, int companyId)
+        {
+            string accno = "";
+            int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
+            var accounts = context.tbl_CASA.Where(x => x.CasaAccountId == casaAccountId);
+
+            foreach (var account in accounts)
+            {
+                if (account == null)
+                {
+                    accno += account.ProductAccountNumber;
+                }
+                else
+                {
+                    accno += "," + account.ProductAccountNumber;
+                }
+                
+            }
+            return accno;
+
         }
 
         public CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId)

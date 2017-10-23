@@ -15,6 +15,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? interestFrequency { get; set; }
         public int principalFrequencyTypeId { get; set; }
         public int interestFrequencyTypeId { get; set; }
+        public int? proposedTenor { get; set; }
         //public int tenor { get { return  }  }
         private int _tenor;
 
@@ -47,8 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal prepayment  { get; set; }
         public int operationId { get; set; }
         public bool isManagementInterestRate{ get; set; }
-        public DateTime newMaturityDate{ get; set; }
-        public int newTenorPrepayment{ get { return (newMaturityDate - newEffectiveDate).Days; } }
+        public DateTime? newMaturityDate{ get; set; }
+        public int newTenorPrepayment{ get { return ((DateTime)newMaturityDate - newEffectiveDate).Days; } }
 
 
 

@@ -141,6 +141,21 @@ namespace FintrakBanking.Repositories.Credit
         private string addRevolvingLoan(LoanViewModel model)
         {
             var revolvingLoanInput = model.revolvingLoanInput;
+
+            var overdraftLimit = from a in context.tbl_Loan_Revolving
+                                   where a.LoanApplicationDetailId == revolvingLoanInput.loanApplicationDetailId
+                                   let sumLimit = context.tbl_Loan_Revolving.Where(x => x.LoanApplicationDetailId == revolvingLoanInput.loanApplicationDetailId).Sum(x => x.OverdraftLimit)
+                                   select sumLimit;
+
+            var totalPreviouslyBookedAmount = overdraftLimit.FirstOrDefault();
+
+            var totaloverdraftLimit = totalPreviouslyBookedAmount + revolvingLoanInput.overdraftLimit;
+
+            if (totaloverdraftLimit > model.customerAvailableAmount)
+                throw new Exception("The loan amount cannot greater than the availiable amount");
+
+            var currentExchangeRate = context.tbl_Currency_Rate.Where(x => x.CurrencyId == model.currencyId).LastOrDefault().SellingRate;
+            
             var loanReferenceNumber = GenerateLoanReferenceNumber(model.customerId, model.productId, model.productTypeId);
             var data = new tbl_Loan_Revolving
             {
@@ -148,8 +163,8 @@ namespace FintrakBanking.Repositories.Credit
                 ProductId = model.productId,
                 CasaAccountId = model.casaAccountId,
                 BranchId = model.branchId,
-                CurrencyId = (short)model.currencyId,
-                ExchangeRate = revolvingLoanInput.exchangeRate,
+                CurrencyId = (short)model.exchangeRate,
+                ExchangeRate = currentExchangeRate,
                 LoanApplicationDetailId = model.loanApplicationDetailId,
                 LoanReferenceNumber = loanReferenceNumber,
                 SubSectorId = model.subSectorId,
@@ -258,6 +273,22 @@ namespace FintrakBanking.Repositories.Credit
         private string addContingentLiability(LoanViewModel entity)
         {
             var contingentLoanInput = entity.contingentLoanInput;
+
+            var contingentAmount = from a in context.tbl_Loan_Contingent
+                                  where a.LoanApplicationDetailId == entity.loanApplicationDetailId
+                                  let sumAmount = context.tbl_Loan_Contingent.Where(x => x.LoanApplicationDetailId == entity.loanApplicationDetailId).Sum(x => x.ContingentAmount)
+                                  select sumAmount;
+
+            var totalPreviouslyBookedAmount = contingentAmount.FirstOrDefault();
+
+            var totalContingentAmount = totalPreviouslyBookedAmount + contingentLoanInput.contingentAmount;
+
+            if (totalContingentAmount > entity.customerAvailableAmount)
+                throw new Exception("The loan amount cannot greater than the availiable amount");
+
+            var currentExchangeRate = context.tbl_Currency_Rate.Where(x => x.CurrencyId == entity.currencyId).LastOrDefault().SellingRate;
+
+            
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId, entity.productTypeId);
             var data = new tbl_Loan_Contingent
             {
@@ -266,7 +297,7 @@ namespace FintrakBanking.Repositories.Credit
                 CasaAccountId = entity.casaAccountId,
                 BranchId = entity.branchId,
                 CurrencyId = contingentLoanInput.currencyId,
-                ExchangeRate = entity.exchangeRate,
+                ExchangeRate = currentExchangeRate,
                 LoanApplicationDetailId = entity.loanApplicationDetailId,
                 LoanReferenceNumber = loanReferenceNumber,
                 SubSectorId = entity.subSectorId,
@@ -276,7 +307,7 @@ namespace FintrakBanking.Repositories.Credit
                 TeamMISCode = entity.teamMiscode,
                 EffectiveDate = entity.effectiveDate,
                 MaturityDate = entity.maturityDate,
-
+                
                 BookingDate = entity.bookingDate,
 
                 ContingentAmount = contingentLoanInput.contingentAmount,
@@ -391,7 +422,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (totalPrincipalAmount > entity.customerAvailableAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
-   
+
+            var currentExchangeRate = context.tbl_Currency_Rate.Where(x => x.CurrencyId == entity.currencyId).LastOrDefault().SellingRate;
 
             double? priceIndex = (from a in context.tbl_Product
                                   where a.ProductId == entity.productId
@@ -423,6 +455,7 @@ namespace FintrakBanking.Repositories.Credit
                 LoanTypeId = entity.loanTypeId,
                 SubSectorId = entity.subSectorId,
                 CurrencyId = (short)entity.currencyId,
+                ExchangeRate = currentExchangeRate,
 
                 DischargeLetter = false,
                 SuspendInterest = false,
@@ -583,6 +616,17 @@ namespace FintrakBanking.Repositories.Credit
 
             financeTransaction.PostTransaction(inputTransactions);
         }
+
+        public void PostLoanFees(LoanViewModel entity)
+        {
+          
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
+
+            financeTransaction.PostTransaction(inputTransactions);
+        }
+
 
         //[OperationBehavior(TransactionScopeRequired = true)]
         //public LoanViewModel PostLoanDisbursment(LoanViewModel model)
@@ -1328,7 +1372,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanCovenantList.Add(loanCovenant);
             };
 
-            var feeRecord = context.tbl_Loan_Fee.Where(x => x.LoanId == loanId).ToList();
+            var feeRecord = context.tbl_Loan_Fee.Where(x => x.LoanId == loanId && x.IsPosted == false).ToList();
             List<LoanChargeFeeViewModel> loanChargeFeeList = new List<LoanChargeFeeViewModel>();
             foreach (var fee in feeRecord)
             {
@@ -1439,7 +1483,7 @@ namespace FintrakBanking.Repositories.Credit
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
             loanTransaction.currencyId = casa.CurrencyId;
-            loanTransaction.currencyRate = financeTransaction.GetExchangeRate(loanTransaction.currencyId, model.companyId);
+            loanTransaction.currencyRate = financeTransaction.GetExchangeRate(loanTransaction.valueDate,loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = model.createdBy;
             loanTransaction.approvedBy = model.createdBy;
@@ -1510,7 +1554,7 @@ namespace FintrakBanking.Repositories.Credit
                 feeTransaction.valueDate = generalSetup.GetApplicationDate();
                 feeTransaction.transactionDate = feeTransaction.valueDate;
                 feeTransaction.currencyId = casa.CurrencyId;
-                feeTransaction.currencyRate = financeTransaction.GetExchangeRate(feeTransaction.currencyId, loanDetails.companyId);
+                feeTransaction.currencyRate = financeTransaction.GetExchangeRate(feeTransaction.valueDate, feeTransaction.currencyId, loanDetails.companyId).sellingRate;
                 feeTransaction.isApproved = true;
                 feeTransaction.postedBy = loanDetails.createdBy;
                 feeTransaction.approvedBy = loanDetails.createdBy;
@@ -2133,7 +2177,7 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
-      
+
         /// <summary>
         /// Gets the product fees.
         /// </summary>
@@ -2141,55 +2185,32 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IEnumerable<LoanChargeFeeViewModel> GetProductFees(int productId)
         {
-            var data = (from a in context.tbl_Charge_Fee
-                        join p in context.tbl_Product_Charge_Fee on a.ChargeFeeId equals p.ChargeFeeId
-                        where p.ProductId == productId && a.Deleted == false
-                        select new LoanChargeFeeViewModel
-                        {
-                            chargeFeeId = a.ChargeFeeId,
-                            chargeFeeName = a.ChargeFeeName,
-                            feeTypeId = a.FeeTypeId,
-                            feeTypeName = a.tbl_Fee_Type.FeeTypeName,
-                            feeIntervalId = a.FeeIntervalId
-                        }).ToList();
-            return data;
-        }
-     
-        /// <summary>
-        /// Gets the loan product charge fee.
-        /// </summary>
-        /// <param name="chargeFeeId">The charge fee identifier.</param>
-        /// <param name="productId">The product identifier.</param>
-        /// <returns></returns>
-        public IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId)
-        {
             var data = (from c in context.tbl_Charge_Fee
                         join p in context.tbl_Product_Charge_Fee on c.ChargeFeeId equals p.ChargeFeeId
                         where p.ProductId == productId && c.Deleted == false
                         select new LoanChargeFeeViewModel
                         {
-                            productFeeId = p.ProductFeeId,
                             chargeFeeId = c.ChargeFeeId,
                             chargeFeeName = c.ChargeFeeName,
+                            feeTypeId = c.FeeTypeId,
+                            feeTypeName = c.tbl_Fee_Type.FeeTypeName,
+                            feeIntervalId = c.FeeIntervalId,
+                            productFeeId = p.ProductFeeId,
                             feeRateValue = p.RateValue,
                             feeDependentAmount = p.DependentAmount ?? 0,
-                            feeAmount = c.Amount ?? 0,
-                            feeIntervalId = c.FeeIntervalId,
+                            chargeAmount = c.Amount ?? 0,
                             feeIntervalName = c.tbl_Fee_Interval.FeeIntervalName,
-                            feeTypeId = c.FeeTypeId,
                             required = c.tbl_Fee_Type.ByAmountRequired,
                             recurring = (bool)c.Recurring,
-                            //feeTypeName = c.FeeTypeName
+                            feeTargetId = c.FeeTargetId,
+                            feeTargetName = c.tbl_Fee_Target.FeeTargetName,
+                            isIntegralFee = c.IsIntegralFee,
 
                         }).ToList();
             return data;
         }
-       
-        /// <summary>
-        /// Gets the loan charge fee.
-        /// </summary>
-        /// <param name="loanId">The loan identifier.</param>
-        /// <returns></returns>
+
+        
         public List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId)
         {
             var data = (from c in context.tbl_Loan_Fee
@@ -2210,6 +2231,40 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        /// <summary>
+        /// Gets the loan product charge fees by product identifier.
+        /// </summary>
+        /// <param name="productId">The product identifier.</param>
+        /// <returns></returns>
+        public IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId)
+        {
+            var data = (from c in context.tbl_Charge_Fee
+                        join p in context.tbl_Product_Charge_Fee
+                        on c.ChargeFeeId equals p.ChargeFeeId
+                        where p.ProductId == productId && p.Deleted == false
+                        select new ProductFeeViewModel
+                        {
+                            productFeeId = p.ProductFeeId,
+                            productId = p.ProductId,
+                            productName = p.tbl_Product.ProductName,
+                            feeId = c.ChargeFeeId,
+                            feeName = c.ChargeFeeName,
+                            feeTargetName = c.tbl_Fee_Target.FeeTargetName,
+                            feeIntervalName = c.tbl_Fee_Interval.FeeIntervalName,
+                            rateValue = (decimal)p.RateValue,
+                            dependentAmount = p.DependentAmount
+
+                        }).ToList();
+            return data;
+        }
+
+        /// <summary>
+        /// Gets the current customer exposure.
+        /// </summary>
+        /// <param name="customer">The customer.</param>
+        /// <param name="companyId">The company identifier.</param>
+        /// <returns></returns>
+        /// 
         /// <summary>
         /// Gets the loan product charge fees by charge fee identifier.
         /// </summary>
@@ -2236,11 +2291,49 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
-       
+
         /// <summary>
         /// Gets the loan guarantors.
         /// </summary>
         /// <param name="loanApplicationId">The loan application identifier.</param>
+        /// <returns></returns>
+        
+
+        /// <summary>
+        /// Gets the loan product charge fee.
+        /// </summary>
+        /// <param name="chargeFeeId">The charge fee identifier.</param>
+        /// <param name="productId">The product identifier.</param>
+        /// <returns></returns>
+
+        public IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId)
+        {
+            var data = (from c in context.tbl_Charge_Fee
+                        join p in context.tbl_Product_Charge_Fee on c.ChargeFeeId equals p.ChargeFeeId
+                        where p.ProductId == productId && c.Deleted == false
+                        select new LoanChargeFeeViewModel
+                        {
+                            productFeeId = p.ProductFeeId,
+                            chargeFeeId = c.ChargeFeeId,
+                            chargeFeeName = c.ChargeFeeName,
+                            feeRateValue = p.RateValue,
+                            feeDependentAmount = p.DependentAmount ?? 0,
+                            feeAmount = c.Amount ?? 0,
+                            feeIntervalId = c.FeeIntervalId,
+                            feeIntervalName = c.tbl_Fee_Interval.FeeIntervalName,
+                            feeTypeId = c.FeeTypeId,
+                            required = c.tbl_Fee_Type.ByAmountRequired,
+                            recurring = (bool)c.Recurring,
+                            //feeTypeName = c.FeeTypeName
+
+                        }).ToList();
+            return data;
+        }
+
+        /// <summary>
+        /// Gets the loan charge fee.
+        /// </summary>
+        /// <param name="loanId">The loan identifier.</param>
         /// <returns></returns>
         public List<LoanGuarantorViewModel> GetLoanGuarantors(int loanApplicationId )
         {
@@ -2490,7 +2583,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
         {
             var data = (from lac in context.tbl_Loan_Application_Collateral
-                        where lac.LoanApplicationId == loanApplicationId && lac.Deleted == false
+                        where lac.tbl_Loan_Application.LoanApplicationId == loanApplicationId && lac.Deleted == false
                         select new LoanApplicationCollateralViewModel()
                         {
                             customerCollateralId = lac.CustomerCollateralId,
@@ -2522,6 +2615,8 @@ namespace FintrakBanking.Repositories.Credit
                         tenor = data.Tenor,
                     }).FirstOrDefault();
         }
+
+
      
         /// <summary>
         /// Gets the appraisal memorandum processed loan applications.
@@ -2764,39 +2859,7 @@ namespace FintrakBanking.Repositories.Credit
             return loans;
         }
      
-        /// <summary>
-        /// Gets the loan product charge fees by product identifier.
-        /// </summary>
-        /// <param name="productId">The product identifier.</param>
-        /// <returns></returns>
-        public IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId)
-        {
-            var data = (from c in context.tbl_Charge_Fee
-                        join p in context.tbl_Product_Charge_Fee
-                        on c.ChargeFeeId equals p.ChargeFeeId
-                        where p.ProductId == productId && p.Deleted == false
-                        select new ProductFeeViewModel
-                        {
-                            productFeeId = p.ProductFeeId,
-                            productId = p.ProductId,
-                            productName = p.tbl_Product.ProductName,
-                            feeId = c.ChargeFeeId,
-                            feeName = c.ChargeFeeName,
-                            feeTargetName = c.tbl_Fee_Target.FeeTargetName,
-                            feeIntervalName = c.tbl_Fee_Interval.FeeIntervalName,
-                            rateValue = (decimal)p.RateValue,
-                            dependentAmount = p.DependentAmount
 
-                        }).ToList();
-            return data;
-        }
-
-        /// <summary>
-        /// Gets the current customer exposure.
-        /// </summary>
-        /// <param name="customer">The customer.</param>
-        /// <param name="companyId">The company identifier.</param>
-        /// <returns></returns>
         public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId)
         {
 

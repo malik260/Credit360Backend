@@ -5,7 +5,7 @@ using FintrakBanking.Entities.Models;
 using System.Collections.Generic;
 using System;
 
-namespace FintrakBanking.ReportObjects.Credit
+namespace FintrakBanking.ReportObjects
 {
     public class OfferLetterInfo
     {

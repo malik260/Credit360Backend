@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         join e in context.tbl_Collateral_Type_Sub on a.CollateralSubTypeId equals e.CollateralSubTypeId
                         join f in context.tbl_Collateral_Immovable_Property on a.CollateralCustomerId equals f
                             .CollateralCustomerId
-                        where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LastValuationDate, a.ValuationCycle), genSetup.GetApplicationDate() ) <= 30)
+                        where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LastValuationDate, a.ValuationCycle), genSetup.GetApplicationDate()) <= 30)
                         select new CollateralViewModel
                         {
                             collateralTypeId = a.CollateralTypeId,
@@ -359,7 +359,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         join b in context.tbl_Product on a.ProductId equals b.ProductId
                         join c in context.tbl_Product_Type on b.ProductTypeId equals c.ProductTypeId
                         join d in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals d.LoanApplicationDetailId
-                        where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.SelfLiquidating && 
+                        where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.SelfLiquidating &&
                         DbFunctions.DiffDays(a.MaturityDate, genSetup.GetApplicationDate()) <= 30
                         select new LoanViewModel
                         {
@@ -435,7 +435,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
         #endregion LPO/CFF/IDF/Self-Liquidating Loans
 
-        public bool SaveMessageDetails(MessageLogViewModel model)
+        public void SaveMessageDetails(MessageLogViewModel model)
         {
             var message = new tbl_Message_Log()
             {
@@ -454,13 +454,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
             try
             {
-                var response = context.SaveChanges() > 0;
-
-                if (response)
-                {
-                    return true;
-                }
-                return false;
+                context.SaveChanges();
             }
             catch (Exception ex)
             {
