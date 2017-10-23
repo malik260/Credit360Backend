@@ -28,18 +28,19 @@
      
         <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetDisburstLoans" TypeName="FintrakBanking.ReportObjects.LoanReportObjects">
             <SelectParameters>
-                <asp:ControlParameter ControlID="hdf_startDate" Name="startDate" PropertyName="Value" Type="DateTime" />
-                <asp:ControlParameter ControlID="hdf_endDdate" Name="endDdate" PropertyName="Value" Type="DateTime" />
-                <asp:ControlParameter ControlID="hdf_companyId" DefaultValue="" Name="companyId" PropertyName="Value" Type="Int32" />
+                <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />
+                <asp:ControlParameter ControlID="endDate" Name="endDdate" PropertyName="Text" Type="DateTime" />
+                <asp:ControlParameter ControlID="companyId" DefaultValue="" Name="companyId" PropertyName="Text" Type="Int32" />
           
             </SelectParameters>
         </asp:ObjectDataSource>
 
     
         </div>
-        <asp:HiddenField ID="hdf_startDate" runat="server" />
-        <asp:HiddenField ID="hdf_endDdate" runat="server" />
-        <asp:HiddenField ID="hdf_companyId" runat="server" />
+     
+        <asp:Label ID="startDate" runat="server" ></asp:Label>
+        <asp:Label ID="endDate" runat="server" ></asp:Label>
+        <asp:Label ID="companyId" runat="server" ></asp:Label>
     </form>
  
 </body>

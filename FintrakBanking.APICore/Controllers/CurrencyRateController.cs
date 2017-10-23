@@ -17,6 +17,7 @@ namespace FintrakBanking.APICore.Controllers
     {
         private ICurrencyRateRepository repo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
+
         public CurrencyRateController(ICurrencyRateRepository _repo)
         {
             this.repo = _repo;
@@ -28,7 +29,7 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetCurrency()
         {
             try
-            {
+            { 
                 var data = repo.GetCurrency();
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
             }
@@ -52,6 +53,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
         [HttpGet][Route("currency-rate")]
         public HttpResponseMessage GetCurrencyRate()
         {
@@ -65,6 +67,21 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
             }
 
+        }
+
+        [HttpGet]
+        [Route("currency-exchange-rate/{currencyId}")]
+        public HttpResponseMessage GetCurrentCurrencyExchangeRate(short currencyId)
+        {
+            try
+            {
+                var data = repo.GetCurrentCurrencyExchangeRate(currencyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet][Route("currency-rate/{currencyId}")]

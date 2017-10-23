@@ -13,10 +13,11 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
+                //startDate = 08 - May - 17 & endDate = 
 
-                hdf_startDate .Value  = Request.QueryString["startDate"];
-                hdf_endDdate.Value = Request.QueryString["endDdate"];
-                hdf_companyId .Value = Request.QueryString["companyId"];
+                 startDate .Text  = "25-May-17";// Request.QueryString["startDate"];
+                endDate.Text = "25-Oct-17";// Request.QueryString["endDdate"];
+                 companyId.Text = "1";// Request.QueryString["companyId"];
                 ReportViewer.LocalReport.Refresh();
             }
             }

@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FintrakBanking.APICore.Reports.Credit.OfferLetter {
+namespace FintrakBanking.APICore.Reports.Credit {
     
     
-    public partial class OfferLetter {
+    public partial class TestReport {
         
         /// <summary>
         /// form1 control.
@@ -31,39 +31,21 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetter {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// offerLetterReport control.
+        /// rvBranchReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer offerLetterReport;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer rvBranchReport;
         
         /// <summary>
-        /// odsOfferLetter control.
+        /// ObjectDataSource1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsOfferLetter;
-        
-        /// <summary>
-        /// odsOfferLetterDetails control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsOfferLetterDetails;
-        
-        /// <summary>
-        /// odsOfferLetterConditionPrecedent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsOfferLetterConditionPrecedent;
+        protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSource1;
     }
 }

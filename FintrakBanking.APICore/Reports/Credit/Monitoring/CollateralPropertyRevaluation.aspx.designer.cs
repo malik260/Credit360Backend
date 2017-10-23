@@ -40,12 +40,12 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
         protected global::Microsoft.Reporting.WebForms.ReportViewer collPropRv;
         
         /// <summary>
-        /// odsCollPropRv control.
+        /// odsCollPropRev control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsCollPropRv;
+        protected global::System.Web.UI.WebControls.ObjectDataSource odsCollPropRev;
     }
 }

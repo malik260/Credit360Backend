@@ -49,30 +49,30 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSource1;
         
         /// <summary>
-        /// hdf_startDate control.
+        /// startDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdf_startDate;
+        protected global::System.Web.UI.WebControls.Label startDate;
         
         /// <summary>
-        /// hdf_endDdate control.
+        /// endDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdf_endDdate;
+        protected global::System.Web.UI.WebControls.Label endDate;
         
         /// <summary>
-        /// hdf_companyId control.
+        /// companyId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdf_companyId;
+        protected global::System.Web.UI.WebControls.Label companyId;
     }
 }

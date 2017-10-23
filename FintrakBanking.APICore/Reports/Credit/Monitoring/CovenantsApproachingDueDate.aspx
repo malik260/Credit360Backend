@@ -12,17 +12,25 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <div style="width: 796px">
+    <div>
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-        <rsweb:ReportViewer ID="covDueDateRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="625px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
+        <rsweb:ReportViewer ID="covDueDateRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
             <LocalReport ReportPath="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc">
+                <DataSources>
+                    <rsweb:ReportDataSource DataSourceId="odsCovDueDate" Name="CovenantDetails" />
+                </DataSources>
             </LocalReport>
         </rsweb:ReportViewer>
     
+        <asp:ObjectDataSource ID="odsCovDueDate" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.OfferLetterInfo">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+            </SelectParameters>
+        </asp:ObjectDataSource>
+    
     </div>
-        <asp:ObjectDataSource ID="odsCovDueDate" runat="server" SelectMethod="CovenantsApproachingDueDate" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring"></asp:ObjectDataSource>
     </form>
 </body>
 </html>

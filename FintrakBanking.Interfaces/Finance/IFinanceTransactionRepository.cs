@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         string PostTransaction(List<FinanceTransactionViewModel> transaction);
 
-        double GetExchangeRate(short currencyId, int companyId);
+        CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId);
 
         CasaBalanceViewModel GetCASABalance(int casaAccountId);
 

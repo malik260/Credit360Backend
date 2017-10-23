@@ -14,8 +14,6 @@ namespace FintrakBanking.ReportObjects.Credit
             FinTrakBankingContext context = new FinTrakBankingContext();
 
             var offerLetterDetails = (from a in context.tbl_Loan_Application
-                                          //join b in context.tbl_Customer on a.CustomerId equals b.CustomerId
-                                          //join c in context.tbl_Customer_Address on b.CustomerId equals c.CustomerId
                                       where a.ApplicationReferenceNumber == applicationRefNumber &&
                                       a.ApprovalStatusId == (int)ApprovalStatusEnum.Approved
                                       select new OfferLetterViewModel
@@ -23,6 +21,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                           companyName = context.tbl_Company.FirstOrDefault(x => x.CompanyId == a.CompanyId).Name,
                                           customerId = (int)a.CustomerId,
                                           customerName = a.tbl_Customer.Title + " " + a.tbl_Customer.FirstName + " " + a.tbl_Customer.LastName,
+                                          customerGroupName = a.tbl_Customer_Group.GroupName + " - " + a.tbl_Customer_Group.GroupCode,
                                           customerAddress = a.tbl_Customer.tbl_Customer_Address.FirstOrDefault().Address ?? string.Empty,
                                           applicationDate = a.ApplicationDate
                                       }).FirstOrDefault();
@@ -31,10 +30,6 @@ namespace FintrakBanking.ReportObjects.Credit
             {
                 return offerLetterDetails;
             }
-
-            //GetLoanApplicationDetail(applicationRefNumber);
-
-            //GetLoanApplicationConditionPrecident(applicationRefNumber);
 
             return new OfferLetterViewModel();
         }
@@ -47,14 +42,13 @@ namespace FintrakBanking.ReportObjects.Credit
             {
                 var loanDetails = (from a in context.tbl_Loan_Application
                                    join b in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals b.LoanApplicationId
-                                   //join c in context.tbl_Product on b.ApprovedProductId equals c.ProductId
-                                   //join d in context.tbl_Customer on b.CustomerId equals d.CustomerId
                                    where a.ApplicationReferenceNumber.ToLower() == applicationRefNumber.ToLower() &&
                                          b.StatusId == (int)ApprovalStatusEnum.Approved
                                    select new OfferLetterDetailViewModel()
                                    {
                                        productName = context.tbl_Product.FirstOrDefault(x => x.ProductId == b.ApprovedProductId).ProductName,
-                                       customerName = b.tbl_Customer.FirstName + " " + b.tbl_Customer.LastName,
+                                       customerName = a.tbl_Customer.FirstName + " " + b.tbl_Customer.LastName,
+                                       customerGroupName = a.tbl_Customer_Group.GroupName + " - " + a.tbl_Customer_Group.GroupCode,
                                        currencyName = b.tbl_Currency.CurrencyName,
                                        tenor = b.ApprovedTenor,
                                        interestRate = b.ApprovedInterestRate,

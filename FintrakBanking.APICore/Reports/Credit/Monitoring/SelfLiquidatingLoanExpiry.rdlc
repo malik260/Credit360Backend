@@ -7,7 +7,7 @@
         <Height>2in</Height>
         <Style />
       </Body>
-      <Width>7.13542in</Width>
+      <Width>6.5in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
@@ -19,10 +19,10 @@
   </ReportSections>
   <ReportParameters>
     <ReportParameter Name="currentDate">
-      <DataType>DateTime</DataType>
+      <DataType>String</DataType>
       <DefaultValue>
         <Values>
-          <Value>=DateTime.Now.ToShortDateString</Value>
+          <Value>DateTime.Now</Value>
         </Values>
       </DefaultValue>
       <Prompt>ReportParameter1</Prompt>
@@ -42,5 +42,5 @@
     </GridLayoutDefinition>
   </ReportParametersLayout>
   <rd:ReportUnitType>Inch</rd:ReportUnitType>
-  <rd:ReportID>53f4fb76-f4de-446d-8d1c-590918244cda</rd:ReportID>
+  <rd:ReportID>fb9cd88b-dbcb-4765-91a7-478d89ade49d</rd:ReportID>
 </Report>

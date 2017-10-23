@@ -12,16 +12,24 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <div style="width: 799px; height: 632px">
+    <div>
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="NplLoanMonitoring" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring"></asp:ObjectDataSource>
         <rsweb:ReportViewer ID="nplLoanRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
             <LocalReport ReportPath="Reports\Credit\Monitoring\NplLoanMonitoring.rdlc">
+                <DataSources>
+                    <rsweb:ReportDataSource DataSourceId="odsNplLoan" Name="NplLoanDetails" />
+                </DataSources>
             </LocalReport>
         </rsweb:ReportViewer>
-
+    
+        <asp:ObjectDataSource ID="odsNplLoan" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.OfferLetterInfo">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+            </SelectParameters>
+        </asp:ObjectDataSource>
+    
     </div>
     </form>
 </body>

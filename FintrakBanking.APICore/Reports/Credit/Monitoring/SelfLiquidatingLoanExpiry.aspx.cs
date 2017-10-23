@@ -17,12 +17,11 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
             if (!IsPostBack)
             {
                 FinTrakBankingContext context = new FinTrakBankingContext();
-                GeneralSetupRepository genSetup = new GeneralSetupRepository(context);
+                GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
+                ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToShortDateString());
 
-                ReportParameter date = new ReportParameter("currentDate", genSetup.GetApplicationDate().ToShortDateString());
-
-                selfLiqLoanExpRv.LocalReport.SetParameters(new ReportParameter[] { date });
-                selfLiqLoanExpRv.LocalReport.Refresh();
+                selfLiqLoanRv.LocalReport.SetParameters(new ReportParameter[] { date });
+                selfLiqLoanRv.LocalReport.Refresh();
             }
         }
     }

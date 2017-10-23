@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FintrakBanking.APICore.Reports.Credit.OfferLetter {
+namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
     
     
-    public partial class TestReport {
+    public partial class OfferLetter {
         
         /// <summary>
         /// form1 control.
@@ -31,21 +31,39 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetter {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// rvBranchReport control.
+        /// offerLetterReport control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer rvBranchReport;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer offerLetterReport;
         
         /// <summary>
-        /// ObjectDataSource1 control.
+        /// odsOfferLetter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSource1;
+        protected global::System.Web.UI.WebControls.ObjectDataSource odsOfferLetter;
+        
+        /// <summary>
+        /// odsOfferLetterDetails control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ObjectDataSource odsOfferLetterDetails;
+        
+        /// <summary>
+        /// odsOfferLetterConditionPrecedent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ObjectDataSource odsOfferLetterConditionPrecedent;
     }
 }

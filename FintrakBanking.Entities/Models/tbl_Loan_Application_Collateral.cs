@@ -47,7 +47,7 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(500)]
-        public string OtherInformations { get; set; }
+        public string OtherInformations { get; set; }         
 
         public int CreatedBy { get; set; }
 
@@ -72,5 +72,6 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+         
     }
 }

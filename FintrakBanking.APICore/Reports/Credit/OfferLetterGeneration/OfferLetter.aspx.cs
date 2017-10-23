@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace FintrakBanking.APICore.Reports.Credit.OfferLetter
+namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 {
     public partial class OfferLetter : System.Web.UI.Page
     {
@@ -17,9 +17,8 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetter
             if (!IsPostBack)
             {
                 FinTrakBankingContext context = new FinTrakBankingContext();
-                GeneralSetupRepository genSetup = new GeneralSetupRepository(context);
-
-                ReportParameter date = new ReportParameter("currentDate", genSetup.GetApplicationDate().ToShortDateString());
+                GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
+                ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToShortDateString());
 
                 offerLetterReport.LocalReport.SetParameters(new ReportParameter[] { date });
                 offerLetterReport.LocalReport.Refresh();

@@ -7,8 +7,6 @@ using System.ComponentModel.Composition;
 
 namespace FintrakBanking.Repositories.ErrorLogger
 {
-    [Export(typeof(IErrorLogRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class ErrorLogRepository : IErrorLogRepository
     {
         FinTrakBankingContext context;

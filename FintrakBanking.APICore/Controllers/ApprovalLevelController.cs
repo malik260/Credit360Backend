@@ -64,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllApprovalLevel(token.GetCompanyId);
                 if (data == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });

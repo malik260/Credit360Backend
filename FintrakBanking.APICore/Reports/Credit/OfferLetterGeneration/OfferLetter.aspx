@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="OfferLetter.aspx.cs" Inherits="FintrakBanking.APICore.Reports.Credit.OfferLetter.OfferLetter" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="OfferLetter.aspx.cs" Inherits="FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration.OfferLetter" %>
 
  <%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
@@ -17,7 +17,7 @@
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
         <rsweb:ReportViewer ID="offerLetterReport" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
-            <LocalReport ReportPath="Reports\Credit\OfferLetter\OfferLetter.rdlc">
+            <LocalReport ReportPath="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc">
                 <DataSources>
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetter" Name="OfferLetterDetails" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterDetails" Name="OfferLetterLoanDetail" />
