@@ -768,6 +768,7 @@
                                   <Value>=Fields!bookingDate.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
+                                    <Format>dd-MMM-yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -802,6 +803,7 @@
                                   <Value>=Fields!disburseDate.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
+                                    <Format>dd-MMM-yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -836,6 +838,7 @@
                                   <Value>=Fields!nplDate.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
+                                    <Format>dd-MMM-yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -856,6 +859,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
