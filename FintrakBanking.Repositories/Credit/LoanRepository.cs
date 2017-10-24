@@ -1760,7 +1760,8 @@ namespace FintrakBanking.Repositories.Credit
                     IsRecurring = false, //TODO : get from entity
                     RecurringPaymentDay = 28, //TODO: get from entity
                     CreatedBy = ent.createdBy,
-                    DateTimeCreated = DateTime.Now.Date
+                    DateTimeCreated = DateTime.Now.Date,
+                    IsPosted = ent.isPosted
                 };
                 context.tbl_Loan_Fee.Add(fee);
             }
