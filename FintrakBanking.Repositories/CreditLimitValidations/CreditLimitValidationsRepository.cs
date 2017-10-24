@@ -1,4 +1,4 @@
-﻿using FintrakBanking.Entities.Models;
+﻿ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
