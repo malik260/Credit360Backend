@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Credit;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -162,6 +163,11 @@ namespace FintrakBanking.ReportObjects.Credit
             }
 
             return new List<LoanViewModel>();
+        }
+
+        public IEnumerable<CreditBereauViewModel> CreditBereauDetails(int companyId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
