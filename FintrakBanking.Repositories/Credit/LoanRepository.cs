@@ -418,12 +418,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var totalPreviouslyBookedAmount = principalAmount.FirstOrDefault();
 
-            var totalPrincipalAmount = totalPreviouslyBookedAmount + entity.principalAmount;
+            var totalPrincipalAmount = totalPreviouslyBookedAmount + (decimal)entity.loanScheduleInput.principalAmount;
 
-            if (totalPrincipalAmount > entity.customerAvailableAmount)
+            if (totalPrincipalAmount > (decimal)entity.loanScheduleInput.principalAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
-            var currentExchangeRate = context.tbl_Currency_Rate.Where(x => x.CurrencyId == entity.currencyId).LastOrDefault().SellingRate;
+            var currentExchangeRate = context.tbl_Currency_Rate.Where(x => x.CurrencyId == entity.currencyId).FirstOrDefault().SellingRate;
 
             double? priceIndex = (from a in context.tbl_Product
                                   where a.ProductId == entity.productId
@@ -1477,6 +1477,7 @@ namespace FintrakBanking.Repositories.Credit
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
             var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
+            var product = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId && x.CompanyId == model.companyId);
 
             loanTransaction.operationId = (int)OperationsEnum.TermLoanBooking;
             loanTransaction.description = "Loan Disbursment Amount";
@@ -1493,7 +1494,7 @@ namespace FintrakBanking.Repositories.Credit
             loanTransaction.companyId = model.companyId;
 
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == product.ProductId).PrincipalBalanceGL.Value;
             debit.sourceReferenceNumber = model.loanReferenceNumber;
             debit.casaAccountId = null;
             debit.debitAmount = model.principalAmount;
@@ -1583,10 +1584,14 @@ namespace FintrakBanking.Repositories.Credit
                 credit.destinationBranchId = loanDetails.branchId;
 
 
-                feeTransaction.transactionDetails.Add(debit);
-                feeTransaction.transactionDetails.Add(credit);
+                if (item.feeAmount != 0)
+                {
+                    feeTransaction.transactionDetails.Add(debit);
+                    feeTransaction.transactionDetails.Add(credit);
+                    output.Add(feeTransaction);
+                }
 
-                output.Add(feeTransaction);
+
             }
 
             // Audit Section ---------------------------            
