@@ -25,7 +25,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                       {
                                           companyName = context.tbl_Company.FirstOrDefault(x => x.CompanyId == a.CompanyId).Name,
                                           //customerId = b.CustomerId,
-                                          customerName = b.CustomerId != 0 ? b.Title + " " + b.FirstName + " " + b.LastName : c.GroupName + " - " + c.GroupCode,
+                                          customerName = a.LoanTypeId != 3 ? b.Title + " " + b.FirstName + " " + b.LastName : c.GroupName + " - " + c.GroupCode,
                                           customerGroupName = c.GroupName + " - " + c.GroupCode,
                                           customerAddress = a.tbl_Customer.tbl_Customer_Address.FirstOrDefault().Address ?? string.Empty,
                                           applicationDate = a.ApplicationDate
