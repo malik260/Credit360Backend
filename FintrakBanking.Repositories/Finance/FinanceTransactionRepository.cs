@@ -836,7 +836,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting (LoanPaymentScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting (LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
@@ -981,7 +981,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
@@ -1037,7 +1037,7 @@ namespace FintrakBanking.Repositories.Finance
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentScheduleInputViewModel model , decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model , decimal postedAmount, int creditGL, string description)
         {
             var loanData  = this.context.tbl_Loan.Where(x => x.TermLoanId == loanId).FirstOrDefault();
 

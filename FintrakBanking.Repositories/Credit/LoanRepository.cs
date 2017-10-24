@@ -418,12 +418,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var totalPreviouslyBookedAmount = principalAmount.FirstOrDefault();
 
-            var totalPrincipalAmount = totalPreviouslyBookedAmount + entity.principalAmount;
+            var totalPrincipalAmount = totalPreviouslyBookedAmount + (decimal)entity.loanScheduleInput.principalAmount;
 
-            if (totalPrincipalAmount > entity.customerAvailableAmount)
+            if (totalPrincipalAmount > (decimal)entity.loanScheduleInput.principalAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
-            var currentExchangeRate = context.tbl_Currency_Rate.Where(x => x.CurrencyId == entity.currencyId).LastOrDefault().SellingRate;
+            var currentExchangeRate = context.tbl_Currency_Rate.Where(x => x.CurrencyId == entity.currencyId).FirstOrDefault().SellingRate;
 
             double? priceIndex = (from a in context.tbl_Product
                                   where a.ProductId == entity.productId
