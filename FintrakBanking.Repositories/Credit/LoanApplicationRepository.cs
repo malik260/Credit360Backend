@@ -111,7 +111,7 @@ namespace FintrakBanking.Repositories.Credit
                                  city = d.tbl_City.CityName,
                                  collateralType = d.tbl_Collateral_Type.CollateralTypeName,
                                  companyName = d.tbl_Loan_Application.tbl_Company.Name,
-                                 applicationReferanceNumber = int.Parse(d.tbl_Loan_Application.ApplicationReferenceNumber),
+                                // applicationReferanceNumber = int.Parse(d.tbl_Loan_Application.ApplicationReferenceNumber),
 
                              }).ToList(),
                             LoanApplicationDetail = context.tbl_Loan_Application_Detail.Where(c => c.LoanApplicationId == a.LoanApplicationId)
@@ -645,23 +645,28 @@ namespace FintrakBanking.Repositories.Credit
                         join ss in context.tbl_Sub_Sector on b.SubSectorId equals ss.SubSectorId into sec from ss in sec.DefaultIfEmpty()
 
                         where a.CompanyId == companyId && a.Deleted == false
-                              && f.StatusId == (int)ApprovalStatusEnum.Approved
+                              && b.StatusId == (int)ApprovalStatusEnum.Approved
                         group a by new
                         {
                             a.LoanApplicationId,
                             a.ApplicationReferenceNumber,
-                            f.ApprovedAmount,
+                            b.ApprovedAmount,
                             a.LoanTypeId,
                             a.ApplicationStatusId,
                             c.CAMRef,
-                            e.CAMDocumentation,
+                            d.CAMDocumentation,
                             a.ApplicationDate,
                             a.RelationshipManagerId,
                             a.RelationshipOfficerId,
                             cust.FirstName,
                             cust.LastName,
                             cust.MiddleName,
-                            cust.CustomerCode
+                            cust.CustomerCode ,
+                            cust.CustomerId, 
+                            cGrp.CustomerGroupId, 
+                            cGrp.GroupCode,
+                            cGrp.GroupName,
+                            ss.SubSectorId
                         } into g
                         select new CamProcessedLoanViewModel
                         {
