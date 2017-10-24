@@ -681,7 +681,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public bool UpdateLoanApplicationStatus(int applicationRefNumber, short applicationStatusId)
+        public bool UpdateLoanApplicationStatus(string applicationRefNumber, short applicationStatusId)
         {
             var target = context.tbl_Loan_Application.FirstOrDefault(x => x.ApplicationReferenceNumber ==
                 applicationRefNumber.ToString());

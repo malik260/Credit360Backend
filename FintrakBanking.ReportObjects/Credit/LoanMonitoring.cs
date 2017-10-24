@@ -1,6 +1,5 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.Repositories.Setups.General;
 using FintrakBanking.ViewModels.Credit;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -10,7 +9,6 @@ namespace FintrakBanking.ReportObjects.Credit
 {
     public class LoanMonitoring
     {
-
         public static IEnumerable<CollateralViewModel> CollateralPropertyRevaluation(int companyId)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -58,7 +56,7 @@ namespace FintrakBanking.ReportObjects.Credit
                         join e in context.tbl_Loan_Application_Detail on b.LoanApplicationDetailId equals e.LoanApplicationDetailId
                         join f in context.tbl_Frequency_Type on a.FrequencyTypeId equals f.FrequencyTypeId
                         join g in context.tbl_Loan_Covenant_Type on a.CovenantTypeId equals g.CovenantTypeId
-                        where DbFunctions.DiffDays(applDate, a.NextCovenantDate) <= 10 
+                        where DbFunctions.DiffDays(applDate, a.NextCovenantDate) <= 10
                         && a.CompanyId == companyId
                         select new LoanCovenantDetailViewModel
                         {
@@ -117,7 +115,7 @@ namespace FintrakBanking.ReportObjects.Credit
                             relationshipOfficerEmail = b.tbl_Staff1.Email
                         }).ToList();
 
-            if (data!=null)
+            if (data != null)
             {
                 return data;
             }
@@ -135,7 +133,7 @@ namespace FintrakBanking.ReportObjects.Credit
                         join c in context.tbl_Product_Type on b.ProductTypeId equals c.ProductTypeId
                         join d in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals d.LoanApplicationDetailId
                         where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.SelfLiquidating &&
-                        DbFunctions.DiffDays(a.MaturityDate, applDate) <= 30 
+                        DbFunctions.DiffDays(a.MaturityDate, applDate) <= 30
                         && a.CompanyId == companyId
                         select new LoanViewModel
                         {
