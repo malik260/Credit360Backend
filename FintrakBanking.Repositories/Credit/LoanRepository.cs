@@ -519,7 +519,6 @@ namespace FintrakBanking.Repositories.Credit
                 data.CustomerGroupId = entity.customerGroupId;
             }
 
-
             ////Audit Section ---------------------------
             var audit = new tbl_Audit
             {
@@ -548,9 +547,27 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Saving Loan Gaurantors................................
                     AddLoanGuarantor(entity.loanGuarantor, (short)entity.productTypeId, entity.loanApplicationId);
 
+
+                    if (entity.scheduleTypeId == (short)LoanScheduleTypeEnum.IrregularSchedule)
+                    {
+                        foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
+                        {
+                            var irregularRecordData = new tbl_Loan_Schedule_Irregular_Input
+                            {
+                                LoanId = loan.TermLoanId,
+                                PaymentAmount = (decimal)irregular.paymentAmount,
+                                PaymentDate = irregular.paymentDate,
+                                CreatedBy = entity.createdBy,
+                                DateTimeCreated = generalSetup.GetApplicationDate()
+                            };
+                            context.tbl_Loan_Schedule_Irregular_Input.Add(irregularRecordData);
+                        }
+
+                    }
+
                     //...................Adding Audit...............................
                     var dataCount = context.SaveChanges();
-                    
+
                     var approvalModel = new ForwardViewModel
                     {
                         createdBy = entity.createdBy,
@@ -565,7 +582,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         //.....Commit transaction ............
                         trans.Commit();
-                        
+
                         AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TermLoanId, (short)entity.productTypeId);
                         AddLoanFees(entity.loanChargeFee, loan.TermLoanId, (short)entity.productTypeId);
 
