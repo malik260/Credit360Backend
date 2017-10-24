@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.Interfaces.Reports;
 using FintrakBanking.ViewModels.Reports;
 using System;
@@ -10,13 +11,16 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/report")]
-    public class ReportsController : ApiControllerBase 
+    public class ReportsController : ApiControllerBase
     {
         IReportRoutes repo;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        IErrorLogRepository errorLogger;
 
-        public ReportsController(IReportRoutes _repo) {
-
+        public ReportsController(IReportRoutes _repo, IErrorLogRepository _errorLogger)
+        {
             repo = _repo;
+            errorLogger = _errorLogger;
         }
 
         [HttpGet]
@@ -26,7 +30,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetWorkflowSLA(id,token.GetCompanyId);
+                var data = repo.GetWorkflowSLA(id, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -92,7 +96,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetBranchLoanAmountLimit( token.GetBranchId ,token.GetCompanyId);
+                var data = repo.GetBranchLoanAmountLimit(token.GetBranchId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -109,12 +113,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("workflow-definition/operation/{id}")]
-        public HttpResponseMessage GetWorkflowDefinition( int id)
+        public HttpResponseMessage GetWorkflowDefinition(int id)
         {
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetWorkflowDefinition(id,token.GetCompanyId);
+                var data = repo.GetWorkflowDefinition(id, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -149,5 +153,121 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
+
+        #region Offer-Letter Generation & Loan Monitoring Reports
+
+        [HttpGet]
+        [Route("offer-letter")]
+        public HttpResponseMessage GetGeneratedOfferLetter([FromUri] string applicationRefNumber)
+        {
+            try
+            {
+                var data = repo.GetGeneratedOfferLetter(applicationRefNumber);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("monitoring/collateral-property-revaluation")]
+        public HttpResponseMessage GetCollateralPropertyRevaluationReport()
+        {
+            try
+            {
+                var data = repo.GetCollateralPropertyRevaluationReport(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data }); 
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("monitoring/almost-due-covenants")]
+        public HttpResponseMessage GetCovenantsApproachingDueDateReport()
+        {
+            try
+            {
+                var data = repo.GetCovenantsApproachingDueDateReport(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("monitoring/non-performing-loans")]
+        public HttpResponseMessage GetNonPerformingLoansReport()
+        {
+            try
+            {
+                var data = repo.GetNonPerformingLoansReport(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("monitoring/expired-self-liquidating-loans")]
+        public HttpResponseMessage GetExpiredSelfLiquidatingLoansReport()
+        {
+            try
+            {
+                var data = repo.GetExpiredSelfLiquidatingLoansReport(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion
     }
 }

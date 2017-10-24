@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
     
     
-    public partial class SelfLiquidatingLoanExpiry {
+    public partial class NonPeformingLoans {
         
         /// <summary>
         /// form1 control.
@@ -31,21 +31,21 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// selfLiqLoanRv control.
+        /// nplLoanRv control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer selfLiqLoanRv;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer nplLoanRv;
         
         /// <summary>
-        /// odsSelfLiqLoanExp control.
+        /// odsNplLoan control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsSelfLiqLoanExp;
+        protected global::System.Web.UI.WebControls.ObjectDataSource odsNplLoan;
     }
 }
