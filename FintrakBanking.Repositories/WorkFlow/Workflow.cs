@@ -406,7 +406,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
-        private bool WithinTenorLimit(WorkflowSetup level)
+        private bool WithinTenorLimit(tbl_Approval_Level level)
         {
             if (tenor == 0 && level.Tenor == 0) { return true; } // setup
             //if (tenor == 0 && level.Tenor > 0 && level.AuthorizeUntenored == true) { return true; } // untenored for cro
@@ -414,14 +414,14 @@ namespace FintrakBanking.Repositories.WorkFlow
             return false;
         }
 
-        private bool WithinMaximumLimit(WorkflowSetup level)
+        private bool WithinMaximumLimit(tbl_Approval_Level level)
         {
             if (amount == 0) { return true; }
             if (level.MaximumAmount >= amount) { return true; }
             return false;
         }
 
-        private bool WithinInvestmentGradeLimit(WorkflowSetup level)
+        private bool WithinInvestmentGradeLimit(tbl_Approval_Level level)
         {
             if (amount == 0) { return true; }
             if (investmentGrade == false) { return true; }
@@ -429,7 +429,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             return false;
         }
 
-        private bool WithinPoliticallyExposedLimit(WorkflowSetup level)
+        private bool WithinPoliticallyExposedLimit(tbl_Approval_Level level)
         {
             if (politicallyExposed == false) { return true; }
             if (level.IsPoliticallyExposed == true) { return true; }
@@ -438,6 +438,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool WithinAllLimits()
         {
+            var level = context.tbl_Approval_Level.Find(this.fromLevelId);
             if (level == null) { throw new Exception("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
 
             return WithinTenorLimit(level) == true

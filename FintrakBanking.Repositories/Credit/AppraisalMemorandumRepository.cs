@@ -247,7 +247,7 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.Amount = model.amount;
             workflow.InvestmentGrade = model.investmentGrade;
-            workflow.Tenor = model.tenor;
+            workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
             // log
 

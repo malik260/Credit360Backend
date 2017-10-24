@@ -771,6 +771,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDue.Date = item.paymentDate;
                     pastDue.TransactionTypeId = (byte)LoanTransactionTypeEnum.Principal;
                     pastDue.Parent_PastDueCode = item.loanRefNo;
+                    pastDue.ProductTypeId = product.ProductTypeId;
 
                     transPastDue.Add(pastDue);
 
@@ -829,6 +830,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDueInterest.Date = item.paymentDate;
                     pastDueInterest.TransactionTypeId = (byte)LoanTransactionTypeEnum.Interest;
                     pastDueInterest.Parent_PastDueCode = item.loanRefNo;
+                    pastDueInterest.ProductTypeId = product.ProductTypeId;
 
                     transPastDue.Add(pastDueInterest);
 
@@ -842,6 +844,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDuePrincipal.Date = item.paymentDate;
                     pastDuePrincipal.TransactionTypeId = (byte)LoanTransactionTypeEnum.Principal;
                     pastDuePrincipal.Parent_PastDueCode = item.loanRefNo;
+                    pastDuePrincipal.ProductTypeId = product.ProductTypeId;
 
                     transPastDue.Add(pastDuePrincipal);
 
@@ -930,7 +933,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDueInterest.Date = item.paymentDate;
                     pastDueInterest.TransactionTypeId = (byte)LoanTransactionTypeEnum.Interest;
                     pastDueInterest.Parent_PastDueCode = item.loanRefNo;
-                    pastDueInterest.ProductTypeId = item.productId;
+                    pastDueInterest.ProductTypeId = product.ProductTypeId;
 
                     transPastDue.Add(pastDueInterest);
 
@@ -944,7 +947,7 @@ namespace FintrakBanking.Repositories.Credit
                     pastDuePrincipal.Date = item.paymentDate;
                     pastDuePrincipal.TransactionTypeId = (byte)LoanTransactionTypeEnum.Principal;
                     pastDuePrincipal.Parent_PastDueCode = item.loanRefNo;
-                    pastDuePrincipal.ProductTypeId = item.productId;
+                    pastDuePrincipal.ProductTypeId = product.ProductTypeId;
 
                     transPastDue.Add(pastDuePrincipal);
 
@@ -1071,6 +1074,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == item.productId);
                 var forceDebitCode = CommonHelpers.GenerateRandomDigitCode(10);
+                item.createdBy = (int)SystemStaff.System;
                 //var casabalance = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == item.casaAccountId).AvailableBalance;
                 //if (casabalance < 0 )
                 //{
@@ -1126,6 +1130,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == item.productId);
                 var forceDebitCode = CommonHelpers.GenerateRandomDigitCode(10);
+                item.createdBy = (int)SystemStaff.System;
                 //var casabalance = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == item.casaAccountId).AvailableBalance;
                 //if (casabalance < 0)
                 //{
@@ -3145,7 +3150,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool UpdateLoanInterestSchedule(int loanId, LoanPaymentScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool UpdateLoanInterestSchedule(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
@@ -3633,7 +3638,7 @@ namespace FintrakBanking.Repositories.Credit
                          where a.tbl_Product.tbl_Product_Price_Index.ProductPriceIndexId == priceindexId
                          && a.LoanStatusId == (short)LoanStatusEnum.Active // a.LoanId == loanId
 
-                         select new LoanPaymentScheduleInputViewModel()
+                         select new LoanPaymentRestructureScheduleInputViewModel()
                          {
                              loanId = a.TermLoanId,
                              scheduleMethodId = a.ScheduleTypeId,
@@ -3697,7 +3702,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool UpdateLoanPrepaymentSchedule(int loanId, LoanPaymentScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool UpdateLoanPrepaymentSchedule(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
@@ -3858,7 +3863,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool PaymentFrequencyChange(int loanId, LoanPaymentScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool PaymentFrequencyChange(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
@@ -3985,7 +3990,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool PaymentDateChange(int loanId, LoanPaymentScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool PaymentDateChange(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
@@ -4112,7 +4117,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool LoanReversal(int loanId, LoanPaymentScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool LoanReversal(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
@@ -4262,7 +4267,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool TerminateAndRebookLoanSchedule(int loanId, LoanPaymentScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool TerminateAndRebookLoanSchedule(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
@@ -4312,7 +4317,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool CompleteWriteOff (int loanId, LoanPaymentScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool CompleteWriteOff (int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
@@ -4429,7 +4434,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool LoanWorkOut(int loanId, LoanPaymentScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool LoanWorkOut(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
@@ -4594,7 +4599,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool LoanSales(int loanId, LoanPaymentScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool LoanSales(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
@@ -4691,7 +4696,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool TenorExtension(int loanId, LoanPaymentScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool TenorExtension(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
             var systemDate = generalSetup.GetApplicationDate();
@@ -5285,7 +5290,7 @@ namespace FintrakBanking.Repositories.Credit
                          //join c in context.tbl_Loan_Review_Operation_Irregular_Schedule on a.LoanReviewOperationId equals c.LoanReviewOperationId
                          where b.LoanStatusId == (short)LoanStatusEnum.Active && a.LoanId == loanId
 
-                         select new LoanPaymentScheduleInputViewModel()
+                         select new LoanPaymentRestructureScheduleInputViewModel()
                          {
                              loanId = b.TermLoanId,
                              scheduleMethodId = b.ScheduleTypeId,
@@ -5377,7 +5382,7 @@ namespace FintrakBanking.Repositories.Credit
                             item.maturityDate = (DateTime)item.newMaturityDate;
                             item.newAmount = item.principalAmount - item.payAmount;
                             item.effectiveDate = item.newEffectiveDate;
-                            item.tenor = item.newTenorPrepayment;
+                           // item.tenor = item.newTenorPrepayment;
                             item.interestFirstpaymentDate = item.newInterestFirstpaymentDate;
                             item.principalFirstpaymentDate = item.newPrincipalFirstpaymentDate;
                         }
@@ -5458,7 +5463,7 @@ namespace FintrakBanking.Repositories.Credit
                          join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
                          where b.LoanStatusId == (short)LoanStatusEnum.Active && a.LoanId == loanId
 
-                         select new LoanPaymentScheduleInputViewModel()
+                         select new LoanPaymentRestructureScheduleInputViewModel()
                          {
                              loanId = b.TermLoanId,
                              scheduleMethodId = b.ScheduleTypeId,
@@ -5518,7 +5523,7 @@ namespace FintrakBanking.Repositories.Credit
                             item.maturityDate = (DateTime)item.newMaturityDate;
                             item.newAmount = item.principalAmount - item.payAmount;
                             item.effectiveDate = item.newEffectiveDate;
-                            item.tenor = item.newTenorPrepayment;
+                            //item.tenor = item.newTenorPrepayment;
                             item.interestFirstpaymentDate = item.newInterestFirstpaymentDate;
                             item.principalFirstpaymentDate = item.newPrincipalFirstpaymentDate;
                         }

@@ -318,10 +318,10 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     LoanApplicationCollateral(loan.LoanApplicationCollateral);
                 }
-                //if (loan.LoanApplicationDetail.Count > 0)
-                //{
-                //    LoanApplicationDetail(loan.LoanApplicationDetail);
-                //}
+                if (loan.LoanApplicationDetail.Count > 0)
+                {
+                    LoanApplicationDetail(loan.LoanApplicationDetail);
+                }
 
                 if (isGroupLoan)
                 {
@@ -373,14 +373,11 @@ namespace FintrakBanking.Repositories.Credit
                 ApprovedInterestRate = a.proposedInterestRate,
                 ApprovedProductId = a.proposedProductId,
                 ApprovedTenor = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
-
                 ExchangeRate = a.exchangeRate,
                 CurrencyId = a.currencyId,
                 CustomerId = a.customerId,
                 LoanApplicationId = a.loanApplicationId,
-                StatusId = (short)LoanApplicationDetailsStatusEnum.Pending,
-
-
+                StatusId = (short)LoanApplicationDetailsStatusEnum.Pending,                 
                 ProposedAmount = a.proposedAmount,
                 ProposedInterestRate = a.proposedInterestRate,
                 ProposedProductId = a.proposedProductId,
