@@ -93,11 +93,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string CommercialViabilityAssessment { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string TaxIdentificationNumber { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string RegistrationNumber { get; set; }
 
@@ -114,7 +112,7 @@ namespace FintrakBanking.Entities.Models
 
         public short ProductClassId { get; set; }
 
-        public short SubSectorId { get; set; }
+        public short? SubSectorId { get; set; }
 
         public short LoanTypeId { get; set; }
 

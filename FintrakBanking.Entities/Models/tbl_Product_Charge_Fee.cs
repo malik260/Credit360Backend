@@ -24,6 +24,8 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal? DependentAmount { get; set; }
 
+        public bool CanBeReviewed { get; set; }
+
         public int CreatedBy { get; set; }
 
         public DateTime DateTimeCreated { get; set; }

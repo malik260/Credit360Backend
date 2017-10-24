@@ -17,7 +17,7 @@ namespace FintrakBanking.Repositories.Credit
 {
     public partial class LoanApplicationRepository : ILoanApplicationRepository
     {
-        
+
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
@@ -27,10 +27,10 @@ namespace FintrakBanking.Repositories.Credit
         private ICustomerCollateralRepository collateral;
         //private IFinanceTransactionRepository finance;
 
-        public LoanApplicationRepository(IAuditTrailRepository _auditTrail, 
-            ICasaRepository _casa, 
+        public LoanApplicationRepository(IAuditTrailRepository _auditTrail,
+            ICasaRepository _casa,
             ICustomerCollateralRepository _collateral,
-            IGeneralSetupRepository _genSetup, 
+            IGeneralSetupRepository _genSetup,
             FinTrakBankingContext _context)
         {
             this.collateral = _collateral;
@@ -40,10 +40,10 @@ namespace FintrakBanking.Repositories.Credit
             this.genSetup = _genSetup;
             this.casa = _casa;
             this.collateral = _collateral;
-           
+
         }
 
-       // public 
+        // public 
 
         public IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId)
         {
@@ -112,15 +112,7 @@ namespace FintrakBanking.Repositories.Credit
                                  collateralType = d.tbl_Collateral_Type.CollateralTypeName,
                                  companyName = d.tbl_Loan_Application.tbl_Company.Name,
                                  applicationReferanceNumber = int.Parse(d.tbl_Loan_Application.ApplicationReferenceNumber),
-                                 applicationCollateralRefNo = context.tbl_Loan_Application_Collateral_RefNo.Where(b => b.CustomerCollateralId == d.CustomerCollateralId)
-                                      .Select(b => new LoanApplicationCollateralRefNoViewModel()
-                                      {
-                                          collateralRefNoId = b.CollateralRefNoId,
-                                          customerCollateralId = b.CustomerCollateralId,
-                                          documentNumber = b.DocumentNumber,
-                                          isBankAccount = b.IsBankAccount,
-                                          worth = b.Worth
-                                      }).ToList(),
+
                              }).ToList(),
                             LoanApplicationDetail = context.tbl_Loan_Application_Detail.Where(c => c.LoanApplicationId == a.LoanApplicationId)
                              .Select(c => new LoanApplicationDetailViewModel()
@@ -283,11 +275,13 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     isGroupLoan = true;
                 }
-                int casaAccountId = -1 ;
+                int casaAccountId = -1;
                 //     string refNumber = GenerateLoanReference(loan.customerId.Value);
-                if (loan.customerAccount != "N/A") {                     
-                    casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId); }
-         
+                if (loan.customerAccount != "N/A")
+                {
+                    casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
+                }
+
 
                 //var loanStatusId = (short)LoanStatusEnum.Inactive;
 
@@ -313,7 +307,7 @@ namespace FintrakBanking.Repositories.Credit
                     CustomerGroupId = loan.customerGroupId,
                     ApplicationStatusId = (short)LoanApplicationStatusEnum.ApplicationCompleted,
                     ApplicationAmount = loan.proposedAmount,
-                    ApplicationTenor = Convert.ToInt32 (Math.Round(((decimal)(loan.proposedTenor/12) * (decimal)365))),
+                    ApplicationTenor = Convert.ToInt32(Math.Round(((decimal)(loan.proposedTenor / 12) * (decimal)365))),
                     IsInvestmentGrade = loan.isInvestmentGrade,
                     LoanPreliminaryEvaluationId = loan.loanPreliminaryEvaluationId,
                     CustomerId = loan.customerId,
@@ -374,29 +368,29 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LoanApplicationDetail(List<LoanApplicationDetailViewModel> entity)
         {
-          var ApplicationDetail =  entity.Select(a => new tbl_Loan_Application_Detail()
+            var ApplicationDetail = entity.Select(a => new tbl_Loan_Application_Detail()
             {
                 ApprovedAmount = a.proposedAmount,
                 ApprovedInterestRate = a.proposedInterestRate,
                 ApprovedProductId = a.proposedProductId,
                 ApprovedTenor = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
-              
+
                 ExchangeRate = a.exchangeRate,
                 CurrencyId = a.currencyId,
                 CustomerId = a.customerId,
                 LoanApplicationId = a.loanApplicationId,
                 StatusId = (short)LoanApplicationDetailsStatusEnum.Pending,
-                 
+
 
                 ProposedAmount = a.proposedAmount,
                 ProposedInterestRate = a.proposedInterestRate,
                 ProposedProductId = a.proposedProductId,
-                ProposedTenor = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))) ,
-                 
+                ProposedTenor = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+
                 SubSectorId = a.subSectorId,
                 CreatedBy = a.createdBy,
                 DateTimeCreated = DateTime.Now,
-                 
+
             });
             context.tbl_Loan_Application_Detail.AddRange(ApplicationDetail);
 
@@ -410,7 +404,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     CollateralReferenceNumber = item.certificateOfOwnership,
                     CityId = item.cityId,
-                    CollateralTypeId = item.collateralTypeId,
+                    // CollateralTypeId = item.collateralTypeId,
                     CreatedBy = item.createdBy,
                     DateTimeCreated = genSetup.GetApplicationDate(),
                     OtherInformations = item.otherInformations,
@@ -420,14 +414,14 @@ namespace FintrakBanking.Repositories.Credit
                     NearestBusStop = item.nearestBusStop,
                     NearestLandmark = item.nearestLandmark,
                     DocumentTitle = item.documentTitle,
-                    LoanApplicationId = item.loanApplicationId,
+                    // LoanApplicationId = item.loanApplicationId,
                     SystemDateTime = DateTime.Now,
-                    
-                    
+
+
                 };
                 context.tbl_Loan_Application_Collateral.Add(loanCollateral);
 
-                if ( item.applicationCollateralRefNo.Count > 0)
+                if (item.applicationCollateralRefNo.Count > 0)
                 {
                     ApplicationCollateralRef(item.applicationCollateralRefNo);
                 }
@@ -436,14 +430,14 @@ namespace FintrakBanking.Repositories.Credit
 
         private void ApplicationCollateralRef(List<LoanApplicationCollateralRefNoViewModel> entity)
         {
-           var item = entity.Select(c => new tbl_Loan_Application_Collateral_RefNo()
-            {
-                DocumentNumber = c.documentNumber,
-                IsBankAccount = c.isBankAccount,
-                Worth = c.worth,
-                CustomerCollateralId = c.customerCollateralId
-            });
-            context.tbl_Loan_Application_Collateral_RefNo.AddRange(item);
+            //var item = entity.Select(c => new tbl_Loan_Application_Collateral_RefNo()
+            // {
+            //     DocumentNumber = c.documentNumber,
+            //     IsBankAccount = c.isBankAccount,
+            //     Worth = c.worth,
+            //     CustomerCollateralId = c.customerCollateralId
+            // });
+            // context.tbl_Loan_Application_Collateral_RefNo.AddRange(item);
         }
 
         private string GenerateLoanReference(int customerId)
@@ -650,13 +644,24 @@ namespace FintrakBanking.Repositories.Credit
                         join e in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals e.AppraisalMemorandumId
                         join f in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals f.LoanApplicationId
                         where a.CompanyId == companyId && a.Deleted == false
-                              && f.StatusId == (int)ApprovalStatusEnum.Approved 
-                              group a by new
-                              {
-                                  a.LoanApplicationId, a.ApplicationReferenceNumber, f.ApprovedAmount, a.LoanTypeId, a.ApplicationStatusId,
-                                  c.CAMRef, e.CAMDocumentation, a.ApplicationDate, a.RelationshipManagerId, a.RelationshipOfficerId,
-                                  cust.FirstName, cust.LastName, cust.MiddleName, cust.CustomerCode
-                              } into g
+                              && f.StatusId == (int)ApprovalStatusEnum.Approved
+                        group a by new
+                        {
+                            a.LoanApplicationId,
+                            a.ApplicationReferenceNumber,
+                            f.ApprovedAmount,
+                            a.LoanTypeId,
+                            a.ApplicationStatusId,
+                            c.CAMRef,
+                            e.CAMDocumentation,
+                            a.ApplicationDate,
+                            a.RelationshipManagerId,
+                            a.RelationshipOfficerId,
+                            cust.FirstName,
+                            cust.LastName,
+                            cust.MiddleName,
+                            cust.CustomerCode
+                        } into g
                         select new CamProcessedLoanViewModel
                         {
                             loanApplicationId = g.Key.LoanApplicationId,
@@ -785,5 +790,44 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion OfferLetter & Availment Process
+
+        #region "Loan Applications Awaiting Checklist"
+        public IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId)
+        {
+            var data = (from a in context.tbl_Loan_Application
+                        join b in context.tbl_Loan_Application_Detail
+                        on a.LoanApplicationId equals b.LoanApplicationId
+                        where a.ApplicationStatusId == (short)LoanApplicationStatusEnum.ApplicationCompleted
+                        && a.CompanyId == companyId && a.Deleted == false group b by new
+                        {
+                            b.ProposedProductId,
+                            a.ApplicationReferenceNumber,
+                            b.CustomerId,
+                            b.LoanApplicationDetailId,
+                            b.tbl_Customer, 
+                            b.LoanApplicationId,
+                            b.ProposedTenor,
+                            b.ProposedInterestRate,
+                            b.ProposedAmount, 
+                            b.tbl_Product
+                        }                        
+                        into g
+                        select new LoanApplicationDetailViewModel() {
+                            loanApplicationId = g.Key.LoanApplicationId,
+                            applicationRefNo = g.Key.ApplicationReferenceNumber,
+                            customerId = g.Key.CustomerId,
+                            customerName = g.Key.tbl_Customer.FirstName + " " + g.Key.tbl_Customer.MiddleName + " " + g.Key.tbl_Customer.LastName,
+                            loanApplicationDetailId = g.Key.LoanApplicationDetailId,
+                            proposedProductId = g.Key.ProposedProductId,
+                            proposedProductName = g.Key.tbl_Product.ProductName,
+                            proposedTenor = g.Key.ProposedTenor,
+                            proposedAmount = g.Key.ProposedAmount,
+                            proposedInterestRate = g.Key.ProposedInterestRate
+                        });
+
+         
+            return data;
+        }
+        #endregion
     }
 }

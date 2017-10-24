@@ -124,9 +124,15 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int loanApplicationId { get; set; }
 
+        public string applicationRefNo { get; set; }
+
         public int customerId { get; set; }
 
+        public string customerName { get; set; }
+
         public short proposedProductId { get; set; }
+
+        public string proposedProductName { get; set; }
 
         public int proposedTenor { get; set; }
 

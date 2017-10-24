@@ -19,6 +19,8 @@ namespace FintrakBanking.Common.Enum
         AvailmentInProgress = 9,
         AvailmentCompleted = 10,
         LoanBookingInProgress = 11,
-        LoanBookingCompleted = 12
+        LoanBookingCompleted = 12,
+        ChecklistInProgress = 13,
+        ChecklistCompleted = 14
     }
 }

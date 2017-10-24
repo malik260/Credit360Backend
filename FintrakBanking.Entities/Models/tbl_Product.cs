@@ -14,6 +14,7 @@ namespace FintrakBanking.Entities.Models
         {
             tbl_Approval_Group_Mapping = new HashSet<tbl_Approval_Group_Mapping>();
             tbl_CASA = new HashSet<tbl_CASA>();
+            tbl_Checklist_Definition = new HashSet<tbl_Checklist_Definition>();
             tbl_Daily_Accrual = new HashSet<tbl_Daily_Accrual>();
             tbl_KYC_Item = new HashSet<tbl_KYC_Item>();
             tbl_Loan = new HashSet<tbl_Loan>();
@@ -46,10 +47,10 @@ namespace FintrakBanking.Entities.Models
         public string ProductCode { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [StringLength(200)]
         public string ProductName { get; set; }
 
-        [StringLength(100)]
+        [StringLength(200)]
         public string ProductDescription { get; set; }
 
         public int? PrincipalBalanceGL { get; set; }
@@ -133,6 +134,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_CASA> tbl_CASA { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_Checklist_Definition> tbl_Checklist_Definition { get; set; }
 
         public virtual tbl_Company tbl_Company { get; set; }
 
