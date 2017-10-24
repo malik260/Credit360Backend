@@ -506,7 +506,7 @@
                                   <Value>=Fields!covenantDate.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
-                                    <Format>dd-mm-yyyy</Format>
+                                    <Format>dd-MMM-yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -539,7 +539,7 @@
                                   <Value>=Fields!dueDate.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
-                                    <Format>dd-mm-yyyy</Format>
+                                    <Format>dd-MMM-yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
