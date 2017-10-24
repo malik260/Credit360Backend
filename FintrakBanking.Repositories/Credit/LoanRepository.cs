@@ -154,8 +154,11 @@ namespace FintrakBanking.Repositories.Credit
             if (totaloverdraftLimit > model.customerAvailableAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
-            var currentExchangeRate = context.tbl_Currency_Rate.Where(x => x.CurrencyId == model.currencyId).LastOrDefault().SellingRate;
-            
+            var CurrRatings = context.tbl_Currency_Rate.Where(x => x.CurrencyId == model.currencyId).FirstOrDefault();
+            var currentExchangeRate = 1.0;
+
+            if (CurrRatings != null) currentExchangeRate = CurrRatings.SellingRate;
+
             var loanReferenceNumber = GenerateLoanReferenceNumber(model.customerId, model.productId, model.productTypeId);
             var data = new tbl_Loan_Revolving
             {
@@ -286,9 +289,12 @@ namespace FintrakBanking.Repositories.Credit
             if (totalContingentAmount > entity.customerAvailableAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
-            var currentExchangeRate = context.tbl_Currency_Rate.Where(x => x.CurrencyId == entity.currencyId).LastOrDefault().SellingRate;
+            var CurrRatings = context.tbl_Currency_Rate.Where(x => x.CurrencyId == contingentLoanInput.currencyId).FirstOrDefault();
+            var currentExchangeRate = 1.0;
 
-            
+            if (CurrRatings != null) currentExchangeRate = CurrRatings.SellingRate;
+
+
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId, entity.productTypeId);
             var data = new tbl_Loan_Contingent
             {
@@ -423,7 +429,10 @@ namespace FintrakBanking.Repositories.Credit
             if (totalPrincipalAmount > (decimal)entity.loanScheduleInput.principalAmount)
                 throw new Exception("The loan amount cannot greater than the availiable amount");
 
-            var currentExchangeRate = context.tbl_Currency_Rate.Where(x => x.CurrencyId == entity.currencyId).FirstOrDefault().SellingRate;
+            var CurrRatings = context.tbl_Currency_Rate.Where(x => x.CurrencyId == entity.currencyId).FirstOrDefault();
+            var currentExchangeRate  = 1.0;
+            
+            if(CurrRatings  != null) currentExchangeRate = CurrRatings.SellingRate;
 
             double? priceIndex = (from a in context.tbl_Product
                                   where a.ProductId == entity.productId
