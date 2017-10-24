@@ -16,9 +16,11 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal interestAccrual { get; set; }
         public string productName { get; set; }
         public double interestRate { get; set; }
-        public double tenor { get; set; }
         public DateTime terminationDate { get; set; }
         public DateTime effectiveDate { get; set; }
+        public DateTime maturityDate { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
         public string totalRepayment { get { return (principalRepayment + interestAccrual).ToString("#,#.00#"); } }
     }
 
@@ -370,6 +372,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string chargeFeeName { get; set; }
         public decimal feeRateValue { get; set; }
         public decimal feeDependentAmount { get; set; }
+        public decimal chargeAmount { get; set; }
         public decimal feeAmount { get; set; }
         public short feeIntervalId { get; set; }
         public string feeIntervalName { get; set; }
@@ -381,6 +384,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int casaAccountId { get; set; }
         public bool required { get; set; }
         public bool recurring { get; set; }
+        public int feeTargetId { get; set; }
+        public string feeTargetName { get; set; }
+        public bool byAmountRequired { get; set; }
+        public bool isPosted { get; set; }
+        public int operationId { get; set; }
+        public decimal loanAmount { get; set; }
+        public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
     }
 
     public class LoanCollateralMappingViewModel : CollateralViewModel

@@ -17,6 +17,7 @@ namespace FintrakBanking.Interfaces.Setups
         bool AddMultipleChecklistDefinitionWithMultipleItems(ChecklistDefinitionViewModel model);
         bool UpdateChecklistDefinition(int CheckListDefinitionId, ChecklistDefinitionViewModel model);
         bool DeleteChecklistDefinition(int CheckListDefinitionId, UserInfo user);
+        IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevel(int approvalLevelId);
         #endregion
 
         #region Loan Checklist Detail

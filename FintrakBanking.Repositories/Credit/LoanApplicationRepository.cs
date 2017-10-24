@@ -96,7 +96,7 @@ namespace FintrakBanking.Repositories.Credit
                             LoanApplicationCollateral = context.tbl_Loan_Application_Collateral.Where(d => d.LoanApplicationId == a.LoanApplicationId)
                              .Select(d => new LoanApplicationCollateralViewModel()
                              {
-                                 certificateOfOwnership = d.CollateralReferenceNumber,
+                           //     collateralValue   = d.CollateralReferenceNumber,
                                  cityId = d.CityId,
                                  collateralTypeId = d.CollateralTypeId,
                                  customerCollateralId = d.CustomerCollateralId,
@@ -290,8 +290,7 @@ namespace FintrakBanking.Repositories.Credit
                     ApplicationReferenceNumber = loan.applicationReferenceNumber,
                     LoanTypeId = loan.loanTypeId,
                     CompanyId = loan.companyId,
-                    BranchId = (short)loan.branchId,
-                    //CasaAccountId = casaAccountId,
+                    BranchId = (short)loan.branchId,                     
                     RelationshipOfficerId = loan.relationshipOfficerId,
                     RelationshipManagerId = loan.relationshipManagerId,
                     MISCode = loan.misCode,
@@ -326,7 +325,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (isGroupLoan)
                 {
-                    data.CustomerGroupId = loan.customerId;
+                    data.CustomerGroupId = loan.customerGroupId;
                     data.CustomerId = null;
                 }
                 else
@@ -402,43 +401,41 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanCollateral = new tbl_Loan_Application_Collateral()
                 {
-                    CollateralReferenceNumber = item.certificateOfOwnership,
+                    CollateralReferenceNumber = item.collateralReferenceNumber,
                     CityId = item.cityId,
-                    // CollateralTypeId = item.collateralTypeId,
+                    CollateralValue = item.collateralValue,
+                    IsBankAccount = item.isBankAccount,
+                    CollateralTypeId = item.collateralTypeId,
                     CreatedBy = item.createdBy,
                     DateTimeCreated = genSetup.GetApplicationDate(),
                     OtherInformations = item.otherInformations,
                     Latitude = item.latitude,
-                    Longitude = item.longitude,
+                    Longitude = item.longitude,             
+                     
                     LocationAddress = item.locationAddress,
                     NearestBusStop = item.nearestBusStop,
                     NearestLandmark = item.nearestLandmark,
                     DocumentTitle = item.documentTitle,
-                    // LoanApplicationId = item.loanApplicationId,
+                    //LoanApplicationId = item.loanApplicationId,
                     SystemDateTime = DateTime.Now,
-
-
+                    CasaAccountId = item.casaAccountId
+                     
                 };
                 context.tbl_Loan_Application_Collateral.Add(loanCollateral);
-
-                if (item.applicationCollateralRefNo.Count > 0)
-                {
-                    ApplicationCollateralRef(item.applicationCollateralRefNo);
-                }
             }
         }
 
-        private void ApplicationCollateralRef(List<LoanApplicationCollateralRefNoViewModel> entity)
-        {
-            //var item = entity.Select(c => new tbl_Loan_Application_Collateral_RefNo()
-            // {
-            //     DocumentNumber = c.documentNumber,
-            //     IsBankAccount = c.isBankAccount,
-            //     Worth = c.worth,
-            //     CustomerCollateralId = c.customerCollateralId
-            // });
-            // context.tbl_Loan_Application_Collateral_RefNo.AddRange(item);
-        }
+        //private void ApplicationCollateralRef(List<LoanApplicationCollateralRefNoViewModel> entity)
+        //{
+        //   var item = entity.Select(c => new tbl_Loan_Application_Collateral()
+        //    {
+        //        DocumentNumber = c.documentNumber,
+        //        IsBankAccount = c.isBankAccount,
+        //        Worth = c.worth,
+        //        CustomerCollateralId = c.customerCollateralId
+        //    });
+        //    context.tbl_Loan_Application_Collateral.AddRange(item);
+        //}
 
         private string GenerateLoanReference(int customerId)
         {
@@ -638,11 +635,15 @@ namespace FintrakBanking.Repositories.Credit
         private IQueryable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId)
         {
             var data = (from a in context.tbl_Loan_Application
+                        join b in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals b.LoanApplicationId
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
-                        //join d in context.tbl_Credit_Appraisal_Memorandum_Loan_Detail on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
-                        join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId
-                        join e in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals e.AppraisalMemorandumId
-                        join f in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals f.LoanApplicationId
+                        join d in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
+                        join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId into cc from cust in
+                        cc.DefaultIfEmpty()
+                        join cGrp in context.tbl_Customer_Group on a.CustomerGroupId equals cGrp.CustomerGroupId into grp
+                        from cGrp in grp.DefaultIfEmpty()
+                        join ss in context.tbl_Sub_Sector on b.SubSectorId equals ss.SubSectorId into sec from ss in sec.DefaultIfEmpty()
+
                         where a.CompanyId == companyId && a.Deleted == false
                               && f.StatusId == (int)ApprovalStatusEnum.Approved
                         group a by new
@@ -667,10 +668,10 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationId = g.Key.LoanApplicationId,
                             applicationReferenceNumber = g.Key.ApplicationReferenceNumber,
                             customerCode = g.Key.CustomerCode,
-                            customerName = g.Key.FirstName + " " + g.Key.MiddleName + " " + g.Key.LastName,
-                            //customerGroupId = a.CustomerGroupId,
-                            //customerGroupName = a.CustomerGroupId.HasValue ? a.tbl_Customer_Group.GroupName : "",
-                            //customerGroupCode = a.tbl_Customer_Group.GroupCode,
+                            customerName = g.Key.CustomerId.Equals(0) ? g.Key.GroupName : g.Key.FirstName + " " + g.Key.MiddleName + " " + g.Key.LastName,
+                            //customerGroupId = g.Key.CustomerGroupId,
+                            customerGroupName = g.Key.GroupName,
+                            customerGroupCode = g.Key.GroupCode,
                             relationshipOfficerId = g.Key.RelationshipOfficerId,
                             //relationshipOfficerName =
                             //    a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
@@ -686,7 +687,8 @@ namespace FintrakBanking.Repositories.Credit
                             camDocumentation = g.Key.CAMDocumentation,
                             approvedAmount = g.Sum(x => x.ApprovedAmount),
                             applicationDate = g.Key.ApplicationDate,
-                            applicationStatusId = g.Key.ApplicationStatusId
+                            applicationStatusId = g.Key.ApplicationStatusId,
+                            subSectorId = g.Key.SubSectorId
                         });
 
             return data;

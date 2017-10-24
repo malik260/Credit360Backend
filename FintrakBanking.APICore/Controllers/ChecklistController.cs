@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = CommonHelpers.GetUserIP();
-                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.applicationUrl = HttpContext.Current.Request.UserHostAddress;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
@@ -68,6 +68,15 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                foreach (var item in model)
+                {
+                    item.userBranchId = (short)token.GetBranchId;
+                    item.userIPAddress = CommonHelpers.GetUserIP();
+                    item.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                    item.createdBy = token.GetStaffId;
+                    item.companyId = token.GetCompanyId;
+                }
+
                 var recordId = repo.AddMultipleChecklistDefinition(model);
                 if (recordId)
                 {
@@ -92,7 +101,14 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                model.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
                 var recordId = repo.AddMultipleChecklistDefinitionWithMultipleItems(model);
+
                 if (recordId)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -141,14 +157,49 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetAllChecklistDefinitionById(CheckListDefinitionId);
-                return Request.CreateResponse(HttpStatusCode.OK,
-           new { success = true, result = data, count = 1 });
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), count = data.Count() });
+
             }
             catch (Exception ex)
             {
 
-                return Request.CreateResponse(HttpStatusCode.OK,
-           new { success = false, message = $"There was an error updating this record {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    success = false,
+                    message = $"There was an error fetching the records {ex.Message}"
+                });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("checklist-definition/approval-level/{approvalLevelId}")]
+        public HttpResponseMessage GetAllChecklistDefinitionByApprovalLevelId(short approvalLevelId)
+        {
+            try
+            {
+                var data = repo.GetChecklistDefinitionByApprovalLevel(approvalLevelId);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), count = data.Count() });
+
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    success = false,
+                    message = $"There was an error fetching the records {ex.Message}"
+                });
             }
 
         }

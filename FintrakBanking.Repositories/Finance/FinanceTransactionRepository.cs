@@ -144,7 +144,7 @@ namespace FintrakBanking.Repositories.Finance
                     trans.OperationId = mainItem.operationId;
                     trans.Description = mainItem.description;
                     trans.ValueDate = mainItem.valueDate;
-                    //trans.PostedDate = mainItem.transactionDate;
+                    trans.PostedDate = mainItem.transactionDate;
                     trans.CurrencyId = mainItem.currencyId;
                     trans.CurrencyRate = mainItem.currencyRate;
                     trans.PostedDateTime = DateTime.Now;
@@ -209,7 +209,7 @@ namespace FintrakBanking.Repositories.Finance
             collateralTransaction.valueDate = generalSetup.GetApplicationDate();
             collateralTransaction.transactionDate = collateralTransaction.valueDate;
             collateralTransaction.currencyId = casa.CurrencyId;
-            collateralTransaction.currencyRate = GetExchangeRate(collateralTransaction.currencyId,   model.companyId);            
+            collateralTransaction.currencyRate = GetExchangeRate(collateralTransaction.valueDate, collateralTransaction.currencyId,   model.companyId).sellingRate;            
             collateralTransaction.isApproved = true;
             collateralTransaction.postedBy = model.createdBy;
             collateralTransaction.approvedBy = model.createdBy;
@@ -269,22 +269,32 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public double GetExchangeRate(short currencyId,   int companyId)
+        public CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId,   int companyId)
         {
             var baseCurrency = this.context.tbl_Company.FirstOrDefault(x => x.CompanyId == companyId).CurrencyId;
+            
+            //CurrencyExchangeRateViewModel rateInfo = new CurrencyExchangeRateViewModel();
 
             if (currencyId == baseCurrency)
             {
-                return 1;
+                return new CurrencyExchangeRateViewModel { baseCurrencyId = baseCurrency, currencyId = currencyId, buyingRate = 1, sellingRate = 1, date = date };
             }
             else
             {
-                DateTime date = generalSetup.GetApplicationDate().Date;
-                var rate = (from x in this.context.tbl_Currency_Rate
-                            where x.CurrencyId == currencyId && x.Date == DbFunctions.TruncateTime(date)
-                            select x.SellingRate).FirstOrDefault();
-                 
-                return rate;
+                //DateTime date = generalSetup.GetApplicationDate().Date;
+                var rateInfo = (from x in this.context.tbl_Currency_Rate
+                            where x.CurrencyId == currencyId && x.Date == date.Date
+                            select x).FirstOrDefault();
+
+                if (rateInfo == null)
+                    throw new Exception($"Exchange rate for {date} is not defined. Define the exchange rate and try again");
+
+                return new CurrencyExchangeRateViewModel {
+                    baseCurrencyId = rateInfo.BaseCurrencyId,
+                    currencyId = rateInfo.CurrencyId,
+                    buyingRate = rateInfo.BuyingRate,
+                    sellingRate = rateInfo.SellingRate,
+                    date = rateInfo.Date };
             }           
             
         }
@@ -301,7 +311,7 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
             dailyInterestAccrualTransaction.currencyId = model.currencyId;
-            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.valueDate, dailyInterestAccrualTransaction.currencyId, model.companyId).sellingRate;
             dailyInterestAccrualTransaction.isApproved = true;
             dailyInterestAccrualTransaction.postedBy = (int)SystemStaff.System;
             dailyInterestAccrualTransaction.approvedBy = (int)SystemStaff.System;
@@ -372,7 +382,7 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
             dailyInterestAccrualTransaction.currencyId = model.currencyId;
-            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.valueDate, dailyInterestAccrualTransaction.currencyId, model.companyId).sellingRate;
             dailyInterestAccrualTransaction.isApproved = true;
             dailyInterestAccrualTransaction.postedBy = (int)SystemStaff.System;
             dailyInterestAccrualTransaction.approvedBy = (int)SystemStaff.System;
@@ -442,7 +452,7 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
             dailyInterestAccrualTransaction.currencyId = model.currencyId;
-            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.valueDate, dailyInterestAccrualTransaction.currencyId, model.companyId).sellingRate;
             dailyInterestAccrualTransaction.isApproved = true;
             dailyInterestAccrualTransaction.postedBy = (int)SystemStaff.System;
             dailyInterestAccrualTransaction.approvedBy = (int)SystemStaff.System;
@@ -512,7 +522,7 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
             dailyInterestAccrualTransaction.currencyId = model.currencyId;
-            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.valueDate, dailyInterestAccrualTransaction.currencyId, model.companyId).sellingRate;
             dailyInterestAccrualTransaction.isApproved = true;
             dailyInterestAccrualTransaction.postedBy = (int)SystemStaff.System;
             dailyInterestAccrualTransaction.approvedBy = (int)SystemStaff.System;
@@ -583,7 +593,7 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
             dailyInterestAccrualTransaction.currencyId = model.currencyId;
-            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.valueDate,dailyInterestAccrualTransaction.currencyId, model.companyId).sellingRate;
             dailyInterestAccrualTransaction.isApproved = true;
             dailyInterestAccrualTransaction.postedBy = (int)SystemStaff.System;
             dailyInterestAccrualTransaction.approvedBy = (int)SystemStaff.System;
@@ -654,7 +664,7 @@ namespace FintrakBanking.Repositories.Finance
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
             loanTransaction.currencyId = casa.CurrencyId;
-            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.currencyId, model.companyId);
+            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.valueDate,loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = (int)SystemStaff.System; ;
             loanTransaction.approvedBy = (int)SystemStaff.System; ;
@@ -707,7 +717,7 @@ namespace FintrakBanking.Repositories.Finance
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
             loanTransaction.currencyId = casa.CurrencyId;
-            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.currencyId, model.companyId);
+            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.valueDate, loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = model.createdBy;
             loanTransaction.approvedBy = model.createdBy;
@@ -762,7 +772,7 @@ namespace FintrakBanking.Repositories.Finance
                 feeTransaction.valueDate = generalSetup.GetApplicationDate();
                 feeTransaction.transactionDate = feeTransaction.valueDate;
                 feeTransaction.currencyId = casa.CurrencyId;
-                feeTransaction.currencyRate = GetExchangeRate(feeTransaction.currencyId, model.companyId);
+                feeTransaction.currencyRate = GetExchangeRate(feeTransaction.valueDate,feeTransaction.currencyId, model.companyId).sellingRate;
                 feeTransaction.isApproved = true;
                 feeTransaction.postedBy = model.createdBy;
                 feeTransaction.approvedBy = model.createdBy;
@@ -826,7 +836,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting (LoanPaymentScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting (LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
@@ -839,7 +849,7 @@ namespace FintrakBanking.Repositories.Finance
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
             loanTransaction.currencyId = casa.CurrencyId;
-            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.currencyId, model.companyId);
+            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.valueDate, loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = model.createdBy;
             loanTransaction.approvedBy = model.createdBy;
@@ -895,7 +905,7 @@ namespace FintrakBanking.Repositories.Finance
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
             loanTransaction.currencyId = casa.CurrencyId;
-            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.currencyId, model.companyId);
+            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.valueDate,loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = model.createdBy;
             loanTransaction.approvedBy = model.createdBy;
@@ -971,7 +981,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
@@ -984,7 +994,7 @@ namespace FintrakBanking.Repositories.Finance
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
             loanTransaction.currencyId = casa.CurrencyId;
-            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.currencyId, model.companyId);
+            loanTransaction.currencyRate = GetExchangeRate(loanTransaction.valueDate, loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = model.createdBy;
             loanTransaction.approvedBy = model.createdBy;
@@ -1027,7 +1037,7 @@ namespace FintrakBanking.Repositories.Finance
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentScheduleInputViewModel model , decimal postedAmount, int creditGL, string description)
+        public FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model , decimal postedAmount, int creditGL, string description)
         {
             var loanData  = this.context.tbl_Loan.Where(x => x.TermLoanId == loanId).FirstOrDefault();
 
@@ -1041,7 +1051,7 @@ namespace FintrakBanking.Repositories.Finance
             terminateAndRebookTransaction.valueDate = generalSetup.GetApplicationDate();
             terminateAndRebookTransaction.transactionDate = terminateAndRebookTransaction.valueDate;
             terminateAndRebookTransaction.currencyId = casa.CurrencyId;
-            terminateAndRebookTransaction.currencyRate = GetExchangeRate(terminateAndRebookTransaction.currencyId, model.companyId);
+            terminateAndRebookTransaction.currencyRate = GetExchangeRate(terminateAndRebookTransaction.valueDate,terminateAndRebookTransaction.currencyId, model.companyId).sellingRate;
             terminateAndRebookTransaction.isApproved = true;
             terminateAndRebookTransaction.postedBy = model.createdBy;
             terminateAndRebookTransaction.approvedBy = model.createdBy;
@@ -1088,7 +1098,7 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.valueDate = generalSetup.GetApplicationDate();
             dailyInterestAccrualTransaction.transactionDate = dailyInterestAccrualTransaction.valueDate;
             dailyInterestAccrualTransaction.currencyId = model.currencyId;
-            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.currencyId, model.companyId);
+            dailyInterestAccrualTransaction.currencyRate = GetExchangeRate(dailyInterestAccrualTransaction.valueDate,dailyInterestAccrualTransaction.currencyId, model.companyId).sellingRate;
             dailyInterestAccrualTransaction.isApproved = true;
             dailyInterestAccrualTransaction.postedBy = staffId;
             dailyInterestAccrualTransaction.approvedBy = staffId;

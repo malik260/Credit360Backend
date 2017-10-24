@@ -104,6 +104,13 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevel(int approvalLevelId)
+        {
+            var data = GetAllChecklistDefinition().Where(x => x.approvalLevelId == approvalLevelId).ToList();
+
+            return data;
+        }
+
         public bool AddChecklistDefinition(ChecklistDefinitionViewModel model)
         {
             var data = new tbl_Checklist_Definition
@@ -282,6 +289,7 @@ namespace FintrakBanking.Repositories.Credit
                             targetTypeName = a.tbl_Checklist_TargetType.TargetTypeName,
                             targetId = a.TargetId,
                             checkListStatusId = a.CheckListStatusId,
+                            checkListStatusName = a.tbl_Checklist_Status.ChecklistStatusName,
                             checkedBy = a.CheckedBy,
                             deferedDate = a.DeferedDate,
                             remark = a.Remark,

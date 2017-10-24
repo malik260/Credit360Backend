@@ -276,8 +276,17 @@ namespace FintrakBanking.Repositories.Credit
             if (loanInput.interestFirstpaymentDate == maturityDate)
             {
                 Period period = Period.Between(LocalDateTime.FromDateTime(loanInput.interestFirstpaymentDate), LocalDateTime.FromDateTime(maturityDate));
+                /// modify by Gbenga to be approve by Anu(Reasons that var maturityDate = output.Max(x => x.paymentDate) makes MaturityDate and FirstPaymentDate qual)
+                if (period.Days == 0)
+                {
+                    output = output * (daysInAYear / 1);
+                }
+                else
+                {
+                    output = output * (daysInAYear / period.Days);
+                }
 
-                output = output * (daysInAYear / period.Days);
+                //output = output * (daysInAYear / period.Days);
             }
 
             return output * 100;
@@ -1224,8 +1233,8 @@ namespace FintrakBanking.Repositories.Credit
 
             //------------adding records to the database--------------------------
 
-            if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
-            { this.context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }
+            //if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+            //{ this.context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }
 
 
             this.context.tbl_Loan_Schedule_Periodic.AddRange(tblPeriodicSchedule);

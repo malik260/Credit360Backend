@@ -114,7 +114,8 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IAccountCategoryRepository>().To<AccountCategoryRepository>();
             kernel.Bind<IAccountTypeRepository>().To<AccountTypeRepository>();
             kernel.Bind<ICompanyRepository>().To<CompanyRepository>();
-            kernel.Bind<IBranchRepository>().To<BranchRepository>();
+            kernel.Bind<IBranchRepository>().To<BranchRepository>(); 
+            kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
             kernel.Bind<IRiskSetupRepository>().To<RiskSetupRepository>();
             kernel.Bind<IRiskImplementation>().To<RiskImplementation>();
             kernel.Bind<IStaffRepository>().To<StaffRepository>();
@@ -144,7 +145,6 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICustomerFSCaptionDetailRepository>().To<CustomerFSCaptionDetailRepository>();
             kernel.Bind<ICustomFieldsRepository>().To<CustomFieldsRepository>();
             kernel.Bind<ICustomerFSRatioRepository>().To<CustomerFSRatioRepository>();
-            kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
             kernel.Bind<IChecklistRepository>().To<ChecklistRepository>();
             kernel.Bind<ILoanRepository>().To<LoanRepository>();
             kernel.Bind<IApprovalGroupMappingRepository>().To<ApprovalGroupMappingRepository>();
@@ -172,7 +172,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
             kernel.Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
-            kernel.Bind<IReportRouts>().To<ReportRouts>();
+            kernel.Bind<IReportRoutes>().To<ReportRoutes>();
             kernel.Bind<ICallMemoRepository>().To<CallMemoRepository>();
             kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
             kernel.Bind<IEmailAndAlertsRepository>().To<EmailAndAlertsRepository>();

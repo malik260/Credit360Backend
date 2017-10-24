@@ -15,6 +15,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? interestFrequency { get; set; }
         public int principalFrequencyTypeId { get; set; }
         public int interestFrequencyTypeId { get; set; }
+ 
         //public int tenor { get { return  }  }
         private int _tenor;
 
@@ -30,27 +31,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short accurialBasis { get; set; }
         public double integralFeeAmount { get; set; }
         public short firstDayType { get; set; }
-        public short loanChangeType { get; set; }
-        public int loanId  { get; set; }
-        public Double payAmount{ get; set; }
-        public Double newAmount { get; set; }
-        public int productId { get; set; }
-        public short newPrincipalFrequency { get; set; }
-        public short newInterestFrequency { get; set; }
-        public DateTime newPrincipalFirstpaymentDate { get; set; }
-        public DateTime newInterestFirstpaymentDate { get; set; }
-        public Double payInterest{ get; set; }
-        public Double newInterest{ get; set; }
-
-        public int newTenor { get { return (maturityDate - newEffectiveDate).Days; } }
-        public DateTime newEffectiveDate { get; set; }
-        public decimal prepayment  { get; set; }
-        public int operationId { get; set; }
-        public bool isManagementInterestRate{ get; set; }
-        public DateTime newMaturityDate{ get; set; }
-        public int newTenorPrepayment{ get { return (newMaturityDate - newEffectiveDate).Days; } }
-
-
+ 
 
 
         public List<IrregularLoanScheduleInputViewModel> irregularPaymentSchedule { get; set; }
@@ -62,6 +43,36 @@ namespace FintrakBanking.ViewModels.Credit
         //public int daysInAYear { get; set; }
         //public Double feeRate { get; set; }
     }
+
+
+    public class LoanPaymentRestructureScheduleInputViewModel : LoanPaymentScheduleInputViewModel
+
+    {
+        public int? proposedTenor { get; set; }
+        //public int tenor { get { return  }  }
+        public short loanChangeType { get; set; }
+        public int loanId { get; set; }
+        public Double payAmount { get; set; }
+        public Double newAmount { get; set; }
+        public int productId { get; set; }
+        public short newPrincipalFrequency { get; set; }
+        public short newInterestFrequency { get; set; }
+        public DateTime newPrincipalFirstpaymentDate { get; set; }
+        public DateTime newInterestFirstpaymentDate { get; set; }
+        public Double payInterest { get; set; }
+        public Double newInterest { get; set; }
+
+        public int newTenor { get { return (maturityDate - newEffectiveDate).Days; } }
+        public DateTime newEffectiveDate { get; set; }
+        public decimal prepayment { get; set; }
+        public int operationId { get; set; }
+        public bool isManagementInterestRate { get; set; }
+        public DateTime? newMaturityDate { get; set; }
+        public int newTenorPrepayment{ get { return ((DateTime)newMaturityDate - newEffectiveDate).Days; } }
+
+        
+    }
+
 
     public class LoanPaymentScheduleExtendedInputViewModel: LoanPaymentScheduleInputViewModel
     {
