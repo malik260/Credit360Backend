@@ -160,7 +160,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("offer-letter")]
-        public HttpResponseMessage GetGeneratedOfferLetter([FromUri] string applicationRefNumber)
+        public HttpResponseMessage GetGeneratedOfferLetter(string applicationRefNumber)
         {
             try
             {

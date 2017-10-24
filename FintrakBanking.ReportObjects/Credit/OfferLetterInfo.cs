@@ -14,7 +14,8 @@ namespace FintrakBanking.ReportObjects.Credit
             FinTrakBankingContext context = new FinTrakBankingContext();
 
             var offerLetterDetails = (from a in context.tbl_Loan_Application
-                                      join b in context.tbl_Customer on a.CustomerId equals b.CustomerId into cc
+                                      join d in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals d.LoanApplicationId
+                                      join b in context.tbl_Customer on d.CustomerId equals b.CustomerId into cc
                                       from b in cc.DefaultIfEmpty()
                                       join c in context.tbl_Customer_Group on a.CustomerGroupId equals c.CustomerGroupId into cg
                                       from c in cg.DefaultIfEmpty()
@@ -24,7 +25,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                       {
                                           companyName = context.tbl_Company.FirstOrDefault(x => x.CompanyId == a.CompanyId).Name,
                                           //customerId = b.CustomerId,
-                                          customerName = b.CustomerId.Equals(0) ? b.Title + " " + b.FirstName + " " + b.LastName : c.GroupName + " - " + c.GroupCode,
+                                          customerName = b.CustomerId != 0 ? b.Title + " " + b.FirstName + " " + b.LastName : c.GroupName + " - " + c.GroupCode,
                                           customerGroupName = c.GroupName + " - " + c.GroupCode,
                                           customerAddress = a.tbl_Customer.tbl_Customer_Address.FirstOrDefault().Address ?? string.Empty,
                                           applicationDate = a.ApplicationDate
