@@ -463,7 +463,7 @@
                                   <Value>=Fields!lastValuationDate.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
-                                    <Format>dd-mm-yyyy</Format>
+                                    <Format>dd-MMM-yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
