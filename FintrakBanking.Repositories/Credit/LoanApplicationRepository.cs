@@ -639,6 +639,7 @@ namespace FintrakBanking.Repositories.Credit
                         cc.DefaultIfEmpty()
                         join cGrp in context.tbl_Customer_Group on a.CustomerGroupId equals cGrp.CustomerGroupId into grp
                         from cGrp in grp.DefaultIfEmpty()
+                        join ss in context.tbl_Sub_Sector on b.SubSectorId equals ss.SubSectorId into sec from ss in sec.DefaultIfEmpty()
 
                         where a.CompanyId == companyId && a.Deleted == false
                               && b.StatusId == (int)ApprovalStatusEnum.Approved 
@@ -646,16 +647,16 @@ namespace FintrakBanking.Repositories.Credit
                               {
                                   a.LoanApplicationId, a.ApplicationReferenceNumber, b.ApprovedAmount, a.LoanTypeId, a.ApplicationStatusId,
                                   c.CAMRef, d.CAMDocumentation, a.ApplicationDate, a.RelationshipManagerId, a.RelationshipOfficerId,
-                                  cust.FirstName, cust.LastName, cust.MiddleName, cust.CustomerCode, cGrp.CustomerGroupId,
-                                  cGrp.GroupName, cGrp.GroupCode, cust.SubSectorId
+                                  cust.FirstName, cust.LastName, cust.MiddleName, cust.CustomerCode, cGrp.CustomerGroupId, cust.CustomerId,
+                                  cGrp.GroupName, cGrp.GroupCode, ss.SubSectorId
                               } into g
                         select new CamProcessedLoanViewModel
                         {
                             loanApplicationId = g.Key.LoanApplicationId,
                             applicationReferenceNumber = g.Key.ApplicationReferenceNumber,
                             customerCode = g.Key.CustomerCode,
-                            customerName = g.Key.FirstName + " " + g.Key.MiddleName + " " + g.Key.LastName,
-                            customerGroupId = g.Key.CustomerGroupId,
+                            customerName = g.Key.CustomerId.Equals(0) ? g.Key.GroupName : g.Key.FirstName + " " + g.Key.MiddleName + " " + g.Key.LastName,
+                            //customerGroupId = g.Key.CustomerGroupId,
                             customerGroupName = g.Key.GroupName,
                             customerGroupCode = g.Key.GroupCode,
                             relationshipOfficerId = g.Key.RelationshipOfficerId,
