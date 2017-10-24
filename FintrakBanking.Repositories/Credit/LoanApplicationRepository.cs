@@ -325,7 +325,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (isGroupLoan)
                 {
-                    data.CustomerGroupId = loan.customerId;
+                    data.CustomerGroupId = loan.customerGroupId;
                     data.CustomerId = null;
                 }
                 else
