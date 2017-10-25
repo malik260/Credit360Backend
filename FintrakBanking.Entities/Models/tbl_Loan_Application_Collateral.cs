@@ -72,6 +72,5 @@ namespace FintrakBanking.Entities.Models
         public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
 
         public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
-         
     }
 }

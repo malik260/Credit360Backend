@@ -52,6 +52,7 @@
     <Compile Include="Enum\ApprovalState.cs" />
     <Compile Include="Enum\ApprovalStatusEnum.cs" />
     <Compile Include="Enum\CASAAccountStatusEnum.cs" />
+    <Compile Include="Enum\CheckListTargetTypeEnum.cs" />
     <Compile Include="Enum\CollateralTypeEnum.cs" />
     <Compile Include="Enum\CompanyDirectorTypeEnum.cs" />
     <Compile Include="Enum\DailyAccuralCategory.cs" />
