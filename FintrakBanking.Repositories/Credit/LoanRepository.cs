@@ -424,10 +424,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var totalPreviouslyBookedAmount = principalAmount.FirstOrDefault();
 
-            var totalPrincipalAmount = totalPreviouslyBookedAmount + (decimal)entity.loanScheduleInput.principalAmount;
+            var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.loanScheduleInput.principalAmount);
 
             if (totalPrincipalAmount > (decimal)entity.loanScheduleInput.principalAmount)
-                throw new Exception("The loan amount cannot greater than the availiable amount");
+                throw new Exception("The loan amount cannot be greater than the availiable amount");
+
+
 
             var CurrRatings = context.tbl_Currency_Rate.Where(x => x.CurrencyId == entity.currencyId).FirstOrDefault();
             var currentExchangeRate  = 1.0;
@@ -1817,23 +1819,20 @@ namespace FintrakBanking.Repositories.Credit
         private bool AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short productTypeId)
         {
             var feeAmount = 0;
-            foreach (LoanChargeFeeViewModel ent in feeModel)
+            foreach (var ent in feeModel)
             {
-                if (ent.feeTypeId == 1)
-                {
-                    feeAmount = 0;
-                }
+           
                 var fee = new tbl_Loan_Fee
                 {
                     ChargeFeeId = ent.chargeFeeId,
-                    FeeAmount = feeAmount,
+                    FeeAmount = ent.feeAmount,
                     FeeDependentAmount = ent.feeDependentAmount,
                     FeeRateValue = ent.feeRateValue,
                     IsIntegralFee = ent.isIntegralFee,
                     LoanId = loanId,
                     ProductTypeId = productTypeId,
-                    IsRecurring = false, //TODO : get from entity
-                    RecurringPaymentDay = 28, //TODO: get from entity
+                    IsRecurring = ent.recurring, 
+                    RecurringPaymentDay = 28,
                     CreatedBy = ent.createdBy,
                     DateTimeCreated = DateTime.Now.Date,
                     IsPosted = ent.isPosted
@@ -1983,11 +1982,12 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId)
         {
-
-            var loans = GetLoansByCompanyId(companyId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.customerId == customerId)
+            var loans = GetLoansByCompanyId(companyId)
+                .Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.customerId == customerId)
                 .Select(c => new LoanRepaymentScheduleViewModel
                 {
                     loanReferenceNumber = c.loanReferenceNumber,
+                    loanApplicationId = c.loanApplicationId,
                     principalRepayment = c.outstandingPrincipal,
                     interestAccrual = c.outstandingInterest,
                     customerId = c.customerId,
@@ -1998,7 +1998,9 @@ namespace FintrakBanking.Repositories.Credit
                     loanId = c.loanId,
                     productName = c.productAccountName,
                     terminationDate = c.maturityDate
-                }).AsQueryable();
+                })
+                .AsQueryable();
+
             return loans;
         }
       
@@ -2145,13 +2147,14 @@ namespace FintrakBanking.Repositories.Credit
         /// </summary>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        public IQueryable<LoanViewModel> GetLoansByCompanyId(int companyId)
+        public IQueryable<LoanViewModel> GetLoansByCompanyId(int companyId) // EXTEND FOR ORDER LOAN TYPES
         {
             return (context.tbl_Loan //.Include("tbl_Customer").Include("tbl_CASA_AccountStatus")
                 .Where(x => x.CompanyId == companyId)
                 .Select(o => new LoanViewModel
                 {
                     loanId = o.TermLoanId,
+                    loanApplicationId = o.tbl_Loan_Application_Detail.LoanApplicationId,
                     customerId = o.CustomerId,
                     productId = o.ProductId,
                     casaAccountId = o.CasaAccountId,

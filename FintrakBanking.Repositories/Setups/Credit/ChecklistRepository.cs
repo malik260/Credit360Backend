@@ -347,7 +347,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (models.Count <= 0)
                 return false;
-            int loanApplicationId = models.FirstOrDefault().targetId;
+       
+            int loanApplicationDetailId = models.FirstOrDefault().targetId;
+            int loanApplicationId = (int)models.FirstOrDefault().checklistId;
             foreach (ChecklistDetailViewModel model in models)
             {
                 model.createdBy = staffId;
@@ -358,12 +360,34 @@ namespace FintrakBanking.Repositories.Credit
                 AddChecklistDetail(model);
 
             }
-            var loanData = context.tbl_Loan_Application.Find(loanApplicationId);
+            var loanDetailsData = context.tbl_Loan_Application_Detail.Find(loanApplicationDetailId);
+            if (loanDetailsData != null)
+            {
+                loanDetailsData.HasDoneChecklist = true;
+            }
+            var loanData = (from l in context.tbl_Loan_Application_Detail where l.LoanApplicationId ==loanApplicationId select l).ToList();
             if (loanData != null)
             {
-                loanData.ApplicationStatusId = (int)LoanApplicationStatusEnum.ChecklistCompleted;
+                var custNo = loanData.Count();
+                var checkedNo = 0;
+                foreach (var item in loanData)
+                {
+                    if (item.HasDoneChecklist == true)
+                    {
+                       ++checkedNo ;
+                    }
+                }
+                if (custNo == checkedNo)
+                {
+                    var loanApplication = context.tbl_Loan_Application.Find(loanApplicationId);
+                    if (loanApplication != null)
+                    {
+                        loanApplication.ApplicationStatusId = (int)LoanApplicationStatusEnum.ChecklistCompleted;
+                    }
+                }
+                
             }
-            return context.SaveChanges() != 0;
+            return context.SaveChanges() != 0; ;
         }
         public bool AddChecklistDetail(ChecklistDetailViewModel model)
         {
