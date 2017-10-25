@@ -37,9 +37,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string comment { get; set; }
         public decimal principal { get; set; }
         public double rate { get; set; }
-        public int tenor { get; set; }
+        //public int tenor { get; set; }
         public bool investmentGrade { get; set; }
         public List<ApprovedLoanDetailViewModel> lineItems { get; set; }
+        public int applicationTenor { get; set; }
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity
@@ -64,6 +65,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short proposedProductId { get; set; }
         public short approvedProductId { get; set; }
         public decimal convertedApprovedAmount { get { return this.approvedAmount * (decimal)this.exchangeRate; } }
+
+        public int customerId { get; set; }
     }
 
     public class PrivilegeViewModel : GeneralEntity

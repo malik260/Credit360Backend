@@ -1073,9 +1073,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             // tbl_Customer --> tbl_Collateral_Customer --> tbl_Loan_Application --> tbl_Loan_Collateral_Mapping
 
-            var collaterals = context.tbl_Customer.Where(x => x.CustomerId == customerId)
+            var collaterals = context.tbl_Customer//.Where(x => x.CustomerId == customerId)
                 .Join(context.tbl_Collateral_Customer, c => c.CustomerId, o => o.CustomerId, (c, o) => new { Customer = c, Collateral = o })
-                .Join(context.tbl_Loan_Application, cc => cc.Collateral.CustomerId, a => a.CustomerId, (cc, a) => new { CustomerCollateral = cc, Application = a })
+                .Join(context.tbl_Loan_Application.Where(x => x.LoanApplicationId == customerId), cc => cc.Collateral.CustomerId, a => a.CustomerId, (cc, a) => new { CustomerCollateral = cc, Application = a })
                 .Join(context.tbl_Loan_Collateral_Mapping, ca => ca.Application.LoanApplicationId, m => m.LoanApplicationId, (ca, m) => new { CollateralApplication = ca, Mapping = m })
                 .Select(x => new ActiveCustomerCollateralViewModel
                 {
@@ -1107,6 +1107,43 @@ namespace FintrakBanking.Repositories.Credit
                     interestRate = x.CollateralApplication.Application.InterestRate,
                     //exchangeRate = x.CollateralApplication.Application.ExchangeRate,
                     //tenor = x.CollateralApplication.Application.Tenor,
+                    loanInformation = x.CollateralApplication.Application.LoanInformation,
+                })
+                .Where(x => x.isReleased == false)
+                .Distinct();
+
+            return collaterals;
+        }
+
+        public IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId) 
+        {
+            var collaterals = context.tbl_Customer
+                .Join(context.tbl_Collateral_Customer, c => c.CustomerId, o => o.CustomerId, (c, o) => new { Customer = c, Collateral = o })
+                .Join(context.tbl_Loan_Application, cc => cc.Collateral.CustomerId, a => a.CustomerId, (cc, a) => new { CustomerCollateral = cc, Application = a })
+                .Join(context.tbl_Loan_Collateral_Mapping, ca => ca.Application.LoanApplicationId, m => m.LoanApplicationId, (ca, m) => new { CollateralApplication = ca, Mapping = m })
+                .Select(x => new ActiveCustomerCollateralViewModel
+                {
+                    customerId = x.CollateralApplication.Application.CustomerId,
+                    collateralCustomerId = x.Mapping.CollateralCustomerId,
+                    loanTypeId = x.CollateralApplication.Application.LoanTypeId,
+                    loanCollateralMappingId = x.Mapping.LoanCollateralMappingId,
+                    loanApplicationId = x.Mapping.LoanApplicationId,
+                    isReleased = x.Mapping.IsReleased,
+                    releaseApprovalStatusId = (short)x.Mapping.ReleaseApprovalStatusId,
+                    customerCode = x.CollateralApplication.CustomerCollateral.Customer.CustomerCode,
+                    firstName = x.CollateralApplication.CustomerCollateral.Customer.FirstName,
+                    middleName = x.CollateralApplication.CustomerCollateral.Customer.MiddleName,
+                    lastName = x.CollateralApplication.CustomerCollateral.Customer.LastName,
+                    collateralCode = x.Mapping.tbl_Collateral_Customer.CollateralCode,
+                    collateralValue = x.Mapping.tbl_Collateral_Customer.CollateralValue,
+                    allowSharing = x.Mapping.tbl_Collateral_Customer.AllowSharing,
+                    isLocationBased = x.Mapping.tbl_Collateral_Customer.IsLocationBased,
+                    valuationCycle = x.Mapping.tbl_Collateral_Customer.ValuationCycle,
+                    hairCut = x.Mapping.tbl_Collateral_Customer.HairCut,
+                    collateralTypeId = x.Mapping.tbl_Collateral_Customer.CollateralTypeId,
+                    applicationReferenceNumber = x.CollateralApplication.Application.ApplicationReferenceNumber,
+                    applicationDate = x.CollateralApplication.Application.ApplicationDate,
+                    interestRate = x.CollateralApplication.Application.InterestRate,
                     loanInformation = x.CollateralApplication.Application.LoanInformation,
                 })
                 .Where(x => x.isReleased == false)
@@ -1217,6 +1254,81 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.isReleased == false && x.releaseApprovalStatusId == (int)ApprovalStatusEnum.Processing)
                 .Distinct();
         }
+
+        public IQueryable<CollateralSearchViewModel> SearchCollateral(string searchQuery, int companyId)
+        {
+            IQueryable<CollateralSearchViewModel> result = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                result =
+                    context.tbl_Collateral_Customer.Where(x => x.Deleted == false && x.CompanyId == companyId)
+                    .Select(o => new CollateralSearchViewModel
+                    {
+                        collateralId = o.CollateralCustomerId,
+                        customerId = o.CustomerId,
+                        collateralTypeId = o.CollateralSubTypeId,
+                        collateralTypeName = o.tbl_Collateral_Type.CollateralTypeName,
+                        customerCode = o.tbl_Customer.CustomerCode,
+                        customerName = o.tbl_Customer.FirstName + " " + o.tbl_Customer.MiddleName + " " + o.tbl_Customer.LastName,
+                        currencyId = o.CurrencyId,
+                        currencyCode = o.tbl_Currency.CurrencyCode,
+                        collateralCode = o.CollateralCode,
+                        allowSharing = o.AllowSharing,
+                        isLocationBased = o.IsLocationBased,
+                        valuationCycle = o.ValuationCycle,
+                        haircut = o.HairCut,
+                    })
+                    .Where(x =>
+                       x.collateralCode.ToLower().Contains(searchQuery)
+                    || x.collateralTypeName.ToLower().Contains(searchQuery)
+                    || x.customerCode.ToLower().Contains(searchQuery)
+                    || x.currencyCode.Contains(searchQuery)
+                    || x.customerName.Contains(searchQuery)
+                    )
+                    .Take(12);
+            }
+
+            return result;
+        }
+
+
+        public bool AssignCollateral(ActiveCustomerCollateralViewModel model)
+        {
+            var assignment = new tbl_Loan_Collateral_Mapping
+            {
+                LoanApplicationId = model.loanApplicationId,
+                CollateralCustomerId = model.collateralCustomerId,
+                ReleaseApprovalStatusId = 0
+            };
+
+            context.tbl_Loan_Collateral_Mapping.Add(assignment);
+
+            // Audit Section ---------------------------
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.CollateralAssignmentAction,
+                StaffId = model.createdBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"Collateral Assignment :: LoanApplicationId:'{ assignment.LoanApplicationId }' CollateralCustomerId:'{ assignment.CollateralCustomerId }' ",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() > 0;
+        }
+
+
+
 
         #region Collateral Customer 
 
@@ -2282,9 +2394,11 @@ namespace FintrakBanking.Repositories.Credit
             var response = await context.SaveChangesAsync() != 0;
             return response;
         }
+
         public async Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id)
         {
             var valuer = context.tbl_Collateral_Valuer.Find(id);
+
             if (valuer != null)
             {
                 valuer.CityId = entity.cityId;
@@ -2368,6 +2482,14 @@ namespace FintrakBanking.Repositories.Credit
                         cityId = m.CityId,
                         name = m.Name,
                         valuerLicenceNumber = m.ValuerLicenceNumber,
+                        valuerTypeId = m.ValuerTypeId,
+                        countryId = m.CountryId,
+                        //accountNumber = m.nu,
+                        //valuerBVN = m.,
+                        emailAddress = m.EmailAddress,
+                        phoneNumber = m.PhoneNumber,
+                        address = m.Address,
+
                     });
         }
 

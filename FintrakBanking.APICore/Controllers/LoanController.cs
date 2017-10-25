@@ -83,23 +83,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("runningloans/customer/{id}")]
+        [Route("running-loan/customer/{id}")]
         public HttpResponseMessage GetAllLoanTypes(int id)
         {
             try
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.RunningLoans(id, token.GetCompanyId);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
 
@@ -353,6 +347,27 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.GetContingentLoanBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-booking/deffered-fees/awaiting-approval")]
+        public HttpResponseMessage GetDeferredLoanFeeAwaitingApproval()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetDeferredLoanFeeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (data.Any() == false)
                 {

@@ -79,6 +79,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool DeferredExecution { set { deferredExecution = value; } }
 
         private List<WorkflowSetup> workflowSetup;
+        private WorkflowSetup level;
+        private WorkflowSetup next;
 
         public bool LogActivity()
         {
@@ -88,8 +90,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             var request = context.tbl_Approval_Trail.Where(x =>
                                 x.CompanyId == this.companyId
                                 && x.OperationId == this.operationId
-                                && x.TargetId == this.targetId
-                                && x.ResponseStaffId == null
+                                && x.TargetId == this.targetId 
+                                && x.ResponseStaffId == null 
                                 && (x.ApprovalStateId != (int)ApprovalState.Ended && x.ResponseDate == null)
                             ).OrderByDescending(x => x.ApprovalTrailId).FirstOrDefault();
 
@@ -107,15 +109,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestStaffId = request.RequestStaffId;
                 //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
                 this.fromLevelId = request.ToApprovalLevelId;
+                if (ProcessIsClosed()) { throw new Exception("Process is closed!"); }
             }
 
             if (ResolveLevelConfigurations() == false) { return false; }
 
-            if (ProcessIsClosed()) { return false; }
+            if (this.useOrganogram == true) { OrganogramRouting(); } // REFACTOR
 
-            if (this.useOrganogram == true) { OrganogramRouting(); }
-
-            if (this.neededNumberOfApproval > 1 && this.statusId == (int)ApprovalStatusEnum.Approved)
+            if (this.neededNumberOfApproval > 1 && ActionIsApprovalDecision())
             {
                 ResolveLevelMultipleApproval();
             }
@@ -132,6 +133,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.SystemResponseDateTime = this.systemDate;
                 request.ResponseStaffId = this.staffId;
             }
+
+            if (this.comment == "flow_test") { throw new Exception("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", NEXTL:" + this.nextLevelId); }
 
             var trail = new tbl_Approval_Trail
             {
@@ -151,7 +154,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             context.tbl_Approval_Trail.Add(trail);
-
+            
             if (this.deferredExecution) { return true; }
 
             this.saved = context.SaveChanges() > 0;
@@ -184,7 +187,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.currentStateId == (int)ApprovalState.Ended)
             {
-                throw new Exception("Process is closed!");
+                return true;
             }
             return false;
         }
@@ -193,11 +196,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
 
-            WorkflowSetup next = null;
-
             if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
             {
-                next = approvalLevels.FirstOrDefault(); //ok
+                next = approvalLevels.FirstOrDefault();
                 if (next != null)
                 {
                     this.smsNotification = next.CanRecieveSMS;
@@ -209,6 +210,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                 throw new Exception("Unable to resolve initiating level or there is no setup for the specified operation!");
             }
 
+            if (this.fromLevelId != null) // check if staff in level
+            {
+                level = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
+                if (level == null)
+                {
+                    throw new Exception("This Approval Level is not in the workflow setup!");
+                }
+                var staff = level.Staff.Where(x => x.StaffId == this.staffId);
+                if (staff.Any() == false)
+                {
+                    throw new Exception("This User is not in the workflow setup!");
+                }
+            }
 
             if (this.fromLevelId == null) // && externalInitialization == false
             {
@@ -217,21 +231,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     throw new Exception("Unable to resolve initiating level. No setup for the specified operation!");
                 }
-
                 this.fromLevelId = levelStaff.ApprovalLevelId;
                 this.neededNumberOfApproval = levelStaff.tbl_Approval_Level.NumberOfApprovals;
-            }
-
-            // validate level and staff
-            var level = approvalLevels.Where(x => x.ApprovalLevelId == fromLevelId).FirstOrDefault();
-            if (level == null)
-            {
-                throw new Exception("This Approval Level is not in the workflow setup!");
-            }
-            var staff = level.Staff.Where(x => x.StaffId == this.staffId);
-            if (staff.Any() == false)
-            {
-                throw new Exception("This User is not in the workflow setup!");
             }
 
             if (this.nextLevelId == null) // && fromLevelId != null
@@ -335,7 +336,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void ContinueProcess(int status)
         {
-            this.statusId = status;
+            this.statusId = status;// == (int)ApprovalStatusEnum.Disapproved ? (int)ApprovalStatusEnum.Processing : status;
             this.newStateId = (int)ApprovalState.Processing;
         }
 
@@ -358,7 +359,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             return false;
         }
 
-        private bool OrganogramRouting()
+        private bool OrganogramRouting() // REDUNDANT
         {
             var position = context.tbl_Staff_Organogram.Where(x => x.StaffId == this.staffId).FirstOrDefault();
             if (position == null) { return false; }
@@ -370,7 +371,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             return true;
         }
 
-        private int? GetStaffApprovalLevelId(int staffId)
+        private int? GetStaffApprovalLevelId(int staffId) // REDUNDANT
         {
             var levelStaff = context.tbl_Approval_Group_Mapping.Where(x => x.Deleted == false
                                 && x.OperationId == this.operationId
@@ -396,50 +397,50 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (WithinAllLimits() == true)
                 {
-                    this.EndProcess((int)ApprovalStatusEnum.Approved);
+                    this.EndProcess(this.statusId);
                 }
                 else
                 {
-                    this.statusId = (int)ApprovalStatusEnum.Authorised;
+                    this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
                 }
             }
         }
 
-        private bool WithinTenorLimit(WorkflowSetup setup)
+        private bool WithinTenorLimit(tbl_Approval_Level level)
         {
-            if (tenor == 0 && setup.Tenor < 1) { return true; }
-            if (tenor > 0 && setup.Tenor >= tenor) { return true; }
+            if (tenor == 0 && level.Tenor == 0) { return true; } // setup
+            //if (tenor == 0 && level.Tenor > 0 && level.AuthorizeUntenored == true) { return true; } // untenored for cro
+            if (tenor > 0 && level.Tenor >= tenor) { return true; } // gen cam
             return false;
         }
 
-        private bool WithinMaximumLimit(WorkflowSetup setup)
+        private bool WithinMaximumLimit(tbl_Approval_Level level)
         {
-            if (investmentGrade == true) { return true; }
             if (amount == 0) { return true; }
-            if (setup.MaximumAmount >= amount) { return true; }
+            if (level.MaximumAmount >= amount) { return true; }
             return false;
         }
 
-        private bool WithinInvestmentGradeLimit(WorkflowSetup setup)
+        private bool WithinInvestmentGradeLimit(tbl_Approval_Level level)
         {
+            if (amount == 0) { return true; }
             if (investmentGrade == false) { return true; }
-            if (amount == 0) { return true; }
-            if (setup.InvestmentGradeAmount >= amount) { return true; }
+            if (level.InvestmentGradeAmount >= amount) { return true; }
             return false;
         }
 
-        private bool WithinPoliticallyExposedLimit(WorkflowSetup setup)
+        private bool WithinPoliticallyExposedLimit(tbl_Approval_Level level)
         {
             if (politicallyExposed == false) { return true; }
-            if (setup.IsPoliticallyExposed == true) { return true; }
+            if (level.IsPoliticallyExposed == true) { return true; }
             return false;
         }
 
         private bool WithinAllLimits()
         {
-            var setup = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
-            var level = setup.Where(x => x.ApprovalLevelId == fromLevelId).FirstOrDefault();
-            if (level == null) { throw new Exception("The user is not in the workflow setup!"); }
+            var level = context.tbl_Approval_Level.Find(this.fromLevelId);
+
+            if (level == null) { throw new Exception("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
 
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true

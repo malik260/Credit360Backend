@@ -21,6 +21,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId);
         IEnumerable<ActiveCustomerCollateralViewModel> GetActiveCustomerCollateral(int customerId);
+        IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId);
 
         Task<bool> AddCollateralValuer(CollateralValuersViewModel entity);
         Task<bool> UpdateCollateralValuer(CollateralValuersViewModel entity, int id);
@@ -28,6 +29,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool ReleaseCollateral(int collateralMappingId, int staffId, GeneralEntity model);
         bool ApproveCollateralRelease(ApprovalViewModel entity, int staffId, GeneralEntity model);
         IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease();
+
+        IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId);
+        bool AssignCollateral(ActiveCustomerCollateralViewModel entity);
 
         #endregion Collateral
 

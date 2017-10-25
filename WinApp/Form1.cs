@@ -87,7 +87,10 @@ namespace WinApp
             //loanOperation.UpdatePeriodicSchedule(vLoan, vDate);
             //loanOperation.LoanRephasementProcess(vReview,vLoan, vStaff);
             //loanOperation.ProcessDailyAuthorisedOverdraftInterestAccrual(vDate);
-            loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(vDate);
+            //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(vDate);
+            //loanOperation.ProcessLoanRepaymentPostingPastDue(vDate);
+            //loanOperation.ProcessLoanRepaymentPostingForceDebit(vDate);
+            loanOperation.ProcessAuthorisedOverdraftRepaymentPostingForceDebit(vDate);
 
             MessageBox.Show("Successful", "Fintrak");
 

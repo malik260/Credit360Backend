@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Linq;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Setups.General;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -19,6 +20,7 @@ namespace FintrakBanking.APICore.Controllers
     {
         private IFinanceTransactionRepository repo;
         private ILoanOperationsRepository repoLoan;
+        private IGeneralSetupRepository setupRepo;      
 
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
@@ -26,20 +28,28 @@ namespace FintrakBanking.APICore.Controllers
 
         public FinanceTransactionController(
             IFinanceTransactionRepository _repo,
-            ILoanOperationsRepository _repoLoan
+            ILoanOperationsRepository _repoLoan, IGeneralSetupRepository _setupRepo
             )
         {
             this.repo = _repo;
             this.repoLoan = _repoLoan;
+            this.setupRepo = _setupRepo;
         }
 
         [HttpGet]
         [Route("getexchangerate/{currencyId}/{date}")]
-        public HttpResponseMessage GetExchangeRate(DateTime date, short currencyId)
+        public HttpResponseMessage GetExchangeRate(DateTime ? date, short currencyId)
         { 
                 try
                 {
-                    var data = repo.GetExchangeRate(date,currencyId, token.GetCompanyId);
+                   DateTime inputDate;
+
+                if (date.HasValue)
+                    inputDate = date.Value;
+                else
+                    inputDate = setupRepo.GetApplicationDate();
+
+                    var data = repo.GetExchangeRate(inputDate, currencyId, token.GetCompanyId);
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (Exception ex)
