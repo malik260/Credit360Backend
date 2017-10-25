@@ -81,10 +81,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             var date = DateTime.Now;
             var applicationDate = general.GetApplicationDate();
+            model.jobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode();
 
             var data = new tbl_Job_Request
             {
-                JobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
+                JobRequestCode = model.jobRequestCode,
                 JobTypeId = model.jobTypeId,
                 SenderStaffId = model.createdBy,
                 ReceiverStaffId = model.receiverStaffId,
