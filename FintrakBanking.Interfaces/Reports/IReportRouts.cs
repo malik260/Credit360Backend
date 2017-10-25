@@ -15,5 +15,9 @@ namespace  FintrakBanking.Interfaces.Reports
         string GetBranchLoanAmountLimit(int branchId, int companyId);
         string GetWorkflowDefinition(int operationId, int companyId);
         string GetDisburstLoans(DateRange dateRange, int companyId);
+        string GetLoanCommercialReport(DateRange dateRange, int companyId);
+        string GetTeamAndRevolving(DateRange dateRange, int companyId);
+        string GetEarnedUnearnedInterest(DateRange dateRange, int companyId);
+       string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
     }
 }

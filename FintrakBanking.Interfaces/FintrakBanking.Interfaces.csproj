@@ -70,6 +70,7 @@
     <Compile Include="Finance\IEndOfDayRepository.cs" />
     <Compile Include="Finance\IFinanceTransactionRepository.cs" />
     <Compile Include="Helper\ICultureHelper.cs" />
+    <Compile Include="Reports\IFinanceTransactionsReport.cs" />
     <Compile Include="Reports\IReportingObjects.cs" />
     <Compile Include="Reports\IReportRouts.cs" />
     <Compile Include="Notification\INotificationRepository.cs" />

@@ -103,6 +103,7 @@
     <Compile Include="Report\LoanInformation.cs" />
     <Compile Include="Report\LoanScheduleViewModel.cs" />
     <Compile Include="Report\SectorLimitViewModel.cs" />
+    <Compile Include="Report\TransactionViewModel.cs" />
     <Compile Include="Risk\RiskLoanApplicationViewModel.cs" />
     <Compile Include="Risk\RiskAssessmentViewModels.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupMappingViewModel.cs" />

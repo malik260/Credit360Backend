@@ -318,10 +318,10 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     LoanApplicationCollateral(loan.LoanApplicationCollateral);
                 }
-                //if (loan.LoanApplicationDetail.Count > 0)
-                //{
-                //    LoanApplicationDetail(loan.LoanApplicationDetail);
-                //}
+                if (loan.LoanApplicationDetail.Count > 0)
+                {
+                    LoanApplicationDetail(loan.LoanApplicationDetail);
+                }
 
                 if (isGroupLoan)
                 {

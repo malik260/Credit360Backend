@@ -55,10 +55,35 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         public string GetDisburstLoans(  DateRange dateRange,   int companyId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/DisburstedLoan.aspx?companyId=" + companyId.ToString() + "&startDate=" +  dateRange.startDate.ToShortDateString()  + "&endDate=" + dateRange.endDate.ToShortDateString();
+            path = reportPath + "ReportViews/DisbursedLoans.aspx?companyId=" + companyId.ToString() + "&startDate=" +  dateRange.startDate.ToShortDateString()  + "&endDate=" + dateRange.endDate.ToShortDateString();
+            return path;
+        }
+        public string GetLoanCommercialReport(DateRange dateRange, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanCommercial.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
+            return path;
+        }
+        public string GetTeamAndRevolving(DateRange dateRange, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/TeamAndRevolving.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
+            return path;
+        }
+        public string GetEarnedUnearnedInterest(DateRange dateRange, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/EarnedUnearnedInterest.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
             return path;
         }
 
+        public string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/GrantedFacilities.aspx?companyId=" + companyId.ToString() + "&startDate=" + searchEntity.startDate.ToShortDateString() + 
+                "&endDate=" + searchEntity.endDate.ToShortDateString() + "&staffId="+ searchEntity.staffId;
+            return path;
+        }
     }
 
 }
