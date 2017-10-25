@@ -528,6 +528,24 @@ namespace FintrakBanking.ViewModels.Credit
         public CollateralViewModel customerCollateral { get; set; }
     }
 
+    public class CollateralSearchViewModel
+    {
+        public int collateralId { get; set; }
+        public int customerId { get; set; }
+        public int collateralTypeId { get; set; }
+        public string collateralTypeName { get; set; }
+        public string customerCode { get; set; }
+        public string customerName { get; set; }
+        public int currencyId { get; set; }
+        public string currencyCode { get; set; }
+        public string collateralCode { get; set; }
+        public bool allowSharing { get; set; }
+        public bool isLocationBased { get; set; }
+        public int? valuationCycle { get; set; }
+        public double haircut { get; set; }
+
+    }
+
     public class ActiveCustomerCollateralViewModel : GeneralEntity
     {
         public int? customerId { get; set; }

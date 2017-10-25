@@ -40,6 +40,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int tenor { get; set; }
         public bool investmentGrade { get; set; }
         public List<ApprovedLoanDetailViewModel> lineItems { get; set; }
+        public int applicationTenor { get; set; }
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity
