@@ -50,11 +50,11 @@ namespace FintrakBanking.Repositories.CASA
             {
                 if (account == null)
                 {
-                    accno += account.ProductAccountNumber;
+                    accno += account.ProductAccountNumber+" - " + account.tbl_Currency.CurrencyCode ;
                 }
                 else
                 {
-                    accno += "," + account.ProductAccountNumber;
+                    accno += "," + account.ProductAccountNumber + " - " + account.tbl_Currency.CurrencyCode;
                 }
                 
             }
@@ -188,7 +188,7 @@ namespace FintrakBanking.Repositories.CASA
 
                         {
                             casaAccountId = a.CasaAccountId,
-                            productAccountNumber = a.ProductAccountNumber + "(" + a.ProductAccountName + ")",
+                            productAccountNumber = a.ProductAccountNumber + "(" + a.ProductAccountName + " - " + a.tbl_Currency.CurrencyCode  + ")",
                             productAccountName = a.ProductAccountName,
                             availableBalance = a.AvailableBalance
                         });
