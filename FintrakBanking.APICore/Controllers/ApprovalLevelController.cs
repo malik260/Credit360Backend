@@ -75,6 +75,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpGet]
+        //[Route("approval-level-detailed/operation/{operationId}")]
+        //public HttpResponseMessage GetAllDetailedApprovalLevel(int operationId)
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetApprovalLevelByOperationId(operationId, token.GetCompanyId);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //        }
+
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
+
         [HttpGet]
         [Route("approval-level/approval-level/{id}")]
         public HttpResponseMessage GetApprovalLevelById(int id)

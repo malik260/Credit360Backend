@@ -24,13 +24,13 @@ namespace FintrakBanking.ViewModels.Setups.Credit
     {
  
         public int checkListDefinitionId { get; set; }
-        public short? productClassId { get; set; }
+        public short? productId { get; set; }
         public int? approvalLevelId { get; set; }
         public int checkListItemId { get; set; }
         public string itemDescription { get; set; }
         public bool isRequired { get; set; }
         public bool isActive { get; set; }
-        public String productClassName { get; set; }
+        public String productName { get; set; }
         public String approvalLevelName { get; set; }
         public String checkListItemName { get; set; }
         public List<MultipleChecklistItemsViewModel> checklistItems { get; set; }
