@@ -52,6 +52,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanBookingAwaitingApproval(int staffId, int companyId);
 
         IEnumerable<ContingentLoanViewModel> GetContingentLoanBookingAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanChargeFeeViewModel> GetDeferredLoanFeeAwaitingApproval(int staffId, int companyId);
 
         bool GoForApproval(ApprovalViewModel entity);
 

@@ -19,6 +19,7 @@ namespace FintrakBanking.Repositories.AppEmail
         private IAuditTrailRepository auditTrail;
         private EmailHelpers emailHelpers;
         private IGeneralSetupRepository genSetup;
+        private DateTime applDate;
 
         public EmailAndAlertsRepository(FinTrakBankingContext _context, IAuditTrailRepository _auditTrail,
             EmailHelpers _emailHelpers, IGeneralSetupRepository _general)
@@ -33,6 +34,8 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public void SendAlertsForCovenantsApproachingDueDate()
         {
+            applDate = context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
+
             var data = (from a in context.tbl_Loan_Covenant_Detail
                         join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
                         join c in context.tbl_Staff on b.RelationshipManagerId equals c.StaffId
@@ -113,6 +116,8 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public void SendAlertsForCovenantsOverDue()
         {
+            applDate = context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
+
             var data = (from a in context.tbl_Loan_Covenant_Detail
                         join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
                         join c in context.tbl_Staff on b.RelationshipManagerId equals c.StaffId
@@ -120,7 +125,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         join e in context.tbl_Loan_Application_Detail on b.LoanApplicationDetailId equals e.LoanApplicationDetailId
                         join f in context.tbl_Frequency_Type on a.FrequencyTypeId equals f.FrequencyTypeId
                         join g in context.tbl_Loan_Covenant_Type on a.CovenantTypeId equals g.CovenantTypeId
-                        where a.NextCovenantDate.Value >= genSetup.GetApplicationDate()
+                        where a.NextCovenantDate.Value >= applDate
                         select new LoanCovenantDetailViewModel
                         {
                             companyId = a.CompanyId,
@@ -197,6 +202,8 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public void SendAlertsForCollateralPropertyRevaluation()
         {
+            var applDate = context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
+
             var data = (from a in context.tbl_Collateral_Customer
                         join b in context.tbl_Customer on a.CustomerId equals b.CustomerId
                         join c in context.tbl_Staff on a.CreatedBy equals c.StaffId
@@ -204,7 +211,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         join e in context.tbl_Collateral_Type_Sub on a.CollateralSubTypeId equals e.CollateralSubTypeId
                         join f in context.tbl_Collateral_Immovable_Property on a.CollateralCustomerId equals f
                             .CollateralCustomerId
-                        where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LastValuationDate, a.ValuationCycle), genSetup.GetApplicationDate()) <= 30)
+                        where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LastValuationDate, a.ValuationCycle), applDate) <= 30)
                         select new CollateralViewModel
                         {
                             collateralTypeId = a.CollateralTypeId,
@@ -355,12 +362,14 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public void SendAlertsOnSelfLiquidatingLoanExpiry()
         {
+            var applDate = genSetup.GetApplicationDate();
+
             var data = (from a in context.tbl_Loan
                         join b in context.tbl_Product on a.ProductId equals b.ProductId
                         join c in context.tbl_Product_Type on b.ProductTypeId equals c.ProductTypeId
                         join d in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals d.LoanApplicationDetailId
                         where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.SelfLiquidating &&
-                        DbFunctions.DiffDays(a.MaturityDate, genSetup.GetApplicationDate()) <= 30
+                        DbFunctions.DiffDays(a.MaturityDate, applDate) <= 30
                         select new LoanViewModel
                         {
                             applicationReferenceNumber = d.tbl_Loan_Application.ApplicationReferenceNumber,

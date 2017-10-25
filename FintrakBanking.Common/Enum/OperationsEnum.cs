@@ -44,7 +44,7 @@ namespace FintrakBanking.Common.Enum
         InterestSuspension = 33,
         LoanTermination = 34,
         CollateralRelease = 35,
-
+        LoanBookingFeeDeferral = 36
 
 
     }

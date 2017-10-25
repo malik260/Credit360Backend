@@ -389,6 +389,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int feeTargetId { get; set; }
         public string feeTargetName { get; set; }
         public bool byAmountRequired { get; set; }
+        public bool isPosted { get; set; }
+        public int operationId { get; set; }
+        public decimal loanAmount { get; set; }
+        public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
     }
 
     public class LoanCollateralMappingViewModel : CollateralViewModel
