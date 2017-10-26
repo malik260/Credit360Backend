@@ -492,75 +492,89 @@ namespace FintrakBanking.Repositories.Credit
                             registrationNumber = pen.RegistrationNumber,
                             operationId = atrail.OperationId,
                             dateTimeCreated = pen.DateTimeCreated,
-                            customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == pen.CustomerId).Select(b => new CustomerBvnViewModels()
+                            customerGroupMappings = context.tbl_Customer_Group_Mapping.Where(x => x.CustomerGroupId == pen.CustomerGroupId).Select(s => new CustomerGroupMappingViewModel()
                             {
-                                bankVerificationNumber = b.BankVerificationNumber,
-                                customerBvnid = b.CustomerBVNId,
-                                firstname = b.Firstname,
-                                isValidBvn = b.IsValidBVN,
-                                isPoliticallyExposed = b.IsPoliticallyExposed,
-                                surname = b.Surname
-                            }).ToList(),
-                            customerCompanyDirectors = context.tbl_Customer_Company_Director
-                            .Where(s => s.CustomerId == pen.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
-                            .Select(s => new CustomerCompanyDirectorsViewModels()
-                            {
-                                bankVerificationNumber = s.CustomerBVN,
-                                companyDirectorTypeId = s.CompanyDirectorTypeId,
-                                companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
                                 customerId = s.CustomerId,
-                                firstname = s.Firstname,
-                                surname = s.Surname
+                                customerName = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
+                                customerCode = s.tbl_Customer.CustomerCode,
+                                //customerAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == p.CustomerId).ProductAccountNumber,
+                                //customerTypeId = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == p.CustomerId).CustomerTypeId,
+                                customerType = s.tbl_Customer.tbl_Customer_Type.Name,
+                                relationshipTypeId = s.RelationshipTypeId,
+                                relationshipTypeName = s.tbl_Customer_Group_RelationshipType.RelationshipTypeName,
+                                productAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == s.CustomerId).ProductAccountNumber,
+                                taxIdentificationNumber = s.tbl_Customer.TaxNumber,
+                                registrationNumber = s.tbl_Customer.tbl_Customer_CompanyInfomation.FirstOrDefault(x => x.CustomerId == s.CustomerId).RegistrationNumber,
+                                customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == s.CustomerId).Select(b => new CustomerBvnViewModels()
+                                {
+                                    bankVerificationNumber = b.BankVerificationNumber,
+                                    customerBvnid = b.CustomerBVNId,
+                                    firstname = b.Firstname,
+                                    isValidBvn = b.IsValidBVN,
+                                    isPoliticallyExposed = b.IsPoliticallyExposed,
+                                    surname = b.Surname
+                                }).ToList(),
+                                customerCompanyDirectors = context.tbl_Customer_Company_Director
+                                   .Where(cd => cd.CustomerId == s.CustomerId && cd.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
+                               .Select(x => new CustomerCompanyDirectorsViewModels()
+                               {
+                                   bankVerificationNumber = x.CustomerBVN,
+                                   companyDirectorTypeId = x.CompanyDirectorTypeId,
+                                   companyDirectorTypeName = x.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                   customerId = x.CustomerId,
+                                   firstname = x.Firstname,
+                                   surname = x.Surname
+                               }).ToList(),
+                                customerCompanyShareholders = context.tbl_Customer_Company_Director
+                                   .Where(cc => cc.CustomerId == s.CustomerId && cc.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
+                               .Select(cs => new CustomerCompanyShareholdersViewModels()
+                               {
+                                   bankVerificationNumber = cs.CustomerBVN,
+                                   companyDirectorTypeId = cs.CompanyDirectorTypeId,
+                                   companyDirectorTypeName = cs.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
+                                   customerId = cs.CustomerId,
+                                   firstname = cs.Firstname,
+                                   surname = cs.Surname
+                               }).ToList(),
+                                customerClients = context.tbl_Customer_Client_Supplier
+                                   .Where(cs => cs.CustomerId == s.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
+                               .Select(cs => new CustomerClientOrSupplierViewModels()
+                               {
+                                   client_SupplierId = cs.Client_SupplierId,
+                                   clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                                   firstName = cs.FirstName,
+                                   middleName = cs.MiddleName,
+                                   lastName = cs.LastName,
+                                   client_SupplierAddress = cs.Address,
+                                   client_SupplierPhoneNumber = cs.PhoneNumber,
+                                   client_SupplierEmail = cs.EmailAddress,
+                                   client_SupplierTypeId = cs.Client_SupplierTypeId,
+                                   client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                               }).ToList(),
+                                customerSuppliers = context.tbl_Customer_Client_Supplier
+                                   .Where(cs => cs.CustomerId == s.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                               .Select(cs => new CustomerSupplierViewModels()
+                               {
+                                   client_SupplierId = cs.Client_SupplierId,
+                                   clientOrSupplierName = cs.FirstName + " " + cs.LastName,
+                                   firstName = cs.FirstName,
+                                   middleName = cs.MiddleName,
+                                   lastName = cs.LastName,
+                                   client_SupplierAddress = cs.Address,
+                                   client_SupplierPhoneNumber = cs.PhoneNumber,
+                                   client_SupplierEmail = cs.EmailAddress,
+                                   client_SupplierTypeId = cs.Client_SupplierTypeId,
+                                   client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                               }).ToList(),
                             }).ToList(),
-                            customerCompanyShareholders = context.tbl_Customer_Company_Director
-                            .Where(s => s.CustomerId == pen.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
-                            .Select(s => new CustomerCompanyShareholdersViewModels()
-                            {
-                                bankVerificationNumber = s.CustomerBVN,
-                                companyDirectorTypeId = s.CompanyDirectorTypeId,
-                                companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
-                                customerId = s.CustomerId,
-                                firstname = s.Firstname,
-                                surname = s.Surname
-                            }).ToList(),
-                            customerClients = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == pen.CustomerId &&
-                            cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
-                            .Select(cs => new CustomerClientOrSupplierViewModels()
-                            {
-                                client_SupplierId = cs.Client_SupplierId,
-                                clientOrSupplierName = cs.FirstName + " " + cs.LastName,
-                                firstName = cs.FirstName,
-                                middleName = cs.MiddleName,
-                                lastName = cs.LastName,
-                                client_SupplierAddress = cs.Address,
-                                client_SupplierPhoneNumber = cs.PhoneNumber,
-                                client_SupplierEmail = cs.EmailAddress,
-                                client_SupplierTypeId = cs.Client_SupplierTypeId,
-                                client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
-                            }).ToList(),
-                            customerSuppliers = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == pen.CustomerId &&
-                            cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
-                             .Select(cs => new CustomerSupplierViewModels()
-                             {
-                                 client_SupplierId = cs.Client_SupplierId,
-                                 clientOrSupplierName = cs.FirstName + " " + cs.LastName,
-                                 firstName = cs.FirstName,
-                                 middleName = cs.MiddleName,
-                                 lastName = cs.LastName,
-                                 client_SupplierAddress = cs.Address,
-                                 client_SupplierPhoneNumber = cs.PhoneNumber,
-                                 client_SupplierEmail = cs.EmailAddress,
-                                 client_SupplierTypeId = cs.Client_SupplierTypeId,
-                                 client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
-                             }).ToList(),
+                            approvalStatusId = pen.ApprovalStatusId,
+                            sentForLoanApplication = pen.SentForLoanApplication,
+                            sentForEvaluation = pen.SentForEvaluation,
                             loanAmount = pen.LoanAmount,
                             loanTypeId = pen.LoanTypeId,
                             loanTypeName = pen.tbl_Loan_Type.LoanTypeName,
                             productClassId = pen.ProductClassId,
                             productClassName = pen.tbl_Product_Class.ProductClassName,
-                            //subSectorId = pen.SubSectorId,
-                            //subSectorName = pen.tbl_Sub_Sector.Name,
-                            //sectorId = context.tbl_Sub_Sector.FirstOrDefault(x => x.SubSectorId == pen.SubSectorId).SectorId ?? 0,
                         });
             return data;
         }
@@ -797,7 +811,7 @@ namespace FintrakBanking.Repositories.Credit
                                 productAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == s.CustomerId).ProductAccountNumber,
                                 taxIdentificationNumber = s.tbl_Customer.TaxNumber,
                                 registrationNumber = s.tbl_Customer.tbl_Customer_CompanyInfomation.FirstOrDefault(x => x.CustomerId == s.CustomerId).RegistrationNumber,
-                                customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == p.CustomerId).Select(b => new CustomerBvnViewModels()
+                                customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == s.CustomerId).Select(b => new CustomerBvnViewModels()
                                 {
                                     bankVerificationNumber = b.BankVerificationNumber,
                                     customerBvnid = b.CustomerBVNId,
@@ -807,7 +821,7 @@ namespace FintrakBanking.Repositories.Credit
                                     surname = b.Surname
                                 }).ToList(),
                                 customerCompanyDirectors = context.tbl_Customer_Company_Director
-                                    .Where(cd => cd.CustomerId == p.CustomerId && cd.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
+                                    .Where(cd => cd.CustomerId == s.CustomerId && cd.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
                                 .Select(x => new CustomerCompanyDirectorsViewModels()
                                 {
                                     bankVerificationNumber = x.CustomerBVN,
@@ -818,7 +832,7 @@ namespace FintrakBanking.Repositories.Credit
                                     surname = x.Surname
                                 }).ToList(),
                                 customerCompanyShareholders = context.tbl_Customer_Company_Director
-                                    .Where(cc => cc.CustomerId == p.CustomerId && cc.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
+                                    .Where(cc => cc.CustomerId == s.CustomerId && cc.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
                                 .Select(cs => new CustomerCompanyShareholdersViewModels()
                                 {
                                     bankVerificationNumber = cs.CustomerBVN,
@@ -829,7 +843,7 @@ namespace FintrakBanking.Repositories.Credit
                                     surname = cs.Surname
                                 }).ToList(),
                                 customerClients = context.tbl_Customer_Client_Supplier
-                                    .Where(cs => cs.CustomerId == p.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
+                                    .Where(cs => cs.CustomerId == s.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
                                 .Select(cs => new CustomerClientOrSupplierViewModels()
                                 {
                                     client_SupplierId = cs.Client_SupplierId,
@@ -844,7 +858,7 @@ namespace FintrakBanking.Repositories.Credit
                                     client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
                                 }).ToList(),
                                 customerSuppliers = context.tbl_Customer_Client_Supplier
-                                    .Where(cs => cs.CustomerId == p.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                                    .Where(cs => cs.CustomerId == s.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
                                 .Select(cs => new CustomerSupplierViewModels()
                                 {
                                     client_SupplierId = cs.Client_SupplierId,
