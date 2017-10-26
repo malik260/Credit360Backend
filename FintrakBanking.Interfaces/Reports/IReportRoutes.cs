@@ -27,5 +27,9 @@ namespace FintrakBanking.Interfaces.Reports
         string GetNonPerformingLoansReport(int companyId);
 
         #endregion Offer Letter Generation & Loan Monitoring Reports
+        string GetLoanCommercialReport(DateRange dateRange, int companyId);
+        string GetTeamAndRevolving(DateRange dateRange, int companyId);
+        string GetEarnedUnearnedInterest(DateRange dateRange, int companyId);
+       string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
     }
 }

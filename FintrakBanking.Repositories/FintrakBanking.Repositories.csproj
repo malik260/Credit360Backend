@@ -99,6 +99,7 @@
     <Compile Include="Media\MediaRepository.cs" />
     <Compile Include="Credit\LoanOperationsRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reports\FinanceTransactions.cs" />
     <Compile Include="Risk\RiskImplementation.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupMappingRepository.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupRepository.cs" />

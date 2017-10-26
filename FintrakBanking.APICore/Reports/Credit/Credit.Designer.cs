@@ -42,13 +42,17 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         private OfferLetterConditionPrecidentDataTable tableOfferLetterConditionPrecident;
         
-        private DisburstedLoansDataTable tableDisburstedLoans;
+        private DisbursedLoansDataTable tableDisbursedLoans;
         
         private CollateralInformationDataTable tableCollateralInformation;
         
         private LoanCovenantInformationDataTable tableLoanCovenantInformation;
         
         private LoanMonitoringInformationDataTable tableLoanMonitoringInformation;
+        
+        private FinanceTransactionDataTable tableFinanceTransaction;
+        
+        private LoanReportDataTable tableLoanReport;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -105,8 +109,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 if ((ds.Tables["OfferLetterConditionPrecident"] != null)) {
                     base.Tables.Add(new OfferLetterConditionPrecidentDataTable(ds.Tables["OfferLetterConditionPrecident"]));
                 }
-                if ((ds.Tables["DisburstedLoans"] != null)) {
-                    base.Tables.Add(new DisburstedLoansDataTable(ds.Tables["DisburstedLoans"]));
+                if ((ds.Tables["DisbursedLoans"] != null)) {
+                    base.Tables.Add(new DisbursedLoansDataTable(ds.Tables["DisbursedLoans"]));
                 }
                 if ((ds.Tables["CollateralInformation"] != null)) {
                     base.Tables.Add(new CollateralInformationDataTable(ds.Tables["CollateralInformation"]));
@@ -116,6 +120,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 }
                 if ((ds.Tables["LoanMonitoringInformation"] != null)) {
                     base.Tables.Add(new LoanMonitoringInformationDataTable(ds.Tables["LoanMonitoringInformation"]));
+                }
+                if ((ds.Tables["FinanceTransaction"] != null)) {
+                    base.Tables.Add(new FinanceTransactionDataTable(ds.Tables["FinanceTransaction"]));
+                }
+                if ((ds.Tables["LoanReport"] != null)) {
+                    base.Tables.Add(new LoanReportDataTable(ds.Tables["LoanReport"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -229,9 +239,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public DisburstedLoansDataTable DisburstedLoans {
+        public DisbursedLoansDataTable DisbursedLoans {
             get {
-                return this.tableDisburstedLoans;
+                return this.tableDisbursedLoans;
             }
         }
         
@@ -267,6 +277,27 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public FinanceTransactionDataTable FinanceTransaction {
+            get {
+                return this.tableFinanceTransaction;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public LoanReportDataTable LoanReport {
+            get {
+                return this.tableLoanReport;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.BrowsableAttribute(true)]
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Visible)]
         public override global::System.Data.SchemaSerializationMode SchemaSerializationMode {
@@ -359,8 +390,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 if ((ds.Tables["OfferLetterConditionPrecident"] != null)) {
                     base.Tables.Add(new OfferLetterConditionPrecidentDataTable(ds.Tables["OfferLetterConditionPrecident"]));
                 }
-                if ((ds.Tables["DisburstedLoans"] != null)) {
-                    base.Tables.Add(new DisburstedLoansDataTable(ds.Tables["DisburstedLoans"]));
+                if ((ds.Tables["DisbursedLoans"] != null)) {
+                    base.Tables.Add(new DisbursedLoansDataTable(ds.Tables["DisbursedLoans"]));
                 }
                 if ((ds.Tables["CollateralInformation"] != null)) {
                     base.Tables.Add(new CollateralInformationDataTable(ds.Tables["CollateralInformation"]));
@@ -370,6 +401,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 }
                 if ((ds.Tables["LoanMonitoringInformation"] != null)) {
                     base.Tables.Add(new LoanMonitoringInformationDataTable(ds.Tables["LoanMonitoringInformation"]));
+                }
+                if ((ds.Tables["FinanceTransaction"] != null)) {
+                    base.Tables.Add(new FinanceTransactionDataTable(ds.Tables["FinanceTransaction"]));
+                }
+                if ((ds.Tables["LoanReport"] != null)) {
+                    base.Tables.Add(new LoanReportDataTable(ds.Tables["LoanReport"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -458,10 +495,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
                     this.tableOfferLetterConditionPrecident.InitVars();
                 }
             }
-            this.tableDisburstedLoans = ((DisburstedLoansDataTable)(base.Tables["DisburstedLoans"]));
+            this.tableDisbursedLoans = ((DisbursedLoansDataTable)(base.Tables["DisbursedLoans"]));
             if ((initTable == true)) {
-                if ((this.tableDisburstedLoans != null)) {
-                    this.tableDisburstedLoans.InitVars();
+                if ((this.tableDisbursedLoans != null)) {
+                    this.tableDisbursedLoans.InitVars();
                 }
             }
             this.tableCollateralInformation = ((CollateralInformationDataTable)(base.Tables["CollateralInformation"]));
@@ -480,6 +517,19 @@ namespace FintrakBanking.APICore.Reports.Credit {
             if ((initTable == true)) {
                 if ((this.tableLoanMonitoringInformation != null)) {
                     this.tableLoanMonitoringInformation.InitVars();
+                }
+            }
+        }
+            this.tableFinanceTransaction = ((FinanceTransactionDataTable)(base.Tables["FinanceTransaction"]));
+            if ((initTable == true)) {
+                if ((this.tableFinanceTransaction != null)) {
+                    this.tableFinanceTransaction.InitVars();
+                }
+            }
+            this.tableLoanReport = ((LoanReportDataTable)(base.Tables["LoanReport"]));
+            if ((initTable == true)) {
+                if ((this.tableLoanReport != null)) {
+                    this.tableLoanReport.InitVars();
                 }
             }
         }
@@ -518,6 +568,12 @@ namespace FintrakBanking.APICore.Reports.Credit {
             base.Tables.Add(this.tableLoanCovenantInformation);
             this.tableLoanMonitoringInformation = new LoanMonitoringInformationDataTable();
             base.Tables.Add(this.tableLoanMonitoringInformation);
+            this.tableDisbursedLoans = new DisbursedLoansDataTable();
+            base.Tables.Add(this.tableDisbursedLoans);
+            this.tableFinanceTransaction = new FinanceTransactionDataTable();
+            base.Tables.Add(this.tableFinanceTransaction);
+            this.tableLoanReport = new LoanReportDataTable();
+            base.Tables.Add(this.tableLoanReport);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -600,6 +656,19 @@ namespace FintrakBanking.APICore.Reports.Credit {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeFinanceTransaction() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeLoanReport() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void SchemaChanged(object sender, global::System.ComponentModel.CollectionChangeEventArgs e) {
             if ((e.Action == global::System.ComponentModel.CollectionChangeAction.Remove)) {
                 this.InitVars();
@@ -4284,11 +4353,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class DisburstedLoansDataTable : global::System.Data.TypedTableBase<DisburstedLoansRow> {
+        public partial class DisbursedLoansDataTable : global::System.Data.TypedTableBase<DisbursedLoansRow> {
             
             private global::System.Data.DataColumn columnapprovedInterestRate;
-            
-            private global::System.Data.DataColumn columnapprovedTenor;
             
             private global::System.Data.DataColumn columnexchangeValue;
             
@@ -4326,18 +4393,24 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnoutstandingInterest;
             
+            private global::System.Data.DataColumn columnapprovedTenor;
+            
+            private global::System.Data.DataColumn columnaccountNumber;
+            
+            private global::System.Data.DataColumn columnbookingRef;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public DisburstedLoansDataTable() {
-                this.TableName = "DisburstedLoans";
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public DisbursedLoansDataTable() {
+                this.TableName = "DisbursedLoans";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            internal DisburstedLoansDataTable(global::System.Data.DataTable table) {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal DisbursedLoansDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -4353,8 +4426,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            protected DisburstedLoansDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected DisbursedLoansDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -4520,7 +4593,31 @@ namespace FintrakBanking.APICore.Reports.Credit {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn approvedTenorColumn {
+                get {
+                    return this.columnapprovedTenor;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn accountNumberColumn {
+                get {
+                    return this.columnaccountNumber;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn bookingRefColumn {
+                get {
+                    return this.columnbookingRef;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -4529,15 +4626,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public DisburstedLoansRow this[int index] {
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public DisbursedLoansRow this[int index] {
                 get {
-                    return ((DisburstedLoansRow)(this.Rows[index]));
+                    return ((DisbursedLoansRow)(this.Rows[index]));
                 }
             }
             
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event DisburstedLoansRowChangeEventHandler DisburstedLoansRowChanging;
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event DisbursedLoansRowChangeEventHandler DisbursedLoansRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public event DisburstedLoansRowChangeEventHandler DisburstedLoansRowChanged;
@@ -4558,7 +4655,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public DisburstedLoansRow AddDisburstedLoansRow(
                         string approvedInterestRate, 
-                        string approvedTenor, 
                         string exchangeValue, 
                         string productId, 
                         string companyName, 
@@ -4576,11 +4672,13 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string logoPath, 
                         string status, 
                         string outstandingPrincipal, 
-                        string outstandingInterest) {
-                DisburstedLoansRow rowDisburstedLoansRow = ((DisburstedLoansRow)(this.NewRow()));
+                        string outstandingInterest, 
+                        string approvedTenor, 
+                        string accountNumber, 
+                        string bookingRef) {
+                DisbursedLoansRow rowDisbursedLoansRow = ((DisbursedLoansRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         approvedInterestRate,
-                        approvedTenor,
                         exchangeValue,
                         productId,
                         companyName,
@@ -4598,16 +4696,19 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         logoPath,
                         status,
                         outstandingPrincipal,
-                        outstandingInterest};
-                rowDisburstedLoansRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowDisburstedLoansRow);
-                return rowDisburstedLoansRow;
+                        outstandingInterest,
+                        approvedTenor,
+                        accountNumber,
+                        bookingRef};
+                rowDisbursedLoansRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowDisbursedLoansRow);
+                return rowDisbursedLoansRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                DisburstedLoansDataTable cln = ((DisburstedLoansDataTable)(base.Clone()));
+                DisbursedLoansDataTable cln = ((DisbursedLoansDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -4615,14 +4716,13 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new DisburstedLoansDataTable();
+                return new DisbursedLoansDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             internal void InitVars() {
                 this.columnapprovedInterestRate = base.Columns["approvedInterestRate"];
-                this.columnapprovedTenor = base.Columns["approvedTenor"];
                 this.columnexchangeValue = base.Columns["exchangeValue"];
                 this.columnproductId = base.Columns["productId"];
                 this.columncompanyName = base.Columns["companyName"];
@@ -4641,6 +4741,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnstatus = base.Columns["status"];
                 this.columnoutstandingPrincipal = base.Columns["outstandingPrincipal"];
                 this.columnoutstandingInterest = base.Columns["outstandingInterest"];
+                this.columnapprovedTenor = base.Columns["approvedTenor"];
+                this.columnaccountNumber = base.Columns["accountNumber"];
+                this.columnbookingRef = base.Columns["bookingRef"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4648,8 +4751,6 @@ namespace FintrakBanking.APICore.Reports.Credit {
             private void InitClass() {
                 this.columnapprovedInterestRate = new global::System.Data.DataColumn("approvedInterestRate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnapprovedInterestRate);
-                this.columnapprovedTenor = new global::System.Data.DataColumn("approvedTenor", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnapprovedTenor);
                 this.columnexchangeValue = new global::System.Data.DataColumn("exchangeValue", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnexchangeValue);
                 this.columnproductId = new global::System.Data.DataColumn("productId", typeof(string), null, global::System.Data.MappingType.Element);
@@ -4686,24 +4787,30 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnoutstandingPrincipal);
                 this.columnoutstandingInterest = new global::System.Data.DataColumn("outstandingInterest", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnoutstandingInterest);
-                this.columnapprovedTenor.Caption = "outstandingInterest";
-                this.columnexchangeValue.Caption = "outstandingInterest";
-                this.columnproductId.Caption = "outstandingInterest";
-                this.columncompanyName.Caption = "outstandingInterest";
-                this.columncustomerName.Caption = "outstandingInterest";
-                this.columnproductName.Caption = "outstandingInterest";
-                this.columnapprovedAmount.Caption = "outstandingInterest";
-                this.columnapplicationReferenceNumber.Caption = "outstandingInterest";
-                this.columnamountDisbursed.Caption = "outstandingInterest";
-                this.columneffectiveDate.Caption = "outstandingInterest";
-                this.columnmaturitydate.Caption = "outstandingInterest";
-                this.columndisburseDate.Caption = "outstandingInterest";
-                this.columnfacilityCurrency.Caption = "outstandingInterest";
-                this.columnexchangeRate.Caption = "outstandingInterest";
-                this.columnbaseCurrency.Caption = "outstandingInterest";
-                this.columnlogoPath.Caption = "outstandingInterest";
-                this.columnstatus.Caption = "outstandingInterest";
-                this.columnoutstandingPrincipal.Caption = "outstandingInterest";
+                this.columnapprovedTenor = new global::System.Data.DataColumn("approvedTenor", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapprovedTenor);
+                this.columnaccountNumber = new global::System.Data.DataColumn("accountNumber", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnaccountNumber);
+                this.columnbookingRef = new global::System.Data.DataColumn("bookingRef", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbookingRef);
+                this.columnexchangeValue.Caption = "approvedTenor";
+                this.columnproductId.Caption = "approvedTenor";
+                this.columncompanyName.Caption = "approvedTenor";
+                this.columncustomerName.Caption = "approvedTenor";
+                this.columnproductName.Caption = "approvedTenor";
+                this.columnapprovedAmount.Caption = "approvedTenor";
+                this.columnapplicationReferenceNumber.Caption = "approvedTenor";
+                this.columnamountDisbursed.Caption = "approvedTenor";
+                this.columneffectiveDate.Caption = "approvedTenor";
+                this.columnmaturitydate.Caption = "approvedTenor";
+                this.columndisburseDate.Caption = "approvedTenor";
+                this.columnfacilityCurrency.Caption = "approvedTenor";
+                this.columnexchangeRate.Caption = "approvedTenor";
+                this.columnbaseCurrency.Caption = "approvedTenor";
+                this.columnlogoPath.Caption = "approvedTenor";
+                this.columnstatus.Caption = "approvedTenor";
+                this.columnoutstandingPrincipal.Caption = "approvedTenor";
+                this.columnoutstandingInterest.Caption = "approvedTenor";
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4715,21 +4822,21 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new DisburstedLoansRow(builder);
+                return new DisbursedLoansRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(DisburstedLoansRow);
+                return typeof(DisbursedLoansRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.DisburstedLoansRowChanged != null)) {
-                    this.DisburstedLoansRowChanged(this, new DisburstedLoansRowChangeEvent(((DisburstedLoansRow)(e.Row)), e.Action));
+                if ((this.DisbursedLoansRowChanged != null)) {
+                    this.DisbursedLoansRowChanged(this, new DisbursedLoansRowChangeEvent(((DisbursedLoansRow)(e.Row)), e.Action));
                 }
             }
             
@@ -4737,8 +4844,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.DisburstedLoansRowChanging != null)) {
-                    this.DisburstedLoansRowChanging(this, new DisburstedLoansRowChangeEvent(((DisburstedLoansRow)(e.Row)), e.Action));
+                if ((this.DisbursedLoansRowChanging != null)) {
+                    this.DisbursedLoansRowChanging(this, new DisbursedLoansRowChangeEvent(((DisbursedLoansRow)(e.Row)), e.Action));
                 }
             }
             
@@ -4746,8 +4853,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.DisburstedLoansRowDeleted != null)) {
-                    this.DisburstedLoansRowDeleted(this, new DisburstedLoansRowChangeEvent(((DisburstedLoansRow)(e.Row)), e.Action));
+                if ((this.DisbursedLoansRowDeleted != null)) {
+                    this.DisbursedLoansRowDeleted(this, new DisbursedLoansRowChangeEvent(((DisbursedLoansRow)(e.Row)), e.Action));
                 }
             }
             
@@ -4755,8 +4862,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.DisburstedLoansRowDeleting != null)) {
-                    this.DisburstedLoansRowDeleting(this, new DisburstedLoansRowChangeEvent(((DisburstedLoansRow)(e.Row)), e.Action));
+                if ((this.DisbursedLoansRowDeleting != null)) {
+                    this.DisbursedLoansRowDeleting(this, new DisbursedLoansRowChangeEvent(((DisbursedLoansRow)(e.Row)), e.Action));
                 }
             }
             
@@ -4789,7 +4896,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "DisburstedLoansDataTable";
+                attribute2.FixedValue = "DisbursedLoansDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -5825,6 +5932,973 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
                 attribute2.FixedValue = "LoanMonitoringInformationDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class FinanceTransactionDataTable : global::System.Data.TypedTableBase<FinanceTransactionRow> {
+            
+            private global::System.Data.DataColumn columncreditAmount;
+            
+            private global::System.Data.DataColumn columndebitAmount;
+            
+            private global::System.Data.DataColumn columndescription;
+            
+            private global::System.Data.DataColumn columnvalueDate;
+            
+            private global::System.Data.DataColumn columnpostedDate;
+            
+            private global::System.Data.DataColumn columnpostedTime;
+            
+            private global::System.Data.DataColumn columnpostedBy;
+            
+            private global::System.Data.DataColumn columnapprovedBy;
+            
+            private global::System.Data.DataColumn columnpostCurrency;
+            
+            private global::System.Data.DataColumn columncurrencyRate;
+            
+            private global::System.Data.DataColumn columnapprovedDate;
+            
+            private global::System.Data.DataColumn columnbaseCurrency;
+            
+            private global::System.Data.DataColumn columncompanyName;
+            
+            private global::System.Data.DataColumn columnlogoPath;
+            
+            private global::System.Data.DataColumn columnrepostDate;
+            
+            private global::System.Data.DataColumn columnaccountName;
+            
+            private global::System.Data.DataColumn columnbatchNo;
+            
+            private global::System.Data.DataColumn columnbranch;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public FinanceTransactionDataTable() {
+                this.TableName = "FinanceTransaction";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal FinanceTransactionDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected FinanceTransactionDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn creditAmountColumn {
+                get {
+                    return this.columncreditAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn debitAmountColumn {
+                get {
+                    return this.columndebitAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn descriptionColumn {
+                get {
+                    return this.columndescription;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn valueDateColumn {
+                get {
+                    return this.columnvalueDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn postedDateColumn {
+                get {
+                    return this.columnpostedDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn postedTimeColumn {
+                get {
+                    return this.columnpostedTime;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn postedByColumn {
+                get {
+                    return this.columnpostedBy;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn approvedByColumn {
+                get {
+                    return this.columnapprovedBy;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn postCurrencyColumn {
+                get {
+                    return this.columnpostCurrency;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn currencyRateColumn {
+                get {
+                    return this.columncurrencyRate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn approvedDateColumn {
+                get {
+                    return this.columnapprovedDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn baseCurrencyColumn {
+                get {
+                    return this.columnbaseCurrency;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn companyNameColumn {
+                get {
+                    return this.columncompanyName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn logoPathColumn {
+                get {
+                    return this.columnlogoPath;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn repostDateColumn {
+                get {
+                    return this.columnrepostDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn accountNameColumn {
+                get {
+                    return this.columnaccountName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn batchNoColumn {
+                get {
+                    return this.columnbatchNo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn branchColumn {
+                get {
+                    return this.columnbranch;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public FinanceTransactionRow this[int index] {
+                get {
+                    return ((FinanceTransactionRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event FinanceTransactionRowChangeEventHandler FinanceTransactionRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event FinanceTransactionRowChangeEventHandler FinanceTransactionRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event FinanceTransactionRowChangeEventHandler FinanceTransactionRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event FinanceTransactionRowChangeEventHandler FinanceTransactionRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddFinanceTransactionRow(FinanceTransactionRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public FinanceTransactionRow AddFinanceTransactionRow(
+                        string creditAmount, 
+                        string debitAmount, 
+                        string description, 
+                        string valueDate, 
+                        string postedDate, 
+                        string postedTime, 
+                        string postedBy, 
+                        string approvedBy, 
+                        string postCurrency, 
+                        string currencyRate, 
+                        string approvedDate, 
+                        string baseCurrency, 
+                        string companyName, 
+                        string logoPath, 
+                        string repostDate, 
+                        string accountName, 
+                        string batchNo, 
+                        string branch) {
+                FinanceTransactionRow rowFinanceTransactionRow = ((FinanceTransactionRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        creditAmount,
+                        debitAmount,
+                        description,
+                        valueDate,
+                        postedDate,
+                        postedTime,
+                        postedBy,
+                        approvedBy,
+                        postCurrency,
+                        currencyRate,
+                        approvedDate,
+                        baseCurrency,
+                        companyName,
+                        logoPath,
+                        repostDate,
+                        accountName,
+                        batchNo,
+                        branch};
+                rowFinanceTransactionRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowFinanceTransactionRow);
+                return rowFinanceTransactionRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                FinanceTransactionDataTable cln = ((FinanceTransactionDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new FinanceTransactionDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columncreditAmount = base.Columns["creditAmount"];
+                this.columndebitAmount = base.Columns["debitAmount"];
+                this.columndescription = base.Columns["description"];
+                this.columnvalueDate = base.Columns["valueDate"];
+                this.columnpostedDate = base.Columns["postedDate"];
+                this.columnpostedTime = base.Columns["postedTime"];
+                this.columnpostedBy = base.Columns["postedBy"];
+                this.columnapprovedBy = base.Columns["approvedBy"];
+                this.columnpostCurrency = base.Columns["postCurrency"];
+                this.columncurrencyRate = base.Columns["currencyRate"];
+                this.columnapprovedDate = base.Columns["approvedDate"];
+                this.columnbaseCurrency = base.Columns["baseCurrency"];
+                this.columncompanyName = base.Columns["companyName"];
+                this.columnlogoPath = base.Columns["logoPath"];
+                this.columnrepostDate = base.Columns["repostDate"];
+                this.columnaccountName = base.Columns["accountName"];
+                this.columnbatchNo = base.Columns["batchNo"];
+                this.columnbranch = base.Columns["branch"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columncreditAmount = new global::System.Data.DataColumn("creditAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncreditAmount);
+                this.columndebitAmount = new global::System.Data.DataColumn("debitAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndebitAmount);
+                this.columndescription = new global::System.Data.DataColumn("description", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndescription);
+                this.columnvalueDate = new global::System.Data.DataColumn("valueDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnvalueDate);
+                this.columnpostedDate = new global::System.Data.DataColumn("postedDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpostedDate);
+                this.columnpostedTime = new global::System.Data.DataColumn("postedTime", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpostedTime);
+                this.columnpostedBy = new global::System.Data.DataColumn("postedBy", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpostedBy);
+                this.columnapprovedBy = new global::System.Data.DataColumn("approvedBy", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapprovedBy);
+                this.columnpostCurrency = new global::System.Data.DataColumn("postCurrency", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpostCurrency);
+                this.columncurrencyRate = new global::System.Data.DataColumn("currencyRate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncurrencyRate);
+                this.columnapprovedDate = new global::System.Data.DataColumn("approvedDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapprovedDate);
+                this.columnbaseCurrency = new global::System.Data.DataColumn("baseCurrency", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbaseCurrency);
+                this.columncompanyName = new global::System.Data.DataColumn("companyName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncompanyName);
+                this.columnlogoPath = new global::System.Data.DataColumn("logoPath", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnlogoPath);
+                this.columnrepostDate = new global::System.Data.DataColumn("repostDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrepostDate);
+                this.columnaccountName = new global::System.Data.DataColumn("accountName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnaccountName);
+                this.columnbatchNo = new global::System.Data.DataColumn("batchNo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbatchNo);
+                this.columnbranch = new global::System.Data.DataColumn("branch", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbranch);
+                this.columnpostedDate.Caption = "accountName";
+                this.columnpostedTime.Caption = "accountName";
+                this.columnpostedBy.Caption = "accountName";
+                this.columnapprovedBy.Caption = "accountName";
+                this.columnpostCurrency.Caption = "accountName";
+                this.columncurrencyRate.Caption = "accountName";
+                this.columnapprovedDate.Caption = "accountName";
+                this.columnbaseCurrency.Caption = "accountName";
+                this.columncompanyName.Caption = "accountName";
+                this.columnlogoPath.Caption = "accountName";
+                this.columnrepostDate.Caption = "accountName";
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public FinanceTransactionRow NewFinanceTransactionRow() {
+                return ((FinanceTransactionRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new FinanceTransactionRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(FinanceTransactionRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.FinanceTransactionRowChanged != null)) {
+                    this.FinanceTransactionRowChanged(this, new FinanceTransactionRowChangeEvent(((FinanceTransactionRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.FinanceTransactionRowChanging != null)) {
+                    this.FinanceTransactionRowChanging(this, new FinanceTransactionRowChangeEvent(((FinanceTransactionRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.FinanceTransactionRowDeleted != null)) {
+                    this.FinanceTransactionRowDeleted(this, new FinanceTransactionRowChangeEvent(((FinanceTransactionRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.FinanceTransactionRowDeleting != null)) {
+                    this.FinanceTransactionRowDeleting(this, new FinanceTransactionRowChangeEvent(((FinanceTransactionRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveFinanceTransactionRow(FinanceTransactionRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                Credit ds = new Credit();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "FinanceTransactionDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class LoanReportDataTable : global::System.Data.TypedTableBase<LoanReportRow> {
+            
+            private global::System.Data.DataColumn columnbookingDate;
+            
+            private global::System.Data.DataColumn columneffectiveDate;
+            
+            private global::System.Data.DataColumn columnmaturityDate;
+            
+            private global::System.Data.DataColumn columndisburseDate;
+            
+            private global::System.Data.DataColumn columnbookingNumber;
+            
+            private global::System.Data.DataColumn columnloanStatus;
+            
+            private global::System.Data.DataColumn columncustomerName;
+            
+            private global::System.Data.DataColumn columnprincipalAmount;
+            
+            private global::System.Data.DataColumn columnrate;
+            
+            private global::System.Data.DataColumn columnrateCharged;
+            
+            private global::System.Data.DataColumn columnpayAccountTo;
+            
+            private global::System.Data.DataColumn columnrequestState;
+            
+            private global::System.Data.DataColumn columncurrency;
+            
+            private global::System.Data.DataColumn columninterestToDate;
+            
+            private global::System.Data.DataColumn columnbusinessGroup;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanReportDataTable() {
+                this.TableName = "LoanReport";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal LoanReportDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected LoanReportDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn bookingDateColumn {
+                get {
+                    return this.columnbookingDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn effectiveDateColumn {
+                get {
+                    return this.columneffectiveDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn maturityDateColumn {
+                get {
+                    return this.columnmaturityDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn disburseDateColumn {
+                get {
+                    return this.columndisburseDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn bookingNumberColumn {
+                get {
+                    return this.columnbookingNumber;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn loanStatusColumn {
+                get {
+                    return this.columnloanStatus;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerNameColumn {
+                get {
+                    return this.columncustomerName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn principalAmountColumn {
+                get {
+                    return this.columnprincipalAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn rateColumn {
+                get {
+                    return this.columnrate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn rateChargedColumn {
+                get {
+                    return this.columnrateCharged;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn payAccountToColumn {
+                get {
+                    return this.columnpayAccountTo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn requestStateColumn {
+                get {
+                    return this.columnrequestState;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn currencyColumn {
+                get {
+                    return this.columncurrency;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn interestToDateColumn {
+                get {
+                    return this.columninterestToDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn businessGroupColumn {
+                get {
+                    return this.columnbusinessGroup;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanReportRow this[int index] {
+                get {
+                    return ((LoanReportRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanReportRowChangeEventHandler LoanReportRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanReportRowChangeEventHandler LoanReportRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanReportRowChangeEventHandler LoanReportRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanReportRowChangeEventHandler LoanReportRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddLoanReportRow(LoanReportRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanReportRow AddLoanReportRow(string bookingDate, string effectiveDate, string maturityDate, string disburseDate, string bookingNumber, string loanStatus, string customerName, string principalAmount, string rate, string rateCharged, string payAccountTo, string requestState, string currency, string interestToDate, string businessGroup) {
+                LoanReportRow rowLoanReportRow = ((LoanReportRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        bookingDate,
+                        effectiveDate,
+                        maturityDate,
+                        disburseDate,
+                        bookingNumber,
+                        loanStatus,
+                        customerName,
+                        principalAmount,
+                        rate,
+                        rateCharged,
+                        payAccountTo,
+                        requestState,
+                        currency,
+                        interestToDate,
+                        businessGroup};
+                rowLoanReportRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowLoanReportRow);
+                return rowLoanReportRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                LoanReportDataTable cln = ((LoanReportDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new LoanReportDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columnbookingDate = base.Columns["bookingDate"];
+                this.columneffectiveDate = base.Columns["effectiveDate"];
+                this.columnmaturityDate = base.Columns["maturityDate"];
+                this.columndisburseDate = base.Columns["disburseDate"];
+                this.columnbookingNumber = base.Columns["bookingNumber"];
+                this.columnloanStatus = base.Columns["loanStatus"];
+                this.columncustomerName = base.Columns["customerName"];
+                this.columnprincipalAmount = base.Columns["principalAmount"];
+                this.columnrate = base.Columns["rate"];
+                this.columnrateCharged = base.Columns["rateCharged"];
+                this.columnpayAccountTo = base.Columns["payAccountTo"];
+                this.columnrequestState = base.Columns["requestState"];
+                this.columncurrency = base.Columns["currency"];
+                this.columninterestToDate = base.Columns["interestToDate"];
+                this.columnbusinessGroup = base.Columns["businessGroup"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columnbookingDate = new global::System.Data.DataColumn("bookingDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbookingDate);
+                this.columneffectiveDate = new global::System.Data.DataColumn("effectiveDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columneffectiveDate);
+                this.columnmaturityDate = new global::System.Data.DataColumn("maturityDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnmaturityDate);
+                this.columndisburseDate = new global::System.Data.DataColumn("disburseDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndisburseDate);
+                this.columnbookingNumber = new global::System.Data.DataColumn("bookingNumber", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbookingNumber);
+                this.columnloanStatus = new global::System.Data.DataColumn("loanStatus", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnloanStatus);
+                this.columncustomerName = new global::System.Data.DataColumn("customerName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerName);
+                this.columnprincipalAmount = new global::System.Data.DataColumn("principalAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnprincipalAmount);
+                this.columnrate = new global::System.Data.DataColumn("rate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrate);
+                this.columnrateCharged = new global::System.Data.DataColumn("rateCharged", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrateCharged);
+                this.columnpayAccountTo = new global::System.Data.DataColumn("payAccountTo", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpayAccountTo);
+                this.columnrequestState = new global::System.Data.DataColumn("requestState", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnrequestState);
+                this.columncurrency = new global::System.Data.DataColumn("currency", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncurrency);
+                this.columninterestToDate = new global::System.Data.DataColumn("interestToDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columninterestToDate);
+                this.columnbusinessGroup = new global::System.Data.DataColumn("businessGroup", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbusinessGroup);
+                this.columnbookingDate.Caption = "requestState";
+                this.columneffectiveDate.Caption = "requestState";
+                this.columnmaturityDate.Caption = "requestState";
+                this.columndisburseDate.Caption = "requestState";
+                this.columnbookingNumber.Caption = "requestState";
+                this.columnloanStatus.Caption = "requestState";
+                this.columncustomerName.Caption = "requestState";
+                this.columnprincipalAmount.Caption = "requestState";
+                this.columnrate.Caption = "requestState";
+                this.columnrateCharged.Caption = "requestState";
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanReportRow NewLoanReportRow() {
+                return ((LoanReportRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new LoanReportRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(LoanReportRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.LoanReportRowChanged != null)) {
+                    this.LoanReportRowChanged(this, new LoanReportRowChangeEvent(((LoanReportRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.LoanReportRowChanging != null)) {
+                    this.LoanReportRowChanging(this, new LoanReportRowChangeEvent(((LoanReportRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.LoanReportRowDeleted != null)) {
+                    this.LoanReportRowDeleted(this, new LoanReportRowChangeEvent(((LoanReportRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.LoanReportRowDeleting != null)) {
+                    this.LoanReportRowDeleting(this, new LoanReportRowChangeEvent(((LoanReportRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveLoanReportRow(LoanReportRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                Credit ds = new Credit();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "LoanReportDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -8762,15 +9836,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class DisburstedLoansRow : global::System.Data.DataRow {
+        public partial class DisbursedLoansRow : global::System.Data.DataRow {
             
-            private DisburstedLoansDataTable tableDisburstedLoans;
+            private DisbursedLoansDataTable tableDisbursedLoans;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             internal DisburstedLoansRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableDisburstedLoans = ((DisburstedLoansDataTable)(this.Table));
+                this.tableDisbursedLoans = ((DisbursedLoansDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -8778,15 +9852,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string approvedInterestRate {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.approvedInterestRateColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.approvedInterestRateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'approvedInterestRate\' in table \'DisburstedLoans\' is DBNull." +
-                                "", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedInterestRate\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.approvedInterestRateColumn] = value;
+                    this[this.tableDisbursedLoans.approvedInterestRateColumn] = value;
                 }
             }
             
@@ -8811,14 +9884,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string exchangeValue {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.exchangeValueColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.exchangeValueColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'exchangeValue\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'exchangeValue\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.exchangeValueColumn] = value;
+                    this[this.tableDisbursedLoans.exchangeValueColumn] = value;
                 }
             }
             
@@ -8827,14 +9900,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string productId {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.productIdColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.productIdColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'productId\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'productId\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.productIdColumn] = value;
+                    this[this.tableDisbursedLoans.productIdColumn] = value;
                 }
             }
             
@@ -8843,14 +9916,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string companyName {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.companyNameColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.companyNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'companyName\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'companyName\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.companyNameColumn] = value;
+                    this[this.tableDisbursedLoans.companyNameColumn] = value;
                 }
             }
             
@@ -8859,14 +9932,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string customerName {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.customerNameColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.customerNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.customerNameColumn] = value;
+                    this[this.tableDisbursedLoans.customerNameColumn] = value;
                 }
             }
             
@@ -8875,14 +9948,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string productName {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.productNameColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.productNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.productNameColumn] = value;
+                    this[this.tableDisbursedLoans.productNameColumn] = value;
                 }
             }
             
@@ -8891,14 +9964,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string approvedAmount {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.approvedAmountColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.approvedAmountColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'approvedAmount\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedAmount\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.approvedAmountColumn] = value;
+                    this[this.tableDisbursedLoans.approvedAmountColumn] = value;
                 }
             }
             
@@ -8907,15 +9980,15 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string applicationReferenceNumber {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.applicationReferenceNumberColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.applicationReferenceNumberColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'applicationReferenceNumber\' in table \'DisburstedLoans\' is D" +
-                                "BNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'applicationReferenceNumber\' in table \'DisbursedLoans\' is DB" +
+                                "Null.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.applicationReferenceNumberColumn] = value;
+                    this[this.tableDisbursedLoans.applicationReferenceNumberColumn] = value;
                 }
             }
             
@@ -8924,14 +9997,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string amountDisbursed {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.amountDisbursedColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.amountDisbursedColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'amountDisbursed\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'amountDisbursed\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.amountDisbursedColumn] = value;
+                    this[this.tableDisbursedLoans.amountDisbursedColumn] = value;
                 }
             }
             
@@ -8940,14 +10013,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string effectiveDate {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.effectiveDateColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.effectiveDateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'effectiveDate\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'effectiveDate\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.effectiveDateColumn] = value;
+                    this[this.tableDisbursedLoans.effectiveDateColumn] = value;
                 }
             }
             
@@ -8956,14 +10029,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string maturitydate {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.maturitydateColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.maturitydateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'maturitydate\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'maturitydate\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.maturitydateColumn] = value;
+                    this[this.tableDisbursedLoans.maturitydateColumn] = value;
                 }
             }
             
@@ -8972,14 +10045,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string disburseDate {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.disburseDateColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.disburseDateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'disburseDate\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'disburseDate\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.disburseDateColumn] = value;
+                    this[this.tableDisbursedLoans.disburseDateColumn] = value;
                 }
             }
             
@@ -8988,14 +10061,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string facilityCurrency {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.facilityCurrencyColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.facilityCurrencyColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'facilityCurrency\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityCurrency\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.facilityCurrencyColumn] = value;
+                    this[this.tableDisbursedLoans.facilityCurrencyColumn] = value;
                 }
             }
             
@@ -9004,14 +10077,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string exchangeRate {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.exchangeRateColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.exchangeRateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'exchangeRate\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'exchangeRate\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.exchangeRateColumn] = value;
+                    this[this.tableDisbursedLoans.exchangeRateColumn] = value;
                 }
             }
             
@@ -9020,14 +10093,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string baseCurrency {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.baseCurrencyColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.baseCurrencyColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'baseCurrency\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'baseCurrency\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.baseCurrencyColumn] = value;
+                    this[this.tableDisbursedLoans.baseCurrencyColumn] = value;
                 }
             }
             
@@ -9036,14 +10109,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string logoPath {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.logoPathColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.logoPathColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'logoPath\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'logoPath\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.logoPathColumn] = value;
+                    this[this.tableDisbursedLoans.logoPathColumn] = value;
                 }
             }
             
@@ -9052,14 +10125,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string status {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.statusColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.statusColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'status\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'status\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.statusColumn] = value;
+                    this[this.tableDisbursedLoans.statusColumn] = value;
                 }
             }
             
@@ -9068,15 +10141,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string outstandingPrincipal {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.outstandingPrincipalColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.outstandingPrincipalColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'outstandingPrincipal\' in table \'DisburstedLoans\' is DBNull." +
-                                "", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'outstandingPrincipal\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.outstandingPrincipalColumn] = value;
+                    this[this.tableDisbursedLoans.outstandingPrincipalColumn] = value;
                 }
             }
             
@@ -9085,27 +10157,63 @@ namespace FintrakBanking.APICore.Reports.Credit {
             public string outstandingInterest {
                 get {
                     try {
-                        return ((string)(this[this.tableDisburstedLoans.outstandingInterestColumn]));
+                        return ((string)(this[this.tableDisbursedLoans.outstandingInterestColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'outstandingInterest\' in table \'DisburstedLoans\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'outstandingInterest\' in table \'DisbursedLoans\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableDisburstedLoans.outstandingInterestColumn] = value;
+                    this[this.tableDisbursedLoans.outstandingInterestColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsapprovedInterestRateNull() {
-                return this.IsNull(this.tableDisburstedLoans.approvedInterestRateColumn);
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string approvedTenor {
+                get {
+                    try {
+                        return ((string)(this[this.tableDisbursedLoans.approvedTenorColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedTenor\' in table \'DisbursedLoans\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDisbursedLoans.approvedTenorColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetapprovedInterestRateNull() {
-                this[this.tableDisburstedLoans.approvedInterestRateColumn] = global::System.Convert.DBNull;
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string accountNumber {
+                get {
+                    try {
+                        return ((string)(this[this.tableDisbursedLoans.accountNumberColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'accountNumber\' in table \'DisbursedLoans\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDisbursedLoans.accountNumberColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string bookingRef {
+                get {
+                    try {
+                        return ((string)(this[this.tableDisbursedLoans.bookingRefColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'bookingRef\' in table \'DisbursedLoans\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDisbursedLoans.bookingRefColumn] = value;
+                }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -9123,217 +10231,1207 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsexchangeValueNull() {
-                return this.IsNull(this.tableDisburstedLoans.exchangeValueColumn);
+                return this.IsNull(this.tableDisbursedLoans.exchangeValueColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetexchangeValueNull() {
-                this[this.tableDisburstedLoans.exchangeValueColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.exchangeValueColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsproductIdNull() {
-                return this.IsNull(this.tableDisburstedLoans.productIdColumn);
+                return this.IsNull(this.tableDisbursedLoans.productIdColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetproductIdNull() {
-                this[this.tableDisburstedLoans.productIdColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.productIdColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscompanyNameNull() {
-                return this.IsNull(this.tableDisburstedLoans.companyNameColumn);
+                return this.IsNull(this.tableDisbursedLoans.companyNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcompanyNameNull() {
-                this[this.tableDisburstedLoans.companyNameColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.companyNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscustomerNameNull() {
-                return this.IsNull(this.tableDisburstedLoans.customerNameColumn);
+                return this.IsNull(this.tableDisbursedLoans.customerNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcustomerNameNull() {
-                this[this.tableDisburstedLoans.customerNameColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.customerNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsproductNameNull() {
-                return this.IsNull(this.tableDisburstedLoans.productNameColumn);
+                return this.IsNull(this.tableDisbursedLoans.productNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetproductNameNull() {
-                this[this.tableDisburstedLoans.productNameColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.productNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsapprovedAmountNull() {
-                return this.IsNull(this.tableDisburstedLoans.approvedAmountColumn);
+                return this.IsNull(this.tableDisbursedLoans.approvedAmountColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetapprovedAmountNull() {
-                this[this.tableDisburstedLoans.approvedAmountColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.approvedAmountColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsapplicationReferenceNumberNull() {
-                return this.IsNull(this.tableDisburstedLoans.applicationReferenceNumberColumn);
+                return this.IsNull(this.tableDisbursedLoans.applicationReferenceNumberColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetapplicationReferenceNumberNull() {
-                this[this.tableDisburstedLoans.applicationReferenceNumberColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.applicationReferenceNumberColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsamountDisbursedNull() {
-                return this.IsNull(this.tableDisburstedLoans.amountDisbursedColumn);
+                return this.IsNull(this.tableDisbursedLoans.amountDisbursedColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetamountDisbursedNull() {
-                this[this.tableDisburstedLoans.amountDisbursedColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.amountDisbursedColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IseffectiveDateNull() {
-                return this.IsNull(this.tableDisburstedLoans.effectiveDateColumn);
+                return this.IsNull(this.tableDisbursedLoans.effectiveDateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SeteffectiveDateNull() {
-                this[this.tableDisburstedLoans.effectiveDateColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.effectiveDateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsmaturitydateNull() {
-                return this.IsNull(this.tableDisburstedLoans.maturitydateColumn);
+                return this.IsNull(this.tableDisbursedLoans.maturitydateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetmaturitydateNull() {
-                this[this.tableDisburstedLoans.maturitydateColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.maturitydateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsdisburseDateNull() {
-                return this.IsNull(this.tableDisburstedLoans.disburseDateColumn);
+                return this.IsNull(this.tableDisbursedLoans.disburseDateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetdisburseDateNull() {
-                this[this.tableDisburstedLoans.disburseDateColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.disburseDateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsfacilityCurrencyNull() {
-                return this.IsNull(this.tableDisburstedLoans.facilityCurrencyColumn);
+                return this.IsNull(this.tableDisbursedLoans.facilityCurrencyColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetfacilityCurrencyNull() {
-                this[this.tableDisburstedLoans.facilityCurrencyColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.facilityCurrencyColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsexchangeRateNull() {
-                return this.IsNull(this.tableDisburstedLoans.exchangeRateColumn);
+                return this.IsNull(this.tableDisbursedLoans.exchangeRateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetexchangeRateNull() {
-                this[this.tableDisburstedLoans.exchangeRateColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.exchangeRateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsbaseCurrencyNull() {
-                return this.IsNull(this.tableDisburstedLoans.baseCurrencyColumn);
+                return this.IsNull(this.tableDisbursedLoans.baseCurrencyColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetbaseCurrencyNull() {
-                this[this.tableDisburstedLoans.baseCurrencyColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.baseCurrencyColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IslogoPathNull() {
-                return this.IsNull(this.tableDisburstedLoans.logoPathColumn);
+                return this.IsNull(this.tableDisbursedLoans.logoPathColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetlogoPathNull() {
-                this[this.tableDisburstedLoans.logoPathColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.logoPathColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsstatusNull() {
-                return this.IsNull(this.tableDisburstedLoans.statusColumn);
+                return this.IsNull(this.tableDisbursedLoans.statusColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetstatusNull() {
-                this[this.tableDisburstedLoans.statusColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.statusColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsoutstandingPrincipalNull() {
-                return this.IsNull(this.tableDisburstedLoans.outstandingPrincipalColumn);
+                return this.IsNull(this.tableDisbursedLoans.outstandingPrincipalColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetoutstandingPrincipalNull() {
-                this[this.tableDisburstedLoans.outstandingPrincipalColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.outstandingPrincipalColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsoutstandingInterestNull() {
-                return this.IsNull(this.tableDisburstedLoans.outstandingInterestColumn);
+                return this.IsNull(this.tableDisbursedLoans.outstandingInterestColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetoutstandingInterestNull() {
-                this[this.tableDisburstedLoans.outstandingInterestColumn] = global::System.Convert.DBNull;
+                this[this.tableDisbursedLoans.outstandingInterestColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsapprovedTenorNull() {
+                return this.IsNull(this.tableDisbursedLoans.approvedTenorColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetapprovedTenorNull() {
+                this[this.tableDisbursedLoans.approvedTenorColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsaccountNumberNull() {
+                return this.IsNull(this.tableDisbursedLoans.accountNumberColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetaccountNumberNull() {
+                this[this.tableDisbursedLoans.accountNumberColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbookingRefNull() {
+                return this.IsNull(this.tableDisbursedLoans.bookingRefColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbookingRefNull() {
+                this[this.tableDisbursedLoans.bookingRefColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class FinanceTransactionRow : global::System.Data.DataRow {
+            
+            private FinanceTransactionDataTable tableFinanceTransaction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal FinanceTransactionRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableFinanceTransaction = ((FinanceTransactionDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string creditAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.creditAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'creditAmount\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.creditAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string debitAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.debitAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'debitAmount\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.debitAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string description {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.descriptionColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'description\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.descriptionColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string valueDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.valueDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'valueDate\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.valueDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string postedDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.postedDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'postedDate\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.postedDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string postedTime {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.postedTimeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'postedTime\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.postedTimeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string postedBy {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.postedByColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'postedBy\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.postedByColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string approvedBy {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.approvedByColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedBy\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.approvedByColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string postCurrency {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.postCurrencyColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'postCurrency\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.postCurrencyColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string currencyRate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.currencyRateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'currencyRate\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.currencyRateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string approvedDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.approvedDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedDate\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.approvedDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string baseCurrency {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.baseCurrencyColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'baseCurrency\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.baseCurrencyColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string companyName {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.companyNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'companyName\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.companyNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string logoPath {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.logoPathColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'logoPath\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.logoPathColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string repostDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.repostDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'repostDate\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.repostDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string accountName {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.accountNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'accountName\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.accountNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string batchNo {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.batchNoColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'batchNo\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.batchNoColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string branch {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.branchColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'branch\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.branchColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscreditAmountNull() {
+                return this.IsNull(this.tableFinanceTransaction.creditAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcreditAmountNull() {
+                this[this.tableFinanceTransaction.creditAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdebitAmountNull() {
+                return this.IsNull(this.tableFinanceTransaction.debitAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdebitAmountNull() {
+                this[this.tableFinanceTransaction.debitAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdescriptionNull() {
+                return this.IsNull(this.tableFinanceTransaction.descriptionColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdescriptionNull() {
+                this[this.tableFinanceTransaction.descriptionColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsvalueDateNull() {
+                return this.IsNull(this.tableFinanceTransaction.valueDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetvalueDateNull() {
+                this[this.tableFinanceTransaction.valueDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IspostedDateNull() {
+                return this.IsNull(this.tableFinanceTransaction.postedDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetpostedDateNull() {
+                this[this.tableFinanceTransaction.postedDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IspostedTimeNull() {
+                return this.IsNull(this.tableFinanceTransaction.postedTimeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetpostedTimeNull() {
+                this[this.tableFinanceTransaction.postedTimeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IspostedByNull() {
+                return this.IsNull(this.tableFinanceTransaction.postedByColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetpostedByNull() {
+                this[this.tableFinanceTransaction.postedByColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsapprovedByNull() {
+                return this.IsNull(this.tableFinanceTransaction.approvedByColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetapprovedByNull() {
+                this[this.tableFinanceTransaction.approvedByColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IspostCurrencyNull() {
+                return this.IsNull(this.tableFinanceTransaction.postCurrencyColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetpostCurrencyNull() {
+                this[this.tableFinanceTransaction.postCurrencyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscurrencyRateNull() {
+                return this.IsNull(this.tableFinanceTransaction.currencyRateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcurrencyRateNull() {
+                this[this.tableFinanceTransaction.currencyRateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsapprovedDateNull() {
+                return this.IsNull(this.tableFinanceTransaction.approvedDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetapprovedDateNull() {
+                this[this.tableFinanceTransaction.approvedDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbaseCurrencyNull() {
+                return this.IsNull(this.tableFinanceTransaction.baseCurrencyColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbaseCurrencyNull() {
+                this[this.tableFinanceTransaction.baseCurrencyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscompanyNameNull() {
+                return this.IsNull(this.tableFinanceTransaction.companyNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcompanyNameNull() {
+                this[this.tableFinanceTransaction.companyNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IslogoPathNull() {
+                return this.IsNull(this.tableFinanceTransaction.logoPathColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetlogoPathNull() {
+                this[this.tableFinanceTransaction.logoPathColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsrepostDateNull() {
+                return this.IsNull(this.tableFinanceTransaction.repostDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetrepostDateNull() {
+                this[this.tableFinanceTransaction.repostDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsaccountNameNull() {
+                return this.IsNull(this.tableFinanceTransaction.accountNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetaccountNameNull() {
+                this[this.tableFinanceTransaction.accountNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbatchNoNull() {
+                return this.IsNull(this.tableFinanceTransaction.batchNoColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbatchNoNull() {
+                this[this.tableFinanceTransaction.batchNoColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbranchNull() {
+                return this.IsNull(this.tableFinanceTransaction.branchColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbranchNull() {
+                this[this.tableFinanceTransaction.branchColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class LoanReportRow : global::System.Data.DataRow {
+            
+            private LoanReportDataTable tableLoanReport;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal LoanReportRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableLoanReport = ((LoanReportDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string bookingDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.bookingDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'bookingDate\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.bookingDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string effectiveDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.effectiveDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'effectiveDate\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.effectiveDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string maturityDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.maturityDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'maturityDate\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.maturityDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string disburseDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.disburseDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'disburseDate\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.disburseDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string bookingNumber {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.bookingNumberColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'bookingNumber\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.bookingNumberColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string loanStatus {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.loanStatusColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'loanStatus\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.loanStatusColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerName {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.customerNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.customerNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string principalAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.principalAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'principalAmount\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.principalAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string rate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.rateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'rate\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.rateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string rateCharged {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.rateChargedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'rateCharged\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.rateChargedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string payAccountTo {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.payAccountToColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'payAccountTo\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.payAccountToColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string requestState {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.requestStateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'requestState\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.requestStateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string currency {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.currencyColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'currency\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.currencyColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string interestToDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.interestToDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'interestToDate\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.interestToDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string businessGroup {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanReport.businessGroupColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'businessGroup\' in table \'LoanReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanReport.businessGroupColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbookingDateNull() {
+                return this.IsNull(this.tableLoanReport.bookingDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbookingDateNull() {
+                this[this.tableLoanReport.bookingDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IseffectiveDateNull() {
+                return this.IsNull(this.tableLoanReport.effectiveDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SeteffectiveDateNull() {
+                this[this.tableLoanReport.effectiveDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsmaturityDateNull() {
+                return this.IsNull(this.tableLoanReport.maturityDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetmaturityDateNull() {
+                this[this.tableLoanReport.maturityDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdisburseDateNull() {
+                return this.IsNull(this.tableLoanReport.disburseDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdisburseDateNull() {
+                this[this.tableLoanReport.disburseDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbookingNumberNull() {
+                return this.IsNull(this.tableLoanReport.bookingNumberColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbookingNumberNull() {
+                this[this.tableLoanReport.bookingNumberColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsloanStatusNull() {
+                return this.IsNull(this.tableLoanReport.loanStatusColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetloanStatusNull() {
+                this[this.tableLoanReport.loanStatusColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerNameNull() {
+                return this.IsNull(this.tableLoanReport.customerNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerNameNull() {
+                this[this.tableLoanReport.customerNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsprincipalAmountNull() {
+                return this.IsNull(this.tableLoanReport.principalAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetprincipalAmountNull() {
+                this[this.tableLoanReport.principalAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsrateNull() {
+                return this.IsNull(this.tableLoanReport.rateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetrateNull() {
+                this[this.tableLoanReport.rateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsrateChargedNull() {
+                return this.IsNull(this.tableLoanReport.rateChargedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetrateChargedNull() {
+                this[this.tableLoanReport.rateChargedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IspayAccountToNull() {
+                return this.IsNull(this.tableLoanReport.payAccountToColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetpayAccountToNull() {
+                this[this.tableLoanReport.payAccountToColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsrequestStateNull() {
+                return this.IsNull(this.tableLoanReport.requestStateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetrequestStateNull() {
+                this[this.tableLoanReport.requestStateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscurrencyNull() {
+                return this.IsNull(this.tableLoanReport.currencyColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcurrencyNull() {
+                this[this.tableLoanReport.currencyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsinterestToDateNull() {
+                return this.IsNull(this.tableLoanReport.interestToDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetinterestToDateNull() {
+                this[this.tableLoanReport.interestToDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbusinessGroupNull() {
+                return this.IsNull(this.tableLoanReport.businessGroupColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbusinessGroupNull() {
+                this[this.tableLoanReport.businessGroupColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -10383,10 +12481,78 @@ namespace FintrakBanking.APICore.Reports.Credit {
         /// <summary>
         ///Row event argument class
         ///</summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        public class DisburstedLoansRowChangeEvent : global::System.EventArgs {
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class DisbursedLoansRowChangeEvent : global::System.EventArgs {
             
-            private DisburstedLoansRow eventRow;
+            private DisbursedLoansRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public DisbursedLoansRowChangeEvent(DisbursedLoansRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public DisbursedLoansRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class FinanceTransactionRowChangeEvent : global::System.EventArgs {
+            
+            private FinanceTransactionRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public FinanceTransactionRowChangeEvent(FinanceTransactionRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public FinanceTransactionRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class LoanReportRowChangeEvent : global::System.EventArgs {
+            
+            private LoanReportRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             

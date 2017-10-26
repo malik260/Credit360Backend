@@ -100,9 +100,7 @@ namespace FintrakBanking.ReportObjects
              
         }
 
-
-
-        public  IEnumerable<DisburstLoanViewModel> GetDisburstLoans(DateTime startDate, DateTime endDdate, int companyId)
+        public  IEnumerable<DisburstLoanViewModel> GetDisburstLoans(DateTime startDate, DateTime endDate, int companyId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -110,15 +108,17 @@ namespace FintrakBanking.ReportObjects
                            join b in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals b.LoanApplicationDetailId
                            where a.IsDisbursed
                             && DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(a.DisburseDate)
-                           && DbFunctions.TruncateTime(a.DisburseDate) <= DbFunctions.TruncateTime(endDdate)
+                           && DbFunctions.TruncateTime(a.DisburseDate) <= DbFunctions.TruncateTime(endDate)
                          && a.CompanyId == companyId
 
                            select new DisburstLoanViewModel
                            {
+                               bookingRef = a.LoanReferenceNumber ,
                                outstandingPrincipal = a.OutstandingPrincipal,
-                               approvedInterestRate = a.OutstandingPrincipal,
-                               outstandingInterest = a.InterestRate,
+                               approvedInterestRate = a.InterestRate,
+                               outstandingInterest = a.OutstandingInterest,
                                amountDisbursed = a.PrincipalAmount,
+                               accountNumber= a.tbl_CASA.ProductAccountNumber,
                                applicationReferenceNumber = b.tbl_Loan_Application.ApplicationReferenceNumber,
                                productName = a.tbl_Product.ProductName,
                                approvedAmount = b.ApprovedAmount,
@@ -138,6 +138,71 @@ namespace FintrakBanking.ReportObjects
 
 
                 return data.ToList();
+            }
+        }
+
+        public static List<AllLoanViewModel> LoanReport(int ProductClassId, DateTime startDate, DateTime endDdate, int companyId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = (from a in context.tbl_Loan
+                            where a.tbl_Product.ProductClassId == ProductClassId && a.IsDisbursed
+                            && DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(a.DisburseDate)
+                            && DbFunctions.TruncateTime(a.DisburseDate) <= DbFunctions.TruncateTime(endDdate)
+                            && a.CompanyId == companyId
+                            select new AllLoanViewModel()
+                            {
+                                requestState = a.tbl_Branch.tbl_State.StateName,
+                                bookingDate = a.BookingDate,
+                                effectiveDate = a.EffectiveDate,
+                                maturityDate = a.MaturityDate.Date,
+                                disburseDate = a.DisburseDate,
+                                bookingNumber = a.LoanReferenceNumber,
+                                loanStatus = a.tbl_Loan_Status.AccountStatus,
+                                customerName = a.tbl_Customer.LastName + " " + a.tbl_Customer.FirstName + " " + a.tbl_Customer.MiddleName,
+                                principalAmount = a.PrincipalAmount,
+                                rate = a.tbl_Product.ProductPriceIndexSpread,
+                                rateCharged = a.InterestRate,
+                                payAccountTo = a.tbl_CASA.ProductAccountNumber,
+                                interestToDate = a.tbl_Loan_Schedule_Daily.FirstOrDefault(c => c.Date == DateTime.Now.Date).AccruedInterest,
+                                currency = a.tbl_Currency.CurrencyCode,
+                                businessGroup = context.tbl_Department.FirstOrDefault(d => d.DepartmentId == a.tbl_Staff.DepartmentId).DepartmentName
+
+                            }).ToList();
+                return data;
+            }
+        }
+
+
+        public static List<AllLoanViewModel> EarnedAndReceivableLoans(int ProductClassId, DateTime startDate, DateTime endDdate, int companyId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = (from a in context.tbl_Loan
+                            where a.tbl_Product.ProductClassId == ProductClassId && a.IsDisbursed
+                            && DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(a.DisburseDate)
+                            && DbFunctions.TruncateTime(a.DisburseDate) <= DbFunctions.TruncateTime(endDdate)
+                            && a.CompanyId == companyId
+                            select new AllLoanViewModel()
+                            {
+                                requestState = a.tbl_Branch.tbl_State.StateName,
+                                bookingDate = a.BookingDate,
+                                effectiveDate = a.EffectiveDate,
+                                maturityDate = a.MaturityDate.Date,
+                                disburseDate = a.DisburseDate,
+                                bookingNumber = a.LoanReferenceNumber,
+                                loanStatus = a.tbl_Loan_Status.AccountStatus,
+                                customerName = a.tbl_Customer.LastName + " " + a.tbl_Customer.FirstName + " " + a.tbl_Customer.MiddleName,
+                                principalAmount = a.PrincipalAmount,
+                                rate = a.tbl_Product.ProductPriceIndexSpread,
+                                rateCharged = a.InterestRate,
+                                payAccountTo = a.tbl_CASA.ProductAccountNumber,
+                                interestToDate = a.tbl_Loan_Schedule_Daily.FirstOrDefault(c => c.Date == DateTime.Now.Date).AccruedInterest,
+                                currency = a.tbl_Currency.CurrencyCode,
+                                businessGroup = context.tbl_Department.FirstOrDefault(d => d.DepartmentId == a.tbl_Staff.DepartmentId).DepartmentName
+
+                            }).ToList();
+                return data;
             }
         }
 

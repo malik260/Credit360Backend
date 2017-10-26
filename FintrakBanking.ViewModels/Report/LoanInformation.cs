@@ -40,8 +40,8 @@ namespace FintrakBanking.ViewModels.Reports
 
     public class DisburstLoanViewModel
     {
-        public double outstandingInterest { get; set; }
-        public decimal approvedInterestRate { get; set; }
+        public decimal  outstandingInterest { get; set; }
+        public double approvedInterestRate { get; set; }
         private int da { get { return (maturitydate - effectiveDate).Days; } }
         public int approvedTenor { get { return (int)(Math.Round(da * (decimal)(12.0 / 365.0))); } }
         public double exchangeValue { get; set; }
@@ -52,6 +52,7 @@ namespace FintrakBanking.ViewModels.Reports
         public decimal approvedAmount { get; set; }
         public string applicationReferenceNumber { get; set; }
         public decimal amountDisbursed { get; set; }
+        public string accountNumber { get; set; }
         public decimal outstandingPrincipal { get; set; }
         public DateTime effectiveDate { get; set; }
         public DateTime maturitydate { get; set; }
@@ -61,6 +62,7 @@ namespace FintrakBanking.ViewModels.Reports
         public string baseCurrency { get; set; }
         public string logoPath { get; set; }
         public string status { get; set; }
+        public string bookingRef { get; set; }
 
     }
 
@@ -68,6 +70,61 @@ namespace FintrakBanking.ViewModels.Reports
     {
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
+    }
+
+    public class ReportSearchEntity
+    {
+        public int typeId { get; set; }
+        public int staffId { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
+    }
+    public class AllLoanViewModel
+    {
+        public string loanStatus { get; set; }
+        public string bookingNumber { get; set; }
+        public DateTime bookingDate { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime maturityDate { get; set; }
+        public DateTime interestDateinView { get { return DateTime.Now.Date; } }
+        public DateTime? disburseDate { get; set; }
+        public int tenor { get { return (effectiveDate - maturityDate).Days; } }
+        public int tenorTillDate { get { return (effectiveDate - DateTime.Now.Date).Days; } }
+        public string customerName { get; set; }
+        public decimal principalAmount { get; set; }
+        public double? rate { get; set; }
+        public double rateCharged { get; set; }
+        public decimal interestToDate { get; set; }
+        public string payAccountTo { get; set; }
+        public string receiveAccountFrom { get; set; }
+        public string remarks { get; set; }
+        public string currency { get; set; }
+        public string businessGroup { get; set; }
+        public string requestState { get; set; }
+    }
+
+    public class InterestOnLoansViewModel
+    {
+        public string status { get; set; }
+        public string bookingNumber { get; set; }
+        public DateTime bookingDate { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime maturityDate { get; set; }
+        public DateTime interestDateinView { get { return DateTime.Now.Date; } }
+        public DateTime? disburseDate { get; set; }
+        public int tenor { get { return (effectiveDate - maturityDate).Days; } }
+        public int tenorTillDate { get { return (effectiveDate - DateTime.Now.Date).Days; } }
+        public string customerName { get; set; }
+        public decimal principalAmount { get; set; }
+        public double? rate { get; set; }
+        public double rateCharged { get; set; }
+        public decimal interestToDate { get; set; }
+        public string payAccountTo { get; set; }
+        public string receiveAccountFrom { get; set; }
+        public string remarks { get; set; }
+        public string currency { get; set; }
+        public string businessGroup { get; set; }
+        public string requestintState { get; set; }
     }
 
 
