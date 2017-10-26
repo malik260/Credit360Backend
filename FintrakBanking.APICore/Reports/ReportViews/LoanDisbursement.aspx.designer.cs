@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class PostedFinancialTransactions {
+    public partial class LoanDisbursement {
         
         /// <summary>
         /// form1 control.
@@ -65,15 +65,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label EndDate;
-        
-        /// <summary>
-        /// PostedByStaffId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PostedByStaffId;
         
         /// <summary>
         /// CompanyId control.

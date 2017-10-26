@@ -16,10 +16,12 @@ namespace FintrakBanking.APICore.Controllers
         IReportRoutes repo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         IErrorLogRepository errorLogger;
+        IFinanceTransactionsReport reportRepo;
 
-        public ReportsController(IReportRoutes _repo, IErrorLogRepository _errorLogger)
-        {
-            repo = _repo;
+        public ReportsController(IReportRoutes _repo, IFinanceTransactionsReport reportRepo, IErrorLogRepository _errorLogger) {
+
+            this.repo = _repo;
+            this.reportRepo = reportRepo;
             errorLogger = _errorLogger;
         }
 
@@ -154,8 +156,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
         #region Offer-Letter Generation & Loan Monitoring Reports
 
         [HttpGet]
@@ -246,28 +246,121 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("monitoring/expired-self-liquidating-loans")]
-        public HttpResponseMessage GetExpiredSelfLiquidatingLoansReport()
+        #endregion Offer-Letter Generation & Loan Monitoring Reports
+
+        [HttpPost]
+        [Route("loan-commercial")]
+        public HttpResponseMessage GetLoanCommercialReport(DateRange dateRange)
         {
+            var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetExpiredSelfLiquidatingLoansReport(token.GetCompanyId);
+                var data = repo.GetLoanCommercialReport(dateRange, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data });
+                    new { success = true, result = data });  //Ok(accounts);
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
-                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
-        #endregion
+
+        [HttpPost]
+        [Route("posted-finance-transactions")]
+        public HttpResponseMessage GetPostedTransactions(ReportSearchEntity searchEntity)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetPostedTransactions(searchEntity, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [Route("loan-team-revolving")]
+        public HttpResponseMessage GetTeamAndRevolving(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetTeamAndRevolving(dateRange, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-earned-unearned-interest")]
+        public HttpResponseMessage GetEarnedUnearnedInterest(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetEarnedUnearnedInterest(dateRange, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("posted-transactions/date")]
+        public HttpResponseMessage PostTransactionsByStaffByDate(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = reportRepo.PostTransactionsByStaffByDate(dateRange, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
     }
 }

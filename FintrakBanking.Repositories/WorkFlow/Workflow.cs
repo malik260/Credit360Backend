@@ -439,6 +439,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool WithinAllLimits()
         {
             var level = context.tbl_Approval_Level.Find(this.fromLevelId);
+
             if (level == null) { throw new Exception("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
 
             return WithinTenorLimit(level) == true

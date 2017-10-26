@@ -1983,11 +1983,12 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId)
         {
-
-            var loans = GetLoansByCompanyId(companyId).Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.customerId == customerId)
+            var loans = GetLoansByCompanyId(companyId)
+                .Where(c => c.approvalStatusId == (int)ApprovalStatusEnum.Approved && c.customerId == customerId)
                 .Select(c => new LoanRepaymentScheduleViewModel
                 {
                     loanReferenceNumber = c.loanReferenceNumber,
+                    loanApplicationId = c.loanApplicationId,
                     principalRepayment = c.outstandingPrincipal,
                     interestAccrual = c.outstandingInterest,
                     customerId = c.customerId,
@@ -1998,7 +1999,9 @@ namespace FintrakBanking.Repositories.Credit
                     loanId = c.loanId,
                     productName = c.productAccountName,
                     terminationDate = c.maturityDate
-                }).AsQueryable();
+                })
+                .AsQueryable();
+
             return loans;
         }
       
@@ -2145,13 +2148,14 @@ namespace FintrakBanking.Repositories.Credit
         /// </summary>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        public IQueryable<LoanViewModel> GetLoansByCompanyId(int companyId)
+        public IQueryable<LoanViewModel> GetLoansByCompanyId(int companyId) // EXTEND FOR ORDER LOAN TYPES
         {
             return (context.tbl_Loan //.Include("tbl_Customer").Include("tbl_CASA_AccountStatus")
                 .Where(x => x.CompanyId == companyId)
                 .Select(o => new LoanViewModel
                 {
                     loanId = o.TermLoanId,
+                    loanApplicationId = o.tbl_Loan_Application_Detail.LoanApplicationId,
                     customerId = o.CustomerId,
                     productId = o.ProductId,
                     casaAccountId = o.CasaAccountId,
