@@ -1920,7 +1920,8 @@ namespace FintrakBanking.Repositories.Credit
                             customerSensitivityLevelId = l.CustomerSensitivityLevelId,
                             createdBy = l.CreatedBy,
                             dateTimeCreated = l.DateTimeCreated,
-                            isCamsol = context.tbl_Loan_Camsol.Any(x => x.LoanId == l.TermLoanId)
+                            isCamsol = context.tbl_Loan_Camsol.Any(x => x.LoanId == l.TermLoanId),
+                            productName = l.tbl_Product.ProductName
                         });
             return data;
         }
