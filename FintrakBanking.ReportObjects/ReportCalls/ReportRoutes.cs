@@ -55,7 +55,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         public string GetDisburstLoans(DateRange dateRange, int companyId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/DisburstedLoan.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
+            path = reportPath + "ReportViews/DisbursedLoans.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
             return path;
         }
 
@@ -77,7 +77,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        #endregion
+        #endregion Offer Letter Generation
 
         #region Loan Monitoring Reports
 
@@ -140,7 +140,27 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
-        #endregion
+        #endregion Loan Monitoring Reports
+
+        public string GetLoanCommercialReport(DateRange dateRange, int companyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetTeamAndRevolving(DateRange dateRange, int companyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetEarnedUnearnedInterest(DateRange dateRange, int companyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId)
+        {
+            throw new NotImplementedException();
+        }
 
     }
 

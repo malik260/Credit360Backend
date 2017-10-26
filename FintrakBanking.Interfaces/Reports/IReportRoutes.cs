@@ -30,6 +30,6 @@ namespace FintrakBanking.Interfaces.Reports
         string GetLoanCommercialReport(DateRange dateRange, int companyId);
         string GetTeamAndRevolving(DateRange dateRange, int companyId);
         string GetEarnedUnearnedInterest(DateRange dateRange, int companyId);
-       string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
+        string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
     }
 }

@@ -156,8 +156,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
         #region Offer-Letter Generation & Loan Monitoring Reports
 
         [HttpGet]
@@ -247,6 +245,9 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        #endregion Offer-Letter Generation & Loan Monitoring Reports
+
         [HttpPost]
         [Route("loan-commercial")]
         public HttpResponseMessage GetLoanCommercialReport(DateRange dateRange)
@@ -291,8 +292,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
-
 
 
         [HttpPost]
