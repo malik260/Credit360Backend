@@ -15,17 +15,17 @@
         <div>
             <asp:ScriptManager ID="ScriptManager1" runat="server">
             </asp:ScriptManager>
-            <rsweb:ReportViewer ID="collPropRv" runat="server" Font-Names="Verdana" Font-Size="8pt" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="651px">
+            <rsweb:ReportViewer ID="collPropRv" runat="server" Font-Names="Verdana" Font-Size="8pt" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1100px" Height="608px">
                 <LocalReport ReportPath="Reports\Credit\Monitoring\CollateralPropertyRevaluation.rdlc">
                     <DataSources>
-                        <rsweb:ReportDataSource DataSourceId="odsCollPropRev" Name="CollPropertyDetails" />
+                        <rsweb:ReportDataSource DataSourceId="odsCollPropRev" Name="CollateralPropertyDetails" />
                     </DataSources>
                 </LocalReport>
             </rsweb:ReportViewer>
         </div>
-        <asp:ObjectDataSource ID="odsCollPropRev" runat="server" SelectMethod="GetBranch" TypeName="FintrakBanking.ReportObjects.BranchInfo">
+        <asp:ObjectDataSource ID="odsCollPropRev" runat="server" SelectMethod="CollateralPropertyRevaluation" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring">
             <SelectParameters>
-                <asp:QueryStringParameter DefaultValue="0" Name="id" QueryStringField="id" Type="Int16" />
+                <asp:QueryStringParameter Name="companyId" QueryStringField="companyId" Type="Int32" />
             </SelectParameters>
         </asp:ObjectDataSource>
     </form>

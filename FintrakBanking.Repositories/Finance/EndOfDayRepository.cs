@@ -38,6 +38,13 @@ namespace FintrakBanking.Repositories.Finance
         {
             var applicationDate = generalSetup.GetApplicationDate();
 
+            var financeEod = (from e in context.tbl_Finance_EndOfDay
+                              where e.CompanyId == model.companyId && e.Date == applicationDate
+                              select e.Date).Any();
+
+            if (financeEod == true)
+                throw new Exception("End of Day for "+ applicationDate+" has already been run.");
+
             var countryId = context.tbl_Company.FirstOrDefault(x => x.CompanyId == model.companyId).CountryId;
 
             var nextWorkDay = publicHoliday.GetNextWorkDay(applicationDate, countryId);

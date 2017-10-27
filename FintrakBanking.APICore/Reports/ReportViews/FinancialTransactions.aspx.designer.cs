@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class DisburstedLoan {
+    public partial class FinancialTransactions {
         
         /// <summary>
         /// form1 control.
@@ -49,30 +49,30 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.WebControls.ObjectDataSource ObjectDataSource1;
         
         /// <summary>
-        /// startDate control.
+        /// StartDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label startDate;
+        protected global::System.Web.UI.WebControls.Label StartDate;
         
         /// <summary>
-        /// endDate control.
+        /// EndDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label endDate;
+        protected global::System.Web.UI.WebControls.Label EndDate;
         
         /// <summary>
-        /// companyId control.
+        /// PostedByStaffId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label companyId;
+        protected global::System.Web.UI.WebControls.Label PostedByStaffId;
     }
 }

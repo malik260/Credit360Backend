@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="NplLoanMonitoring.aspx.cs" Inherits="FintrakBanking.APICore.Reports.Credit.Monitoring.NplLoanMonitoring" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="NonPeformingLoans.aspx.cs" Inherits="FintrakBanking.APICore.Reports.Credit.Monitoring.NonPeformingLoans" %>
 
  <%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
@@ -16,17 +16,17 @@
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-        <rsweb:ReportViewer ID="nplLoanRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
-            <LocalReport ReportPath="Reports\Credit\Monitoring\NplLoanMonitoring.rdlc">
+        <rsweb:ReportViewer ID="nplLoanRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1100px">
+            <LocalReport ReportPath="Reports\Credit\Monitoring\NonPeformingLoans.rdlc">
                 <DataSources>
                     <rsweb:ReportDataSource DataSourceId="odsNplLoan" Name="NplLoanDetails" />
                 </DataSources>
             </LocalReport>
         </rsweb:ReportViewer>
     
-        <asp:ObjectDataSource ID="odsNplLoan" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.OfferLetterInfo">
+        <asp:ObjectDataSource ID="odsNplLoan" runat="server" SelectMethod="NplLoanMonitoring" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring">
             <SelectParameters>
-                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+                <asp:QueryStringParameter Name="companyId" QueryStringField="companyId" Type="Int32" />
             </SelectParameters>
         </asp:ObjectDataSource>
     

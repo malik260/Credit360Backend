@@ -16,7 +16,7 @@
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-        <rsweb:ReportViewer ID="covDueDateRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
+        <rsweb:ReportViewer ID="covDueDateRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1100px">
             <LocalReport ReportPath="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc">
                 <DataSources>
                     <rsweb:ReportDataSource DataSourceId="odsCovDueDate" Name="CovenantDetails" />
@@ -24,9 +24,9 @@
             </LocalReport>
         </rsweb:ReportViewer>
     
-        <asp:ObjectDataSource ID="odsCovDueDate" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.OfferLetterInfo">
+        <asp:ObjectDataSource ID="odsCovDueDate" runat="server" SelectMethod="CovenantsApproachingDueDate" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring">
             <SelectParameters>
-                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+                <asp:QueryStringParameter Name="companyId" QueryStringField="companyId" Type="Int32" />
             </SelectParameters>
         </asp:ObjectDataSource>
     

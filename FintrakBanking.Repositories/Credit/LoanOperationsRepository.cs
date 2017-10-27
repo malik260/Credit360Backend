@@ -5466,7 +5466,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationTypeName = context.tbl_Operations.FirstOrDefault(d => d.OperationId == op.OperationTypeId).OperationName,
                             newEffectiveDate = op.EffectiveDate,
                             reviewDetails = op.ReviewDetails,
-                            newInterateRate = (decimal)op.InterateRate
+                        //    newInterateRate = (decimal)op.InterateRate
                         }).ToList();
             return data;
         }
@@ -5562,7 +5562,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationTypeName = context.tbl_Operations.FirstOrDefault(d => d.OperationId == op.OperationTypeId).OperationName,
                             newEffectiveDate = op.EffectiveDate,
                             reviewDetails = op.ReviewDetails,
-                            newInterateRate = (decimal)op.InterateRate,
+                        //    newInterateRate = (decimal)op.InterateRate,
                             prepayment = op.Prepayment,
                             newPrincipalFrequencyTypeId = op.PrincipalFrequencyTypeId,
                             newInterestFrequencyTypeId = op.InterestFrequencyTypeId,

@@ -360,6 +360,27 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+        [HttpGet]
+        [Route("loan-booking/deffered-fees/awaiting-approval")]
+        public HttpResponseMessage GetDeferredLoanFeeAwaitingApproval()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetDeferredLoanFeeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [Route("loan-booking/approval")]
         public HttpResponseMessage ApproveLoanBooking(ApprovalViewModel model)

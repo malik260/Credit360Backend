@@ -297,6 +297,45 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost, Route("customer-collateral/assignment")]
+        public HttpResponseMessage AssignCollateral([FromBody] ActiveCustomerCollateralViewModel entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var response = repo.AssignCollateral(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("customer-collateral/search/")]
+        public HttpResponseMessage SearchStaff(string queryString)
+        {
+            try
+            {
+                var data = repo.SearchCollateral(queryString, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK,  new { success = true, result = data.ToList() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+
+        }
+
         #endregion New
 
 

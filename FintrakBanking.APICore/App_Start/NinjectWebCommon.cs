@@ -52,6 +52,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Risk; 
     using FintrakBanking.ReportObjects.ReportCalls;
     using FintrakBanking.Interfaces.Reports;
+    using FintrakBanking.Repositories.Reports;
 
     public static class NinjectWebCommon
     {
@@ -172,11 +173,12 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             kernel.Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
             kernel.Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
-            kernel.Bind<IReportRoutes>().To<ReportRouts>();
+            kernel.Bind<IReportRoutes>().To<ReportRoutes>();
             kernel.Bind<ICallMemoRepository>().To<CallMemoRepository>();
             kernel.Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
             kernel.Bind<IEmailAndAlertsRepository>().To<EmailAndAlertsRepository>();
             kernel.Bind<IEndOfDayRepository>().To<EndOfDayRepository>();
+            kernel.Bind<IFinanceTransactionsReport>().To<FinanceTransactionsReport>();
         }
     }
 }

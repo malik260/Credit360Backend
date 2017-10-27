@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SelfLiquidatingLoanExpiry.aspx.cs" Inherits="FintrakBanking.APICore.Reports.Credit.Monitoring.SelfLiquidatingLoanExpiry" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ExpiredSelfLiquidatingLoans.aspx.cs" Inherits="FintrakBanking.APICore.Reports.Credit.Monitoring.ExpiredSelfLiquidatingLoans" %>
 
  <%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
@@ -16,17 +16,17 @@
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-        <rsweb:ReportViewer ID="selfLiqLoanRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
-            <LocalReport ReportPath="Reports\Credit\Monitoring\SelfLiquidatingLoanExpiry.rdlc">
+        <rsweb:ReportViewer ID="selfLiqLoanRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1300px">
+            <LocalReport ReportPath="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.rdlc">
                 <DataSources>
                     <rsweb:ReportDataSource DataSourceId="odsSelfLiqLoanExp" Name="SelfLiqLoanDetails" />
                 </DataSources>
             </LocalReport>
         </rsweb:ReportViewer>
     
-        <asp:ObjectDataSource ID="odsSelfLiqLoanExp" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.OfferLetterInfo">
+        <asp:ObjectDataSource ID="odsSelfLiqLoanExp" runat="server" SelectMethod="SelfLiquidatingLoanExpiry" TypeName="FintrakBanking.ReportObjects.Credit.LoanMonitoring">
             <SelectParameters>
-                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+                <asp:QueryStringParameter Name="companyId" QueryStringField="companyId" Type="Int32" />
             </SelectParameters>
         </asp:ObjectDataSource>
     

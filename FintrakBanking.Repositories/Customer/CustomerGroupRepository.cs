@@ -745,8 +745,7 @@ namespace FintrakBanking.Repositories.Customer
             }
             catch (Exception ex)
             {
-
-                throw;
+                throw ex;
             }
            
         }

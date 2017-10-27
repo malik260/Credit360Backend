@@ -13,6 +13,8 @@ using System.Net;
 using FintrakBanking.APICore.core;
 using System.Web;
 using FintrakBanking.Common;
+using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -20,11 +22,13 @@ namespace FintrakBanking.APICore.Controllers
     public class ChecklistController : ApiControllerBase
     {
         private IChecklistRepository repo;
+        private ILoanApplicationRepository loanApplicationRepo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public ChecklistController(IChecklistRepository _repo)
+        public ChecklistController(IChecklistRepository _repo, ILoanApplicationRepository _loanApplicationRepo)
         {
             repo = _repo;
+            loanApplicationRepo = _loanApplicationRepo;
         }
 
         #region Checklist Definition
@@ -174,18 +178,55 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("checklist-definition/approval-level/{approvalLevelId}")]
-        public HttpResponseMessage GetAllChecklistDefinitionByApprovalLevelId(short approvalLevelId)
+        [Route("checklist-definition/mapped/approval-level/{approvalLevelId}/product/{productId}")]
+        public HttpResponseMessage GetAllChecklistDefinitionByApprovalLevelId(short approvalLevelId, short productId)
         {
             try
             {
-                var data = repo.GetChecklistDefinitionByApprovalLevel(approvalLevelId);
+                var data = repo.GetAllMappedChecklistDefinitionByApprovalLevelAndProduct(approvalLevelId, productId);
 
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), count = data.Count() });
+
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    success = false,
+                    message = $"There was an error fetching the records {ex.Message}"
+                });
+            }
+
+        }
+
+        [HttpGet]
+        [Route("checklist-definition/unmapped/approval-level/{approvalLevelId}/product/{productId}")]
+        public HttpResponseMessage GetUnmappedChecklistDefintionToApprovalLevel(short approvalLevelId, short productId)
+        {
+            try
+            {
+                var data = repo.GetAllUnmappedChecklistItemsToApprovalLevelAndProduct(approvalLevelId, productId);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new
+                    {
+                        success = true,
+                        result = data.ToList(),
+                        count = data.Count()
+                    });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    success = false,
+                    result = data.ToList(),
+                    count = data.Count()
+                });
 
             }
             catch (Exception ex)
@@ -292,7 +333,34 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        [HttpPost]
+        [Route("checklist-detail-multiple")]
+        public HttpResponseMessage AddChecklistDetailMultiple([FromBody] List<ChecklistDetailViewModel> model)
+        {
+            try
+            {
+                if (model.Count <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Please select all checklist to continue" });
+                }
+                var data = repo.AddMultipleChecklistDetails(model, token.GetStaffId, (short)token.GetBranchId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = true, result = data, message = "The record has been created successfully" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+
+        }
         [HttpGet]
         [Route("checklist-detail")]
         public HttpResponseMessage GetAllChecklistDetail()
@@ -300,6 +368,30 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetAllChecklistDetail();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("checklist-detail/")]
+        public HttpResponseMessage GetAllChecklistDetailByProductId(int targetId)
+        {
+            try
+            {
+                // var targetTypeId = (int)CheckListTargetTypeEnum.Loan;
+                var data = repo.GetAllMappedChecklistDefinitionByProductId(targetId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -599,6 +691,28 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                 new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        #endregion
+
+        #region Loan Application CheckList
+        [HttpGet]
+        [Route("loan-application-checklist")]
+        public HttpResponseMessage GetLoanApplicationsAwaitingCheckList()
+        {
+            try
+            {
+                var data = loanApplicationRepo.GetLoanApplicationsAwaitingCheckList(token.GetCompanyId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
         #endregion

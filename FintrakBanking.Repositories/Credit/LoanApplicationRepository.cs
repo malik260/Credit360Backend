@@ -96,7 +96,7 @@ namespace FintrakBanking.Repositories.Credit
                             LoanApplicationCollateral = context.tbl_Loan_Application_Collateral.Where(d => d.LoanApplicationId == a.LoanApplicationId)
                              .Select(d => new LoanApplicationCollateralViewModel()
                              {
-                           //     collateralValue   = d.CollateralReferenceNumber,
+                                 //     collateralValue   = d.CollateralReferenceNumber,
                                  cityId = d.CityId,
                                  collateralTypeId = d.CollateralTypeId,
                                  customerCollateralId = d.CustomerCollateralId,
@@ -111,8 +111,8 @@ namespace FintrakBanking.Repositories.Credit
                                  city = d.tbl_City.CityName,
                                  collateralType = d.tbl_Collateral_Type.CollateralTypeName,
                                  companyName = d.tbl_Loan_Application.tbl_Company.Name,
-                                 collateralReferenceNumber =  d.tbl_Loan_Application.ApplicationReferenceNumber,
-                                
+                                 // applicationReferanceNumber = int.Parse(d.tbl_Loan_Application.ApplicationReferenceNumber),
+
                              }).ToList(),
                             LoanApplicationDetail = context.tbl_Loan_Application_Detail.Where(c => c.LoanApplicationId == a.LoanApplicationId)
                              .Select(c => new LoanApplicationDetailViewModel()
@@ -271,11 +271,11 @@ namespace FintrakBanking.Repositories.Credit
             {
                 bool isGroupLoan = false;
                 int response = 0;
-                if (loan.loanTypeId > (int)LoanTypeEnum.CustomerGroup)
+                if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
                 {
                     isGroupLoan = true;
                 }
-                int? casaAccountId = -1 ;
+                int casaAccountId = -1;
                 //     string refNumber = GenerateLoanReference(loan.customerId.Value);
                 if (loan.customerAccount != "N/A")
                 {
@@ -290,7 +290,7 @@ namespace FintrakBanking.Repositories.Credit
                     ApplicationReferenceNumber = loan.applicationReferenceNumber,
                     LoanTypeId = loan.loanTypeId,
                     CompanyId = loan.companyId,
-                    BranchId = (short)loan.branchId,                     
+                    BranchId = (short)loan.branchId,
                     RelationshipOfficerId = loan.relationshipOfficerId,
                     RelationshipManagerId = loan.relationshipManagerId,
                     MISCode = loan.misCode,
@@ -318,14 +318,14 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     LoanApplicationCollateral(loan.LoanApplicationCollateral);
                 }
-                //if (loan.LoanApplicationDetail.Count > 0)
-                //{
-                //    LoanApplicationDetail(loan.LoanApplicationDetail);
-                //}
+                if (loan.LoanApplicationDetail.Count > 0)
+                {
+                    LoanApplicationDetail(loan.LoanApplicationDetail);
+                }
 
                 if (isGroupLoan)
                 {
-                    data.CustomerGroupId = loan.customerId;
+                    data.CustomerGroupId = loan.customerGroupId;
                     data.CustomerId = null;
                 }
                 else
@@ -410,8 +410,8 @@ namespace FintrakBanking.Repositories.Credit
                     DateTimeCreated = genSetup.GetApplicationDate(),
                     OtherInformations = item.otherInformations,
                     Latitude = item.latitude,
-                    Longitude = item.longitude,             
-                     
+                    Longitude = item.longitude,
+
                     LocationAddress = item.locationAddress,
                     NearestBusStop = item.nearestBusStop,
                     NearestLandmark = item.nearestLandmark,
@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.Credit
                     //LoanApplicationId = item.loanApplicationId,
                     SystemDateTime = DateTime.Now,
                     CasaAccountId = item.casaAccountId
-                     
+
                 };
                 context.tbl_Loan_Application_Collateral.Add(loanCollateral);
             }
@@ -481,9 +481,19 @@ namespace FintrakBanking.Repositories.Credit
             int operationId = (int)OperationsEnum.CAM;
             int scope = this.GetStaffWorkflowViewScope(operationId, staffId);
 
+            int[] camStages = new int[] {
+                (int)LoanApplicationStatusEnum.CAMInProgress,
+                (int)LoanApplicationStatusEnum.CAMCompleted,
+                (int)LoanApplicationStatusEnum.ChecklistCompleted
+            };
+
             if (scope == (int)ProcessViewScopeEnum.Process) // 3
             {
-                return context.tbl_Loan_Application.Where(x => x.CompanyId == companyId && x.Deleted == false //&& x.BranchId == branchId
+                return context.tbl_Loan_Application.Where(x => 
+                    x.CompanyId == companyId 
+                    && x.Deleted == false 
+                    && camStages.Contains(x.ApplicationStatusId)
+                    //&& x.BranchId == branchId
                 )
                     .GroupJoin(
                         context.tbl_Approval_Trail.Where(x => x.OperationId == operationId),
@@ -541,7 +551,7 @@ namespace FintrakBanking.Repositories.Credit
             var staffApprovalLevelIds = context.tbl_Approval_Level_Staff
                 .Where(x => x.Deleted == false && x.StaffId == staffId).Select(x => x.ApprovalLevelId);
 
-            var pendingApplications = context.tbl_Loan_Application
+            var pendingApplications = context.tbl_Loan_Application.Where(x => camStages.Contains(x.ApplicationStatusId))
                 .Join(context.tbl_Approval_Trail,
                     a => a.LoanApplicationId, b => b.TargetId, (a, b) => new { a, b })
                 .Where(x => x.b.OperationId == operationId //&& x.a.BranchId == branchId
@@ -638,27 +648,45 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals b.LoanApplicationId
                         join c in context.tbl_Credit_Appraisal_Memorandum on a.LoanApplicationId equals c.LoanApplicationId
                         join d in context.tbl_Credit_Appraisal_Memorandum_Document on c.AppraisalMemorandumId equals d.AppraisalMemorandumId
-                        join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId into cc from cust in
-                        cc.DefaultIfEmpty()
+                        join cust in context.tbl_Customer on a.CustomerId equals cust.CustomerId into cc
+                        from cust in
+cc.DefaultIfEmpty()
                         join cGrp in context.tbl_Customer_Group on a.CustomerGroupId equals cGrp.CustomerGroupId into grp
                         from cGrp in grp.DefaultIfEmpty()
+                        join ss in context.tbl_Sub_Sector on b.SubSectorId equals ss.SubSectorId into sec
+                        from ss in sec.DefaultIfEmpty()
 
                         where a.CompanyId == companyId && a.Deleted == false
-                              && b.StatusId == (int)ApprovalStatusEnum.Approved 
-                              group a by new
-                              {
-                                  a.LoanApplicationId, a.ApplicationReferenceNumber, b.ApprovedAmount, a.LoanTypeId, a.ApplicationStatusId,
-                                  c.CAMRef, d.CAMDocumentation, a.ApplicationDate, a.RelationshipManagerId, a.RelationshipOfficerId,
-                                  cust.FirstName, cust.LastName, cust.MiddleName, cust.CustomerCode, cGrp.CustomerGroupId,
-                                  cGrp.GroupName, cGrp.GroupCode
-                              } into g
+                              && b.StatusId == (int)ApprovalStatusEnum.Approved
+                        group a by new
+                        {
+                            a.LoanApplicationId,
+                            a.ApplicationReferenceNumber,
+                            b.ApprovedAmount,
+                            a.LoanTypeId,
+                            a.ApplicationStatusId,
+                            c.CAMRef,
+                            d.CAMDocumentation,
+                            a.ApplicationDate,
+                            a.RelationshipManagerId,
+                            a.RelationshipOfficerId,
+                            cust.FirstName,
+                            cust.LastName,
+                            cust.MiddleName,
+                            cust.CustomerCode,
+                            cust.CustomerId,
+                            cGrp.CustomerGroupId,
+                            cGrp.GroupCode,
+                            cGrp.GroupName,
+                            ss.SubSectorId
+                        } into g
                         select new CamProcessedLoanViewModel
                         {
                             loanApplicationId = g.Key.LoanApplicationId,
                             applicationReferenceNumber = g.Key.ApplicationReferenceNumber,
                             customerCode = g.Key.CustomerCode,
-                            customerName = g.Key.FirstName + " " + g.Key.MiddleName + " " + g.Key.LastName,
-                            customerGroupId = g.Key.CustomerGroupId,
+                            customerName = g.Key.CustomerId.Equals(0) ? g.Key.GroupName : g.Key.FirstName + " " + g.Key.MiddleName + " " + g.Key.LastName,
+                            //customerGroupId = g.Key.CustomerGroupId,
                             customerGroupName = g.Key.GroupName,
                             customerGroupCode = g.Key.GroupCode,
                             relationshipOfficerId = g.Key.RelationshipOfficerId,
@@ -676,7 +704,8 @@ namespace FintrakBanking.Repositories.Credit
                             camDocumentation = g.Key.CAMDocumentation,
                             approvedAmount = g.Sum(x => x.ApprovedAmount),
                             applicationDate = g.Key.ApplicationDate,
-                            applicationStatusId = g.Key.ApplicationStatusId
+                            applicationStatusId = g.Key.ApplicationStatusId,
+                            subSectorId = g.Key.SubSectorId
                         });
 
             return data;
@@ -780,5 +809,64 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion OfferLetter & Availment Process
+
+        #region "Loan Applications Awaiting Checklist"
+        public IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId)
+        {
+            var data = (from a in context.tbl_Loan_Application
+                        join b in context.tbl_Loan_Application_Detail
+                        on a.LoanApplicationId equals b.LoanApplicationId
+                        where a.ApplicationStatusId == (short)LoanApplicationStatusEnum.ApplicationCompleted
+                        && b.StatusId == (short)LoanApplicationDetailsStatusEnum.Pending
+                        && b.HasDoneChecklist == false
+                        && a.CompanyId == companyId && a.Deleted == false
+                        select new LoanApplicationDetailViewModel()
+                        {
+                            loanApplicationId = b.LoanApplicationId,
+                            applicationRefNo = a.ApplicationReferenceNumber,
+                            customerId = b.CustomerId,
+                            customerName = b.tbl_Customer.FirstName + " " + b.tbl_Customer.MiddleName + " " + b.tbl_Customer.LastName,
+                            loanApplicationDetailId = b.LoanApplicationDetailId,
+                            proposedProductId = b.ProposedProductId,
+                            proposedProductName = b.tbl_Product.ProductName,
+                            proposedTenor = b.ProposedTenor,
+                            proposedAmount = b.ProposedAmount,
+                            proposedInterestRate = b.ProposedInterestRate
+                        });
+            //var data = (from a in context.tbl_Loan_Application
+            //            join b in context.tbl_Loan_Application_Detail
+            //            on a.LoanApplicationId equals b.LoanApplicationId
+            //            where a.ApplicationStatusId == (short)LoanApplicationStatusEnum.ApplicationCompleted
+            //            && a.CompanyId == companyId && a.Deleted == false group b by new
+            //            {
+            //                b.ProposedProductId,
+            //                a.ApplicationReferenceNumber,
+            //                b.CustomerId,
+            //                b.LoanApplicationDetailId,
+            //                b.tbl_Customer, 
+            //                b.LoanApplicationId,
+            //                b.ProposedTenor,
+            //                b.ProposedInterestRate,
+            //                b.ProposedAmount, 
+            //                b.tbl_Product
+            //            }                        
+            //            into g
+            //            select new LoanApplicationDetailViewModel() {
+            //                loanApplicationId = g.Key.LoanApplicationId,
+            //                applicationRefNo = g.Key.ApplicationReferenceNumber,
+            //                customerId = g.Key.CustomerId,
+            //                customerName = g.Key.tbl_Customer.FirstName + " " + g.Key.tbl_Customer.MiddleName + " " + g.Key.tbl_Customer.LastName,
+            //                loanApplicationDetailId = g.Key.LoanApplicationDetailId,
+            //                proposedProductId = g.Key.ProposedProductId,
+            //                proposedProductName = g.Key.tbl_Product.ProductName,
+            //                proposedTenor = g.Key.ProposedTenor,
+            //                proposedAmount = g.Key.ProposedAmount,
+            //                proposedInterestRate = g.Key.ProposedInterestRate
+            //            });
+
+
+            return data;
+        }
+        #endregion
     }
 }

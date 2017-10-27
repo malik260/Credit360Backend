@@ -1233,8 +1233,8 @@ namespace FintrakBanking.Repositories.Credit
 
             //------------adding records to the database--------------------------
 
-            if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
-            { this.context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }
+            //if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+            //{ this.context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }
 
 
             this.context.tbl_Loan_Schedule_Periodic.AddRange(tblPeriodicSchedule);

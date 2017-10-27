@@ -10,7 +10,7 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.Credit.Monitoring
 {
-    public partial class SelfLiquidatingLoanExpiry : System.Web.UI.Page
+    public partial class NonPeformingLoans : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -20,8 +20,8 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
                 GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
                 ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToShortDateString());
 
-                selfLiqLoanRv.LocalReport.SetParameters(new ReportParameter[] { date });
-                selfLiqLoanRv.LocalReport.Refresh();
+                nplLoanRv.LocalReport.SetParameters(new ReportParameter[] { date });
+                nplLoanRv.LocalReport.Refresh();
             }
         }
     }
