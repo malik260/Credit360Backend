@@ -24,8 +24,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CheckListItemId { get; set; }
 
-        [Required]
-        [StringLength(250)]
+        [StringLength(2000)]
         public string ItemDescription { get; set; }
 
         public bool IsRequired { get; set; }

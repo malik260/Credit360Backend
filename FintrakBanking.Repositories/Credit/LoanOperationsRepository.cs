@@ -4828,6 +4828,114 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion
+        public IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId)
+        {
+            var excemptionsList = (from l in context.tbl_Loan
+                                   join p in context.tbl_Loan_PriceIndex_Exception
+                                     on l.TermLoanId  equals p.LoanId
+                                   where l.CompanyId == companyId
+                    select new LoanViewModel()
+                    {
+                        companyName = l.tbl_Company.Name,
+                        companyId = l.CompanyId,
+                        customerName = l.tbl_Customer.FirstName + " " + l.tbl_Customer.MiddleName + " " + l.tbl_Customer.LastName,
+                        customerId = l.CustomerId,
+                        approvedAmount = l.PrincipalAmount,
+                        branchName = l.tbl_Branch.BranchName,
+                        interestRate = l.InterestRate,
+                        outstandingInterest = l.OutstandingInterest,
+                        outstandingPrincipal = l.OutstandingPrincipal,
+                        principalAmount = l.PrincipalAmount,
+                        currency = l.tbl_Currency.CurrencyCode,
+                        loanReferenceNumber = l.LoanReferenceNumber
+                        
+                    });
+
+            return excemptionsList;
+        }
+
+        public IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId)
+        {
+            var newRates = (from l in context.tbl_Loan_Bulk_Interest_Review
+                                   where l.CompanyId == companyId && l.IsProcessed == false
+                                   select new LoanBulkInterestReviewViewModel()
+                                   {
+                                       effectiveDate = l.EffectiveDate,
+                                       productPriceIndexId = l.ProductPriceIndexId,
+                                       productPriceIndexName = l.tbl_Product_Price_Index.PriceIndexName,
+                                       oldInterestRate = l.OldInterestRate,
+                                       newInterestRate = l.NewInterestRate,
+                                       isProcessed = l.IsProcessed,
+                                       createdBy = l.CreatedBy,
+
+                                   });
+            return newRates;
+        }
+
+        public bool addBulkRateLoanExcemptions(LoanViewModel model)
+        {
+            var data = new tbl_Loan_PriceIndex_Exception
+            {
+                LoanId = model.loanId,
+                CreatedBy = model.createdBy,
+                DateTimeCreated = generalSetup.GetApplicationDate(),
+            };
+
+            //Audit Section ---------------------------
+            var loanReferenceNumber = context.tbl_Loan.Find(model.loanId).LoanReferenceNumber;
+
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.BulkRateLoanExcemption,
+                StaffId = model.createdBy,
+                BranchId = (short)model.branchId,
+                Detail = $"Added bulk rate review loan excemption for loan with ReferenceNumber: {loanReferenceNumber}",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = generalSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            //end of Audit section -------------------------------
+
+             context.tbl_Loan_PriceIndex_Exception.Add(data);
+             context.tbl_Audit.Add(audit);
+            return context.SaveChanges() > 0;
+
+        }
+
+        public bool addInterestRateChange(LoanBulkInterestReviewViewModel model)
+        {
+            var data = new tbl_Loan_Bulk_Interest_Review
+            {
+                CompanyId = model.companyId,
+                EffectiveDate = model.effectiveDate,
+                ProductPriceIndexId = model.productPriceIndexId,
+                OldInterestRate = model.oldInterestRate,
+                NewInterestRate = model.newInterestRate,
+                IsProcessed = false,
+                CreatedBy = model.createdBy,
+            };
+
+            //Audit Section ---------------------------
+
+            var audit = new tbl_Audit
+            {
+                AuditTypeId = (short)AuditTypeEnum.BulkRateLoanExcemption,
+                StaffId = model.createdBy,
+                BranchId = (short)model.userBranchId,
+                Detail = $"Added bulk New Interest Rate from  {model.oldInterestRate} to {model.newInterestRate}. Effective from {model.effectiveDate}",
+                IPAddress = model.userIPAddress,
+                Url = model.applicationUrl,
+                ApplicationDate = generalSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
+            };
+            //end of Audit section -------------------------------
+
+            context.tbl_Loan_Bulk_Interest_Review.Add(data);
+            context.tbl_Audit.Add(audit);
+            return context.SaveChanges() > 0;
+
+        }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationType()
         {

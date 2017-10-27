@@ -36,10 +36,10 @@ namespace FintrakBanking.Entities.Models
         public string ProductCode { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [StringLength(200)]
         public string ProductName { get; set; }
 
-        [StringLength(100)]
+        [StringLength(200)]
         public string ProductDescription { get; set; }
 
         public int? PrincipalBalanceGL { get; set; }
