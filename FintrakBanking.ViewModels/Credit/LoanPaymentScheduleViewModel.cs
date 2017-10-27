@@ -36,6 +36,9 @@ namespace FintrakBanking.ViewModels.Credit
         public double amortisedEndPrincipalAmount { get; set; }
         public double effectiveInterestRate { get; set; }
         public int loanId  { get; set; }
+        public double? previousInterestAmount  { get; set; }
+        public double? previousPrincipalAmount { get; set; }
+
     }
 
     public class LoanPaymentScheduleDailyViewModel: GeneralEntity
@@ -74,7 +77,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int numberOfPeriods { get; set; }
         public int loanId { get; set; }
         public double ballonAmount { get; set; }
-        
+        public double? previousInterestAmount { get; set; }
+        public double? previousPrincipalAmount { get; set; }
+
 
     }
 

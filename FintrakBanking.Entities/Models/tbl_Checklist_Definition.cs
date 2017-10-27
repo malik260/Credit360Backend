@@ -18,14 +18,13 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int CheckListDefinitionId { get; set; }
 
-        public short? ProductClassId { get; set; }
+        public short? ProductId { get; set; }
 
         public int? ApprovalLevelId { get; set; }
 
         public int CheckListItemId { get; set; }
 
-        [Required]
-        [StringLength(250)]
+        [StringLength(2000)]
         public string ItemDescription { get; set; }
 
         public bool IsRequired { get; set; }
@@ -52,10 +51,10 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Company tbl_Company { get; set; }
 
-        public virtual tbl_Product_Class tbl_Product_Class { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tbl_Checklist_Detail> tbl_Checklist_Detail { get; set; }
+
+        public virtual tbl_Product tbl_Product { get; set; }
 
         public virtual tbl_CheckList_Item tbl_CheckList_Item { get; set; }
     }

@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         public int CheckListItemId { get; set; }
 
         [Required]
-        [StringLength(300)]
+        [StringLength(2000)]
         public string CheckListItemName { get; set; }
 
         public int CreatedBy { get; set; }

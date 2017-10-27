@@ -138,6 +138,11 @@ namespace FintrakBanking.Entities.Models
 
         public short? FSCaptionGroupId { get; set; }
 
+        [StringLength(50)]
+        public string TaxNumber { get; set; }
+
+        public short? RiskRatingId { get; set; }
+
         public int CreatedBy { get; set; }
 
         public int? LastUpdatedBy { get; set; }
@@ -151,9 +156,6 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
-
-        [StringLength(50)]
-        public string TaxNumber { get; set; }
 
         public virtual tbl_Branch tbl_Branch { get; set; }
 
@@ -239,6 +241,8 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<tbl_Customer_Address> tbl_Customer_Address { get; set; }
 
         public virtual tbl_Customer_FS_Caption_Group tbl_Customer_FS_Caption_Group { get; set; }
+
+        public virtual tbl_Customer_Risk_Rating tbl_Customer_Risk_Rating { get; set; }
 
         public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
 

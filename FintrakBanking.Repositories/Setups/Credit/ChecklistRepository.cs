@@ -43,8 +43,8 @@ namespace FintrakBanking.Repositories.Credit
                             approvalLevelName = a.tbl_Approval_Level.LevelName,
                             isActive = a.IsActive,
                             isRequired = a.IsRequired,
-                            productClassId = a.ProductClassId,
-                            productClassName = a.tbl_Product_Class.ProductClassName,
+                            productClassId = a.ProductId,
+                            productClassName = a.tbl_Product.ProductName,
                             checkListItemId = a.CheckListItemId,
                             checkListItemName = a.tbl_CheckList_Item.CheckListItemName,
                             itemDescription = a.ItemDescription,
@@ -67,8 +67,8 @@ namespace FintrakBanking.Repositories.Credit
                             approvalLevelId = a.ApprovalLevelId,
                             isActive = a.IsActive,
                             isRequired = a.IsRequired,
-                            productClassId = a.ProductClassId,
-                            productClassName = a.tbl_Product_Class.ProductClassName,
+                            productClassId = a.ProductId,
+                            productClassName = a.tbl_Product.ProductName,
                             checkListItemId = a.CheckListItemId,
                             checkListItemName = a.tbl_CheckList_Item.CheckListItemName,
                             itemDescription = a.ItemDescription,
@@ -97,14 +97,14 @@ namespace FintrakBanking.Repositories.Credit
                 IsRequired = model.isRequired,
                 CompanyId = model.companyId,
                 IsActive = model.isActive,
-                ProductClassId = (short)model.productClassId,
+                ProductId = (short)model.productClassId,
                 DateTimeCreated = _genSetup.GetApplicationDate(),
                 CreatedBy = (int)model.createdBy
             };
 
             //Audit Section ---------------------------
 
-            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductClassId))?.ProductName;
+            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductId))?.ProductName;
             var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId))?.CheckListItemName;
 
             var audit = new tbl_Audit
@@ -149,7 +149,7 @@ namespace FintrakBanking.Repositories.Credit
                 var data = new tbl_Checklist_Definition
                 {
                     ApprovalLevelId = (int)model.approvalLevelId,
-                    ProductClassId = (short)model.productClassId,
+                    ProductId = (short)model.productClassId,
                     CompanyId = model.companyId,
                     CheckListItemId = item.checkListItemId,
                     ItemDescription = item.itemDescription,
@@ -161,7 +161,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 //Audit Section ---------------------------
 
-                var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductClassId))?.ProductName;
+                var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductId))?.ProductName;
                 var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId))?.CheckListItemName;
 
                 var audit = new tbl_Audit
@@ -195,12 +195,12 @@ namespace FintrakBanking.Repositories.Credit
             data.CheckListItemId = model.checkListItemId;
             data.IsActive = model.isActive;
             data.IsRequired = model.isRequired;
-            data.ProductClassId = (short)model.productClassId;
+            data.ProductId = (short)model.productClassId;
             data.DateTimeUpdated = _genSetup.GetApplicationDate();
             data.LastUpdatedBy = (int)model.createdBy;
 
             //Audit Section ---------------------------
-            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductClassId)).ProductName;
+            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductId)).ProductName;
             var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
 
             var audit = new tbl_Audit
@@ -230,7 +230,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // Audit Section ---------------------------
 
-            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductClassId)).ProductName;
+            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductId)).ProductName;
             var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
 
             var audit = new tbl_Audit

@@ -31,6 +31,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_CASA_AccountStatus> tbl_CASA_AccountStatus { get; set; }
         public virtual DbSet<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
         public virtual DbSet<tbl_CASA_Lien_Type> tbl_CASA_Lien_Type { get; set; }
+        public virtual DbSet<tbl_CASA_Overdraft> tbl_CASA_Overdraft { get; set; }
         public virtual DbSet<tbl_CASA_PostNoStatus> tbl_CASA_PostNoStatus { get; set; }
         public virtual DbSet<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
         public virtual DbSet<tbl_Checklist_Definition> tbl_Checklist_Definition { get; set; }
@@ -81,6 +82,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Customer_IdentificationModeType> tbl_Customer_IdentificationModeType { get; set; }
         public virtual DbSet<tbl_Customer_NextOfKin> tbl_Customer_NextOfKin { get; set; }
         public virtual DbSet<tbl_Customer_PhoneContact> tbl_Customer_PhoneContact { get; set; }
+        public virtual DbSet<tbl_Customer_Risk_Rating> tbl_Customer_Risk_Rating { get; set; }
         public virtual DbSet<tbl_Customer_Sensitivity_Level> tbl_Customer_Sensitivity_Level { get; set; }
         public virtual DbSet<tbl_Customer_Type> tbl_Customer_Type { get; set; }
         public virtual DbSet<tbl_Daily_Accrual> tbl_Daily_Accrual { get; set; }
@@ -185,6 +187,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Loan_Application_Detail_Status> tbl_Loan_Application_Detail_Status { get; set; }
         public virtual DbSet<tbl_Loan_Application_Status> tbl_Loan_Application_Status { get; set; }
         public virtual DbSet<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+        public virtual DbSet<tbl_Loan_Bulk_Interest_Review> tbl_Loan_Bulk_Interest_Review { get; set; }
         public virtual DbSet<tbl_Loan_Camsol> tbl_Loan_Camsol { get; set; }
         public virtual DbSet<tbl_Loan_Collateral_Mapping> tbl_Loan_Collateral_Mapping { get; set; }
         public virtual DbSet<tbl_Loan_Comment> tbl_Loan_Comment { get; set; }
@@ -270,6 +273,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<tbl_Deal_Classification> tbl_Deal_Classification { get; set; }
         public virtual DbSet<tbl_Deal_Type> tbl_Deal_Type { get; set; }
         public virtual DbSet<tbl_Stock> tbl_Stock { get; set; }
+        public virtual DbSet<dev_CheckList> dev_CheckList { get; set; }
         public virtual DbSet<tbl_Temp_Collateral_Stock> tbl_Temp_Collateral_Stock { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -499,6 +503,11 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_CASA>()
+                .HasMany(e => e.tbl_CASA_Overdraft)
+                .WithRequired(e => e.tbl_CASA)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_CASA>()
                 .HasMany(e => e.tbl_Loan_Archive)
                 .WithRequired(e => e.tbl_CASA)
                 .HasForeignKey(e => e.CasaAccountId)
@@ -549,6 +558,14 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_CASA_Lien)
                 .WithRequired(e => e.tbl_CASA_Lien_Type)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_CASA_Overdraft>()
+                .Property(e => e.CreditAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_CASA_Overdraft>()
+                .Property(e => e.DebitAmount)
+                .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_CASA_PostNoStatus>()
                 .HasMany(e => e.tbl_CASA)
@@ -722,6 +739,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Customer_Risk_Rating)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
                 .HasMany(e => e.tbl_Customer)
                 .WithRequired(e => e.tbl_Company)
                 .WillCascadeOnDelete(false);
@@ -758,6 +780,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Company>()
                 .HasMany(e => e.tbl_Loan_Archive)
+                .WithRequired(e => e.tbl_Company)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Company>()
+                .HasMany(e => e.tbl_Loan_Bulk_Interest_Review)
                 .WithRequired(e => e.tbl_Company)
                 .WillCascadeOnDelete(false);
 
@@ -1583,6 +1610,11 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<tbl_Product_Group>()
                 .HasMany(e => e.tbl_Product_Type)
                 .WithRequired(e => e.tbl_Product_Group)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Product_Price_Index>()
+                .HasMany(e => e.tbl_Loan_Bulk_Interest_Review)
+                .WithRequired(e => e.tbl_Product_Price_Index)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Product_Type>()
@@ -2751,6 +2783,14 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan_Schedule_Daily>()
+                .Property(e => e.PreviousInterestAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Schedule_Daily>()
+                .Property(e => e.PreviousPrincipalAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Schedule_Daily>()
                 .Property(e => e.AmortisedOpeningBalance)
                 .HasPrecision(19, 4);
 
@@ -3000,6 +3040,14 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<tbl_Loan_Schedule_Periodic>()
                 .Property(e => e.EndPrincipalAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Schedule_Periodic>()
+                .Property(e => e.PreviousInterestAmount)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<tbl_Loan_Schedule_Periodic>()
+                .Property(e => e.PreviousPrincipalAmount)
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<tbl_Loan_Schedule_Periodic>()
