@@ -22,6 +22,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
         public string totalRepayment { get { return (principalRepayment + interestAccrual).ToString("#,#.00#"); } }
+
+        public int loanApplicationId { get; set; }
     }
 
     public class LoanViewModel : GeneralEntity

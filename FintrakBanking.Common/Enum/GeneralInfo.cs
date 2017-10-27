@@ -149,19 +149,20 @@ namespace FintrakBanking.Common.Enum
         DepartmentUpdated = 143,
         PublicHolidayAdded = 144,
         PublicHolidayUpdated = 145,
-        CollateralDocumentAdded = 000,
-        CollateralDocumentUpdated = 000,
+        CollateralDocumentAdded = 155,
+        CollateralDocumentUpdated = 156,
         LoanDailyInterestAccrual = 148,
         LoanDailyPrincipalAccrual = 148,
         CollateralValuerAdded = 149,
-        ConditionPrecedentAdded = 000,
-        ConditionPrecedentUpdated = 000,
-        CollateralReleaseAction = 000,
-        CollateralReleaseApproval = 000,
+        ConditionPrecedentAdded = 150,
+        ConditionPrecedentUpdated = 151,
+        CollateralReleaseAction = 152,
+        CollateralReleaseApproval = 153,
         RanEndOfDay = 150,
-            KYCItemAdded = 151,
+        KYCItemAdded = 151,
         KYCItemUpdated = 152,
-        BulkRateLoanExcemption = 153
+        BulkRateLoanExcemption = 154,
+        CollateralAssignmentAction = 157
     };
 
 

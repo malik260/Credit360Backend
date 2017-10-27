@@ -166,11 +166,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-account/")]
-        public HttpResponseMessage SearchForCustomerAccount(string searchQuery)
+        public HttpResponseMessage SearchForCustomerAccount(string searchQuery, int loanTypeId)
         {
             try
             {
-                var data = repo.SearchForCustomerAccount(token.GetCompanyId, searchQuery);
+                var data = repo.SearchForCustomerAccount(token.GetCompanyId, searchQuery, loanTypeId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

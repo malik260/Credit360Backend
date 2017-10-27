@@ -43,8 +43,8 @@ namespace FintrakBanking.Repositories.Credit
                             approvalLevelName = a.tbl_Approval_Level.LevelName,
                             isActive = a.IsActive,
                             isRequired = a.IsRequired,
-                            productClassId = a.ProductId,
-                            productClassName = a.tbl_Product.ProductName,
+                            productId = a.ProductId,
+                            productName = a.tbl_Product.ProductName,
                             checkListItemId = a.CheckListItemId,
                             checkListItemName = a.tbl_CheckList_Item.CheckListItemName,
                             itemDescription = a.ItemDescription,
@@ -57,7 +57,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinitionByProductId(int productId)
+        public IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId)
         {
             var data = (from a in context.tbl_Checklist_Definition
                         where a.Deleted == false && a.ProductId == productId
@@ -68,8 +68,8 @@ namespace FintrakBanking.Repositories.Credit
                             approvalLevelName = a.tbl_Approval_Level.LevelName,
                             isActive = a.IsActive,
                             isRequired = a.IsRequired,
-                            productClassId = a.ProductId,
-                            productClassName = a.tbl_Product.ProductName,
+                            productId = a.ProductId,
+                            productName = a.tbl_Product.ProductName,
                             checkListItemId = a.CheckListItemId,
                             checkListItemName = a.tbl_CheckList_Item.CheckListItemName,
                             itemDescription = a.ItemDescription,
@@ -81,6 +81,31 @@ namespace FintrakBanking.Repositories.Credit
             return data;
 
         }
+
+        public IEnumerable<ChecklistItemViewModel> GetAllUnmappedChecklistItemsToApprovalLevelAndProduct(int approvalLevelId, int productId)
+        {
+            var dataList = (from data in context.tbl_Checklist_Definition
+                            where data.ProductId == productId && data.ApprovalLevelId == approvalLevelId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+                            select data.CheckListItemId).ToList();
+
+            var unmappedChecklistItems = (from data in context.tbl_CheckList_Item
+                                          where data.Deleted == false
+                                          select new ChecklistItemViewModel
+                                          {
+                                              checkListItemId = data.CheckListItemId,
+                                              checkListItemName = data.CheckListItemName,
+                                              dateTimeCreated = data.DateTimeCreated,
+                                              createdBy = (int)data.CreatedBy
+                                          });
+
+            if (dataList.Any())
+            {
+                unmappedChecklistItems = unmappedChecklistItems.Where(x => !dataList.Contains(x.checkListItemId));
+            }
+
+            return unmappedChecklistItems;
+        }
+
         public List<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId)
         {
             var data = (from a in context.tbl_Checklist_Definition
@@ -91,8 +116,8 @@ namespace FintrakBanking.Repositories.Credit
                             approvalLevelId = a.ApprovalLevelId,
                             isActive = a.IsActive,
                             isRequired = a.IsRequired,
-                            productClassId = a.ProductId,
-                            productClassName = a.tbl_Product.ProductName,
+                            productId = a.ProductId,
+                            productName = a.tbl_Product.ProductName,
                             checkListItemId = a.CheckListItemId,
                             checkListItemName = a.tbl_CheckList_Item.CheckListItemName,
                             itemDescription = a.ItemDescription,
@@ -104,11 +129,44 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevel(int approvalLevelId)
+        public IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByApprovalLevelAndProduct(int approvalLevelId, int productId)
         {
-            var data = GetAllChecklistDefinition().Where(x => x.approvalLevelId == approvalLevelId).ToList();
+            var data = GetAllChecklistDefinition().Where(x => x.approvalLevelId == approvalLevelId && x.productId == productId).ToList();
 
             return data;
+        }
+
+        public IEnumerable<ChecklistDefinitionViewModel> GetUnmappedChecklistDefintionToApprovalLevel(int approvalLevelId)
+        {
+            var dataList = (from data in context.tbl_Checklist_Definition
+                            where data.ApprovalLevelId == approvalLevelId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+                            select data.CheckListDefinitionId).ToList();
+
+            var unmappedChecklistItems = (from data in context.tbl_Checklist_Definition
+                                          where data.Deleted == false
+                                          select new ChecklistDefinitionViewModel
+                                          {
+                                              checkListDefinitionId = data.CheckListDefinitionId,
+                                              approvalLevelId = data.ApprovalLevelId,
+                                              isActive = data.IsActive,
+                                              isRequired = data.IsRequired,
+                                              productId = data.ProductId,
+                                              productName = data.tbl_Product.ProductName,
+                                              checkListItemId = data.CheckListItemId,
+                                              checkListItemName = data.tbl_CheckList_Item.CheckListItemName,
+                                              itemDescription = data.ItemDescription,
+                                              companyId = data.CompanyId,
+                                              companyName = data.tbl_Company.Name,
+                                              dateTimeCreated = data.DateTimeCreated,
+                                              createdBy = data.CreatedBy
+                                          });
+
+            if (dataList.Any())
+            {
+                unmappedChecklistItems = unmappedChecklistItems.Where(x => !dataList.Contains(x.checkListDefinitionId));
+            }
+
+            return unmappedChecklistItems;
         }
 
         public bool AddChecklistDefinition(ChecklistDefinitionViewModel model)
@@ -121,15 +179,15 @@ namespace FintrakBanking.Repositories.Credit
                 IsRequired = model.isRequired,
                 CompanyId = model.companyId,
                 IsActive = model.isActive,
-                ProductId = (short)model.productClassId,
+                ProductId = (short)model.productId,
                 DateTimeCreated = _genSetup.GetApplicationDate(),
                 CreatedBy = (int)model.createdBy
             };
 
             //Audit Section ---------------------------
 
-            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductId)).ProductName;
-            var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
+            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductId == data.ProductId))?.ProductName;
+            var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId))?.CheckListItemName;
 
             var audit = new tbl_Audit
             {
@@ -173,7 +231,7 @@ namespace FintrakBanking.Repositories.Credit
                 var data = new tbl_Checklist_Definition
                 {
                     ApprovalLevelId = (int)model.approvalLevelId,
-                    ProductId = (short)model.productClassId,
+                    ProductId = (short)model.productId,
                     CompanyId = model.companyId,
                     CheckListItemId = item.checkListItemId,
                     ItemDescription = item.itemDescription,
@@ -185,7 +243,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 //Audit Section ---------------------------
 
-                var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductId)).ProductName;
+                var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductId == data.ProductId)).ProductName;
                 var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
 
                 var audit = new tbl_Audit
@@ -219,12 +277,12 @@ namespace FintrakBanking.Repositories.Credit
             data.CheckListItemId = model.checkListItemId;
             data.IsActive = model.isActive;
             data.IsRequired = model.isRequired;
-            data.ProductId = (short)model.productClassId;
+            data.ProductId = (short)model.productId;
             data.DateTimeUpdated = _genSetup.GetApplicationDate();
             data.LastUpdatedBy = (int)model.createdBy;
 
             //Audit Section ---------------------------
-            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductId)).ProductName;
+            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductId == data.ProductId)).ProductName;
             var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
 
             var audit = new tbl_Audit
@@ -254,7 +312,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // Audit Section ---------------------------
 
-            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductClassId == data.ProductId)).ProductName;
+            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductId == data.ProductId)).ProductName;
             var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
 
             var audit = new tbl_Audit
@@ -347,7 +405,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (models.Count <= 0)
                 return false;
-            int loanApplicationId = models.FirstOrDefault().targetId;
+       
+            int loanApplicationDetailId = models.FirstOrDefault().targetId;
+            int loanApplicationId = (int)models.FirstOrDefault().checklistId;
             foreach (ChecklistDetailViewModel model in models)
             {
                 model.createdBy = staffId;
@@ -358,12 +418,34 @@ namespace FintrakBanking.Repositories.Credit
                 AddChecklistDetail(model);
 
             }
-            var loanData = context.tbl_Loan_Application.Find(loanApplicationId);
+            var loanDetailsData = context.tbl_Loan_Application_Detail.Find(loanApplicationDetailId);
+            if (loanDetailsData != null)
+            {
+                loanDetailsData.HasDoneChecklist = true;
+            }
+            var loanData = (from l in context.tbl_Loan_Application_Detail where l.LoanApplicationId ==loanApplicationId select l).ToList();
             if (loanData != null)
             {
-                loanData.ApplicationStatusId = (int)LoanApplicationStatusEnum.ChecklistCompleted;
+                var custNo = loanData.Count();
+                var checkedNo = 0;
+                foreach (var item in loanData)
+                {
+                    if (item.HasDoneChecklist == true)
+                    {
+                       ++checkedNo ;
+                    }
+                }
+                if (custNo == checkedNo)
+                {
+                    var loanApplication = context.tbl_Loan_Application.Find(loanApplicationId);
+                    if (loanApplication != null)
+                    {
+                        loanApplication.ApplicationStatusId = (int)LoanApplicationStatusEnum.ChecklistCompleted;
+                    }
+                }
+                
             }
-            return context.SaveChanges() != 0;
+            return context.SaveChanges() != 0; ;
         }
         public bool AddChecklistDetail(ChecklistDetailViewModel model)
         {

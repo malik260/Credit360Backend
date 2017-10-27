@@ -120,6 +120,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return GetApprovalLevel(companyId);
         }
 
+        public IEnumerable<ApprovalLevelViewModel> GetAllApprovalLevelDetails(int companyId)
+        {
+            return GetAllDetailedApprovalLevel(companyId);
+        }
+
         public IEnumerable<ApprovalLevelViewModel> GetApprovalLevelById(int ApprovalLevelId, int companyId)
         {
             return GetApprovalLevel(companyId).Where(c => c.approvalLevelId == ApprovalLevelId);
@@ -132,7 +137,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public IEnumerable<ApprovalLevelViewModel> GetApprovalLevelByOperationId(int operationId, int companyId)
         {
-            return GetAllDetailedApprovalLevel(companyId).Where(c => c.operationId == operationId);
+            var data = GetAllDetailedApprovalLevel(companyId).Where(c => c.operationId == operationId);
+            return data;
         }
 
         public bool AddApprovalLevel(ApprovalLevelViewModel model)

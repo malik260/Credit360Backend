@@ -118,7 +118,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.AddLoanScheduleByBulkRate(entity.productPriceIndexId,entity.newInterestRate,entity.effectiveDate,token.GetStaffId);
+                var data = repo.BulkRateReview(entity.productPriceIndexId,entity.newInterestRate,entity.effectiveDate,token.GetStaffId);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "New Interst Rate Successfully Added " });

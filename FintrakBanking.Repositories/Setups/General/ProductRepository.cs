@@ -747,8 +747,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             entity.externalInitialization = false;
 
-            workFlow.LogForApproval(entity);
-
             using (var trans = context.Database.BeginTransaction())
             {
                 try
