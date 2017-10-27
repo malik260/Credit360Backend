@@ -42,10 +42,10 @@ namespace FintrakBanking.Entities.Models
 
         public short RequestStatusId { get; set; }
 
-        [StringLength(700)]
+        [StringLength(2000)]
         public string SenderComment { get; set; }
 
-        [StringLength(50)]
+        [StringLength(2000)]
         public string ResponseComment { get; set; }
 
         [Column(TypeName = "date")]

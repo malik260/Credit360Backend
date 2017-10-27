@@ -96,8 +96,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 IsReassigned = model.isReassigned,
                 IsAcknowledged = model.isAcknowledged,
                 TargetId = model.targetId,
-                OperationsId = model.operationsId, // cam enum
-                RequestStatusId = model.requestStatusId, // status enum
+                OperationsId = model.operationsId, 
+                RequestStatusId = model.requestStatusId,
                 SenderComment = model.senderComment,
                 ResponseComment = model.responseComment,
                 ArrivalDate = applicationDate,
