@@ -54,8 +54,6 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Interfaces.Reports;
     using FintrakBanking.Repositories.Reports;
 
-    //using FintrakBanking.Repositories.Reports;
-
     public static class NinjectWebCommon
     {
         private static readonly Bootstrapper bootstrapper = new Bootstrapper();
