@@ -57,6 +57,7 @@
     <Compile Include="DocumentModels\tbl_Media_Collateral_Documents.cs" />
     <Compile Include="DocumentModels\tbl_Media_Job_Request_Documents.cs" />
     <Compile Include="DocumentModels\tbl_Media_Loan_Documents.cs" />
+    <Compile Include="Models\dev_CheckList.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\sysdiagram.cs" />
     <Compile Include="Models\tbl_Accounting_Standard.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Models\tbl_CASA_AccountStatus.cs" />
     <Compile Include="Models\tbl_CASA_Lien.cs" />
     <Compile Include="Models\tbl_CASA_Lien_Type.cs" />
+    <Compile Include="Models\tbl_CASA_Overdraft.cs" />
     <Compile Include="Models\tbl_CASA_PostNoStatus.cs" />
     <Compile Include="Models\tbl_Charges.cs" />
     <Compile Include="Models\tbl_Charges_ValueSource.cs" />
@@ -161,6 +163,7 @@
     <Compile Include="Models\tbl_Customer_IdentificationModeType.cs" />
     <Compile Include="Models\tbl_Customer_NextOfKin.cs" />
     <Compile Include="Models\tbl_Customer_PhoneContact.cs" />
+    <Compile Include="Models\tbl_Customer_Risk_Rating.cs" />
     <Compile Include="Models\tbl_Customer_Sensitivity_Level.cs" />
     <Compile Include="Models\tbl_Customer_Type.cs" />
     <Compile Include="Models\tbl_Custom_Fields.cs" />
@@ -205,6 +208,7 @@
     <Compile Include="Models\tbl_Loan_Application_Detail_Status.cs" />
     <Compile Include="Models\tbl_Loan_Application_Status.cs" />
     <Compile Include="Models\tbl_Loan_Archive.cs" />
+    <Compile Include="Models\tbl_Loan_Bulk_Interest_Review.cs" />
     <Compile Include="Models\tbl_Loan_Camsol.cs" />
     <Compile Include="Models\tbl_Loan_Collateral_Mapping.cs" />
     <Compile Include="Models\tbl_Loan_Comment.cs" />

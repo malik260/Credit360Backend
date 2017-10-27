@@ -51,7 +51,7 @@ namespace FintrakBanking.Entities.Models
 
         public short StatusId { get; set; }
 
-        public bool HasDoneChecklist {get; set;}
+        public bool HasDoneChecklist { get; set; }
 
         public int CreatedBy { get; set; }
 
