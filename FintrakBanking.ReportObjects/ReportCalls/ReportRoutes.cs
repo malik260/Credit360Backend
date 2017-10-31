@@ -140,6 +140,21 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
+        public string GetExpiredOverdraftLoansReport(int companyId)
+        {
+            try
+            {
+                string path = string.Empty;
+                path = reportPath + "Credit/Monitoring/ExpiredOverdraftLoans.aspx?companyId=" + companyId.ToString();
+                return path;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         #endregion Loan Monitoring Reports
 
         public string GetLoanCommercialReport(DateRange dateRange, int companyId)

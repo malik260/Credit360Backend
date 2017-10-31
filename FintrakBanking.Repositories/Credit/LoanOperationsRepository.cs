@@ -3965,7 +3965,7 @@ namespace FintrakBanking.Repositories.Credit
                              principalAmount = (double)a.OutstandingPrincipal,
                              principalFrequency = (short)a.PrincipalFrequencyTypeId,
                              interestFrequency = (short)a.InterestFrequencyTypeId,
-                             //tenor = (int)(a.MaturityDate - applicationDate).TotalDays,
+                             newEffectiveDate = applicationDate,
                              principalFirstpaymentDate = (DateTime)a.FirstPrincipalPaymentDate,
                              interestFirstpaymentDate = (DateTime)a.FirstInterestPaymentDate,
                              interestRate = a.InterestRate + rateChange,

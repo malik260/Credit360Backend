@@ -220,7 +220,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var staff = level.Staff.Where(x => x.StaffId == this.staffId);
                 if (staff.Any() == false)
                 {
-                    throw new Exception("This User is not in the workflow setup!");
+                    throw new Exception("This User is not in the current workflow level of the process!");
                 }
             }
 
