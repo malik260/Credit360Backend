@@ -6,97 +6,97 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Product_Type")]
-    public partial class tbl_Product_Type
+    [Table("core.TBL_PRODUCT_TYPE")]
+    public partial class TBL_PRODUCT_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Product_Type()
+        public TBL_PRODUCT_TYPE()
         {
-            tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
-            tbl_Fee = new HashSet<tbl_Fee>();
-            tbl_Product = new HashSet<tbl_Product>();
-            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
-            tbl_Loan_Covenant_Detail = new HashSet<tbl_Loan_Covenant_Detail>();
-            tbl_Loan_Fee = new HashSet<tbl_Loan_Fee>();
-            tbl_Loan_Force_Debit = new HashSet<tbl_Loan_Force_Debit>();
-            tbl_Loan_Guarantor = new HashSet<tbl_Loan_Guarantor>();
-            tbl_Loan_Past_Due = new HashSet<tbl_Loan_Past_Due>();
-            tbl_Loan_Schedule_Type_Product_Type_Mapping = new HashSet<tbl_Loan_Schedule_Type_Product_Type_Mapping>();
-            tbl_Temp_Charge_Fee = new HashSet<tbl_Temp_Charge_Fee>();
-            tbl_Temp_Fee = new HashSet<tbl_Temp_Fee>();
+            TBL_CHARGE_FEE = new HashSet<TBL_CHARGE_FEE>();
+            TBL_FEE = new HashSet<TBL_FEE>();
+            TBL_PRODUCT = new HashSet<TBL_PRODUCT>();
+            TBL_TEMP_PRODUCT = new HashSet<TBL_TEMP_PRODUCT>();
+            TBL_LOAN_COVENANT_DETAIL = new HashSet<TBL_LOAN_COVENANT_DETAIL>();
+            TBL_LOAN_FEE = new HashSet<TBL_LOAN_FEE>();
+            TBL_LOAN_FORCE_DEBIT = new HashSet<TBL_LOAN_FORCE_DEBIT>();
+            TBL_LOAN_GUARANTOR = new HashSet<TBL_LOAN_GUARANTOR>();
+            TBL_LOAN_PAST_DUE = new HashSet<TBL_LOAN_PAST_DUE>();
+            TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING = new HashSet<TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING>();
+            TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
+            TBL_TEMP_FEE = new HashSet<TBL_TEMP_FEE>();
         }
 
         [Key]
-        public short ProductTypeId { get; set; }
+        public short PRODUCTTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ProductTypeName { get; set; }
+        public string PRODUCTTYPENAME { get; set; }
 
-        public short ProductGroupId { get; set; }
+        public short PRODUCTGROUPID { get; set; }
 
-        public bool RequirePrincipalGL { get; set; }
+        public bool REQUIREPRINCIPALGL { get; set; }
 
-        public bool RequireInterestIncomeExpenseGL { get; set; }
+        public bool REQUIREINTERESTINCOMEEXPENSEGL { get; set; }
 
-        public bool RequireInterestReceivablePayableGL { get; set; }
+        public bool REQUIREINTERESTRECEIVABLEPAYABLEGL { get; set; }
 
-        public bool RequireDormantGL { get; set; }
+        public bool REQUIREDORMANTGL { get; set; }
 
-        public bool RequirePremiumDiscountGL { get; set; }
+        public bool REQUIREPREMIUMDISCOUNTGL { get; set; }
 
-        public bool RequireOverdrawnGL { get; set; }
+        public bool REQUIREOVERDRAWNGL { get; set; }
 
-        public short DealClassificationId { get; set; }
+        public short DEALCLASSIFICATIONID { get; set; }
 
-        public bool RequireRate { get; set; }
+        public bool REQUIRERATE { get; set; }
 
-        public bool RequireTenor { get; set; }
+        public bool REQUIRETENOR { get; set; }
 
-        public bool RequireScheduleType { get; set; }
+        public bool REQUIRESCHEDULETYPE { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Fee> tbl_Fee { get; set; }
+        public virtual ICollection<TBL_CHARGE_FEE> TBL_CHARGE_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product { get; set; }
-
-        public virtual tbl_Product_Group tbl_Product_Group { get; set; }
+        public virtual ICollection<TBL_FEE> TBL_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT { get; set; }
+
+        public virtual TBL_PRODUCT_GROUP TBL_PRODUCT_GROUP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Covenant_Detail> tbl_Loan_Covenant_Detail { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Fee> tbl_Loan_Fee { get; set; }
+        public virtual ICollection<TBL_LOAN_COVENANT_DETAIL> TBL_LOAN_COVENANT_DETAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Force_Debit> tbl_Loan_Force_Debit { get; set; }
+        public virtual ICollection<TBL_LOAN_FEE> TBL_LOAN_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Guarantor> tbl_Loan_Guarantor { get; set; }
+        public virtual ICollection<TBL_LOAN_FORCE_DEBIT> TBL_LOAN_FORCE_DEBIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Past_Due> tbl_Loan_Past_Due { get; set; }
+        public virtual ICollection<TBL_LOAN_GUARANTOR> TBL_LOAN_GUARANTOR { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Schedule_Type_Product_Type_Mapping> tbl_Loan_Schedule_Type_Product_Type_Mapping { get; set; }
-
-        public virtual tbl_Deal_Classification tbl_Deal_Classification { get; set; }
+        public virtual ICollection<TBL_LOAN_PAST_DUE> TBL_LOAN_PAST_DUE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Charge_Fee> tbl_Temp_Charge_Fee { get; set; }
+        public virtual ICollection<TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING> TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING { get; set; }
+
+        public virtual TBL_DEAL_CLASSIFICATION TBL_DEAL_CLASSIFICATION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Fee> tbl_Temp_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_FEE> TBL_TEMP_FEE { get; set; }
     }
 }

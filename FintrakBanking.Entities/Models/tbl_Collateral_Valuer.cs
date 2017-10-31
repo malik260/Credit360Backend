@@ -6,51 +6,51 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Valuer")]
-    public partial class tbl_Collateral_Valuer
+    [Table("credit.TBL_COLLATERAL_VALUER")]
+    public partial class TBL_COLLATERAL_VALUER
     {
         [Key]
-        public short CollateralValuerId { get; set; }
+        public short COLLATERALVALUERID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ValuerLicenceNumber { get; set; }
+        public string VALUERLICENCENUMBER { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string NAME { get; set; }
 
-        public short? ValuerTypeId { get; set; }
+        public short? VALUERTYPEID { get; set; }
 
-        public int? CompanyId { get; set; }
+        public int? COMPANYID { get; set; }
 
-        public short? CityId { get; set; }
+        public short? CITYID { get; set; }
 
-        public short? CountryId { get; set; }
-
-        [StringLength(50)]
-        public string EmailAddress { get; set; }
+        public short? COUNTRYID { get; set; }
 
         [StringLength(50)]
-        public string PhoneNumber { get; set; }
+        public string EMAILADDRESS { get; set; }
+
+        [StringLength(50)]
+        public string PHONENUMBER { get; set; }
 
         [StringLength(500)]
-        public string Address { get; set; }
+        public string ADDRESS { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Collateral_Valuer_Type tbl_Collateral_Valuer_Type { get; set; }
+        public virtual TBL_COLLATERAL_VALUER_TYPE TBL_COLLATERAL_VALUER_TYPE { get; set; }
     }
 }

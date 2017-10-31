@@ -6,27 +6,27 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Credit_Appraisal_Memorandum_Loan_Detail")]
-    public partial class tbl_Credit_Appraisal_Memorandum_Loan_Detail
+    [Table("credit.TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL")]
+    public partial class TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL
     {
         [Key]
-        public int AppraisalMemorandumLoanDetailId { get; set; }
+        public int APPRAISALMEMORANDUMLOANDETAILID { get; set; }
 
-        public int AppraisalMemorandumId { get; set; }
+        public int APPRAISALMEMORANDUMID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal PrincipalAmount { get; set; }
+        public decimal PRINCIPALAMOUNT { get; set; }
 
-        public double InterestRate { get; set; }
+        public double INTERESTRATE { get; set; }
 
-        public int Tenor { get; set; }
+        public int TENOR { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime SystemDateTime { get; set; }
+        public DateTime SYSTEMDATETIME { get; set; }
 
-        public virtual tbl_Credit_Appraisal_Memorandum tbl_Credit_Appraisal_Memorandum { get; set; }
+        public virtual TBL_CREDIT_APPRAISAL_MEMORANDUM TBL_CREDIT_APPRAISAL_MEMORANDUM { get; set; }
     }
 }

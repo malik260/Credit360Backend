@@ -6,95 +6,95 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Currency")]
-    public partial class tbl_Currency
+    [Table("core.TBL_CURRENCY")]
+    public partial class TBL_CURRENCY
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Currency()
+        public TBL_CURRENCY()
         {
-            tbl_CASA = new HashSet<tbl_CASA>();
-            tbl_Company = new HashSet<tbl_Company>();
-            tbl_Chart_Of_Account_Currency = new HashSet<tbl_Chart_Of_Account_Currency>();
-            tbl_Temp_Chart_Of_Account_Currency = new HashSet<tbl_Temp_Chart_Of_Account_Currency>();
-            tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
-            tbl_Currency_Rate = new HashSet<tbl_Currency_Rate>();
-            tbl_Currency_Rate1 = new HashSet<tbl_Currency_Rate>();
-            tbl_Daily_Accrual = new HashSet<tbl_Daily_Accrual>();
-            tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
-            tbl_Loan_Application_Detail = new HashSet<tbl_Loan_Application_Detail>();
-            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
-            tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
-            tbl_Loan = new HashSet<tbl_Loan>();
-            tbl_Product_Currency = new HashSet<tbl_Product_Currency>();
-            tbl_Temp_Product_Currency = new HashSet<tbl_Temp_Product_Currency>();
+            TBL_CASA = new HashSet<TBL_CASA>();
+            TBL_COMPANY = new HashSet<TBL_COMPANY>();
+            TBL_CHART_OF_ACCOUNT_CURRENCY = new HashSet<TBL_CHART_OF_ACCOUNT_CURRENCY>();
+            TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY>();
+            TBL_COLLATERAL_CUSTOMER = new HashSet<TBL_COLLATERAL_CUSTOMER>();
+            TBL_CURRENCY_RATE = new HashSet<TBL_CURRENCY_RATE>();
+            TBL_CURRENCY_RATE1 = new HashSet<TBL_CURRENCY_RATE>();
+            TBL_DAILY_ACCRUAL = new HashSet<TBL_DAILY_ACCRUAL>();
+            TBL_FINANCE_TRANSACTION = new HashSet<TBL_FINANCE_TRANSACTION>();
+            TBL_LOAN_APPLICATION_DETAIL = new HashSet<TBL_LOAN_APPLICATION_DETAIL>();
+            TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
+            TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
+            TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
+            TBL_LOAN = new HashSet<TBL_LOAN>();
+            TBL_PRODUCT_CURRENCY = new HashSet<TBL_PRODUCT_CURRENCY>();
+            TBL_TEMP_PRODUCT_CURRENCY = new HashSet<TBL_TEMP_PRODUCT_CURRENCY>();
         }
 
         [Key]
-        public short CurrencyId { get; set; }
+        public short CURRENCYID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string CurrencyCode { get; set; }
+        public string CURRENCYCODE { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string CurrencyName { get; set; }
+        public string CURRENCYNAME { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public int? CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_CASA> tbl_CASA { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Company> tbl_Company { get; set; }
+        public virtual ICollection<TBL_CASA> TBL_CASA { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Chart_Of_Account_Currency> tbl_Chart_Of_Account_Currency { get; set; }
+        public virtual ICollection<TBL_COMPANY> TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Chart_Of_Account_Currency> tbl_Temp_Chart_Of_Account_Currency { get; set; }
+        public virtual ICollection<TBL_CHART_OF_ACCOUNT_CURRENCY> TBL_CHART_OF_ACCOUNT_CURRENCY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
+        public virtual ICollection<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY> TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Currency_Rate> tbl_Currency_Rate { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_CUSTOMER> TBL_COLLATERAL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Currency_Rate> tbl_Currency_Rate1 { get; set; }
+        public virtual ICollection<TBL_CURRENCY_RATE> TBL_CURRENCY_RATE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Daily_Accrual> tbl_Daily_Accrual { get; set; }
+        public virtual ICollection<TBL_CURRENCY_RATE> TBL_CURRENCY_RATE1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
+        public virtual ICollection<TBL_DAILY_ACCRUAL> TBL_DAILY_ACCRUAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application_Detail> tbl_Loan_Application_Detail { get; set; }
+        public virtual ICollection<TBL_FINANCE_TRANSACTION> TBL_FINANCE_TRANSACTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION_DETAIL> TBL_LOAN_APPLICATION_DETAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
+        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
+        public virtual ICollection<TBL_LOAN_CONTINGENT> TBL_LOAN_CONTINGENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+        public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product_Currency> tbl_Product_Currency { get; set; }
+        public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_Currency> tbl_Temp_Product_Currency { get; set; }
+        public virtual ICollection<TBL_PRODUCT_CURRENCY> TBL_PRODUCT_CURRENCY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_PRODUCT_CURRENCY> TBL_TEMP_PRODUCT_CURRENCY { get; set; }
     }
 }

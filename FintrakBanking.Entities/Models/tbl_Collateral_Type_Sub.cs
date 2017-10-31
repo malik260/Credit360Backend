@@ -6,57 +6,57 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Type_Sub")]
-    public partial class tbl_Collateral_Type_Sub
+    [Table("credit.TBL_COLLATERAL_TYPE_SUB")]
+    public partial class TBL_COLLATERAL_TYPE_SUB
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Collateral_Type_Sub()
+        public TBL_COLLATERAL_TYPE_SUB()
         {
-            tbl_Temp_Collateral_Casa = new HashSet<tbl_Temp_Collateral_Casa>();
-            tbl_Temp_Collateral_Deposit = new HashSet<tbl_Temp_Collateral_Deposit>();
-            tbl_Temp_Collateral_Immovable_Property = new HashSet<tbl_Temp_Collateral_Immovable_Property>();
-            tbl_Temp_Collateral_Plant_And_Equipment = new HashSet<tbl_Temp_Collateral_Plant_And_Equipment>();
+            TBL_TEMP_COLLATERAL_CASA = new HashSet<TBL_TEMP_COLLATERAL_CASA>();
+            TBL_TEMP_COLLATERAL_DEPOSIT = new HashSet<TBL_TEMP_COLLATERAL_DEPOSIT>();
+            TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY = new HashSet<TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY>();
+            TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT = new HashSet<TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT>();
         }
 
         [Key]
-        public short CollateralSubTypeId { get; set; }
+        public short COLLATERALSUBTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string CollateralSubTypeName { get; set; }
+        public string COLLATERALSUBTYPENAME { get; set; }
 
-        public int CollateralTypeId { get; set; }
+        public int COLLATERALTYPEID { get; set; }
 
-        public double Haircut { get; set; }
+        public double HAIRCUT { get; set; }
 
-        public int RevaluationDuration { get; set; }
+        public int REVALUATIONDURATION { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_Casa> tbl_Temp_Collateral_Casa { get; set; }
+        public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_Deposit> tbl_Temp_Collateral_Deposit { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_CASA> TBL_TEMP_COLLATERAL_CASA { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_Immovable_Property> tbl_Temp_Collateral_Immovable_Property { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_DEPOSIT> TBL_TEMP_COLLATERAL_DEPOSIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_Plant_And_Equipment> tbl_Temp_Collateral_Plant_And_Equipment { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY> TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT> TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT { get; set; }
     }
 }

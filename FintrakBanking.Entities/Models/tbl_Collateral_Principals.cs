@@ -6,53 +6,53 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Principals")]
-    public partial class tbl_Collateral_Principals
+    [Table("credit.TBL_COLLATERAL_PRINCIPALS")]
+    public partial class TBL_COLLATERAL_PRINCIPALS
     {
         [Key]
-        public short PrincipalsId { get; set; }
+        public short PRINCIPALSID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string PrincipalsRegNumber { get; set; }
+        public string PRINCIPALSREGNUMBER { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string NAME { get; set; }
 
-        public int? CompanyId { get; set; }
+        public int? COMPANYID { get; set; }
 
-        public short? CityId { get; set; }
-
-        [StringLength(50)]
-        public string AccountNumber { get; set; }
+        public short? CITYID { get; set; }
 
         [StringLength(50)]
-        public string PrincipalsBVN { get; set; }
-
-        public short? CountryId { get; set; }
+        public string ACCOUNTNUMBER { get; set; }
 
         [StringLength(50)]
-        public string EmailAddress { get; set; }
+        public string PRINCIPALSBVN { get; set; }
+
+        public short? COUNTRYID { get; set; }
 
         [StringLength(50)]
-        public string PhoneNumber { get; set; }
+        public string EMAILADDRESS { get; set; }
+
+        [StringLength(50)]
+        public string PHONENUMBER { get; set; }
 
         [StringLength(500)]
-        public string Address { get; set; }
+        public string ADDRESS { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
     }
 }

@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Public_Holiday")]
-    public partial class tbl_Public_Holiday
+    [Table("core.TBL_PUBLIC_HOLIDAY")]
+    public partial class TBL_PUBLIC_HOLIDAY
     {
         [Key]
-        public int PublicHolidayId { get; set; }
+        public int PUBLICHOLIDAYID { get; set; }
 
-        public int CountryId { get; set; }
+        public int COUNTRYID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime Date { get; set; }
+        public DateTime DATE { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool ISACTIVE { get; set; }
 
-        public virtual tbl_Country tbl_Country { get; set; }
+        public virtual TBL_COUNTRY TBL_COUNTRY { get; set; }
     }
 }

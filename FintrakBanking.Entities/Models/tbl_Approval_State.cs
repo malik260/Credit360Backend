@@ -6,22 +6,22 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Approval_State")]
-    public partial class tbl_Approval_State
+    [Table("core.TBL_APPROVAL_STATE")]
+    public partial class TBL_APPROVAL_STATE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Approval_State()
+        public TBL_APPROVAL_STATE()
         {
-            tbl_Approval_Trail = new HashSet<tbl_Approval_Trail>();
+            TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
         }
 
         [Key]
-        public short ApprovalStateId { get; set; }
+        public short APPROVALSTATEID { get; set; }
 
         [StringLength(50)]
-        public string ApprovalState { get; set; }
+        public string APPROVALSTATE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Trail> tbl_Approval_Trail { get; set; }
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
     }
 }

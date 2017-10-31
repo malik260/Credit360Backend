@@ -6,153 +6,153 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Preliminary_Evaluation")]
-    public partial class tbl_Loan_Preliminary_Evaluation
+    [Table("credit.TBL_LOAN_PRELIMINARY_EVALUATION")]
+    public partial class TBL_LOAN_PRELIMINARY_EVALUATION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Preliminary_Evaluation()
+        public TBL_LOAN_PRELIMINARY_EVALUATION()
         {
-            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
+            TBL_LOAN_APPLICATION = new HashSet<TBL_LOAN_APPLICATION>();
         }
 
         [Key]
-        public int LoanPreliminaryEvaluationId { get; set; }
+        public int LOANPRELIMINARYEVALUATIONID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string PreliminaryEvaluationCode { get; set; }
+        public string PRELIMINARYEVALUATIONCODE { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public short BranchId { get; set; }
+        public short BRANCHID { get; set; }
 
-        public int? CustomerId { get; set; }
+        public int? CUSTOMERID { get; set; }
 
-        public int? CustomerGroupId { get; set; }
+        public int? CUSTOMERGROUPID { get; set; }
 
-        public int RelationshipOfficerId { get; set; }
+        public int RELATIONSHIPOFFICERID { get; set; }
 
-        public int RelationshipManagerId { get; set; }
+        public int RELATIONSHIPMANAGERID { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string ProjectDescription { get; set; }
+        public string PROJECTDESCRIPTION { get; set; }
 
         [Required]
         [StringLength(300)]
-        public string ClientDescription { get; set; }
+        public string CLIENTDESCRIPTION { get; set; }
 
         [StringLength(300)]
-        public string OwnershipStructure { get; set; }
+        public string OWNERSHIPSTRUCTURE { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string ProjectFinancingPlan { get; set; }
+        public string PROJECTFINANCINGPLAN { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string ExistingExposure { get; set; }
+        public string EXISTINGEXPOSURE { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string BankRole { get; set; }
+        public string BANKROLE { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string CollateralArrangement { get; set; }
+        public string COLLATERALARRANGEMENT { get; set; }
 
         [Required]
-        public string ProposedTermsAndConditions { get; set; }
-
-        [Required]
-        [StringLength(500)]
-        public string ImplementationArrangements { get; set; }
-
-        [Required]
-        public string MarketDemand { get; set; }
-
-        [Required]
-        public string BusinessProfile { get; set; }
-
-        [Required]
-        public string RisksAndConcerns { get; set; }
+        public string PROPOSEDTERMSANDCONDITIONS { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string PrudentialExposureLimitImplications { get; set; }
+        public string IMPLEMENTATIONARRANGEMENTS { get; set; }
+
+        [Required]
+        public string MARKETDEMAND { get; set; }
+
+        [Required]
+        public string BUSINESSPROFILE { get; set; }
+
+        [Required]
+        public string RISKSANDCONCERNS { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string EnvironmentalImpact { get; set; }
+        public string PRUDENTIALEXPOSURELIMITIMPLICATIONS { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string PortfolioStrategicAlignment { get; set; }
+        public string ENVIRONMENTALIMPACT { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string CommercialViabilityAssessment { get; set; }
+        public string PORTFOLIOSTRATEGICALIGNMENT { get; set; }
+
+        [Required]
+        [StringLength(500)]
+        public string COMMERCIALVIABILITYASSESSMENT { get; set; }
 
         [StringLength(50)]
-        public string TaxIdentificationNumber { get; set; }
+        public string TAXIDENTIFICATIONNUMBER { get; set; }
 
         [StringLength(50)]
-        public string RegistrationNumber { get; set; }
+        public string REGISTRATIONNUMBER { get; set; }
 
-        public short ApprovalStatusId { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
-        public bool IsCurrent { get; set; }
+        public bool ISCURRENT { get; set; }
 
-        public bool SentForEvaluation { get; set; }
+        public bool SENTFOREVALUATION { get; set; }
 
-        public bool SentForLoanApplication { get; set; }
+        public bool SENTFORLOANAPPLICATION { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal LoanAmount { get; set; }
+        public decimal LOANAMOUNT { get; set; }
 
-        public short ProductClassId { get; set; }
+        public short PRODUCTCLASSID { get; set; }
 
-        public short? SubSectorId { get; set; }
+        public short? SUBSECTORID { get; set; }
 
-        public short LoanTypeId { get; set; }
+        public short LOANTYPEID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public DateTime? DateApproved { get; set; }
+        public DateTime? DATEAPPROVED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
+        public virtual TBL_CUSTOMER_GROUP TBL_CUSTOMER_GROUP { get; set; }
 
-        public virtual tbl_Product_Class tbl_Product_Class { get; set; }
+        public virtual TBL_PRODUCT_CLASS TBL_PRODUCT_CLASS { get; set; }
 
-        public virtual tbl_Staff tbl_Staff { get; set; }
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
 
-        public virtual tbl_Staff tbl_Staff1 { get; set; }
+        public virtual TBL_STAFF TBL_STAFF1 { get; set; }
 
-        public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
+        public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION { get; set; }
 
-        public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
+        public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
     }
 }

@@ -6,43 +6,43 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Credit_Template")]
-    public partial class tbl_Credit_Template
+    [Table("credit.TBL_CREDIT_TEMPLATE")]
+    public partial class TBL_CREDIT_TEMPLATE
     {
         [Key]
-        public int CreditTemplateId { get; set; }
+        public int CREDITTEMPLATEID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string TemplateTitle { get; set; }
+        public string TEMPLATETITLE { get; set; }
 
         [Required]
-        public string TemplateDocument { get; set; }
+        public string TEMPLATEDOCUMENT { get; set; }
 
-        public int ApprovalLevelId { get; set; }
+        public int APPROVALLEVELID { get; set; }
 
-        public short ProductClassId { get; set; }
+        public short PRODUCTCLASSID { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public virtual tbl_Approval_Level tbl_Approval_Level { get; set; }
+        public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Product_Class tbl_Product_Class { get; set; }
+        public virtual TBL_PRODUCT_CLASS TBL_PRODUCT_CLASS { get; set; }
     }
 }

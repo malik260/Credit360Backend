@@ -6,147 +6,147 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Application")]
-    public partial class tbl_Loan_Application
+    [Table("credit.TBL_LOAN_APPLICATION")]
+    public partial class TBL_LOAN_APPLICATION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Application()
+        public TBL_LOAN_APPLICATION()
         {
-            tbl_Credit_Appraisal_Memorandum = new HashSet<tbl_Credit_Appraisal_Memorandum>();
-            tbl_Loan_Condition_Precedent = new HashSet<tbl_Loan_Condition_Precedent>();
-            tbl_Loan_Application_Detail = new HashSet<tbl_Loan_Application_Detail>();
-            tbl_Loan_Collateral_Mapping = new HashSet<tbl_Loan_Collateral_Mapping>();
-            tbl_Loan_Application_Collateral = new HashSet<tbl_Loan_Application_Collateral>();
-            tbl_Loan_Guarantor = new HashSet<tbl_Loan_Guarantor>();
-            tbl_Risk_Assessment = new HashSet<tbl_Risk_Assessment>();
+            TBL_CREDIT_APPRAISAL_MEMORANDUM = new HashSet<TBL_CREDIT_APPRAISAL_MEMORANDUM>();
+            TBL_LOAN_CONDITION_PRECEDENT = new HashSet<TBL_LOAN_CONDITION_PRECEDENT>();
+            TBL_LOAN_APPLICATION_DETAIL = new HashSet<TBL_LOAN_APPLICATION_DETAIL>();
+            TBL_LOAN_COLLATERAL_MAPPING = new HashSet<TBL_LOAN_COLLATERAL_MAPPING>();
+            TBL_LOAN_APPLICATION_COLLATERAL = new HashSet<TBL_LOAN_APPLICATION_COLLATERAL>();
+            TBL_LOAN_GUARANTOR = new HashSet<TBL_LOAN_GUARANTOR>();
+            TBL_RISK_ASSESSMENT = new HashSet<TBL_RISK_ASSESSMENT>();
         }
 
         [Key]
-        public int LoanApplicationId { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ApplicationReferenceNumber { get; set; }
+        public string APPLICATIONREFERENCENUMBER { get; set; }
 
-        public int? LoanPreliminaryEvaluationId { get; set; }
+        public int? LOANPRELIMINARYEVALUATIONID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int? CustomerId { get; set; }
+        public int? CUSTOMERID { get; set; }
 
-        public short BranchId { get; set; }
+        public short BRANCHID { get; set; }
 
-        public int? CustomerGroupId { get; set; }
+        public int? CUSTOMERGROUPID { get; set; }
 
-        public short LoanTypeId { get; set; }
+        public short LOANTYPEID { get; set; }
 
-        public int RelationshipOfficerId { get; set; }
+        public int RELATIONSHIPOFFICERID { get; set; }
 
-        public int RelationshipManagerId { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime ApplicationDate { get; set; }
-
-        public double InterestRate { get; set; }
-
-        public int ApplicationTenor { get; set; }
+        public int RELATIONSHIPMANAGERID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? EffectiveDate { get; set; }
+        public DateTime APPLICATIONDATE { get; set; }
+
+        public double INTERESTRATE { get; set; }
+
+        public int APPLICATIONTENOR { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? ExpiryDate { get; set; }
+        public DateTime? EFFECTIVEDATE { get; set; }
 
-        public int OperationId { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime? EXPIRYDATE { get; set; }
+
+        public int OPERATIONID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal ApplicationAmount { get; set; }
+        public decimal APPLICATIONAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal ApprovedAmount { get; set; }
+        public decimal APPROVEDAMOUNT { get; set; }
 
         [Required]
-        public string LoanInformation { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string MISCode { get; set; }
+        public string LOANINFORMATION { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string TeamMISCode { get; set; }
+        public string MISCODE { get; set; }
 
-        public bool IsInvestmentGrade { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string TEAMMISCODE { get; set; }
 
-        public bool IsRelatedParty { get; set; }
+        public bool ISINVESTMENTGRADE { get; set; }
 
-        public bool IsPoliticallyExposed { get; set; }
+        public bool ISRELATEDPARTY { get; set; }
 
-        public int CreatedBy { get; set; }
+        public bool ISPOLITICALLYEXPOSED { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public bool Deleted { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public bool DELETED { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime SystemDateTime { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int ApprovalStatusId { get; set; }
+        public DateTime SYSTEMDATETIME { get; set; }
 
-        public short ApplicationStatusId { get; set; }
+        public int APPROVALSTATUSID { get; set; }
 
-        public DateTime? DateActedOn { get; set; }
+        public short APPLICATIONSTATUSID { get; set; }
 
-        public int? ActedOnBy { get; set; }
+        public DateTime? DATEACTEDON { get; set; }
 
-        public bool SubmittedForAppraisal { get; set; }
+        public int? ACTEDONBY { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
+        public bool SUBMITTEDFORAPPRAISAL { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual tbl_Operations tbl_Operations { get; set; }
+        public virtual TBL_CUSTOMER_GROUP TBL_CUSTOMER_GROUP { get; set; }
 
-        public virtual tbl_Staff tbl_Staff { get; set; }
+        public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
-        public virtual tbl_Staff tbl_Staff1 { get; set; }
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Credit_Appraisal_Memorandum> tbl_Credit_Appraisal_Memorandum { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Condition_Precedent> tbl_Loan_Condition_Precedent { get; set; }
+        public virtual TBL_STAFF TBL_STAFF1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application_Detail> tbl_Loan_Application_Detail { get; set; }
-
-        public virtual tbl_Loan_Application_Status tbl_Loan_Application_Status { get; set; }
-
-        public virtual tbl_Loan_Preliminary_Evaluation tbl_Loan_Preliminary_Evaluation { get; set; }
-
-        public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
+        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMORANDUM> TBL_CREDIT_APPRAISAL_MEMORANDUM { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Collateral_Mapping> tbl_Loan_Collateral_Mapping { get; set; }
+        public virtual ICollection<TBL_LOAN_CONDITION_PRECEDENT> TBL_LOAN_CONDITION_PRECEDENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application_Collateral> tbl_Loan_Application_Collateral { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION_DETAIL> TBL_LOAN_APPLICATION_DETAIL { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION_STATUS TBL_LOAN_APPLICATION_STATUS { get; set; }
+
+        public virtual TBL_LOAN_PRELIMINARY_EVALUATION TBL_LOAN_PRELIMINARY_EVALUATION { get; set; }
+
+        public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Guarantor> tbl_Loan_Guarantor { get; set; }
+        public virtual ICollection<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Risk_Assessment> tbl_Risk_Assessment { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION_COLLATERAL> TBL_LOAN_APPLICATION_COLLATERAL { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_GUARANTOR> TBL_LOAN_GUARANTOR { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_RISK_ASSESSMENT> TBL_RISK_ASSESSMENT { get; set; }
     }
 }

@@ -6,44 +6,44 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Account_KYC_Item")]
-    public partial class tbl_Customer_Account_KYC_Item
+    [Table("core.TBL_CUSTOMER_ACCOUNT_KYC_ITEM")]
+    public partial class TBL_CUSTOMER_ACCOUNT_KYC_ITEM
     {
         [Key]
-        public int CustomerAccountKYCItemId { get; set; }
+        public int CUSTOMERACCOUNTKYCITEMID { get; set; }
 
-        public short? KYCItemId { get; set; }
+        public short? KYCITEMID { get; set; }
 
-        public int CustomerId { get; set; }
-
-        [StringLength(100)]
-        public string AccountNumber { get; set; }
-
-        public bool? Provided { get; set; }
-
-        public bool? Deferred { get; set; }
-
-        public bool? Waived { get; set; }
-
-        public bool? Disapproved { get; set; }
-
-        public bool? Approved { get; set; }
-
-        public bool? DateApproved { get; set; }
-
-        public bool? ApprovedBy { get; set; }
+        public int CUSTOMERID { get; set; }
 
         [StringLength(100)]
-        public string CreatedBy { get; set; }
+        public string ACCOUNTNUMBER { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public bool? PROVIDED { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public bool? DEFERRED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public bool? WAIVED { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public bool? DISAPPROVED { get; set; }
 
-        public virtual tbl_KYC_Item tbl_KYC_Item { get; set; }
+        public bool? APPROVED { get; set; }
+
+        public bool? DATEAPPROVED { get; set; }
+
+        public bool? APPROVEDBY { get; set; }
+
+        [StringLength(100)]
+        public string CREATEDBY { get; set; }
+
+        public int? LASTUPDATEDBY { get; set; }
+
+        public DateTime? DATETIMECREATED { get; set; }
+
+        public DateTime? DATETIMEUPDATED { get; set; }
+
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
+
+        public virtual TBL_KYC_ITEM TBL_KYC_ITEM { get; set; }
     }
 }

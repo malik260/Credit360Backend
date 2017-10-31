@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Operations_Type")]
-    public partial class tbl_Operations_Type
+    [Table("core.TBL_OPERATIONS_TYPE")]
+    public partial class TBL_OPERATIONS_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Operations_Type()
+        public TBL_OPERATIONS_TYPE()
         {
-            tbl_Operations = new HashSet<tbl_Operations>();
+            TBL_OPERATIONS = new HashSet<TBL_OPERATIONS>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short OperationTypeId { get; set; }
+        public short OPERATIONTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string OperationTypeName { get; set; }
+        public string OPERATIONTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Operations> tbl_Operations { get; set; }
+        public virtual ICollection<TBL_OPERATIONS> TBL_OPERATIONS { get; set; }
     }
 }

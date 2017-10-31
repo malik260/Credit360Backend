@@ -6,15 +6,15 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Tenor_Mode")]
-    public partial class tbl_Tenor_Mode
+    [Table("core.TBL_TENOR_MODE")]
+    public partial class TBL_TENOR_MODE
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short TenorModeId { get; set; }
+        public short TENORMODEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string TenorModeName { get; set; }
+        public string TENORMODENAME { get; set; }
     }
 }

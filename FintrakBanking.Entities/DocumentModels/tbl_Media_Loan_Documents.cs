@@ -6,43 +6,43 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class tbl_Media_Loan_Documents
+    public partial class TBL_MEDIA_LOAN_DOCUMENTS
     {
         [Key]
-        public int DocumentId { get; set; }
+        public int DOCUMENTID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LoanApplicationNumber { get; set; }
+        public string LOANAPPLICATIONNUMBER { get; set; }
 
         [StringLength(50)]
-        public string LoanReferenceNumber { get; set; }
+        public string LOANREFERENCENUMBER { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string DocumentTitle { get; set; }
+        public string DOCUMENTTITLE { get; set; }
 
-        public short DocumentTypeId { get; set; }
+        public short DOCUMENTTYPEID { get; set; }
 
         [Required]
         [StringLength(400)]
-        public string FileName { get; set; }
+        public string FILENAME { get; set; }
 
         [Required]
         [StringLength(10)]
-        public string FileExtension { get; set; }
+        public string FILEEXTENSION { get; set; }
 
         [Required]
-        public byte[] FileData { get; set; }
+        public byte[] FILEDATA { get; set; }
 
-        public DateTime SystemDateTime { get; set; }
+        public DateTime SYSTEMDATETIME { get; set; }
 
         [StringLength(50)]
-        public string PhysicalFileNumber { get; set; }
+        public string PHYSICALFILENUMBER { get; set; }
 
         [StringLength(250)]
-        public string PhysicalLocation { get; set; }
+        public string PHYSICALLOCATION { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
     }
 }

@@ -6,35 +6,35 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Risk_Assessment_Result")]
-    public partial class tbl_Risk_Assessment_Result
+    [Table("credit.TBL_RISK_ASSESSMENT_RESULT")]
+    public partial class TBL_RISK_ASSESSMENT_RESULT
     {
         [Key]
-        public int AssessmentResultId { get; set; }
+        public int ASSESSMENTRESULTID { get; set; }
 
-        public int LoanApplicationId { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
 
-        public int RiskAssessmentTitleId { get; set; }
+        public int RISKASSESSMENTTITLEID { get; set; }
 
         [StringLength(50)]
-        public string CreditRating { get; set; }
+        public string CREDITRATING { get; set; }
 
-        public decimal TotalScore { get; set; }
+        public decimal TOTALSCORE { get; set; }
 
-        public short CompanyId { get; set; }
+        public short COMPANYID { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
     }
 }

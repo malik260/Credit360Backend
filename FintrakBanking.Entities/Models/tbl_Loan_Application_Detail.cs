@@ -6,91 +6,91 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Application_Detail")]
-    public partial class tbl_Loan_Application_Detail
+    [Table("credit.TBL_LOAN_APPLICATION_DETAIL")]
+    public partial class TBL_LOAN_APPLICATION_DETAIL
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Application_Detail()
+        public TBL_LOAN_APPLICATION_DETAIL()
         {
-            tbl_Loan = new HashSet<tbl_Loan>();
-            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
-            tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
+            TBL_LOAN = new HashSet<TBL_LOAN>();
+            TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
+            TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
+            TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
         }
 
         [Key]
-        public int LoanApplicationDetailId { get; set; }
+        public int LOANAPPLICATIONDETAILID { get; set; }
 
-        public int LoanApplicationId { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
-        public short ProposedProductId { get; set; }
+        public short PROPOSEDPRODUCTID { get; set; }
 
-        public int ProposedTenor { get; set; }
+        public int PROPOSEDTENOR { get; set; }
 
-        public double ProposedInterestRate { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal ProposedAmount { get; set; }
-
-        public short ApprovedProductId { get; set; }
-
-        public int ApprovedTenor { get; set; }
-
-        public double ApprovedInterestRate { get; set; }
+        public double PROPOSEDINTERESTRATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal ApprovedAmount { get; set; }
+        public decimal PROPOSEDAMOUNT { get; set; }
 
-        public short CurrencyId { get; set; }
+        public short APPROVEDPRODUCTID { get; set; }
 
-        public double ExchangeRate { get; set; }
+        public int APPROVEDTENOR { get; set; }
 
-        public short SubSectorId { get; set; }
+        public double APPROVEDINTERESTRATE { get; set; }
 
-        public short StatusId { get; set; }
+        [Column(TypeName = "money")]
+        public decimal APPROVEDAMOUNT { get; set; }
 
-        public bool HasDoneChecklist { get; set; }
+        public short CURRENCYID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public double EXCHANGERATE { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public short SUBSECTORID { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public short STATUSID { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public bool HASDONECHECKLIST { get; set; }
 
-        public bool Deleted { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual tbl_Currency tbl_Currency { get; set; }
+        public bool DELETED { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public virtual tbl_Product tbl_Product { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Product tbl_Product1 { get; set; }
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
+        public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+        public virtual TBL_PRODUCT TBL_PRODUCT1 { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
+        public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
+        public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_CONTINGENT> TBL_LOAN_CONTINGENT { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; }
     }
 }

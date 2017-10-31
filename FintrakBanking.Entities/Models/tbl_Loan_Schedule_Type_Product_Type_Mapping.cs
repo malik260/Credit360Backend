@@ -6,18 +6,18 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Schedule_Type_Product_Type_Mapping")]
-    public partial class tbl_Loan_Schedule_Type_Product_Type_Mapping
+    [Table("credit.TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING")]
+    public partial class TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING
     {
         [Key]
-        public int ScheduleProductTypeId { get; set; }
+        public int SCHEDULEPRODUCTTYPEID { get; set; }
 
-        public short ScheduleTypeId { get; set; }
+        public short SCHEDULETYPEID { get; set; }
 
-        public short ProductTypeId { get; set; }
+        public short PRODUCTTYPEID { get; set; }
 
-        public virtual tbl_Product_Type tbl_Product_Type { get; set; }
+        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
 
-        public virtual tbl_Loan_Schedule_Type tbl_Loan_Schedule_Type { get; set; }
+        public virtual TBL_LOAN_SCHEDULE_TYPE TBL_LOAN_SCHEDULE_TYPE { get; set; }
     }
 }

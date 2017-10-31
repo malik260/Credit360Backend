@@ -6,110 +6,110 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Schedule_Daily")]
-    public partial class tbl_Loan_Schedule_Daily
+    [Table("credit.TBL_LOAN_SCHEDULE_DAILY")]
+    public partial class TBL_LOAN_SCHEDULE_DAILY
     {
         [Key]
-        public int DailyScheduleId { get; set; }
+        public int DAILYSCHEDULEID { get; set; }
 
-        public int LoanId { get; set; }
+        public int LOANID { get; set; }
 
-        public int PaymentNumber { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime Date { get; set; }
+        public int PAYMENTNUMBER { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime PaymentDate { get; set; }
+        public DateTime DATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime PAYMENTDATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal OpeningBalance { get; set; }
+        public decimal OPENINGBALANCE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal StartPrincipalAmount { get; set; }
+        public decimal STARTPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal DailyPaymentAmount { get; set; }
+        public decimal DAILYPAYMENTAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal DailyInterestAmount { get; set; }
+        public decimal DAILYINTERESTAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal DailyPrincipalAmount { get; set; }
+        public decimal DAILYPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal ClosingBalance { get; set; }
+        public decimal CLOSINGBALANCE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal EndPrincipalAmount { get; set; }
+        public decimal ENDPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AccruedInterest { get; set; }
+        public decimal ACCRUEDINTEREST { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedCost { get; set; }
+        public decimal AMORTISEDCOST { get; set; }
 
-        public double InterestRate { get; set; }
+        public double INTERESTRATE { get; set; }
 
-        public double PreviousInterestRate { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal PreviousInterestAmount { get; set; }
+        public double PREVIOUSINTERESTRATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal PreviousPrincipalAmount { get; set; }
+        public decimal PREVIOUSINTERESTAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedOpeningBalance { get; set; }
+        public decimal PREVIOUSPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedStartPrincipalAmount { get; set; }
+        public decimal AMORTISEDOPENINGBALANCE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedDailyPaymentAmount { get; set; }
+        public decimal AMORTISEDSTARTPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedDailyInterestAmount { get; set; }
+        public decimal AMORTISEDDAILYPAYMENTAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedDailyPrincipalAmount { get; set; }
+        public decimal AMORTISEDDAILYINTERESTAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedClosingBalance { get; set; }
+        public decimal AMORTISEDDAILYPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedEndPrincipalAmount { get; set; }
+        public decimal AMORTISEDCLOSINGBALANCE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedAccruedInterest { get; set; }
+        public decimal AMORTISEDENDPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal Amortised_AmortisedCost { get; set; }
+        public decimal AMORTISEDACCRUEDINTEREST { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal DiscountPremium { get; set; }
+        public decimal AMORTISED_AMORTISEDCOST { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal UnEarnedFee { get; set; }
+        public decimal DISCOUNTPREMIUM { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal EarnedFee { get; set; }
-
-        public double EffectiveInterestRate { get; set; }
-
-        public int NumberOfPeriods { get; set; }
+        public decimal UNEARNEDFEE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal BallonAmount { get; set; }
+        public decimal EARNEDFEE { get; set; }
 
-        public int CreatedBy { get; set; }
+        public double EFFECTIVEINTERESTRATE { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public int NUMBEROFPERIODS { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        [Column(TypeName = "money")]
+        public decimal BALLONAMOUNT { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public virtual tbl_Loan tbl_Loan { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
+
+        public int? LASTUPDATEDBY { get; set; }
+
+        public DateTime? DATETIMEUPDATED { get; set; }
+
+        public virtual TBL_LOAN TBL_LOAN { get; set; }
     }
 }

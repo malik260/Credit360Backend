@@ -6,19 +6,19 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Application_Setup")]
-    public partial class tbl_Application_Setup
+    [Table("core.TBL_APPLICATION_SETUP")]
+    public partial class TBL_APPLICATION_SETUP
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short ApplicationSetupId { get; set; }
+        public short APPLICATIONSETUPID { get; set; }
 
         [StringLength(500)]
-        public string ReportPath { get; set; }
+        public string REPORTPATH { get; set; }
 
-        public bool UseActiveDirectory { get; set; }
+        public bool USEACTIVEDIRECTORY { get; set; }
 
         [StringLength(100)]
-        public string ActiveDirectoryDomain { get; set; }
+        public string ACTIVEDIRECTORYDOMAIN { get; set; }
     }
 }

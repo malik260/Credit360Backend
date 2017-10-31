@@ -6,77 +6,77 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_FS_Caption")]
-    public partial class tbl_Customer_FS_Caption
+    [Table("core.TBL_CUSTOMER_FS_CAPTION")]
+    public partial class TBL_CUSTOMER_FS_CAPTION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Customer_FS_Caption()
+        public TBL_CUSTOMER_FS_CAPTION()
         {
-            tbl_Customer_FS_Caption_Detail = new HashSet<tbl_Customer_FS_Caption_Detail>();
-            tbl_Customer_FS_Ratio_Detail = new HashSet<tbl_Customer_FS_Ratio_Detail>();
-            tbl_Customer_FS_Caption1 = new HashSet<tbl_Customer_FS_Caption>();
+            TBL_CUSTOMER_FS_CAPTION_DETAIL = new HashSet<TBL_CUSTOMER_FS_CAPTION_DETAIL>();
+            TBL_CUSTOMER_FS_RATIO_DETAIL = new HashSet<TBL_CUSTOMER_FS_RATIO_DETAIL>();
+            TBL_CUSTOMER_FS_CAPTION1 = new HashSet<TBL_CUSTOMER_FS_CAPTION>();
         }
 
         [Key]
-        public int FSCaptionId { get; set; }
+        public int FSCAPTIONID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string FSCaptionCode { get; set; }
+        public string FSCAPTIONCODE { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string FSCaptionName { get; set; }
+        public string FSCAPTIONNAME { get; set; }
 
-        public short FSCaptionGroupId { get; set; }
+        public short FSCAPTIONGROUPID { get; set; }
 
-        public int? ParentIdFSCaptionId { get; set; }
+        public int? PARENTIDFSCAPTIONID { get; set; }
 
-        public short? AccountCategoryId { get; set; }
+        public short? ACCOUNTCATEGORYID { get; set; }
 
-        public short FSTypeId { get; set; }
+        public short FSTYPEID { get; set; }
 
-        public int Position { get; set; }
-
-        [StringLength(50)]
-        public string RefNote { get; set; }
-
-        public bool IsTotalLine { get; set; }
+        public int POSITION { get; set; }
 
         [StringLength(50)]
-        public string ReportColour { get; set; }
+        public string REFNOTE { get; set; }
 
-        public double Multiplier { get; set; }
+        public bool ISTOTALLINE { get; set; }
 
-        public int CreatedBy { get; set; }
+        [StringLength(50)]
+        public string REPORTCOLOUR { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public double MULTIPLIER { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public bool Deleted { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public bool DELETED { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_FS_Caption_Detail> tbl_Customer_FS_Caption_Detail { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_FS_Ratio_Detail> tbl_Customer_FS_Ratio_Detail { get; set; }
-
-        public virtual tbl_Account_Category tbl_Account_Category { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_FS_Caption> tbl_Customer_FS_Caption1 { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_FS_CAPTION_DETAIL> TBL_CUSTOMER_FS_CAPTION_DETAIL { get; set; }
 
-        public virtual tbl_Customer_FS_Caption tbl_Customer_FS_Caption2 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CUSTOMER_FS_RATIO_DETAIL> TBL_CUSTOMER_FS_RATIO_DETAIL { get; set; }
 
-        public virtual tbl_Customer_FS_Caption_Group tbl_Customer_FS_Caption_Group { get; set; }
+        public virtual TBL_ACCOUNT_CATEGORY TBL_ACCOUNT_CATEGORY { get; set; }
 
-        public virtual tbl_Financial_Statement_Type tbl_Financial_Statement_Type { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CUSTOMER_FS_CAPTION> TBL_CUSTOMER_FS_CAPTION1 { get; set; }
+
+        public virtual TBL_CUSTOMER_FS_CAPTION TBL_CUSTOMER_FS_CAPTION2 { get; set; }
+
+        public virtual TBL_CUSTOMER_FS_CAPTION_GROUP TBL_CUSTOMER_FS_CAPTION_GROUP { get; set; }
+
+        public virtual TBL_FINANCIAL_STATEMENT_TYPE TBL_FINANCIAL_STATEMENT_TYPE { get; set; }
     }
 }

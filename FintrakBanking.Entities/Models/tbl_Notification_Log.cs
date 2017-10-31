@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Notification_Log")]
-    public partial class tbl_Notification_Log
+    [Table("core.TBL_NOTIFICATION_LOG")]
+    public partial class TBL_NOTIFICATION_LOG
     {
         [Key]
-        public long NotificationId { get; set; }
+        public long NOTIFICATIONID { get; set; }
 
-        public int StaffId { get; set; }
+        public int STAFFID { get; set; }
 
         [Required]
         [StringLength(1000)]
-        public string Message { get; set; }
+        public string MESSAGE { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ActionUrl { get; set; }
+        public string ACTIONURL { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool ISACTIVE { get; set; }
 
-        public virtual tbl_Staff tbl_Staff { get; set; }
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
     }
 }

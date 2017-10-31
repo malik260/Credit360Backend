@@ -6,36 +6,36 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Fee_Amortisation_Type")]
-    public partial class tbl_Fee_Amortisation_Type
+    [Table("core.TBL_FEE_AMORTISATION_TYPE")]
+    public partial class TBL_FEE_AMORTISATION_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Fee_Amortisation_Type()
+        public TBL_FEE_AMORTISATION_TYPE()
         {
-            tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
-            tbl_Fee = new HashSet<tbl_Fee>();
-            tbl_Temp_Charge_Fee = new HashSet<tbl_Temp_Charge_Fee>();
-            tbl_Temp_Fee = new HashSet<tbl_Temp_Fee>();
+            TBL_CHARGE_FEE = new HashSet<TBL_CHARGE_FEE>();
+            TBL_FEE = new HashSet<TBL_FEE>();
+            TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
+            TBL_TEMP_FEE = new HashSet<TBL_TEMP_FEE>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short FeeAmortisationTypeId { get; set; }
+        public short FEEAMORTISATIONTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string FeeAmortisationTypeName { get; set; }
+        public string FEEAMORTISATIONTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
+        public virtual ICollection<TBL_CHARGE_FEE> TBL_CHARGE_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Fee> tbl_Fee { get; set; }
+        public virtual ICollection<TBL_FEE> TBL_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Charge_Fee> tbl_Temp_Charge_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Fee> tbl_Temp_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_FEE> TBL_TEMP_FEE { get; set; }
     }
 }

@@ -6,71 +6,71 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Schedule_Periodic")]
-    public partial class tbl_Loan_Schedule_Periodic
+    [Table("credit.TBL_LOAN_SCHEDULE_PERIODIC")]
+    public partial class TBL_LOAN_SCHEDULE_PERIODIC
     {
         [Key]
-        public int PeriodicScheduleId { get; set; }
+        public int PERIODICSCHEDULEID { get; set; }
 
-        public int LoanId { get; set; }
+        public int LOANID { get; set; }
 
-        public int PaymentNumber { get; set; }
+        public int PAYMENTNUMBER { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime PaymentDate { get; set; }
+        public DateTime PAYMENTDATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal StartPrincipalAmount { get; set; }
+        public decimal STARTPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal PeriodPaymentAmount { get; set; }
+        public decimal PERIODPAYMENTAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal PeriodInterestAmount { get; set; }
+        public decimal PERIODINTERESTAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal PeriodPrincipalAmount { get; set; }
+        public decimal PERIODPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal EndPrincipalAmount { get; set; }
+        public decimal ENDPRINCIPALAMOUNT { get; set; }
 
-        public double InterestRate { get; set; }
+        public double INTERESTRATE { get; set; }
 
-        public double? PreviousInterestRate { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal PreviousInterestAmount { get; set; }
+        public double? PREVIOUSINTERESTRATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal PreviousPrincipalAmount { get; set; }
+        public decimal PREVIOUSINTERESTAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedStartPrincipalAmount { get; set; }
+        public decimal PREVIOUSPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedPeriodPaymentAmount { get; set; }
+        public decimal AMORTISEDSTARTPRINCIPALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedPeriodInterestAmount { get; set; }
+        public decimal AMORTISEDPERIODPAYMENTAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedPeriodPrincipalAmount { get; set; }
+        public decimal AMORTISEDPERIODINTERESTAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AmortisedEndPrincipalAmount { get; set; }
+        public decimal AMORTISEDPERIODPRINCIPALAMOUNT { get; set; }
 
-        public double EffectiveInterestRate { get; set; }
+        [Column(TypeName = "money")]
+        public decimal AMORTISEDENDPRINCIPALAMOUNT { get; set; }
 
-        public double? PreviousEffectiveInterestRate { get; set; }
+        public double EFFECTIVEINTERESTRATE { get; set; }
 
-        public int CreatedBy { get; set; }
+        public double? PREVIOUSEFFECTIVEINTERESTRATE { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public virtual tbl_Loan tbl_Loan { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
+
+        public virtual TBL_LOAN TBL_LOAN { get; set; }
     }
 }

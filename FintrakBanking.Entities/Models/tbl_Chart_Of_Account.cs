@@ -6,150 +6,150 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("finance.tbl_Chart_Of_Account")]
-    public partial class tbl_Chart_Of_Account
+    [Table("finance.TBL_CHART_OF_ACCOUNT")]
+    public partial class TBL_CHART_OF_ACCOUNT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Chart_Of_Account()
+        public TBL_CHART_OF_ACCOUNT()
         {
-            tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
-            tbl_Fee = new HashSet<tbl_Fee>();
-            tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
-            tbl_Product = new HashSet<tbl_Product>();
-            tbl_Product1 = new HashSet<tbl_Product>();
-            tbl_Product2 = new HashSet<tbl_Product>();
-            tbl_Product3 = new HashSet<tbl_Product>();
-            tbl_Product4 = new HashSet<tbl_Product>();
-            tbl_Product5 = new HashSet<tbl_Product>();
-            tbl_Tax = new HashSet<tbl_Tax>();
-            tbl_Collateral_Type = new HashSet<tbl_Collateral_Type>();
-            tbl_Charges = new HashSet<tbl_Charges>();
-            tbl_Chart_Of_Account_Currency = new HashSet<tbl_Chart_Of_Account_Currency>();
-            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
-            tbl_Temp_Product1 = new HashSet<tbl_Temp_Product>();
-            tbl_Temp_Product2 = new HashSet<tbl_Temp_Product>();
-            tbl_Temp_Product3 = new HashSet<tbl_Temp_Product>();
-            tbl_Temp_Product4 = new HashSet<tbl_Temp_Product>();
-            tbl_Temp_Product5 = new HashSet<tbl_Temp_Product>();
-            tbl_Temp_Charge_Fee = new HashSet<tbl_Temp_Charge_Fee>();
-            tbl_Temp_Fee = new HashSet<tbl_Temp_Fee>();
+            TBL_CHARGE_FEE = new HashSet<TBL_CHARGE_FEE>();
+            TBL_FEE = new HashSet<TBL_FEE>();
+            TBL_FINANCE_TRANSACTION = new HashSet<TBL_FINANCE_TRANSACTION>();
+            TBL_PRODUCT = new HashSet<TBL_PRODUCT>();
+            TBL_PRODUCT1 = new HashSet<TBL_PRODUCT>();
+            TBL_PRODUCT2 = new HashSet<TBL_PRODUCT>();
+            TBL_PRODUCT3 = new HashSet<TBL_PRODUCT>();
+            TBL_PRODUCT4 = new HashSet<TBL_PRODUCT>();
+            TBL_PRODUCT5 = new HashSet<TBL_PRODUCT>();
+            TBL_TAX = new HashSet<TBL_TAX>();
+            TBL_COLLATERAL_TYPE = new HashSet<TBL_COLLATERAL_TYPE>();
+            TBL_CHARGES = new HashSet<TBL_CHARGES>();
+            TBL_CHART_OF_ACCOUNT_CURRENCY = new HashSet<TBL_CHART_OF_ACCOUNT_CURRENCY>();
+            TBL_TEMP_PRODUCT = new HashSet<TBL_TEMP_PRODUCT>();
+            TBL_TEMP_PRODUCT1 = new HashSet<TBL_TEMP_PRODUCT>();
+            TBL_TEMP_PRODUCT2 = new HashSet<TBL_TEMP_PRODUCT>();
+            TBL_TEMP_PRODUCT3 = new HashSet<TBL_TEMP_PRODUCT>();
+            TBL_TEMP_PRODUCT4 = new HashSet<TBL_TEMP_PRODUCT>();
+            TBL_TEMP_PRODUCT5 = new HashSet<TBL_TEMP_PRODUCT>();
+            TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
+            TBL_TEMP_FEE = new HashSet<TBL_TEMP_FEE>();
         }
 
         [Key]
-        public int GLAccountId { get; set; }
+        public int GLACCOUNTID { get; set; }
 
-        public int AccountTypeId { get; set; }
+        public int ACCOUNTTYPEID { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string AccountCode { get; set; }
+        public string ACCOUNTCODE { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string AccountName { get; set; }
+        public string ACCOUNTNAME { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public short BranchId { get; set; }
+        public short BRANCHID { get; set; }
 
-        public short GLClassId { get; set; }
+        public short GLCLASSID { get; set; }
 
-        public bool SystemUse { get; set; }
+        public bool SYSTEMUSE { get; set; }
 
-        public int? AccountStatusId { get; set; }
+        public int? ACCOUNTSTATUSID { get; set; }
 
-        public bool BranchSpecific { get; set; }
+        public bool BRANCHSPECIFIC { get; set; }
 
         [StringLength(20)]
-        public string OldAccountId { get; set; }
+        public string OLDACCOUNTID { get; set; }
 
-        public short FSCaptionId { get; set; }
+        public short FSCAPTIONID { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
-
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Fee> tbl_Fee { get; set; }
+        public virtual ICollection<TBL_CHARGE_FEE> TBL_CHARGE_FEE { get; set; }
+
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
+        public virtual ICollection<TBL_FEE> TBL_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product { get; set; }
+        public virtual ICollection<TBL_FINANCE_TRANSACTION> TBL_FINANCE_TRANSACTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product1 { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product2 { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product3 { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT2 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product4 { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT3 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product5 { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT4 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Tax> tbl_Tax { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT5 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Type> tbl_Collateral_Type { get; set; }
-
-        public virtual tbl_Account_Type tbl_Account_Type { get; set; }
+        public virtual ICollection<TBL_TAX> TBL_TAX { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Charges> tbl_Charges { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_TYPE> TBL_COLLATERAL_TYPE { get; set; }
+
+        public virtual TBL_ACCOUNT_TYPE TBL_ACCOUNT_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Chart_Of_Account_Currency> tbl_Chart_Of_Account_Currency { get; set; }
-
-        public virtual tbl_Chart_Of_Account_Class tbl_Chart_Of_Account_Class { get; set; }
-
-        public virtual tbl_Financial_Statement_Caption tbl_Financial_Statement_Caption { get; set; }
+        public virtual ICollection<TBL_CHARGES> TBL_CHARGES { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
+        public virtual ICollection<TBL_CHART_OF_ACCOUNT_CURRENCY> TBL_CHART_OF_ACCOUNT_CURRENCY { get; set; }
+
+        public virtual TBL_CHART_OF_ACCOUNT_CLASS TBL_CHART_OF_ACCOUNT_CLASS { get; set; }
+
+        public virtual TBL_FINANCIAL_STATEMENT_CAPTION TBL_FINANCIAL_STATEMENT_CAPTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product1 { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product2 { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product3 { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT2 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product4 { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT3 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product5 { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT4 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Charge_Fee> tbl_Temp_Charge_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT5 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Fee> tbl_Temp_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_FEE> TBL_TEMP_FEE { get; set; }
     }
 }

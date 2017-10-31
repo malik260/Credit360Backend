@@ -6,45 +6,45 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_FS_Caption_Group")]
-    public partial class tbl_Customer_FS_Caption_Group
+    [Table("core.TBL_CUSTOMER_FS_CAPTION_GROUP")]
+    public partial class TBL_CUSTOMER_FS_CAPTION_GROUP
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Customer_FS_Caption_Group()
+        public TBL_CUSTOMER_FS_CAPTION_GROUP()
         {
-            tbl_Customer = new HashSet<tbl_Customer>();
-            tbl_Customer_FS_Caption = new HashSet<tbl_Customer_FS_Caption>();
+            TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
+            TBL_CUSTOMER_FS_CAPTION = new HashSet<TBL_CUSTOMER_FS_CAPTION>();
         }
 
         [Key]
-        public short FSCaptionGroupId { get; set; }
+        public short FSCAPTIONGROUPID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string FSCaptionGroupName { get; set; }
+        public string FSCAPTIONGROUPNAME { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer> tbl_Customer { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_FS_Caption> tbl_Customer_FS_Caption { get; set; }
+        public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CUSTOMER_FS_CAPTION> TBL_CUSTOMER_FS_CAPTION { get; set; }
     }
 }

@@ -6,53 +6,53 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("finance.tbl_Financial_Statement_Caption")]
-    public partial class tbl_Financial_Statement_Caption
+    [Table("finance.TBL_FINANCIAL_STATEMENT_CAPTION")]
+    public partial class TBL_FINANCIAL_STATEMENT_CAPTION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Financial_Statement_Caption()
+        public TBL_FINANCIAL_STATEMENT_CAPTION()
         {
-            tbl_Chart_Of_Account = new HashSet<tbl_Chart_Of_Account>();
-            tbl_Temp_Chart_Of_Account = new HashSet<tbl_Temp_Chart_Of_Account>();
+            TBL_CHART_OF_ACCOUNT = new HashSet<TBL_CHART_OF_ACCOUNT>();
+            TBL_TEMP_CHART_OF_ACCOUNT = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT>();
         }
 
         [Key]
-        public short FSCaptionId { get; set; }
+        public short FSCAPTIONID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string FSCaptionCode { get; set; }
+        public string FSCAPTIONCODE { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string FSCaption { get; set; }
+        public string FSCAPTION { get; set; }
 
-        public int Position { get; set; }
+        public int POSITION { get; set; }
 
         [StringLength(50)]
-        public string RefNote { get; set; }
+        public string REFNOTE { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string FinType { get; set; }
+        public string FINTYPE { get; set; }
 
-        public short? AccountCategoryId { get; set; }
+        public short? ACCOUNTCATEGORYID { get; set; }
 
-        public int? ParentId { get; set; }
+        public int? PARENTID { get; set; }
 
-        public bool IsTotalLine { get; set; }
+        public bool ISTOTALLINE { get; set; }
 
         [StringLength(50)]
-        public string CaptionColor { get; set; }
+        public string CAPTIONCOLOR { get; set; }
 
-        public double? Multiplier { get; set; }
+        public double? MULTIPLIER { get; set; }
 
-        public virtual tbl_Account_Category tbl_Account_Category { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Chart_Of_Account> tbl_Chart_Of_Account { get; set; }
+        public virtual TBL_ACCOUNT_CATEGORY TBL_ACCOUNT_CATEGORY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Chart_Of_Account> tbl_Temp_Chart_Of_Account { get; set; }
+        public virtual ICollection<TBL_CHART_OF_ACCOUNT> TBL_CHART_OF_ACCOUNT { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_CHART_OF_ACCOUNT> TBL_TEMP_CHART_OF_ACCOUNT { get; set; }
     }
 }

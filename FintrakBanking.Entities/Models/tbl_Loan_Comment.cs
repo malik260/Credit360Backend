@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Comment")]
-    public partial class tbl_Loan_Comment
+    [Table("credit.TBL_LOAN_COMMENT")]
+    public partial class TBL_LOAN_COMMENT
     {
         [Key]
-        public short LoanCommentId { get; set; }
+        public short LOANCOMMENTID { get; set; }
 
-        public int? LoanId { get; set; }
+        public int? LOANID { get; set; }
 
         [StringLength(20)]
-        public string CommentType { get; set; }
+        public string COMMENTTYPE { get; set; }
 
         [StringLength(250)]
-        public string Comment { get; set; }
+        public string COMMENT { get; set; }
 
         [StringLength(100)]
-        public string CreatedBy { get; set; }
+        public string CREATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
     }
 }

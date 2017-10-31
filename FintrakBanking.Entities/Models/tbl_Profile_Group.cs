@@ -6,35 +6,35 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Profile_Group")]
-    public partial class tbl_Profile_Group
+    [Table("core.TBL_PROFILE_GROUP")]
+    public partial class TBL_PROFILE_GROUP
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Profile_Group()
+        public TBL_PROFILE_GROUP()
         {
-            tbl_Profile_Group_Activity = new HashSet<tbl_Profile_Group_Activity>();
-            tbl_Profile_UserGroup = new HashSet<tbl_Profile_UserGroup>();
+            TBL_PROFILE_GROUP_ACTIVITY = new HashSet<TBL_PROFILE_GROUP_ACTIVITY>();
+            TBL_PROFILE_USERGROUP = new HashSet<TBL_PROFILE_USERGROUP>();
         }
 
         [Key]
-        public short GroupId { get; set; }
+        public short GROUPID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string GroupName { get; set; }
+        public string GROUPNAME { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_Group_Activity> tbl_Profile_Group_Activity { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_UserGroup> tbl_Profile_UserGroup { get; set; }
+        public virtual ICollection<TBL_PROFILE_GROUP_ACTIVITY> TBL_PROFILE_GROUP_ACTIVITY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_PROFILE_USERGROUP> TBL_PROFILE_USERGROUP { get; set; }
     }
 }

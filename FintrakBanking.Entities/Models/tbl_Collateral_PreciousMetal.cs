@@ -6,35 +6,35 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_PreciousMetal")]
-    public partial class tbl_Collateral_PreciousMetal
+    [Table("credit.TBL_COLLATERAL_PRECIOUSMETAL")]
+    public partial class TBL_COLLATERAL_PRECIOUSMETAL
     {
         [Key]
-        public int CollateralPreciousMetalId { get; set; }
+        public int COLLATERALPRECIOUSMETALID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
-        public bool IsOwnedByCustomer { get; set; }
+        public bool ISOWNEDBYCUSTOMER { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string PreciousMetalName { get; set; }
+        public string PRECIOUSMETALNAME { get; set; }
 
         [Required]
         [StringLength(10)]
-        public string WeightInGrammes { get; set; }
+        public string WEIGHTINGRAMMES { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ValuationAmount { get; set; }
+        public decimal? VALUATIONAMOUNT { get; set; }
 
-        public double? UnitRate { get; set; }
+        public double? UNITRATE { get; set; }
 
         [StringLength(100)]
-        public string PreciousMetalForm { get; set; }
+        public string PRECIOUSMETALFORM { get; set; }
 
         [StringLength(500)]
-        public string Remark { get; set; }
+        public string REMARK { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

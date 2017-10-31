@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_City_Class")]
-    public partial class tbl_City_Class
+    [Table("core.TBL_CITY_CLASS")]
+    public partial class TBL_CITY_CLASS
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_City_Class()
+        public TBL_CITY_CLASS()
         {
-            tbl_City = new HashSet<tbl_City>();
+            TBL_CITY = new HashSet<TBL_CITY>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short CityClassId { get; set; }
+        public short CITYCLASSID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string CityClassName { get; set; }
+        public string CITYCLASSNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_City> tbl_City { get; set; }
+        public virtual ICollection<TBL_CITY> TBL_CITY { get; set; }
     }
 }

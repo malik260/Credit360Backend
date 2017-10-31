@@ -6,53 +6,53 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Covenant_Detail")]
-    public partial class tbl_Loan_Covenant_Detail
+    [Table("credit.TBL_LOAN_COVENANT_DETAIL")]
+    public partial class TBL_LOAN_COVENANT_DETAIL
     {
         [Key]
-        public int LoanCovenantDetailId { get; set; }
+        public int LOANCOVENANTDETAILID { get; set; }
 
         [Required]
         [StringLength(2000)]
-        public string CovenantDetail { get; set; }
+        public string COVENANTDETAIL { get; set; }
 
-        public int LoanId { get; set; }
+        public int LOANID { get; set; }
 
-        public short ProductTypeId { get; set; }
+        public short PRODUCTTYPEID { get; set; }
 
-        public short CovenantTypeId { get; set; }
+        public short COVENANTTYPEID { get; set; }
 
-        public short? FrequencyTypeId { get; set; }
+        public short? FREQUENCYTYPEID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? CovenantAmount { get; set; }
+        public decimal? COVENANTAMOUNT { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime CovenantDate { get; set; }
+        public DateTime COVENANTDATE { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? NextCovenantDate { get; set; }
+        public DateTime? NEXTCOVENANTDATE { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Frequency_Type tbl_Frequency_Type { get; set; }
+        public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }
 
-        public virtual tbl_Product_Type tbl_Product_Type { get; set; }
+        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
 
-        public virtual tbl_Loan_Covenant_Type tbl_Loan_Covenant_Type { get; set; }
+        public virtual TBL_LOAN_COVENANT_TYPE TBL_LOAN_COVENANT_TYPE { get; set; }
     }
 }

@@ -6,53 +6,53 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Credit_Appraisal_Memorandum")]
-    public partial class tbl_Credit_Appraisal_Memorandum
+    [Table("credit.TBL_CREDIT_APPRAISAL_MEMORANDUM")]
+    public partial class TBL_CREDIT_APPRAISAL_MEMORANDUM
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Credit_Appraisal_Memorandum()
+        public TBL_CREDIT_APPRAISAL_MEMORANDUM()
         {
-            tbl_Credit_Appraisal_Memorandum_Document = new HashSet<tbl_Credit_Appraisal_Memorandum_Document>();
-            tbl_Credit_Appraisal_Memorandum_Loan_Detail = new HashSet<tbl_Credit_Appraisal_Memorandum_Loan_Detail>();
+            TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT = new HashSet<TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT>();
+            TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL = new HashSet<TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL>();
         }
 
         [Key]
-        public int AppraisalMemorandumId { get; set; }
+        public int APPRAISALMEMORANDUMID { get; set; }
 
-        public int LoanApplicationId { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string CAMRef { get; set; }
+        public string CAMREF { get; set; }
 
-        public bool IsCompleted { get; set; }
+        public bool ISCOMPLETED { get; set; }
 
-        public bool RiskRated { get; set; }
+        public bool RISKRATED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Credit_Appraisal_Memorandum_Document> tbl_Credit_Appraisal_Memorandum_Document { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Credit_Appraisal_Memorandum_Loan_Detail> tbl_Credit_Appraisal_Memorandum_Loan_Detail { get; set; }
+        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT> TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT { get; set; }
 
-        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL> TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
     }
 }

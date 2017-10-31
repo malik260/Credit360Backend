@@ -6,52 +6,52 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Company_Director")]
-    public partial class tbl_Customer_Company_Director
+    [Table("core.TBL_CUSTOMER_COMPANY_DIRECTOR")]
+    public partial class TBL_CUSTOMER_COMPANY_DIRECTOR
     {
         [Key]
-        public short CompanyDirectorId { get; set; }
+        public short COMPANYDIRECTORID { get; set; }
 
-        public int CustomerId { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string Surname { get; set; }
+        public int CUSTOMERID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Firstname { get; set; }
+        public string SURNAME { get; set; }
 
-        public short CompanyDirectorTypeId { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string FIRSTNAME { get; set; }
+
+        public short COMPANYDIRECTORTYPEID { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string CustomerBVN { get; set; }
+        public string CUSTOMERBVN { get; set; }
 
-        public int NumberOfShares { get; set; }
+        public int NUMBEROFSHARES { get; set; }
 
-        public bool IsPoliticallyExposed { get; set; }
-
-        [StringLength(500)]
-        public string Address { get; set; }
-
-        [StringLength(50)]
-        public string PhoneNumber { get; set; }
-
-        [StringLength(50)]
-        public string EmailAddress { get; set; }
+        public bool ISPOLITICALLYEXPOSED { get; set; }
 
         [StringLength(500)]
-        public string Others { get; set; }
+        public string ADDRESS { get; set; }
 
-        public int CreatedBy { get; set; }
+        [StringLength(50)]
+        public string PHONENUMBER { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        [StringLength(50)]
+        public string EMAILADDRESS { get; set; }
 
-        public int? UpdatedBy { get; set; }
+        [StringLength(500)]
+        public string OTHERS { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public virtual tbl_Customer_Company_DirectorType tbl_Customer_Company_DirectorType { get; set; }
+        public DateTime DATECREATED { get; set; }
+
+        public int? UPDATEDBY { get; set; }
+
+        public DateTime? DATETIMEUPDATED { get; set; }
+
+        public virtual TBL_CUSTOMER_COMPANY_DIRECTORTYPE TBL_CUSTOMER_COMPANY_DIRECTORTYPE { get; set; }
     }
 }

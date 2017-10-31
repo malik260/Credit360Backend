@@ -6,73 +6,73 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Profile_User")]
-    public partial class tbl_Profile_User
+    [Table("core.TBL_PROFILE_USER")]
+    public partial class TBL_PROFILE_USER
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Profile_User()
+        public TBL_PROFILE_USER()
         {
-            tbl_Profile_AdditionalActivity = new HashSet<tbl_Profile_AdditionalActivity>();
-            tbl_Profile_Priviledge_Activity = new HashSet<tbl_Profile_Priviledge_Activity>();
-            tbl_Profile_UserGroup = new HashSet<tbl_Profile_UserGroup>();
+            TBL_PROFILE_ADDITIONALACTIVITY = new HashSet<TBL_PROFILE_ADDITIONALACTIVITY>();
+            TBL_PROFILE_PRIVILEDGE_ACTIVITY = new HashSet<TBL_PROFILE_PRIVILEDGE_ACTIVITY>();
+            TBL_PROFILE_USERGROUP = new HashSet<TBL_PROFILE_USERGROUP>();
         }
 
         [Key]
-        public int UserId { get; set; }
+        public int USERID { get; set; }
 
-        public int StaffId { get; set; }
+        public int STAFFID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Username { get; set; }
+        public string USERNAME { get; set; }
 
         [Required]
         [StringLength(2000)]
-        public string Password { get; set; }
+        public string PASSWORD { get; set; }
 
-        public bool? IsFirstLoginAttempt { get; set; }
+        public bool? ISFIRSTLOGINATTEMPT { get; set; }
 
-        public bool IsLocked { get; set; }
+        public bool ISLOCKED { get; set; }
 
-        public int? FailedLogonAttempt { get; set; }
-
-        [StringLength(500)]
-        public string SecurityQuestion { get; set; }
+        public int? FAILEDLOGONATTEMPT { get; set; }
 
         [StringLength(500)]
-        public string SecurityAnswer { get; set; }
+        public string SECURITYQUESTION { get; set; }
 
-        public DateTime? NextPasswordChangeDate { get; set; }
+        [StringLength(500)]
+        public string SECURITYANSWER { get; set; }
 
-        public bool IsActive { get; set; }
+        public DateTime? NEXTPASSWORDCHANGEDATE { get; set; }
 
-        public DateTime? DeactivatedDate { get; set; }
+        public bool ISACTIVE { get; set; }
 
-        public DateTime? LastLoginDate { get; set; }
+        public DateTime? DEACTIVATEDDATE { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public DateTime? LASTLOGINDATE { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? CREATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public bool ApprovalStatus { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public DateTime? DateApproved { get; set; }
+        public bool APPROVALSTATUS { get; set; }
 
-        public short ApprovalStatusId { get; set; }
+        public DateTime? DATEAPPROVED { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_AdditionalActivity> tbl_Profile_AdditionalActivity { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_Priviledge_Activity> tbl_Profile_Priviledge_Activity { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_UserGroup> tbl_Profile_UserGroup { get; set; }
+        public virtual ICollection<TBL_PROFILE_ADDITIONALACTIVITY> TBL_PROFILE_ADDITIONALACTIVITY { get; set; }
 
-        public virtual tbl_Staff tbl_Staff { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_PROFILE_PRIVILEDGE_ACTIVITY> TBL_PROFILE_PRIVILEDGE_ACTIVITY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_PROFILE_USERGROUP> TBL_PROFILE_USERGROUP { get; set; }
+
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
     }
 }

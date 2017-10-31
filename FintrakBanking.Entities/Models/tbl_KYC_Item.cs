@@ -6,39 +6,39 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_KYC_Item")]
-    public partial class tbl_KYC_Item
+    [Table("core.TBL_KYC_ITEM")]
+    public partial class TBL_KYC_ITEM
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_KYC_Item()
+        public TBL_KYC_ITEM()
         {
-            tbl_Customer_Account_KYC_Item = new HashSet<tbl_Customer_Account_KYC_Item>();
+            TBL_CUSTOMER_ACCOUNT_KYC_ITEM = new HashSet<TBL_CUSTOMER_ACCOUNT_KYC_ITEM>();
         }
 
         [Key]
-        public short KYCItemId { get; set; }
+        public short KYCITEMID { get; set; }
 
-        public short? ProductId { get; set; }
+        public short? PRODUCTID { get; set; }
 
-        public int DisplayOrder { get; set; }
+        public int DISPLAYORDER { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string Item { get; set; }
+        public string ITEM { get; set; }
 
-        public bool IsMandatory { get; set; }
+        public bool ISMANDATORY { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public int? CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_Account_KYC_Item> tbl_Customer_Account_KYC_Item { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_ACCOUNT_KYC_ITEM> TBL_CUSTOMER_ACCOUNT_KYC_ITEM { get; set; }
 
-        public virtual tbl_Product tbl_Product { get; set; }
+        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
     }
 }

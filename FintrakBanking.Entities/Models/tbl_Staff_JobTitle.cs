@@ -6,29 +6,29 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Staff_JobTitle")]
-    public partial class tbl_Staff_JobTitle
+    [Table("core.TBL_STAFF_JOBTITLE")]
+    public partial class TBL_STAFF_JOBTITLE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Staff_JobTitle()
+        public TBL_STAFF_JOBTITLE()
         {
-            tbl_Staff = new HashSet<tbl_Staff>();
-            tbl_Temp_Staff = new HashSet<tbl_Temp_Staff>();
+            TBL_STAFF = new HashSet<TBL_STAFF>();
+            TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
 
         [Key]
-        public int JobTitleId { get; set; }
+        public int JOBTITLEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string JobTitleName { get; set; }
+        public string JOBTITLENAME { get; set; }
 
-        public int CompanyId { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Staff> tbl_Staff { get; set; }
+        public int COMPANYID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Staff> tbl_Temp_Staff { get; set; }
+        public virtual ICollection<TBL_STAFF> TBL_STAFF { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
     }
 }

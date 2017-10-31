@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Message_Log_Type")]
-    public partial class tbl_Message_Log_Type
+    [Table("core.TBL_MESSAGE_LOG_TYPE")]
+    public partial class TBL_MESSAGE_LOG_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Message_Log_Type()
+        public TBL_MESSAGE_LOG_TYPE()
         {
-            tbl_Message_Log = new HashSet<tbl_Message_Log>();
+            TBL_MESSAGE_LOG = new HashSet<TBL_MESSAGE_LOG>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short MessageTypeId { get; set; }
+        public short MESSAGETYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string MessageTypeName { get; set; }
+        public string MESSAGETYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Message_Log> tbl_Message_Log { get; set; }
+        public virtual ICollection<TBL_MESSAGE_LOG> TBL_MESSAGE_LOG { get; set; }
     }
 }

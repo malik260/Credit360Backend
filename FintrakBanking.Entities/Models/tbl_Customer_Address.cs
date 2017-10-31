@@ -6,38 +6,38 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Address")]
-    public partial class tbl_Customer_Address
+    [Table("core.TBL_CUSTOMER_ADDRESS")]
+    public partial class TBL_CUSTOMER_ADDRESS
     {
         [Key]
-        public int AddressId { get; set; }
+        public int ADDRESSID { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
-        public int StateId { get; set; }
+        public int STATEID { get; set; }
 
-        public int CityId { get; set; }
+        public int CITYID { get; set; }
 
-        public int AddressTypeId { get; set; }
+        public int ADDRESSTYPEID { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string Address { get; set; }
+        public string ADDRESS { get; set; }
 
         [StringLength(200)]
-        public string HomeTown { get; set; }
+        public string HOMETOWN { get; set; }
 
         [StringLength(20)]
-        public string POBox { get; set; }
+        public string POBOX { get; set; }
 
         [StringLength(300)]
-        public string NearestLandmark { get; set; }
+        public string NEARESTLANDMARK { get; set; }
 
         [StringLength(50)]
-        public string ElectricMeterNumber { get; set; }
+        public string ELECTRICMETERNUMBER { get; set; }
 
-        public bool Active { get; set; }
+        public bool ACTIVE { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }

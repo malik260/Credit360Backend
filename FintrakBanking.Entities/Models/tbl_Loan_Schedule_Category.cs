@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Schedule_Category")]
-    public partial class tbl_Loan_Schedule_Category
+    [Table("credit.TBL_LOAN_SCHEDULE_CATEGORY")]
+    public partial class TBL_LOAN_SCHEDULE_CATEGORY
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Schedule_Category()
+        public TBL_LOAN_SCHEDULE_CATEGORY()
         {
-            tbl_Loan_Schedule_Type = new HashSet<tbl_Loan_Schedule_Type>();
+            TBL_LOAN_SCHEDULE_TYPE = new HashSet<TBL_LOAN_SCHEDULE_TYPE>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short ScheduleCategoryId { get; set; }
+        public short SCHEDULECATEGORYID { get; set; }
 
         [StringLength(50)]
-        public string ScheduleCategoryName { get; set; }
+        public string SCHEDULECATEGORYNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Schedule_Type> tbl_Loan_Schedule_Type { get; set; }
+        public virtual ICollection<TBL_LOAN_SCHEDULE_TYPE> TBL_LOAN_SCHEDULE_TYPE { get; set; }
     }
 }

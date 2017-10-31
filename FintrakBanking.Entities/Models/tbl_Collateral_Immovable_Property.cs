@@ -6,85 +6,81 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Immovable_Property")]
-    public partial class tbl_Collateral_Immovable_Property
+    [Table("credit.TBL_COLLATERAL_IMMOVABLE_PROPERTY")]
+    public partial class TBL_COLLATERAL_IMMOVABLE_PROPERTY
     {
         [Key]
-        public int CollateralPropertyId { get; set; }
+        public int COLLATERALPROPERTYID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string PropertyName { get; set; }
+        public string PROPERTYNAME { get; set; }
 
-        public int CityId { get; set; }
+        public int CITYID { get; set; }
 
-        public short CountryId { get; set; }
+        public short COUNTRYID { get; set; }
 
-        public DateTime? ConstructionDate { get; set; }
+        public DateTime? CONSTRUCTIONDATE { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string PropertyAddress { get; set; }
+        public string PROPERTYADDRESS { get; set; }
 
-        public DateTime DateOfAcquisition { get; set; }
+        public DateTime DATEOFACQUISITION { get; set; }
 
-        public DateTime LastValuationDate { get; set; }
+        public DateTime LASTVALUATIONDATE { get; set; }
 
-        public short? ValuerId { get; set; }
+        public short? VALUERID { get; set; }
 
         [StringLength(100)]
-        public string ValuerReferenceNumber { get; set; }
+        public string VALUERREFERENCENUMBER { get; set; }
 
-        public short PropertyValueBaseTypeId { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? OpenMarketValue { get; set; }
+        public short PROPERTYVALUEBASETYPEID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal CollateralValue { get; set; }
+        public decimal? OPENMARKETVALUE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ForcedSaleValue { get; set; }
+        public decimal COLLATERALVALUE { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? FORCEDSALEVALUE { get; set; }
 
         [StringLength(10)]
-        public string StampToCover { get; set; }
+        public string STAMPTOCOVER { get; set; }
 
         [StringLength(50)]
-        public string ValuationSource { get; set; }
+        public string VALUATIONSOURCE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal OriginalValue { get; set; }
+        public decimal ORIGINALVALUE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AvailableValue { get; set; }
+        public decimal AVAILABLEVALUE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? SecurityValue { get; set; }
+        public decimal? SECURITYVALUE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? CollateralUsableAmount { get; set; }
+        public decimal? COLLATERALUSABLEAMOUNT { get; set; }
 
         [StringLength(500)]
-        public string Remark { get; set; }
+        public string REMARK { get; set; }
 
         [StringLength(250)]
-        public string NearestLandMark { get; set; }
+        public string NEARESTLANDMARK { get; set; }
 
         [StringLength(250)]
-        public string NearestBusStop { get; set; }
+        public string NEARESTBUSSTOP { get; set; }
 
-        public decimal? Longitude { get; set; }
+        public decimal? LONGITUDE { get; set; }
 
-        public decimal? Latitude { get; set; }
+        public decimal? LATITUDE { get; set; }
 
-        public virtual tbl_City tbl_City { get; set; }
+        public virtual TBL_CITY TBL_CITY { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
-
-        //public virtual tbl_Collateral_Immovable_Property tbl_Collateral_Immovable_Property1 { get; set; }
-
-        //public virtual tbl_Collateral_Immovable_Property tbl_Collateral_Immovable_Property2 { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

@@ -6,28 +6,28 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Condition_Precedent")]
-    public partial class tbl_Loan_Condition_Precedent
+    [Table("credit.TBL_LOAN_CONDITION_PRECEDENT")]
+    public partial class TBL_LOAN_CONDITION_PRECEDENT
     {
         [Key]
-        public int ConditionId { get; set; }
+        public int CONDITIONID { get; set; }
 
         [Required]
         [StringLength(1000)]
-        public string Condition { get; set; }
+        public string CONDITION { get; set; }
 
-        public bool IsExternal { get; set; }
+        public bool ISEXTERNAL { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int LoanApplicationId { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
     }
 }

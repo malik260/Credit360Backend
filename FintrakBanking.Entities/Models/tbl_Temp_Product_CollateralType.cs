@@ -6,44 +6,44 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Product_CollateralType")]
-    public partial class tbl_Temp_Product_CollateralType
+    [Table("temp.TBL_TEMP_PRODUCT_COLLATERALTYPE")]
+    public partial class TBL_TEMP_PRODUCT_COLLATERALTYPE
     {
         [Key]
-        public int ProductCollateralTypeId { get; set; }
+        public int PRODUCTCOLLATERALTYPEID { get; set; }
 
-        public short ProductId { get; set; }
+        public short PRODUCTID { get; set; }
 
-        public int CollateralTypeId { get; set; }
+        public int COLLATERALTYPEID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public bool IsCurrent { get; set; }
+        public bool ISCURRENT { get; set; }
 
-        public short ApprovalStatusId { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Company tbl_Company1 { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY1 { get; set; }
 
-        public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
+        public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE { get; set; }
 
-        public virtual tbl_Collateral_Type tbl_Collateral_Type1 { get; set; }
+        public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE1 { get; set; }
 
-        public virtual tbl_Temp_Product tbl_Temp_Product { get; set; }
+        public virtual TBL_TEMP_PRODUCT TBL_TEMP_PRODUCT { get; set; }
     }
 }

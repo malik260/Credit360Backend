@@ -6,37 +6,37 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Gaurantee")]
-    public partial class tbl_Collateral_Gaurantee
+    [Table("credit.TBL_COLLATERAL_GAURANTEE")]
+    public partial class TBL_COLLATERAL_GAURANTEE
     {
         [Key]
-        public int CollateralGauranteeId { get; set; }
+        public int COLLATERALGAURANTEEID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
-        public bool IsOwnedByCustomer { get; set; }
+        public bool ISOWNEDBYCUSTOMER { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string InstitutionName { get; set; }
+        public string INSTITUTIONNAME { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string GuarantorAddress { get; set; }
+        public string GUARANTORADDRESS { get; set; }
 
         [StringLength(50)]
-        public string GuarantorReferenceNumber { get; set; }
+        public string GUARANTORREFERENCENUMBER { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal GuaranteeValue { get; set; }
+        public decimal GUARANTEEVALUE { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public DateTime STARTDATE { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        public DateTime? ENDDATE { get; set; }
 
         [StringLength(500)]
-        public string Remark { get; set; }
+        public string REMARK { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

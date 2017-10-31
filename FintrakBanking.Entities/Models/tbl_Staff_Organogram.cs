@@ -6,42 +6,42 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Staff_Organogram")]
-    public partial class tbl_Staff_Organogram
+    [Table("core.TBL_STAFF_ORGANOGRAM")]
+    public partial class TBL_STAFF_ORGANOGRAM
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int StaffId { get; set; }
+        public int STAFFID { get; set; }
 
         [Key]
         [StringLength(50)]
-        public string StaffCode { get; set; }
+        public string STAFFCODE { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string FirstName { get; set; }
+        public string FIRSTNAME { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LastName { get; set; }
+        public string LASTNAME { get; set; }
 
         [StringLength(50)]
-        public string MiddleName { get; set; }
+        public string MIDDLENAME { get; set; }
 
         [StringLength(50)]
-        public string Rank { get; set; }
+        public string RANK { get; set; }
 
         [StringLength(50)]
-        public string JobTitle { get; set; }
+        public string JOBTITLE { get; set; }
 
-        public short? StaffStatusId { get; set; }
+        public short? STAFFSTATUSID { get; set; }
 
         [StringLength(50)]
-        public string ParentStaffCode { get; set; }
+        public string PARENTSTAFFCODE { get; set; }
 
-        public int? CompanyId { get; set; }
+        public int? COMPANYID { get; set; }
 
-        public DateTime? DateTimeRefreshed { get; set; }
+        public DateTime? DATETIMEREFRESHED { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
     }
 }

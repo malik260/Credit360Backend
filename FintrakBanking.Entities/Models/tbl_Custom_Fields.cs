@@ -6,63 +6,63 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Custom_Fields")]
-    public partial class tbl_Custom_Fields
+    [Table("core.TBL_CUSTOM_FIELDS")]
+    public partial class TBL_CUSTOM_FIELDS
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Custom_Fields()
+        public TBL_CUSTOM_FIELDS()
         {
-            tbl_Custom_Fields_Data = new HashSet<tbl_Custom_Fields_Data>();
+            TBL_CUSTOM_FIELDS_DATA = new HashSet<TBL_CUSTOM_FIELDS_DATA>();
         }
 
         [Key]
-        public int CustomFieldId { get; set; }
+        public int CUSTOMFIELDID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int HostPageId { get; set; }
+        public int HOSTPAGEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LabelName { get; set; }
+        public string LABELNAME { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string ControlKey { get; set; }
+        public string CONTROLKEY { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string ControlType { get; set; }
+        public string CONTROLTYPE { get; set; }
 
-        public bool Required { get; set; }
+        public bool REQUIRED { get; set; }
 
-        public int ItemOrder { get; set; }
+        public int ITEMORDER { get; set; }
 
-        public bool IsUpload { get; set; }
+        public bool ISUPLOAD { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public int ApprovalStatus { get; set; }
+        public int APPROVALSTATUS { get; set; }
 
-        public DateTime? DateActedOn { get; set; }
+        public DateTime? DATEACTEDON { get; set; }
 
-        public int? ActedOnBy { get; set; }
+        public int? ACTEDONBY { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Custom_Fields_Data> tbl_Custom_Fields_Data { get; set; }
+        public virtual ICollection<TBL_CUSTOM_FIELDS_DATA> TBL_CUSTOM_FIELDS_DATA { get; set; }
     }
 }

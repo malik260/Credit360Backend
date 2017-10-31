@@ -6,46 +6,46 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_CompanyInfomation")]
-    public partial class tbl_Customer_CompanyInfomation
+    [Table("core.TBL_CUSTOMER_COMPANYINFOMATION")]
+    public partial class TBL_CUSTOMER_COMPANYINFOMATION
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int CompanyInfomationId { get; set; }
+        public int COMPANYINFOMATIONID { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
         [StringLength(50)]
-        public string RegistrationNumber { get; set; }
+        public string REGISTRATIONNUMBER { get; set; }
 
         [StringLength(200)]
-        public string CompanyName { get; set; }
+        public string COMPANYNAME { get; set; }
 
         [StringLength(200)]
-        public string CompanyWebsite { get; set; }
+        public string COMPANYWEBSITE { get; set; }
 
         [StringLength(200)]
-        public string CompanyEmail { get; set; }
+        public string COMPANYEMAIL { get; set; }
 
         [StringLength(200)]
-        public string RegisteredOffice { get; set; }
+        public string REGISTEREDOFFICE { get; set; }
 
         [StringLength(200)]
-        public string AnnualTurnOver { get; set; }
+        public string ANNUALTURNOVER { get; set; }
 
         [StringLength(200)]
-        public string CorporateBusinessCategory { get; set; }
+        public string CORPORATEBUSINESSCATEGORY { get; set; }
 
         [StringLength(200)]
-        public string CreditRating { get; set; }
+        public string CREDITRATING { get; set; }
 
         [StringLength(200)]
-        public string PreviousCreditRating { get; set; }
+        public string PREVIOUSCREDITRATING { get; set; }
 
-        public int? PaidUpCapital { get; set; }
+        public int? PAIDUPCAPITAL { get; set; }
 
-        public int? AuthorisedCapital { get; set; }
+        public int? AUTHORISEDCAPITAL { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }

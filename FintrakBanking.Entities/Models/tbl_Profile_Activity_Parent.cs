@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Profile_Activity_Parent")]
-    public partial class tbl_Profile_Activity_Parent
+    [Table("core.TBL_PROFILE_ACTIVITY_PARENT")]
+    public partial class TBL_PROFILE_ACTIVITY_PARENT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Profile_Activity_Parent()
+        public TBL_PROFILE_ACTIVITY_PARENT()
         {
-            tbl_Profile_Activity = new HashSet<tbl_Profile_Activity>();
+            TBL_PROFILE_ACTIVITY = new HashSet<TBL_PROFILE_ACTIVITY>();
         }
 
         [Key]
-        public int ActivityParentId { get; set; }
+        public int ACTIVITYPARENTID { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string ActivityParentName { get; set; }
+        public string ACTIVITYPARENTNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_Activity> tbl_Profile_Activity { get; set; }
+        public virtual ICollection<TBL_PROFILE_ACTIVITY> TBL_PROFILE_ACTIVITY { get; set; }
     }
 }

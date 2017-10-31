@@ -6,35 +6,35 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Casa")]
-    public partial class tbl_Collateral_Casa
+    [Table("credit.TBL_COLLATERAL_CASA")]
+    public partial class TBL_COLLATERAL_CASA
     {
         [Key]
-        public int CollateralCasaId { get; set; }
+        public int COLLATERALCASAID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string AccountNumber { get; set; }
+        public string ACCOUNTNUMBER { get; set; }
 
-        public bool IsOwnedByCustomer { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal AvailableBalance { get; set; }
+        public bool ISOWNEDBYCUSTOMER { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal ExistingLienAmount { get; set; }
+        public decimal AVAILABLEBALANCE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal LienAmount { get; set; }
+        public decimal EXISTINGLIENAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal SecurityValue { get; set; }
+        public decimal LIENAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal SECURITYVALUE { get; set; }
 
         [StringLength(500)]
-        public string Remark { get; set; }
+        public string REMARK { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

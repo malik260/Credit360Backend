@@ -6,70 +6,70 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Collateral_Vehicle")]
-    public partial class tbl_Temp_Collateral_Vehicle
+    [Table("temp.TBL_TEMP_COLLATERAL_VEHICLE")]
+    public partial class TBL_TEMP_COLLATERAL_VEHICLE
     {
         [Key]
-        public int CollateralVehicleId { get; set; }
+        public int COLLATERALVEHICLEID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string VehicleType { get; set; }
+        public string VEHICLETYPE { get; set; }
 
-        public short CollateralSubTypeId { get; set; }
+        public short COLLATERALSUBTYPEID { get; set; }
 
         [StringLength(10)]
-        public string VehicleStatus { get; set; }
+        public string VEHICLESTATUS { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string VehicleMake { get; set; }
+        public string VEHICLEMAKE { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ModelName { get; set; }
+        public string MODELNAME { get; set; }
 
         [Required]
         [StringLength(5)]
-        public string ManufacturedDate { get; set; }
+        public string MANUFACTUREDDATE { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string RegistrationNumber { get; set; }
+        public string REGISTRATIONNUMBER { get; set; }
 
         [StringLength(50)]
-        public string SerialNumber { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string ChasisNumber { get; set; }
+        public string SERIALNUMBER { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string EngineNumber { get; set; }
+        public string CHASISNUMBER { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string ENGINENUMBER { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string NameOfOwner { get; set; }
+        public string NAMEOFOWNER { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string RegistrationCompany { get; set; }
+        public string REGISTRATIONCOMPANY { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ResaleValue { get; set; }
+        public decimal? RESALEVALUE { get; set; }
 
-        public DateTime? ValuationDate { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? LastValuationAmount { get; set; }
+        public DateTime? VALUATIONDATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal InvoiceValue { get; set; }
+        public decimal? LASTVALUATIONAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal INVOICEVALUE { get; set; }
 
         [StringLength(500)]
-        public string Remark { get; set; }
+        public string REMARK { get; set; }
     }
 }

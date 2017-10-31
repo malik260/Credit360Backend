@@ -6,38 +6,38 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Country")]
-    public partial class tbl_Country
+    [Table("core.TBL_COUNTRY")]
+    public partial class TBL_COUNTRY
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Country()
+        public TBL_COUNTRY()
         {
-            tbl_Company = new HashSet<tbl_Company>();
-            tbl_State = new HashSet<tbl_State>();
-            tbl_Public_Holiday = new HashSet<tbl_Public_Holiday>();
-            tbl_Region = new HashSet<tbl_Region>();
+            TBL_COMPANY = new HashSet<TBL_COMPANY>();
+            TBL_STATE = new HashSet<TBL_STATE>();
+            TBL_PUBLIC_HOLIDAY = new HashSet<TBL_PUBLIC_HOLIDAY>();
+            TBL_REGION = new HashSet<TBL_REGION>();
         }
 
         [Key]
-        public int CountryId { get; set; }
+        public int COUNTRYID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string NAME { get; set; }
 
         [StringLength(10)]
-        public string CountryCode { get; set; }
+        public string COUNTRYCODE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Company> tbl_Company { get; set; }
+        public virtual ICollection<TBL_COMPANY> TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_State> tbl_State { get; set; }
+        public virtual ICollection<TBL_STATE> TBL_STATE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Public_Holiday> tbl_Public_Holiday { get; set; }
+        public virtual ICollection<TBL_PUBLIC_HOLIDAY> TBL_PUBLIC_HOLIDAY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Region> tbl_Region { get; set; }
+        public virtual ICollection<TBL_REGION> TBL_REGION { get; set; }
     }
 }

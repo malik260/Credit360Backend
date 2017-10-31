@@ -6,16 +6,16 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Job_Request_Document_Mapping")]
-    public partial class tbl_Job_Request_Document_Mapping
+    [Table("core.TBL_JOB_REQUEST_DOCUMENT_MAPPING")]
+    public partial class TBL_JOB_REQUEST_DOCUMENT_MAPPING
     {
         [Key]
-        public int JobRequestDocumentId { get; set; }
+        public int JOBREQUESTDOCUMENTID { get; set; }
 
-        public int JobRequestId { get; set; }
+        public int JOBREQUESTID { get; set; }
 
-        public int DocumentId { get; set; }
+        public int DOCUMENTID { get; set; }
 
-        public virtual tbl_Job_Request tbl_Job_Request { get; set; }
+        public virtual TBL_JOB_REQUEST TBL_JOB_REQUEST { get; set; }
     }
 }

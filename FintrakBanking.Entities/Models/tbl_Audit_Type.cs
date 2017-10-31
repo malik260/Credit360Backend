@@ -6,14 +6,14 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Audit_Type")]
-    public partial class tbl_Audit_Type
+    [Table("core.TBL_AUDIT_TYPE")]
+    public partial class TBL_AUDIT_TYPE
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short AuditTypeId { get; set; }
+        public short AUDITTYPEID { get; set; }
 
         [StringLength(100)]
-        public string AuditTypeName { get; set; }
+        public string AUDITTYPENAME { get; set; }
     }
 }

@@ -6,47 +6,47 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Approval_Group")]
-    public partial class tbl_Approval_Group
+    [Table("core.TBL_APPROVAL_GROUP")]
+    public partial class TBL_APPROVAL_GROUP
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Approval_Group()
+        public TBL_APPROVAL_GROUP()
         {
-            tbl_Approval_Group_Mapping = new HashSet<tbl_Approval_Group_Mapping>();
-            tbl_Approval_Level = new HashSet<tbl_Approval_Level>();
+            TBL_APPROVAL_GROUP_MAPPING = new HashSet<TBL_APPROVAL_GROUP_MAPPING>();
+            TBL_APPROVAL_LEVEL = new HashSet<TBL_APPROVAL_LEVEL>();
         }
 
         [Key]
-        public int GroupId { get; set; }
+        public int GROUPID { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string GroupName { get; set; }
+        public string GROUPNAME { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public bool IsCommittee { get; set; }
+        public bool ISCOMMITTEE { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Group_Mapping> tbl_Approval_Group_Mapping { get; set; }
-
-        public virtual tbl_Company tbl_Company { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Level> tbl_Approval_Level { get; set; }
+        public virtual ICollection<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
+
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
     }
 }

@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Finance_EndOfDay")]
-    public partial class tbl_Finance_EndOfDay
+    [Table("core.TBL_FINANCE_ENDOFDAY")]
+    public partial class TBL_FINANCE_ENDOFDAY
     {
         [Key]
-        public int EndOfDayId { get; set; }
+        public int ENDOFDAYID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime Date { get; set; }
+        public DateTime DATE { get; set; }
 
-        public DateTime StartDateTime { get; set; }
+        public DateTime STARTDATETIME { get; set; }
 
-        public DateTime? EndDateTime { get; set; }
+        public DateTime? ENDDATETIME { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
     }
 }

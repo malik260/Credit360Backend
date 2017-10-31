@@ -6,34 +6,34 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_NextOfKin")]
-    public partial class tbl_Customer_NextOfKin
+    [Table("core.TBL_CUSTOMER_NEXTOFKIN")]
+    public partial class TBL_CUSTOMER_NEXTOFKIN
     {
         [Key]
-        public int NextOfKinId { get; set; }
+        public int NEXTOFKINID { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string NextOfKinName { get; set; }
+        public string NEXTOFKINNAME { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string NextOfKinFirstName { get; set; }
+        public string NEXTOFKINFIRSTNAME { get; set; }
 
         [StringLength(200)]
-        public string NextOfKinPhoneNumber { get; set; }
+        public string NEXTOFKINPHONENUMBER { get; set; }
 
         [StringLength(200)]
-        public string NestOfKinEmail { get; set; }
+        public string NESTOFKINEMAIL { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string NestOfKinAddress { get; set; }
+        public string NESTOFKINADDRESS { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
-        public bool? Active { get; set; }
+        public bool? ACTIVE { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }

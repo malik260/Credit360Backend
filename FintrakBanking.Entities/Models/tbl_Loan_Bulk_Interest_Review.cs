@@ -6,36 +6,36 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Bulk_Interest_Review")]
-    public partial class tbl_Loan_Bulk_Interest_Review
+    [Table("credit.TBL_LOAN_BULK_INTEREST_REVIEW")]
+    public partial class TBL_LOAN_BULK_INTEREST_REVIEW
     {
         [Key]
-        public int BulkInterestRateReviewId { get; set; }
+        public int BULKINTERESTRATEREVIEWID { get; set; }
 
-        public int CompanyId { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime EffectiveDate { get; set; }
-
-        public short ProductPriceIndexId { get; set; }
-
-        public double OldInterestRate { get; set; }
-
-        public double NewInterestRate { get; set; }
-
-        public bool IsProcessed { get; set; }
-
-        public DateTime? ProcessStartTime { get; set; }
-
-        public DateTime? ProcessEndTime { get; set; }
-
-        public int CreatedBy { get; set; }
+        public int COMPANYID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime DateCreated { get; set; }
+        public DateTime EFFECTIVEDATE { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public short PRODUCTPRICEINDEXID { get; set; }
 
-        public virtual tbl_Product_Price_Index tbl_Product_Price_Index { get; set; }
+        public double OLDINTERESTRATE { get; set; }
+
+        public double NEWINTERESTRATE { get; set; }
+
+        public bool ISPROCESSED { get; set; }
+
+        public DateTime? PROCESSSTARTTIME { get; set; }
+
+        public DateTime? PROCESSENDTIME { get; set; }
+
+        public int CREATEDBY { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime DATECREATED { get; set; }
+
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+
+        public virtual TBL_PRODUCT_PRICE_INDEX TBL_PRODUCT_PRICE_INDEX { get; set; }
     }
 }

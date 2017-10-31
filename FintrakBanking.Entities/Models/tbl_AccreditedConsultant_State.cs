@@ -6,16 +6,16 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_AccreditedConsultant_State")]
-    public partial class tbl_AccreditedConsultant_State
+    [Table("core.TBL_ACCREDITEDCONSULTANT_STATE")]
+    public partial class TBL_ACCREDITEDCONSULTANT_STATE
     {
         [Key]
-        public int AccreditedConsultantStateCoveredID { get; set; }
+        public int ACCREDITEDCONSULTANTSTATECOVEREDID { get; set; }
 
-        public int StateId { get; set; }
+        public int STATEID { get; set; }
 
-        public int AccreditedConsultantId { get; set; }
+        public int ACCREDITEDCONSULTANTID { get; set; }
 
-        public virtual tbl_AccreditedConsultant tbl_AccreditedConsultant { get; set; }
+        public virtual TBL_ACCREDITEDCONSULTANT TBL_ACCREDITEDCONSULTANT { get; set; }
     }
 }

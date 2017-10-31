@@ -6,29 +6,29 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Item_Policy")]
-    public partial class tbl_Collateral_Item_Policy
+    [Table("credit.TBL_COLLATERAL_ITEM_POLICY")]
+    public partial class TBL_COLLATERAL_ITEM_POLICY
     {
         [Key]
-        public int PolicyId { get; set; }
+        public int POLICYID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string PolicyReferenceNumber { get; set; }
+        public string POLICYREFERENCENUMBER { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string InsuranceCompanyName { get; set; }
+        public string INSURANCECOMPANYNAME { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal SumInsured { get; set; }
+        public decimal SUMINSURED { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public DateTime STARTDATE { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public DateTime ENDDATE { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

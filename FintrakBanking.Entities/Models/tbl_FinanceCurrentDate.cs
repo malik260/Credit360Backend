@@ -6,16 +6,16 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_FinanceCurrentDate")]
-    public partial class tbl_FinanceCurrentDate
+    [Table("core.TBL_FINANCECURRENTDATE")]
+    public partial class TBL_FINANCECURRENTDATE
     {
         [Key]
-        public int FinanceDateId { get; set; }
+        public int FINANCEDATEID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public DateTime CurrentDate { get; set; }
+        public DateTime CURRENTDATE { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
     }
 }

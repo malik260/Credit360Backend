@@ -6,53 +6,53 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_City")]
-    public partial class tbl_City
+    [Table("core.TBL_CITY")]
+    public partial class TBL_CITY
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_City()
+        public TBL_CITY()
         {
-            tbl_Branch = new HashSet<tbl_Branch>();
-            tbl_Collateral_Immovable_Property = new HashSet<tbl_Collateral_Immovable_Property>();
-            tbl_Loan_Application_Collateral = new HashSet<tbl_Loan_Application_Collateral>();
-            tbl_Staff = new HashSet<tbl_Staff>();
-            tbl_Temp_Collateral_Immovable_Property = new HashSet<tbl_Temp_Collateral_Immovable_Property>();
-            tbl_Temp_Staff = new HashSet<tbl_Temp_Staff>();
+            TBL_BRANCH = new HashSet<TBL_BRANCH>();
+            TBL_COLLATERAL_IMMOVABLE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVABLE_PROPERTY>();
+            TBL_LOAN_APPLICATION_COLLATERAL = new HashSet<TBL_LOAN_APPLICATION_COLLATERAL>();
+            TBL_STAFF = new HashSet<TBL_STAFF>();
+            TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY = new HashSet<TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY>();
+            TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
 
         [Key]
-        public int CityId { get; set; }
+        public int CITYID { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string CityName { get; set; }
+        public string CITYNAME { get; set; }
 
-        public int StateId { get; set; }
+        public int STATEID { get; set; }
 
-        public short CityClassId { get; set; }
+        public short CITYCLASSID { get; set; }
 
-        public bool AllowedForCollateral { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Branch> tbl_Branch { get; set; }
-
-        public virtual tbl_State tbl_State { get; set; }
-
-        public virtual tbl_City_Class tbl_City_Class { get; set; }
+        public bool ALLOWEDFORCOLLATERAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Immovable_Property> tbl_Collateral_Immovable_Property { get; set; }
+        public virtual ICollection<TBL_BRANCH> TBL_BRANCH { get; set; }
+
+        public virtual TBL_STATE TBL_STATE { get; set; }
+
+        public virtual TBL_CITY_CLASS TBL_CITY_CLASS { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application_Collateral> tbl_Loan_Application_Collateral { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_IMMOVABLE_PROPERTY> TBL_COLLATERAL_IMMOVABLE_PROPERTY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Staff> tbl_Staff { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION_COLLATERAL> TBL_LOAN_APPLICATION_COLLATERAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_Immovable_Property> tbl_Temp_Collateral_Immovable_Property { get; set; }
+        public virtual ICollection<TBL_STAFF> TBL_STAFF { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Staff> tbl_Temp_Staff { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY> TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
     }
 }

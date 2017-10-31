@@ -6,28 +6,28 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Product_Category")]
-    public partial class tbl_Product_Category
+    [Table("core.TBL_PRODUCT_CATEGORY")]
+    public partial class TBL_PRODUCT_CATEGORY
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Product_Category()
+        public TBL_PRODUCT_CATEGORY()
         {
-            tbl_Product = new HashSet<tbl_Product>();
-            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
+            TBL_PRODUCT = new HashSet<TBL_PRODUCT>();
+            TBL_TEMP_PRODUCT = new HashSet<TBL_TEMP_PRODUCT>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short ProductCategoryId { get; set; }
+        public short PRODUCTCATEGORYID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ProductCategoryName { get; set; }
+        public string PRODUCTCATEGORYNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT { get; set; }
     }
 }

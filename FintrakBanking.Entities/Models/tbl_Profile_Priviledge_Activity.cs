@@ -6,30 +6,30 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Profile_Priviledge_Activity")]
-    public partial class tbl_Profile_Priviledge_Activity
+    [Table("core.TBL_PROFILE_PRIVILEDGE_ACTIVITY")]
+    public partial class TBL_PROFILE_PRIVILEDGE_ACTIVITY
     {
         [Key]
-        public int UserActivityPriviledgeId { get; set; }
+        public int USERACTIVITYPRIVILEDGEID { get; set; }
 
-        public int UserId { get; set; }
+        public int USERID { get; set; }
 
-        public int ActivityId { get; set; }
+        public int ACTIVITYID { get; set; }
 
-        public short PriviledgeId { get; set; }
+        public short PRIVILEDGEID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual tbl_Profile_Activity tbl_Profile_Activity { get; set; }
+        public virtual TBL_PROFILE_ACTIVITY TBL_PROFILE_ACTIVITY { get; set; }
 
-        public virtual tbl_Profile_Priviledge tbl_Profile_Priviledge { get; set; }
+        public virtual TBL_PROFILE_PRIVILEDGE TBL_PROFILE_PRIVILEDGE { get; set; }
 
-        public virtual tbl_Profile_User tbl_Profile_User { get; set; }
+        public virtual TBL_PROFILE_USER TBL_PROFILE_USER { get; set; }
     }
 }

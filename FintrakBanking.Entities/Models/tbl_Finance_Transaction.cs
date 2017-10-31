@@ -6,87 +6,87 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Finance_Transaction")]
-    public partial class tbl_Finance_Transaction
+    [Table("core.TBL_FINANCE_TRANSACTION")]
+    public partial class TBL_FINANCE_TRANSACTION
     {
         [Key]
-        public int TransactionId { get; set; }
+        public int TRANSACTIONID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string BatchCode { get; set; }
+        public string BATCHCODE { get; set; }
 
-        public int GLAccountId { get; set; }
+        public int GLACCOUNTID { get; set; }
 
-        public int OperationId { get; set; }
+        public int OPERATIONID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string SourceReferenceNumber { get; set; }
+        public string SOURCEREFERENCENUMBER { get; set; }
 
-        public int? CasaAccountId { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal DebitAmount { get; set; }
+        public int? CASAACCOUNTID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal CreditAmount { get; set; }
+        public decimal DEBITAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal CREDITAMOUNT { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime ValueDate { get; set; }
+        public DateTime VALUEDATE { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime PostedDate { get; set; }
+        public DateTime POSTEDDATE { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public short SourceBranchId { get; set; }
+        public short SOURCEBRANCHID { get; set; }
 
-        public short DestinationBranchId { get; set; }
+        public short DESTINATIONBRANCHID { get; set; }
 
-        public short CurrencyId { get; set; }
+        public short CURRENCYID { get; set; }
 
-        public double CurrencyRate { get; set; }
+        public double CURRENCYRATE { get; set; }
 
-        public DateTime PostedDateTime { get; set; }
+        public DateTime POSTEDDATETIME { get; set; }
 
-        public bool IsApproved { get; set; }
+        public bool ISAPPROVED { get; set; }
 
-        public bool IsReversal { get; set; }
+        public bool ISREVERSAL { get; set; }
 
-        public bool IsSystemTransaction { get; set; }
+        public bool ISSYSTEMTRANSACTION { get; set; }
 
-        public int PostedBy { get; set; }
+        public int POSTEDBY { get; set; }
 
-        public int ApprovedBy { get; set; }
+        public int APPROVEDBY { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime ApprovedDate { get; set; }
+        public DateTime APPROVEDDATE { get; set; }
 
-        public DateTime ApprovedDateTime { get; set; }
+        public DateTime APPROVEDDATETIME { get; set; }
 
-        public short SourceApplicationId { get; set; }
+        public short SOURCEAPPLICATIONID { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
-        public virtual tbl_Branch tbl_Branch1 { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH1 { get; set; }
 
-        public virtual tbl_CASA tbl_CASA { get; set; }
+        public virtual TBL_CASA TBL_CASA { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Currency tbl_Currency { get; set; }
+        public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
-        public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
+        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
 
-        public virtual tbl_Operations tbl_Operations { get; set; }
+        public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
-        public virtual tbl_Staff tbl_Staff { get; set; }
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
 
-        public virtual tbl_Staff tbl_Staff1 { get; set; }
+        public virtual TBL_STAFF TBL_STAFF1 { get; set; }
     }
 }

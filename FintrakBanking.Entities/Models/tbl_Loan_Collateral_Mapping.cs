@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Collateral_Mapping")]
-    public partial class tbl_Loan_Collateral_Mapping
+    [Table("credit.TBL_LOAN_COLLATERAL_MAPPING")]
+    public partial class TBL_LOAN_COLLATERAL_MAPPING
     {
         [Key]
-        public int LoanCollateralMappingId { get; set; }
+        public int LOANCOLLATERALMAPPINGID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
-        public int LoanApplicationId { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
 
-        public bool IsReleased { get; set; }
+        public bool ISRELEASED { get; set; }
 
-        public short? ReleaseApprovalStatusId { get; set; }
+        public short? RELEASEAPPROVALSTATUSID { get; set; }
 
-        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
 
-        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
     }
 }

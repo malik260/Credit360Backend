@@ -6,33 +6,33 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Custom_Field_Data_Upload")]
-    public partial class tbl_Custom_Field_Data_Upload
+    [Table("core.TBL_CUSTOM_FIELD_DATA_UPLOAD")]
+    public partial class TBL_CUSTOM_FIELD_DATA_UPLOAD
     {
         [Key]
-        public int CustomFieldDataUploadId { get; set; }
+        public int CUSTOMFIELDDATAUPLOADID { get; set; }
 
-        public byte[] CustomFieldDataUpload { get; set; }
+        public byte[] CUSTOMFIELDDATAUPLOAD { get; set; }
 
-        public int CustomFieldsDataId { get; set; }
+        public int CUSTOMFIELDSDATAID { get; set; }
 
         [StringLength(50)]
-        public string ContentType { get; set; }
+        public string CONTENTTYPE { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public virtual tbl_Custom_Fields_Data tbl_Custom_Fields_Data { get; set; }
+        public virtual TBL_CUSTOM_FIELDS_DATA TBL_CUSTOM_FIELDS_DATA { get; set; }
     }
 }

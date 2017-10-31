@@ -6,48 +6,48 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Risk_Assessment_Index")]
-    public partial class tbl_Risk_Assessment_Index
+    [Table("credit.TBL_RISK_ASSESSMENT_INDEX")]
+    public partial class TBL_RISK_ASSESSMENT_INDEX
     {
         [Key]
-        public int RiskId { get; set; }
+        public int RISKID { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string Name { get; set; }
+        public string NAME { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
-        public decimal Weight { get; set; }
+        public decimal WEIGHT { get; set; }
 
-        public int? ItemLevel { get; set; }
+        public int? ITEMLEVEL { get; set; }
 
-        public int RiskAssessmentTitleId { get; set; }
+        public int RISKASSESSMENTTITLEID { get; set; }
 
-        public int? ParentId { get; set; }
+        public int? PARENTID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public short IndexTypeId { get; set; }
+        public short INDEXTYPEID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Risk_Assessment_Index_Type tbl_Risk_Assessment_Index_Type { get; set; }
+        public virtual TBL_RISK_ASSESSMENT_INDEX_TYPE TBL_RISK_ASSESSMENT_INDEX_TYPE { get; set; }
 
-        public virtual tbl_Risk_Assessment_Title tbl_Risk_Assessment_Title { get; set; }
+        public virtual TBL_RISK_ASSESSMENT_TITLE TBL_RISK_ASSESSMENT_TITLE { get; set; }
     }
 }

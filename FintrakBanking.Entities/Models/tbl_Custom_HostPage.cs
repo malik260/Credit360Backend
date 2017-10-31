@@ -6,20 +6,20 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Custom_HostPage")]
-    public partial class tbl_Custom_HostPage
+    [Table("core.TBL_CUSTOM_HOSTPAGE")]
+    public partial class TBL_CUSTOM_HOSTPAGE
     {
         [Key]
-        public int HostPageId { get; set; }
+        public int HOSTPAGEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string HostPage { get; set; }
+        public string HOSTPAGE { get; set; }
 
-        public int ParentHostPageId { get; set; }
+        public int PARENTHOSTPAGEID { get; set; }
 
-        public virtual tbl_Custom_HostPage tbl_Custom_HostPage1 { get; set; }
+        public virtual TBL_CUSTOM_HOSTPAGE TBL_CUSTOM_HOSTPAGE1 { get; set; }
 
-        public virtual tbl_Custom_HostPage tbl_Custom_HostPage2 { get; set; }
+        public virtual TBL_CUSTOM_HOSTPAGE TBL_CUSTOM_HOSTPAGE2 { get; set; }
     }
 }

@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Product_Class_Type")]
-    public partial class tbl_Product_Class_Type
+    [Table("core.TBL_PRODUCT_CLASS_TYPE")]
+    public partial class TBL_PRODUCT_CLASS_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Product_Class_Type()
+        public TBL_PRODUCT_CLASS_TYPE()
         {
-            tbl_Product_Class = new HashSet<tbl_Product_Class>();
+            TBL_PRODUCT_CLASS = new HashSet<TBL_PRODUCT_CLASS>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short ProductClassTypeId { get; set; }
+        public short PRODUCTCLASSTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ProductClassTypeName { get; set; }
+        public string PRODUCTCLASSTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product_Class> tbl_Product_Class { get; set; }
+        public virtual ICollection<TBL_PRODUCT_CLASS> TBL_PRODUCT_CLASS { get; set; }
     }
 }

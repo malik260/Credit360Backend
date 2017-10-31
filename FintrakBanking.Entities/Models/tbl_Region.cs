@@ -6,27 +6,27 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Region")]
-    public partial class tbl_Region
+    [Table("core.TBL_REGION")]
+    public partial class TBL_REGION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Region()
+        public TBL_REGION()
         {
-            tbl_State = new HashSet<tbl_State>();
+            TBL_STATE = new HashSet<TBL_STATE>();
         }
 
         [Key]
-        public int RegionId { get; set; }
+        public int REGIONID { get; set; }
 
-        public int CountryId { get; set; }
+        public int COUNTRYID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string RegionName { get; set; }
+        public string REGIONNAME { get; set; }
 
-        public virtual tbl_Country tbl_Country { get; set; }
+        public virtual TBL_COUNTRY TBL_COUNTRY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_State> tbl_State { get; set; }
+        public virtual ICollection<TBL_STATE> TBL_STATE { get; set; }
     }
 }

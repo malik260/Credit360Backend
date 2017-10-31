@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Guardian")]
-    public partial class tbl_Customer_Guardian
+    [Table("core.TBL_CUSTOMER_GUARDIAN")]
+    public partial class TBL_CUSTOMER_GUARDIAN
     {
         [Key]
-        public int GuardianId { get; set; }
+        public int GUARDIANID { get; set; }
 
         [StringLength(100)]
-        public string GuardianName { get; set; }
+        public string GUARDIANNAME { get; set; }
 
         [StringLength(20)]
-        public string GuardianPhone { get; set; }
+        public string GUARDIANPHONE { get; set; }
 
         [StringLength(200)]
-        public string GuardianAddress { get; set; }
+        public string GUARDIANADDRESS { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }

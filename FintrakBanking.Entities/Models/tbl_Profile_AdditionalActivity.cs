@@ -6,36 +6,36 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Profile_AdditionalActivity")]
-    public partial class tbl_Profile_AdditionalActivity
+    [Table("core.TBL_PROFILE_ADDITIONALACTIVITY")]
+    public partial class TBL_PROFILE_ADDITIONALACTIVITY
     {
         [Key]
-        public int AdditionalActivityId { get; set; }
+        public int ADDITIONALACTIVITYID { get; set; }
 
-        public int UserId { get; set; }
+        public int USERID { get; set; }
 
-        public int ActivityId { get; set; }
+        public int ACTIVITYID { get; set; }
 
-        public bool CanAdd { get; set; }
+        public bool CANADD { get; set; }
 
-        public bool CanEdit { get; set; }
+        public bool CANEDIT { get; set; }
 
-        public bool CanView { get; set; }
+        public bool CANVIEW { get; set; }
 
-        public bool CanDelete { get; set; }
+        public bool CANDELETE { get; set; }
 
-        public bool CanApprove { get; set; }
+        public bool CANAPPROVE { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual tbl_Profile_Activity tbl_Profile_Activity { get; set; }
+        public virtual TBL_PROFILE_ACTIVITY TBL_PROFILE_ACTIVITY { get; set; }
 
-        public virtual tbl_Profile_User tbl_Profile_User { get; set; }
+        public virtual TBL_PROFILE_USER TBL_PROFILE_USER { get; set; }
     }
 }

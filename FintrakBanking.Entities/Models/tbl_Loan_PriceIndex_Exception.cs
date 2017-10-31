@@ -6,16 +6,16 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_PriceIndex_Exception")]
-    public partial class tbl_Loan_PriceIndex_Exception
+    [Table("credit.TBL_LOAN_PRICEINDEX_EXCEPTION")]
+    public partial class TBL_LOAN_PRICEINDEX_EXCEPTION
     {
         [Key]
-        public int LoanPriceExceptionId { get; set; }
+        public int LOANPRICEEXCEPTIONID { get; set; }
 
-        public int LoanId { get; set; }
+        public int LOANID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
     }
 }

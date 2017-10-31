@@ -6,38 +6,38 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_EmploymentHistory")]
-    public partial class tbl_Customer_EmploymentHistory
+    [Table("core.TBL_CUSTOMER_EMPLOYMENTHISTORY")]
+    public partial class TBL_CUSTOMER_EMPLOYMENTHISTORY
     {
         [Key]
-        public int PlaceOfWorkId { get; set; }
+        public int PLACEOFWORKID { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string EmployerName { get; set; }
+        public string EMPLOYERNAME { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string EmployerAddress { get; set; }
+        public string EMPLOYERADDRESS { get; set; }
 
-        public int EmployerStateId { get; set; }
+        public int EMPLOYERSTATEID { get; set; }
 
-        public int EmployerCountryId { get; set; }
+        public int EMPLOYERCOUNTRYID { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string OfficePhone { get; set; }
+        public string OFFICEPHONE { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime EmployDate { get; set; }
+        public DateTime EMPLOYDATE { get; set; }
 
         [StringLength(200)]
-        public string PreviousEmployer { get; set; }
+        public string PREVIOUSEMPLOYER { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
-        public bool Active { get; set; }
+        public bool ACTIVE { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }

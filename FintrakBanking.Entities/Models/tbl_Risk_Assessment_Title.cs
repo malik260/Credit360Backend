@@ -6,47 +6,47 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Risk_Assessment_Title")]
-    public partial class tbl_Risk_Assessment_Title
+    [Table("credit.TBL_RISK_ASSESSMENT_TITLE")]
+    public partial class TBL_RISK_ASSESSMENT_TITLE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Risk_Assessment_Title()
+        public TBL_RISK_ASSESSMENT_TITLE()
         {
-            tbl_Risk_Assessment = new HashSet<tbl_Risk_Assessment>();
-            tbl_Risk_Assessment_Index = new HashSet<tbl_Risk_Assessment_Index>();
+            TBL_RISK_ASSESSMENT = new HashSet<TBL_RISK_ASSESSMENT>();
+            TBL_RISK_ASSESSMENT_INDEX = new HashSet<TBL_RISK_ASSESSMENT_INDEX>();
         }
 
         [Key]
-        public int RiskAssessmentTitleId { get; set; }
+        public int RISKASSESSMENTTITLEID { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string RiskTitle { get; set; }
+        public string RISKTITLE { get; set; }
 
-        public int? ProductId { get; set; }
+        public int? PRODUCTID { get; set; }
 
-        public int RiskTypeId { get; set; }
+        public int RISKTYPEID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Risk_Assessment> tbl_Risk_Assessment { get; set; }
+        public int? DELETEDBY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Risk_Assessment_Index> tbl_Risk_Assessment_Index { get; set; }
+        public virtual ICollection<TBL_RISK_ASSESSMENT> TBL_RISK_ASSESSMENT { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_RISK_ASSESSMENT_INDEX> TBL_RISK_ASSESSMENT_INDEX { get; set; }
     }
 }

@@ -6,57 +6,57 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Plant_And_Equipment")]
-    public partial class tbl_Collateral_Plant_And_Equipment
+    [Table("credit.TBL_COLLATERAL_PLANT_AND_EQUIPMENT")]
+    public partial class TBL_COLLATERAL_PLANT_AND_EQUIPMENT
     {
         [Key]
-        public int CollateralMachineDetailId { get; set; }
+        public int COLLATERALMACHINEDETAILID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string MachineName { get; set; }
+        public string MACHINENAME { get; set; }
 
         [StringLength(500)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string MachineNumber { get; set; }
+        public string MACHINENUMBER { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ManufacturerName { get; set; }
+        public string MANUFACTURERNAME { get; set; }
 
         [Required]
-        [StringLength(10)]
-        public string YearOfManufacture { get; set; }
+        [StringLength(5)]
+        public string YEAROFMANUFACTURE { get; set; }
 
         [Required]
-        [StringLength(10)]
-        public string YearOfPurchase { get; set; }
+        [StringLength(5)]
+        public string YEAROFPURCHASE { get; set; }
 
-        public short ValueBaseTypeId { get; set; }
+        public short VALUEBASETYPEID { get; set; }
 
         [StringLength(300)]
-        public string MachineCondition { get; set; }
+        public string MACHINECONDITION { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string MachineryLocation { get; set; }
+        public string MACHINERYLOCATION { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal ReplacementValue { get; set; }
+        public decimal REPLACEMENTVALUE { get; set; }
 
         [StringLength(50)]
-        public string EquipmentSize { get; set; }
+        public string EQUIPMENTSIZE { get; set; }
 
         [StringLength(150)]
-        public string IntendedUse { get; set; }
+        public string INTENDEDUSE { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
 
-        public virtual tbl_Collateral_Valuebase_Type tbl_Collateral_Valuebase_Type { get; set; }
+        public virtual TBL_COLLATERAL_VALUEBASE_TYPE TBL_COLLATERAL_VALUEBASE_TYPE { get; set; }
     }
 }

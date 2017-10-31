@@ -6,46 +6,46 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Risk_Assessment")]
-    public partial class tbl_Risk_Assessment
+    [Table("credit.TBL_RISK_ASSESSMENT")]
+    public partial class TBL_RISK_ASSESSMENT
     {
         [Key]
-        public int RiskAssessmentId { get; set; }
+        public int RISKASSESSMENTID { get; set; }
 
-        public int RiskIndexId { get; set; }
+        public int RISKINDEXID { get; set; }
 
-        public int? ParentId { get; set; }
+        public int? PARENTID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string RefCode { get; set; }
+        public string REFCODE { get; set; }
 
-        public int LoanApplicationId { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
 
-        public int RiskAssessmentTitleId { get; set; }
+        public int RISKASSESSMENTTITLEID { get; set; }
 
-        public decimal IndexScore { get; set; }
+        public decimal INDEXSCORE { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public bool Selected { get; set; }
+        public bool SELECTED { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
 
-        public virtual tbl_Risk_Assessment_Title tbl_Risk_Assessment_Title { get; set; }
+        public virtual TBL_RISK_ASSESSMENT_TITLE TBL_RISK_ASSESSMENT_TITLE { get; set; }
     }
 }

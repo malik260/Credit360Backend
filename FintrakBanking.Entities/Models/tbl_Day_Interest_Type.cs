@@ -6,28 +6,28 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Day_Interest_Type")]
-    public partial class tbl_Day_Interest_Type
+    [Table("core.TBL_DAY_INTEREST_TYPE")]
+    public partial class TBL_DAY_INTEREST_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Day_Interest_Type()
+        public TBL_DAY_INTEREST_TYPE()
         {
-            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan = new HashSet<tbl_Loan>();
+            TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
+            TBL_LOAN = new HashSet<TBL_LOAN>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short DayInterestTypeId { get; set; }
+        public short DAYINTERESTTYPEID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string DayInterestTypeName { get; set; }
+        public string DAYINTERESTTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+        public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
     }
 }

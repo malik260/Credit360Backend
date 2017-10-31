@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_CASA_PostNoStatus")]
-    public partial class tbl_CASA_PostNoStatus
+    [Table("core.TBL_CASA_POSTNOSTATUS")]
+    public partial class TBL_CASA_POSTNOSTATUS
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_CASA_PostNoStatus()
+        public TBL_CASA_POSTNOSTATUS()
         {
-            tbl_CASA = new HashSet<tbl_CASA>();
+            TBL_CASA = new HashSet<TBL_CASA>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short PostNoStatusId { get; set; }
+        public short POSTNOSTATUSID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string PostNoStatusName { get; set; }
+        public string POSTNOSTATUSNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_CASA> tbl_CASA { get; set; }
+        public virtual ICollection<TBL_CASA> TBL_CASA { get; set; }
     }
 }

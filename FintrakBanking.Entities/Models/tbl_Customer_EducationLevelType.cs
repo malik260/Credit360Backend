@@ -6,14 +6,14 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_EducationLevelType")]
-    public partial class tbl_Customer_EducationLevelType
+    [Table("core.TBL_CUSTOMER_EDUCATIONLEVELTYPE")]
+    public partial class TBL_CUSTOMER_EDUCATIONLEVELTYPE
     {
         [Key]
-        public short EducationLevelTypeId { get; set; }
+        public short EDUCATIONLEVELTYPEID { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string EducationLevel { get; set; }
+        public string EDUCATIONLEVEL { get; set; }
     }
 }

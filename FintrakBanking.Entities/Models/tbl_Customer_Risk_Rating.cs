@@ -6,36 +6,36 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Risk_Rating")]
-    public partial class tbl_Customer_Risk_Rating
+    [Table("core.TBL_CUSTOMER_RISK_RATING")]
+    public partial class TBL_CUSTOMER_RISK_RATING
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Customer_Risk_Rating()
+        public TBL_CUSTOMER_RISK_RATING()
         {
-            tbl_Customer = new HashSet<tbl_Customer>();
+            TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short RiskRatingId { get; set; }
+        public short RISKRATINGID { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string RiskRating { get; set; }
+        public string RISKRATING { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
-        public bool IsInvestmentGrade { get; set; }
+        public bool ISINVESTMENTGRADE { get; set; }
 
-        public double MaximumShareHolderFundPercentage { get; set; }
+        public double MAXIMUMSHAREHOLDERFUNDPERCENTAGE { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer> tbl_Customer { get; set; }
+        public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
     }
 }

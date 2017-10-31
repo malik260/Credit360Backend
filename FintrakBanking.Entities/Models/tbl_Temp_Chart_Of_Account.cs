@@ -6,76 +6,76 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Chart_Of_Account")]
-    public partial class tbl_Temp_Chart_Of_Account
+    [Table("temp.TBL_TEMP_CHART_OF_ACCOUNT")]
+    public partial class TBL_TEMP_CHART_OF_ACCOUNT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Temp_Chart_Of_Account()
+        public TBL_TEMP_CHART_OF_ACCOUNT()
         {
-            tbl_Temp_Chart_Of_Account_Currency = new HashSet<tbl_Temp_Chart_Of_Account_Currency>();
+            TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY>();
         }
 
         [Key]
-        public int GLAccountId { get; set; }
+        public int GLACCOUNTID { get; set; }
 
-        public int AccountTypeId { get; set; }
+        public int ACCOUNTTYPEID { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string AccountCode { get; set; }
+        public string ACCOUNTCODE { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string AccountName { get; set; }
+        public string ACCOUNTNAME { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public short BranchId { get; set; }
+        public short BRANCHID { get; set; }
 
-        public bool SystemUse { get; set; }
+        public bool SYSTEMUSE { get; set; }
 
-        public int? AccountStatusId { get; set; }
+        public int? ACCOUNTSTATUSID { get; set; }
 
-        public short? GLClassId { get; set; }
+        public short? GLCLASSID { get; set; }
 
-        public bool BranchSpecific { get; set; }
+        public bool BRANCHSPECIFIC { get; set; }
 
         [StringLength(20)]
-        public string OldAccountId { get; set; }
+        public string OLDACCOUNTID { get; set; }
 
-        public short FSCaptionId { get; set; }
+        public short FSCAPTIONID { get; set; }
 
-        public bool IsCurrent { get; set; }
+        public bool ISCURRENT { get; set; }
 
-        public short ApprovalStatusId { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Account_Type tbl_Account_Type { get; set; }
+        public virtual TBL_ACCOUNT_TYPE TBL_ACCOUNT_TYPE { get; set; }
 
-        public virtual tbl_Chart_Of_Account_Class tbl_Chart_Of_Account_Class { get; set; }
+        public virtual TBL_CHART_OF_ACCOUNT_CLASS TBL_CHART_OF_ACCOUNT_CLASS { get; set; }
 
-        public virtual tbl_Financial_Statement_Caption tbl_Financial_Statement_Caption { get; set; }
+        public virtual TBL_FINANCIAL_STATEMENT_CAPTION TBL_FINANCIAL_STATEMENT_CAPTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Chart_Of_Account_Currency> tbl_Temp_Chart_Of_Account_Currency { get; set; }
+        public virtual ICollection<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY> TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY { get; set; }
     }
 }

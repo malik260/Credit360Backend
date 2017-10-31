@@ -6,25 +6,25 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Blacklist")]
-    public partial class tbl_Customer_Blacklist
+    [Table("core.TBL_CUSTOMER_BLACKLIST")]
+    public partial class TBL_CUSTOMER_BLACKLIST
     {
         [Key]
-        public int Customer_BlacklistId { get; set; }
+        public int CUSTOMER_BLACKLISTID { get; set; }
 
-        public int? CompanyId { get; set; }
+        public int? COMPANYID { get; set; }
 
-        public int? CustomerId { get; set; }
+        public int? CUSTOMERID { get; set; }
 
-        public DateTime? DateBlacklisted { get; set; }
+        public DateTime? DATEBLACKLISTED { get; set; }
 
         [StringLength(2000)]
-        public string Reason { get; set; }
+        public string REASON { get; set; }
 
-        public bool? IsCurrent { get; set; }
+        public bool? ISCURRENT { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }

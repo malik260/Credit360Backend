@@ -6,49 +6,49 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Client_Supplier")]
-    public partial class tbl_Customer_Client_Supplier
+    [Table("core.TBL_CUSTOMER_CLIENT_SUPPLIER")]
+    public partial class TBL_CUSTOMER_CLIENT_SUPPLIER
     {
         [Key]
-        public int Client_SupplierId { get; set; }
+        public int CLIENT_SUPPLIERID { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
-        public short CustomerTypeId { get; set; }
+        public short CUSTOMERTYPEID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string FirstName { get; set; }
+        public string FIRSTNAME { get; set; }
 
         [StringLength(100)]
-        public string MiddleName { get; set; }
+        public string MIDDLENAME { get; set; }
 
         [StringLength(100)]
-        public string LastName { get; set; }
+        public string LASTNAME { get; set; }
 
         [StringLength(500)]
-        public string Address { get; set; }
+        public string ADDRESS { get; set; }
 
         [StringLength(50)]
-        public string PhoneNumber { get; set; }
+        public string PHONENUMBER { get; set; }
 
         [StringLength(50)]
-        public string EmailAddress { get; set; }
+        public string EMAILADDRESS { get; set; }
 
-        public short Client_SupplierTypeId { get; set; }
+        public short CLIENT_SUPPLIERTYPEID { get; set; }
 
-        public int CreatedBy { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime DateCreated { get; set; }
-
-        public int? UpdatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime DATECREATED { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public int? UPDATEDBY { get; set; }
 
-        public virtual tbl_Customer_Client_Supplier_Type tbl_Customer_Client_Supplier_Type { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime? DATETIMEUPDATED { get; set; }
+
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
+
+        public virtual TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE { get; set; }
     }
 }
