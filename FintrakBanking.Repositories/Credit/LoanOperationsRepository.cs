@@ -3937,7 +3937,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool BulkRateReview(short priceindexId, double newRate, DateTime applicationDate, int staffId)
+        public bool BulkRateReview(short priceindexId, double newRate, DateTime applicationDate, int staffId,int operationId)
         {
             bool output = false;
             // var applicationDate = generalSetup.GetApplicationDate();
@@ -3954,8 +3954,10 @@ namespace FintrakBanking.Repositories.Credit
                          from a in context.tbl_Loan
                          where a.tbl_Product.tbl_Product_Price_Index.ProductPriceIndexId == priceindexId
                          && a.LoanStatusId == (short)LoanStatusEnum.Active
-                         && !context.tbl_Loan_PriceIndex_Exception.Any(d => d.LoanId == a.TermLoanId) // a.LoanId == loanId
-
+                         && applicationDate < a.MaturityDate && a.FirstInterestPaymentDate < a.MaturityDate && a.FirstPrincipalPaymentDate < a.MaturityDate
+                         && a.FirstInterestPaymentDate > applicationDate && a.FirstPrincipalPaymentDate > applicationDate
+                         && !context.tbl_Loan_PriceIndex_Exception.Any(d => d.LoanId == a.TermLoanId) orderby a.TermLoanId
+                         // a.LoanId == loanId
                          select new LoanPaymentRestructureScheduleInputViewModel()
                          {
                              loanId = a.TermLoanId,
@@ -3963,7 +3965,7 @@ namespace FintrakBanking.Repositories.Credit
                              principalAmount = (double)a.OutstandingPrincipal,
                              principalFrequency = (short)a.PrincipalFrequencyTypeId,
                              interestFrequency = (short)a.InterestFrequencyTypeId,
-                             tenor = (int)(a.MaturityDate - applicationDate).TotalDays,
+                             //tenor = (int)(a.MaturityDate - applicationDate).TotalDays,
                              principalFirstpaymentDate = (DateTime)a.FirstPrincipalPaymentDate,
                              interestFirstpaymentDate = (DateTime)a.FirstInterestPaymentDate,
                              interestRate = a.InterestRate + rateChange,
@@ -3972,6 +3974,7 @@ namespace FintrakBanking.Repositories.Credit
                              accurialBasis = a.ScheduleDayCountConventionId,
                              firstDayType = a.ScheduleDayInterestTypeId,
                              integralFeeAmount = 0,
+                             operationId = operationId,
                          }).ToList();
 
             foreach (var item in model)
@@ -3981,7 +3984,7 @@ namespace FintrakBanking.Repositories.Credit
                                   let sumUnEarnedFee = context.tbl_Loan_Schedule_Daily.Where(a => a.LoanId == item.loanId
                                   && a.Date >= DbFunctions.TruncateTime(applicationDate)).Sum(a => (double?)a.UnEarnedFee ?? 0)
                                   select sumUnEarnedFee;
-                item.integralFeeAmount = (double?)unEarnedFee.FirstOrDefault() ?? 0;
+                //item.integralFeeAmount = (double?)unEarnedFee.FirstOrDefault() ?? 0;
 
                 InterestRateReview(item.loanId, item, applicationDate, staffId);
 
