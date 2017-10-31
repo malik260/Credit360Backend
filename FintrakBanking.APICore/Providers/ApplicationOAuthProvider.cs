@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Repositories.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
@@ -7,6 +8,7 @@ using Microsoft.Owin.Security.OAuth;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.DirectoryServices.AccountManagement;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -18,15 +20,49 @@ namespace FintrakBanking.APICore.Providers
         private readonly string _publicClientId;
         private FinTrakBankingContext repo;
 
+        public string DomanProvider
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DomainName"];
+            }
+        }
+
+        public string AuthenticationType
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["AuthenticationType"];
+            }
+        }
+
+        public string DomainUserName
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DomainUserName"];
+            }
+        }
+
+        public string DomainUserPassword
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["DomainUserPassword"];
+            }
+        }
+
         public ApplicationOAuthProvider(string publicClientId)
         {
-            if( publicClientId==null) throw new ArgumentNullException("publicClientId");
+            if (publicClientId == null) throw new ArgumentNullException("publicClientId");
             this.repo = new FinTrakBankingContext();
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             //var origin = context.OwinContext.Request.Headers["Origin"];
+
+            UserViewModel user = null;
 
             var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
             var userVM = new UserViewModel
@@ -35,18 +71,56 @@ namespace FintrakBanking.APICore.Providers
                 username = context.UserName
             };
 
+            ClaimsIdentity identity;
             var _authRepo = new AuthenticationRepository(repo);
 
-            var isUserAccountValid = Task.FromResult(_authRepo.IsUserAccountValid(userVM.username)).Result;
-            if (isUserAccountValid)
+
+            if (AuthenticationType == AuthenticationTypeEnum.activeDirectory.ToString())
             {
-                var user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
-                    .Result;
+                if (!Task.FromResult(ValidateCredentials(context.UserName, context.Password, out identity)).Result)
+                {
+                    context.SetError("invalid_grant", "The user name or password is incorrect.");
+                    return;
+                }
+                else
+                {
+                    user = Task.FromResult(_authRepo.FindUserByUserName(userVM.username)).Result;
+                }
+            }
+
+
+         
+
+
+            bool isUserAccountValid;
+
+
+            if (Task.FromResult(_authRepo.IsUserAccountValid(userVM.username)).Result)
+            {
+                isUserAccountValid = true;
+            }
+            else
+            {
+                isUserAccountValid = false;
+            }
+
+
+            if (AuthenticationType == AuthenticationTypeEnum.defaultAuth.ToString())
+            {
+                user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
+                   .Result;
                 if (user == null)
                 {
                     context.SetError("invalid_grant", "The user name or password is incorrect.");
                     return;
                 }
+            }
+
+
+            if (isUserAccountValid)
+            {
+              
+
 
                 var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
                 var currUser = user;
@@ -129,5 +203,28 @@ namespace FintrakBanking.APICore.Providers
             };
             return new AuthenticationProperties(data);
         }
+
+
+        public bool ValidateCredentials(string userName, string password, out ClaimsIdentity identity)
+        {
+           
+            using (var pc = new PrincipalContext(ContextType.Domain, this.DomanProvider, this.DomainUserName, this.DomainUserPassword))
+            {
+                bool isValid = pc.ValidateCredentials(userName, password);
+                if (isValid)
+                {
+                    identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
+                    identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+                }
+                else
+                {
+                    identity = null;
+                }
+
+                return isValid;
+            }
+        }
+
+
     }
 }

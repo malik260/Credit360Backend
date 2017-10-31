@@ -10,5 +10,6 @@ namespace FintrakBanking.Interfaces.Reports
     public interface IFinanceTransactionsReport
     {
         IEnumerable<dynamic> PostTransactionsByStaffByDate(DateRange dateItem, int companyId);
+        IEnumerable<dynamic> PostTransactionsByBranchByDate(DateRange dateItem, int companyId);
     }
 }

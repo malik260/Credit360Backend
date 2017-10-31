@@ -339,7 +339,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("posted-transactions/date")]
+        [Route("posted-transactions-staff/date")]
         public HttpResponseMessage PostTransactionsByStaffByDate(DateRange dateRange)
         {
             var token = new TokenDecryptionHelper();
@@ -360,7 +360,27 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
+        [HttpPost]
+        [Route("posted-transactions-branch/date")]
+        public HttpResponseMessage PostTransactionsByBranchByDate(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = reportRepo.PostTransactionsByBranchByDate(dateRange, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }

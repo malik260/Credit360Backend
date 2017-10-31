@@ -159,7 +159,10 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
         public string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId)
         {
-            throw new NotImplementedException();
+            string path = string.Empty;
+            path = reportPath + "ReportViews/GrantedFacilities.aspx?companyId=" + companyId.ToString() + "&startDate=" + searchEntity.startDate.ToShortDateString() + 
+                "&endDate=" + searchEntity.endDate.ToShortDateString() + "&staffId=" + searchEntity.staffId + "&excludeSystem=" + searchEntity.excludeSystem + "&branchId=" + searchEntity.branchId;
+            return path;
         }
 
     }

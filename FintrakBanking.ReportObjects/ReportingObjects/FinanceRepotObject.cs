@@ -11,17 +11,19 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 {
     public partial class FinanceRepotObject
     {
-        public  List<TransactionViewModel> FinanceTransaction(DateTime? endDate, DateTime? startDate, int? staffId, int companyId)
+        public  List<TransactionViewModel> FinanceTransaction(DateTime? endDate, DateTime? startDate, int? staffId, int companyId, int? branchId, bool excludeSystem)
         {
+           
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var data = (from a in context.tbl_Finance_Transaction
-                            where a.CompanyId == companyId && (a.PostedDate <= endDate && a.PostedDate >= startDate) || (a.PostedDate == endDate 
-                            || a.PostedBy == staffId) ||( staffId == null || endDate == null || endDate == null)
+                IQueryable< TransactionViewModel > data  = (from a in context.tbl_Finance_Transaction
+                            where a.CompanyId == companyId && (a.PostedDate <= endDate && a.PostedDate >= startDate) || (a.PostedDate == endDate) ||(  endDate == null || startDate == null  )
 
                             orderby a.PostedDate, a.TransactionId descending
                             select new TransactionViewModel()
                             {
+                                postedByStaffId = a.PostedBy ,
+                                branchId = a.SourceBranchId ,
                                 branch = a.tbl_Branch.BranchName,
                                 batchNo = a.BatchCode,
                                 companyName= a.tbl_Company.Name,
@@ -40,6 +42,25 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                 baseCurrency = a.tbl_Company.tbl_Currency.CurrencyName
                                 
                             });
+
+
+                if (branchId!= null)
+                {
+                    data = data.Where(c => c.branchId ==  branchId);
+                }
+
+                if (excludeSystem)
+                {
+                    data = data.Where(c => c.postedByStaffId != -1);
+
+                }
+                
+
+                if (staffId != null)
+                {
+                    data = data.Where(c => c.postedByStaffId == staffId);
+                }
+               
                 return data.ToList();
             }
 
