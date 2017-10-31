@@ -150,12 +150,14 @@ namespace FintrakBanking.Repositories.Credit
                 DateTimeCreated = genSetup.GetApplicationDate()
             });
 
-            if (context.SaveChanges() == 1) // may not be needed
-            {
-                return collateral.CollateralCustomerId;
-            }
+            return collateral.CollateralCustomerId;
 
-            return 0;
+            //if (context.SaveChanges() == 1) // may not be needed
+            //{
+            //    return collateral.CollateralCustomerId;
+            //}
+
+            //return 0;
         }
 
         private void UpdateCollateralMainForm(CollateralViewModel model, int collateralId)

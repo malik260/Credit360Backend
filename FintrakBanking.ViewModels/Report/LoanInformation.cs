@@ -74,10 +74,13 @@ namespace FintrakBanking.ViewModels.Reports
 
     public class ReportSearchEntity
     {
-        public int typeId { get; set; }
-        public int staffId { get; set; }
+        public int? branchId { get; set; }
+
+        public int? typeId { get; set; }
+        public int? staffId { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
+        public bool excludeSystem { get; set; }
     }
     public class AllLoanViewModel
     {

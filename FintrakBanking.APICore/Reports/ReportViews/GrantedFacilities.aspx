@@ -34,6 +34,9 @@
                      <asp:ControlParameter ControlID="EndDate" Name="endDate" PropertyName="Text" Type="DateTime" />
                      <asp:ControlParameter ControlID="StartDate" Name="startDate" PropertyName="Text" Type="DateTime" />
                      <asp:ControlParameter ControlID="PostedByStaffId" Name="staffId" PropertyName="Text" Type="Int32" />
+                     <asp:ControlParameter ControlID="CompanyId" Name="companyId" PropertyName="Text" Type="Int32" />
+                     <asp:ControlParameter ControlID="BranchId" Name="branchId" PropertyName="Text" Type="Int32" />
+                     <asp:ControlParameter ControlID="ExcludeSystem" Name="excludeSystem" PropertyName="Text" Type="Boolean" />
                  </SelectParameters>
              </asp:ObjectDataSource>
 
@@ -41,6 +44,8 @@
         <asp:Label ID="EndDate" runat="server"  Visible="false" ></asp:Label>
         <asp:Label ID="PostedByStaffId" runat="server"  Visible="false" ></asp:Label>
         <asp:Label ID="CompanyId" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="BranchId" runat="server"  Visible="False" ></asp:Label>
+        <asp:Label ID="ExcludeSystem" runat="server"  Visible="False" ></asp:Label>
         </div>
     </form> 
 </body>
