@@ -6,6 +6,7 @@ namespace FintrakBanking.Finance.ViewModels
     public class TransactionViewModel
     {
         public string branch { get; set; }
+        public int branchId { get; set; }
         public string batchNo { get; set; }
         public decimal creditAmount { get; set; }
         public decimal debitAmount { get; set; }
@@ -23,6 +24,7 @@ namespace FintrakBanking.Finance.ViewModels
         public string companyName { get; set; }
         public string logoPath { get; set; }
         public DateTime repostDate { get { return DateTime.Now; } }
+        public int postedByStaffId { get; set; }
     }
 
    

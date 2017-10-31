@@ -33,7 +33,9 @@ namespace FintrakBanking.Repositories.Reports
                            select new
                            {
                                staffId = a.tbl_Staff.StaffId,
-                               staffName = a.tbl_Staff.LastName + " " + a.tbl_Staff.FirstName
+                               staffName = a.tbl_Staff.LastName + " " + a.tbl_Staff.FirstName,
+                      
+
                            };
                 return data.ToList().Distinct();
             }
@@ -45,7 +47,30 @@ namespace FintrakBanking.Repositories.Reports
            
 
         }
+        public IEnumerable<dynamic> PostTransactionsByBranchByDate(DateRange dateItem, int companyId)
+        {
+            try
+            {
+                var data = from a in context.tbl_Finance_Transaction
+                           where (a.PostedDate >= dateItem.startDate && a.PostedDate <= dateItem.endDate)
+                           && a.CompanyId == companyId
+                           select new
+                           {
+                               
+                               branchId = a.tbl_Branch.BranchId,
+                               branchName = a.tbl_Branch.BranchName
 
+                           };
+                return data.ToList().Distinct();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+
+        }
 
 
     }
