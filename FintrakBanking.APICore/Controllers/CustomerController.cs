@@ -35,11 +35,12 @@ namespace FintrakBanking.APICore.Controllers
             {
 
                 entity.userBranchId = (short)token.GetBranchId;
-                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.companyId = token.GetCompanyId;
+            //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
 
-                var data = repo.AddCustomer(entity).IsCompleted;
+                var data = repo.AddCustomer(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -112,7 +113,28 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [Route("customer-information/")]
+        public HttpResponseMessage SearchRandomCustomerBySearchQuery(string searchQuery)
 
+        {
+            try
+            {
+                var data = repo.SearchRandomCustomerBySearchQuery(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         [HttpGet]
         [Route("customers-in-group/{groupId}")]
         public HttpResponseMessage GetCustomerInGroupByGroupId(int groupId)
@@ -401,5 +423,216 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpPost]
+        [Route("customer-phonecontact")]
+        public HttpResponseMessage AddCustomerPhoneContact([FromBody]CustomerPhoneContactViewModels entity)
+        {
+            try
+            {
+
+                entity.userBranchId = (short)token.GetBranchId;
+              
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddCustomerPhoneContact(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("customer-address")]
+        public HttpResponseMessage AddCustomerAddresses([FromBody]CustomerAddressViewModels entity)
+        {
+            try
+            {
+
+                entity.userBranchId = (short)token.GetBranchId;
+
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddCustomerAddresses(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("customer-bvn")]
+        public HttpResponseMessage AddCustomerBvn([FromBody]CustomerBvnViewModels entity)
+        {
+            try
+            {
+
+                entity.userBranchId = (short)token.GetBranchId;
+
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddCustomerBvn(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("customer-employmentHistory")]
+        public HttpResponseMessage AddCustomerEmploymentHistory([FromBody]CustomerEmploymentHistoryViewModels entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddCustomerEmploymentHistory(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("customer-companydirectors")]
+        public HttpResponseMessage AddCustomerCompanyDirector([FromBody]CustomerCompanyDirectorsViewModels entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddCustomerCompanyDirector(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("customer-clientsupplier")]
+        public HttpResponseMessage AddCustomerClientSupplier([FromBody]CustomerClientOrSupplierViewModels entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddCustomerClientSupplier(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("customer-identification")]
+        public HttpResponseMessage AddCustomerIdentification([FromBody]CustomerIdentificationViewModels entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddCustomerIdentification(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        //[HttpPost]
+        //[Route("customer-company")]
+        //public HttpResponseMessage AddCustomerIdentification([FromBody]CustomerIdentificationViewModels entity)
+        //{
+        //    try
+        //    {
+        //        entity.userBranchId = (short)token.GetBranchId;
+
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
+        //        entity.createdBy = token.GetStaffId;
+
+        //        var data = repo.AddCustomerIdentification(entity);
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = true, result = data, message = "The record has been created successfully" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = "There was an error creating this record" });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //           new { success = false, message = $"There was an error creating this record {e.Message}" });
+        //    }
+        //}
     }
 }

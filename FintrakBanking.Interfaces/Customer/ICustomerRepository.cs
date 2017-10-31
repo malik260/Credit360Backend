@@ -25,7 +25,9 @@ namespace FintrakBanking.Interfaces.Customer
 
         IEnumerable<CustomerViewModels> GetCustomerByTypeId(int customerTypeId);
 
-        Task<bool> AddCustomer(CustomerViewModels entity);
+        //Task<bool> AddCustomer(CustomerViewModels entity);
+
+        bool AddCustomer(CustomerViewModels entity);
 
         //Task<bool> UpdateCustomer(int customerId, CustomerViewModels entity);
         bool UpdateCustomer(int customerId, CustomerViewModels entity);
@@ -49,7 +51,8 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search) ;
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
+        IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery);
 
-        
+
     }
 }
