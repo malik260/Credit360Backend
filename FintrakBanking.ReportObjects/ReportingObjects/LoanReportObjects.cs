@@ -172,8 +172,7 @@ namespace FintrakBanking.ReportObjects
                 return data;
             }
         }
-
-
+        
         public static List<AllLoanViewModel> EarnedAndReceivableLoans(int ProductClassId, DateTime startDate, DateTime endDdate, int companyId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -206,6 +205,21 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
+        public List<dynamic> LoanUtilization()
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = (from n in context.tbl_Loan_Application_Detail
+                            select new
+                            {
+                                n.ApprovedAmount,
+                                disbursedAmount = (decimal?)(from a in context.tbl_Loan where a.LoanApplicationDetailId == n.LoanApplicationDetailId select a.PrincipalAmount).Sum() ?? 0,
+
+                            }).ToList();
+            }
+               
+            return null;
+        }
     }
 
 

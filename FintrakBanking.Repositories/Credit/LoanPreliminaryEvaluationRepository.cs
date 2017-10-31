@@ -585,14 +585,41 @@ namespace FintrakBanking.Repositories.Credit
 
             entity.externalInitialization = false;
 
-            workFlow.LogForApproval(entity);
-
-            if (workFlow.NewState == (int)ApprovalState.Ended)
+            using (var trans = context.Database.BeginTransaction())
             {
-                return ApprovePreliminaryEvaluation(entity.targetId, (short)workFlow.StatusId, entity);
-            }
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
 
-            return false;
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApprovePreliminaryEvaluation(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
         }
 
         private bool ApprovePreliminaryEvaluation(int loanPenId, short approvalStatusId, UserInfo user)

@@ -1,4 +1,7 @@
-﻿namespace FintrakBanking.Interfaces.Setups.General
+﻿using FintrakBanking.ViewModels.Setups.General;
+using System.Collections.Generic;
+
+namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IEmailAndAlertsRepository
     {
@@ -11,5 +14,15 @@
         void SendAlertsForLoanNplMonitoring();
 
         void SendAlertsOnSelfLiquidatingLoanExpiry();
+
+        bool CreateEmailMessageAndSend(MessageLogViewModel model);
+
+        IEnumerable<MessageLogViewModel> GetMailingList();
+
+        IEnumerable<MessageLogViewModel> GetEmailMailingList();
+
+        IEnumerable<MessageLogViewModel> GetSmsMailingList();
+
+        bool UpdateMailDeliveryStatus(int messageId, short statusId);
     }
 }
