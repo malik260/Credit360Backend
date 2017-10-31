@@ -8,16 +8,47 @@ namespace FintrakBanking.Common
 {
     public class EmailHelpers
     {
-        public void SendMail(string recipient, string additionalRecipient, string messageSubject, string messageContent, string templateUrl)
+        public bool SendMail(string recipient, string additionalRecipient, string messageSubject, string messageContent, string templateUrl)
         {
             var body = PopulateBody(messageContent, templateUrl);
 
-            SendHtmlFormattedEmail(recipient, additionalRecipient, messageSubject, body);
+            bool sentMail = false;
+
+            try
+            {
+                SendHtmlFormattedEmail(recipient, additionalRecipient, messageSubject, body);
+
+                sentMail = true;
+
+                return sentMail;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         public static string PopulateBody(string description, string templateLink)
         {
             string body;
+            //StreamReader stream = new StreamReader();
+            //string p2 = HostingEnvironment.ApplicationPhysicalPath;
+            //int h = p2.LastIndexOf("bin");
+            //string hostEnvironment = p2.Remove(h);
+
+            //string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+            //To get the location the assembly normally resides on disk or the install directory
+            //string path = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
+
+            //once you have the path you get the directory with:
+            //var directory = Path.GetDirectoryName(path);
+
+            //int stripDown = directory.LastIndexOf("bin");
+
+            //string hostingEnvironment = directory.Remove(stripDown);
+
             using (var reader = new StreamReader(HostingEnvironment.MapPath(templateLink) ?? throw new InvalidOperationException()))
             {
                 body = reader.ReadToEnd();
@@ -34,7 +65,10 @@ namespace FintrakBanking.Common
             {
                 mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["SupportEmailAddr"]);
                 mailMessage.To.Add(new MailAddress(recepientEmail));
-                mailMessage.Bcc.Add(new MailAddress(additionalRecipients));
+                if (additionalRecipients != null)
+                {
+                    mailMessage.Bcc.Add(new MailAddress(additionalRecipients));
+                }
                 mailMessage.Subject = subject;
                 mailMessage.Body = body;
                 mailMessage.IsBodyHtml = true;
@@ -54,7 +88,7 @@ namespace FintrakBanking.Common
     public class EmailFormViewModel
     {
         public string Sender { get; set; }
-        public string Secipient { get; set; }
+        public string Recipient { get; set; }
         public string Body { get; set; }
         public string Subject { get; set; }
     }

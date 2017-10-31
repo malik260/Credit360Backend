@@ -15,5 +15,10 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(500)]
         public string ReportPath { get; set; }
+
+        public bool UseActiveDirectory { get; set; }
+
+        [StringLength(100)]
+        public string ActiveDirectoryDomain { get; set; }
     }
 }

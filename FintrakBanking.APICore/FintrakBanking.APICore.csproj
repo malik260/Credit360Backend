@@ -342,6 +342,7 @@
     <Compile Include="Controllers\LoanController.cs" />
     <Compile Include="Controllers\LoanCovenantController.cs" />
     <Compile Include="Controllers\LoanDocumentController.cs" />
+    <Compile Include="Controllers\LoanOperationController.cs" />
     <Compile Include="Controllers\MisInfoController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\ProductCollateralTypeController.cs" />
@@ -586,6 +587,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\EndOfDay\" />
+    <Folder Include="Views\LoanOperation\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

@@ -449,6 +449,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string managerEmail { get; set; }
         public string relationshipOfficer { get; set; }
         public string officerEmail { get; set; }
+        public int relationshipOfficerId { get; set; }
     }
 
     public class DailyInterestAccrualViewModel : GeneralEntity
