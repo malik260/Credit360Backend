@@ -8,6 +8,7 @@ using FintrakBanking.APICore.core;
 using System.Web;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.APICore.Controllers 
 {
@@ -116,9 +117,9 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 entity.createdBy = token.GetStaffId;
-                entity.companyId = token.GetCompanyId;
+                entity.companyId = token.GetCompanyId; 
 
-                var data = repo.BulkRateReview(entity.productPriceIndexId,entity.newInterestRate,entity.effectiveDate,token.GetStaffId);
+                var data = repo.BulkRateReview(entity.productPriceIndexId,entity.newInterestRate,entity.effectiveDate,token.GetStaffId,(int) OperationsEnum.TermLoanBooking);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "New Interst Rate Successfully Added " });
