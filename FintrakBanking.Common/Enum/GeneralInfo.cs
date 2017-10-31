@@ -159,9 +159,10 @@ namespace FintrakBanking.Common.Enum
         CollateralReleaseAction = 152,
         CollateralReleaseApproval = 153,
         RanEndOfDay = 150,
-            KYCItemAdded = 151,
+        KYCItemAdded = 151,
         KYCItemUpdated = 152,
-        CollateralAssignmentAction = 153
+        BulkRateLoanExcemption = 154,
+        CollateralAssignmentAction = 157
     };
 
 

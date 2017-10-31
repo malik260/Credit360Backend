@@ -55,10 +55,10 @@ namespace FintrakBanking.ViewModels.Credit
         public Double payAmount { get; set; }
         public Double newAmount { get; set; }
         public int productId { get; set; }
-        public short newPrincipalFrequency { get; set; }
-        public short newInterestFrequency { get; set; }
-        public DateTime newPrincipalFirstpaymentDate { get; set; }
-        public DateTime newInterestFirstpaymentDate { get; set; }
+        public int? newPrincipalFrequency { get; set; }
+        public int? newInterestFrequency { get; set; }
+        public DateTime? newPrincipalFirstpaymentDate { get; set; }
+        public DateTime? newInterestFirstpaymentDate { get; set; }
         public Double payInterest { get; set; }
         public Double newInterest { get; set; }
 
@@ -69,6 +69,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isManagementInterestRate { get; set; }
         public DateTime? newMaturityDate { get; set; }
         public int newTenorPrepayment{ get { return ((DateTime)newMaturityDate - newEffectiveDate).Days; } }
+
 
         
     }

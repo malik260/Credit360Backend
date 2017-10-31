@@ -192,7 +192,6 @@ namespace FintrakBanking.Repositories.Credit
             context.tbl_Collateral_Plant_And_Equipment.Add(new tbl_Collateral_Plant_And_Equipment
             {
                 CollateralCustomerId = collateralId,
-                CollateralSubTypeId = entity.collateralSubTypeId,
                 MachineName = entity.machineName,
                 Description = entity.description,
                 MachineNumber = entity.machineNumber,

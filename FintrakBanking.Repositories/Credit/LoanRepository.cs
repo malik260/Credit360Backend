@@ -220,13 +220,13 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.tbl_Loan_Revolving.Add(data);
 
                     //...................Saving Loan Collaterals Mapping.......................
-                   // AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
+                    AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
 
                     //...................Saving Loan Gaurantors................................
-                    //AddLoanGuarantor(model.loanGuarantor, (short)model.productTypeId, model.loanApplicationId);
+                    AddLoanGuarantor(model.loanGuarantor, (short)model.productTypeId, model.loanApplicationId);
 
                     //...................Adding Audit...............................
-                    //context.tbl_Audit.Add(audit);
+                    context.tbl_Audit.Add(audit);
 
                     //........Save Changes...............
                     var dataCount = context.SaveChanges();
@@ -1920,7 +1920,8 @@ namespace FintrakBanking.Repositories.Credit
                             customerSensitivityLevelId = l.CustomerSensitivityLevelId,
                             createdBy = l.CreatedBy,
                             dateTimeCreated = l.DateTimeCreated,
-                            isCamsol = context.tbl_Loan_Camsol.Any(x => x.LoanId == l.TermLoanId)
+                            isCamsol = context.tbl_Loan_Camsol.Any(x => x.LoanId == l.TermLoanId),
+                            productName = l.tbl_Product.ProductName
                         });
             return data;
         }
@@ -2869,7 +2870,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         }).ToList();
 
-             //data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+             data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
            
             foreach (var item in data)
             {

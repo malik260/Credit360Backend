@@ -39,6 +39,12 @@ namespace FintrakBanking.Entities.Models
         public double? PreviousInterestRate { get; set; }
 
         [Column(TypeName = "money")]
+        public decimal PreviousInterestAmount { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal PreviousPrincipalAmount { get; set; }
+
+        [Column(TypeName = "money")]
         public decimal AmortisedStartPrincipalAmount { get; set; }
 
         [Column(TypeName = "money")]

@@ -31,7 +31,7 @@ namespace FintrakBanking.Repositories.Customer
             _genSetup = genSetup;
         }
 
-        public async Task<bool> AddCustomer(CustomerViewModels entity)
+        public  bool AddCustomer(CustomerViewModels entity)
         {
             var customer = new tbl_Customer
             {
@@ -102,7 +102,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 AddCustomerEmploymentHistory(entity.CustomerEmploymentHistory);
             }
-            var response = await context.SaveChangesAsync() != 0;
+            var response = context.SaveChanges() != 0;
             // Audit Section ---------------------------
             var audit = new tbl_Audit
             {
@@ -382,7 +382,7 @@ namespace FintrakBanking.Repositories.Customer
                 info.PreviousCreditRating = ent.previousCreditRating;
                 info.RegisteredOffice = ent.registeredOffice;
                 info.RegistrationNumber = ent.registrationNumber;
-               // info.paidUpCapital = ent.PaidUpCapital;
+                // info.paidUpCapital = ent.PaidUpCapital;
                 //info.authorizedCapital = ent.AuthorisedCapital;
                 context.tbl_Customer_CompanyInfomation.Add(info);
 
@@ -426,9 +426,9 @@ namespace FintrakBanking.Repositories.Customer
                     info.RegistrationNumber = ent.registrationNumber;
                 }
             }
-               
+
         }
-        
+
         private void AddCustomerIdentification(List<CustomerIdentificationViewModels> entity)
         {
             var identity = new tbl_Customer_Identification();
@@ -744,9 +744,9 @@ namespace FintrakBanking.Repositories.Customer
 
                 var audit = new tbl_Audit
                 {
-                    AuditTypeId = (short) AuditTypeEnum.CustomerDeleted,
+                    AuditTypeId = (short)AuditTypeEnum.CustomerDeleted,
                     StaffId = user.staffId,
-                    BranchId = (short) user.BranchId,
+                    BranchId = (short)user.BranchId,
                     Detail = "Deleted Customer: " + customer.LastName + " with code: " + customer.CustomerCode,
                     IPAddress = user.userIPAddress,
                     Url = user.applicationUrl,
@@ -911,7 +911,7 @@ namespace FintrakBanking.Repositories.Customer
                            phoneNumber = s.PhoneNumber,
                            email = s.EmailAddress
                        }).ToList(),
-                       CustomerClientOrSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId && cs.Client_SupplierTypeId ==(short)CompanyClientOrSupplierTypeEnum.Client)
+                       CustomerClientOrSupplier = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == a.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
                        .Select(cs => new CustomerClientOrSupplierViewModels()
                        {
                            client_SupplierId = cs.Client_SupplierId,
@@ -1051,7 +1051,7 @@ namespace FintrakBanking.Repositories.Customer
                 customer.BranchId = entity.branchId;
                 customer.ChildDateOfBirth = entity.childDateOfBirth;
                 customer.CompanyId = entity.companyMainId;
-                customer.CreatedBy = (int) entity.createdBy;
+                customer.CreatedBy = (int)entity.createdBy;
                 customer.CreationMailSent = entity.creationMailSent;
                 customer.CustomerCode = entity.customerCode;
                 customer.CustomerSensitivityLevelId = entity.customerSensitivityLevelId;
@@ -1073,7 +1073,7 @@ namespace FintrakBanking.Repositories.Customer
                 customer.PlaceOfBirth = entity.placeOfBirth;
 
                 customer.IsInvestmentGrade = entity.isInvestmentGrade;
-                customer.IsRealatedParty = entity.isRealatedParty;             
+                customer.IsRealatedParty = entity.isRealatedParty;
 
                 customer.Spouse = entity.spouse;
                 customer.SubSectorId = entity.subSectorId;
@@ -1101,7 +1101,7 @@ namespace FintrakBanking.Repositories.Customer
 
             auditTrail.AddAuditTrail(audit);
 
-            return  context.SaveChanges() != 0;
+            return context.SaveChanges() != 0;
 
         }
 
@@ -1153,7 +1153,7 @@ namespace FintrakBanking.Repositories.Customer
                     subSectorId = c.subSectorId,
                     subSectorName = c.subSectorName,
                     relationshipOfficerId = c.relationshipOfficerId
-                    
+
                 });
             }
             return allCustomers;
@@ -1218,7 +1218,21 @@ namespace FintrakBanking.Repositories.Customer
 
             return data;
         }
-
+        public IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery)
+        {
+            var customers = (from x in GetCustomers()
+                             where x.firstName.ToLower().Contains(searchQuery.ToLower())
+                            || x.lastName.ToLower().Contains(searchQuery.ToLower())
+                            || x.middleName.ToLower().Contains(searchQuery.ToLower())
+                            || x.customerCode.Contains(searchQuery)
+                            || x.branchName.Contains(searchQuery)
+                             select x).ToList();
+            if (customers.Count > 0)
+            {
+                return customers;
+            }
+            return null;
+        }
     }
 }
 

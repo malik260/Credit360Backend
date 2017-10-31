@@ -262,6 +262,14 @@ namespace FintrakBanking.Common
             }
         }
 
+        public static string DomanProvider
+        {
+            get
+            {
+                return  ConfigurationManager.AppSettings["DomainName"];
+            }
+        }
+
         public static string  SendErrorMail
         {
             get
