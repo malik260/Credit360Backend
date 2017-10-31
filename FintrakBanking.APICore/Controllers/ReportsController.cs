@@ -246,6 +246,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("monitoring/overdraft-loans")]
+        public HttpResponseMessage GetExpiredOverdraftLoansReport()
+        {
+            try
+            {
+                var data = repo.GetExpiredOverdraftLoansReport(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         #endregion Offer-Letter Generation & Loan Monitoring Reports
 
         [HttpPost]

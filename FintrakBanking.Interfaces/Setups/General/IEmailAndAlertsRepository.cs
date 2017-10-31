@@ -24,5 +24,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<MessageLogViewModel> GetSmsMailingList();
 
         bool UpdateMailDeliveryStatus(int messageId, short statusId);
+        void SendAlertsOnOverDraftLoansAlmostDue();
     }
 }

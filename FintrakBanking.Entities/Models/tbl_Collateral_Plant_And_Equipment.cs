@@ -30,11 +30,11 @@ namespace FintrakBanking.Entities.Models
         public string ManufacturerName { get; set; }
 
         [Required]
-        [StringLength(5)]
+        [StringLength(10)]
         public string YearOfManufacture { get; set; }
 
         [Required]
-        [StringLength(5)]
+        [StringLength(10)]
         public string YearOfPurchase { get; set; }
 
         public short ValueBaseTypeId { get; set; }
