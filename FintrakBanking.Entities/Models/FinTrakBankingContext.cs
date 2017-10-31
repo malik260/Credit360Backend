@@ -358,6 +358,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.ReleaseApprovalStatusId);
 
             modelBuilder.Entity<tbl_Approval_Status>()
+                .HasMany(e => e.tbl_Loan_Fee)
+                .WithRequired(e => e.tbl_Approval_Status)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<tbl_Approval_Status>()
                 .HasMany(e => e.tbl_Loan_Preliminary_Evaluation)
                 .WithRequired(e => e.tbl_Approval_Status)
                 .WillCascadeOnDelete(false);
@@ -2212,10 +2217,6 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.Latitude)
                 .HasPrecision(12, 9);
 
-            modelBuilder.Entity<tbl_Collateral_Immovable_Property>()
-                .HasOptional(e => e.tbl_Collateral_Immovable_Property1)
-                .WithRequired(e => e.tbl_Collateral_Immovable_Property2);
-
             modelBuilder.Entity<tbl_Collateral_Item_Policy>()
                 .Property(e => e.SumInsured)
                 .HasPrecision(19, 4);
@@ -2385,11 +2386,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.tbl_Temp_Product_CollateralType1)
                 .WithRequired(e => e.tbl_Collateral_Type1)
                 .HasForeignKey(e => e.CollateralTypeId)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<tbl_Collateral_Type_Sub>()
-                .HasMany(e => e.tbl_Collateral_Plant_And_Equipment)
-                .WithRequired(e => e.tbl_Collateral_Type_Sub)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<tbl_Collateral_Type_Sub>()

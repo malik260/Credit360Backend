@@ -3963,7 +3963,7 @@ namespace FintrakBanking.Repositories.Credit
                              principalAmount = (double)a.OutstandingPrincipal,
                              principalFrequency = (short)a.PrincipalFrequencyTypeId,
                              interestFrequency = (short)a.InterestFrequencyTypeId,
-                             tenor = (int)(a.MaturityDate - applicationDate).TotalDays,
+                             newEffectiveDate = applicationDate,
                              principalFirstpaymentDate = (DateTime)a.FirstPrincipalPaymentDate,
                              interestFirstpaymentDate = (DateTime)a.FirstInterestPaymentDate,
                              interestRate = a.InterestRate + rateChange,
@@ -3981,7 +3981,7 @@ namespace FintrakBanking.Repositories.Credit
                                   let sumUnEarnedFee = context.tbl_Loan_Schedule_Daily.Where(a => a.LoanId == item.loanId
                                   && a.Date >= DbFunctions.TruncateTime(applicationDate)).Sum(a => (double?)a.UnEarnedFee ?? 0)
                                   select sumUnEarnedFee;
-                item.integralFeeAmount = (double?)unEarnedFee.FirstOrDefault() ?? 0;
+                //item.integralFeeAmount = (double?)unEarnedFee.FirstOrDefault() ?? 0;
 
                 InterestRateReview(item.loanId, item, applicationDate, staffId);
 

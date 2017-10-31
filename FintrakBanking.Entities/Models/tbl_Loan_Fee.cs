@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool IsPosted { get; set; }
 
+        public short ApprovalStatusId { get; set; }
+
         [Column(TypeName = "money")]
         public decimal FeeRateValue { get; set; }
 
@@ -54,6 +56,8 @@ namespace FintrakBanking.Entities.Models
         public int? DeletedBy { get; set; }
 
         public DateTime? DateTimeDeleted { get; set; }
+
+        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
 
         public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
 
