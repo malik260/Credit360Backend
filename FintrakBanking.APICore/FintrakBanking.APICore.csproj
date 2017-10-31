@@ -376,6 +376,13 @@
     <Compile Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx.designer.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.aspx.cs">
+      <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.aspx.designer.cs">
+      <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\Credit\Monitoring\NonPeformingLoans.aspx.cs">
       <DependentUpon>NonPeformingLoans.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -486,6 +493,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx" />
+    <Content Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\Credit\Monitoring\NonPeformingLoans.aspx" />
     <Content Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.aspx" />
@@ -630,6 +638,7 @@
     <EmbeddedResource Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.rdlc" />

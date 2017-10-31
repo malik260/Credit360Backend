@@ -80,6 +80,7 @@ namespace FintrakBanking.Common
                 smtpClient.UseDefaultCredentials = true;
                 smtpClient.Credentials = networkCred;
                 smtpClient.Port = int.Parse(ConfigurationManager.AppSettings["smtpPort"]);
+                smtpClient.Timeout = 10000;
                 smtpClient.Send(mailMessage);
             }
         }

@@ -90,7 +90,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpGet]
         [Route("send-alerts/self-liquidating-loans-expiry")]
         public HttpResponseMessage SendAlertsOnSelfLiquidatingLoanExpiry()
@@ -98,6 +97,23 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 repo.SendAlertsOnSelfLiquidatingLoanExpiry();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
+            }
+            catch (Exception ex)
+            {
+                errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("send-alerts/overdraft-loans-expiry")]
+        public HttpResponseMessage SendAlertsOnOverdraftLoansExpiry()
+        {
+            try
+            {
+                repo.SendAlertsOnOverDraftLoansAlmostDue();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
