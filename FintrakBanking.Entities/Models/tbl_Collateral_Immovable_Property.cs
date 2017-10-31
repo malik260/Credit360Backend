@@ -83,8 +83,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
 
-        public virtual tbl_Collateral_Immovable_Property tbl_Collateral_Immovable_Property1 { get; set; }
+        //public virtual tbl_Collateral_Immovable_Property tbl_Collateral_Immovable_Property1 { get; set; }
 
-        public virtual tbl_Collateral_Immovable_Property tbl_Collateral_Immovable_Property2 { get; set; }
+        //public virtual tbl_Collateral_Immovable_Property tbl_Collateral_Immovable_Property2 { get; set; }
     }
 }

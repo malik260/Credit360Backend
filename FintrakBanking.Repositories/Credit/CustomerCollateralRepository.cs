@@ -150,12 +150,14 @@ namespace FintrakBanking.Repositories.Credit
                 DateTimeCreated = genSetup.GetApplicationDate()
             });
 
-            if (context.SaveChanges() == 1) // may not be needed
-            {
-                return collateral.CollateralCustomerId;
-            }
+            return collateral.CollateralCustomerId;
 
-            return 0;
+            //if (context.SaveChanges() == 1) // may not be needed
+            //{
+            //    return collateral.CollateralCustomerId;
+            //}
+
+            //return 0;
         }
 
         private void UpdateCollateralMainForm(CollateralViewModel model, int collateralId)
@@ -190,6 +192,7 @@ namespace FintrakBanking.Repositories.Credit
             context.tbl_Collateral_Plant_And_Equipment.Add(new tbl_Collateral_Plant_And_Equipment
             {
                 CollateralCustomerId = collateralId,
+                CollateralSubTypeId = entity.collateralSubTypeId,
                 MachineName = entity.machineName,
                 Description = entity.description,
                 MachineNumber = entity.machineNumber,

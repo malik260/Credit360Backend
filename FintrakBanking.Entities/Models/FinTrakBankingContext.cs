@@ -12,6 +12,19 @@ namespace FintrakBanking.Entities.Models
         {
         }
 
+        public override int SaveChanges()
+        {
+            try
+            {
+                return base.SaveChanges();
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new System.Data.Entity.Validation.DbEntityValidationException(errorMessages);
+            }
+        }
+
         public virtual DbSet<tbl_Accounting_Standard> tbl_Accounting_Standard { get; set; }
         public virtual DbSet<tbl_AccreditedConsultant> tbl_AccreditedConsultant { get; set; }
         public virtual DbSet<tbl_AccreditedConsultant_State> tbl_AccreditedConsultant_State { get; set; }
@@ -2179,9 +2192,9 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.Latitude)
                 .HasPrecision(12, 9);
 
-            modelBuilder.Entity<tbl_Collateral_Immovable_Property>()
-                .HasOptional(e => e.tbl_Collateral_Immovable_Property1)
-                .WithRequired(e => e.tbl_Collateral_Immovable_Property2);
+            //modelBuilder.Entity<tbl_Collateral_Immovable_Property>()
+            //    .HasOptional(e => e.tbl_Collateral_Immovable_Property1)
+            //    .WithRequired(e => e.tbl_Collateral_Immovable_Property2);
 
             modelBuilder.Entity<tbl_Collateral_Item_Policy>()
                 .Property(e => e.SumInsured)

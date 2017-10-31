@@ -30,7 +30,7 @@ namespace FintrakBanking.Entities.Models
         public string ModelName { get; set; }
 
         [Required]
-        [StringLength(5)]
+        [StringLength(50)]
         public string ManufacturedDate { get; set; }
 
         [Required]
