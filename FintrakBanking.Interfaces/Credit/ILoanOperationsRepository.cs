@@ -46,7 +46,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForInterestReview(DateTime applicationDate, int loanId);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForBulkInterestReview(DateTime applicationDate);
         IEnumerable<LoanRepaymentViewModel> ProcessAuthorisedOverdraftRepaymentPostingForceDebit(DateTime applicationDate);
-        bool BulkRateReview(short priceindexId, double newRate, DateTime applicationDate, int staffId);
+        bool BulkRateReview(short priceindexId, double newRate, DateTime applicationDate, int staffId, int operationId);
         IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId);
         bool addBulkRateLoanExcemptions(LoanViewModel model);
         bool addInterestRateChange(LoanBulkInterestReviewViewModel model);
