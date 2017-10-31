@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="GrantedFacilities.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.GrantedFacilities" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="PostedFinancialTransactions.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.PostedFinancialTransactions" %>
 
  <%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
@@ -16,16 +16,37 @@
             <asp:ScriptManager ID="ScriptManager1" runat="server">
             </asp:ScriptManager>
 
-            <rsweb:ReportViewer ID="offerLetter" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="485px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="644px">
-                <LocalReport ReportPath="Reports\Credit\LoanInformation.rdlc">
-                    <DataSources>
-                        <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="Loan Information" />
-                    </DataSources>
-                </LocalReport>
-            </rsweb:ReportViewer>
+         <rsweb:ReportViewer ID="ReportViewer" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="1000px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="100%" BackColor=""
+                  ClientIDMode="AutoID" HighlightBackgroundColor="" InternalBorderColor="204, 204, 204" InternalBorderStyle="Solid" InternalBorderWidth="1px" 
+                  LinkActiveColor="" LinkActiveHoverColor="" LinkDisabledColor="" PrimaryButtonBackgroundColor="" PrimaryButtonForegroundColor="" PrimaryButtonHoverBackgroundColor=""
+                  PrimaryButtonHoverForegroundColor="" SecondaryButtonBackgroundColor="" SecondaryButtonForegroundColor="" SecondaryButtonHoverBackgroundColor="" 
+                  SecondaryButtonHoverForegroundColor="" SplitterBackColor="" ToolbarDividerColor="" ToolbarForegroundColor="" ToolbarForegroundDisabledColor="" 
+                  ToolbarHoverBackgroundColor="" ToolbarHoverForegroundColor="" ToolBarItemBorderColor="" ToolBarItemBorderStyle="Solid" ToolBarItemBorderWidth="1px" ToolBarItemHoverBackColor="" ToolBarItemPressedBorderColor="51, 102, 153" ToolBarItemPressedBorderStyle="Solid" ToolBarItemPressedBorderWidth="1px" ToolBarItemPressedHoverBackColor="153, 187, 226">
+                  <localreport reportpath="Reports\Report\FinanceTransactions.rdlc">
+                      <datasources>
+                          <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="FinanceTransactions" />
+                      </datasources>
+                  </localreport>
+           
+        </rsweb:ReportViewer>
+             <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="FinanceTransaction" TypeName="FintrakBanking.ReportObjects.ReportingObjects.FinanceRepotObject">
+                 <SelectParameters>
+                     <asp:ControlParameter ControlID="EndDate" Name="endDate" PropertyName="Text" Type="DateTime" />
+                     <asp:ControlParameter ControlID="StartDate" Name="startDate" PropertyName="Text" Type="DateTime" />
+                     <asp:ControlParameter ControlID="PostedByStaffId" Name="staffId" PropertyName="Text" Type="Int32" />
+                     <asp:ControlParameter ControlID="CompanyId" Name="companyId" PropertyName="Text" Type="Int32" />
+                     <asp:ControlParameter ControlID="BranchId" Name="branchId" PropertyName="Text" Type="Int32" />
+                     <asp:ControlParameter ControlID="ExcludeSystem" Name="excludeSystem" PropertyName="Text" Type="Boolean" />
+                 </SelectParameters>
+             </asp:ObjectDataSource>
 
-
+             <asp:Label ID="StartDate" runat="server" Visible="false"  ></asp:Label>
+        <asp:Label ID="EndDate" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="PostedByStaffId" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="CompanyId" runat="server"  Visible="false" ></asp:Label>
+        <asp:Label ID="BranchId" runat="server"  Visible="False" ></asp:Label>
+        <asp:Label ID="ExcludeSystem" runat="server"  Visible="False" ></asp:Label>
         </div>
-    </form>
+    </form> 
 </body>
 </html>

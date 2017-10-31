@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public tbl_CASA()
         {
+            tbl_CASA_Overdraft = new HashSet<tbl_CASA_Overdraft>();
             tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
             tbl_Loan_Application_Collateral = new HashSet<tbl_Loan_Application_Collateral>();
             tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
@@ -130,6 +131,9 @@ namespace FintrakBanking.Entities.Models
         public short CustomerSensitivityLevelId { get; set; }
 
         public virtual tbl_Branch tbl_Branch { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<tbl_CASA_Overdraft> tbl_CASA_Overdraft { get; set; }
 
         public virtual tbl_CASA_AccountStatus tbl_CASA_AccountStatus { get; set; }
 

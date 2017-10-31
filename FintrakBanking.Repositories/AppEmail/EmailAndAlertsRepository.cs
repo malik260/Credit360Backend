@@ -10,6 +10,10 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Data.Entity;
+using System.Collections;
+using System.Collections.Generic;
+using FintrakBanking.Interfaces.ErrorLogger;
+using System.Text;
 
 namespace FintrakBanking.Repositories.AppEmail
 {
@@ -20,14 +24,19 @@ namespace FintrakBanking.Repositories.AppEmail
         private EmailHelpers emailHelpers;
         private IGeneralSetupRepository genSetup;
         private DateTime applDate;
+        private IErrorLogRepository errorLogger;
+        private IStaffRepository staffRepo;
 
         public EmailAndAlertsRepository(FinTrakBankingContext _context, IAuditTrailRepository _auditTrail,
-            EmailHelpers _emailHelpers, IGeneralSetupRepository _general)
+            EmailHelpers _emailHelpers, IGeneralSetupRepository _general, IErrorLogRepository _errorLogger,
+            IStaffRepository _staffRepo)
         {
             context = _context;
             auditTrail = _auditTrail;
             emailHelpers = _emailHelpers;
             genSetup = _general;
+            errorLogger = _errorLogger;
+            staffRepo = _staffRepo;
         }
 
         #region Covenant Monitoring
@@ -59,19 +68,29 @@ namespace FintrakBanking.Repositories.AppEmail
                             loanRefNumber = e.tbl_Loan_Application.ApplicationReferenceNumber,
                             relationshipManager = c.FirstName + " " + c.LastName,
                             managerEmail = c.Email,
+                            relationshipOfficerId = d.StaffId,
                             relationshipOfficer = d.FirstName + " " + d.LastName,
                             officerEmail = d.Email,
                         }).ToList();
 
+            //var getAllOfficers = staffRepo.GetAllStaff();
+
+            //List<LoanCovenantDetailViewModel> mailList = new List<LoanCovenantDetailViewModel>();
+
             try
             {
+                //foreach (var staff in getAllOfficers)
+                //{
+                //    mailList = data.Where(x => x.relationshipOfficerId == staff.StaffId).ToList();
+                //}
+
                 foreach (var item in data)
                 {
-                    var recipient = item.officerEmail;
+                    string recipient = item.officerEmail;
 
-                    var additionalRecipient = item.managerEmail;
+                    string additionalRecipient = item.managerEmail;
 
-                    var messageSubject = "FIRSTBANKONLINE (REMINDER) - LOAN COVENANTS APPROACHING DUE DATE";
+                    string messageSubject = "FIRSTBANKONLINE (REMINDER) - LOAN COVENANTS APPROACHING DUE DATE";
 
                     var dataTable =
                         "<table><tr><th>Application Ref</th><th>Covenant Detail</th><th>Covenant Type</th>" +
@@ -81,7 +100,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
                     dataTable = dataTable + "</table>";
 
-                    var messageContent = $"Dear {item.relationshipOfficer}, <br /><br />" +
+                    string messageContent = $"Dear {item.relationshipOfficer}, <br /><br />" +
                                          "This is to bring your attention the following loan covenants " +
                                          "which are approaching their due date for revaluation. <br /><br />" +
                                          $"{dataTable}";
@@ -98,14 +117,15 @@ namespace FintrakBanking.Repositories.AppEmail
                         MessageStatusId = (short)MessageStatusEnum.Pending,
                         MessageTypeId = (short)MessageTypeEnum.Email,
                         FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                        ToAddress = $"{item.officerEmail};{item.managerEmail}",
+                        ToAddress = $"{recipient};{additionalRecipient}",
                         DateTimeReceived = DateTime.Now,
-                        SendOnDateTime = item.dueDate.Value
+                        SendOnDateTime = DateTime.Now
                     };
 
                     SaveMessageDetails(messageModel);
 
                     emailHelpers.SendMail(recipient, additionalRecipient, messageSubject, messageContent, templateUrl);
+
                 }
             }
             catch (Exception ex)
@@ -368,6 +388,7 @@ namespace FintrakBanking.Repositories.AppEmail
                         join b in context.tbl_Product on a.ProductId equals b.ProductId
                         join c in context.tbl_Product_Type on b.ProductTypeId equals c.ProductTypeId
                         join d in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals d.LoanApplicationDetailId
+                        join f in context.tbl_Staff on a.RelationshipOfficerId equals f.StaffId
                         where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.SelfLiquidating &&
                         DbFunctions.DiffDays(a.MaturityDate, applDate) <= 30
                         select new LoanViewModel
@@ -386,63 +407,172 @@ namespace FintrakBanking.Repositories.AppEmail
                             relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
                             relationshipManagerEmail = a.tbl_Staff.Email,
                             relationshipOfficerId = a.RelationshipOfficerId,
-                            relationshipOfficerName = a.tbl_Staff1.FirstName + " " + a.tbl_Staff1.LastName,
-                            relationshipOfficerEmail = a.tbl_Staff1.Email
+                            relationshipOfficerName = f.FirstName + " " + f.LastName,
+                            relationshipOfficerEmail = f.Email
                         }).ToList();
 
-            try
+            var staffList = staffRepo.GetAllStaff().ToList();
+
+            var dataList = data.Select(g => g.relationshipManagerId).ToList();
+
+            staffList = staffList.Where(x => dataList.Contains(x.StaffId)).ToList();
+
+            string dataTable;
+
+            foreach (var mailItem in staffList)
             {
-                foreach (var item in data)
-                {
-                    var recipient = item.relationshipManagerEmail;
-
-                    var otherRecipient = item.relationshipOfficerEmail;
-
-                    var messageSubject = "FIRSTBANKONLINE (REMINDER) - SELF-LIQUIDATING LOANs EXPIRED";
-
-                    var dataTable =
+                dataTable =
                         "<table><tr><th>Loan Ref #</th><th>Product</th><th>Loan Type</th><th>Product Type</th><th>Outstanding Interest</th>" +
-                        "<th>Oustanding Principal</th></tr><th>Disbursed Date</th><th>Maturity Date</th>" +
+                        "<th>Oustanding Principal</th><th>Disbursed Date</th><th>Maturity Date</th></tr>";
+
+                string recipient = mailItem.Email;
+
+                var mailList = data.Where(x => x.relationshipManagerId == mailItem.StaffId).ToList();
+
+                foreach (var item in mailList)
+                {
+
+                    dataTable = dataTable +
                         $"<tr><td>{item.loanReferenceNumber}</td><td>{item.productName}</td><td>{item.loanTypeName}</td><td>{item.productTypeName}</td>" +
                         $"<td style='text-align:right;'>{item.outstandingInterest:f}</td><td style='text-align:right;'>{item.outstandingPrincipal:f}</td>" +
                         $"<td>{item.maturityDate:d}</td><td>{item.disburseDate:d}</td></tr>";
+                }
 
-                    dataTable = dataTable + "</table>";
+                dataTable = dataTable + "</table>";
 
-                    var messageContent = $"Dear {item.relationshipOfficerName}, <br /><br />" +
+                var messageSubject = "FIRSTBANKONLINE (REMINDER) - EXPIRED SELF-LIQUIDATING LOANS";
+
+                string messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
                                          "This is to bring your attention the following self-liquidating loans " +
                                          "which are expired. <br /><br />" +
                                          $"{dataTable}";
 
-                    var templateUrl = "~/EmailTemplates/Monitoring.html";
+                var otherRecipient = data.FirstOrDefault(x => x.relationshipOfficerId == mailItem.StaffId).relationshipOfficerEmail;
 
-                    var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                var templateUrl = "~/EmailTemplates/Monitoring.html";
 
-                    var messageModel = new MessageLogViewModel()
-                    {
-                        //MessageId = model.MessageId,
-                        MessageSubject = messageSubject,
-                        MessageBody = mailBody,
-                        MessageStatusId = (short)MessageStatusEnum.Pending,
-                        MessageTypeId = (short)MessageTypeEnum.Email,
-                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                        ToAddress = $"{item.relationshipOfficerEmail};{item.relationshipManagerEmail}",
-                        DateTimeReceived = DateTime.Now,
-                        SendOnDateTime = DateTime.Now
-                    };
+                var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
 
-                    SaveMessageDetails(messageModel);
+                var messageModel = new MessageLogViewModel()
+                {
+                    //MessageId = model.MessageId,
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = (short)MessageStatusEnum.Pending,
+                    MessageTypeId = (short)MessageTypeEnum.Email,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient};{otherRecipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now
+                };
 
-                    emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
-                }
+                SaveMessageDetails(messageModel);
+
+                emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
             }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+
         }
 
         #endregion LPO/CFF/IDF/Self-Liquidating Loans
+
+        #region Overdraft Monitoring
+
+        public void SendAlertsOnOverDraftLoansAlmostDue()
+        {
+            var applDate = genSetup.GetApplicationDate();
+
+            var data = (from a in context.tbl_Loan
+                        join b in context.tbl_Product on a.ProductId equals b.ProductId
+                        join c in context.tbl_Product_Type on b.ProductTypeId equals c.ProductTypeId
+                        join d in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals d.LoanApplicationDetailId
+                        join f in context.tbl_Staff on a.RelationshipOfficerId equals f.StaffId
+                        where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.SelfLiquidating &&
+                        DbFunctions.DiffDays(a.MaturityDate, applDate) <= 30
+                        select new LoanViewModel
+                        {
+                            applicationReferenceNumber = d.tbl_Loan_Application.ApplicationReferenceNumber,
+                            loanReferenceNumber = a.LoanReferenceNumber,
+                            bookingDate = a.BookingDate,
+                            disburseDate = a.DisburseDate,
+                            maturityDate = a.MaturityDate,
+                            productName = b.ProductName,
+                            outstandingInterest = a.OutstandingInterest,
+                            outstandingPrincipal = a.OutstandingPrincipal,
+                            loanTypeName = a.tbl_Loan_Type.LoanTypeName,
+                            productTypeName = b.tbl_Product_Type.ProductTypeName,
+                            relationshipManagerId = a.RelationshipOfficerId,
+                            relationshipManagerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
+                            relationshipManagerEmail = a.tbl_Staff.Email,
+                            relationshipOfficerId = a.RelationshipOfficerId,
+                            relationshipOfficerName = f.FirstName + " " + f.LastName,
+                            relationshipOfficerEmail = f.Email
+                        }).ToList();
+
+            var staffList = staffRepo.GetAllStaff().ToList();
+
+            var dataList = data.Select(g => g.relationshipManagerId).ToList();
+
+            staffList = staffList.Where(x => dataList.Contains(x.StaffId)).ToList();
+
+            string dataTable;
+
+            foreach (var mailItem in staffList)
+            {
+                dataTable =
+                        "<table><tr><th>Loan Ref #</th><th>Product</th><th>Loan Type</th><th>Product Type</th><th>Outstanding Interest</th>" +
+                        "<th>Oustanding Principal</th><th>Disbursed Date</th><th>Maturity Date</th></tr>";
+
+                string recipient = mailItem.Email;
+
+                var mailList = data.Where(x => x.relationshipManagerId == mailItem.StaffId).ToList();
+
+                foreach (var item in mailList)
+                {
+
+                    dataTable = dataTable +
+                        $"<tr><td>{item.loanReferenceNumber}</td><td>{item.productName}</td><td>{item.loanTypeName}</td><td>{item.productTypeName}</td>" +
+                        $"<td style='text-align:right;'>{item.outstandingInterest:f}</td><td style='text-align:right;'>{item.outstandingPrincipal:f}</td>" +
+                        $"<td>{item.maturityDate:d}</td><td>{item.disburseDate:d}</td></tr>";
+                }
+
+                dataTable = dataTable + "</table>";
+
+                var messageSubject = "FIRSTBANKONLINE (REMINDER) - EXPIRED SELF-LIQUIDATING LOANS";
+
+                string messageContent = $"Dear {mailItem.FirstName + " " + mailItem.LastName}, <br /><br />" +
+                                         "This is to bring your attention the following self-liquidating loans " +
+                                         "which are expired. <br /><br />" +
+                                         $"{dataTable}";
+
+                var otherRecipient = data.FirstOrDefault(x => x.relationshipOfficerId == mailItem.StaffId).relationshipOfficerEmail;
+
+                var templateUrl = "~/EmailTemplates/Monitoring.html";
+
+                var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+
+                var messageModel = new MessageLogViewModel()
+                {
+                    //MessageId = model.MessageId,
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = (short)MessageStatusEnum.Pending,
+                    MessageTypeId = (short)MessageTypeEnum.Email,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient};{otherRecipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now
+                };
+
+                SaveMessageDetails(messageModel);
+
+                emailHelpers.SendMail(recipient, otherRecipient, messageSubject, messageContent, templateUrl);
+            }
+
+        }
+
+        #endregion Overdraft Monitoring
+
+        #region Helper Methods
 
         public void SaveMessageDetails(MessageLogViewModel model)
         {
@@ -470,5 +600,116 @@ namespace FintrakBanking.Repositories.AppEmail
                 throw new Exception(ex.Message);
             }
         }
+
+
+        public bool CreateEmailMessageAndSend(MessageLogViewModel model)
+        {
+            bool sentEmail;
+
+            var templateUrl = "~/EmailTemplates/Monitoring.html";
+
+            var message = new tbl_Message_Log()
+            {
+                //MessageId = model.MessageId,
+                MessageSubject = model.MessageSubject,
+                MessageBody = model.MessageBody,
+                MessageStatusId = model.MessageStatusId,
+                MessageTypeId = model.MessageTypeId,
+                FromAddress = model.FromAddress,
+                ToAddress = model.ToAddress,
+                DateTimeReceived = model.DateTimeReceived,
+                SendOnDateTime = model.SendOnDateTime
+            };
+
+            try
+            {
+                context.tbl_Message_Log.Add(message);
+
+                context.SaveChanges();
+
+                sentEmail = emailHelpers.SendMail(model.ToAddress, null, model.MessageSubject, model.MessageBody, templateUrl);
+
+                if (sentEmail)
+                {
+                    message.MessageStatusId = (short)MessageStatusEnum.Sent;
+
+                    context.SaveChanges();
+
+                    return true;
+                }
+                else
+                {
+                    message.MessageStatusId = (short)MessageStatusEnum.Attempted;
+
+                    context.SaveChanges();
+
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
+        }
+
+        public IEnumerable<MessageLogViewModel> GetMailingList()
+        {
+            var mailList = (from data in context.tbl_Message_Log
+                            where data.MessageStatusId == (short)MessageStatusEnum.Pending
+                            select new MessageLogViewModel()
+                            {
+                                MessageId = data.MessageId,
+                                MessageSubject = data.MessageSubject,
+                                MessageBody = data.MessageBody,
+                                MessageStatusId = data.MessageStatusId,
+                                MessageTypeId = data.MessageTypeId,
+                                FromAddress = data.FromAddress,
+                                ToAddress = data.ToAddress,
+                                DateTimeReceived = data.DateTimeReceived,
+                                SendOnDateTime = data.SendOnDateTime
+                            }).ToList();
+
+            return mailList;
+        }
+
+        public IEnumerable<MessageLogViewModel> GetEmailMailingList()
+        {
+            var mailList = GetMailingList().Where(m => m.MessageTypeId == (short)MessageTypeEnum.Email).ToList();
+
+            return mailList;
+        }
+
+        public IEnumerable<MessageLogViewModel> GetSmsMailingList()
+        {
+            var mailList = GetMailingList().Where(m => m.MessageTypeId == (short)MessageTypeEnum.SMS).ToList();
+
+            return mailList;
+        }
+
+        public bool UpdateMailDeliveryStatus(int messageId, short statusId)
+        {
+            var mailMessage = context.tbl_Message_Log.Find(messageId);
+
+            if (mailMessage != null)
+            {
+                mailMessage.MessageStatusId = (short)statusId;
+
+                var output = context.SaveChanges() > 0;
+
+                if (output)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        #endregion Helper Methods
     }
 }

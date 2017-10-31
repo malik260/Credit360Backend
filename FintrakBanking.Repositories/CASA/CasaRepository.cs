@@ -50,11 +50,11 @@ namespace FintrakBanking.Repositories.CASA
             {
                 if (account == null)
                 {
-                    accno += account.ProductAccountNumber;
+                    accno += account.ProductAccountNumber+" - " + account.tbl_Currency.CurrencyCode ;
                 }
                 else
                 {
-                    accno += "," + account.ProductAccountNumber;
+                    accno += "," + account.ProductAccountNumber + " - " + account.tbl_Currency.CurrencyCode;
                 }
                 
             }
@@ -188,7 +188,7 @@ namespace FintrakBanking.Repositories.CASA
 
                         {
                             casaAccountId = a.CasaAccountId,
-                            productAccountNumber = a.ProductAccountNumber + "(" + a.ProductAccountName + ")",
+                            productAccountNumber = a.ProductAccountNumber + "(" + a.ProductAccountName + " - " + a.tbl_Currency.CurrencyCode  + ")",
                             productAccountName = a.ProductAccountName,
                             availableBalance = a.AvailableBalance
                         });
@@ -343,7 +343,7 @@ namespace FintrakBanking.Repositories.CASA
         {
             var data = (from casa in context.tbl_CASA
                         join cust in context.tbl_Customer on casa.CustomerId equals cust.CustomerId
-                        join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
+                        //join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
                         join sector in context.tbl_Sub_Sector on cust.SubSectorId equals sector.SubSectorId
                         join custGroup in context.tbl_Customer_Group_Mapping on cust.CustomerId equals custGroup.CustomerId into cGroup
                         from custGroup in cGroup.DefaultIfEmpty()
@@ -355,11 +355,11 @@ namespace FintrakBanking.Repositories.CASA
                             customerId = casa.CustomerId,
                             customerCode = cust.CustomerCode,
                             accountHolder = cust.FirstName + " " + cust.LastName,
-                            productId = prod.ProductId,
-                            productCode = prod.ProductCode,
-                            productName = prod.ProductName,
-                            productClassId = prod.ProductClassId,
-                            productClassName = prod.tbl_Product_Class.ProductClassName,
+                            productId = casa.tbl_Product.ProductId,
+                            productCode = casa.tbl_Product.ProductCode,
+                            productName = casa.tbl_Product.ProductName,
+                            productClassId = casa.tbl_Product.ProductClassId,
+                            productClassName = casa.tbl_Product.tbl_Product_Class.ProductClassName,
                             companyId = casa.CompanyId,
                             branchId = casa.BranchId,
                             branchCode = casa.tbl_Branch.BranchCode,
@@ -445,7 +445,7 @@ namespace FintrakBanking.Repositories.CASA
             return data;
         }
 
-        public IQueryable<CasaCustomerSearchViewModel> SearchForCustomerAccount(int companyId, string searchQuery)
+        public IQueryable<CasaCustomerSearchViewModel> SearchForCustomerAccount(int companyId, string searchQuery, int customerTypeId)
         {
             IQueryable<CasaCustomerSearchViewModel> allCustomers = null;
 
@@ -458,10 +458,11 @@ namespace FintrakBanking.Repositories.CASA
             {
                 allCustomers = GetAllAccounts()
                     .Where(c => c.companyId == companyId)
+                    .Where(ct => ct.customerTypeId == customerTypeId)
                     .Where(x => x.accountHolder.Contains(searchQuery)
                || x.customerCode.Contains(searchQuery)
                || x.productAccountNumber.Contains(searchQuery)
-                ).Take(10);
+                ).GroupBy(c => c.customerId).Select(g => g.FirstOrDefault()).Take(10);
             }
 
             //foreach (var item in allCustomers)

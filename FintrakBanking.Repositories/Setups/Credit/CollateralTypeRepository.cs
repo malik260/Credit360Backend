@@ -15,8 +15,6 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.Credit
 {
-    [Export(typeof(ICollateralTypeRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class CollateralTypeRepository : ICollateralTypeRepository
     {
         private FinTrakBankingContext context;
@@ -130,6 +128,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
             subType.CollateralTypeId = entity.collateralTypeId;
             subType.CollateralSubTypeName = entity.collateralSubTypeName;
+            subType.Haircut = entity.haircut;
+            subType.RevaluationDuration = entity.revaluationDuration;
             subType.DateTimeUpdated = genSetup.GetApplicationDate();
             subType.LastUpdatedBy = entity.lastUpdatedBy;
             var respose = await context.SaveChangesAsync() != 0;

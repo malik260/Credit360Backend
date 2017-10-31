@@ -481,9 +481,19 @@ namespace FintrakBanking.Repositories.Credit
             int operationId = (int)OperationsEnum.CAM;
             int scope = this.GetStaffWorkflowViewScope(operationId, staffId);
 
+            int[] camStages = new int[] {
+                (int)LoanApplicationStatusEnum.CAMInProgress,
+                (int)LoanApplicationStatusEnum.CAMCompleted,
+                (int)LoanApplicationStatusEnum.ChecklistCompleted
+            };
+
             if (scope == (int)ProcessViewScopeEnum.Process) // 3
             {
-                return context.tbl_Loan_Application.Where(x => x.CompanyId == companyId && x.Deleted == false //&& x.BranchId == branchId
+                return context.tbl_Loan_Application.Where(x => 
+                    x.CompanyId == companyId 
+                    && x.Deleted == false 
+                    && camStages.Contains(x.ApplicationStatusId)
+                    //&& x.BranchId == branchId
                 )
                     .GroupJoin(
                         context.tbl_Approval_Trail.Where(x => x.OperationId == operationId),
@@ -541,7 +551,7 @@ namespace FintrakBanking.Repositories.Credit
             var staffApprovalLevelIds = context.tbl_Approval_Level_Staff
                 .Where(x => x.Deleted == false && x.StaffId == staffId).Select(x => x.ApprovalLevelId);
 
-            var pendingApplications = context.tbl_Loan_Application
+            var pendingApplications = context.tbl_Loan_Application.Where(x => camStages.Contains(x.ApplicationStatusId))
                 .Join(context.tbl_Approval_Trail,
                     a => a.LoanApplicationId, b => b.TargetId, (a, b) => new { a, b })
                 .Where(x => x.b.OperationId == operationId //&& x.a.BranchId == branchId
