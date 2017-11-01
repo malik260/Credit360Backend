@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 CREATEDBY = fee.createdBy,
                 DATETIMECREATED = DateTime.Now,
-            };
+            };           
 
             this.context.TBL_FEE.Add(data);
 
@@ -89,7 +89,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 return data.FEEID;
             }
-
+            
             else
                 return -1;
         }
@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         companyId = data.COMPANYID,
                         feeDate = data.FEEDATE,
                         createdBy = data.CREATEDBY,
-
+                        
                         dateTimeCreated = data.DATETIMECREATED,
                         dateTimeUpdated = data.DATETIMEUPDATED,
                         deleted = data.DELETED,
@@ -261,7 +261,7 @@ namespace FintrakBanking.Repositories.Setups.General
             feeModel.INCLUDECUTOFFDAY = fee.includeCutOffDay;
             feeModel.CUTOFFDAY = fee.cutOffDay;
             feeModel.COMPANYID = fee.companyId;
-            feeModel.FEEDATE = fee.feeDate;
+            feeModel.FEEDATE = fee.feeDate;            
 
             feeModel.LASTUPDATEDBY = fee.lastUpdatedBy;
             feeModel.DATETIMEUPDATED = DateTime.Now;
@@ -336,7 +336,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DATETIMECREATED = DateTime.Now,
                 };
 
-                context.TBL_TEMP_FEE.Add(tempFee);
+                context.tbl_Temp_Fee.Add(tempFee);
             }
 
             // Audit Section ---------------------------
@@ -444,14 +444,14 @@ namespace FintrakBanking.Repositories.Setups.General
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.FeeApproved,
-                STAFFID = user.staffId,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"Approved Fee '{feeModel.FEENAME}' with fee account category '{feeModel.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME}'",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                AuditTypeId = (short)AuditTypeEnum.FeeApproved,
+                StaffId = user.staffId,
+                BranchId = (short)user.BranchId,
+                Detail = $"Approved Fee '{feeModel.FeeName}' with fee account category '{feeModel.tbl_Account_Category.AccountCategoryName}'",
+                IPAddress = user.userIPAddress,
+                Url = user.applicationUrl,
+                ApplicationDate = genSetup.GetApplicationDate(),
+                SystemDateTime = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -459,11 +459,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return this.SaveAll();
         }
-        #endregion tbl_Product Fee
+            #endregion tbl_Product Fee
 
-        #region Fee Related Lookups
+            #region Fee Related Lookups
 
-        public IEnumerable<LookupViewModel> GetFeeAccountCategory()
+            public IEnumerable<LookupViewModel> GetFeeAccountCategory()
         {
             return (from data in context.TBL_ACCOUNT_CATEGORY
                     where data.ACCOUNTCATEGORYID == (short)AccountCategoryEnum.Income || data.ACCOUNTCATEGORYID == (short)AccountCategoryEnum.Expense

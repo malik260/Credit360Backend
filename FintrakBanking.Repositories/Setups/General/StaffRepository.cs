@@ -208,36 +208,36 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 var tempStaffToUpdate = existingTempStaff;
 
-                tempStaffToUpdate.FIRSTNAME = staffModel.FirstName;
-                tempStaffToUpdate.MIDDLENAME = staffModel.MiddleName;
-                tempStaffToUpdate.LASTNAME = staffModel.LastName;
-                tempStaffToUpdate.STAFFCODE = staffModel.StaffCode;
-                tempStaffToUpdate.JOBTITLEID = staffModel.JobTitleId;
-                tempStaffToUpdate.COMPANYID = staffModel.companyId;
-                tempStaffToUpdate.RANKID = staffModel.RankId;
-                tempStaffToUpdate.ADDRESS = staffModel.Address;
-                tempStaffToUpdate.ADDRESSOFNOK = staffModel.AddressOfNok;
-                tempStaffToUpdate.BRANCHID = staffModel.BranchId;
-                tempStaffToUpdate.COMMENT = staffModel.Comment;
-                tempStaffToUpdate.CREATEDBY = staffModel.createdBy;
-                tempStaffToUpdate.CUSTOMERSENSITIVITYLEVEL = staffModel.CustomerSensitivityLevel;
-                tempStaffToUpdate.DATEOFBIRTH = staffModel.DateOfBirth;
-                tempStaffToUpdate.DATETIMEUPDATED = DateTime.Now;
-                tempStaffToUpdate.DEPARTMENTID = staffModel.DepartmentId;
-                tempStaffToUpdate.EMAIL = staffModel.Email;
-                tempStaffToUpdate.EMAILOFNOK = staffModel.EmailOfNok;
-                tempStaffToUpdate.GENDER = staffModel.Gender;
-                tempStaffToUpdate.GENDEROFNOK = staffModel.GenderOfNok;
-                tempStaffToUpdate.MISINFOID = staffModel.MisinfoId;
-                tempStaffToUpdate.NAMEOFNOK = staffModel.NameOfNok;
-                tempStaffToUpdate.NOKRELATIONSHIP = staffModel.NokrelationShip;
-                tempStaffToUpdate.PHONE = staffModel.Phone;
-                tempStaffToUpdate.PHONEOFNOK = staffModel.PhoneOfNok;
-                tempStaffToUpdate.STATEID = staffModel.StateId;
-                tempStaffToUpdate.CITYID = staffModel.CityId;
-                tempStaffToUpdate.STAFFSIGNATURE = staffModel.Staffsignature;
-                tempStaffToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
-                tempStaffToUpdate.ISCURRENT = true;
+                tempStaffToUpdate.FirstName = staffModel.FirstName;
+                tempStaffToUpdate.MiddleName = staffModel.MiddleName;
+                tempStaffToUpdate.LastName = staffModel.LastName;
+                tempStaffToUpdate.StaffCode = staffModel.StaffCode;
+                tempStaffToUpdate.JobTitleId = staffModel.JobTitleId;
+                tempStaffToUpdate.CompanyId = staffModel.companyId;
+                tempStaffToUpdate.RankId = staffModel.RankId;
+                tempStaffToUpdate.Address = staffModel.Address;
+                tempStaffToUpdate.AddressOfNOK = staffModel.AddressOfNok;
+                tempStaffToUpdate.BranchId = staffModel.BranchId;
+                tempStaffToUpdate.Comment = staffModel.Comment;
+                tempStaffToUpdate.CreatedBy = staffModel.createdBy;
+                tempStaffToUpdate.CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel;
+                tempStaffToUpdate.DateOfBirth = staffModel.DateOfBirth;
+                tempStaffToUpdate.DateTimeUpdated = DateTime.Now;
+                tempStaffToUpdate.DepartmentId = staffModel.DepartmentId;
+                tempStaffToUpdate.Email = staffModel.Email;
+                tempStaffToUpdate.EmailOfNOK = staffModel.EmailOfNok;
+                tempStaffToUpdate.Gender = staffModel.Gender;
+                tempStaffToUpdate.GenderOfNOK = staffModel.GenderOfNok;
+                tempStaffToUpdate.MISInfoId = staffModel.MisinfoId;
+                tempStaffToUpdate.NameOfNOK = staffModel.NameOfNok;
+                tempStaffToUpdate.NOKRelationShip = staffModel.NokrelationShip;
+                tempStaffToUpdate.Phone = staffModel.Phone;
+                tempStaffToUpdate.PhoneOfNOK = staffModel.PhoneOfNok;
+                tempStaffToUpdate.StateId = staffModel.StateId;
+                tempStaffToUpdate.CityId = staffModel.CityId;
+                tempStaffToUpdate.Staffsignature = staffModel.Staffsignature;
+                tempStaffToUpdate.ApprovalStatusId = (int)ApprovalStatusEnum.Pending;
+                tempStaffToUpdate.IsCurrent = true;
             }
             else
             {
