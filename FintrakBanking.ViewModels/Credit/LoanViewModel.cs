@@ -37,8 +37,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         
-
-
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
@@ -144,6 +142,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipManagerEmail { get; set; }
         public string relationshipOfficerEmail { get; set; }
         public decimal customerAvailableAmount { get; set; }
+        public bool feeOverride { get; set; }
 
         //............Loan Repayment Schedule Model..........................//
         public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }

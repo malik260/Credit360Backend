@@ -99,7 +99,6 @@
     <Compile Include="Setups\General\ICustomFieldsRepository.cs" />
     <Compile Include="Setups\General\IDepartmentRepository.cs" />
     <Compile Include="Setups\General\IEmailAndAlertsRepository.cs" />
-    <Compile Include="Setups\General\IFeeRepository.cs" />
     <Compile Include="Setups\General\IGeneralSetupRepository.cs" />
     <Compile Include="Setups\General\IJobTitleRepository.cs" />
     <Compile Include="Setups\General\IMisInfoRepository.cs" />

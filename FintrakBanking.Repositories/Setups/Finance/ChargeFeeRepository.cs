@@ -19,21 +19,22 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository auditTrail;
-        private IWorkFlowRepository workFlow;
 
-        public ChargeFeeRepository(FinTrakBankingContext context, IGeneralSetupRepository general, 
-                                    IAuditTrailRepository _auditTrail, IWorkFlowRepository _workFlow)
+        public ChargeFeeRepository(
+            FinTrakBankingContext context, 
+            IGeneralSetupRepository general, 
+            IAuditTrailRepository _auditTrail
+            )
         {
             this.context = context;
             this.general = general;
             this.auditTrail = _auditTrail;
-            this.workFlow = _workFlow;
         }
 
         public async Task<bool> GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.UserCreation;
-
+            /*
             var response = await workFlow.GoForApproval(entity);
 
             if (response.Item1)
@@ -41,9 +42,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 return ApproveChargeFee(entity.targetId, response.Item2.approvalStatusId, entity);
             }
             else
-            {
+            {*/
                 return false;
-            }
+            //}
 
         }
 
@@ -106,7 +107,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
-
+/*
             if (workFlow.CheckRouteForOperation((int)OperationsEnum.FeeCreation, chargeFeemodel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
@@ -138,7 +139,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             else
             {
                 throw new Exception("Approval route have not been defined for this operation");
-            }
+            }*/
             return output;
 
         }
