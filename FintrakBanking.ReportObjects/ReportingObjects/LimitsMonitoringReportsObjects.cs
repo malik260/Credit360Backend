@@ -14,28 +14,28 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var company = context.tbl_Company.Where(c => c.CompanyId == companyId).FirstOrDefault();
+                var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
 
                 var output = (
 
-                    from B in context.tbl_Sub_Sector
+                    from B in context.TBL_SUB_SECTOR
                     select new SectorLimitViewModel()
                     {
-                        companyLogo = company.LogoPath ,
-                        companyName = company.Name,
-                        sectorcode = B.Code,
-                        sectorName = B.tbl_Sector.Name,
-                        subsectorName = (B.Name ?? "NOT DEFINED"),
-                        subsectorCode = (B.Code ?? "NOT DEFINED"),
-                        limitMaximumValue = ((System.Decimal?)((Int64)((Int16?)B.SubSectorId ?? (Int16?)0) > 0 ? (System.Decimal?)
-                        ((from D in context.tbl_Limit_Detail
-                          where D.LimitTypeId == 2 && D.TargetId == (Int32)B.SubSectorId
-                          select new { D.MaximumValue }).FirstOrDefault().MaximumValue) : (Int64)((Int16?)B.SubSectorId ?? (Int16?)0) == 0 ? (System.Decimal?)0 : null) ?? (System.Decimal?)0),
-                        usage = ((System.Decimal?)((Int64)((Int16?)B.SubSectorId ?? (Int16?)0) > 0 ? (System.Decimal?)
-                        (from C in context.tbl_Loan
-                         where C.SubSectorId == B.SubSectorId
+                        companyLogo = company.LOGOPATH ,
+                        companyName = company.NAME,
+                        sectorcode = B.CODE,
+                        sectorName = B.TBL_SECTOR.NAME,
+                        subsectorName = (B.NAME ?? "NOT DEFINED"),
+                        subsectorCode = (B.CODE ?? "NOT DEFINED"),
+                        limitMaximumValue = ((System.Decimal?)((Int64)((Int16?)B.SUBSECTORID ?? (Int16?)0) > 0 ? (System.Decimal?)
+                        ((from D in context.TBL_LIMIT_DETAIL
+                          where D.LIMITTYPEID == 2 && D.TARGETID == (Int32)B.SUBSECTORID
+                          select new { D.MAXIMUMVALUE }).FirstOrDefault().MAXIMUMVALUE) : (Int64)((Int16?)B.SUBSECTORID ?? (Int16?)0) == 0 ? (System.Decimal?)0 : null) ?? (System.Decimal?)0),
+                        usage = ((System.Decimal?)((Int64)((Int16?)B.SUBSECTORID ?? (Int16?)0) > 0 ? (System.Decimal?)
+                        (from C in context.TBL_LOAN
+                         where C.SUBSECTORID == B.SUBSECTORID
                          select new
-                         { C.OutstandingPrincipal }).Sum(p => p.OutstandingPrincipal) : null) ?? (System.Decimal?)0)
+                         { C.OUTSTANDINGPRINCIPAL }).Sum(p => p.OUTSTANDINGPRINCIPAL) : null) ?? (System.Decimal?)0)
                     }).ToList();
 
 
@@ -75,28 +75,28 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var company = context.tbl_Company.Where(c => c.CompanyId == companyId).FirstOrDefault();
+                var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
 
-                var output = (from a in context.tbl_Limit_Detail
-                              join b in context.tbl_Branch on a.TargetId equals b.BranchId
-                              join c in context.tbl_Loan on a.TargetId equals c.BranchId
-                              where a.LimitTypeId == (int)LimitType.Sector && c.LoanStatusId == (short)LoanStatusEnum.Active
-                                  && a.tbl_Limit.tbl_Limit_Metric.LimitMetricId == (int)LimitMatricEnum.LoanAmount && c.CompanyId == companyId && c.BranchId == branchId
+                var output = (from a in context.TBL_LIMIT_DETAIL
+                              join b in context.TBL_BRANCH on a.TARGETID equals b.BRANCHID
+                              join c in context.TBL_LOAN on a.TARGETID equals c.BRANCHID
+                              where a.LIMITTYPEID == (int)LimitType.Sector && c.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                  && a.TBL_LIMIT.TBL_LIMIT_METRIC.LIMITMETRICID == (int)LimitMatricEnum.LoanAmount && c.COMPANYID == companyId && c.BRANCHID == branchId
                               group new { a, b, c } by new
                               {
-                                  a.MaximumValue,
-                                  b.BranchName,
-                                  b.BranchCode,
-                                  b.BranchId
+                                  a.MAXIMUMVALUE,
+                                  b.BRANCHNAME,
+                                  b.BRANCHCODE,
+                                  b.BRANCHID
                               } into groupedQ
                               select new  SectorLimitViewModel
 
                               {
-                                  companyName = company.Name,
-                                   limitMaximumValue = groupedQ.Key.MaximumValue,
-                                   usage = groupedQ.Sum(p => p.c.OutstandingPrincipal),
-                                   sectorName = groupedQ.Key.BranchName,
-                                   subsectorCode = groupedQ.Key.BranchCode,
+                                  companyName = company.NAME,
+                                   limitMaximumValue = groupedQ.Key.MAXIMUMVALUE,
+                                   usage = groupedQ.Sum(p => p.c.OUTSTANDINGPRINCIPAL),
+                                   sectorName = groupedQ.Key.BRANCHNAME,
+                                   subsectorCode = groupedQ.Key.BRANCHCODE,
                                   // Id = groupedQ.Key.BranchId,
                                  // Balance = groupedQ.Key.MaximumValue - groupedQ.Sum(i => i.c.OutstandingPrincipal)
                                    
