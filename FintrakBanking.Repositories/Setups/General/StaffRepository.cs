@@ -89,46 +89,46 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <returns></returns>
         public IEnumerable<StaffInfoViewModel> GetAllStaff()
         {
-            var staff = (from c in context.tbl_Staff
-                         join br in context.tbl_Branch on c.BranchId equals br.BranchId
-                         join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
-                         join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
+            var staff = (from c in context.TBL_STAFF
+                         join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
+                         join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                         join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
                          select new StaffInfoViewModel()
                          {
-                             StaffId = c.StaffId,
-                             Address = c.Address,
-                             companyId = coy.CompanyId,
-                             AddressOfNok = c.AddressOfNOK,
-                             BranchId = br.BranchId,
-                             Comment = c.Comment,
+                             StaffId = c.STAFFID,
+                             Address = c.ADDRESS,
+                             companyId = coy.COMPANYID,
+                             AddressOfNok = c.ADDRESSOFNOK,
+                             BranchId = br.BRANCHID,
+                             Comment = c.COMMENT,
                              //createdBy = c.CreatedBy.Value,
-                             CustomerSensitivityLevel = c.CustomerSensitivityLevel,
-                             DateOfBirth = c.DateOfBirth ?? DateTime.Now,
+                             CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
+                             DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
                              //dateTimeCreated = c.DateTimeCreated,
-                             DepartmentId = c.DepartmentId,
-                             Email = c.Email,
-                             EmailOfNok = c.EmailOfNOK,
-                             Gender = c.Gender,
-                             GenderOfNok = c.GenderOfNOK,
-                             JobTitleId = c.JobTitleId,
-                             MisinfoId = c.MISInfoId,
-                             NameOfNok = c.NameOfNOK,
-                             NokrelationShip = c.NOKRelationShip,
-                             Phone = c.Phone,
-                             PhoneOfNok = c.PhoneOfNOK,
-                             StateId = c.StateId,
+                             DepartmentId = c.DEPARTMENTID,
+                             Email = c.EMAIL,
+                             EmailOfNok = c.EMAILOFNOK,
+                             Gender = c.GENDER,
+                             GenderOfNok = c.GENDEROFNOK,
+                             JobTitleId = c.JOBTITLEID,
+                             MisinfoId = c.MISINFOID,
+                             NameOfNok = c.NAMEOFNOK,
+                             NokrelationShip = c.NOKRELATIONSHIP,
+                             Phone = c.PHONE,
+                             PhoneOfNok = c.PHONEOFNOK,
+                             StateId = c.STATEID,
                              //Staffsignature = c.Staffsignature,
-                             FirstName = c.FirstName,
-                             MiddleName = c.MiddleName,
-                             LastName = c.LastName,
-                             StaffCode = c.StaffCode,
-                             RankId = c.RankId,
-                             BranchName = br.BranchName,
-                             DepartmentName = dept.DepartmentName,
+                             FirstName = c.FIRSTNAME,
+                             MiddleName = c.MIDDLENAME,
+                             LastName = c.LASTNAME,
+                             StaffCode = c.STAFFCODE,
+                             RankId = c.RANKID,
+                             BranchName = br.BRANCHNAME,
+                             DepartmentName = dept.DEPARTMENTNAME,
                              //MisInfoCode = c.MISC,
-                             SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
+                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
                              //State = c.State.StateName
-                             CityId = c.CityId
+                             CityId = c.CITYID
                          });
             return staff;
         }
@@ -140,41 +140,41 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <returns></returns>
         public StaffInfoViewModel GetStaffById(int staffId)
         {
-            var staff = (from c in context.tbl_Staff
-                         where c.StaffId == staffId
+            var staff = (from c in context.TBL_STAFF
+                         where c.STAFFID == staffId
                          select new StaffInfoViewModel()
                          {
-                             Address = c.Address,
-                             AddressOfNok = c.AddressOfNOK,
-                             BranchId = c.BranchId,
-                             Comment = c.Comment,
-                             createdBy = c.CreatedBy.Value,
-                             CustomerSensitivityLevel = c.CustomerSensitivityLevel,
-                             DateOfBirth = c.DateOfBirth,
-                             dateTimeCreated = (DateTime)c.DateTimeCreated,
-                             DepartmentId = c.DepartmentId,
-                             Email = c.Email,
-                             EmailOfNok = c.EmailOfNOK,
-                             Gender = c.Gender,
-                             GenderOfNok = c.GenderOfNOK,
-                             JobTitleId = c.JobTitleId,
-                             MisinfoId = c.MISInfoId,
-                             NameOfNok = c.NameOfNOK,
-                             NokrelationShip = c.NOKRelationShip,
-                             Phone = c.Phone,
-                             PhoneOfNok = c.PhoneOfNOK,
-                             StateId = c.StateId,
-                             Staffsignature = c.Staffsignature,
-                             FirstName = c.FirstName,
-                             MiddleName = c.MiddleName,
-                             LastName = c.LastName,
-                             StaffCode = c.StaffCode,
-                             RankId = c.RankId,
+                             Address = c.ADDRESS,
+                             AddressOfNok = c.ADDRESSOFNOK,
+                             BranchId = c.BRANCHID,
+                             Comment = c.COMMENT,
+                             createdBy = c.CREATEDBY.Value,
+                             CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
+                             DateOfBirth = c.DATEOFBIRTH,
+                             dateTimeCreated = (DateTime)c.DATETIMECREATED,
+                             DepartmentId = c.DEPARTMENTID,
+                             Email = c.EMAIL,
+                             EmailOfNok = c.EMAILOFNOK,
+                             Gender = c.GENDER,
+                             GenderOfNok = c.GENDEROFNOK,
+                             JobTitleId = c.JOBTITLEID,
+                             MisinfoId = c.MISINFOID,
+                             NameOfNok = c.NAMEOFNOK,
+                             NokrelationShip = c.NOKRELATIONSHIP,
+                             Phone = c.PHONE,
+                             PhoneOfNok = c.PHONEOFNOK,
+                             StateId = c.STATEID,
+                             Staffsignature = c.STAFFSIGNATURE,
+                             FirstName = c.FIRSTNAME,
+                             MiddleName = c.MIDDLENAME,
+                             LastName = c.LASTNAME,
+                             StaffCode = c.STAFFCODE,
+                             RankId = c.RANKID,
                              //BranchName = br.BranchName,
 
                              //DepartmentName = c.Department.DepartmentName,
                              //MisInfoCode = c.Misinfo.Misname,
-                             SensitivityLevel = context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
+                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
                              //State = c.State.StateName
                          }).SingleOrDefault();
             return staff;
@@ -187,11 +187,11 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <returns></returns>
         public async Task<bool> UpdateStaff(int staffid, StaffInfoViewModel staffModel)
         {
-            var existingTempStaff = context.tbl_Temp_Staff.FirstOrDefault(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower() && x.IsCurrent == false && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existingTempStaff = context.TBL_TEMP_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower() && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
 
-            var unApprovedStaffEdit = context.tbl_Temp_Staff.Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending &&
-                                                                        x.StaffCode.ToLower() == staffModel.StaffCode.ToLower());
-            tbl_Temp_Staff tempStaff = new tbl_Temp_Staff();
+            var unApprovedStaffEdit = context.TBL_TEMP_STAFF.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending &&
+                                                                        x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower());
+            TBL_TEMP_STAFF tempStaff = new TBL_TEMP_STAFF();
 
             if (unApprovedStaffEdit.Any())
             {
@@ -208,17 +208,17 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 var tempStaffToUpdate = existingTempStaff;
 
-                tempStaffToUpdate.FirstName = staffModel.FirstName;
-                tempStaffToUpdate.MiddleName = staffModel.MiddleName;
-                tempStaffToUpdate.LastName = staffModel.LastName;
-                tempStaffToUpdate.StaffCode = staffModel.StaffCode;
-                tempStaffToUpdate.JobTitleId = staffModel.JobTitleId;
-                tempStaffToUpdate.CompanyId = staffModel.companyId;
-                tempStaffToUpdate.RankId = staffModel.RankId;
-                tempStaffToUpdate.Address = staffModel.Address;
-                tempStaffToUpdate.AddressOfNOK = staffModel.AddressOfNok;
-                tempStaffToUpdate.BranchId = staffModel.BranchId;
-                tempStaffToUpdate.Comment = staffModel.Comment;
+                tempStaffToUpdate.FIRSTNAME = staffModel.FirstName;
+                tempStaffToUpdate.MIDDLENAME = staffModel.MiddleName;
+                tempStaffToUpdate.LASTNAME = staffModel.LastName;
+                tempStaffToUpdate.STAFFCODE = staffModel.StaffCode;
+                tempStaffToUpdate.JOBTITLEID = staffModel.JobTitleId;
+                tempStaffToUpdate.COMPANYID = staffModel.companyId;
+                tempStaffToUpdate.RANKID = staffModel.RankId;
+                tempStaffToUpdate.ADDRESS = staffModel.Address;
+                tempStaffToUpdate.ADDRESSOFNOK = staffModel.AddressOfNok;
+                tempStaffToUpdate.BRANCHID = staffModel.BranchId;
+                tempStaffToUpdate.COMMENT = staffModel.Comment;
                 tempStaffToUpdate.CreatedBy = staffModel.createdBy;
                 tempStaffToUpdate.CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel;
                 tempStaffToUpdate.DateOfBirth = staffModel.DateOfBirth;

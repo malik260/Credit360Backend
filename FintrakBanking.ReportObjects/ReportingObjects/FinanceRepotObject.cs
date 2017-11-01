@@ -16,30 +16,30 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
            
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                IQueryable< TransactionViewModel > data  = (from a in context.tbl_Finance_Transaction
-                            where a.CompanyId == companyId && (a.PostedDate <= endDate && a.PostedDate >= startDate) || (a.PostedDate == endDate) ||(  endDate == null || startDate == null  )
+                IQueryable< TransactionViewModel > data  = (from a in context.TBL_FINANCE_TRANSACTION
+                            where a.COMPANYID == companyId && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate) || (a.POSTEDDATE == endDate) ||(  endDate == null || startDate == null  )
 
-                            orderby a.PostedDate, a.TransactionId descending
+                            orderby a.POSTEDDATE, a.TRANSACTIONID descending
                             select new TransactionViewModel()
                             {
-                                postedByStaffId = a.PostedBy ,
-                                branchId = a.SourceBranchId ,
-                                branch = a.tbl_Branch.BranchName,
-                                batchNo = a.BatchCode,
-                                companyName= a.tbl_Company.Name,
-                                creditAmount = a.CreditAmount,
-                                debitAmount = a.DebitAmount,
-                                accountName = a.tbl_Chart_Of_Account.AccountName +"("+ a.tbl_Chart_Of_Account.AccountCode + ")",
-                                description = a.Description,
-                                valueDate = a.ValueDate,
-                                postedDate = a.PostedDate,
-                                postedTime = a.PostedDateTime,
-                                postedBy = a.PostedBy == -1 ?   SystemStaff.System.ToString()  : a.tbl_Staff.LastName + " " + a.tbl_Staff.FirstName,
-                                approvedBy = a.PostedBy == -1 ? SystemStaff.System.ToString() : a.tbl_Staff1.LastName + " " + a.tbl_Staff1.FirstName,
-                                postCurrency = a.tbl_Currency.CurrencyName,
-                                currencyRate = a.CurrencyRate,
-                                approvedDate = a.ApprovedDate,
-                                baseCurrency = a.tbl_Company.tbl_Currency.CurrencyName
+                                postedByStaffId = a.POSTEDBY ,
+                                branchId = a.SOURCEBRANCHID ,
+                                branch = a.TBL_BRANCH.BRANCHNAME,
+                                batchNo = a.BATCHCODE,
+                                companyName= a.TBL_COMPANY.NAME,
+                                creditAmount = a.CREDITAMOUNT,
+                                debitAmount = a.DEBITAMOUNT,
+                                accountName = a.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME +"("+ a.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE + ")",
+                                description = a.DESCRIPTION,
+                                valueDate = a.VALUEDATE,
+                                postedDate = a.POSTEDDATE,
+                                postedTime = a.POSTEDDATETIME,
+                                postedBy = a.POSTEDBY == -1 ?   SystemStaff.System.ToString()  : a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.FIRSTNAME,
+                                approvedBy = a.POSTEDBY == -1 ? SystemStaff.System.ToString() : a.TBL_STAFF1.LASTNAME + " " + a.TBL_STAFF1.FIRSTNAME,
+                                postCurrency = a.TBL_CURRENCY.CURRENCYNAME,
+                                currencyRate = a.CURRENCYRATE,
+                                approvedDate = a.APPROVEDDATE,
+                                baseCurrency = a.TBL_COMPANY.TBL_CURRENCY.CURRENCYNAME
                                 
                             });
 

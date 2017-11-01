@@ -38,20 +38,20 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public BranchViewModel GetBranch(short id)
         {
-            var branch = context.tbl_Branch.Find(id);
-
+            var branch = context.TBL_BRANCH.Find(id);
+            
             if (branch != null)
             {
                 return new BranchViewModel()
                 {
-                    branchId = branch.BranchId,
-                    stateId = branch.StateId,
-                    companyId = branch.CompanyId,
-                    branchName = branch.BranchName,
-                    branchCode = branch.BranchCode,
-                    addressLine1 = branch.AddressLine1,
-                    addressLine2 = branch.AddressLine2,
-                    comment = branch.Comment,
+                    branchId = branch.BRANCHID,
+                    stateId = branch.STATEID,
+                    companyId = branch.COMPANYID,
+                    branchName = branch.BRANCHNAME,
+                    branchCode = branch.BRANCHCODE,
+                    addressLine1 = branch.ADDRESSLINE1,
+                    addressLine2 = branch.ADDRESSLINE2,
+                    comment = branch.COMMENT,
                 };
             }
 
@@ -60,20 +60,20 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<BranchViewModel> GetAllBranch()
         {
-            var branches = context.tbl_Branch.Where(x => x.Deleted == false).Select(x => new BranchViewModel
+            var branches = context.TBL_BRANCH.Where(x => x.DELETED == false).Select(x => new BranchViewModel
             {
-                branchId = x.BranchId,
-                stateId = x.StateId,
-                cityId = (int)x.CityId,
-                companyId = x.CompanyId,
-                stateName = x.tbl_State.StateName,
-                cityName = context.tbl_City.FirstOrDefault(c => c.CityId == x.CityId).CityName ?? string.Empty,
-                branchName = x.BranchName,
-                branchCode = x.BranchCode,
-                addressLine1 = x.AddressLine1,
-                addressLine2 = x.AddressLine2,
-                comment = x.Comment,
-                deleted = x.Deleted,
+                branchId = x.BRANCHID,
+                stateId = x.STATEID,
+                cityId = (int)x.CITYID,
+                companyId = x.COMPANYID,
+                stateName = x.TBL_STATE.STATENAME,
+                cityName = context.TBL_CITY.FirstOrDefault(c => c.CITYID == x.CITYID).CITYNAME ?? string.Empty,
+                branchName = x.BRANCHNAME,
+                branchCode = x.BRANCHCODE,
+                addressLine1 = x.ADDRESSLINE1,
+                addressLine2 = x.ADDRESSLINE2,
+                comment = x.COMMENT,
+                deleted = x.DELETED,
             }).ToList();
 
             return branches;
@@ -81,21 +81,21 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<BranchViewModel> GetAllBranchByCompanyId(int id)
         {
-            var branches = context.tbl_Branch.Where(x => x.CompanyId == id).Select(x => new BranchViewModel
+            var branches = context.TBL_BRANCH.Where(x => x.COMPANYID == id).Select(x => new BranchViewModel
             {
-                branchId = x.BranchId,
-                stateId = x.StateId,
-                companyId = x.CompanyId,
-                branchName = x.BranchName,
-                stateName = x.tbl_State.StateName,
-                cityId = (int)x.CityId,
-                cityName = context.tbl_City.FirstOrDefault(c=>c.CityId==x.CityId).CityName,
-                branchCode = x.BranchCode,
-                addressLine1 = x.AddressLine1,
-                addressLine2 = x.AddressLine2,
-                comment = x.Comment,
-                dateTimeUpdated = x.DateTimeUpdated,
-                deleted = x.Deleted,
+                branchId = x.BRANCHID,
+                stateId = x.STATEID,
+                companyId = x.COMPANYID,
+                branchName = x.BRANCHNAME,
+                stateName = x.TBL_STATE.STATENAME,
+                cityId = (int)x.CITYID,
+                cityName = context.TBL_CITY.FirstOrDefault(c=>c.CITYID==x.CITYID).CITYNAME,
+                branchCode = x.BRANCHCODE,
+                addressLine1 = x.ADDRESSLINE1,
+                addressLine2 = x.ADDRESSLINE2,
+                comment = x.COMMENT,
+                dateTimeUpdated = x.DATETIMEUPDATED,
+                deleted = x.DELETED,
             });
 
             return branches;
@@ -103,34 +103,34 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> AddBranch(AddBranchViewModel model)
         {
-            var branch = new tbl_Branch()
+            var branch = new TBL_BRANCH()
             {
-                StateId = model.stateId,
-                CityId = model.cityId,
-                CompanyId = model.companyId,
-                BranchName = model.branchName,
-                BranchCode = model.branchCode,
-                AddressLine1 = model.addressLine1,
-                AddressLine2 = model.addressLine2,
-                Comment = model.comment,
-                CreatedBy = model.createdBy,
-                Deleted = model.deleted,
+                STATEID = model.stateId,
+                CITYID = model.cityId,
+                COMPANYID = model.companyId,
+                BRANCHNAME = model.branchName,
+                BRANCHCODE = model.branchCode,
+                ADDRESSLINE1 = model.addressLine1,
+                ADDRESSLINE2 = model.addressLine2,
+                COMMENT = model.comment,
+                CREATEDBY = model.createdBy,
+                DELETED = model.deleted,
             };
 
-            this.context.tbl_Branch.Add(branch);
+            this.context.TBL_BRANCH.Add(branch);
 
             var response = await context.SaveChangesAsync();
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.BranchAdded,
-                StaffId = (int)model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added branch: '{model.branchName}' with code: {model.branchCode} ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.BranchAdded,
+                STAFFID = (int)model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added branch: '{model.branchName}' with code: {model.branchCode} ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             //end of Audit section -------------------------------
             return response != 0;
@@ -139,35 +139,35 @@ namespace FintrakBanking.Repositories.Setups.General
         public async Task<bool> UpdateBranch(BranchViewModel model, short id)
         {
             var response = 0;
-            var branch = context.tbl_Branch.Find(id);
+            var branch = context.TBL_BRANCH.Find(id);
 
             if (branch != null)
             {
                 //branch.BranchId = model.branchId;
-                branch.StateId = model.stateId;
-                branch.CityId = model.cityId;
-                branch.CompanyId = model.companyId;
-                branch.BranchName = model.branchName;
-                branch.BranchCode = model.branchCode;
-                branch.AddressLine1 = model.addressLine1;
-                branch.AddressLine2 = model.addressLine2;
-                branch.Comment = model.comment;
-                branch.LastUpdatedBy = model.lastUpdatedBy;
-                branch.DateTimeUpdated = DateTime.Now;
+                branch.STATEID = model.stateId;
+                branch.CITYID = model.cityId;
+                branch.COMPANYID = model.companyId;
+                branch.BRANCHNAME = model.branchName;
+                branch.BRANCHCODE = model.branchCode;
+                branch.ADDRESSLINE1 = model.addressLine1;
+                branch.ADDRESSLINE2 = model.addressLine2;
+                branch.COMMENT = model.comment;
+                branch.LASTUPDATEDBY = model.lastUpdatedBy;
+                branch.DATETIMEUPDATED = DateTime.Now;
 
                 response = await context.SaveChangesAsync();
 
                 // Audit Section ---------------------------
-                var audit = new tbl_Audit
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.BranchUpdated,
-                    StaffId = (int)model.lastUpdatedBy,
-                    BranchId = (short)model.userBranchId,
-                    Detail = $"Updated branch: '{model.branchName}' with code: {model.branchCode} ",
-                    IPAddress = model.userIPAddress,
-                    Url = model.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.BranchUpdated,
+                    STAFFID = (int)model.lastUpdatedBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Updated branch: '{model.branchName}' with code: {model.branchCode} ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
                 //end of Audit section -------------------------------
             }
@@ -178,23 +178,23 @@ namespace FintrakBanking.Repositories.Setups.General
         public async Task<bool> DeleteBranch(short id, UserInfo user)
         {
             var response = 0;
-            var branch = context.tbl_Branch.Find(id);
+            var branch = context.TBL_BRANCH.Find(id);
 
             if (branch != null)
             {
-                branch.Deleted = true;
+                branch.DELETED = true;
                 response = await context.SaveChangesAsync();
                 // Audit Section ---------------------------
-                var audit = new tbl_Audit
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.BranchDeleted,
-                    StaffId = (int)user.staffId,
-                    BranchId = (short)user.BranchId,
-                    Detail = $"Deleted branch: '{branch.BranchName}' with code: {branch.BranchCode} ",
-                    IPAddress = user.userIPAddress,
-                    Url = user.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.BranchDeleted,
+                    STAFFID = (int)user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Deleted branch: '{branch.BRANCHNAME}' with code: {branch.BRANCHCODE} ",
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
                 //end of Audit section -------------------------------
             }

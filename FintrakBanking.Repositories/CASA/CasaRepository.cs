@@ -33,28 +33,28 @@ namespace FintrakBanking.Repositories.CASA
             int value = 0;
             int.TryParse(accountNumber, out value);
 
-            var CasaAccount = (context.tbl_CASA.Where(d => d.OldProductAccountNumber3 == accountNumber ||
-                d.OldProductAccountNumber2 == accountNumber || d.OldProductAccountNumber1 == accountNumber ||
-                d.CasaAccountId == (value) || d.ProductAccountNumber == accountNumber && d.CompanyId == companyId)
+            var CasaAccount = (context.TBL_CASA.Where(d => d.OLDPRODUCTACCOUNTNUMBER3 == accountNumber ||
+                d.OLDPRODUCTACCOUNTNUMBER2 == accountNumber || d.OLDPRODUCTACCOUNTNUMBER1 == accountNumber ||
+                d.CASAACCOUNTID == (value) || d.PRODUCTACCOUNTNUMBER == accountNumber && d.COMPANYID == companyId)
                 ).AsQueryable().SingleOrDefault();
-            return CasaAccount.CasaAccountId;
+            return CasaAccount.CASAACCOUNTID;
         }
 
         public string GetAllCASAAccount(string casaAccountNumber, int companyId)
         {
             string accno = "";
             int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
-            var accounts = context.tbl_CASA.Where(x => x.CasaAccountId == casaAccountId);
+            var accounts = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaAccountId);
 
             foreach (var account in accounts)
             {
                 if (account == null)
                 {
-                    accno += account.ProductAccountNumber+" - " + account.tbl_Currency.CurrencyCode ;
+                    accno += account.PRODUCTACCOUNTNUMBER+" - " + account.TBL_CURRENCY.CURRENCYCODE ;
                 }
                 else
                 {
-                    accno += "," + account.ProductAccountNumber + " - " + account.tbl_Currency.CurrencyCode;
+                    accno += "," + account.PRODUCTACCOUNTNUMBER + " - " + account.TBL_CURRENCY.CURRENCYCODE;
                 }
                 
             }
@@ -65,182 +65,182 @@ namespace FintrakBanking.Repositories.CASA
         public CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId)
         {
             int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
-            var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
+            var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
 
-            return new CasaBalanceViewModel {  accountName = $" {account.tbl_Customer.LastName } {account.tbl_Customer.FirstName} {account.tbl_Customer.MiddleName} " ,
-                availableBalance = account.AvailableBalance, ledgerBalance = account.LedgerBalance, accountNo = account.ProductAccountName, productName = account.tbl_Product.ProductName  };
+            return new CasaBalanceViewModel {  accountName = $" {account.TBL_CUSTOMER.LASTNAME } {account.TBL_CUSTOMER.FIRSTNAME} {account.TBL_CUSTOMER.MIDDLENAME} " ,
+                availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountNo = account.PRODUCTACCOUNTNAME, productName = account.TBL_PRODUCT.PRODUCTNAME  };
         }
         /// TODO: Implement server side filtering due to large number of records that may be returned
         public IEnumerable<CasaViewModel> FindAccount(string accountNumberOrName, int companyId)
         {
-            return (from data in context.tbl_CASA join cust in context.tbl_Customer on data.CustomerId equals cust.CustomerId
-                    where data.CompanyId == companyId && (data.ProductAccountNumber.Contains(accountNumberOrName) || 
-                    cust.CustomerCode.Contains(accountNumberOrName) || cust.FirstName.Contains(accountNumberOrName) ||
-                 cust.LastName.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
+            return (from data in context.TBL_CASA join cust in context.TBL_CUSTOMER on data.CUSTOMERID equals cust.CUSTOMERID
+                    where data.COMPANYID == companyId && (data.PRODUCTACCOUNTNUMBER.Contains(accountNumberOrName) || 
+                    cust.CUSTOMERCODE.Contains(accountNumberOrName) || cust.FIRSTNAME.Contains(accountNumberOrName) ||
+                 cust.LASTNAME.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
                     select new CasaViewModel()
                     {
-                        casaAccountId = data.CasaAccountId,
-                        productAccountNumber = data.ProductAccountNumber,
-                        productAccountName = data.ProductAccountName,
-                        customerId = data.CustomerId,
-                        customerCode = data.tbl_Customer.CustomerCode,
-                        customerName = data.tbl_Customer.FirstName +" "+ data.tbl_Customer.LastName,
-                        productId = data.ProductId,
-                        productCode = data.tbl_Product.ProductCode,
-                        productName = data.tbl_Product.ProductName,
-                        companyId = data.CompanyId,
-                        branchId = data.BranchId,
-                        currency = data.tbl_Currency.CurrencyName,
-                        branchCode = data.tbl_Branch.BranchCode,
-                        branchName = data.tbl_Branch.BranchName,
-                        isCurrentAccount = data.IsCurrentAccount,
-                        tenor = data.Tenor ?? 0,
-                        interestRate = data.InterestRate ?? 0,
-                        effectiveDate = data.EffectiveDate ?? General.DefaultDate,
-                        terminalDate = data.TerminalDate ?? General.DefaultDate,
-                        actionBy = data.ActionBy ?? 0,
-                        actionDate = data.ActionDate ?? General.DefaultDate,
-                        accountStatusId = data.AccountStatusId,
-                        operationId = data.OperationId ?? 0,
-                        availableBalance = data.AvailableBalance,
-                        ledgerBalance = data.LedgerBalance,
-                        relationshipOfficerId = data.RelationshipOfficerId ?? 0,
-                        misCode = data.MISCode,
-                        overdraftAmount = data.OverdraftAmount ?? 0,
-                        overdraftInterestRate = data.OverdraftInterestRate ?? 0,
-                        overdraftExpiryDate = data.OverdraftExpiryDate ?? General.DefaultDate,
-                        hasOverdraft = data.HasOverdraft.HasValue == true ? data.HasOverdraft.Value : false,
-                        lienAmount = data.LienAmount,
-                        hasLien = data.HasLien,
-                        postNoStatusId = data.PostNoStatusId,
-                        oldProductAccountNumber1 = data.OldProductAccountNumber1,
-                        oldProductAccountNumber2 = data.OldProductAccountNumber2,
-                        oldProductAccountNumber3 = data.OldProductAccountNumber3,
+                        casaAccountId = data.CASAACCOUNTID,
+                        productAccountNumber = data.PRODUCTACCOUNTNUMBER,
+                        productAccountName = data.PRODUCTACCOUNTNAME,
+                        customerId = data.CUSTOMERID,
+                        customerCode = data.TBL_CUSTOMER.CUSTOMERCODE,
+                        customerName = data.TBL_CUSTOMER.FIRSTNAME +" "+ data.TBL_CUSTOMER.LASTNAME,
+                        productId = data.PRODUCTID,
+                        productCode = data.TBL_PRODUCT.PRODUCTCODE,
+                        productName = data.TBL_PRODUCT.PRODUCTNAME,
+                        companyId = data.COMPANYID,
+                        branchId = data.BRANCHID,
+                        currency = data.TBL_CURRENCY.CURRENCYNAME,
+                        branchCode = data.TBL_BRANCH.BRANCHCODE,
+                        branchName = data.TBL_BRANCH.BRANCHNAME,
+                        isCurrentAccount = data.ISCURRENTACCOUNT,
+                        tenor = data.TENOR ?? 0,
+                        interestRate = data.INTERESTRATE ?? 0,
+                        effectiveDate = data.EFFECTIVEDATE ?? General.DefaultDate,
+                        terminalDate = data.TERMINALDATE ?? General.DefaultDate,
+                        actionBy = data.ACTIONBY ?? 0,
+                        actionDate = data.ACTIONDATE ?? General.DefaultDate,
+                        accountStatusId = data.ACCOUNTSTATUSID,
+                        operationId = data.OPERATIONID ?? 0,
+                        availableBalance = data.AVAILABLEBALANCE,
+                        ledgerBalance = data.LEDGERBALANCE,
+                        relationshipOfficerId = data.RELATIONSHIPOFFICERID ?? 0,
+                        misCode = data.MISCODE,
+                        overdraftAmount = data.OVERDRAFTAMOUNT ?? 0,
+                        overdraftInterestRate = data.OVERDRAFTINTERESTRATE ?? 0,
+                        overdraftExpiryDate = data.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
+                        hasOverdraft = data.HASOVERDRAFT.HasValue == true ? data.HASOVERDRAFT.Value : false,
+                        lienAmount = data.LIENAMOUNT,
+                        hasLien = data.HASLIEN,
+                        postNoStatusId = data.POSTNOSTATUSID,
+                        oldProductAccountNumber1 = data.OLDPRODUCTACCOUNTNUMBER1,
+                        oldProductAccountNumber2 = data.OLDPRODUCTACCOUNTNUMBER2,
+                        oldProductAccountNumber3 = data.OLDPRODUCTACCOUNTNUMBER3,
                         //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0
-                        aprovalStatusId = data.AprovalStatusId,
+                        aprovalStatusId = data.APROVALSTATUSID,
                     });
         }
 
         public CasaViewModel GetAccount(int casaAccountId)
         {
-            return (from data in context.tbl_CASA
-                    where data.CasaAccountId == casaAccountId //orderby account.AccountCode ascending, account.AccountName ascending
+            return (from data in context.TBL_CASA
+                    where data.CASAACCOUNTID == casaAccountId //orderby account.AccountCode ascending, account.AccountName ascending
                     select new CasaViewModel()
                     {
-                        casaAccountId = data.CasaAccountId,
-                        productAccountNumber = data.ProductAccountNumber,
-                        productAccountName = data.ProductAccountName,
-                        customerId = data.CustomerId,
-                        customerCode = data.tbl_Customer.CustomerCode,
-                        productId = data.ProductId,
-                        productCode = data.tbl_Product.ProductCode,
-                        productName = data.tbl_Product.ProductName,
-                        companyId = data.CompanyId,
-                        branchId = data.BranchId,
-                        branchCode = data.tbl_Branch.BranchCode,
-                        branchName = data.tbl_Branch.BranchName,
+                        casaAccountId = data.CASAACCOUNTID,
+                        productAccountNumber = data.PRODUCTACCOUNTNUMBER,
+                        productAccountName = data.PRODUCTACCOUNTNAME,
+                        customerId = data.CUSTOMERID,
+                        customerCode = data.TBL_CUSTOMER.CUSTOMERCODE,
+                        productId = data.PRODUCTID,
+                        productCode = data.TBL_PRODUCT.PRODUCTCODE,
+                        productName = data.TBL_PRODUCT.PRODUCTNAME,
+                        companyId = data.COMPANYID,
+                        branchId = data.BRANCHID,
+                        branchCode = data.TBL_BRANCH.BRANCHCODE,
+                        branchName = data.TBL_BRANCH.BRANCHNAME,
 
-                        isCurrentAccount = data.IsCurrentAccount,
-                        tenor = data.Tenor ?? 0,
-                        interestRate = data.InterestRate ?? 0,
-                        effectiveDate = data.EffectiveDate ?? General.DefaultDate,
-                        terminalDate = data.TerminalDate ?? General.DefaultDate,
-                        actionBy = data.ActionBy ?? 0,
-                        actionDate = data.ActionDate ?? General.DefaultDate,
-                        accountStatusId = data.AccountStatusId,
-                        operationId = data.OperationId ?? 0,
-                        availableBalance = data.AvailableBalance,
-                        ledgerBalance = data.LedgerBalance,
+                        isCurrentAccount = data.ISCURRENTACCOUNT,
+                        tenor = data.TENOR ?? 0,
+                        interestRate = data.INTERESTRATE ?? 0,
+                        effectiveDate = data.EFFECTIVEDATE ?? General.DefaultDate,
+                        terminalDate = data.TERMINALDATE ?? General.DefaultDate,
+                        actionBy = data.ACTIONBY ?? 0,
+                        actionDate = data.ACTIONDATE ?? General.DefaultDate,
+                        accountStatusId = data.ACCOUNTSTATUSID,
+                        operationId = data.OPERATIONID ?? 0,
+                        availableBalance = data.AVAILABLEBALANCE,
+                        ledgerBalance = data.LEDGERBALANCE,
+                        
+                        relationshipOfficerId = data.RELATIONSHIPOFFICERID ?? 0,
+                        misCode = data.MISCODE,
 
-                        relationshipOfficerId = data.RelationshipOfficerId ?? 0,
-                        misCode = data.MISCode,
-
-                        overdraftAmount = data.OverdraftAmount ?? 0,
-                        overdraftInterestRate = data.OverdraftInterestRate ?? 0,
-                        overdraftExpiryDate = data.OverdraftExpiryDate ?? General.DefaultDate,
-                        hasOverdraft = data.HasOverdraft.HasValue == true ? data.HasOverdraft.Value : false,
-                        lienAmount = data.LienAmount,
-                        hasLien = data.HasLien,
-                        postNoStatusId = data.PostNoStatusId,
-                        oldProductAccountNumber1 = data.OldProductAccountNumber1,
-                        oldProductAccountNumber2 = data.OldProductAccountNumber2,
-                        oldProductAccountNumber3 = data.OldProductAccountNumber3,
+                        overdraftAmount = data.OVERDRAFTAMOUNT ?? 0,
+                        overdraftInterestRate = data.OVERDRAFTINTERESTRATE ?? 0,
+                        overdraftExpiryDate = data.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
+                        hasOverdraft = data.HASOVERDRAFT.HasValue == true ? data.HASOVERDRAFT.Value : false,
+                        lienAmount = data.LIENAMOUNT,
+                        hasLien = data.HASLIEN,
+                        postNoStatusId = data.POSTNOSTATUSID,
+                        oldProductAccountNumber1 = data.OLDPRODUCTACCOUNTNUMBER1,
+                        oldProductAccountNumber2 = data.OLDPRODUCTACCOUNTNUMBER2,
+                        oldProductAccountNumber3 = data.OLDPRODUCTACCOUNTNUMBER3,
                         //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0
-                        aprovalStatusId = data.AprovalStatusId,
+                        aprovalStatusId = data.APROVALSTATUSID,
 
-                        refreshBatchId = data.RefreshBatchId,
-                        lastRefreshDatetime = data.LastRefreshDatetime,
-                        createdBy = data.CreatedBy ?? 0,
-                        lastUpdatedBy = data.LastUpdatedBy ?? 0,
-                        dateTimeCreated = (DateTime)data.DateTimeCreated,
-                        dateTimeUpdated = data.DateTimeUpdated,
-                        deleted = data.Deleted,
-                        deletedBy = data.DeletedBy,
-                        dateTimeDeleted = data.DateTimeDeleted
+                        refreshBatchId = data.REFRESHBATCHID,
+                        lastRefreshDatetime = data.LASTREFRESHDATETIME,
+                        createdBy = data.CREATEDBY ?? 0,
+                        lastUpdatedBy = data.LASTUPDATEDBY ?? 0,
+                        dateTimeCreated = (DateTime)data.DATETIMECREATED,
+                        dateTimeUpdated = data.DATETIMEUPDATED,
+                        deleted = data.DELETED,
+                        deletedBy = data.DELETEDBY,
+                        dateTimeDeleted = data.DATETIMEDELETED
                     }).FirstOrDefault();
         }
 
         public IEnumerable<dynamic> GetAllCustomerAccountByCustomerId(int customerId, int companyId)
         {
-            var data = (from a in context.tbl_CASA
-                        where a.CustomerId == customerId && a.CompanyId == companyId //orderby account.AccountCode ascending, account.AccountName ascending
+            var data = (from a in context.TBL_CASA
+                        where a.CUSTOMERID == customerId && a.COMPANYID == companyId //orderby account.AccountCode ascending, account.AccountName ascending
                         select new
 
                         {
-                            casaAccountId = a.CasaAccountId,
-                            productAccountNumber = a.ProductAccountNumber + "(" + a.ProductAccountName + " - " + a.tbl_Currency.CurrencyCode  + ")",
-                            productAccountName = a.ProductAccountName,
-                            availableBalance = a.AvailableBalance
+                            casaAccountId = a.CASAACCOUNTID,
+                            productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE  + ")",
+                            productAccountName = a.PRODUCTACCOUNTNAME,
+                            availableBalance = a.AVAILABLEBALANCE
                         });
             return data;
         }
 
         public IEnumerable<CasaViewModel> GetAccountByCustomerId(int customerId)
         {
-            return (from data in context.tbl_CASA
-                    where data.CustomerId == customerId //orderby account.AccountCode ascending, account.AccountName ascending
+            return (from data in context.TBL_CASA
+                    where data.CUSTOMERID == customerId //orderby account.AccountCode ascending, account.AccountName ascending
                     select new CasaViewModel()
                     {
-                        casaAccountId = data.CasaAccountId,
-                        productAccountNumber = data.ProductAccountNumber,
-                        productAccountName = data.ProductAccountName,
-                        customerId = data.CustomerId,
-                        customerCode = data.tbl_Customer.CustomerCode,
-                        productId = data.ProductId,
-                        productCode = data.tbl_Product.ProductCode,
-                        productName = data.tbl_Product.ProductName,
-                        companyId = data.CompanyId,
-                        branchId = data.BranchId,
-                        branchCode = data.tbl_Branch.BranchCode,
-                        branchName = data.tbl_Branch.BranchName,
-                        isCurrentAccount = data.IsCurrentAccount,
-                        tenor = data.Tenor ?? 0,
-                        interestRate = data.InterestRate ?? 0,
-                        effectiveDate = data.EffectiveDate ?? General.DefaultDate,
-                        terminalDate = data.TerminalDate ?? General.DefaultDate,
-                        actionBy = data.ActionBy ?? 0,
-                        actionDate = data.ActionDate ?? General.DefaultDate,
-                        accountStatusId = data.AccountStatusId,
-                        operationId = data.OperationId ?? 0,
-                        availableBalance = data.AvailableBalance,
-                        ledgerBalance = data.LedgerBalance,
+                        casaAccountId = data.CASAACCOUNTID,
+                        productAccountNumber = data.PRODUCTACCOUNTNUMBER,
+                        productAccountName = data.PRODUCTACCOUNTNAME,
+                        customerId = data.CUSTOMERID,
+                        customerCode = data.TBL_CUSTOMER.CUSTOMERCODE,
+                        productId = data.PRODUCTID,
+                        productCode = data.TBL_PRODUCT.PRODUCTCODE,
+                        productName = data.TBL_PRODUCT.PRODUCTNAME,
+                        companyId = data.COMPANYID,
+                        branchId = data.BRANCHID,
+                        branchCode = data.TBL_BRANCH.BRANCHCODE,
+                        branchName = data.TBL_BRANCH.BRANCHNAME,
+                        isCurrentAccount = data.ISCURRENTACCOUNT,
+                        tenor = data.TENOR ?? 0,
+                        interestRate = data.INTERESTRATE ?? 0,
+                        effectiveDate = data.EFFECTIVEDATE ?? General.DefaultDate,
+                        terminalDate = data.TERMINALDATE ?? General.DefaultDate,
+                        actionBy = data.ACTIONBY ?? 0,
+                        actionDate = data.ACTIONDATE ?? General.DefaultDate,
+                        accountStatusId = data.ACCOUNTSTATUSID,
+                        operationId = data.OPERATIONID ?? 0,
+                        availableBalance = data.AVAILABLEBALANCE,
+                        ledgerBalance = data.LEDGERBALANCE,
 
-                        relationshipOfficerId = data.RelationshipOfficerId ?? 0,
-                        relationshipManagerId = data.RelationshipManagerId ?? 0,
-                        misCode = data.MISCode,
+                        relationshipOfficerId = data.RELATIONSHIPOFFICERID ?? 0,
+                        relationshipManagerId = data.RELATIONSHIPMANAGERID ?? 0,
+                        misCode = data.MISCODE,
 
-                        overdraftAmount = data.OverdraftAmount ?? 0,
-                        overdraftInterestRate = data.OverdraftInterestRate ?? 0,
-                        overdraftExpiryDate = data.OverdraftExpiryDate ?? General.DefaultDate,
-                        hasOverdraft = data.HasOverdraft.HasValue == true ? data.HasOverdraft.Value : false,
-                        lienAmount = data.LienAmount,
-                        hasLien = data.HasLien,
-                        postNoStatusId = data.PostNoStatusId,
-                        oldProductAccountNumber1 = data.OldProductAccountNumber1,
-                        oldProductAccountNumber2 = data.OldProductAccountNumber2,
-                        oldProductAccountNumber3 = data.OldProductAccountNumber3,
+                        overdraftAmount = data.OVERDRAFTAMOUNT ?? 0,
+                        overdraftInterestRate = data.OVERDRAFTINTERESTRATE ?? 0,
+                        overdraftExpiryDate = data.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
+                        hasOverdraft = data.HASOVERDRAFT.HasValue == true ? data.HASOVERDRAFT.Value : false,
+                        lienAmount = data.LIENAMOUNT,
+                        hasLien = data.HASLIEN,
+                        postNoStatusId = data.POSTNOSTATUSID,
+                        oldProductAccountNumber1 = data.OLDPRODUCTACCOUNTNUMBER1,
+                        oldProductAccountNumber2 = data.OLDPRODUCTACCOUNTNUMBER2,
+                        oldProductAccountNumber3 = data.OLDPRODUCTACCOUNTNUMBER3,
                         //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0
-                        aprovalStatusId = data.AprovalStatusId,
+                        aprovalStatusId = data.APROVALSTATUSID,
 
                         //refreshBatchId = data.RefreshBatchId,
                         //lastRefreshDatetime = data.LastRefreshDatetime,
@@ -265,20 +265,20 @@ namespace FintrakBanking.Repositories.CASA
             }
             if (customerTypeId < 3)
             {
-                allCustomer = from cust in context.tbl_Customer
-                              join acc in context.tbl_CASA on cust.CustomerId equals acc.CustomerId
-                              join prod in context.tbl_Product on acc.ProductId equals prod.ProductId
-                              where cust.Deleted == false && cust.CompanyId == companyId
+                allCustomer = from cust in context.TBL_CUSTOMER
+                              join acc in context.TBL_CASA on cust.CUSTOMERID equals acc.CUSTOMERID
+                              join prod in context.TBL_PRODUCT on acc.PRODUCTID equals prod.PRODUCTID
+                              where cust.DELETED == false && cust.COMPANYID == companyId
                               select new CustomerSearchVM
                               {
-                                  customerId = cust.CustomerId,
-                                  accountNumber = acc.ProductAccountNumber,
-                                  customerCode = cust.CustomerCode,
-                                  firstName = cust.FirstName,
-                                  lastName = cust.LastName,
-                                  middleName = cust.MaidenName,
-                                  relationshipManagerId = acc.RelationshipManagerId ?? 0,
-                                  relationshipOfficerId = acc.RelationshipOfficerId ?? 0
+                                  customerId = cust.CUSTOMERID,
+                                  accountNumber = acc.PRODUCTACCOUNTNUMBER,
+                                  customerCode = cust.CUSTOMERCODE,
+                                  firstName = cust.FIRSTNAME,
+                                  lastName = cust.LASTNAME,
+                                  middleName = cust.MAIDENNAME,
+                                  relationshipManagerId = acc.RELATIONSHIPMANAGERID ?? 0,
+                                  relationshipOfficerId = acc.RELATIONSHIPOFFICERID ?? 0
                               };
 
                 if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
@@ -292,22 +292,22 @@ namespace FintrakBanking.Repositories.CASA
             }
             else
             {
-                allCustomer = from cg in context.tbl_Customer_Group
-                              join gm in context.tbl_Customer_Group_Mapping
-                              on cg.CustomerGroupId equals gm.CustomerGroupId
-                              join casa in context.tbl_CASA
-                              on gm.CustomerId equals casa.CustomerId
-                              join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
-                              where cg.Deleted == false && gm.Deleted == false && casa.Deleted == false
+                allCustomer = from cg in context.TBL_CUSTOMER_GROUP
+                              join gm in context.TBL_CUSTOMER_GROUP_MAPPING
+                              on cg.CUSTOMERGROUPID equals gm.CUSTOMERGROUPID
+                              join casa in context.TBL_CASA
+                              on gm.CUSTOMERID equals casa.CUSTOMERID
+                              join prod in context.TBL_PRODUCT on casa.PRODUCTID equals prod.PRODUCTID
+                              where cg.DELETED == false && gm.DELETED == false && casa.DELETED == false
                               select new CustomerSearchVM
                               {
-                                  customerId = cg.CustomerGroupId,
-                                  customerCode = cg.GroupCode,
-                                  firstName = cg.GroupName,
+                                  customerId = cg.CUSTOMERGROUPID,
+                                  customerCode = cg.GROUPCODE,
+                                  firstName = cg.GROUPNAME,
                                   lastName = string.Empty,
-                                  accountNumber = casa.ProductAccountNumber,
-                                  relationshipManagerId = casa.RelationshipManagerId ?? 0,
-                                  relationshipOfficerId = casa.RelationshipOfficerId ?? 0
+                                  accountNumber = casa.PRODUCTACCOUNTNUMBER,
+                                  relationshipManagerId = casa.RELATIONSHIPMANAGERID ?? 0,
+                                  relationshipOfficerId = casa.RELATIONSHIPOFFICERID ?? 0
                               };
 
                 if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
@@ -325,14 +325,14 @@ namespace FintrakBanking.Repositories.CASA
 
         public IEnumerable<GroupCustomerMembersViewModel> GetGroupMembersByGroupId(int customerId, int companyId)
         {
-            var customerGroupMapping = from b in context.tbl_CASA 
-                                       where b.CustomerId == customerId &&  b.Deleted == false && b.CompanyId == companyId
+            var customerGroupMapping = from b in context.TBL_CASA 
+                                       where b.CUSTOMERID == customerId &&  b.DELETED == false && b.COMPANYID == companyId
                                        select new GroupCustomerMembersViewModel
                                        {
-                                           customerId = b.CustomerId,                                          
-                                           customerCode = b.tbl_Customer.CustomerCode,
-                                           lastName = b.tbl_Customer.LastName,
-                                           firstName = b.tbl_Customer.FirstName,
+                                           customerId = b.CUSTOMERID,                                          
+                                           customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                                           lastName = b.TBL_CUSTOMER.LASTNAME,
+                                           firstName = b.TBL_CUSTOMER.FIRSTNAME,
                                        
                                        };
 
@@ -341,104 +341,104 @@ namespace FintrakBanking.Repositories.CASA
 
         private IQueryable<CasaCustomerSearchViewModel> GetAllAccounts()
         {
-            var data = (from casa in context.tbl_CASA
-                        join cust in context.tbl_Customer on casa.CustomerId equals cust.CustomerId
+            var data = (from casa in context.TBL_CASA
+                        join cust in context.TBL_CUSTOMER on casa.CUSTOMERID equals cust.CUSTOMERID
                         //join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
-                        join sector in context.tbl_Sub_Sector on cust.SubSectorId equals sector.SubSectorId
-                        join custGroup in context.tbl_Customer_Group_Mapping on cust.CustomerId equals custGroup.CustomerId into cGroup
+                        join sector in context.TBL_SUB_SECTOR on cust.SUBSECTORID equals sector.SUBSECTORID
+                        join custGroup in context.TBL_CUSTOMER_GROUP_MAPPING on cust.CUSTOMERID equals custGroup.CUSTOMERID into cGroup
                         from custGroup in cGroup.DefaultIfEmpty()
                         select new CasaCustomerSearchViewModel()
                         {
-                            casaAccountId = casa.CasaAccountId,
-                            productAccountNumber = casa.ProductAccountNumber,
-                            productAccountName = casa.ProductAccountName,
-                            customerId = casa.CustomerId,
-                            customerCode = cust.CustomerCode,
-                            accountHolder = cust.FirstName + " " + cust.LastName,
-                            productId = casa.tbl_Product.ProductId,
-                            productCode = casa.tbl_Product.ProductCode,
-                            productName = casa.tbl_Product.ProductName,
-                            productClassId = casa.tbl_Product.ProductClassId,
-                            productClassName = casa.tbl_Product.tbl_Product_Class.ProductClassName,
-                            companyId = casa.CompanyId,
-                            branchId = casa.BranchId,
-                            branchCode = casa.tbl_Branch.BranchCode,
-                            branchName = casa.tbl_Branch.BranchName,
-                            relationshipOfficerId = casa.RelationshipOfficerId ?? 0,
-                            relationshipManagerId = casa.RelationshipManagerId ?? 0,
-                            subSectorId = sector.SubSectorId,
-                            subSectorName = sector.Name,
-                            customerSectorId = sector.tbl_Sector.SectorId,
-                            customerSectorName = sector.tbl_Sector.Name,
-                            customerGroupId = custGroup.CustomerGroupId,
-                            customerGroupName = custGroup.tbl_Customer_Group.GroupName ?? "None",
-                            taxIdentificationNumber = cust.TaxNumber,
-                            registrationNumber = cust.tbl_Customer_CompanyInfomation.FirstOrDefault(x => x.CustomerId == cust.CustomerId).RegistrationNumber,
-                            isBlackList = context.tbl_Customer_Blacklist.Any(x => x.CustomerId == cust.CustomerId),
-                            isOnWatchList = context.tbl_Loan_PrudentialGuideline.Any(x => x.tbl_Loan.Any(l => l.CustomerId == cust.CustomerId) && x.PrudentialGuidelineStatusId == (int)LoanPrudentialStatusEnum.WatchList),
-                            isCamsol = context.tbl_Loan_Camsol.Any(x => context.tbl_Loan.Any(l => l.TermLoanId == x.LoanId && l.CustomerId == cust.CustomerId)),
-                            customerTypeId = cust.CustomerTypeId,
-                            customerTypeName = cust.tbl_Customer_Type.Name,
-                            customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == casa.CustomerId).Select(b => new CustomerBvnViewModels()
+                            casaAccountId = casa.CASAACCOUNTID,
+                            productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+                            productAccountName = casa.PRODUCTACCOUNTNAME,
+                            customerId = casa.CUSTOMERID,
+                            customerCode = cust.CUSTOMERCODE,
+                            accountHolder = cust.FIRSTNAME + " " + cust.LASTNAME,
+                            productId = casa.TBL_PRODUCT.PRODUCTID,
+                            productCode = casa.TBL_PRODUCT.PRODUCTCODE,
+                            productName = casa.TBL_PRODUCT.PRODUCTNAME,
+                            productClassId = casa.TBL_PRODUCT.PRODUCTCLASSID,
+                            productClassName = casa.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                            companyId = casa.COMPANYID,
+                            branchId = casa.BRANCHID,
+                            branchCode = casa.TBL_BRANCH.BRANCHCODE,
+                            branchName = casa.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerId = casa.RELATIONSHIPOFFICERID ?? 0,
+                            relationshipManagerId = casa.RELATIONSHIPMANAGERID ?? 0,
+                            subSectorId = sector.SUBSECTORID,
+                            subSectorName = sector.NAME,
+                            customerSectorId = sector.TBL_SECTOR.SECTORID,
+                            customerSectorName = sector.TBL_SECTOR.NAME,
+                            customerGroupId = custGroup.CUSTOMERGROUPID,
+                            customerGroupName = custGroup.TBL_CUSTOMER_GROUP.GROUPNAME ?? "None",
+                            taxIdentificationNumber = cust.TAXNUMBER,
+                            registrationNumber = cust.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == cust.CUSTOMERID).REGISTRATIONNUMBER,
+                            isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERID == cust.CUSTOMERID),
+                            isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == cust.CUSTOMERID) && x.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList),
+                            isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == cust.CUSTOMERID)),
+                            customerTypeId = cust.CUSTOMERTYPEID,
+                            customerTypeName = cust.TBL_CUSTOMER_TYPE.NAME,
+                            customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == casa.CUSTOMERID).Select(b => new CustomerBvnViewModels()
                             {
-                                bankVerificationNumber = b.BankVerificationNumber,
-                                customerBvnid = b.CustomerBVNId,
-                                firstname = b.Firstname,
-                                isValidBvn = b.IsValidBVN,
-                                isPoliticallyExposed = b.IsPoliticallyExposed,
-                                surname = b.Surname
+                                bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
+                                customerBvnid = b.CUSTOMERBVNID,
+                                firstname = b.FIRSTNAME,
+                                isValidBvn = b.ISVALIDBVN,
+                                isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
+                                surname = b.SURNAME
                             }).ToList(),
-                            customerCompanyDirectors = context.tbl_Customer_Company_Director
-                            .Where(s => s.CustomerId == casa.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember)
+                            customerCompanyDirectors = context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                            .Where(s => s.CUSTOMERID == casa.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
                             .Select(s => new CustomerCompanyDirectorsViewModels()
                             {
-                                bankVerificationNumber = s.CustomerBVN,
-                                companyDirectorTypeId = s.CompanyDirectorTypeId,
-                                companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
-                                customerId = s.CustomerId,
-                                firstname = s.Firstname,
-                                surname = s.Surname
+                                bankVerificationNumber = s.CUSTOMERBVN,
+                                companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                customerId = s.CUSTOMERID,
+                                firstname = s.FIRSTNAME,
+                                surname = s.SURNAME
                             }).ToList(),
-                            customerCompanyShareholders = context.tbl_Customer_Company_Director
-                            .Where(s => s.CustomerId == casa.CustomerId && s.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder)
+                            customerCompanyShareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                            .Where(s => s.CUSTOMERID == casa.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder)
                             .Select(s => new CustomerCompanyShareholdersViewModels()
                             {
-                                bankVerificationNumber = s.CustomerBVN,
-                                companyDirectorTypeId = s.CompanyDirectorTypeId,
-                                companyDirectorTypeName = s.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
-                                customerId = s.CustomerId,
-                                firstname = s.Firstname,
-                                surname = s.Surname
+                                bankVerificationNumber = s.CUSTOMERBVN,
+                                companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                customerId = s.CUSTOMERID,
+                                firstname = s.FIRSTNAME,
+                                surname = s.SURNAME
                             }).ToList(),
-                            customerClients = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == casa.CustomerId &&
-                            cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
+                            customerClients = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == casa.CUSTOMERID &&
+                            cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Client)
                             .Select(cs => new CustomerClientOrSupplierViewModels()
                             {
-                                client_SupplierId = cs.Client_SupplierId,
-                                clientOrSupplierName = cs.FirstName + " " + cs.LastName,
-                                firstName = cs.FirstName,
-                                middleName = cs.MiddleName,
-                                lastName = cs.LastName,
-                                client_SupplierAddress = cs.Address,
-                                client_SupplierPhoneNumber = cs.PhoneNumber,
-                                client_SupplierEmail = cs.EmailAddress,
-                                client_SupplierTypeId = cs.Client_SupplierTypeId,
-                                client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                                client_SupplierId = cs.CLIENT_SUPPLIERID,
+                                clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                                firstName = cs.FIRSTNAME,
+                                middleName = cs.MIDDLENAME,
+                                lastName = cs.LASTNAME,
+                                client_SupplierAddress = cs.ADDRESS,
+                                client_SupplierPhoneNumber = cs.PHONENUMBER,
+                                client_SupplierEmail = cs.EMAILADDRESS,
+                                client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
                             }).ToList(),
-                            customerSuppliers = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == casa.CustomerId &&
-                            cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                            customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == casa.CUSTOMERID &&
+                            cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
                              .Select(cs => new CustomerSupplierViewModels()
                              {
-                                 client_SupplierId = cs.Client_SupplierId,
-                                 clientOrSupplierName = cs.FirstName + " " + cs.LastName,
-                                 firstName = cs.FirstName,
-                                 middleName = cs.MiddleName,
-                                 lastName = cs.LastName,
-                                 client_SupplierAddress = cs.Address,
-                                 client_SupplierPhoneNumber = cs.PhoneNumber,
-                                 client_SupplierEmail = cs.EmailAddress,
-                                 client_SupplierTypeId = cs.Client_SupplierTypeId,
-                                 client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                                 client_SupplierId = cs.CLIENT_SUPPLIERID,
+                                 clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                                 firstName = cs.FIRSTNAME,
+                                 middleName = cs.MIDDLENAME,
+                                 lastName = cs.LASTNAME,
+                                 client_SupplierAddress = cs.ADDRESS,
+                                 client_SupplierPhoneNumber = cs.PHONENUMBER,
+                                 client_SupplierEmail = cs.EMAILADDRESS,
+                                 client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
                              }).ToList(),
                         });
 
