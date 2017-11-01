@@ -219,78 +219,78 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.ADDRESSOFNOK = staffModel.AddressOfNok;
                 tempStaffToUpdate.BRANCHID = staffModel.BranchId;
                 tempStaffToUpdate.COMMENT = staffModel.Comment;
-                tempStaffToUpdate.CreatedBy = staffModel.createdBy;
-                tempStaffToUpdate.CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel;
-                tempStaffToUpdate.DateOfBirth = staffModel.DateOfBirth;
-                tempStaffToUpdate.DateTimeUpdated = DateTime.Now;
-                tempStaffToUpdate.DepartmentId = staffModel.DepartmentId;
-                tempStaffToUpdate.Email = staffModel.Email;
-                tempStaffToUpdate.EmailOfNOK = staffModel.EmailOfNok;
-                tempStaffToUpdate.Gender = staffModel.Gender;
-                tempStaffToUpdate.GenderOfNOK = staffModel.GenderOfNok;
-                tempStaffToUpdate.MISInfoId = staffModel.MisinfoId;
-                tempStaffToUpdate.NameOfNOK = staffModel.NameOfNok;
-                tempStaffToUpdate.NOKRelationShip = staffModel.NokrelationShip;
-                tempStaffToUpdate.Phone = staffModel.Phone;
-                tempStaffToUpdate.PhoneOfNOK = staffModel.PhoneOfNok;
-                tempStaffToUpdate.StateId = staffModel.StateId;
-                tempStaffToUpdate.CityId = staffModel.CityId;
-                tempStaffToUpdate.Staffsignature = staffModel.Staffsignature;
-                tempStaffToUpdate.ApprovalStatusId = (int)ApprovalStatusEnum.Pending;
-                tempStaffToUpdate.IsCurrent = true;
+                tempStaffToUpdate.CREATEDBY = staffModel.createdBy;
+                tempStaffToUpdate.CUSTOMERSENSITIVITYLEVEL = staffModel.CustomerSensitivityLevel;
+                tempStaffToUpdate.DATEOFBIRTH = staffModel.DateOfBirth;
+                tempStaffToUpdate.DATETIMEUPDATED = DateTime.Now;
+                tempStaffToUpdate.DEPARTMENTID = staffModel.DepartmentId;
+                tempStaffToUpdate.EMAIL = staffModel.Email;
+                tempStaffToUpdate.EMAILOFNOK = staffModel.EmailOfNok;
+                tempStaffToUpdate.GENDER = staffModel.Gender;
+                tempStaffToUpdate.GENDEROFNOK = staffModel.GenderOfNok;
+                tempStaffToUpdate.MISINFOID = staffModel.MisinfoId;
+                tempStaffToUpdate.NAMEOFNOK = staffModel.NameOfNok;
+                tempStaffToUpdate.NOKRELATIONSHIP = staffModel.NokrelationShip;
+                tempStaffToUpdate.PHONE = staffModel.Phone;
+                tempStaffToUpdate.PHONEOFNOK = staffModel.PhoneOfNok;
+                tempStaffToUpdate.STATEID = staffModel.StateId;
+                tempStaffToUpdate.CITYID = staffModel.CityId;
+                tempStaffToUpdate.STAFFSIGNATURE = staffModel.Staffsignature;
+                tempStaffToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                tempStaffToUpdate.ISCURRENT = true;
             }
             else
             {
-                var targetStaff = context.tbl_Staff.Find(staffid);
+                var targetStaff = context.TBL_STAFF.Find(staffid);
 
-                tempStaff = new tbl_Temp_Staff()
+                tempStaff = new TBL_TEMP_STAFF()
                 {
-                    FirstName = staffModel.FirstName,
-                    MiddleName = staffModel.MiddleName,
-                    LastName = staffModel.LastName,
-                    StaffCode = targetStaff?.StaffCode,
-                    JobTitleId = staffModel.JobTitleId,
-                    CompanyId = staffModel.companyId,
-                    RankId = staffModel.RankId,
-                    Address = staffModel.Address,
-                    AddressOfNOK = staffModel.AddressOfNok,
-                    BranchId = staffModel.BranchId,
-                    Comment = staffModel.Comment,
-                    CreatedBy = staffModel.createdBy,
-                    CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel,
-                    DateOfBirth = staffModel.DateOfBirth,
-                    DateTimeCreated = DateTime.Now,
-                    DepartmentId = staffModel.DepartmentId,
-                    Email = staffModel.Email,
-                    EmailOfNOK = staffModel.EmailOfNok,
-                    Gender = staffModel.Gender,
-                    GenderOfNOK = staffModel.GenderOfNok,
-                    MISInfoId = staffModel.MisinfoId,
-                    NameOfNOK = staffModel.NameOfNok,
-                    NOKRelationShip = staffModel.NokrelationShip,
-                    Phone = staffModel.Phone,
-                    PhoneOfNOK = staffModel.PhoneOfNok,
-                    StateId = staffModel.StateId,
-                    CityId = staffModel.CityId,
-                    Staffsignature = staffModel.Staffsignature,
-                    ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-                    IsCurrent = true
+                    FIRSTNAME = staffModel.FirstName,
+                    MIDDLENAME = staffModel.MiddleName,
+                    LASTNAME = staffModel.LastName,
+                    STAFFCODE = targetStaff?.STAFFCODE,
+                    JOBTITLEID = staffModel.JobTitleId,
+                    COMPANYID = staffModel.companyId,
+                    RANKID = staffModel.RankId,
+                    ADDRESS = staffModel.Address,
+                    ADDRESSOFNOK = staffModel.AddressOfNok,
+                    BRANCHID = staffModel.BranchId,
+                    COMMENT = staffModel.Comment,
+                    CREATEDBY = staffModel.createdBy,
+                    CUSTOMERSENSITIVITYLEVEL = staffModel.CustomerSensitivityLevel,
+                    DATEOFBIRTH = staffModel.DateOfBirth,
+                    DATETIMECREATED = DateTime.Now,
+                    DEPARTMENTID = staffModel.DepartmentId,
+                    EMAIL = staffModel.Email,
+                    EMAILOFNOK = staffModel.EmailOfNok,
+                    GENDER = staffModel.Gender,
+                    GENDEROFNOK = staffModel.GenderOfNok,
+                    MISINFOID = staffModel.MisinfoId,
+                    NAMEOFNOK = staffModel.NameOfNok,
+                    NOKRELATIONSHIP = staffModel.NokrelationShip,
+                    PHONE = staffModel.Phone,
+                    PHONEOFNOK = staffModel.PhoneOfNok,
+                    STATEID = staffModel.StateId,
+                    CITYID = staffModel.CityId,
+                    STAFFSIGNATURE = staffModel.Staffsignature,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    ISCURRENT = true
                 };
 
-                context.tbl_Temp_Staff.Add(tempStaff);
+                context.TBL_TEMP_STAFF.Add(tempStaff);
             }
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.StaffUpdated,
-                StaffId = staffModel.createdBy,
-                BranchId = (short)staffModel.BranchId,
-                Detail = $"Updated Staff '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
-                IPAddress = staffModel.userIPAddress,
-                Url = staffModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = staffid
+                AUDITTYPEID = (short)AuditTypeEnum.StaffUpdated,
+                STAFFID = staffModel.createdBy,
+                BRANCHID = (short)staffModel.BranchId,
+                DETAIL = $"Updated Staff '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
+                IPADDRESS = staffModel.userIPAddress,
+                URL = staffModel.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = staffid
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -302,7 +302,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     var output = await context.SaveChangesAsync() > 0;
 
-                    var targetStaffId = existingTempStaff?.StaffId ?? tempStaff.StaffId;
+                    var targetStaffId = existingTempStaff?.STAFFID ?? tempStaff.STAFFID;
 
                     var entity = new ApprovalViewModel
                     {
@@ -340,21 +340,21 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <returns></returns>
         public bool DeleteStaff(int staffId, UserInfo user)
         {
-            var targetStaff = context.tbl_Staff.Find(staffId);
+            var targetStaff = context.TBL_STAFF.Find(staffId);
 
-            targetStaff.Deleted = true;
+            targetStaff.DELETED = true;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.StaffDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Staff '{targetStaff.FirstName}' with code'{targetStaff.StaffCode}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.StaffDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Staff '{targetStaff?.FIRSTNAME}' with code'{targetStaff?.STAFFCODE}'",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -368,11 +368,11 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <returns></returns>
         public IEnumerable<StaffViewModel> GetStaffName()
         {
-            var staff = (from c in context.tbl_Staff
+            var staff = (from c in context.TBL_STAFF
                          select new StaffViewModel()
                          {
-                             StaffName = c.FirstName + " " + c.MiddleName + " " + c.LastName,
-                             StaffId = c.StaffId
+                             StaffName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                             StaffId = c.STAFFID
                          });
             return staff;
         }
@@ -422,8 +422,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private bool ApproveStaff(int staffid, short approvalStatusId, UserInfo user)
         {
-            var staffModel = context.tbl_Temp_Staff.Find(staffid);
-            var staffToUpdate = context.tbl_Staff.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower());
+            var staffModel = context.TBL_TEMP_STAFF.Find(staffid);
+            var staffToUpdate = context.TBL_STAFF.Where(x => x.STAFFCODE.ToLower() == staffModel.STAFFCODE.ToLower());
 
             if (staffToUpdate.Any()) //Update existing staff with tempStaff record
             {
@@ -431,96 +431,96 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if (staffModel != null)
                 {
-                    existingStaff.FirstName = staffModel.FirstName;
-                    existingStaff.CompanyId = staffModel.CompanyId;
-                    existingStaff.MiddleName = staffModel.MiddleName;
-                    existingStaff.LastName = staffModel.LastName;
-                    existingStaff.StaffCode = staffModel.StaffCode;
-                    existingStaff.JobTitleId = staffModel.JobTitleId;
-                    existingStaff.RankId = staffModel.RankId;
-                    existingStaff.Address = staffModel.Address;
-                    existingStaff.AddressOfNOK = staffModel.AddressOfNOK;
-                    existingStaff.BranchId = staffModel.BranchId;
-                    existingStaff.Comment = staffModel.Comment;
-                    existingStaff.CreatedBy = staffModel.CreatedBy;
-                    existingStaff.CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel;
-                    existingStaff.DateOfBirth = staffModel.DateOfBirth;
-                    existingStaff.DateTimeUpdated = DateTime.Now;
-                    existingStaff.DepartmentId = staffModel.DepartmentId;
-                    existingStaff.Email = staffModel.Email;
-                    existingStaff.EmailOfNOK = staffModel.EmailOfNOK;
-                    existingStaff.Gender = staffModel.Gender;
-                    existingStaff.GenderOfNOK = staffModel.GenderOfNOK;
-                    existingStaff.MISInfoId = staffModel.MISInfoId;
-                    existingStaff.NameOfNOK = staffModel.NameOfNOK;
-                    existingStaff.NOKRelationShip = staffModel.NOKRelationShip;
-                    existingStaff.Phone = staffModel.Phone;
-                    existingStaff.PhoneOfNOK = staffModel.PhoneOfNOK;
-                    existingStaff.StateId = staffModel.StateId;
-                    existingStaff.CityId = staffModel.CityId;
-                    existingStaff.Staffsignature = staffModel.Staffsignature;
-                    existingStaff.Deleted = false;
+                    existingStaff.FIRSTNAME = staffModel.FIRSTNAME;
+                    existingStaff.COMPANYID = staffModel.COMPANYID;
+                    existingStaff.MIDDLENAME = staffModel.MIDDLENAME;
+                    existingStaff.LASTNAME = staffModel.LASTNAME;
+                    existingStaff.STAFFCODE = staffModel.STAFFCODE;
+                    existingStaff.JOBTITLEID = staffModel.JOBTITLEID;
+                    existingStaff.RANKID = staffModel.RANKID;
+                    existingStaff.ADDRESS = staffModel.ADDRESS;
+                    existingStaff.ADDRESSOFNOK = staffModel.ADDRESSOFNOK;
+                    existingStaff.BRANCHID = staffModel.BRANCHID;
+                    existingStaff.COMMENT = staffModel.COMMENT;
+                    existingStaff.CREATEDBY = staffModel.CREATEDBY;
+                    existingStaff.CUSTOMERSENSITIVITYLEVEL = staffModel.CUSTOMERSENSITIVITYLEVEL;
+                    existingStaff.DATEOFBIRTH = staffModel.DATEOFBIRTH;
+                    existingStaff.DATETIMEUPDATED = DateTime.Now;
+                    existingStaff.DEPARTMENTID = staffModel.DEPARTMENTID;
+                    existingStaff.EMAIL = staffModel.EMAIL;
+                    existingStaff.EMAILOFNOK = staffModel.EMAILOFNOK;
+                    existingStaff.GENDER = staffModel.GENDER;
+                    existingStaff.GENDEROFNOK = staffModel.GENDEROFNOK;
+                    existingStaff.MISINFOID = staffModel.MISINFOID;
+                    existingStaff.NAMEOFNOK = staffModel.NAMEOFNOK;
+                    existingStaff.NOKRELATIONSHIP = staffModel.NOKRELATIONSHIP;
+                    existingStaff.PHONE = staffModel.PHONE;
+                    existingStaff.PHONEOFNOK = staffModel.PHONEOFNOK;
+                    existingStaff.STATEID = staffModel.STATEID;
+                    existingStaff.CITYID = staffModel.CITYID;
+                    existingStaff.STAFFSIGNATURE = staffModel.STAFFSIGNATURE;
+                    existingStaff.DELETED = false;
                 }
             }
             else //Insert a new staff record into the real staff table
             {
                 if (staffModel != null)
                 {
-                    var staff = new tbl_Staff()
+                    var staff = new TBL_STAFF()
                     {
-                        FirstName = staffModel.FirstName,
-                        MiddleName = staffModel.MiddleName,
-                        CompanyId = staffModel.CompanyId,
-                        LastName = staffModel.LastName,
-                        StaffCode = staffModel.StaffCode,
-                        JobTitleId = staffModel.JobTitleId,
-                        RankId = staffModel.RankId,
-                        Address = staffModel.Address,
-                        AddressOfNOK = staffModel.AddressOfNOK,
-                        BranchId = staffModel.BranchId,
-                        Comment = staffModel.Comment,
-                        CreatedBy = staffModel.CreatedBy,
-                        CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel,
-                        DateOfBirth = staffModel.DateOfBirth,
-                        DateTimeCreated = DateTime.Now,
-                        DepartmentId = staffModel.DepartmentId,
-                        Email = staffModel.Email,
-                        EmailOfNOK = staffModel.EmailOfNOK,
-                        Gender = staffModel.Gender,
-                        GenderOfNOK = staffModel.GenderOfNOK,
-                        MISInfoId = staffModel.MISInfoId,
-                        NameOfNOK = staffModel.NameOfNOK,
-                        NOKRelationShip = staffModel.NOKRelationShip,
-                        Phone = staffModel.Phone,
-                        PhoneOfNOK = staffModel.PhoneOfNOK,
-                        StateId = staffModel.StateId,
-                        CityId = staffModel.CityId,
-                        Staffsignature = staffModel.Staffsignature,
+                        FIRSTNAME = staffModel.FIRSTNAME,
+                        MIDDLENAME = staffModel.MIDDLENAME,
+                        COMPANYID = staffModel.COMPANYID,
+                        LASTNAME = staffModel.LASTNAME,
+                        STAFFCODE = staffModel.STAFFCODE,
+                        JOBTITLEID = staffModel.JOBTITLEID,
+                        RANKID = staffModel.RANKID,
+                        ADDRESS = staffModel.ADDRESS,
+                        ADDRESSOFNOK = staffModel.ADDRESSOFNOK,
+                        BRANCHID = staffModel.BRANCHID,
+                        COMMENT = staffModel.COMMENT,
+                        CREATEDBY = staffModel.CREATEDBY,
+                        CUSTOMERSENSITIVITYLEVEL = staffModel.CUSTOMERSENSITIVITYLEVEL,
+                        DATEOFBIRTH = staffModel.DATEOFBIRTH,
+                        DATETIMECREATED = DateTime.Now,
+                        DEPARTMENTID = staffModel.DEPARTMENTID,
+                        EMAIL = staffModel.EMAIL,
+                        EMAILOFNOK = staffModel.EMAILOFNOK,
+                        GENDER = staffModel.GENDER,
+                        GENDEROFNOK = staffModel.GENDEROFNOK,
+                        MISINFOID = staffModel.MISINFOID,
+                        NAMEOFNOK = staffModel.NAMEOFNOK,
+                        NOKRELATIONSHIP = staffModel.NOKRELATIONSHIP,
+                        PHONE = staffModel.PHONE,
+                        PHONEOFNOK = staffModel.PHONEOFNOK,
+                        STATEID = staffModel.STATEID,
+                        CITYID = staffModel.CITYID,
+                        STAFFSIGNATURE = staffModel.STAFFSIGNATURE,
                     };
-                    context.tbl_Staff.Add(staff);
+                    context.TBL_STAFF.Add(staff);
                 }
             }
 
-            staffModel.IsCurrent = false;
-            staffModel.ApprovalStatusId = approvalStatusId;
-            staffModel.DateTimeUpdated = DateTime.Now;
+            staffModel.ISCURRENT = false;
+            staffModel.APPROVALSTATUSID = approvalStatusId;
+            staffModel.DATETIMEUPDATED = DateTime.Now;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.StaffApproved,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Approved Staff '{staffModel.FirstName + " " + staffModel.LastName}' with staff code'{staffModel.StaffCode}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.StaffApproved,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Approved Staff '{staffModel?.FIRSTNAME + " " + staffModel?.LASTNAME}' with staff code'{staffModel?.STAFFCODE}'",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             try
             {
-                context.tbl_Audit.Add(audit);
+                context.TBL_AUDIT.Add(audit);
                 // Audit Section ---------------------------
                 var output = context.SaveChanges() > 0;
 
@@ -539,60 +539,60 @@ namespace FintrakBanking.Repositories.Setups.General
         public async Task<bool> AddTempStaff(StaffInfoViewModel staffModel)
         {
             bool output = false;
-            var existStingTempStaff = context.tbl_Temp_Staff.Where(x => x.StaffCode.ToLower() == staffModel.StaffCode.ToLower()
-                                                                  && x.IsCurrent == true
-                                                                  && x.CompanyId == staffModel.companyId
-                                                                  && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
+            var existStingTempStaff = context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower()
+                                                                  && x.ISCURRENT == true
+                                                                  && x.COMPANYID == staffModel.companyId
+                                                                  && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending);
 
             if (existStingTempStaff.Any())
             {
                 throw new Exception("Staff Information already exist and is undergoing approval");
             }
 
-            var staff = new tbl_Temp_Staff()
+            var staff = new TBL_TEMP_STAFF()
             {
-                FirstName = staffModel.FirstName,
-                MiddleName = staffModel.MiddleName,
-                CompanyId = staffModel.companyId,
-                LastName = staffModel.LastName,
-                StaffCode = StaticHelpers.GetUniqueKey(6),
-                JobTitleId = staffModel.JobTitleId,
-                RankId = staffModel.RankId,
-                Address = staffModel.Address,
-                AddressOfNOK = staffModel.AddressOfNok,
-                BranchId = staffModel.BranchId,
-                Comment = staffModel.Comment,
-                CreatedBy = staffModel.createdBy,
-                CustomerSensitivityLevel = staffModel.CustomerSensitivityLevel,
-                DateOfBirth = staffModel.DateOfBirth,
-                DateTimeCreated = DateTime.Now,
-                DepartmentId = staffModel.DepartmentId,
-                Email = staffModel.Email,
-                EmailOfNOK = staffModel.EmailOfNok,
-                Gender = staffModel.Gender,
-                GenderOfNOK = staffModel.GenderOfNok,
-                MISInfoId = staffModel.MisinfoId,
-                NameOfNOK = staffModel.NameOfNok,
-                NOKRelationShip = staffModel.NokrelationShip,
-                Phone = staffModel.Phone,
-                PhoneOfNOK = staffModel.PhoneOfNok,
-                StateId = staffModel.StateId,
-                CityId = staffModel.CityId,
-                Staffsignature = staffModel.Staffsignature,
-                ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-                IsCurrent = true
+                FIRSTNAME = staffModel.FirstName,
+                MIDDLENAME = staffModel.MiddleName,
+                COMPANYID = staffModel.companyId,
+                LASTNAME = staffModel.LastName,
+                STAFFCODE = StaticHelpers.GetUniqueKey(6),
+                JOBTITLEID = staffModel.JobTitleId,
+                RANKID = staffModel.RankId,
+                ADDRESS = staffModel.Address,
+                ADDRESSOFNOK = staffModel.AddressOfNok,
+                BRANCHID = staffModel.BranchId,
+                COMMENT = staffModel.Comment,
+                CREATEDBY = staffModel.createdBy,
+                CUSTOMERSENSITIVITYLEVEL = staffModel.CustomerSensitivityLevel,
+                DATEOFBIRTH = staffModel.DateOfBirth,
+                DATETIMECREATED = DateTime.Now,
+                DEPARTMENTID = staffModel.DepartmentId,
+                EMAIL = staffModel.Email,
+                EMAILOFNOK = staffModel.EmailOfNok,
+                GENDER = staffModel.Gender,
+                GENDEROFNOK = staffModel.GenderOfNok,
+                MISINFOID = staffModel.MisinfoId,
+                NAMEOFNOK = staffModel.NameOfNok,
+                NOKRELATIONSHIP = staffModel.NokrelationShip,
+                PHONE = staffModel.Phone,
+                PHONEOFNOK = staffModel.PhoneOfNok,
+                STATEID = staffModel.StateId,
+                CITYID = staffModel.CityId,
+                STAFFSIGNATURE = staffModel.Staffsignature,
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                ISCURRENT = true
             };
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CreateStaffInitiated,
-                StaffId = staffModel.createdBy,
-                BranchId = (short)staffModel.BranchId,
-                Detail = $"Initiated Staff Creation for '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
-                IPAddress = staffModel.userIPAddress,
-                Url = staffModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CreateStaffInitiated,
+                STAFFID = staffModel.createdBy,
+                BRANCHID = (short)staffModel.BranchId,
+                DETAIL = $"Initiated Staff Creation for '{staffModel?.StaffFullName}' with code'{staffModel?.StaffCode}'",
+                IPADDRESS = staffModel.userIPAddress,
+                URL = staffModel.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -600,7 +600,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 try
                 {
                     auditTrail.AddAuditTrail(audit);
-                    context.tbl_Temp_Staff.Add(staff);
+                    context.TBL_TEMP_STAFF.Add(staff);
                     output = await context.SaveChangesAsync() > 0;
 
                     var entity = new ApprovalViewModel
@@ -608,7 +608,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         staffId = staffModel.createdBy,
                         companyId = staffModel.companyId,
                         approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = staff.StaffId,
+                        targetId = staff.STAFFID,
                         operationId = (int)OperationsEnum.StaffCreation,
                         BranchId = staffModel.userBranchId,
                         externalInitialization = true
@@ -633,12 +633,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool IsStaffCodeAlreadyExist(string staffCode)
         {
-            return context.tbl_Staff.Any(x => x.StaffCode.ToLower() == staffCode.ToLower());
+            return context.TBL_STAFF.Any(x => x.STAFFCODE.ToLower() == staffCode.ToLower());
         }
 
         public bool IsTempStaffExist(string staffCode)
         {
-            return context.tbl_Temp_Staff.Any(x => x.StaffCode.ToLower() == staffCode.ToLower() && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && x.IsCurrent == true);
+            return context.TBL_TEMP_STAFF.Any(x => x.STAFFCODE.ToLower() == staffCode.ToLower() && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.ISCURRENT == true);
         }
 
         public IEnumerable<StaffInfoViewModel> GetStaffAwaitingApprovals(int staffId, int companyId)
@@ -648,51 +648,51 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            return (from c in context.tbl_Temp_Staff
-                    join br in context.tbl_Branch on c.BranchId equals br.BranchId
-                    join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
-                    join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
-                    join atrail in context.tbl_Approval_Trail on c.StaffId equals atrail.TargetId
-                    where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                        && atrail.ResponseStaffId == null
-                          && atrail.OperationId == (int)OperationsEnum.StaffCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+            return (from c in context.TBL_TEMP_STAFF
+                    join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
+                    join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                    join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
+                    join atrail in context.TBL_APPROVAL_TRAIL on c.STAFFID equals atrail.TARGETID
+                    where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
+                        && atrail.RESPONSESTAFFID == null
+                          && atrail.OPERATIONID == (int)OperationsEnum.StaffCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                     select new StaffInfoViewModel()
                     {
-                        StaffId = c.StaffId,
-                        Address = c.Address,
-                        companyId = coy.CompanyId,
-                        AddressOfNok = c.AddressOfNOK,
-                        BranchId = br.BranchId,
-                        Comment = c.Comment,
-                        CustomerSensitivityLevel = c.CustomerSensitivityLevel,
-                        DateOfBirth = c.DateOfBirth ?? DateTime.Now,
-                        DepartmentId = c.DepartmentId,
-                        Email = c.Email,
-                        EmailOfNok = c.EmailOfNOK,
-                        Gender = c.Gender,
-                        GenderOfNok = c.GenderOfNOK,
-                        JobTitleId = c.JobTitleId,
-                        JobTitleName = c.tbl_Staff_JobTitle.JobTitleName,
-                        MisinfoId = c.MISInfoId,
-                        MisInfoCode = c.tbl_MIS_Info.MISCode,
-                        NameOfNok = c.NameOfNOK,
-                        NokrelationShip = c.NOKRelationShip,
-                        Phone = c.Phone,
-                        PhoneOfNok = c.PhoneOfNOK,
-                        StateId = c.StateId,
-                        StateName = c.tbl_City.tbl_State.StateName,
-                        CityId = (int)c.CityId,
-                        CityName = c.tbl_City.CityName,
-                        FirstName = c.FirstName,
-                        MiddleName = c.MiddleName,
-                        LastName = c.LastName,
-                        StaffCode = c.StaffCode,
-                        RankId = c.RankId,
-                        RankName = c.tbl_Staff_Rank.RankName,
-                        BranchName = br.BranchName,
-                        DepartmentName = dept.DepartmentName,
-                        OperationId = atrail.OperationId,
-                        SensitivityLevel = context.tbl_Customer_Sensitivity_Level.FirstOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description
+                        StaffId = c.STAFFID,
+                        Address = c.ADDRESS,
+                        companyId = coy.COMPANYID,
+                        AddressOfNok = c.ADDRESSOFNOK,
+                        BranchId = br.BRANCHID,
+                        Comment = c.COMMENT,
+                        CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
+                        DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
+                        DepartmentId = c.DEPARTMENTID,
+                        Email = c.EMAIL,
+                        EmailOfNok = c.EMAILOFNOK,
+                        Gender = c.GENDER,
+                        GenderOfNok = c.GENDEROFNOK,
+                        JobTitleId = c.JOBTITLEID,
+                        JobTitleName = c.TBL_STAFF_JOBTITLE.JOBTITLENAME,
+                        MisinfoId = c.MISINFOID,
+                        MisInfoCode = c.TBL_MIS_INFO.MISCODE,
+                        NameOfNok = c.NAMEOFNOK,
+                        NokrelationShip = c.NOKRELATIONSHIP,
+                        Phone = c.PHONE,
+                        PhoneOfNok = c.PHONEOFNOK,
+                        StateId = c.STATEID,
+                        StateName = c.TBL_CITY.TBL_STATE.STATENAME,
+                        CityId = (int)c.CITYID,
+                        CityName = c.TBL_CITY.CITYNAME,
+                        FirstName = c.FIRSTNAME,
+                        MiddleName = c.MIDDLENAME,
+                        LastName = c.LASTNAME,
+                        StaffCode = c.STAFFCODE,
+                        RankId = c.RANKID,
+                        RankName = c.TBL_STAFF_RANK.RANKNAME,
+                        BranchName = br.BRANCHNAME,
+                        DepartmentName = dept.DEPARTMENTNAME,
+                        OperationId = atrail.OPERATIONID,
+                        SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION
                     }).GroupBy(x => x.StaffId).Select(g => g.FirstOrDefault());
         }
 
@@ -700,50 +700,50 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             //return GetTempStaffDetails().Where(x => x.StaffId == staffId).Single();
 
-            return (from c in context.tbl_Temp_Staff
-                    join br in context.tbl_Branch on c.BranchId equals br.BranchId
-                    join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
-                    join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
-                    where c.StaffId == staffId //c.ApprovalStatusId == (int)ApprovalStatusEnum.Approved && c.IsCurrent == true
+            return (from c in context.TBL_TEMP_STAFF
+                    join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
+                    join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                    join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
+                    where c.STAFFID == staffId //c.ApprovalStatusId == (int)ApprovalStatusEnum.Approved && c.IsCurrent == true
                     select new StaffDetailsModel()
                     {
-                        StaffId = c.StaffId,
-                        Address = c.Address,
-                        companyId = coy.CompanyId,
-                        AddressOfNok = c.AddressOfNOK,
-                        BranchId = br.BranchId,
-                        BranchName = br.BranchName,
-                        Comment = c.Comment,
-                        CustomerSensitivityLevel = c.CustomerSensitivityLevel,
-                        DateOfBirth = c.DateOfBirth ?? DateTime.Now,
-                        DepartmentId = c.DepartmentId ?? 0,
-                        CityId = c.CityId ?? 0,
-                        City = c.tbl_City.CityName,
-                        company = coy.Name,
-                        JobTitle = c.tbl_Staff_JobTitle.JobTitleName,
-                        MisInfo = c.tbl_MIS_Info.MISName,
-                        Staffsignature = c.Staffsignature,
-                        Email = c.Email,
-                        EmailOfNok = c.EmailOfNOK,
-                        Gender = c.Gender,
-                        GenderOfNok = c.GenderOfNOK,
-                        JobTitleId = c.JobTitleId,
-                        MisinfoId = c.MISInfoId ?? 0,
-                        NameOfNok = c.NameOfNOK,
-                        NokrelationShip = c.NOKRelationShip,
-                        Phone = c.Phone,
-                        PhoneOfNok = c.PhoneOfNOK,
-                        StateId = c.StateId ?? 0,
-                        State = c.tbl_State.StateName,
-                        FirstName = c.FirstName,
-                        MiddleName = c.MiddleName,
-                        LastName = c.LastName,
-                        StaffCode = c.StaffCode,
-                        RankId = c.RankId,
-                        Rank = c.tbl_Staff_Rank.RankName,
-                        DepartmentName = dept.DepartmentName,
-                        ApprovalStatusId = c.ApprovalStatusId,
-                        SensitivityLevel = context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
+                        StaffId = c.STAFFID,
+                        Address = c.ADDRESS,
+                        companyId = coy.COMPANYID,
+                        AddressOfNok = c.ADDRESSOFNOK,
+                        BranchId = br.BRANCHID,
+                        BranchName = br.BRANCHNAME,
+                        Comment = c.COMMENT,
+                        CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
+                        DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
+                        DepartmentId = c.DEPARTMENTID ?? 0,
+                        CityId = c.CITYID ?? 0,
+                        City = c.TBL_CITY.CITYNAME,
+                        company = coy.NAME,
+                        JobTitle = c.TBL_STAFF_JOBTITLE.JOBTITLENAME,
+                        MisInfo = c.TBL_MIS_INFO.MISNAME,
+                        Staffsignature = c.STAFFSIGNATURE,
+                        Email = c.EMAIL,
+                        EmailOfNok = c.EMAILOFNOK,
+                        Gender = c.GENDER,
+                        GenderOfNok = c.GENDEROFNOK,
+                        JobTitleId = c.JOBTITLEID,
+                        MisinfoId = c.MISINFOID ?? 0,
+                        NameOfNok = c.NAMEOFNOK,
+                        NokrelationShip = c.NOKRELATIONSHIP,
+                        Phone = c.PHONE,
+                        PhoneOfNok = c.PHONEOFNOK,
+                        StateId = c.STATEID ?? 0,
+                        State = c.TBL_STATE.STATENAME,
+                        FirstName = c.FIRSTNAME,
+                        MiddleName = c.MIDDLENAME,
+                        LastName = c.LASTNAME,
+                        StaffCode = c.STAFFCODE,
+                        RankId = c.RANKID,
+                        Rank = c.TBL_STAFF_RANK.RANKNAME,
+                        DepartmentName = dept.DEPARTMENTNAME,
+                        ApprovalStatusId = c.APPROVALSTATUSID,
+                        SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
                     }).FirstOrDefault();
         }
 
@@ -803,49 +803,49 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<StaffDetailsModel> GetStaffDetails(int companyId)
         {
-            var data = (from c in context.tbl_Staff
-                        join br in context.tbl_Branch on c.BranchId equals br.BranchId
-                        join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
-                        join dept in context.tbl_Department on c.DepartmentId equals dept.DepartmentId
-                        where c.CompanyId == companyId
+            var data = (from c in context.TBL_STAFF
+                        join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
+                        join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                        join dept in context.TBL_DEPARTMENT on c.DEPARTMENTID equals dept.DEPARTMENTID
+                        where c.COMPANYID == companyId
                         select new StaffDetailsModel()
                         {
-                            StaffId = c.StaffId,
-                            Address = c.Address,
-                            companyId = coy.CompanyId,
-                            AddressOfNok = c.AddressOfNOK,
-                            BranchId = br.BranchId,
-                            BranchName = br.BranchName,
-                            Comment = c.Comment,
-                            CustomerSensitivityLevel = c.CustomerSensitivityLevel,
-                            DateOfBirth = c.DateOfBirth ?? DateTime.Now,
-                            DepartmentId = c.DepartmentId ?? 0,
-                            CityId = c.CityId ?? 0,
-                            City = c.tbl_City.CityName,
-                            company = coy.Name,
-                            JobTitle = c.tbl_Staff_JobTitle.JobTitleName,
-                            MisInfo = context.tbl_MIS_Info.Find(c.MISInfoId).MISName,
-                            Staffsignature = c.Staffsignature,
-                            Email = c.Email,
-                            EmailOfNok = c.EmailOfNOK,
-                            Gender = c.Gender,
-                            GenderOfNok = c.GenderOfNOK,
-                            JobTitleId = c.JobTitleId,
-                            MisinfoId = c.MISInfoId ?? 0,
-                            NameOfNok = c.NameOfNOK,
-                            NokrelationShip = c.NOKRelationShip,
-                            Phone = c.Phone,
-                            PhoneOfNok = c.PhoneOfNOK,
-                            StateId = c.StateId ?? 0,
-                            State = context.tbl_State.Find(c.StateId).StateName,
-                            FirstName = c.FirstName,
-                            MiddleName = c.MiddleName,
-                            LastName = c.LastName,
-                            StaffCode = c.StaffCode,
-                            RankId = c.RankId,
-                            Rank = c.tbl_Staff_Rank.RankName,
-                            DepartmentName = dept.DepartmentName,
-                            SensitivityLevel = context.tbl_Customer_Sensitivity_Level.SingleOrDefault(x => x.CustomerSensitivityLevelId == c.CustomerSensitivityLevel).Description,
+                            StaffId = c.STAFFID,
+                            Address = c.ADDRESS,
+                            companyId = coy.COMPANYID,
+                            AddressOfNok = c.ADDRESSOFNOK,
+                            BranchId = br.BRANCHID,
+                            BranchName = br.BRANCHNAME,
+                            Comment = c.COMMENT,
+                            CustomerSensitivityLevel = c.CUSTOMERSENSITIVITYLEVEL,
+                            DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
+                            DepartmentId = c.DEPARTMENTID ?? 0,
+                            CityId = c.CITYID ?? 0,
+                            City = c.TBL_CITY.CITYNAME,
+                            company = coy.NAME,
+                            JobTitle = c.TBL_STAFF_JOBTITLE.JOBTITLENAME,
+                            MisInfo = context.TBL_MIS_INFO.Find(c.MISINFOID).MISNAME,
+                            Staffsignature = c.STAFFSIGNATURE,
+                            Email = c.EMAIL,
+                            EmailOfNok = c.EMAILOFNOK,
+                            Gender = c.GENDER,
+                            GenderOfNok = c.GENDEROFNOK,
+                            JobTitleId = c.JOBTITLEID,
+                            MisinfoId = c.MISINFOID ?? 0,
+                            NameOfNok = c.NAMEOFNOK,
+                            NokrelationShip = c.NOKRELATIONSHIP,
+                            Phone = c.PHONE,
+                            PhoneOfNok = c.PHONEOFNOK,
+                            StateId = c.STATEID ?? 0,
+                            State = context.TBL_STATE.Find(c.STATEID).STATENAME,
+                            FirstName = c.FIRSTNAME,
+                            MiddleName = c.MIDDLENAME,
+                            LastName = c.LASTNAME,
+                            StaffCode = c.STAFFCODE,
+                            RankId = c.RANKID,
+                            Rank = c.TBL_STAFF_RANK.RANKNAME,
+                            DepartmentName = dept.DEPARTMENTNAME,
+                            SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
                         });
 
             return data;
@@ -853,26 +853,26 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<simpleStaffModel> GetStaffNames()
         {
-            return from st in context.tbl_Staff
+            return from st in context.TBL_STAFF
                    select new simpleStaffModel
                    {
-                       staffId = st.StaffId,
-                       staffCode = st.StaffCode,
-                       firstName = st.FirstName,
-                       middleName = st.MiddleName,
-                       lastName = st.LastName,
-                       departmentId = (short)st.DepartmentId
+                       staffId = st.STAFFID,
+                       staffCode = st.STAFFCODE,
+                       firstName = st.FIRSTNAME,
+                       middleName = st.MIDDLENAME,
+                       lastName = st.LASTNAME,
+                       departmentId = (short)st.DEPARTMENTID
                    };
         }
 
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {
-            return from ap in context.tbl_Approval_Status
+            return from ap in context.TBL_APPROVAL_STATUS
                    select new ApprovalStatusViewModel
                    {
-                       approvalStatusId = ap.ApprovalStatusId,
-                       approvalStatusName = ap.ApprovalStatusName,
-                       forDisplay = ap.ForDisplay,
+                       approvalStatusId = ap.APPROVALSTATUSID,
+                       approvalStatusName = ap.APPROVALSTATUSNAME,
+                       forDisplay = ap.FORDISPLAY,
                    };
         }
 
@@ -888,18 +888,18 @@ namespace FintrakBanking.Repositories.Setups.General
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
                 staff =
-                    context.tbl_Staff.Where(x => x.Deleted == false)// && x.c == companyId)
-                    .Where(x => x.FirstName.ToLower().Contains(searchQuery)
-                    || x.MiddleName.ToLower().Contains(searchQuery)
-                    || x.LastName.ToLower().Contains(searchQuery)
-                    || x.StaffCode.Contains(searchQuery))
+                    context.TBL_STAFF.Where(x => x.DELETED == false)// && x.c == companyId)
+                    .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
+                    || x.MIDDLENAME.ToLower().Contains(searchQuery)
+                    || x.LASTNAME.ToLower().Contains(searchQuery)
+                    || x.STAFFCODE.Contains(searchQuery))
                     .Select(o => new simpleStaffModel
                     {
-                        staffId = o.StaffId,
-                        firstName = o.FirstName,
-                        middleName = o.MiddleName,
-                        lastName = o.LastName,
-                        staffCode = o.StaffCode,
+                        staffId = o.STAFFID,
+                        firstName = o.FIRSTNAME,
+                        middleName = o.MIDDLENAME,
+                        lastName = o.LASTNAME,
+                        staffCode = o.STAFFCODE,
                     })
                     .Take(12);
 
@@ -920,19 +920,19 @@ namespace FintrakBanking.Repositories.Setups.General
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
                 staff =
-                    context.tbl_Staff.Where(x => x.Deleted == false)// && x.c == companyId)
-                    .Where(x => x.FirstName.ToLower().Contains(searchQuery)
-                    || x.MiddleName.ToLower().Contains(searchQuery)
-                    || x.LastName.ToLower().Contains(searchQuery)
-                    || x.StaffCode.Contains(searchQuery)
-                    && x.DepartmentId == departmentId)
+                    context.TBL_STAFF.Where(x => x.DELETED == false)// && x.c == companyId)
+                    .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
+                    || x.MIDDLENAME.ToLower().Contains(searchQuery)
+                    || x.LASTNAME.ToLower().Contains(searchQuery)
+                    || x.STAFFCODE.Contains(searchQuery)
+                    && x.DEPARTMENTID == departmentId)
                     .Select(o => new simpleStaffModel
                     {
-                        staffId = o.StaffId,
-                        firstName = o.FirstName,
-                        middleName = o.MiddleName,
-                        lastName = o.LastName,
-                        staffCode = o.StaffCode,
+                        staffId = o.STAFFID,
+                        firstName = o.FIRSTNAME,
+                        middleName = o.MIDDLENAME,
+                        lastName = o.LASTNAME,
+                        staffCode = o.STAFFCODE,
                     })
                     .Take(12)
                 ;

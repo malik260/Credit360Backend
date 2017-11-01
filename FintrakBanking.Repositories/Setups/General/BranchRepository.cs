@@ -39,7 +39,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public BranchViewModel GetBranch(short id)
         {
             var branch = context.TBL_BRANCH.Find(id);
-            
+
             if (branch != null)
             {
                 return new BranchViewModel()

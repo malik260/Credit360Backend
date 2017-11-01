@@ -375,7 +375,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     if (check.Count() > 0)
                     {
                         var data = check.First();
-                        custom.customFieldDataUpload = custom.isUpload ? context.TBL_CUSTOM_FIELD_DATA_UPLOAD.FirstOrDefault(d => d.CUSTOMFIELDSDATAID == data.CUSTOMFIELDSDATAID).CUSTOMFIELDDATAUPLOAD : null;
+
+                        custom.customFieldDataUpload = custom.isUpload ? context.TBL_CUSTOM_FIELD_DATA_UPLOAD.FirstOrDefault(d => d.CUSTOMFIELDSDATAID == data.CUSTOMFIELDSDATAID).CustomFieldDataUpload : null;
                         custom.customFieldsDataId = data.CUSTOMFIELDSDATAID;
                         custom.dataDetails = data.DATADETAILS;
                         custom.isUpload = custom.isUpload;

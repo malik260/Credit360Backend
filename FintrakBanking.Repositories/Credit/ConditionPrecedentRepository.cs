@@ -26,28 +26,28 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddConditionPrecedent(ConditionPrecedentViewModel model)
         {
-            var data = new tbl_Loan_Condition_Precedent
+            var data = new TBL_LOAN_CONDITION_PRECEDENT
             {
-                Condition = model.condition,
-                IsExternal = (bool)model.isExternal,
-                CreatedBy = model.createdBy,
-                LoanApplicationId = model.loanApplicationId,
-                DateTimeCreated = general.GetApplicationDate(),
+                CONDITION = model.condition,
+                ISEXTERNAL = (bool)model.isExternal,
+                CREATEDBY = model.createdBy,
+                LOANAPPLICATIONID = model.loanApplicationId,
+                DATETIMECREATED = general.GetApplicationDate(),
             };
 
-            context.tbl_Loan_Condition_Precedent.Add(data);
+            context.TBL_LOAN_CONDITION_PRECEDENT.Add(data);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ConditionPrecedentAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Condition Precedent '{ model.conditionId }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Condition Precedent '{ model.conditionId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -57,30 +57,30 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateConditionPrecedent(ConditionPrecedentViewModel model, int conditionPrecedentId)
         {
-            var data = this.context.tbl_Loan_Condition_Precedent.Find(conditionPrecedentId);
+            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(conditionPrecedentId);
             if (data == null)
             {
                 return false;
             }
 
-            data.Condition = model.condition;
-            data.IsExternal = (bool)model.isExternal;
-            data.LastUpdatedBy = model.lastUpdatedBy;
-            data.DateTimeUpdated = DateTime.Now;
-            data.LastUpdatedBy = model.lastUpdatedBy;
-            data.DateTimeUpdated = general.GetApplicationDate();
+            data.CONDITION = model.condition;
+            data.ISEXTERNAL = (bool)model.isExternal;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ConditionPrecedentUpdated,
-                StaffId = model.lastUpdatedBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated Condition Precedent '{ model.conditionId }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Condition Precedent '{ model.conditionId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -90,20 +90,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ConditionPrecedentViewModel> GetAllConditionPrecedent()
         {
-            return this.context.tbl_Loan_Condition_Precedent
+            return this.context.TBL_LOAN_CONDITION_PRECEDENT
                 .Join(
-                    context.tbl_Staff,
-                    c => c.CreatedBy,
-                    s => s.StaffId,
+                    context.TBL_STAFF,
+                    c => c.CREATEDBY,
+                    s => s.STAFFID,
                     (c, s) => new ConditionPrecedentViewModel
                     {
-                        conditionId = c.ConditionId,
-                        condition = c.Condition,
-                        isExternal = c.IsExternal,
-                        staffName = s.FirstName + " " + s.MiddleName + " " + s.LastName,
-                        loanApplicationId = c.LoanApplicationId,
-                        dateTimeCreated = c.DateTimeCreated,
-                        dateTimeUpdated = c.DateTimeUpdated,
+                        conditionId = c.CONDITIONID,
+                        condition = c.CONDITION,
+                        isExternal = c.ISEXTERNAL,
+                        staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
+                        loanApplicationId = c.LOANAPPLICATIONID,
+                        dateTimeCreated = c.DATETIMECREATED,
+                        dateTimeUpdated = c.DATETIMEUPDATED,
                     });
         }
 

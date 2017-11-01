@@ -24,17 +24,17 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> AddMisInfo(MisInfoViewModel entity)
         {
-            var misInfo = new tbl_MIS_Info
+            var misInfo = new TBL_MIS_INFO
             {
-                CompanyId = entity.companyId,
-                CreatedBy = entity.createdBy,
-                DateTimeCreated = DateTime.Now,
-                ParentMISInfoId = entity.ParentMisinfoId,
-                MISCode = entity.Miscode,
-                MISName = entity.Misname,
-                MISTypeId = entity.MistypeId
+                COMPANYID = entity.companyId,
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                PARENTMISINFOID = entity.ParentMisinfoId,
+                MISCODE = entity.Miscode,
+                MISNAME = entity.Misname,
+                MISTYPEID = entity.MistypeId
             };
-            this.context.tbl_MIS_Info.Add(misInfo);
+            this.context.TBL_MIS_INFO.Add(misInfo);
             var response = await this.context.SaveChangesAsync();
             return response != 0;
         }
@@ -46,63 +46,63 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<MisInfoViewModel> GetAllMisInfo()
         {
-            var misInfo = from a in context.tbl_MIS_Info
+            var misInfo = from a in context.TBL_MIS_INFO
                           select new MisInfoViewModel()
                           {
-                              createdBy = a.CreatedBy.Value,
-                              ParentMisinfoId = a.ParentMISInfoId,
-                              Miscode = a.MISCode,
-                              Misname = a.MISName,
-                              MisinfoId = a.MISInfoId,
-                              MistypeId = a.MISTypeId,
-                              dateTimeCreated = (DateTime)a.DateTimeCreated,
-                              MisType = context.tbl_MIS_Type.SingleOrDefault(c => c.MISTypeId == a.MISTypeId).MISType,
+                              createdBy = a.CREATEDBY.Value,
+                              ParentMisinfoId = a.PARENTMISINFOID,
+                              Miscode = a.MISCODE,
+                              Misname = a.MISNAME,
+                              MisinfoId = a.MISINFOID,
+                              MistypeId = a.MISTYPEID,
+                              dateTimeCreated = (DateTime)a.DATETIMECREATED,
+                              MisType = context.TBL_MIS_TYPE.SingleOrDefault(c => c.MISTYPEID == a.MISTYPEID).MISTYPE,
                           };
             return misInfo;
         }
 
         public MisInfoViewModel GetMisInfoById(int misInfoId)
         {
-            var misInfo = (from a in context.tbl_MIS_Info
-                           where a.MISInfoId == misInfoId
+            var misInfo = (from a in context.TBL_MIS_INFO
+                           where a.MISINFOID == misInfoId
                            select new MisInfoViewModel()
                            {
-                               createdBy = a.CreatedBy.Value,
-                               ParentMisinfoId = a.ParentMISInfoId,
-                               Miscode = a.MISCode,
-                               Misname = a.MISName,
-                               MisinfoId = a.MISInfoId,
-                               MistypeId = a.MISTypeId,
-                               dateTimeCreated = (DateTime)a.DateTimeCreated
+                               createdBy = a.CREATEDBY.Value,
+                               ParentMisinfoId = a.PARENTMISINFOID,
+                               Miscode = a.MISCODE,
+                               Misname = a.MISNAME,
+                               MisinfoId = a.MISINFOID,
+                               MistypeId = a.MISTYPEID,
+                               dateTimeCreated = (DateTime)a.DATETIMECREATED
                            }).SingleOrDefault();
             return misInfo;
         }
 
         public async Task<bool> UpdateMisInfo(int misinfoid, MisInfoViewModel entity)
         {
-            var misinfo = this.context.tbl_MIS_Info.Find(misinfoid);
-            misinfo.CompanyId = entity.companyId;
-            misinfo.CreatedBy = entity.createdBy;
-            misinfo.DateTimeUpdated = DateTime.Now;
-            misinfo.ParentMISInfoId = entity.ParentMisinfoId;
-            misinfo.MISCode = entity.Miscode;
-            misinfo.MISName = entity.Misname;
-            misinfo.MISTypeId = entity.MistypeId;
+            var misinfo = this.context.TBL_MIS_INFO.Find(misinfoid);
+            misinfo.COMPANYID = entity.companyId;
+            misinfo.CREATEDBY = entity.createdBy;
+            misinfo.DATETIMEUPDATED = DateTime.Now;
+            misinfo.PARENTMISINFOID = entity.ParentMisinfoId;
+            misinfo.MISCODE = entity.Miscode;
+            misinfo.MISNAME = entity.Misname;
+            misinfo.MISTYPEID = entity.MistypeId;
             return await this.context.SaveChangesAsync() != 0;
         }
 
 
         public IEnumerable<MisInfoViewModel> GetMisInfoByCompanyId(int coyId)
         {
-            return from a in context.tbl_MIS_Info
-                   where a.CompanyId == coyId
+            return from a in context.TBL_MIS_INFO
+                   where a.COMPANYID == coyId
                    select new MisInfoViewModel()
                    {
                        //createdBy = a.CreatedBy.Value,
                       // ParentMisinfoId = a.ParentMisinfoId,
-                       Miscode = a.MISCode,
-                       Misname = a.MISName,
-                       MisinfoId = a.MISInfoId                       
+                       Miscode = a.MISCODE,
+                       Misname = a.MISNAME,
+                       MisinfoId = a.MISINFOID                       
                    };
         }
 
@@ -114,14 +114,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> AddMisType(MisTypeViewModel entity)
         {
-            var misType = new tbl_MIS_Type
+            var misType = new TBL_MIS_TYPE
             {
-                Category = entity.Category,
-                DateTimeCreated = entity.dateTimeCreated,
-                CreatedBy = entity.createdBy,
-                MISType = entity.Mistype,
+                CATEGORY = entity.Category,
+                DATETIMECREATED = entity.dateTimeCreated,
+                CREATEDBY = entity.createdBy,
+                MISTYPE = entity.Mistype,
             };
-            this.context.tbl_MIS_Type.Add(misType);
+            this.context.TBL_MIS_TYPE.Add(misType);
             return await this.context.SaveChangesAsync() != 0;
         }
 
@@ -132,42 +132,42 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<MisTypeViewModel> GetAllMisType()
         {
-            var misType = from a in context.tbl_MIS_Type
+            var misType = from a in context.TBL_MIS_TYPE
                           select new MisTypeViewModel
                           {
-                              Category = a.Category,
-                              createdBy = a.CreatedBy.Value,
-                              dateTimeCreated = (DateTime)a.DateTimeCreated,
-                              Mistype = a.MISType ,
-                              MistypeId = a.MISTypeId
+                              Category = a.CATEGORY,
+                              createdBy = a.CREATEDBY.Value,
+                              dateTimeCreated = (DateTime)a.DATETIMECREATED,
+                              Mistype = a.MISTYPE ,
+                              MistypeId = a.MISTYPEID
                           };
             return misType;
         }
 
         public MisTypeViewModel GetMisTypeById(int misTypeId)
         {
-            var misType = (from a in context.tbl_MIS_Type
-                           where a.MISTypeId == misTypeId
+            var misType = (from a in context.TBL_MIS_TYPE
+                           where a.MISTYPEID == misTypeId
                            select new MisTypeViewModel
                            {
-                               Category = a.Category,
-                               createdBy = a.CreatedBy.Value,
-                               dateTimeCreated = (DateTime)a.DateTimeCreated,
-                               Mistype = a.MISType,
-                               MistypeId = a.MISTypeId
+                               Category = a.CATEGORY,
+                               createdBy = a.CREATEDBY.Value,
+                               dateTimeCreated = (DateTime)a.DATETIMECREATED,
+                               Mistype = a.MISTYPE,
+                               MistypeId = a.MISTYPEID
                            }).SingleOrDefault();
             return misType;
         }
 
         public async Task<bool> UpdateMisType(int misTypeid, MisTypeViewModel entity)
         {
-            var misType = this.context.tbl_MIS_Type.Find(misTypeid);
-            misType.Category = entity.Category;
-            misType.CreatedBy = entity.createdBy;
-            misType.DateTimeUpdated = entity.dateTimeUpdated;
-            misType.MISType = entity.Mistype;
-            misType.MISTypeId = entity.MistypeId;
-            misType.LastUpdatedBy = entity.lastUpdatedBy;
+            var misType = this.context.TBL_MIS_TYPE.Find(misTypeid);
+            misType.CATEGORY = entity.Category;
+            misType.CREATEDBY = entity.createdBy;
+            misType.DATETIMEUPDATED = entity.dateTimeUpdated;
+            misType.MISTYPE = entity.Mistype;
+            misType.MISTYPEID = entity.MistypeId;
+            misType.LASTUPDATEDBY = entity.lastUpdatedBy;
 
             return await this.context.SaveChangesAsync() != 0;
         }

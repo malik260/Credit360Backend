@@ -32,34 +32,34 @@ namespace FintrakBanking.Repositories.Credit
             {
 
            
-            var data = new tbl_Media_Loan_Documents
+            var data = new TBL_MEDIA_LOAN_DOCUMENTS
             {
-                FileData = file,
-                LoanApplicationNumber = model.loanApplicationNumber,
-                LoanReferenceNumber = model.loanReferenceNumber,
-                DocumentTitle = model.documentTitle,
-                DocumentTypeId = model.documentTypeId,
-                FileName = model.fileName,
-                FileExtension = model.fileExtension,
-                SystemDateTime = DateTime.Now,
-                PhysicalFileNumber = model.physicalFileNumber,
-                PhysicalLocation = model.physicalLocation,
-                CreatedBy = (int)model.createdBy,
+                FILEDATA = file,
+                LOANAPPLICATIONNUMBER = model.loanApplicationNumber,
+                LOANREFERENCENUMBER = model.loanReferenceNumber,
+                DOCUMENTTITLE = model.documentTitle,
+                DOCUMENTTYPEID = model.documentTypeId,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                SYSTEMDATETIME = DateTime.Now,
+                PHYSICALFILENUMBER = model.physicalFileNumber,
+                PHYSICALLOCATION = model.physicalLocation,
+                CREATEDBY = (int)model.createdBy,
             };
 
-            context.tbl_Media_Loan_Documents.Add(data);
+            context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanDocumentAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Loan Document '{ model.documentTitle }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Loan Document '{ model.documentTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -69,39 +69,39 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
 
         public bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId)
         {
-            var data = this.context.tbl_Media_Loan_Documents.Find(documentId);
+            var data = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
             if (data == null)
             {
                 return false;
             }
 
-            data.LoanApplicationNumber = model.loanApplicationNumber;
-            data.LoanReferenceNumber = model.loanReferenceNumber;
-            data.DocumentTitle = model.documentTitle;
-            data.DocumentTypeId = model.documentTypeId;
-            data.FileName = model.fileName;
-            data.FileExtension = model.fileExtension;
-            data.SystemDateTime = DateTime.Now;
-            data.PhysicalFileNumber = model.physicalFileNumber;
-            data.PhysicalLocation = model.physicalLocation;
+            data.LOANAPPLICATIONNUMBER = model.loanApplicationNumber;
+            data.LOANREFERENCENUMBER = model.loanReferenceNumber;
+            data.DOCUMENTTITLE = model.documentTitle;
+            data.DOCUMENTTYPEID = model.documentTypeId;
+            data.FILENAME = model.fileName;
+            data.FILEEXTENSION = model.fileExtension;
+            data.SYSTEMDATETIME = DateTime.Now;
+            data.PHYSICALFILENUMBER = model.physicalFileNumber;
+            data.PHYSICALLOCATION = model.physicalLocation;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanDocumentUpdated,
-                StaffId = model.lastUpdatedBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated LoanDocument '{ model.documentTitle }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated LoanDocument '{ model.documentTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -111,25 +111,25 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanDocumentViewModel> GetAllLoanDocument()
         {
-            return this.context.tbl_Media_Loan_Documents.Select(x => new LoanDocumentViewModel
+            return this.context.TBL_MEDIA_LOAN_DOCUMENTS.Select(x => new LoanDocumentViewModel
             {
-                documentId = x.DocumentId,
-                loanApplicationNumber = x.LoanApplicationNumber,
-                loanReferenceNumber = x.LoanReferenceNumber,
-                documentTitle = x.DocumentTitle,
-                documentTypeId = x.DocumentTypeId,
-                fileData = x.FileData,
-                fileName = x.FileName,
-                fileExtension = x.FileExtension,
-                systemDateTime = x.SystemDateTime,
-                physicalFileNumber = x.PhysicalFileNumber,
-                physicalLocation = x.PhysicalLocation,
+                documentId = x.DOCUMENTID,
+                loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                loanReferenceNumber = x.LOANREFERENCENUMBER,
+                documentTitle = x.DOCUMENTTITLE,
+                documentTypeId = x.DOCUMENTTYPEID,
+                fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                systemDateTime = x.SYSTEMDATETIME,
+                physicalFileNumber = x.PHYSICALFILENUMBER,
+                physicalLocation = x.PHYSICALLOCATION,
             });
         }
 
         public LoanDocumentViewModel GetLoanDocument(int documentId)
         {
-            var data = this.context.tbl_Media_Loan_Documents.Find(documentId);
+            var data = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
 
             if (data == null)
             {
@@ -138,17 +138,17 @@ namespace FintrakBanking.Repositories.Credit
 
             return new LoanDocumentViewModel
             {
-                documentId = data.DocumentId,
-                loanApplicationNumber = data.LoanApplicationNumber,
-                loanReferenceNumber = data.LoanReferenceNumber,
-                documentTitle = data.DocumentTitle,
-                documentTypeId = data.DocumentTypeId,
-                fileData = data.FileData,
-                fileName = data.FileName,
-                fileExtension = data.FileExtension,
-                systemDateTime = data.SystemDateTime,
-                physicalFileNumber = data.PhysicalFileNumber,
-                physicalLocation = data.PhysicalLocation,
+                documentId = data.DOCUMENTID,
+                loanApplicationNumber = data.LOANAPPLICATIONNUMBER,
+                loanReferenceNumber = data.LOANREFERENCENUMBER,
+                documentTitle = data.DOCUMENTTITLE,
+                documentTypeId = data.DOCUMENTTYPEID,
+                fileData = data.FILEDATA,
+                fileName = data.FILENAME,
+                fileExtension = data.FILEEXTENSION,
+                systemDateTime = data.SYSTEMDATETIME,
+                physicalFileNumber = data.PHYSICALFILENUMBER,
+                physicalLocation = data.PHYSICALLOCATION,
             };
         }
 

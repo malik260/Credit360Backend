@@ -335,7 +335,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     CREATEDBY = feeModel.createdBy,
                     DATETIMECREATED = DateTime.Now,
                 };
-                
+
                 context.TBL_TEMP_FEE.Add(tempFee);
             }
 
@@ -449,9 +449,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Approved Fee '{feeModel.FEENAME}' with fee account category '{feeModel.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME}'",
                 IPADDRESS = user.userIPAddress,
-                URL  = user.applicationUrl,
+                URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME  = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);

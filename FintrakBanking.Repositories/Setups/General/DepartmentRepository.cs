@@ -41,11 +41,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 throw new DbEntityValidationException(errorMessages);
             }
         }
-        /// <summary>
-        /// Adds the department.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
+
         public bool AddDepartment(DepartmentViewModel entity)
         {
            
@@ -89,7 +85,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
         /// <summary>
-        /// Gets all department.
+        /// Get all departments
         /// </summary>
         /// <returns></returns>
         public IEnumerable<DepartmentViewModel> GetAllDepartment()
@@ -126,18 +122,13 @@ namespace FintrakBanking.Repositories.Setups.General
                                   lastname = c.LASTNAME,
                                   staffId = c.STAFFID,
                                   middlename = c.MIDDLENAME,
+                                  fullname = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                                   rankName = c.TBL_STAFF_RANK.RANKNAME,
                                   jobTitleName = c.TBL_STAFF_JOBTITLE.JOBTITLENAME
                               });
             return department;
         }
-        /// <summary>
-        /// Searches for department staff.
-        /// </summary>
-        /// <param name="companyId">The company identifier.</param>
-        /// <param name="searchQuery">The search query.</param>
-        /// <param name="departmentId">The department identifier.</param>
-        /// <returns></returns>
+        //SearchForDepartmentbyStaffId
         public IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery , int departmentId)
         {
             IQueryable<DepartmentCustomersViewModel> allstaff = null;
@@ -159,12 +150,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return allstaff;
         }
-        /// <summary>
-        /// Searches for department staff.
-        /// </summary>
-        /// <param name="companyId">The company identifier.</param>
-        /// <param name="searchQuery">The search query.</param>
-        /// <returns></returns>
+
         public IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery)
         {
             IQueryable<DepartmentCustomersViewModel> allstaff = null;
@@ -186,13 +172,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return allstaff;
         }
 
-        /// <summary>
-        /// Searches the department.
-        /// </summary>
-        /// <param name="departmentId">The department identifier.</param>
-        /// <param name="companyId">The company identifier.</param>
-        /// <param name="searchQuery">The search query.</param>
-        /// <returns></returns>
+
         public IQueryable<DepartmentCustomersViewModel> SearchDepartment(int departmentId, int companyId, string searchQuery)
         {
             if (departmentId == 0) return null;
@@ -217,10 +197,11 @@ namespace FintrakBanking.Repositories.Setups.General
                                   DepartmentId = dept.DEPARTMENTID,
                                   firstname = s.FIRSTNAME,
                                   lastname = s.LASTNAME,
-                                  middlename = s.MIDDLENAME,
-                                  staffId = s.STAFFID,
-                                  rankName = s.TBL_STAFF_RANK.RANKNAME,
-                                  jobTitleName = s.TBL_STAFF_JOBTITLE.JOBTITLENAME
+                                  middlename = s.MiddleName,
+                                  fullname = s.LastName +" "+ s.FirstName + " "+ s.MiddleName,
+                                  staffId = s.StaffId,
+                                  rankName = s.tbl_Staff_Rank.RankName,
+                                  jobTitleName = s.tbl_Staff_JobTitle.JobTitleName
                               };
 
                 if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
@@ -240,9 +221,9 @@ namespace FintrakBanking.Repositories.Setups.General
         //IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string searchQuery)
 
         /// <summary>
-        /// Gets the department.
+        ///
         /// </summary>
-        /// <param name="departmentId">The department identifier.</param>
+        /// <param name="departmentId"></param>
         /// <returns></returns>
         public DepartmentViewModel GetDepartment(int departmentId)
         {
@@ -259,11 +240,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               }).SingleOrDefault();
             return department;
         }
-        /// <summary>
-        /// Gets the staff department.
-        /// </summary>
-        /// <param name="staffId">The staff identifier.</param>
-        /// <returns></returns>
+
         public DepartmentViewModel GetStaffDepartment(int staffId)
         {
             DepartmentViewModel result = new DepartmentViewModel();
@@ -286,12 +263,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return result;
         }
-        /// <summary>
-        /// Updates the department.
-        /// </summary>
-        /// <param name="departmentId">The department identifier.</param>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
+
         public bool UpdateDepartment(int departmentId, DepartmentViewModel entity)
         {
             var department = context.TBL_DEPARTMENT.Find(departmentId);
@@ -315,11 +287,7 @@ namespace FintrakBanking.Repositories.Setups.General
             auditTrail.AddAuditTrail(audit);
             return SaveAll();
         }
-        /// <summary>
-        /// Gets all department staff.
-        /// </summary>
-        /// <param name="departmentId">The department identifier.</param>
-        /// <returns></returns>
+
         public IEnumerable<OperationStaffViewModel> GetAllDepartmentStaff(int departmentId)
         {
             return context.TBL_STAFF.Where(x=> x.DELETED == false && x.DEPARTMENTID == departmentId).Select(x=> new OperationStaffViewModel
