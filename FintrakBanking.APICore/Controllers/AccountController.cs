@@ -90,17 +90,17 @@ namespace FintrakBanking.APICore.Controllers
         {
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
 
-            var audit = new tbl_Audit()
+            var audit = new TBL_AUDIT()
             {
-                AuditTypeId = (short)AuditTypeEnum.LoggedOut,
-                StaffId = token.GetStaffId,
-                BranchId = (short)token.GetBranchId,
-                Detail = $"{token.GetUsername} logged out",
-                IPAddress = CommonHelpers.GetUserIP(),
-                Url = Request.RequestUri.AbsoluteUri,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = -1
+                AUDITTYPEID = (short)AuditTypeEnum.LoggedOut,
+                STAFFID = token.GetStaffId,
+                BRANCHID = (short)token.GetBranchId,
+                DETAIL = $"{token.GetUsername} logged out",
+                IPADDRESS = CommonHelpers.GetUserIP(),
+                URL = Request.RequestUri.AbsoluteUri,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = -1
             };
 
             auditTrail.AddAuditTrail(audit);
