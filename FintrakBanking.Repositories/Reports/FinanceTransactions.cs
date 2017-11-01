@@ -27,13 +27,13 @@ namespace FintrakBanking.Repositories.Reports
         {
             try
             {
-                var data = from a in context.tbl_Finance_Transaction
-                           where (a.PostedDate >= dateItem.startDate  && a.PostedDate <=  dateItem.endDate)
-                           && a.CompanyId == companyId
+                var data = from a in context.TBL_FINANCE_TRANSACTION
+                           where (a.POSTEDDATE >= dateItem.startDate  && a.POSTEDDATE <=  dateItem.endDate)
+                           && a.COMPANYID == companyId
                            select new
                            {
-                               staffId = a.tbl_Staff.StaffId,
-                               staffName = a.tbl_Staff.LastName + " " + a.tbl_Staff.FirstName,
+                               staffId = a.TBL_STAFF.STAFFID,
+                               staffName = a.TBL_STAFF.LASTNAME + " " + a.TBL_STAFF.FIRSTNAME,
                       
 
                            };
@@ -51,14 +51,14 @@ namespace FintrakBanking.Repositories.Reports
         {
             try
             {
-                var data = from a in context.tbl_Finance_Transaction
-                           where (a.PostedDate >= dateItem.startDate && a.PostedDate <= dateItem.endDate)
-                           && a.CompanyId == companyId
+                var data = from a in context.TBL_FINANCE_TRANSACTION
+                           where (a.POSTEDDATE >= dateItem.startDate && a.POSTEDDATE <= dateItem.endDate)
+                           && a.COMPANYID == companyId
                            select new
                            {
                                
-                               branchId = a.tbl_Branch.BranchId,
-                               branchName = a.tbl_Branch.BranchName
+                               branchId = a.TBL_BRANCH.BRANCHID,
+                               branchName = a.TBL_BRANCH.BRANCHNAME
 
                            };
                 return data.ToList().Distinct();
