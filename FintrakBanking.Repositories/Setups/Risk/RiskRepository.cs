@@ -32,35 +32,35 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> AddRiskAssessmentIndexs(RiskAssessmentIndexViewModels entity)
         {
-            var index = new tbl_Risk_Assessment_Index
+            var index = new TBL_RISK_ASSESSMENT_INDEX
             {
-                DateTimeCreated = genSetup.GetApplicationDate().Date,
-                Name = entity.name,
-                Description = entity.description,
-                Weight = entity.weight,
-                CompanyId = entity.companyId,
-                CreatedBy = entity.createdBy,
-                ParentId = entity.parentId,
-                ItemLevel = entity.itemLevel,
-                IndexTypeId = entity.indexTypeId,
-                RiskAssessmentTitleId = entity.riskAssessmentTitleId
+                DATETIMECREATED = genSetup.GetApplicationDate().Date,
+                NAME = entity.name,
+                DESCRIPTION = entity.description,
+                WEIGHT = entity.weight,
+                COMPANYID = entity.companyId,
+                CREATEDBY = entity.createdBy,
+                PARENTID = entity.parentId,
+                ITEMLEVEL = entity.itemLevel,
+                INDEXTYPEID = entity.indexTypeId,
+                RISKASSESSMENTTITLEID = entity.riskAssessmentTitleId
 
 
 
             };
-            this.context.tbl_Risk_Assessment_Index.Add(index);
+            this.context.TBL_RISK_ASSESSMENT_INDEX.Add(index);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.RiskAssessmentIndexAdd,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Added Risk assessment index: { entity.name } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.RiskAssessmentIndexAdd,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added Risk assessment index: { entity.name } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -71,22 +71,22 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> DeleteRiskAssessmentIndex(int riskId, UserInfo user)
         {
-            var index = context.tbl_Risk_Assessment_Index.FirstOrDefault(c => c.RiskId == riskId);
-            index.Deleted = true;
-            index.DateTimeDeleted = genSetup.GetApplicationDate();
-            index.DeletedBy = (int)user.staffId;
+            var index = context.TBL_RISK_ASSESSMENT_INDEX.FirstOrDefault(c => c.RISKID == riskId);
+            index.DELETED = true;
+            index.DATETIMEDELETED = genSetup.GetApplicationDate();
+            index.DELETEDBY = (int)user.staffId;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.RiskAssessmentIndexDelete,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Risk assessment index: { index.Name } ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.RiskAssessmentIndexDelete,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Risk assessment index: { index.NAME } ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -97,25 +97,25 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         private IEnumerable<RiskAssessmentIndexViewModels> GetRiskAssessmentIndex(int companyId)
         {
-            return context.tbl_Risk_Assessment_Index.Where(a => a.CompanyId == companyId && a.Deleted == false).Select(a => new
-                        RiskAssessmentIndexViewModels
-            {
-                companyId = a.CompanyId,
-                createdBy = a.CreatedBy,
-                dateTimeCreated = a.DateTimeCreated,
-                description = a.Description,
-                name = a.Name,
-                indexTypeId = a.IndexTypeId,
-                riskAssessmentTitleId = a.RiskAssessmentTitleId,
-                itemLevel = a.ItemLevel,
-                weight = a.Weight,
-                riskAssessmentTitle = context.tbl_Risk_Assessment_Title
-                                    .FirstOrDefault(c => c.RiskAssessmentTitleId == a.RiskAssessmentTitleId).RiskTitle,
+            return context.TBL_RISK_ASSESSMENT_INDEX.Where(a => a.COMPANYID == companyId && a.DELETED == false)
+                .Select(a => new RiskAssessmentIndexViewModels
+                {
+                    companyId = a.COMPANYID,
+                    createdBy = a.CREATEDBY,
+                    dateTimeCreated = a.DATETIMECREATED,
+                    description = a.DESCRIPTION,
+                    name = a.NAME,
+                    indexTypeId = a.INDEXTYPEID,
+                    riskAssessmentTitleId = a.RISKASSESSMENTTITLEID,
+                    itemLevel = a.ITEMLEVEL,
+                    weight = a.WEIGHT,
+                    riskAssessmentTitle = context.TBL_RISK_ASSESSMENT_TITLE
+                                    .FirstOrDefault(c => c.RISKASSESSMENTTITLEID == a.RISKASSESSMENTTITLEID).RISKTITLE,
 
-                riskId = a.RiskId,
+                    riskId = a.RISKID,
 
-                parentId = a.ParentId
-            });
+                    parentId = a.PARENTID
+                });
 
         }
 
@@ -142,29 +142,29 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> UpdateRiskAssessmentIndex(int riskId, RiskAssessmentIndexViewModels entity)
         {
-            var index = context.tbl_Risk_Assessment_Index.Find(riskId);
-            index.Name = entity.name;
-            index.Description = entity.description;
-            index.ParentId = entity.parentId;
-            index.ItemLevel = entity.itemLevel;
-            index.IndexTypeId = entity.indexTypeId;
-            index.RiskAssessmentTitleId = entity.riskAssessmentTitleId;
-            index.CompanyId = entity.companyId;
-            index.Weight = entity.weight;
-            index.DateTimeUpdated = genSetup.GetApplicationDate().Date;
-            index.LastUpdatedBy = entity.lastUpdatedBy;
+            var index = context.TBL_RISK_ASSESSMENT_INDEX.Find(riskId);
+            index.NAME = entity.name;
+            index.DESCRIPTION = entity.description;
+            index.PARENTID = entity.parentId;
+            index.ITEMLEVEL = entity.itemLevel;
+            index.INDEXTYPEID = entity.indexTypeId;
+            index.RISKASSESSMENTTITLEID = entity.riskAssessmentTitleId;
+            index.COMPANYID = entity.companyId;
+            index.WEIGHT = entity.weight;
+            index.DATETIMEUPDATED = genSetup.GetApplicationDate().Date;
+            index.LASTUPDATEDBY = entity.lastUpdatedBy;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.RiskAssessmentIndexDelete,
-                StaffId = entity.lastUpdatedBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Deleted Risk assessment index: { index.Name } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.RiskAssessmentIndexDelete,
+                STAFFID = entity.lastUpdatedBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Deleted Risk assessment index: { index.NAME } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -178,102 +178,102 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> AddRiskRating(RiskRatingViewModel entity)
         {
-            var rating = new tbl_Risk_Rating
+            var rating = new TBL_RISK_RATING
             {
-                AdvicedRate = entity.advicedRate,
-                DateTimeCreated = DateTime.Now.Date,
-                MaxRange = entity.maxRange,
-                MinRange = entity.minRange,
-                Rates = entity.rates,
-                ProductId = entity.productId,
-                RatesDescription = entity.ratesDescription
+                ADVICEDRATE = entity.advicedRate,
+                DATETIMECREATED = DateTime.Now.Date,
+                MAXRANGE = entity.maxRange,
+                MINRANGE = entity.minRange,
+                RATES = entity.rates,
+                PRODUCTID = entity.productId,
+                RATESDESCRIPTION = entity.ratesDescription
             };
-            this.context.tbl_Risk_Rating.Add(rating);
+            this.context.TBL_RISK_RATING.Add(rating);
             return await context.SaveChangesAsync() != 0;
         }
 
         public async Task<bool> DeleteRiskRating(int ratingId, RiskRatingViewModel entity)
         {
-            var rating = (from a in context.tbl_Risk_Rating where a.RiskRatingId == ratingId select a).FirstOrDefault();
-            rating.DateTimeDeleted = DateTime.Now.Date;
-            rating.DeletedBy = entity.deletedBy;
-            rating.Deleted = true;
+            var rating = (from a in context.TBL_RISK_RATING where a.RISKRATINGID == ratingId select a).FirstOrDefault();
+            rating.DATETIMEDELETED = DateTime.Now.Date;
+            rating.DELETEDBY = entity.deletedBy;
+            rating.DELETED = true;
             return await context.SaveChangesAsync() != 0;
         }
 
         public IEnumerable<RiskRatingViewModel> GetRiskRating()
         {
-            var rating = (from a in context.tbl_Risk_Rating
-                          where a.Deleted == false
+            var rating = (from a in context.TBL_RISK_RATING
+                          where a.DELETED == false
                           select new RiskRatingViewModel
                           {
-                              riskRatingId = a.RiskRatingId,
-                              advicedRate = a.AdvicedRate,
-                              maxRange = a.MaxRange,
-                              minRange = a.MinRange,
-                              rates = a.Rates,
-                              ratesDescription = a.RatesDescription,
-                              productId = (short)a.RiskRatingId
+                              riskRatingId = a.RISKRATINGID,
+                              advicedRate = a.ADVICEDRATE,
+                              maxRange = a.MAXRANGE,
+                              minRange = a.MINRANGE,
+                              rates = a.RATES,
+                              ratesDescription = a.RATESDESCRIPTION,
+                              productId = (short)a.RISKRATINGID
                           }).ToList();
             return rating;
         }
 
         public IEnumerable<RiskRatingViewModel> GetRiskRatingByCompanyId(int companyId)
         {
-            var rating = (from a in context.tbl_Risk_Rating
-                          where a.Deleted == false && a.CompanyId == companyId
+            var rating = (from a in context.TBL_RISK_RATING
+                          where a.DELETED == false && a.COMPANYID == companyId
                           select new RiskRatingViewModel
                           {
-                              riskRatingId = a.RiskRatingId,
-                              advicedRate = a.AdvicedRate,
-                              companyId = (short)a.CompanyId,
-                              createdBy = a.CreatedBy,
-                              dateTimeCreated = a.DateTimeCreated,
-                              dateTimeUpdated = a.DateTimeUpdated,
-                              lastUpdatedBy = a.LastUpdatedBy.Value,
-                              maxRange = a.MaxRange,
-                              minRange = a.MinRange,
-                              rates = a.Rates,
-                              ratesDescription = a.RatesDescription,
-                              productId = (short)a.RiskRatingId
+                              riskRatingId = a.RISKRATINGID,
+                              advicedRate = a.ADVICEDRATE,
+                              companyId = (short)a.COMPANYID,
+                              createdBy = a.CREATEDBY,
+                              dateTimeCreated = a.DATETIMECREATED,
+                              dateTimeUpdated = a.DATETIMEUPDATED,
+                              lastUpdatedBy = a.LASTUPDATEDBY.Value,
+                              maxRange = a.MAXRANGE,
+                              minRange = a.MINRANGE,
+                              rates = a.RATES,
+                              ratesDescription = a.RATESDESCRIPTION,
+                              productId = (short)a.RISKRATINGID
                           }).ToList();
             return rating;
         }
 
         public IEnumerable<RiskRatingViewModel> GetRiskRatingByProductId(int ratingId)
         {
-            var rating = (from a in context.tbl_Risk_Rating
-                          where a.Deleted == false && a.RiskRatingId == ratingId
+            var rating = (from a in context.TBL_RISK_RATING
+                          where a.DELETED == false && a.RISKRATINGID == ratingId
                           select new RiskRatingViewModel
                           {
-                              riskRatingId = a.RiskRatingId,
-                              advicedRate = a.AdvicedRate,
-                              companyId = a.CompanyId,
-                              createdBy = a.CreatedBy,
-                              dateTimeCreated = a.DateTimeCreated,
-                              dateTimeUpdated = a.DateTimeUpdated,
-                              lastUpdatedBy = a.LastUpdatedBy.Value,
-                              maxRange = a.MaxRange,
-                              minRange = a.MinRange,
-                              rates = a.Rates,
-                              ratesDescription = a.RatesDescription,
-                              productId = (short)a.RiskRatingId
+                              riskRatingId = a.RISKRATINGID,
+                              advicedRate = a.ADVICEDRATE,
+                              companyId = a.COMPANYID,
+                              createdBy = a.CREATEDBY,
+                              dateTimeCreated = a.DATETIMECREATED,
+                              dateTimeUpdated = a.DATETIMEUPDATED,
+                              lastUpdatedBy = a.LASTUPDATEDBY.Value,
+                              maxRange = a.MAXRANGE,
+                              minRange = a.MINRANGE,
+                              rates = a.RATES,
+                              ratesDescription = a.RATESDESCRIPTION,
+                              productId = (short)a.RISKRATINGID
                           }).ToList();
             return rating;
         }
 
         public async Task<bool> UpdateRiskRating(int ratingId, RiskRatingViewModel entity)
         {
-            var rating = (from a in context.tbl_Risk_Rating where a.RiskRatingId == ratingId select a).FirstOrDefault();
-            rating.AdvicedRate = entity.advicedRate;
-            rating.CompanyId = (short)entity.companyId;
-            rating.MaxRange = entity.maxRange;
-            rating.MinRange = entity.minRange;
-            rating.ProductId = entity.productId;
-            rating.Rates = entity.rates;
-            rating.RatesDescription = entity.ratesDescription;
-            rating.DateTimeUpdated = DateTime.Now.Date;
-            rating.LastUpdatedBy = entity.lastUpdatedBy;
+            var rating = (from a in context.TBL_RISK_RATING where a.RISKRATINGID == ratingId select a).FirstOrDefault();
+            rating.ADVICEDRATE = entity.advicedRate;
+            rating.COMPANYID = (short)entity.companyId;
+            rating.MAXRANGE = entity.maxRange;
+            rating.MINRANGE = entity.minRange;
+            rating.PRODUCTID = entity.productId;
+            rating.RATES = entity.rates;
+            rating.RATESDESCRIPTION = entity.ratesDescription;
+            rating.DATETIMEUPDATED = DateTime.Now.Date;
+            rating.LASTUPDATEDBY = entity.lastUpdatedBy;
             return await context.SaveChangesAsync() != 0;
         }
         #endregion RiskRating
@@ -281,28 +281,28 @@ namespace FintrakBanking.Repositories.Setups.Risk
         #region Risk Assessment Title
         public async Task<bool> AddRiskAssessmentTitle(RiskAssessmentTitleViewModels entity)
         {
-            var title = new tbl_Risk_Assessment_Title
+            var title = new TBL_RISK_ASSESSMENT_TITLE
             {
-                RiskTitle = entity.riskTitle,
-                DateTimeCreated = genSetup.GetApplicationDate().Date,
-                CreatedBy = entity.createdBy,
-                CompanyId = entity.companyId,
-                RiskTypeId = entity.riskTypeId,
-                ProductId = entity.productId,
+                RISKTITLE = entity.riskTitle,
+                DATETIMECREATED = genSetup.GetApplicationDate().Date,
+                CREATEDBY = entity.createdBy,
+                COMPANYID = entity.companyId,
+                RISKTYPEID = entity.riskTypeId,
+                PRODUCTID = entity.productId,
             };
-            this.context.tbl_Risk_Assessment_Title.Add(title);
+            this.context.TBL_RISK_ASSESSMENT_TITLE.Add(title);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.RiskAssessmentTitleAdd,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Added Risk assessment title: { entity.riskTitle } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.RiskAssessmentTitleAdd,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added Risk assessment title: { entity.riskTitle } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -313,24 +313,24 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> UpdateRiskAssessmentTitle(int riskAssessmentTitleId, RiskAssessmentTitleViewModels entity)
         {
-            var title = context.tbl_Risk_Assessment_Title.FirstOrDefault(c => c.RiskAssessmentTitleId == riskAssessmentTitleId);
-            title.RiskTitle = entity.riskTitle;
-            title.DateTimeUpdated = genSetup.GetApplicationDate();
-            title.RiskTypeId = entity.riskTypeId;
-            title.ProductId = entity.productId;
-            title.LastUpdatedBy = entity.lastUpdatedBy;
+            var title = context.TBL_RISK_ASSESSMENT_TITLE.FirstOrDefault(c => c.RISKASSESSMENTTITLEID == riskAssessmentTitleId);
+            title.RISKTITLE = entity.riskTitle;
+            title.DATETIMEUPDATED = genSetup.GetApplicationDate();
+            title.RISKTYPEID = entity.riskTypeId;
+            title.PRODUCTID = entity.productId;
+            title.LASTUPDATEDBY = entity.lastUpdatedBy;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.RiskAssessmentTitleUpdate,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Update Risk assessment title: { entity.riskTitle } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.RiskAssessmentTitleUpdate,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Update Risk assessment title: { entity.riskTitle } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -341,23 +341,23 @@ namespace FintrakBanking.Repositories.Setups.Risk
 
         public async Task<bool> DeleteRiskAssessmentTitle(int riskAssessmentTitleId, UserInfo user)
         {
-            var title = context.tbl_Risk_Assessment_Title.FirstOrDefault(c => c.RiskAssessmentTitleId == riskAssessmentTitleId);
-            title.Deleted = true;
-            title.DateTimeDeleted = genSetup.GetApplicationDate();
-            title.DeletedBy = user.staffId;
+            var title = context.TBL_RISK_ASSESSMENT_TITLE.FirstOrDefault(c => c.RISKASSESSMENTTITLEID == riskAssessmentTitleId);
+            title.DELETED = true;
+            title.DATETIMEDELETED = genSetup.GetApplicationDate();
+            title.DELETEDBY = user.staffId;
 
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.RiskAssessmentTitleDelete,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Delete Risk assessment title: { title.RiskTitle } ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.RiskAssessmentTitleDelete,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Delete Risk assessment title: { title.RISKTITLE } ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -389,14 +389,14 @@ namespace FintrakBanking.Repositories.Setups.Risk
         IEnumerable<RiskAssessmentTitleViewModels> RiskAssessmentTitle(int companyId)
         {
 
-            return context.tbl_Risk_Assessment_Title.Where(c => c.CompanyId == companyId).Select(c => new RiskAssessmentTitleViewModels()
+            return context.TBL_RISK_ASSESSMENT_TITLE.Where(c => c.COMPANYID == companyId).Select(c => new RiskAssessmentTitleViewModels()
             {
-                riskAssessmentTitleId = c.RiskAssessmentTitleId,
-                companyId = c.CompanyId,
-                createdBy = c.CreatedBy,
-                riskTitle = c.RiskTitle,
-                productId = c.ProductId,
-                riskTypeId = c.RiskTypeId
+                riskAssessmentTitleId = c.RISKASSESSMENTTITLEID,
+                companyId = c.COMPANYID,
+                createdBy = c.CREATEDBY,
+                riskTitle = c.RISKTITLE,
+                productId = c.PRODUCTID,
+                riskTypeId = c.RISKTYPEID
             });
         }
 
