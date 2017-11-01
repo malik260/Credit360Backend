@@ -49,32 +49,32 @@ namespace FintrakBanking.Repositories.Customer
         }
         public async  Task<bool> AddLoanCovenantDetail(LoanCovenantDetailViewModel entity)
         {
-            var convenant = new tbl_Loan_Covenant_Detail
+            var convenant = new TBL_LOAN_COVENANT_DETAIL
             {
-                CompanyId = entity.companyId,
-                CovenantAmount = entity.covenantAmount,
-                CovenantDate = entity.covenantDate,
-                CovenantDetail = entity.covenantDetail,
-                CovenantTypeId = entity.covenantTypeId,
-                CreatedBy = entity.createdBy,
-                DateTimeCreated = this.genSetup.GetApplicationDate().Date,
-                FrequencyTypeId = entity.frequencyTypeId,
-                LoanId = entity.loanId
+                COMPANYID = entity.companyId,
+                COVENANTAMOUNT = entity.covenantAmount,
+                COVENANTDATE = entity.covenantDate,
+                COVENANTDETAIL = entity.covenantDetail,
+                COVENANTTYPEID = entity.covenantTypeId,
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = this.genSetup.GetApplicationDate().Date,
+                FREQUENCYTYPEID = entity.frequencyTypeId,
+                LOANID = entity.loanId
             };
-            context.tbl_Loan_Covenant_Detail.Add(convenant);
+            context.TBL_LOAN_COVENANT_DETAIL.Add(convenant);
 
-            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.TermLoanId == entity.loanId).LoanReferenceNumber;
+            var loanRef = context.TBL_LOAN.SingleOrDefault(c => c.TERMLOANID == entity.loanId).LOANREFERENCENUMBER;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanCovenantDetailAdd,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Added loan convent to loan ref: { loanRef } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantDetailAdd,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added loan convent to loan ref: { loanRef } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -83,22 +83,22 @@ namespace FintrakBanking.Repositories.Customer
 
         public async  Task<bool> DeleteLoanCovenantDetail(int loanCovenantDetailId, UserInfo user)
         {
-            var convenant = context.tbl_Loan_Covenant_Detail.Find(loanCovenantDetailId);
-            convenant.Deleted = true;
-            convenant.DeletedBy = user.staffId;
-            convenant.DateTimeDeleted = this.genSetup.GetApplicationDate().Date; 
+            var convenant = context.TBL_LOAN_COVENANT_DETAIL.Find(loanCovenantDetailId);
+            convenant.DELETED = true;
+            convenant.DELETEDBY = user.staffId;
+            convenant.DATETIMEDELETED = this.genSetup.GetApplicationDate().Date; 
 
-            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.TermLoanId == loanCovenantDetailId).LoanReferenceNumber;
-            var audit = new tbl_Audit
+            var loanRef = context.TBL_LOAN.SingleOrDefault(c => c.TERMLOANID == loanCovenantDetailId).LOANREFERENCENUMBER;
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanCovenantDetailDelete,
-                StaffId = user.createdBy,
-                BranchId = (short)user.BranchId,
-                Detail = $"Delete loan convent to loan ref: { loanRef } ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantDetailDelete,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Delete loan convent to loan ref: { loanRef } ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -107,18 +107,18 @@ namespace FintrakBanking.Repositories.Customer
 
         private IEnumerable<LoanCovenantDetailViewModel>  LoanCovenantDetail(int companyId)
         {
-           return context.tbl_Loan_Covenant_Detail.Where(c => c.CompanyId == companyId).Select(c => new LoanCovenantDetailViewModel
+           return context.TBL_LOAN_COVENANT_DETAIL.Where(c => c.COMPANYID == companyId).Select(c => new LoanCovenantDetailViewModel
             {
-                covenantAmount = c.CovenantAmount,
-                companyId = c.CompanyId,
-                covenantDate = c.CovenantDate,
-                covenantDetail = c.CovenantDetail,
-                covenantTypeId = c.CovenantTypeId,
-                covenantTypeName = c.tbl_Loan_Covenant_Type.CovenantTypeName,
-                frequencyTypeId = c.FrequencyTypeId,
-                frequencyTypeName = c.tbl_Frequency_Type.Mode,
-                loanCovenantDetailId = c.LoanCovenantDetailId,
-                loanId = c.LoanId,
+                covenantAmount = c.COVENANTAMOUNT,
+                companyId = c.COMPANYID,
+                covenantDate = c.COVENANTDATE,
+                covenantDetail = c.COVENANTDETAIL,
+                covenantTypeId = c.COVENANTTYPEID,
+                covenantTypeName = c.TBL_LOAN_COVENANT_TYPE.COVENANTTYPENAME,
+                frequencyTypeId = c.FREQUENCYTYPEID,
+                frequencyTypeName = c.TBL_FREQUENCY_TYPE.MODE,
+                loanCovenantDetailId = c.LOANCOVENANTDETAILID,
+                loanId = c.LOANID,
                 //loanRef = c.tbl_Loan.LoanReferenceNumber,
                // productName = c.tbl_Loan.tbl_Product.ProductName
             });
@@ -141,29 +141,29 @@ namespace FintrakBanking.Repositories.Customer
         
         public async  Task<bool> UpdateLoanCovenantDetail(int id ,LoanCovenantDetailViewModel entity)
         {
-            var convenant = context.tbl_Loan_Covenant_Detail.Find(id);
+            var convenant = context.TBL_LOAN_COVENANT_DETAIL.Find(id);
 
-            convenant.CompanyId = entity.companyId;
-            convenant.CovenantAmount = entity.covenantAmount;
-            convenant.CovenantDate = entity.covenantDate;
-            convenant.CovenantDetail = entity.covenantDetail;
-            convenant.CovenantTypeId = entity.covenantTypeId;
-            convenant.CreatedBy = entity.createdBy;
-            convenant.DateTimeUpdated = this.genSetup.GetApplicationDate().Date;
-            convenant.FrequencyTypeId = entity.frequencyTypeId;
-            convenant.LoanId = entity.loanId;
+            convenant.COMPANYID = entity.companyId;
+            convenant.COVENANTAMOUNT = entity.covenantAmount;
+            convenant.COVENANTDATE = entity.covenantDate;
+            convenant.COVENANTDETAIL = entity.covenantDetail;
+            convenant.COVENANTTYPEID = entity.covenantTypeId;
+            convenant.CREATEDBY = entity.createdBy;
+            convenant.DATETIMEUPDATED = this.genSetup.GetApplicationDate().Date;
+            convenant.FREQUENCYTYPEID = entity.frequencyTypeId;
+            convenant.LOANID = entity.loanId;
 
-            var loanRef = context.tbl_Loan.SingleOrDefault(c => c.TermLoanId == entity.loanId).LoanReferenceNumber;
-            var audit = new tbl_Audit
+            var loanRef = context.TBL_LOAN.SingleOrDefault(c => c.TERMLOANID == entity.loanId).LOANREFERENCENUMBER;
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanCovenantDetailUpdate,
-                StaffId = entity.lastUpdatedBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Updated loan convent to loan ref: { loanRef } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantDetailUpdate,
+                STAFFID = entity.lastUpdatedBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated loan convent to loan ref: { loanRef } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
 
@@ -179,25 +179,25 @@ namespace FintrakBanking.Repositories.Customer
         #region Loan Covenant Type
         public async  Task<bool> AddLoanCovenantType(LoanCovenantTypeViewModel entity)
         {
-            var convenant = new tbl_Loan_Covenant_Type
+            var convenant = new TBL_LOAN_COVENANT_TYPE
             {
-                CompanyId = entity.companyId,
-                CovenantTypeName = entity.covenantTypeName,
-                RequireAmount = entity.requireAmount,
-                RequireFrequency = entity.requireFrequency 
+                COMPANYID = entity.companyId,
+                COVENANTTYPENAME = entity.covenantTypeName,
+                REQUIREAMOUNT = entity.requireAmount,
+                REQUIREFREQUENCY = entity.requireFrequency 
             };
-            context.tbl_Loan_Covenant_Type.Add(convenant);
+            context.TBL_LOAN_COVENANT_TYPE.Add(convenant);
         
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanCovenantTypeAdd ,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Defined loan convent type: { entity.covenantTypeName } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantTypeAdd ,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Defined loan convent type: { entity.covenantTypeName } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -206,22 +206,22 @@ namespace FintrakBanking.Repositories.Customer
         
         public async Task<bool> UpdateLoanCovenantType(short id, LoanCovenantTypeViewModel entity)
         {
-            var convenant = context.tbl_Loan_Covenant_Type.Find(id);
-            convenant.CompanyId = entity.companyId;
-            convenant.CovenantTypeName = entity.covenantTypeName;
-            convenant.RequireAmount = entity.requireAmount;
-            convenant.RequireFrequency = entity.requireFrequency;
+            var convenant = context.TBL_LOAN_COVENANT_TYPE.Find(id);
+            convenant.COMPANYID = entity.companyId;
+            convenant.COVENANTTYPENAME = entity.covenantTypeName;
+            convenant.REQUIREAMOUNT = entity.requireAmount;
+            convenant.REQUIREFREQUENCY = entity.requireFrequency;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanCovenantTypeAdd,
-                StaffId = entity.lastUpdatedBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Updated loan convent type: { entity.covenantTypeName } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantTypeAdd,
+                STAFFID = entity.lastUpdatedBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated loan convent type: { entity.covenantTypeName } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             //this.auditTrail.AddAuditTrail(audit);
@@ -230,13 +230,13 @@ namespace FintrakBanking.Repositories.Customer
 
         IEnumerable<LoanCovenantTypeViewModel>  LoanCovenantType(int companyId)
         {
-            return context.tbl_Loan_Covenant_Type.Where(c => c.CompanyId == companyId).Select(c => new LoanCovenantTypeViewModel
+            return context.TBL_LOAN_COVENANT_TYPE.Where(c => c.COMPANYID == companyId).Select(c => new LoanCovenantTypeViewModel
             {
-                companyId = c.CompanyId,
-                covenantTypeId = c.CovenantTypeId,
-                covenantTypeName = c.CovenantTypeName,
-                requireAmount = c.RequireAmount,
-                requireFrequency = c.RequireFrequency
+                companyId = c.COMPANYID,
+                covenantTypeId = c.COVENANTTYPEID,
+                covenantTypeName = c.COVENANTTYPENAME,
+                requireAmount = c.REQUIREAMOUNT,
+                requireFrequency = c.REQUIREFREQUENCY
             });
         }
 

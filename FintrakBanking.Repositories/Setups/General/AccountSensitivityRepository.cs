@@ -21,25 +21,25 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public AccountSensitivityViewModel GetAccountSensitivityLevelsByLevelId(int sensitivityId)
         {
-            var accountSensitivity = (from a in context.tbl_Customer_Sensitivity_Level
-                                      where a.CustomerSensitivityLevelId == sensitivityId
+            var accountSensitivity = (from a in context.TBL_CUSTOMER_SENSITIVITY_LEVEL
+                                      where a.CUSTOMERSENSITIVITYLEVELID == sensitivityId
                                       select new AccountSensitivityViewModel
                                       {
-                                          SensitivityDescription = a.Description,
-                                          SensitivityId = a.CustomerSensitivityLevelId,
-                                          SensitivityLevel = a.Level
+                                          SensitivityDescription = a.DESCRIPTION,
+                                          SensitivityId = a.CUSTOMERSENSITIVITYLEVELID,
+                                          SensitivityLevel = a.LEVEL
                                       }).SingleOrDefault();
             return accountSensitivity;
         }
 
         public IEnumerable<AccountSensitivityViewModel> GetAllAccountSensitivityLevels()
         {
-            var accountSensitivity = (from a in context.tbl_Customer_Sensitivity_Level
+            var accountSensitivity = (from a in context.TBL_CUSTOMER_SENSITIVITY_LEVEL
                                       select new AccountSensitivityViewModel
                                       {
-                                          SensitivityDescription = a.Description,
-                                          SensitivityId = a.CustomerSensitivityLevelId,
-                                          SensitivityLevel = a.Level
+                                          SensitivityDescription = a.DESCRIPTION,
+                                          SensitivityId = a.CUSTOMERSENSITIVITYLEVELID,
+                                          SensitivityLevel = a.LEVEL
                                       });
             return accountSensitivity;
         }

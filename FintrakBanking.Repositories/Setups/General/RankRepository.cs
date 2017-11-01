@@ -20,37 +20,37 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public RankViewModel GetRank(int jobTitleId)
         {
-            var rank = (from a in context.tbl_Staff_Rank
+            var rank = (from a in context.TBL_STAFF_RANK
                         select new RankViewModel
                         {
-                            rankName = a.RankName,
-                            companyId = (short)a.CompanyId,
-                            rankId = a.RankId
+                            rankName = a.RANKNAME,
+                            companyId = (short)a.COMPANYID,
+                            rankId = a.RANKID
                         }).SingleOrDefault();
             return rank;
         }
 
         public IEnumerable<RankViewModel> GetRankByCompanyId(int companyId)
         {
-            return from a in context.tbl_Staff_Rank
-                        where a.CompanyId == companyId
+            return from a in context.TBL_STAFF_RANK
+                        where a.COMPANYID == companyId
                         select new RankViewModel
                         {
-                            rankName = a.RankName,
-                            companyId = (short)a.CompanyId,
-                            rankId = a.RankId
+                            rankName = a.RANKNAME,
+                            companyId = (short)a.COMPANYID,
+                            rankId = a.RANKID
                         };
             
         }
 
         public IEnumerable<RankViewModel> GetRank()
         {
-            var rank = (from a in context.tbl_Staff_Rank
+            var rank = (from a in context.TBL_STAFF_RANK
                         select new RankViewModel
                         {
-                            rankName = a.RankName,
-                            companyId = (short)a.CompanyId,
-                            rankId = a.RankId
+                            rankName = a.RANKNAME,
+                            companyId = (short)a.COMPANYID,
+                            rankId = a.RANKID
                         });
             return rank;
         }

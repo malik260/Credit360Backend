@@ -19,28 +19,28 @@ namespace FintrakBanking.Repositories.media
         }
         public async Task<bool> AddFile(byte[] imgContent, string fileName, string extention)
         {
-            var document = new tbl_Media_Collateral_Documents()
+            var document = new TBL_MEDIA_COLLATERAL_DOCUMENTS()
             {
-                FileName = fileName,
-                FileExtension = extention,
-                FileData = imgContent,
-                SystemDateTime = DateTime.Now
+                FILENAME = fileName,
+                FILEEXTENSION = extention,
+                FILEDATA = imgContent,
+                SYSTEMDATETIME = DateTime.Now
             };
-            context.tbl_Media_Collateral_Documents.Add(document);
+            context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(document);
             var response = await context.SaveChangesAsync();
             return response > 0;
         }
 
         public DocumentViewModel GetDocumentById(int id)
         {
-            return (from doc in context.tbl_Media_Collateral_Documents
-                    where doc.DocumentId == id
+            return (from doc in context.TBL_MEDIA_COLLATERAL_DOCUMENTS
+                    where doc.DOCUMENTID == id
                     select new DocumentViewModel()
                     {
-                        documentId = doc.DocumentId,
-                        fileData = doc.FileData,
-                        fileExtension = doc.FileExtension,
-                        fileName = doc.FileName
+                        documentId = doc.DOCUMENTID,
+                        fileData = doc.FILEDATA,
+                        fileExtension = doc.FILEEXTENSION,
+                        fileName = doc.FILENAME
                     }).FirstOrDefault();
 
         }

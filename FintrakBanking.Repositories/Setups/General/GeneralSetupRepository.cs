@@ -24,7 +24,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public DateTime GetApplicationDate()
         {
-            return this.context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;            
+            return this.context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;            
         }
 
 
@@ -45,11 +45,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<LookupViewModel> GetAllTenorMode()
         {
-            return (from data in context.tbl_Tenor_Mode
+            return (from data in context.TBL_TENOR_MODE
                     select new LookupViewModel()
                     {
-                        lookupId = data.TenorModeId,
-                        lookupName = data.TenorModeName
+                        lookupId = data.TENORMODEID,
+                        lookupName = data.TENORMODENAME
                     });
         }
 
@@ -65,135 +65,135 @@ namespace FintrakBanking.Repositories.Setups.General
         /// <returns>IEnumerable of ProductGroup</returns>
         public IEnumerable<LookupViewModel> GetAllCurrency()
         {
-            return (from data in context.tbl_Currency
+            return (from data in context.TBL_CURRENCY
                     select new LookupViewModel()
                     {
-                        lookupId = data.CurrencyId,
-                        lookupName = data.CurrencyCode + " -- " + data.CurrencyName,
-                         lookupTypeName = data.CurrencyCode
+                        lookupId = data.CURRENCYID,
+                        lookupName = data.CURRENCYCODE + " -- " + data.CURRENCYNAME,
+                         lookupTypeName = data.CURRENCYCODE
                     });
         }
 
         public IEnumerable<LookupViewModel> GetSector() {
-            return (from   data in context.tbl_Sector
+            return (from   data in context.TBL_SECTOR
                     select new LookupViewModel()
                     {
-                        lookupId = data.SectorId ,
-                        lookupName = data.Name  
+                        lookupId = data.SECTORID ,
+                        lookupName = data.NAME  
                     });
         }
         public IEnumerable<LookupViewModel> GetSubsector( )
         {
-            return (from data in context.tbl_Sub_Sector 
+            return (from data in context.TBL_SUB_SECTOR 
                     select new LookupViewModel()
                     {
-                        lookupId = data.SubSectorId,
-                        lookupName = data.Name
+                        lookupId = data.SUBSECTORID,
+                        lookupName = data.NAME
                     });
         }
 
         public IEnumerable<LookupViewModel> GetAllCustomerType()
         {
-            return (from data in context.tbl_Customer_Type
+            return (from data in context.TBL_CUSTOMER_TYPE
                     select new LookupViewModel()
                     {
-                        lookupId = data.CustomerTypeId,
-                        lookupName = data.Name
+                        lookupId = data.CUSTOMERTYPEID,
+                        lookupName = data.NAME
                     });
         }
 
         public IEnumerable<LookupViewModel> GetAllDealClassificationType()
         {
-            return (from data in context.tbl_Deal_Classification
+            return (from data in context.TBL_DEAL_CLASSIFICATION
                     select new LookupViewModel()
                     {
-                        lookupId = data.DealClassificationID,
-                        lookupName = data.Classification
+                        lookupId = data.DEALCLASSIFICATIONID,
+                        lookupName = data.CLASSIFICATION
                     });
         }
 
         public IEnumerable<LookupViewModel> GetAllDayCount()
         {
-            return (from data in context.tbl_Day_Count_Convention
+            return (from data in context.TBL_DAY_COUNT_CONVENTION
                     select new LookupViewModel()
                     {
-                        lookupId = data.DayCountConventionId,
-                        lookupName = data.DayCountConventionName
+                        lookupId = data.DAYCOUNTCONVENTIONID,
+                        lookupName = data.DAYCOUNTCONVENTIONNAME
                     });
         }
 
         public IEnumerable<LookupViewModel> GetAllFeeAmortisationType()
         {
-            return (from data in context.tbl_Fee_Amortisation_Type
+            return (from data in context.TBL_FEE_AMORTISATION_TYPE
                     select new LookupViewModel()
                     {
-                        lookupId = data.FeeAmortisationTypeId,
-                        lookupName = data.FeeAmortisationTypeName
+                        lookupId = data.FEEAMORTISATIONTYPEID,
+                        lookupName = data.FEEAMORTISATIONTYPENAME
                     });
         }
 
         public IEnumerable<LookupViewModel> GetAllDealTypes()
         {
-            return (from data in context.tbl_Deal_Type
+            return (from data in context.TBL_DEAL_TYPE
                     select new LookupViewModel()
                     {
-                        lookupId = data.DealTypeId,
-                        lookupName = data.DealTypeName
+                        lookupId = data.DEALTYPEID,
+                        lookupName = data.DEALTYPENAME
                     });
         }
 
         public IEnumerable<LookupViewModel> GetAllFSTypes()
         {
-            return (from data in context.tbl_Financial_Statement_Type
+            return (from data in context.TBL_FINANCIAL_STATEMENT_TYPE
                     select new LookupViewModel()
                     {
-                        lookupId = data.FSTypeId,
-                        lookupName = data.FSTypeName
+                        lookupId = data.FSTYPEID,
+                        lookupName = data.FSTYPENAME
                     });
         }
 
         public IEnumerable<LookupViewModel> GetAllFrequencyTypes()
         {
-            return (from data in context.tbl_Frequency_Type
+            return (from data in context.TBL_FREQUENCY_TYPE
                     select new LookupViewModel()
                     {
-                        lookupId = data.FrequencyTypeId,
-                        lookupName = data.Mode
+                        lookupId = data.FREQUENCYTYPEID,
+                        lookupName = data.MODE
                     });
         }
 
         public IEnumerable<LookupViewModel> GetAllOperationTypes()
         {
-            return (from data in context.tbl_Operations_Type
+            return (from data in context.TBL_OPERATIONS_TYPE
                     select new LookupViewModel()
                     {
-                        lookupId = data.OperationTypeId,
-                        lookupName = data.OperationTypeName
+                        lookupId = data.OPERATIONTYPEID,
+                        lookupName = data.OPERATIONTYPENAME
                     });
         }
 
         public IEnumerable<LookupViewModel> GetAllOperations()
         {
-            return (from data in context.tbl_Operations                    
+            return (from data in context.TBL_OPERATIONS                    
                     select new LookupViewModel()
                     {
-                        lookupId = (short)data.OperationId,
-                        lookupName = data.OperationName,
-                        lookupTypeId = data.OperationTypeId,
-                        lookupTypeName = data.tbl_Operations_Type.OperationTypeName
+                        lookupId = (short)data.OPERATIONID,
+                        lookupName = data.OPERATIONNAME,
+                        lookupTypeId = data.OPERATIONTYPEID,
+                        lookupTypeName = data.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
                     });
         }
 
         public IEnumerable<LookupViewModel> GetOperations(short operationTypeId)
         {
-            return (from data in context.tbl_Operations
-                    where data.OperationTypeId == operationTypeId
+            return (from data in context.TBL_OPERATIONS
+                    where data.OPERATIONTYPEID == operationTypeId
                     select new LookupViewModel()
                     {
-                        lookupId = (short)data.OperationId,
-                        lookupName = data.OperationName,
-                        lookupTypeId = data.OperationTypeId,
-                        lookupTypeName = data.tbl_Operations_Type.OperationTypeName
+                        lookupId = (short)data.OPERATIONID,
+                        lookupName = data.OPERATIONNAME,
+                        lookupTypeId = data.OPERATIONTYPEID,
+                        lookupTypeName = data.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
                     });
         }
 
@@ -222,12 +222,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<SectorViewModel> GetAllSectors()
         {
-            var data = (from cs in context.tbl_Sector
+            var data = (from cs in context.TBL_SECTOR
                         select new SectorViewModel()
                         {
-                            sectorId = cs.SectorId,
-                            sectorName = cs.Name,
-                            sectorCode = cs.Code,
+                            sectorId = cs.SECTORID,
+                            sectorName = cs.NAME,
+                            sectorCode = cs.CODE,
                         });
 
             return data;
@@ -235,13 +235,13 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<SectorViewModel> GetAllSubSectors()
         {
-            var data = (from cs in context.tbl_Sub_Sector
+            var data = (from cs in context.TBL_SUB_SECTOR
                         select new SectorViewModel()
                         {
-                            subSectorId = cs.SubSectorId,
-                            sectorId = cs.tbl_Sector.SectorId,
-                            sectorName = cs.Name,
-                            sectorCode = cs.Code,
+                            subSectorId = cs.SUBSECTORID,
+                            sectorId = cs.TBL_SECTOR.SECTORID,
+                            sectorName = cs.NAME,
+                            sectorCode = cs.CODE,
                         }).Distinct();
 
             return data;
@@ -249,14 +249,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<SectorViewModel> GetSectorsBySubSectorId(short ssId)
         {
-            var data = (from s in context.tbl_Sub_Sector
-                        where s.SubSectorId == ssId
+            var data = (from s in context.TBL_SUB_SECTOR
+                        where s.SUBSECTORID == ssId
                         select new SectorViewModel()
                         {
-                            subSectorId = s.SubSectorId,
-                            sectorId = s.tbl_Sector.SectorId,
-                            sectorName = s.Name,
-                            sectorCode = s.Code
+                            subSectorId = s.SUBSECTORID,
+                            sectorId = s.TBL_SECTOR.SECTORID,
+                            sectorName = s.NAME,
+                            sectorCode = s.CODE
                         });
 
             return data;

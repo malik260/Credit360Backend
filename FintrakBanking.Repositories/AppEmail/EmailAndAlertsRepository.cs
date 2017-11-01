@@ -37,35 +37,35 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public void SendAlertsForCovenantsApproachingDueDate()
         {
-            applDate = context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
+            applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
 
-            var data = (from a in context.tbl_Loan_Covenant_Detail
-                        join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
-                        join c in context.tbl_Staff on b.RelationshipManagerId equals c.StaffId
-                        join d in context.tbl_Staff on b.RelationshipOfficerId equals d.StaffId
-                        join e in context.tbl_Loan_Application_Detail on b.LoanApplicationDetailId equals e.LoanApplicationDetailId
-                        join f in context.tbl_Frequency_Type on a.FrequencyTypeId equals f.FrequencyTypeId
-                        join g in context.tbl_Loan_Covenant_Type on a.CovenantTypeId equals g.CovenantTypeId
-                        where DbFunctions.DiffDays(genSetup.GetApplicationDate(), a.NextCovenantDate) <= 10
+            var data = (from a in context.TBL_LOAN_COVENANT_DETAIL
+                        join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                        join c in context.TBL_STAFF on b.RELATIONSHIPMANAGERID equals c.STAFFID
+                        join d in context.TBL_STAFF on b.RELATIONSHIPOFFICERID equals d.STAFFID
+                        join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
+                        join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals f.FREQUENCYTYPEID
+                        join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
+                        where DbFunctions.DiffDays(genSetup.GetApplicationDate(), a.NEXTCOVENANTDATE) <= 10
                         select new LoanCovenantDetailViewModel
                         {
-                            companyId = a.CompanyId,
-                            covenantAmount = a.CovenantAmount,
-                            covenantDate = a.CovenantDate,
-                            dueDate = a.NextCovenantDate,
-                            covenantDetail = a.CovenantDetail,
-                            covenantTypeId = a.CovenantTypeId,
-                            covenantTypeName = g.CovenantTypeName,
-                            frequencyTypeId = a.FrequencyTypeId,
-                            frequencyTypeName = f.Mode,
-                            loanId = a.LoanId,
-                            loanRefNumber = e.tbl_Loan_Application.ApplicationReferenceNumber,
-                            relationshipManager = c.FirstName + " " + c.LastName,
-                            relationshipManagerId = c.StaffId,
-                            managerEmail = c.Email,
-                            relationshipOfficerId = d.StaffId,
-                            relationshipOfficer = d.FirstName + " " + d.LastName,
-                            officerEmail = d.Email,
+                            companyId = a.COMPANYID,
+                            covenantAmount = a.COVENANTAMOUNT,
+                            covenantDate = a.COVENANTDATE,
+                            dueDate = a.NEXTCOVENANTDATE,
+                            covenantDetail = a.COVENANTDETAIL,
+                            covenantTypeId = a.COVENANTTYPEID,
+                            covenantTypeName = g.COVENANTTYPENAME,
+                            frequencyTypeId = a.FREQUENCYTYPEID,
+                            frequencyTypeName = f.MODE,
+                            loanId = a.LOANID,
+                            loanRefNumber = e.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
+                            relationshipManagerId = c.STAFFID,
+                            managerEmail = c.EMAIL,
+                            relationshipOfficerId = d.STAFFID,
+                            relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
+                            officerEmail = d.EMAIL,
                         }).ToList();
 
             try
@@ -135,33 +135,33 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public void SendAlertsForCovenantsOverDue()
         {
-            applDate = context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
+            applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
 
-            var data = (from a in context.tbl_Loan_Covenant_Detail
-                        join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
-                        join c in context.tbl_Staff on b.RelationshipManagerId equals c.StaffId
-                        join d in context.tbl_Staff on b.RelationshipOfficerId equals d.StaffId
-                        join e in context.tbl_Loan_Application_Detail on b.LoanApplicationDetailId equals e.LoanApplicationDetailId
-                        join f in context.tbl_Frequency_Type on a.FrequencyTypeId equals f.FrequencyTypeId
-                        join g in context.tbl_Loan_Covenant_Type on a.CovenantTypeId equals g.CovenantTypeId
-                        where a.NextCovenantDate.Value >= applDate
+            var data = (from a in context.TBL_LOAN_COVENANT_DETAIL
+                        join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                        join c in context.TBL_STAFF on b.RELATIONSHIPMANAGERID equals c.STAFFID
+                        join d in context.TBL_STAFF on b.RELATIONSHIPOFFICERID equals d.STAFFID
+                        join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
+                        join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals f.FREQUENCYTYPEID
+                        join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
+                        where a.NEXTCOVENANTDATE.Value >= applDate
                         select new LoanCovenantDetailViewModel
                         {
-                            companyId = a.CompanyId,
-                            covenantAmount = a.CovenantAmount,
-                            covenantDate = a.CovenantDate,
-                            dueDate = a.NextCovenantDate,
-                            covenantDetail = a.CovenantDetail,
-                            covenantTypeId = a.CovenantTypeId,
-                            covenantTypeName = g.CovenantTypeName,
-                            frequencyTypeId = a.FrequencyTypeId,
-                            frequencyTypeName = f.Mode,
-                            loanId = a.LoanId,
-                            loanRefNumber = e.tbl_Loan_Application.ApplicationReferenceNumber,
-                            relationshipManager = c.FirstName + " " + c.LastName,
-                            managerEmail = c.Email,
-                            relationshipOfficer = d.FirstName + " " + d.LastName,
-                            officerEmail = d.Email,
+                            companyId = a.COMPANYID,
+                            covenantAmount = a.COVENANTAMOUNT,
+                            covenantDate = a.COVENANTDATE,
+                            dueDate = a.NEXTCOVENANTDATE,
+                            covenantDetail = a.COVENANTDETAIL,
+                            covenantTypeId = a.COVENANTTYPEID,
+                            covenantTypeName = g.COVENANTTYPENAME,
+                            frequencyTypeId = a.FREQUENCYTYPEID,
+                            frequencyTypeName = f.MODE,
+                            loanId = a.LOANID,
+                            loanRefNumber = e.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
+                            managerEmail = c.EMAIL,
+                            relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
+                            officerEmail = d.EMAIL,
                         }).ToList();
 
             try
@@ -236,28 +236,28 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public void SendAlertsForCollateralPropertyRevaluation()
         {
-            var applDate = context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
+            var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
 
-            var data = (from a in context.tbl_Collateral_Customer
-                        join b in context.tbl_Customer on a.CustomerId equals b.CustomerId
-                        join c in context.tbl_Staff on a.CreatedBy equals c.StaffId
-                        join d in context.tbl_Collateral_Type on a.CollateralTypeId equals d.CollateralTypeId
-                        join e in context.tbl_Collateral_Type_Sub on a.CollateralSubTypeId equals e.CollateralSubTypeId
-                        join f in context.tbl_Collateral_Immovable_Property on a.CollateralCustomerId equals f
-                            .CollateralCustomerId
-                        where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LastValuationDate, a.ValuationCycle), applDate) <= 30)
+            var data = (from a in context.TBL_COLLATERAL_CUSTOMER
+                        join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                        join c in context.TBL_STAFF on a.CREATEDBY equals c.STAFFID
+                        join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
+                        join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
+                        join f in context.TBL_COLLATERAL_IMMOVABLE_PROPERTY on a.COLLATERALCUSTOMERID equals f
+                            .COLLATERALCUSTOMERID
+                        where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LASTVALUATIONDATE, a.VALUATIONCYCLE), applDate) <= 30)
                         select new CollateralViewModel
                         {
-                            collateralTypeId = a.CollateralTypeId,
-                            collateralType = d.CollateralTypeName,
-                            collateralCode = a.CollateralCode,
-                            collateralSubType = e.CollateralSubTypeName,
-                            customerName = b.FirstName + " " + b.LastName,
-                            propertyName = f.PropertyName,
-                            lastValuationDate = f.LastValuationDate,
-                            relationshipManagerId = a.CreatedBy,
-                            relationshipManager = c.FirstName + " " + c.LastName,
-                            relationshipManagerEmail = c.Email
+                            collateralTypeId = a.COLLATERALTYPEID,
+                            collateralType = d.COLLATERALTYPENAME,
+                            collateralCode = a.COLLATERALCODE,
+                            collateralSubType = e.COLLATERALSUBTYPENAME,
+                            customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                            propertyName = f.PROPERTYNAME,
+                            lastValuationDate = f.LASTVALUATIONDATE,
+                            relationshipManagerId = a.CREATEDBY,
+                            relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
+                            relationshipManagerEmail = c.EMAIL
                         }).ToList();
 
             try
@@ -330,27 +330,27 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public void SendAlertsForLoanNplMonitoring()
         {
-            var data = (from a in context.tbl_Loan_Application
-                        join d in context.tbl_Loan_Application_Detail on a.LoanApplicationId equals d.LoanApplicationId
-                        join b in context.tbl_Loan on d.LoanApplicationDetailId equals b.LoanApplicationDetailId
-                        join c in context.tbl_Loan_Revolving on d.LoanApplicationDetailId equals c.LoanApplicationDetailId
-                        where b.InternalPrudentialGuidelineStatusId != (int)LoanPrudentialStatusEnum.Performing
+            var data = (from a in context.TBL_LOAN_APPLICATION
+                        join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                        join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                        where b.INTERNALPRUDENTIALGUIDELINESTATUSID != (int)LoanPrudentialStatusEnum.Performing
                         select new LoanViewModel
                         {
-                            applicationReferenceNumber = a.ApplicationReferenceNumber,
-                            loanReferenceNumber = b.LoanReferenceNumber,
-                            bookingDate = b.BookingDate,
-                            disburseDate = b.DisburseDate,
-                            nplDate = b.NPLDate.Value,
-                            outstandingInterest = b.OutstandingInterest,
-                            outstandingPrincipal = b.OutstandingPrincipal,
-                            loanTypeName = b.tbl_Loan_Type.LoanTypeName,
-                            relationshipManagerId = b.RelationshipManagerId,
-                            relationshipManagerName = b.tbl_Staff1.FirstName + " " + b.tbl_Staff1.LastName,
-                            relationshipManagerEmail = b.tbl_Staff1.Email,
-                            relationshipOfficerId = b.RelationshipOfficerId,
-                            relationshipOfficerName = b.tbl_Staff.FirstName + " " + b.tbl_Staff.LastName,
-                            relationshipOfficerEmail = b.tbl_Staff.Email
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            loanReferenceNumber = b.LOANREFERENCENUMBER,
+                            bookingDate = b.BOOKINGDATE,
+                            disburseDate = b.DISBURSEDATE,
+                            nplDate = b.NPLDATE.Value,
+                            outstandingInterest = b.OUTSTANDINGINTEREST,
+                            outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+                            loanTypeName = b.TBL_LOAN_TYPE.LOANTYPENAME,
+                            relationshipManagerId = b.RELATIONSHIPMANAGERID,
+                            relationshipManagerName = b.TBL_STAFF1.FIRSTNAME + " " + b.TBL_STAFF1.LASTNAME,
+                            relationshipManagerEmail = b.TBL_STAFF1.EMAIL,
+                            relationshipOfficerId = b.RELATIONSHIPOFFICERID,
+                            relationshipOfficerName = b.TBL_STAFF.FIRSTNAME + " " + b.TBL_STAFF.LASTNAME,
+                            relationshipOfficerEmail = b.TBL_STAFF.EMAIL
                         }).ToList();
 
             try
@@ -428,30 +428,30 @@ namespace FintrakBanking.Repositories.AppEmail
         {
             var applDate = genSetup.GetApplicationDate();
 
-            var data = (from a in context.tbl_Loan
-                        join b in context.tbl_Product on a.ProductId equals b.ProductId
-                        join c in context.tbl_Product_Type on b.ProductTypeId equals c.ProductTypeId
-                        join d in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals d.LoanApplicationDetailId
-                        where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.SelfLiquidating &&
-                        DbFunctions.DiffDays(a.MaturityDate, applDate) <= 30
+            var data = (from a in context.TBL_LOAN
+                        join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                        join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
+                        join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                        where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.SelfLiquidating &&
+                        DbFunctions.DiffDays(a.MATURITYDATE, applDate) <= 30
                         select new LoanViewModel
                         {
-                            applicationReferenceNumber = d.tbl_Loan_Application.ApplicationReferenceNumber,
-                            loanReferenceNumber = a.LoanReferenceNumber,
-                            bookingDate = a.BookingDate,
-                            disburseDate = a.DisburseDate,
-                            maturityDate = a.MaturityDate,
-                            productName = b.ProductName,
-                            outstandingInterest = a.OutstandingInterest,
-                            outstandingPrincipal = a.OutstandingPrincipal,
-                            loanTypeName = a.tbl_Loan_Type.LoanTypeName,
-                            productTypeName = b.tbl_Product_Type.ProductTypeName,
-                            relationshipManagerId = a.RelationshipManagerId,
-                            relationshipManagerName = a.tbl_Staff1.FirstName + " " + a.tbl_Staff1.LastName,
-                            relationshipManagerEmail = a.tbl_Staff1.Email,
-                            relationshipOfficerId = a.RelationshipOfficerId,
-                            relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
-                            relationshipOfficerEmail = a.tbl_Staff.Email
+                            applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            bookingDate = a.BOOKINGDATE,
+                            disburseDate = a.DISBURSEDATE,
+                            maturityDate = a.MATURITYDATE,
+                            productName = b.PRODUCTNAME,
+                            outstandingInterest = a.OUTSTANDINGINTEREST,
+                            outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                            loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                            productTypeName = b.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                            relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                            relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                            relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                            relationshipOfficerEmail = a.TBL_STAFF.EMAIL
                         }).ToList();
 
             try
@@ -529,29 +529,29 @@ namespace FintrakBanking.Repositories.AppEmail
         {
             var applDate = genSetup.GetApplicationDate();
 
-            var data = (from a in context.tbl_Loan_Revolving
-                        join b in context.tbl_Product on a.ProductId equals b.ProductId
-                        join c in context.tbl_Product_Type on b.ProductTypeId equals c.ProductTypeId
-                        join d in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals d.LoanApplicationDetailId
-                        where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.RevolvingLoan &&
-                        DbFunctions.DiffDays(a.MaturityDate, applDate) <= 90
+            var data = (from a in context.TBL_LOAN_REVOLVING
+                        join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                        join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
+                        join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                        where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.RevolvingLoan &&
+                        DbFunctions.DiffDays(a.MATURITYDATE, applDate) <= 90
                         select new LoanViewModel
                         {
-                            applicationReferenceNumber = d.tbl_Loan_Application.ApplicationReferenceNumber,
-                            loanReferenceNumber = a.LoanReferenceNumber,
-                            bookingDate = a.BookingDate,
-                            disburseDate = a.DisburseDate,
-                            maturityDate = a.MaturityDate,
-                            productName = b.ProductName,
-                            loanTypeName = a.tbl_Loan_Type.LoanTypeName,
-                            productTypeName = b.tbl_Product_Type.ProductTypeName,
-                            overdraftLimit = a.OverdraftLimit,
-                            relationshipManagerId = a.RelationshipManagerId,
-                            relationshipManagerName = a.tbl_Staff1.FirstName + " " + a.tbl_Staff1.LastName,
-                            relationshipManagerEmail = a.tbl_Staff1.Email,
-                            relationshipOfficerId = a.RelationshipOfficerId,
-                            relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
-                            relationshipOfficerEmail = a.tbl_Staff.Email
+                            applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            bookingDate = a.BOOKINGDATE,
+                            disburseDate = a.DISBURSEDATE,
+                            maturityDate = a.MATURITYDATE,
+                            productName = b.PRODUCTNAME,
+                            loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                            productTypeName = b.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            overdraftLimit = a.OVERDRAFTLIMIT,
+                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                            relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                            relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                            relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                            relationshipOfficerEmail = a.TBL_STAFF.EMAIL
                         }).ToList();
 
             try
@@ -627,20 +627,20 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public void SaveMessageDetails(MessageLogViewModel model)
         {
-            var message = new tbl_Message_Log()
+            var message = new TBL_MESSAGE_LOG()
             {
                 //MessageId = model.MessageId,
-                MessageSubject = model.MessageSubject,
-                MessageBody = model.MessageBody,
-                MessageStatusId = model.MessageStatusId,
-                MessageTypeId = model.MessageTypeId,
-                FromAddress = model.FromAddress,
-                ToAddress = model.ToAddress,
-                DateTimeReceived = model.DateTimeReceived,
-                SendOnDateTime = model.SendOnDateTime
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime
             };
 
-            context.tbl_Message_Log.Add(message);
+            context.TBL_MESSAGE_LOG.Add(message);
 
             try
             {
@@ -658,22 +658,22 @@ namespace FintrakBanking.Repositories.AppEmail
 
             var templateUrl = "~/EmailTemplates/Monitoring.html";
 
-            var message = new tbl_Message_Log()
+            var message = new TBL_MESSAGE_LOG()
             {
                 //MessageId = model.MessageId,
-                MessageSubject = model.MessageSubject,
-                MessageBody = model.MessageBody,
-                MessageStatusId = model.MessageStatusId,
-                MessageTypeId = model.MessageTypeId,
-                FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                ToAddress = model.ToAddress,
-                DateTimeReceived = model.DateTimeReceived,
-                SendOnDateTime = model.SendOnDateTime
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime
             };
 
             try
             {
-                context.tbl_Message_Log.Add(message);
+                context.TBL_MESSAGE_LOG.Add(message);
 
                 context.SaveChanges();
 
@@ -681,7 +681,7 @@ namespace FintrakBanking.Repositories.AppEmail
 
                 if (sentEmail)
                 {
-                    message.MessageStatusId = (short)MessageStatusEnum.Sent;
+                    message.MESSAGESTATUSID = (short)MessageStatusEnum.Sent;
 
                     context.SaveChanges();
 
@@ -689,7 +689,7 @@ namespace FintrakBanking.Repositories.AppEmail
                 }
                 else
                 {
-                    message.MessageStatusId = (short)MessageStatusEnum.Attempted;
+                    message.MESSAGESTATUSID = (short)MessageStatusEnum.Attempted;
 
                     context.SaveChanges();
 
@@ -704,19 +704,19 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public IEnumerable<MessageLogViewModel> GetMailingList()
         {
-            var mailList = (from data in context.tbl_Message_Log
-                            where data.MessageStatusId == (short)MessageStatusEnum.Pending
+            var mailList = (from data in context.TBL_MESSAGE_LOG
+                            where data.MESSAGESTATUSID == (short)MessageStatusEnum.Pending
                             select new MessageLogViewModel()
                             {
-                                MessageId = data.MessageId,
-                                MessageSubject = data.MessageSubject,
-                                MessageBody = data.MessageBody,
-                                MessageStatusId = data.MessageStatusId,
-                                MessageTypeId = data.MessageTypeId,
-                                FromAddress = data.FromAddress,
-                                ToAddress = data.ToAddress,
-                                DateTimeReceived = data.DateTimeReceived,
-                                SendOnDateTime = data.SendOnDateTime
+                                MessageId = data.MESSAGEID,
+                                MessageSubject = data.MESSAGESUBJECT,
+                                MessageBody = data.MESSAGEBODY,
+                                MessageStatusId = data.MESSAGESTATUSID,
+                                MessageTypeId = data.MESSAGETYPEID,
+                                FromAddress = data.FROMADDRESS,
+                                ToAddress = data.TOADDRESS,
+                                DateTimeReceived = data.DATETIMERECEIVED,
+                                SendOnDateTime = data.SENDONDATETIME
                             }).ToList();
 
             return mailList;
@@ -738,11 +738,11 @@ namespace FintrakBanking.Repositories.AppEmail
 
         public bool UpdateMailDeliveryStatus(int messageId, short statusId)
         {
-            var mailMessage = context.tbl_Message_Log.Find(messageId);
+            var mailMessage = context.TBL_MESSAGE_LOG.Find(messageId);
 
             if (mailMessage != null)
             {
-                mailMessage.MessageStatusId = (short)statusId;
+                mailMessage.MESSAGESTATUSID = (short)statusId;
 
                 var output = context.SaveChanges() > 0;
 
