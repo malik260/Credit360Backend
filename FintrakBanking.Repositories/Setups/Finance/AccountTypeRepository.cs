@@ -43,27 +43,27 @@ namespace FintrakBanking.Repositories.Setups.Finance
         /// <returns></returns>
         public bool AddAccountType(AddAccountTypeViewModel accounttype)
         {
-            var type = new tbl_Account_Type()
+            var type = new TBL_ACCOUNT_TYPE()
             {
-                AccountTypeCode = accounttype.accountTypeCode,
-                AccountTypeName = accounttype.accountTypeName,
-                AccountCategoryId = accounttype.accountCategoryId,
-                CreatedBy = accounttype.createdBy,
-                DateTimeCreated = DateTime.Now
+                ACCOUNTTYPECODE = accounttype.accountTypeCode,
+                ACCOUNTTYPENAME = accounttype.accountTypeName,
+                ACCOUNTCATEGORYID = accounttype.accountCategoryId,
+                CREATEDBY = accounttype.createdBy,
+                DATETIMECREATED = DateTime.Now
             };
 
-            this.context.tbl_Account_Type.Add(type);
+            this.context.TBL_ACCOUNT_TYPE.Add(type);
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.AccountTypeAdded,
-                StaffId = (int)accounttype.createdBy,
-                BranchId = (short)accounttype.userBranchId,
-                Detail = $"Added accounttype: '{accounttype.accountTypeName}' with code: '{accounttype.accountTypeCode}' ",
-                IPAddress = accounttype.userIPAddress,
-                Url = accounttype.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.AccountTypeAdded,
+                STAFFID = (int)accounttype.createdBy,
+                BRANCHID = (short)accounttype.userBranchId,
+                DETAIL = $"Added accounttype: '{accounttype.accountTypeName}' with code: '{accounttype.accountTypeCode}' ",
+                IPADDRESS = accounttype.userIPAddress,
+                URL = accounttype.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -77,13 +77,13 @@ namespace FintrakBanking.Repositories.Setups.Finance
         /// <returns></returns>
         public IEnumerable<AccountTypeViewModel> GetAllAccountType()
         {
-            return this.context.tbl_Account_Type.Select(p => new AccountTypeViewModel()
+            return this.context.TBL_ACCOUNT_TYPE.Select(p => new AccountTypeViewModel()
             {
-                accountTypeId = p.AccountTypeId,
-                accountCategoryId = p.AccountCategoryId,
-                accountCategoryName = p.tbl_Account_Category.AccountCategoryName,
-                accountTypeCode = p.AccountTypeCode,
-                accountTypeName = p.AccountTypeName,
+                accountTypeId = p.ACCOUNTTYPEID,
+                accountCategoryId = p.ACCOUNTCATEGORYID,
+                accountCategoryName = p.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+                accountTypeCode = p.ACCOUNTTYPECODE,
+                accountTypeName = p.ACCOUNTTYPENAME,
                 // dateTimeCreated =(DateTime) p.DateTimeCreated,
                 // createdBy =(int) p.CreatedBy
             });
@@ -96,14 +96,14 @@ namespace FintrakBanking.Repositories.Setups.Finance
         /// <returns></returns>
         public AccountTypeViewModel GetAllAccountTypeById(int accountTypeId)
         {
-            return this.context.tbl_Account_Type.Select(p => new AccountTypeViewModel()
+            return this.context.TBL_ACCOUNT_TYPE.Select(p => new AccountTypeViewModel()
             {
-                accountTypeId = p.AccountTypeId,
-                accountCategoryId = p.AccountCategoryId,
-                accountTypeCode = p.AccountTypeCode,
-                accountTypeName = p.AccountTypeName,
-                dateTimeCreated = p.DateTimeCreated.Value ,
-                createdBy = p.CreatedBy.Value 
+                accountTypeId = p.ACCOUNTTYPEID,
+                accountCategoryId = p.ACCOUNTCATEGORYID,
+                accountTypeCode = p.ACCOUNTTYPECODE,
+                accountTypeName = p.ACCOUNTTYPENAME,
+                dateTimeCreated = p.DATETIMECREATED.Value ,
+                createdBy = p.CREATEDBY.Value 
             }).FirstOrDefault(u => u.accountTypeId == accountTypeId);
         }
 
@@ -114,27 +114,27 @@ namespace FintrakBanking.Repositories.Setups.Finance
         /// <returns></returns>
         public bool UpdateAccountType(int accountTypeId, AccountTypeViewModel accounttype)
         {
-            var type = this.context.tbl_Account_Type.Where(p => p.AccountTypeId == accountTypeId).FirstOrDefault();
+            var type = this.context.TBL_ACCOUNT_TYPE.Where(p => p.ACCOUNTTYPEID == accountTypeId).FirstOrDefault();
             if (type != null)
             {
-                type.AccountTypeCode = accounttype.accountTypeCode;
-                type.AccountTypeName = accounttype.accountTypeName;
-                type.AccountCategoryId = accounttype.accountCategoryId;
-                type.LastUpdatedBy = accounttype.lastUpdatedBy;
-                type.DateTimeUpdated = accounttype.dateTimeUpdated;
+                type.ACCOUNTTYPECODE = accounttype.accountTypeCode;
+                type.ACCOUNTTYPENAME = accounttype.accountTypeName;
+                type.ACCOUNTCATEGORYID = accounttype.accountCategoryId;
+                type.LASTUPDATEDBY = accounttype.lastUpdatedBy;
+                type.DATETIMEUPDATED = accounttype.dateTimeUpdated;
             }
            
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.AccountTypeUpdated,
-                StaffId = (int)accounttype.createdBy,
-                BranchId = (short)accounttype.userBranchId,
-                Detail = $"Updated accounttype: '{accounttype.accountTypeName}' with code: '{accounttype.accountTypeCode}' ",
-                IPAddress = accounttype.userIPAddress,
-                Url = accounttype.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.AccountTypeUpdated,
+                STAFFID = (int)accounttype.createdBy,
+                BRANCHID = (short)accounttype.userBranchId,
+                DETAIL = $"Updated accounttype: '{accounttype.accountTypeName}' with code: '{accounttype.accountTypeCode}' ",
+                IPADDRESS = accounttype.userIPAddress,
+                URL = accounttype.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -144,24 +144,24 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public bool DeleteAcountType(int accountTypeId, UserInfo user)
         {
-            var type = this.context.tbl_Account_Type.Where(p => p.AccountTypeId == accountTypeId).FirstOrDefault();
+            var type = this.context.TBL_ACCOUNT_TYPE.Where(p => p.ACCOUNTTYPEID == accountTypeId).FirstOrDefault();
             if (type != null)
             {
-                type.Deleted = true;
+                type.DELETED = true;
                 //type.DateTimeDeleted;
             }
              
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.AccountTypeAdded,
-                StaffId = (int)user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted accounttype: '{type.AccountTypeName}' with code: '{type.AccountTypeCode}' ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.AccountTypeAdded,
+                STAFFID = (int)user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted accounttype: '{type.ACCOUNTTYPENAME}' with code: '{type.ACCOUNTTYPECODE}' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);

@@ -26,32 +26,32 @@ namespace FintrakBanking.Repositories.Finance
 
         public bool AddTax(TaxViewModel model)
         {
-            var data = new tbl_Tax
+            var data = new TBL_TAX
             {
-                TaxId = model.taxId,
-                TaxName = model.taxName,
-                Amount = model.amount,
-                Rate = model.rate,
-                GLAccountId = model.gLAccountId,
-                UseAmount = model.useAmount,
-                CompanyId = model.companyId,
-                CreatedBy = (int)model.createdBy,
-                DateTimeCreated = general.GetApplicationDate()
+                TAXID = model.taxId,
+                TAXNAME = model.taxName,
+                AMOUNT = model.amount,
+                RATE = model.rate,
+                GLACCOUNTID = model.gLAccountId,
+                USEAMOUNT = model.useAmount,
+                COMPANYID = model.companyId,
+                CREATEDBY = (int)model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate()
             };
 
-            context.tbl_Tax.Add(data);
+            context.TBL_TAX.Add(data);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.TaxAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Tax '{ data.TaxName }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.TaxAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Tax '{ data.TAXNAME }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -61,33 +61,33 @@ namespace FintrakBanking.Repositories.Finance
 
         public bool UpdateTax(TaxViewModel model, int taxId)
         {
-            var data = this.context.tbl_Tax.Find(taxId);
+            var data = this.context.TBL_TAX.Find(taxId);
             if (data == null)
             {
                 return false;
             }
 
-            data.TaxId = model.taxId;
-            data.TaxName = model.taxName;
-            data.Amount = model.amount;
-            data.Rate = model.rate;
-            data.GLAccountId = model.gLAccountId;
-            data.UseAmount = model.useAmount;
+            data.TAXID = model.taxId;
+            data.TAXNAME = model.taxName;
+            data.AMOUNT = model.amount;
+            data.RATE = model.rate;
+            data.GLACCOUNTID = model.gLAccountId;
+            data.USEAMOUNT = model.useAmount;
 
-            data.LastUpdatedBy = model.lastUpdatedBy;
-            data.DateTimeUpdated = general.GetApplicationDate();
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.TaxUpdated,
-                StaffId = model.lastUpdatedBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated Tax '{ data.TaxName }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.TaxUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Tax '{ data.TAXNAME }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -97,21 +97,21 @@ namespace FintrakBanking.Repositories.Finance
 
         public IEnumerable<TaxViewModel> GetAllTax()
         {
-            return this.context.tbl_Tax.Where(x => x.Deleted == false).Select(x => new TaxViewModel
+            return this.context.TBL_TAX.Where(x => x.DELETED == false).Select(x => new TaxViewModel
             {
-                taxId = x.TaxId,
-                taxName = x.TaxName,
-                amount = x.Amount,
-                rate = x.Rate,
-                gLAccountId = x.GLAccountId,
-                useAmount = x.UseAmount,
-                companyId = x.CompanyId,
+                taxId = x.TAXID,
+                taxName = x.TAXNAME,
+                amount = x.AMOUNT,
+                rate = x.RATE,
+                gLAccountId = x.GLACCOUNTID,
+                useAmount = x.USEAMOUNT,
+                companyId = x.COMPANYID,
             });
         }
 
         public TaxViewModel GetTax(int taxId)
         {
-            var data = this.context.tbl_Tax.Find(taxId);
+            var data = this.context.TBL_TAX.Find(taxId);
 
             if (data == null)
             {
@@ -120,13 +120,13 @@ namespace FintrakBanking.Repositories.Finance
 
             return new TaxViewModel
             {
-                taxId = data.TaxId,
-                taxName = data.TaxName,
-                amount = data.Amount,
-                rate = data.Rate,
-                gLAccountId = data.GLAccountId,
-                useAmount = data.UseAmount,
-                companyId = data.CompanyId,
+                taxId = data.TAXID,
+                taxName = data.TAXNAME,
+                amount = data.AMOUNT,
+                rate = data.RATE,
+                gLAccountId = data.GLACCOUNTID,
+                useAmount = data.USEAMOUNT,
+                companyId = data.COMPANYID,
             };
         }
 
@@ -137,26 +137,26 @@ namespace FintrakBanking.Repositories.Finance
 
         public bool DeleteTax(int taxId, UserInfo user)
         {
-            var data = this.context.tbl_Tax.Find(taxId);
+            var data = this.context.TBL_TAX.Find(taxId);
             if (data == null)
             {
                 return false;
             }
 
-            data.Deleted = true;
-            data.DateTimeUpdated = general.GetApplicationDate();
+            data.DELETED = true;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.TaxDeleted,
-                StaffId = user.createdBy,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Tax '{ data.TaxName }' ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.TaxDeleted,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Tax '{ data.TAXNAME }' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------

@@ -37,23 +37,23 @@ namespace FintrakBanking.Repositories.Credit
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
              
-                var JobRole = (from a in _context.tbl_Staff where a.StaffId == staffId select a.JobTitleId).FirstOrDefault();
+                var JobRole = (from a in _context.TBL_STAFF where a.STAFFID == staffId select a.JOBTITLEID).FirstOrDefault();
                 if (JobRole > 0)
                 {
-                    var memoLimit = (from b in _context.tbl_Call_Memo_Limit where b.JobTitleId == JobRole && b.CallLimitTypeId == 1 select b).FirstOrDefault();
+                    var memoLimit = (from b in _context.TBL_CALL_MEMO_LIMIT where b.JOBTITLEID == JobRole && b.CALLLIMITTYPEID == 1 select b).FirstOrDefault();
                     if (memoLimit != null)
                     {
-                        allFilteredLoan = (from a in _context.tbl_Loan_Application
-                                           join b in _context.tbl_Customer on a.CustomerId equals b.CustomerId
-                                           where a.ApplicationAmount <= memoLimit.MaximumAmount && a.ApplicationAmount >= memoLimit.MinimumAmount && (a.ApplicationReferenceNumber.Contains(searchQuery) ||
-                                           b.CustomerCode.ToLower().Contains(searchQuery))
+                        allFilteredLoan = (from a in _context.TBL_LOAN_APPLICATION
+                                           join b in _context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                           where a.APPLICATIONAMOUNT <= memoLimit.MAXIMUMAMOUNT && a.APPLICATIONAMOUNT >= memoLimit.MINIMUMAMOUNT && (a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
+                                           b.CUSTOMERCODE.ToLower().Contains(searchQuery))
                                            select new CallMemoLoanSearchViewModel
                                            {
-                                               loanApplicationId = a.LoanApplicationId,
-                                               customerId = a.CustomerId,
-                                               customerName = b.CustomerCode + " - " + b.FirstName + " " + b.LastName,
-                                               loanReferenceNo = a.ApplicationReferenceNumber,
-                                               principalAmount = a.ApplicationAmount
+                                               loanApplicationId = a.LOANAPPLICATIONID,
+                                               customerId = a.CUSTOMERID,
+                                               customerName = b.CUSTOMERCODE + " - " + b.FIRSTNAME + " " + b.LASTNAME,
+                                               loanReferenceNo = a.APPLICATIONREFERENCENUMBER,
+                                               principalAmount = a.APPLICATIONAMOUNT
                                            }).Take(10).AsQueryable();
                     }
                 }
@@ -65,88 +65,88 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CallMemoTypeViewModel> GetCallLimitType()
         {
-            var data = (from a in _context.tbl_Call_Memo_Type
-                        orderby a.Name
+            var data = (from a in _context.TBL_CALL_MEMO_TYPE
+                        orderby a.NAME
                         select new CallMemoTypeViewModel
                         {
-                            CallLimitTypeId = a.CallLimitTypeId,
-                            Name = a.Name
+                            CallLimitTypeId = a.CALLLIMITTYPEID,
+                            Name = a.NAME
                         }).ToList();
             return data;
         }
         public IEnumerable<CallLimitViewModel> GetAllCallLimit(int companyId)
         {
-            var data = (from a in _context.tbl_Call_Memo_Limit
-                        where a.Deleted == false && a.CompanyId == companyId
-                        orderby a.CallLimitTypeId
+            var data = (from a in _context.TBL_CALL_MEMO_LIMIT
+                        where a.DELETED == false && a.COMPANYID == companyId
+                        orderby a.CALLLIMITTYPEID
                         select new CallLimitViewModel
                         {
-                            MaximumAmount = a.MaximumAmount,
-                            MinimumAmount = a.MinimumAmount,
-                            CallLimitId = a.CallLimitId,
-                            companyId = a.CompanyId,
-                            FrequencyId = a.FrequencyId,
-                            FrequencyName = a.tbl_Frequency_Type.Mode,
-                            JobTitleId = a.JobTitleId,
-                            JobTitleName = _context.tbl_Staff_JobTitle.FirstOrDefault(d => d.JobTitleId == a.JobTitleId).JobTitleName,
-                            CallLimitTypeId = a.CallLimitTypeId,
-                            CallLimitTypeName = _context.tbl_Call_Memo_Type.FirstOrDefault(i=>i.CallLimitTypeId == a.CallLimitTypeId).Name
+                            MaximumAmount = a.MAXIMUMAMOUNT,
+                            MinimumAmount = a.MINIMUMAMOUNT,
+                            CallLimitId = a.CALLLIMITID,
+                            companyId = a.COMPANYID,
+                            FrequencyId = a.FREQUENCYID,
+                            FrequencyName = a.TBL_FREQUENCY_TYPE.MODE,
+                            JobTitleId = a.JOBTITLEID,
+                            JobTitleName = _context.TBL_STAFF_JOBTITLE.FirstOrDefault(d => d.JOBTITLEID == a.JOBTITLEID).JOBTITLENAME,
+                            CallLimitTypeId = a.CALLLIMITTYPEID,
+                            CallLimitTypeName = _context.TBL_CALL_MEMO_TYPE.FirstOrDefault(i=>i.CALLLIMITTYPEID == a.CALLLIMITTYPEID).NAME
                         }).ToList();
             return data;
         }
 
         public List<CallLimitViewModel> GetCallLimitByTypeId(int limitId)
         {
-            var data = (from a in _context.tbl_Call_Memo_Limit
-                        where a.Deleted == false && a.CallLimitId == limitId
-                        orderby a.CallLimitTypeId
+            var data = (from a in _context.TBL_CALL_MEMO_LIMIT
+                        where a.DELETED == false && a.CALLLIMITID == limitId
+                        orderby a.CALLLIMITTYPEID
                         select new CallLimitViewModel
                         {
-                            MaximumAmount = a.MaximumAmount,
-                            MinimumAmount = a.MinimumAmount,
-                            CallLimitId = a.CallLimitId,
-                            companyId = a.CompanyId,
-                            FrequencyId = a.FrequencyId,
-                            FrequencyName = a.tbl_Frequency_Type.Mode,
-                            JobTitleId = a.JobTitleId,
-                            JobTitleName = _context.tbl_Staff_JobTitle.FirstOrDefault(d => d.JobTitleId == a.JobTitleId).JobTitleName,
-                            CallLimitTypeId = a.CallLimitTypeId,
-                            CallLimitTypeName = _context.tbl_Call_Memo_Type.FirstOrDefault(i => i.CallLimitTypeId == a.CallLimitTypeId).Name
+                            MaximumAmount = a.MAXIMUMAMOUNT,
+                            MinimumAmount = a.MINIMUMAMOUNT,
+                            CallLimitId = a.CALLLIMITID,
+                            companyId = a.COMPANYID,
+                            FrequencyId = a.FREQUENCYID,
+                            FrequencyName = a.TBL_FREQUENCY_TYPE.MODE,
+                            JobTitleId = a.JOBTITLEID,
+                            JobTitleName = _context.TBL_STAFF_JOBTITLE.FirstOrDefault(d => d.JOBTITLEID == a.JOBTITLEID).JOBTITLENAME,
+                            CallLimitTypeId = a.CALLLIMITTYPEID,
+                            CallLimitTypeName = _context.TBL_CALL_MEMO_TYPE.FirstOrDefault(i => i.CALLLIMITTYPEID == a.CALLLIMITTYPEID).NAME
                         }).ToList();
             return data;
         }
         public bool isLimitExist(CallLimitViewModel model)
         {
-            return _context.tbl_Call_Memo_Limit.Where(x => x.JobTitleId == model.JobTitleId && x.CallLimitTypeId == model.CallLimitTypeId).Any();
+            return _context.TBL_CALL_MEMO_LIMIT.Where(x => x.JOBTITLEID == model.JobTitleId && x.CALLLIMITTYPEID == model.CallLimitTypeId).Any();
         }
         public bool AddCallLimit(CallLimitViewModel model)
         {
-            var data = new tbl_Call_Memo_Limit
+            var data = new TBL_CALL_MEMO_LIMIT
             {
-                MaximumAmount = model.MaximumAmount,
-                MinimumAmount = model.MinimumAmount,
-                FrequencyId = model.FrequencyId,
-                JobTitleId = model.JobTitleId,
-                CallLimitTypeId = model.CallLimitTypeId,
-                CompanyId = model.companyId,
-                CreatedBy = model.createdBy,
-                DateTimeCreated = _genSetup.GetApplicationDate()
+                MAXIMUMAMOUNT = model.MaximumAmount,
+                MINIMUMAMOUNT = model.MinimumAmount,
+                FREQUENCYID = model.FrequencyId,
+                JOBTITLEID = model.JobTitleId,
+                CALLLIMITTYPEID = model.CallLimitTypeId,
+                COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = _genSetup.GetApplicationDate()
             };
 
-            _context.tbl_Call_Memo_Limit.Add(data);
+            _context.TBL_CALL_MEMO_LIMIT.Add(data);
 
             // Audit Section ---------------------------
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LimitAdded,
-                StaffId = model.createdBy,
-                BranchId = model.userBranchId,
-                Detail = $"Added tbl_Call_Limit '{ data.CallLimitId }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LimitAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = model.userBranchId,
+                DETAIL = $"Added tbl_Call_Limit '{ data.CALLLIMITID }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             _auditTrail.AddAuditTrail(audit);
@@ -157,26 +157,26 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateCallLimit(int limitId, CallLimitViewModel model)
         {
-            var data = _context.tbl_Call_Memo_Limit.Find(limitId);
+            var data = _context.TBL_CALL_MEMO_LIMIT.Find(limitId);
             if (data == null) return false;
 
-            data.MaximumAmount = model.MaximumAmount;
-            data.MinimumAmount = model.MinimumAmount;
-            data.CallLimitTypeId = model.CallLimitTypeId;
-            data.FrequencyId = model.FrequencyId;
-            data.JobTitleId = model.JobTitleId;
+            data.MAXIMUMAMOUNT = model.MaximumAmount;
+            data.MINIMUMAMOUNT = model.MinimumAmount;
+            data.CALLLIMITTYPEID = model.CallLimitTypeId;
+            data.FREQUENCYID = model.FrequencyId;
+            data.JOBTITLEID = model.JobTitleId;
             // Audit Section ---------------------------
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LimitUpdated,
-                StaffId = model.createdBy,
-                BranchId = model.userBranchId,
-                Detail = $"Updated tbl_Call_Limit : '{ data.CallLimitId }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LimitUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = model.userBranchId,
+                DETAIL = $"Updated tbl_Call_Limit : '{ data.CALLLIMITID }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             _auditTrail.AddAuditTrail(audit);
@@ -187,25 +187,25 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteCallLimit(int limitId, UserInfo user)
         {
-            var data = _context.tbl_Call_Memo_Limit.Find(limitId);
+            var data = _context.TBL_CALL_MEMO_LIMIT.Find(limitId);
             if (data != null)
             {
-                data.Deleted = true;
-                data.DeletedBy = user.staffId;
-                data.DateTimeDeleted = _genSetup.GetApplicationDate();
+                data.DELETED = true;
+                data.DELETEDBY = user.staffId;
+                data.DATETIMEDELETED = _genSetup.GetApplicationDate();
             }
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LimitDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted tbl_Call_Limit with Id : '{ limitId }' ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LimitDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted tbl_Call_Limit with Id : '{ limitId }' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             _auditTrail.AddAuditTrail(audit);
@@ -218,62 +218,62 @@ namespace FintrakBanking.Repositories.Credit
         #region "Call Memo"
         public IEnumerable<CallMemoViewModel> GetAllCallMemo(int staffId)
         {
-            var data = (from a in _context.tbl_Call_Memo
-                        join b in _context.tbl_Loan_Application on a.LoanApplicationId equals b.LoanApplicationId
-                        where a.StaffId == staffId
-                        orderby a.CallMemoId
+            var data = (from a in _context.TBL_CALL_MEMO
+                        join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        where a.STAFFID == staffId
+                        orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
-                            CallMemoId = a.CallMemoId,
-                            LoanApplicationId = a.LoanApplicationId,
-                            LoanReferenceNo = b.ApplicationReferenceNumber,
-                            StaffId = a.StaffId,
-                            CallMemoTypeId = a.CallLimitTypeId,
-                            CallMemoType = a.tbl_Call_Memo_Type.Name,
-                            CustomerName = _context.tbl_Customer.FirstOrDefault(x=>x.CustomerId == b.CustomerId).FirstName,
-                            MemoDate = a.MemoDate,
-                            NextCallDate = a.NextCallDate,
-                            Purpose = a.Purpose,
-                            Discusion = a.Discusion,
-                            Summary = a.Summary,
-                            Action = a.Action,
-                            Recommendation = a.Recommendation,
-                            createdBy = a.CreatedBy,
-                            dateTimeCreated = a.DateCreated
+                            CallMemoId = a.CALLMEMOID,
+                            LoanApplicationId = a.LOANAPPLICATIONID,
+                            LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
+                            StaffId = a.STAFFID,
+                            CallMemoTypeId = a.CALLLIMITTYPEID,
+                            CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
+                            CustomerName = _context.TBL_CUSTOMER.FirstOrDefault(x=>x.CUSTOMERID == b.CUSTOMERID).FIRSTNAME,
+                            MemoDate = a.MEMODATE,
+                            NextCallDate = a.NEXTCALLDATE,
+                            Purpose = a.PURPOSE,
+                            Discusion = a.DISCUSION,
+                            Summary = a.SUMMARY,
+                            Action = a.ACTION,
+                            Recommendation = a.RECOMMENDATION,
+                            createdBy = a.CREATEDBY,
+                            dateTimeCreated = a.DATECREATED
                         }).ToList();
             return data;
         }
         public bool AddCallMemo(CallMemoViewModel model)
         {
-            var data = new tbl_Call_Memo
+            var data = new TBL_CALL_MEMO
             {
-                LoanApplicationId = model.LoanApplicationId,
-                StaffId = model.StaffId,
-                MemoDate = model.MemoDate,
-                NextCallDate = model.NextCallDate,
-                Purpose = model.Purpose,
-                CallLimitTypeId = model.CallMemoTypeId,
-                Discusion = model.Discusion,
-                Summary = model.Summary,
-                Action = model.Action,
-                Recommendation = model.Recommendation,
-                CreatedBy = model.createdBy,
-                DateCreated = _genSetup.GetApplicationDate()
+                LOANAPPLICATIONID = model.LoanApplicationId,
+                STAFFID = model.StaffId,
+                MEMODATE = model.MemoDate,
+                NEXTCALLDATE = model.NextCallDate,
+                PURPOSE = model.Purpose,
+                CALLLIMITTYPEID = model.CallMemoTypeId,
+                DISCUSION = model.Discusion,
+                SUMMARY = model.Summary,
+                ACTION = model.Action,
+                RECOMMENDATION = model.Recommendation,
+                CREATEDBY = model.createdBy,
+                DATECREATED = _genSetup.GetApplicationDate()
             };
-            _context.tbl_Call_Memo.Add(data);
+            _context.TBL_CALL_MEMO.Add(data);
 
             // Audit Section ---------------------------
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LimitAdded,
-                StaffId = model.createdBy,
-                BranchId = model.userBranchId,
-                Detail = $"Added Call Memo for: '{ data.Purpose }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LimitAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = model.userBranchId,
+                DETAIL = $"Added Call Memo for: '{ data.PURPOSE }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             _auditTrail.AddAuditTrail(audit);
@@ -284,30 +284,30 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateCallMemo(int limitId, CallMemoViewModel model)
         {
-            var data = _context.tbl_Call_Memo.Find(limitId);
+            var data = _context.TBL_CALL_MEMO.Find(limitId);
             if (data == null) return false;
-            data.CallLimitTypeId = model.CallMemoTypeId;
-            data.LoanApplicationId = model.LoanApplicationId;
-            data.StaffId = model.StaffId;
-            data.MemoDate = model.MemoDate;
-            data.NextCallDate = model.NextCallDate;
-            data.Purpose = model.Purpose;
-            data.Discusion = model.Discusion;
-            data.Summary = model.Summary;
-            data.Action = model.Action;
-            data.Recommendation = model.Recommendation;
+            data.CALLLIMITTYPEID = model.CallMemoTypeId;
+            data.LOANAPPLICATIONID = model.LoanApplicationId;
+            data.STAFFID = model.StaffId;
+            data.MEMODATE = model.MemoDate;
+            data.NEXTCALLDATE = model.NextCallDate;
+            data.PURPOSE = model.Purpose;
+            data.DISCUSION = model.Discusion;
+            data.SUMMARY = model.Summary;
+            data.ACTION = model.Action;
+            data.RECOMMENDATION = model.Recommendation;
             // Audit Section ---------------------------
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LimitUpdated,
-                StaffId = model.createdBy,
-                BranchId = model.userBranchId,
-                Detail = $"Updated tbl_Call_Limit for data with Id : '{ data.CallMemoId }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LimitUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = model.userBranchId,
+                DETAIL = $"Updated tbl_Call_Limit for data with Id : '{ data.CALLMEMOID }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             _auditTrail.AddAuditTrail(audit);

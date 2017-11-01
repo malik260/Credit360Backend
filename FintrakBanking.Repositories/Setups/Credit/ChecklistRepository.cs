@@ -34,24 +34,24 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition()
         {
-            var data = (from a in context.tbl_Checklist_Definition
-                        where a.Deleted == false
+            var data = (from a in context.TBL_CHECKLIST_DEFINITION
+                        where a.DELETED == false
                         select new ChecklistDefinitionViewModel
                         {
-                            checkListDefinitionId = a.CheckListDefinitionId,
-                            approvalLevelId = a.ApprovalLevelId,
-                            approvalLevelName = a.tbl_Approval_Level.LevelName,
-                            isActive = a.IsActive,
-                            isRequired = a.IsRequired,
-                            productId = a.ProductId,
-                            productName = a.tbl_Product.ProductName,
-                            checkListItemId = a.CheckListItemId,
-                            checkListItemName = a.tbl_CheckList_Item.CheckListItemName,
-                            itemDescription = a.ItemDescription,
-                            companyId = a.CompanyId,
-                            companyName = a.tbl_Company.Name,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = a.CreatedBy
+                            checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                            approvalLevelId = a.APPROVALLEVELID,
+                            approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                            isActive = a.ISACTIVE,
+                            isRequired = a.ISREQUIRED,
+                            productId = a.PRODUCTID,
+                            productName = a.TBL_PRODUCT.PRODUCTNAME,
+                            checkListItemId = a.CHECKLISTITEMID,
+                            checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                            itemDescription = a.ITEMDESCRIPTION,
+                            companyId = a.COMPANYID,
+                            companyName = a.TBL_COMPANY.NAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
                         }).ToList();
             return data;
 
@@ -59,24 +59,24 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId)
         {
-            var data = (from a in context.tbl_Checklist_Definition
-                        where a.Deleted == false && a.ProductId == productId
+            var data = (from a in context.TBL_CHECKLIST_DEFINITION
+                        where a.DELETED == false && a.PRODUCTID == productId
                         select new ChecklistDefinitionViewModel
                         {
-                            checkListDefinitionId = a.CheckListDefinitionId,
-                            approvalLevelId = a.ApprovalLevelId,
-                            approvalLevelName = a.tbl_Approval_Level.LevelName,
-                            isActive = a.IsActive,
-                            isRequired = a.IsRequired,
-                            productId = a.ProductId,
-                            productName = a.tbl_Product.ProductName,
-                            checkListItemId = a.CheckListItemId,
-                            checkListItemName = a.tbl_CheckList_Item.CheckListItemName,
-                            itemDescription = a.ItemDescription,
-                            companyId = a.CompanyId,
-                            companyName = a.tbl_Company.Name,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = a.CreatedBy
+                            checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                            approvalLevelId = a.APPROVALLEVELID,
+                            approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                            isActive = a.ISACTIVE,
+                            isRequired = a.ISREQUIRED,
+                            productId = a.PRODUCTID,
+                            productName = a.TBL_PRODUCT.PRODUCTNAME,
+                            checkListItemId = a.CHECKLISTITEMID,
+                            checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                            itemDescription = a.ITEMDESCRIPTION,
+                            companyId = a.COMPANYID,
+                            companyName = a.TBL_COMPANY.NAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
                         }).ToList();
             return data;
 
@@ -84,18 +84,18 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ChecklistItemViewModel> GetAllUnmappedChecklistItemsToApprovalLevelAndProduct(int approvalLevelId, int productId)
         {
-            var dataList = (from data in context.tbl_Checklist_Definition
-                            where data.ProductId == productId && data.ApprovalLevelId == approvalLevelId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
-                            select data.CheckListItemId).ToList();
+            var dataList = (from data in context.TBL_CHECKLIST_DEFINITION
+                            where data.PRODUCTID == productId && data.APPROVALLEVELID == approvalLevelId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
+                            select data.CHECKLISTITEMID).ToList();
 
-            var unmappedChecklistItems = (from data in context.tbl_CheckList_Item
-                                          where data.Deleted == false
+            var unmappedChecklistItems = (from data in context.TBL_CHECKLIST_ITEM
+                                          where data.DELETED == false
                                           select new ChecklistItemViewModel
                                           {
-                                              checkListItemId = data.CheckListItemId,
-                                              checkListItemName = data.CheckListItemName,
-                                              dateTimeCreated = data.DateTimeCreated,
-                                              createdBy = (int)data.CreatedBy
+                                              checkListItemId = data.CHECKLISTITEMID,
+                                              checkListItemName = data.CHECKLISTITEMNAME,
+                                              dateTimeCreated = data.DATETIMECREATED,
+                                              createdBy = (int)data.CREATEDBY
                                           });
 
             if (dataList.Any())
@@ -108,23 +108,23 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId)
         {
-            var data = (from a in context.tbl_Checklist_Definition
-                        where a.Deleted == false && CheckListDefinitionId == a.CheckListDefinitionId
+            var data = (from a in context.TBL_CHECKLIST_DEFINITION
+                        where a.DELETED == false && CheckListDefinitionId == a.CHECKLISTDEFINITIONID
                         select new ChecklistDefinitionViewModel
                         {
-                            checkListDefinitionId = a.CheckListDefinitionId,
-                            approvalLevelId = a.ApprovalLevelId,
-                            isActive = a.IsActive,
-                            isRequired = a.IsRequired,
-                            productId = a.ProductId,
-                            productName = a.tbl_Product.ProductName,
-                            checkListItemId = a.CheckListItemId,
-                            checkListItemName = a.tbl_CheckList_Item.CheckListItemName,
-                            itemDescription = a.ItemDescription,
-                            companyId = a.CompanyId,
-                            companyName = a.tbl_Company.Name,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = a.CreatedBy
+                            checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                            approvalLevelId = a.APPROVALLEVELID,
+                            isActive = a.ISACTIVE,
+                            isRequired = a.ISREQUIRED,
+                            productId = a.PRODUCTID,
+                            productName = a.TBL_PRODUCT.PRODUCTNAME,
+                            checkListItemId = a.CHECKLISTITEMID,
+                            checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                            itemDescription = a.ITEMDESCRIPTION,
+                            companyId = a.COMPANYID,
+                            companyName = a.TBL_COMPANY.NAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
                         }).ToList();
             return data;
         }
@@ -138,27 +138,27 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ChecklistDefinitionViewModel> GetUnmappedChecklistDefintionToApprovalLevel(int approvalLevelId)
         {
-            var dataList = (from data in context.tbl_Checklist_Definition
-                            where data.ApprovalLevelId == approvalLevelId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
-                            select data.CheckListDefinitionId).ToList();
+            var dataList = (from data in context.TBL_CHECKLIST_DEFINITION
+                            where data.APPROVALLEVELID == approvalLevelId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
+                            select data.CHECKLISTDEFINITIONID).ToList();
 
-            var unmappedChecklistItems = (from data in context.tbl_Checklist_Definition
-                                          where data.Deleted == false
+            var unmappedChecklistItems = (from data in context.TBL_CHECKLIST_DEFINITION
+                                          where data.DELETED == false
                                           select new ChecklistDefinitionViewModel
                                           {
-                                              checkListDefinitionId = data.CheckListDefinitionId,
-                                              approvalLevelId = data.ApprovalLevelId,
-                                              isActive = data.IsActive,
-                                              isRequired = data.IsRequired,
-                                              productId = data.ProductId,
-                                              productName = data.tbl_Product.ProductName,
-                                              checkListItemId = data.CheckListItemId,
-                                              checkListItemName = data.tbl_CheckList_Item.CheckListItemName,
-                                              itemDescription = data.ItemDescription,
-                                              companyId = data.CompanyId,
-                                              companyName = data.tbl_Company.Name,
-                                              dateTimeCreated = data.DateTimeCreated,
-                                              createdBy = data.CreatedBy
+                                              checkListDefinitionId = data.CHECKLISTDEFINITIONID,
+                                              approvalLevelId = data.APPROVALLEVELID,
+                                              isActive = data.ISACTIVE,
+                                              isRequired = data.ISREQUIRED,
+                                              productId = data.PRODUCTID,
+                                              productName = data.TBL_PRODUCT.PRODUCTNAME,
+                                              checkListItemId = data.CHECKLISTITEMID,
+                                              checkListItemName = data.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                                              itemDescription = data.ITEMDESCRIPTION,
+                                              companyId = data.COMPANYID,
+                                              companyName = data.TBL_COMPANY.NAME,
+                                              dateTimeCreated = data.DATETIMECREATED,
+                                              createdBy = data.CREATEDBY
                                           });
 
             if (dataList.Any())
@@ -171,37 +171,37 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddChecklistDefinition(ChecklistDefinitionViewModel model)
         {
-            var data = new tbl_Checklist_Definition
+            var data = new TBL_CHECKLIST_DEFINITION
             {
-                ApprovalLevelId = (int)model.approvalLevelId,
-                CheckListItemId = model.checkListItemId,
-                ItemDescription = model.itemDescription,
-                IsRequired = model.isRequired,
-                CompanyId = model.companyId,
-                IsActive = model.isActive,
-                ProductId = (short)model.productId,
-                DateTimeCreated = _genSetup.GetApplicationDate(),
-                CreatedBy = (int)model.createdBy
+                APPROVALLEVELID = (int)model.approvalLevelId,
+                CHECKLISTITEMID = model.checkListItemId,
+                ITEMDESCRIPTION = model.itemDescription,
+                ISREQUIRED = model.isRequired,
+                COMPANYID = model.companyId,
+                ISACTIVE = model.isActive,
+                PRODUCTID = (short)model.productId,
+                DATETIMECREATED = _genSetup.GetApplicationDate(),
+                CREATEDBY = (int)model.createdBy
             };
 
             //Audit Section ---------------------------
 
-            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductId == data.ProductId))?.ProductName;
-            var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId))?.CheckListItemName;
+            var audit_product = (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == data.PRODUCTID))?.PRODUCTNAME;
+            var audit_checklist = (context.TBL_CHECKLIST_ITEM.FirstOrDefault(x => x.CHECKLISTITEMID == data.CHECKLISTITEMID))?.CHECKLISTITEMNAME;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanChecklistAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
-            context.tbl_Checklist_Definition.Add(data);
+            context.TBL_CHECKLIST_DEFINITION.Add(data);
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
@@ -228,73 +228,73 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in model.checklistItems)
             {
-                var data = new tbl_Checklist_Definition
+                var data = new TBL_CHECKLIST_DEFINITION
                 {
-                    ApprovalLevelId = (int)model.approvalLevelId,
-                    ProductId = (short)model.productId,
-                    CompanyId = model.companyId,
-                    CheckListItemId = item.checkListItemId,
-                    ItemDescription = item.itemDescription,
-                    IsRequired = item.isRequired,
-                    IsActive = item.isActive,
-                    DateTimeCreated = _genSetup.GetApplicationDate(),
-                    CreatedBy = (int)model.createdBy
+                    APPROVALLEVELID = (int)model.approvalLevelId,
+                    PRODUCTID = (short)model.productId,
+                    COMPANYID = model.companyId,
+                    CHECKLISTITEMID = item.checkListItemId,
+                    ITEMDESCRIPTION = item.itemDescription,
+                    ISREQUIRED = item.isRequired,
+                    ISACTIVE = item.isActive,
+                    DATETIMECREATED = _genSetup.GetApplicationDate(),
+                    CREATEDBY = (int)model.createdBy
                 };
 
                 //Audit Section ---------------------------
 
-                var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductId == data.ProductId)).ProductName;
-                var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
+                var audit_product = (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == data.PRODUCTID)).PRODUCTNAME;
+                var audit_checklist = (context.TBL_CHECKLIST_ITEM.FirstOrDefault(x => x.CHECKLISTITEMID == data.CHECKLISTITEMID)).CHECKLISTITEMNAME;
 
-                var audit = new tbl_Audit
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.LoanChecklistAdded,
-                    StaffId = model.createdBy,
-                    BranchId = (short)model.userBranchId,
-                    Detail = $"Added Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
-                    IPAddress = model.userIPAddress,
-                    Url = model.applicationUrl,
-                    ApplicationDate = _genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
 
-                context.tbl_Checklist_Definition.Add(data);
+                context.TBL_CHECKLIST_DEFINITION.Add(data);
                 this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -------------------------------
 
-            }
+            }      
 
             return context.SaveChanges() != 0;
         }
 
         public bool UpdateChecklistDefinition(int CheckListDefinitionId, ChecklistDefinitionViewModel model)
         {
-            var data = this.context.tbl_Checklist_Definition.Find(CheckListDefinitionId);
+            var data = this.context.TBL_CHECKLIST_DEFINITION.Find(CheckListDefinitionId);
             if (data == null) return false;
-            data.ApprovalLevelId = (int)model.approvalLevelId;
-            data.ItemDescription = model.itemDescription;
-            data.CompanyId = model.companyId;
-            data.CheckListItemId = model.checkListItemId;
-            data.IsActive = model.isActive;
-            data.IsRequired = model.isRequired;
-            data.ProductId = (short)model.productId;
-            data.DateTimeUpdated = _genSetup.GetApplicationDate();
-            data.LastUpdatedBy = (int)model.createdBy;
+            data.APPROVALLEVELID = (int)model.approvalLevelId;
+            data.ITEMDESCRIPTION = model.itemDescription;
+            data.COMPANYID = model.companyId;
+            data.CHECKLISTITEMID = model.checkListItemId;
+            data.ISACTIVE = model.isActive;
+            data.ISREQUIRED = model.isRequired;
+            data.PRODUCTID = (short)model.productId;
+            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+            data.LASTUPDATEDBY = (int)model.createdBy;
 
             //Audit Section ---------------------------
-            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductId == data.ProductId)).ProductName;
-            var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
-
-            var audit = new tbl_Audit
+            var audit_product = (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == data.PRODUCTID)).PRODUCTNAME;
+            var audit_checklist = (context.TBL_CHECKLIST_ITEM.FirstOrDefault(x => x.CHECKLISTITEMID == data.CHECKLISTITEMID)).CHECKLISTITEMNAME;
+            
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanChecklistUpdated,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
             // end of Audit section -------------------------------
@@ -305,26 +305,26 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteChecklistDefinition(int CheckListDefinitionId, UserInfo user)
         {
-            var data = this.context.tbl_Checklist_Definition.Find(CheckListDefinitionId);
-            data.Deleted = true;
-            data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicationDate();
+            var data = this.context.TBL_CHECKLIST_DEFINITION.Find(CheckListDefinitionId);
+            data.DELETED = true;
+            data.DELETEDBY = (int)user.staffId;
+            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
 
-            var audit_product = (context.tbl_Product.FirstOrDefault(x => x.ProductId == data.ProductId)).ProductName;
-            var audit_checklist = (context.tbl_CheckList_Item.FirstOrDefault(x => x.CheckListItemId == data.CheckListItemId)).CheckListItemName;
+            var audit_product = (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == data.PRODUCTID)).PRODUCTNAME;
+            var audit_checklist = (context.TBL_CHECKLIST_ITEM.FirstOrDefault(x => x.CHECKLISTITEMID == data.CHECKLISTITEMID)).CHECKLISTITEMNAME;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanChecklistDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Checklist Definition {audit_checklist} to tbl_Product '{audit_product}' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -336,67 +336,67 @@ namespace FintrakBanking.Repositories.Credit
         #region Checklist Details
         public IEnumerable<ChecklistDetailViewModel> GetAllChecklistDetail()
         {
-            var data = (from a in context.tbl_Checklist_Detail
-                        where a.Deleted == false
+            var data = (from a in context.TBL_CHECKLIST_DETAIL
+                        where a.DELETED == false
                         select new ChecklistDetailViewModel
                         {
-                            checklistId = a.ChecklistId,
-                            checkListDefinitionId = a.CheckListDefinitionId,
-                            checkListDefinitionItemName = a.tbl_Checklist_Definition.tbl_CheckList_Item.CheckListItemName,
-                            targetTypeId = a.TargetTypeId,
-                            targetTypeName = a.tbl_Checklist_TargetType.TargetTypeName,
-                            targetId = a.TargetId,
-                            checkListStatusId = a.CheckListStatusId,
-                            checkListStatusName = a.tbl_Checklist_Status.ChecklistStatusName,
-                            checkedBy = a.CheckedBy,
-                            deferedDate = a.DeferedDate,
-                            remark = a.Remark,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = (int)a.CreatedBy
+                            checklistId = a.CHECKLISTID,
+                            checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                            checkListDefinitionItemName = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                            targetTypeId = a.TARGETTYPEID,
+                            targetTypeName = a.TBL_CHECKLIST_TARGETTYPE.TARGETTYPENAME,
+                            targetId = a.TARGETID,
+                            checkListStatusId = a.CHECKLISTSTATUSID,
+                            checkListStatusName = a.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                            checkedBy = a.CHECKEDBY,
+                            deferedDate = a.DEFEREDDATE,
+                            remark = a.REMARK,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = (int)a.CREATEDBY
                         }).ToList();
             return data;
         }
 
         public List<ChecklistDetailViewModel> GetAllChecklistDetailById(int ChecklistId)
         {
-            var data = (from a in context.tbl_Checklist_Detail
-                        where a.Deleted == false && ChecklistId == a.ChecklistId
+            var data = (from a in context.TBL_CHECKLIST_DETAIL
+                        where a.DELETED == false && ChecklistId == a.CHECKLISTID
                         select new ChecklistDetailViewModel
                         {
-                            checklistId = a.ChecklistId,
-                            checkListDefinitionId = a.CheckListDefinitionId,
-                            checkListDefinitionItemName = a.tbl_Checklist_Definition.tbl_CheckList_Item.CheckListItemName,
-                            targetTypeId = a.TargetTypeId,
-                            targetTypeName = a.tbl_Checklist_TargetType.TargetTypeName,
-                            targetId = a.TargetId,
-                            checkListStatusId = a.CheckListStatusId,
-                            checkedBy = a.CheckedBy,
-                            deferedDate = a.DeferedDate,
-                            remark = a.Remark,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = (int)a.CreatedBy
+                            checklistId = a.CHECKLISTID,
+                            checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                            checkListDefinitionItemName = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                            targetTypeId = a.TARGETTYPEID,
+                            targetTypeName = a.TBL_CHECKLIST_TARGETTYPE.TARGETTYPENAME,
+                            targetId = a.TARGETID,
+                            checkListStatusId = a.CHECKLISTSTATUSID,
+                            checkedBy = a.CHECKEDBY,
+                            deferedDate = a.DEFEREDDATE,
+                            remark = a.REMARK,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = (int)a.CREATEDBY
                         }).ToList();
             return data;
         }
 
         public List<ChecklistDetailViewModel> GetAllChecklistDetailByProductId(int targetTypeId, int targetId)
         {
-            var data = (from a in context.tbl_Checklist_Detail
-                        where a.Deleted == false && a.TargetTypeId == targetTypeId && a.TargetId == targetId
+            var data = (from a in context.TBL_CHECKLIST_DETAIL
+                        where a.DELETED == false && a.TARGETTYPEID == targetTypeId && a.TARGETID == targetId
                         select new ChecklistDetailViewModel
                         {
-                            checklistId = a.ChecklistId,
-                            checkListDefinitionId = a.CheckListDefinitionId,
-                            checkListDefinitionItemName = a.tbl_Checklist_Definition.tbl_CheckList_Item.CheckListItemName,
-                            targetTypeId = a.TargetTypeId,
-                            targetTypeName = a.tbl_Checklist_TargetType.TargetTypeName,
-                            targetId = a.TargetId,
-                            checkListStatusId = a.CheckListStatusId,
-                            checkedBy = a.CheckedBy,
-                            deferedDate = a.DeferedDate,
-                            remark = a.Remark,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = (int)a.CreatedBy
+                            checklistId = a.CHECKLISTID,
+                            checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                            checkListDefinitionItemName = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                            targetTypeId = a.TARGETTYPEID,
+                            targetTypeName = a.TBL_CHECKLIST_TARGETTYPE.TARGETTYPENAME,
+                            targetId = a.TARGETID,
+                            checkListStatusId = a.CHECKLISTSTATUSID,
+                            checkedBy = a.CHECKEDBY,
+                            deferedDate = a.DEFEREDDATE,
+                            remark = a.REMARK,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = (int)a.CREATEDBY
                         }).ToList();
             return data;
         }
@@ -418,29 +418,29 @@ namespace FintrakBanking.Repositories.Credit
                 AddChecklistDetail(model);
 
             }
-            var loanDetailsData = context.tbl_Loan_Application_Detail.Find(loanApplicationDetailId);
+            var loanDetailsData = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
             if (loanDetailsData != null)
             {
-                loanDetailsData.HasDoneChecklist = true;
+                loanDetailsData.HASDONECHECKLIST = true;
             }
-            var loanData = (from l in context.tbl_Loan_Application_Detail where l.LoanApplicationId ==loanApplicationId select l).ToList();
+            var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID ==loanApplicationId select l).ToList();
             if (loanData != null)
             {
                 var custNo = loanData.Count();
                 var checkedNo = 0;
                 foreach (var item in loanData)
                 {
-                    if (item.HasDoneChecklist == true)
+                    if (item.HASDONECHECKLIST == true)
                     {
                        ++checkedNo ;
                     }
                 }
                 if (custNo == checkedNo)
                 {
-                    var loanApplication = context.tbl_Loan_Application.Find(loanApplicationId);
+                    var loanApplication = context.TBL_LOAN_APPLICATION.Find(loanApplicationId);
                     if (loanApplication != null)
                     {
-                        loanApplication.ApplicationStatusId = (int)LoanApplicationStatusEnum.ChecklistCompleted;
+                        loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
                     }
                 }
                 
@@ -449,35 +449,35 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool AddChecklistDetail(ChecklistDetailViewModel model)
         {
-            var data = new tbl_Checklist_Detail
+            var data = new TBL_CHECKLIST_DETAIL
             {
-                CheckListDefinitionId = model.checkListDefinitionId,
-                TargetTypeId = model.targetTypeId,
-                TargetId = model.targetId,
-                CheckListStatusId = model.checkListStatusId,
-                CheckedBy = (int)model.createdBy,
-                DeferedDate = model.deferedDate,
-                Remark = model.remark,
-                DateTimeCreated = _genSetup.GetApplicationDate(),
-                CreatedBy = (int)model.createdBy
+                CHECKLISTDEFINITIONID = model.checkListDefinitionId,
+                TARGETTYPEID = model.targetTypeId,
+                TARGETID = model.targetId,
+                CHECKLISTSTATUSID = model.checkListStatusId,
+                CHECKEDBY = (int)model.createdBy,
+                DEFEREDDATE = model.deferedDate,
+                REMARK = model.remark,
+                DATETIMECREATED = _genSetup.GetApplicationDate(),
+                CREATEDBY = (int)model.createdBy
             };
 
             // Audit Section ---------------------------
-            var audit_checklist = (context.tbl_Checklist_Definition.FirstOrDefault(x => x.CheckListDefinitionId == data.CheckListDefinitionId));
+            var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.CHECKLISTDEFINITIONID == data.CHECKLISTDEFINITIONID));
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanChecklistAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Loan Checklist {audit_checklist.tbl_CheckList_Item.CheckListItemName}", // on Loan '{data.LoanId}' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Loan Checklist {audit_checklist.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME}", // on Loan '{data.LoanId}' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
-            context.tbl_Checklist_Detail.Add(data);
+            context.TBL_CHECKLIST_DETAIL.Add(data);
             this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
@@ -487,32 +487,32 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateChecklistDetail(int ChecklistId, ChecklistDetailViewModel model)
         {
-            var data = this.context.tbl_Checklist_Detail.Find(ChecklistId);
+            var data = this.context.TBL_CHECKLIST_DETAIL.Find(ChecklistId);
             if (data == null) return false;
 
-            data.CheckListDefinitionId = model.checkListDefinitionId;
-            data.TargetTypeId = model.targetTypeId;
-            data.TargetId = model.targetId;
-            data.CheckListStatusId = model.checkListStatusId;
-            data.CheckedBy = (int)model.createdBy;
-            data.DeferedDate = model.deferedDate;
-            data.Remark = model.remark;
-            data.DateTimeUpdated = _genSetup.GetApplicationDate();
-            data.LastUpdatedBy = (int)model.createdBy;
+            data.CHECKLISTDEFINITIONID = model.checkListDefinitionId;
+            data.TARGETTYPEID = model.targetTypeId;
+            data.TARGETID = model.targetId;
+            data.CHECKLISTSTATUSID = model.checkListStatusId;
+            data.CHECKEDBY = (int)model.createdBy;
+            data.DEFEREDDATE = model.deferedDate;
+            data.REMARK = model.remark;
+            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+            data.LASTUPDATEDBY = (int)model.createdBy;
 
             // Audit Section ---------------------------
-            var audit_checklist = (context.tbl_Checklist_Definition.FirstOrDefault(x => x.CheckListDefinitionId == data.CheckListDefinitionId));
+            var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.CHECKLISTDEFINITIONID == data.CHECKLISTDEFINITIONID));
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanChecklistAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Loan Checklist {audit_checklist.tbl_CheckList_Item.CheckListItemName}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Loan Checklist {audit_checklist.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -524,25 +524,25 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteChecklistDetail(int ChecklistId, UserInfo user)
         {
-            var data = context.tbl_Checklist_Detail.Find(ChecklistId);
-            data.Deleted = true;
-            data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicationDate();
+            var data = context.TBL_CHECKLIST_DETAIL.Find(ChecklistId);
+            data.DELETED = true;
+            data.DELETEDBY = (int)user.staffId;
+            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit_checklist = (context.tbl_Checklist_Definition.FirstOrDefault(x => x.
-             CheckListDefinitionId == context.tbl_Checklist_Detail.Find(ChecklistId).CheckListDefinitionId));
+            var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.
+             CHECKLISTDEFINITIONID == context.TBL_CHECKLIST_DETAIL.Find(ChecklistId).CHECKLISTDEFINITIONID));
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanChecklistAdded,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Added Loan Checklist {audit_checklist.tbl_CheckList_Item.CheckListItemName}",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Added Loan Checklist {audit_checklist.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -555,55 +555,55 @@ namespace FintrakBanking.Repositories.Credit
         #region Checklist Item
         public IEnumerable<ChecklistItemViewModel> GetAllChecklistItem()
         {
-            var data = (from a in context.tbl_CheckList_Item
-                        where a.Deleted == false
+            var data = (from a in context.TBL_CHECKLIST_ITEM
+                        where a.DELETED == false
                         select new ChecklistItemViewModel
                         {
-                            checkListItemId = a.CheckListItemId,
-                            checkListItemName = a.CheckListItemName,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = (int)a.CreatedBy
+                            checkListItemId = a.CHECKLISTITEMID,
+                            checkListItemName = a.CHECKLISTITEMNAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = (int)a.CREATEDBY
                         }).ToList();
             return data;
         }
 
         public List<ChecklistItemViewModel> GetAllChecklistItemById(int CheckListItemId)
         {
-            var data = (from a in context.tbl_CheckList_Item
-                        where a.Deleted == false && CheckListItemId == a.CheckListItemId
+            var data = (from a in context.TBL_CHECKLIST_ITEM
+                        where a.DELETED == false && CheckListItemId == a.CHECKLISTITEMID
                         select new ChecklistItemViewModel
                         {
-                            checkListItemId = a.CheckListItemId,
-                            checkListItemName = a.CheckListItemName,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = (int)a.CreatedBy
+                            checkListItemId = a.CHECKLISTITEMID,
+                            checkListItemName = a.CHECKLISTITEMNAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = (int)a.CREATEDBY
                         }).ToList();
             return data;
         }
 
         public bool AddChecklistItem(ChecklistItemViewModel model)
         {
-            var data = new tbl_CheckList_Item
+            var data = new TBL_CHECKLIST_ITEM
             {
-                CheckListItemName = model.checkListItemName,
-                DateTimeCreated = _genSetup.GetApplicationDate(),
-                CreatedBy = (int)model.createdBy
+                CHECKLISTITEMNAME = model.checkListItemName,
+                DATETIMECREATED = _genSetup.GetApplicationDate(),
+                CREATEDBY = (int)model.createdBy
             };
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ChecklistItemAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Checklist Item Item '{model.checkListItemName}'",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ChecklistItemAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Checklist Item Item '{model.checkListItemName}'",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
-            context.tbl_CheckList_Item.Add(data);
+            context.TBL_CHECKLIST_ITEM.Add(data);
             this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
@@ -626,24 +626,24 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateChecklistItem(int CheckListItemId, ChecklistItemViewModel model)
         {
-            var data = this.context.tbl_CheckList_Item.Find(CheckListItemId);
+            var data = this.context.TBL_CHECKLIST_ITEM.Find(CheckListItemId);
             if (data == null) return false;
 
-            data.CheckListItemName = model.checkListItemName;
-            data.DateTimeUpdated = _genSetup.GetApplicationDate();
-            data.LastUpdatedBy = (int)model.createdBy;
+            data.CHECKLISTITEMNAME = model.checkListItemName;
+            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+            data.LASTUPDATEDBY = (int)model.createdBy;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ChecklistItemUpdated,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated Checklist Item '{model.checkListItemName}'",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ChecklistItemUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Checklist Item '{model.checkListItemName}'",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -654,22 +654,22 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteChecklistItem(int CheckListItemId, UserInfo user)
         {
-            var data = context.tbl_CheckList_Item.Find(CheckListItemId);
-            data.Deleted = true;
-            data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicationDate();
+            var data = context.TBL_CHECKLIST_ITEM.Find(CheckListItemId);
+            data.DELETED = true;
+            data.DELETEDBY = (int)user.staffId;
+            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
-            {
-                AuditTypeId = (short)AuditTypeEnum.ChecklistItemDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Checklist Item '{data.CheckListItemName}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+            var audit = new TBL_AUDIT
+            {  
+                AUDITTYPEID = (short)AuditTypeEnum.ChecklistItemDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Checklist Item '{data.CHECKLISTITEMNAME}'",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -682,24 +682,24 @@ namespace FintrakBanking.Repositories.Credit
         #region CheckList Select List
         public IEnumerable<CheckListStatusViewModel> GetAllChecklistStatus()
         {
-            var data = (from a in context.tbl_Checklist_Status
-                        where a.Deleted == false
+            var data = (from a in context.TBL_CHECKLIST_STATUS
+                        where a.DELETED == false
                         select new CheckListStatusViewModel
                         {
-                            checklistStatusId = a.ChecklistStatusId,
-                            checklistStatusName = a.ChecklistStatusName,
+                            checklistStatusId = a.CHECKLISTSTATUSID,
+                            checklistStatusName = a.CHECKLISTSTATUSNAME,
                         }).ToList();
             return data;
         }
 
         public IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistTargetType()
         {
-            var data = (from a in context.tbl_Checklist_TargetType
-                        where a.Deleted == false
+            var data = (from a in context.TBL_CHECKLIST_TARGETTYPE
+                        where a.DELETED == false
                         select new CheckListTargetTypeViewModel
                         {
-                            targetTypeId = a.TargetTypeId,
-                            targetTypeName = a.TargetTypeName
+                            targetTypeId = a.TARGETTYPEID,
+                            targetTypeName = a.TARGETTYPENAME
                         }).ToList();
             return data;
         }

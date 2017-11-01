@@ -10,7 +10,7 @@ namespace FintrakBanking.Interfaces.Admin
 {
     public interface IAuditTrailRepository
     {
-        void AddAuditTrail(tbl_Audit auditInput);
+        void AddAuditTrail(TBL_AUDIT auditInput);
 
         IQueryable<AuditViewModel> GetAuditTrail(short branchId);
     }

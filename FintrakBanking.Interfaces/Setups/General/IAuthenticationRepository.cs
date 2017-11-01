@@ -28,7 +28,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         // Groups
 
-        IEnumerable<tbl_Profile_Group> GetAllGroups();
+        IEnumerable<TBL_PROFILE_GROUP> GetAllGroups();
 
     }
 }

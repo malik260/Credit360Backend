@@ -49,40 +49,40 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public int AddProductFee(ProductFeeViewModel productFee)
         {
-            var existingApprovedProduct = context.tbl_Product.Where(x => x.ProductId == productFee.productId);
-            var dataExist = this.context.tbl_Product_Charge_Fee.FirstOrDefault(x => x.ProductId == productFee.productId && x.ChargeFeeId == productFee.feeId && x.Deleted == true); // .Find(accountId);
+            var existingApprovedProduct = context.TBL_PRODUCT.Where(x => x.PRODUCTID == productFee.productId);
+            var dataExist = this.context.TBL_PRODUCT_CHARGE_FEE.FirstOrDefault(x => x.PRODUCTID == productFee.productId && x.CHARGEFEEID == productFee.feeId && x.DELETED == true); // .Find(accountId);
 
             var productFeeEntity = dataExist;
 
             if (dataExist == null)
             {
-                productFeeEntity = new tbl_Product_Charge_Fee()
+                productFeeEntity = new TBL_PRODUCT_CHARGE_FEE()
                 {
-                    ProductId = productFee.productId,
-                    ChargeFeeId = productFee.feeId,
-                    CompanyId = productFee.companyId,
+                    PRODUCTID = productFee.productId,
+                    CHARGEFEEID = productFee.feeId,
+                    COMPANYID = productFee.companyId,
 
-                    RateValue = productFee.rateValue,
-                    DependentAmount = productFee.dependentAmount,
+                    RATEVALUE = productFee.rateValue,
+                    DEPENDENTAMOUNT = productFee.dependentAmount,
 
-                    CreatedBy = productFee.createdBy,
-                    DateTimeCreated = genSetup.GetApplicationDate(),
-                    Deleted = false
+                    CREATEDBY = productFee.createdBy,
+                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                    DELETED = false
                 };
 
-                this.context.tbl_Product_Charge_Fee.Add(productFeeEntity);
+                this.context.TBL_PRODUCT_CHARGE_FEE.Add(productFeeEntity);
                 // Audit Section ---------------------------
-                var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId)?.ProductName;
-                var audit = new tbl_Audit
+                var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == productFee.productId)?.PRODUCTNAME;
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.ProductFeeAdded,
-                    StaffId = productFee.createdBy,
-                    BranchId = (short)productFee.userBranchId,
-                    Detail = $"Added Product Fee: { productFee.feeName } to product {product} with amount {productFee.rateValue} ",
-                    IPAddress = productFee.userIPAddress,
-                    Url = productFee.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.ProductFeeAdded,
+                    STAFFID = productFee.createdBy,
+                    BRANCHID = (short)productFee.userBranchId,
+                    DETAIL = $"Added Product Fee: { productFee.feeName } to product {product} with amount {productFee.rateValue} ",
+                    IPADDRESS = productFee.userIPAddress,
+                    URL = productFee.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -91,64 +91,64 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             else
             {
-                productFeeEntity.RateValue = productFee.rateValue;
-                productFeeEntity.DependentAmount = productFee.dependentAmount;
+                productFeeEntity.RATEVALUE = productFee.rateValue;
+                productFeeEntity.DEPENDENTAMOUNT = productFee.dependentAmount;
 
-                productFeeEntity.Deleted = false;
+                productFeeEntity.DELETED = false;
             }
 
             var status = this.SaveAll();
 
             if (status)
-                return productFeeEntity.ProductFeeId;
+                return productFeeEntity.PRODUCTFEEID;
             return -1;
         }
 
         public int AddTempProductFee(ProductFeeViewModel productFee)
         {
-            var dataExist = this.context.tbl_Temp_Product_Charge_Fee.FirstOrDefault(x => x.ProductId == productFee.productId
-                                                                && x.ProductFeeId == productFee.feeId
-                                                                && x.Deleted == true); // .Find(accountId);
+            var dataExist = this.context.TBL_TEMP_PRODUCT_CHARGE_FEE.FirstOrDefault(x => x.PRODUCTID == productFee.productId
+                                                                && x.PRODUCTFEEID == productFee.feeId
+                                                                && x.DELETED == true); // .Find(accountId);
 
             var tempProductFeeEntity = dataExist;
 
             if (dataExist == null)
             {
-                tempProductFeeEntity = new tbl_Temp_Product_Charge_Fee()
+                tempProductFeeEntity = new TBL_TEMP_PRODUCT_CHARGE_FEE()
                 {
                     //ProductId = productFee.productId,
-                    ChargeFeeId = productFee.feeId,
-                    CompanyId = productFee.companyId,
+                    CHARGEFEEID = productFee.feeId,
+                    COMPANYID = productFee.companyId,
 
-                    RateValue = productFee.rateValue,
-                    DependentAmount = productFee.dependentAmount,
+                    RATEVALUE = productFee.rateValue,
+                    DEPENDENTAMOUNT = productFee.dependentAmount,
 
-                    CreatedBy = productFee.createdBy,
-                    DateTimeCreated = genSetup.GetApplicationDate(),
-                    Deleted = false,
+                    CREATEDBY = productFee.createdBy,
+                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                    DELETED = false,
                 };
 
-                var existingProductApprovalLog = context.tbl_Temp_Product.Find(productFee.productId);
-                var productData = context.tbl_Temp_Product.Find(productFee.productId);
+                var existingProductApprovalLog = context.TBL_TEMP_PRODUCT.Find(productFee.productId);
+                var productData = context.TBL_TEMP_PRODUCT.Find(productFee.productId);
 
                 if (existingProductApprovalLog != null)
                 {
-                    if (productData != null) productData.IsCurrent = true;
+                    if (productData != null) productData.ISCURRENT = true;
                 }
 
-                this.context.tbl_Temp_Product_Charge_Fee.Add(tempProductFeeEntity);
+                this.context.TBL_TEMP_PRODUCT_CHARGE_FEE.Add(tempProductFeeEntity);
                 // Audit Section ---------------------------
-                var productName = this.context.tbl_Temp_Product.FirstOrDefault(x => x.ProductId == productFee.productId)?.ProductName;
-                var audit = new tbl_Audit
+                var productName = this.context.TBL_TEMP_PRODUCT.FirstOrDefault(x => x.PRODUCTID == productFee.productId)?.PRODUCTNAME;
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.ProductFeeAdded,
-                    StaffId = productFee.createdBy,
-                    BranchId = (short)productFee.userBranchId,
-                    Detail = $"Initiated adding Fee: { productFee.feeName } for product {productName} with amount {productFee.rateValue} ",
-                    IPAddress = productFee.userIPAddress,
-                    Url = productFee.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.ProductFeeAdded,
+                    STAFFID = productFee.createdBy,
+                    BRANCHID = (short)productFee.userBranchId,
+                    DETAIL = $"Initiated adding Fee: { productFee.feeName } for product {productName} with amount {productFee.rateValue} ",
+                    IPADDRESS = productFee.userIPAddress,
+                    URL = productFee.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -157,62 +157,62 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             else
             {
-                tempProductFeeEntity.RateValue = productFee.rateValue;
-                tempProductFeeEntity.DependentAmount = productFee.dependentAmount;
+                tempProductFeeEntity.RATEVALUE = productFee.rateValue;
+                tempProductFeeEntity.DEPENDENTAMOUNT = productFee.dependentAmount;
 
-                tempProductFeeEntity.Deleted = false;
+                tempProductFeeEntity.DELETED = false;
             }
 
             var status = context.SaveChanges() > 0;
 
             if (status)
-                return tempProductFeeEntity.ProductFeeId;
+                return tempProductFeeEntity.PRODUCTFEEID;
             else
                 return -1;
         }
 
         public void ApproveProductFee(int productId, UserInfo user)
         {
-            var productFeeModel = context.tbl_Temp_Product_Charge_Fee.Where(x => x.ProductId == productId
-                                                                        && x.Deleted == false);
+            var productFeeModel = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(x => x.PRODUCTID == productId
+                                                                        && x.DELETED == false);
                                                                        
-            var productToUpdate = context.tbl_Product.Find(productId);
+            var productToUpdate = context.TBL_PRODUCT.Find(productId);
 
             foreach (var p in productFeeModel)
             {
-                var product = new tbl_Product_Charge_Fee()
+                var product = new TBL_PRODUCT_CHARGE_FEE()
                 {
-                    ProductId = p.ProductId,
-                    ChargeFeeId = p.ChargeFeeId,
-                    CompanyId = p.CompanyId,
+                    PRODUCTID = p.PRODUCTID,
+                    CHARGEFEEID = p.CHARGEFEEID,
+                    COMPANYID = p.COMPANYID,
 
-                    RateValue = p.RateValue,
-                    DependentAmount = p.DependentAmount,
+                    RATEVALUE = p.RATEVALUE,
+                    DEPENDENTAMOUNT = p.DEPENDENTAMOUNT,
 
-                    CreatedBy = p.CreatedBy,
-                    DateTimeCreated = genSetup.GetApplicationDate(),
-                    Deleted = false
+                    CREATEDBY = p.CREATEDBY,
+                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                    DELETED = false
                 };
-                context.tbl_Product_Charge_Fee.Add(product);
+                context.TBL_PRODUCT_CHARGE_FEE.Add(product);
                 //context.tbl_Temp_Product_Fee.Remove(p);
             }
 
             foreach (var item in productFeeModel)
             {
-                item.DateTimeUpdated = DateTime.Now;
+                item.DATETIMEUPDATED = DateTime.Now;
             }
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductFeeAdded,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Added Fee for product '{productToUpdate?.ProductName}' with product code'{productToUpdate?.ProductCode}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductFeeAdded,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Added Fee for product '{productToUpdate?.PRODUCTNAME}' with product code'{productToUpdate?.PRODUCTCODE}'",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -226,14 +226,14 @@ namespace FintrakBanking.Repositories.Setups.General
             if (productFeeIds.Count <= 0)
                 return false;
 
-            var dataList = (from a in context.tbl_Product_Charge_Fee
-                            where productFeeIds.ToList().Contains(a.ProductFeeId)
+            var dataList = (from a in context.TBL_PRODUCT_CHARGE_FEE
+                            where productFeeIds.ToList().Contains(a.PRODUCTFEEID)
                             select a);
 
-            foreach (tbl_Product_Charge_Fee data in dataList)
+            foreach (TBL_PRODUCT_CHARGE_FEE data in dataList)
             {
-                data.Deleted = true;
-                data.DateTimeDeleted = DateTime.Now;
+                data.DELETED = true;
+                data.DATETIMEDELETED = DateTime.Now;
             }
 
             return this.SaveAll();
@@ -241,26 +241,26 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool DeleteProductFee(int productFeeId, UserInfo user)
         {
-            var data = this.context.tbl_Product_Charge_Fee.Find(productFeeId);
+            var data = this.context.TBL_PRODUCT_CHARGE_FEE.Find(productFeeId);
 
             if (data == null)
                 return false;
 
-            data.Deleted = true;
+            data.DELETED = true;
             //accountModel.DeletedBy = ;
-            data.DateTimeDeleted = genSetup.GetApplicationDate();
+            data.DATETIMEDELETED = genSetup.GetApplicationDate();
             // Audit Section ---------------------------
-            var productFee = this.context.tbl_Charge_Fee.FirstOrDefault(x => x.ChargeFeeId == data.ChargeFeeId);
-            var audit = new tbl_Audit
+            var productFee = this.context.TBL_CHARGE_FEE.FirstOrDefault(x => x.CHARGEFEEID == data.CHARGEFEEID);
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductFeeDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted tbl_Product Fee: {productFee?.ChargeFeeName} to product {data.tbl_Product} ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductFeeDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted TBL_PRODUCT Fee: {productFee?.CHARGEFEENAME} to product {data.TBL_PRODUCT?.PRODUCTNAME} ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -271,149 +271,149 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ProductFeeViewModel> GetAllMappedFeeByProduct(int productId)
         {
-            return (from data in context.tbl_Product_Charge_Fee
-                    where data.ProductId == productId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+            return (from data in context.TBL_PRODUCT_CHARGE_FEE
+                    where data.PRODUCTID == productId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
                     select new ProductFeeViewModel()
                     {
-                        productFeeId = data.ProductFeeId,
-                        productId = data.ProductId,
-                        feeId = data.ChargeFeeId,
-                        feeName = data.tbl_Charge_Fee.ChargeFeeName,
-                        feeIntervalName = data.tbl_Charge_Fee.tbl_Fee_Interval.FeeIntervalName,
-                        feeTargetName = data.tbl_Charge_Fee.tbl_Fee_Target.FeeTargetName,
-                        feeTypeName = data.tbl_Charge_Fee.tbl_Fee_Type.FeeTypeName,
-                        glAccountCode = data.tbl_Charge_Fee.tbl_Chart_Of_Account.AccountCode,
-                        glAccountName = data.tbl_Charge_Fee.tbl_Chart_Of_Account.AccountName,
-                        companyId = data.CompanyId,
+                        productFeeId = data.PRODUCTFEEID,
+                        productId = data.PRODUCTID,
+                        feeId = data.CHARGEFEEID,
+                        feeName = data.TBL_CHARGE_FEE.CHARGEFEENAME,
+                        feeIntervalName = data.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                        feeTargetName = data.TBL_CHARGE_FEE.TBL_FEE_TARGET.FEETARGETNAME,
+                        feeTypeName = data.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,
+                        glAccountCode = data.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                        glAccountName = data.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                        companyId = data.COMPANYID,
 
-                        rateValue = data.RateValue,
-                        dependentAmount = data.DependentAmount,
+                        rateValue = data.RATEVALUE,
+                        dependentAmount = data.DEPENDENTAMOUNT,
 
-                        createdBy = data.CreatedBy,
-                        dateTimeCreated = data.DateTimeCreated,
+                        createdBy = data.CREATEDBY,
+                        dateTimeCreated = data.DATETIMECREATED,
                     });
         }
 
         public IEnumerable<ProductFeeViewModel> GetAllMappedFeeByTempProduct(int productId)
         {
-            return (from data in context.tbl_Temp_Product_Charge_Fee
-                    where data.ProductId == productId && data.Deleted == false
+            return (from data in context.TBL_TEMP_PRODUCT_CHARGE_FEE
+                    where data.PRODUCTID == productId && data.DELETED == false
                     select new ProductFeeViewModel()
                     {
-                        productFeeId = data.ProductFeeId,
-                        productId = data.ProductId,
-                        feeId = data.ChargeFeeId,
-                        feeName = data.tbl_Charge_Fee.ChargeFeeName,
-                        feeIntervalName = data.tbl_Charge_Fee.tbl_Fee_Interval.FeeIntervalName,
-                        feeTargetName = data.tbl_Charge_Fee.tbl_Fee_Target.FeeTargetName,
-                        feeTypeName = data.tbl_Charge_Fee.tbl_Fee_Type.FeeTypeName,
-                        glAccountCode = data.tbl_Charge_Fee.tbl_Chart_Of_Account.AccountCode,
-                        glAccountName = data.tbl_Charge_Fee.tbl_Chart_Of_Account.AccountName,
-                        companyId = data.CompanyId,
+                        productFeeId = data.PRODUCTFEEID,
+                        productId = data.PRODUCTID,
+                        feeId = data.CHARGEFEEID,
+                        feeName = data.TBL_CHARGE_FEE.CHARGEFEENAME,
+                        feeIntervalName = data.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                        feeTargetName = data.TBL_CHARGE_FEE.TBL_FEE_TARGET.FEETARGETNAME,
+                        feeTypeName = data.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,
+                        glAccountCode = data.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                        glAccountName = data.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                        companyId = data.COMPANYID,
 
-                        rateValue = data.RateValue,
-                        dependentAmount = data.DependentAmount,
+                        rateValue = data.RATEVALUE,
+                        dependentAmount = data.DEPENDENTAMOUNT,
 
-                        createdBy = data.CreatedBy,
-                        dateTimeCreated = data.DateTimeCreated,
+                        createdBy = data.CREATEDBY,
+                        dateTimeCreated = data.DATETIMECREATED,
                     });
         }
 
         public bool DoesProductFeeExist(int productFeeId)
         {
-            return context.tbl_Product_Charge_Fee.Any(x => x.ProductFeeId == productFeeId);
+            return context.TBL_PRODUCT_CHARGE_FEE.Any(x => x.PRODUCTFEEID == productFeeId);
         }
 
         public List<ProductFeeViewModel> GetProductFeeAwaitingApprovals(int tempProductId)
         {
-            return (from data in context.tbl_Temp_Product_Charge_Fee
-                    join p in context.tbl_Temp_Product on data.ProductId equals p.ProductId
-                    where data.ProductId == tempProductId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+            return (from data in context.TBL_TEMP_PRODUCT_CHARGE_FEE
+                    join p in context.TBL_TEMP_PRODUCT on data.PRODUCTID equals p.PRODUCTID
+                    where data.PRODUCTID == tempProductId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
                     select new ProductFeeViewModel()
                     {
-                        productFeeId = data.ProductFeeId,
-                        productName = p.ProductName,
-                        productId = data.ProductId,
-                        feeId = data.ProductFeeId,
-                        feeName = data.tbl_Charge_Fee.ChargeFeeName,
-                        companyId = data.CompanyId,
+                        productFeeId = data.PRODUCTFEEID,
+                        productName = p.PRODUCTNAME,
+                        productId = data.PRODUCTID,
+                        feeId = data.PRODUCTFEEID,
+                        feeName = data.TBL_CHARGE_FEE.CHARGEFEENAME,
+                        companyId = data.COMPANYID,
 
-                        rateValue = data.RateValue,
-                        dependentAmount = data.DependentAmount,
+                        rateValue = data.RATEVALUE,
+                        dependentAmount = data.DEPENDENTAMOUNT,
 
-                        createdBy = data.CreatedBy,
-                        dateTimeCreated = data.DateTimeCreated,
+                        createdBy = data.CREATEDBY,
+                        dateTimeCreated = data.DATETIMECREATED,
                     }).ToList();
         }
 
         public ProductFeeViewModel GetProductFee(int productFeeId)
         {
-            return (from data in context.tbl_Product_Charge_Fee
-                    where data.ProductFeeId == productFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+            return (from data in context.TBL_PRODUCT_CHARGE_FEE
+                    where data.PRODUCTFEEID == productFeeId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
                     select new ProductFeeViewModel()
                     {
-                        productFeeId = data.ProductFeeId,
-                        productId = (short)data.ProductId,
-                        feeId = data.ChargeFeeId,
-                        feeName = data.tbl_Charge_Fee.ChargeFeeName,
-                        companyId = data.CompanyId,
+                        productFeeId = data.PRODUCTFEEID,
+                        productId = (short)data.PRODUCTID,
+                        feeId = data.CHARGEFEEID,
+                        feeName = data.TBL_CHARGE_FEE.CHARGEFEENAME,
+                        companyId = data.COMPANYID,
 
-                        rateValue = data.RateValue,
-                        dependentAmount = data.DependentAmount,
+                        rateValue = data.RATEVALUE,
+                        dependentAmount = data.DEPENDENTAMOUNT,
 
-                        createdBy = data.CreatedBy,
-                        dateTimeCreated = data.DateTimeCreated,
+                        createdBy = data.CREATEDBY,
+                        dateTimeCreated = data.DATETIMECREATED,
                     }).FirstOrDefault();
         }
 
         public List<ProductFeeViewModel> GetTempProductFee(int productProductFeeId)
         {
-            return (from data in context.tbl_Product_Charge_Fee
-                    where data.ProductFeeId == productProductFeeId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+            return (from data in context.TBL_TEMP_PRODUCT_CHARGE_FEE
+                    where data.PRODUCTFEEID == productProductFeeId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
                     select new ProductFeeViewModel()
                     {
-                        productFeeId = data.ProductFeeId,
-                        productId = (short)data.ProductId,
-                        feeId = data.ProductFeeId,
-                        feeName = data.tbl_Charge_Fee.ChargeFeeName,
-                        companyId = data.CompanyId,
+                        productFeeId = data.PRODUCTFEEID,
+                        productId = (short)data.PRODUCTID,
+                        feeId = data.PRODUCTFEEID,
+                        feeName = data.TBL_CHARGE_FEE.CHARGEFEENAME,
+                        companyId = data.COMPANYID,
 
-                        rateValue = data.RateValue,
-                        dependentAmount = data.DependentAmount,
+                        rateValue = data.RATEVALUE,
+                        dependentAmount = data.DEPENDENTAMOUNT,
 
-                        createdBy = data.CreatedBy,
-                        dateTimeCreated = data.DateTimeCreated,
+                        createdBy = data.CREATEDBY,
+                        dateTimeCreated = data.DATETIMECREATED,
                     }).ToList();
         }
 
         public IEnumerable<ChargeFeeViewModel> GetUnmappedFeeToProduct(int productId)
         {
-            var dataList = (from data in context.tbl_Product_Charge_Fee
-                            where data.ProductId == productId && data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
-                            select data.ChargeFeeId).ToList();
+            var dataList = (from data in context.TBL_PRODUCT_CHARGE_FEE
+                            where data.PRODUCTID == productId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
+                            select data.CHARGEFEEID).ToList();
 
-            var chargeFee = (from data in context.tbl_Charge_Fee
-                             where data.Deleted == false
+            var chargeFee = (from data in context.TBL_CHARGE_FEE
+                             where data.DELETED == false
                              select new ChargeFeeViewModel
                              {
-                                 chargeFeeId = data.ChargeFeeId,
-                                 chargeName = data.ChargeFeeName,
-                                 productId = data.ProductTypeId,
-                                 amount = data.Amount,
-                                 rate = data.Rate,
-                                 feeTypeId = data.FeeTypeId,
-                                 feeTypeName = data.tbl_Fee_Type.FeeTypeName,
-                                 ledgerAccountId = data.GLAccountId,
-                                 ledgerAccountName = data.tbl_Chart_Of_Account.AccountName,
-                                 ledgerAccountCode = data.tbl_Chart_Of_Account.AccountCode,
-                                 accountCategoryId = data.AccountCategoryId,
-                                 accountCategoryName = data.tbl_Account_Category.AccountCategoryName,
-                                 targetId = data.FeeTargetId,
-                                 targetName = data.tbl_Fee_Target.FeeTargetName,
-                                 amortisationTypeId = data.FeeAmortisationTypeId,
-                                 amortisationTypeName = data.tbl_Fee_Amortisation_Type.FeeAmortisationTypeName,
-                                 frequencyTypeId = data.FeeIntervalId,
-                                 frequencyTypeName = data.tbl_Fee_Interval.FeeIntervalName
+                                 chargeFeeId = data.CHARGEFEEID,
+                                 chargeName = data.CHARGEFEENAME,
+                                 productId = data.PRODUCTTYPEID,
+                                 amount = data.AMOUNT,
+                                 rate = data.RATE,
+                                 feeTypeId = data.FEETYPEID,
+                                 feeTypeName = data.TBL_FEE_TYPE.FEETYPENAME,
+                                 ledgerAccountId = data.GLACCOUNTID,
+                                 ledgerAccountName = data.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                                 ledgerAccountCode = data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                                 accountCategoryId = data.ACCOUNTCATEGORYID,
+                                 accountCategoryName = data.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+                                 targetId = data.FEETARGETID,
+                                 targetName = data.TBL_FEE_TARGET.FEETARGETNAME,
+                                 amortisationTypeId = data.FEEAMORTISATIONTYPEID,
+                                 amortisationTypeName = data.TBL_FEE_AMORTISATION_TYPE.FEEAMORTISATIONTYPENAME,
+                                 frequencyTypeId = data.FEEINTERVALID,
+                                 frequencyTypeName = data.TBL_FEE_INTERVAL.FEEINTERVALNAME
                              });
 
             if (dataList.Any())
@@ -426,29 +426,29 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool UpdateProductFee(int productFeeId, ProductFeeViewModel productFee)
         {
-            var productFeeEntity = this.context.tbl_Product_Charge_Fee.Find(productFeeId);
+            var productFeeEntity = this.context.TBL_PRODUCT_CHARGE_FEE.Find(productFeeId);
 
             if (productFeeEntity == null)
                 return false;
 
-            productFeeEntity.RateValue = productFee.rateValue;
-            productFeeEntity.DependentAmount = productFee.dependentAmount;
+            productFeeEntity.RATEVALUE = productFee.rateValue;
+            productFeeEntity.DEPENDENTAMOUNT = productFee.dependentAmount;
 
-            productFeeEntity.LastUpdatedBy = productFee.lastUpdatedBy;
-            productFeeEntity.DateTimeUpdated = genSetup.GetApplicationDate();
+            productFeeEntity.LASTUPDATEDBY = productFee.lastUpdatedBy;
+            productFeeEntity.DATETIMEUPDATED = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var productName = this.context.tbl_Product.FirstOrDefault(x => x.ProductId == productFee.productId)?.ProductName;
-            var audit = new tbl_Audit
+            var productName = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == productFee.productId)?.PRODUCTNAME;
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductFeeUpdated,
-                StaffId = productFee.createdBy,
-                BranchId = (short)productFee.userBranchId,
-                Detail = $"Updated tbl_Product Fee: { productFee.feeName } to product {productName} with amount {productFee.rateValue} ",
-                IPAddress = productFee.userIPAddress,
-                Url = productFee.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductFeeUpdated,
+                STAFFID = productFee.createdBy,
+                BRANCHID = (short)productFee.userBranchId,
+                DETAIL = $"Updated TBL_PRODUCT Fee: { productFee.feeName } to product {productName} with amount {productFee.rateValue} ",
+                IPADDRESS = productFee.userIPAddress,
+                URL = productFee.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);

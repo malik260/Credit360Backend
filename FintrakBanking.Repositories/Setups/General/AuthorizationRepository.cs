@@ -22,14 +22,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> AddGroup(GroupModel groupModel)
         {
-            var newGroup = new tbl_Profile_Group()
+            var newGroup = new TBL_PROFILE_GROUP()
             {
-                GroupName = groupModel.groupName,
-                CreatedBy = groupModel.createdBy,
-                DateTimeCreated = DateTime.Now
+                GROUPNAME = groupModel.groupName,
+                CREATEDBY = groupModel.createdBy,
+                DATETIMECREATED = DateTime.Now
             };
 
-              context.tbl_Profile_Group.Add(newGroup);
+              context.TBL_PROFILE_GROUP.Add(newGroup);
 
             var response = await context.SaveChangesAsync();
 
@@ -43,11 +43,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> UpdateGroup(short groupId, GroupViewModel groupModel)
         {
-            var targetGroup = context.tbl_Profile_Group.Find(groupId);
+            var targetGroup = context.TBL_PROFILE_GROUP.Find(groupId);
 
-            targetGroup.GroupName = groupModel.groupName;
-            targetGroup.DateTimeUpdated = DateTime.Now;
-            targetGroup.LastUpdatedBy = groupModel.createdBy;
+            targetGroup.GROUPNAME = groupModel.groupName;
+            targetGroup.DATETIMEUPDATED = DateTime.Now;
+            targetGroup.LASTUPDATEDBY = groupModel.createdBy;
 
             var response = await context.SaveChangesAsync();
             return response != 0;
@@ -57,14 +57,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             IEnumerable<GroupViewModel> result = null;
 
-            result = context.tbl_Profile_Group.Select(g => new GroupViewModel()
+            result = context.TBL_PROFILE_GROUP.Select(g => new GroupViewModel()
             {
-                groupId = g.GroupId,
-                groupName = g.GroupName,
-                Activities = g.tbl_Profile_Group_Activity.Select(x => new ActivityViewModel()
+                groupId = g.GROUPID,
+                groupName = g.GROUPNAME,
+                Activities = g.TBL_PROFILE_GROUP_ACTIVITY.Select(x => new ActivityViewModel()
                 {
-                    activityId = x.ActivityId,
-                    activityName = x.tbl_Profile_Activity.ActivityName
+                    activityId = x.ACTIVITYID,
+                    activityName = x.TBL_PROFILE_ACTIVITY.ACTIVITYNAME
                 }).ToList()
             });
 
@@ -73,10 +73,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ActivityViewModel> GetActivities()
         {
-            return context.tbl_Profile_Activity.Select(x => new ActivityViewModel()
+            return context.TBL_PROFILE_ACTIVITY.Select(x => new ActivityViewModel()
             {
-                activityId = x.ActivityId,
-                activityName = x.ActivityName
+                activityId = x.ACTIVITYID,
+                activityName = x.ACTIVITYNAME
             });
         }
 
@@ -84,36 +84,36 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             if (model.Activities.Any())
             {
-                var existingActivities = context.tbl_Profile_Group_Activity.Where(x => x.GroupId == model.groupId).ToList();
+                var existingActivities = context.TBL_PROFILE_GROUP_ACTIVITY.Where(x => x.GROUPID == model.groupId).ToList();
                 bool isExist = existingActivities.Count() > 0;
                 if (existingActivities.Count > 0)
                 {
                     foreach (var item in existingActivities)
                     {
-                        context.tbl_Profile_Group_Activity.Remove(item);
+                        context.TBL_PROFILE_GROUP_ACTIVITY.Remove(item);
                     }
                 }
 
                 foreach (var activity in model.Activities)
                 {
-                    var newActivity = new tbl_Profile_Group_Activity()
+                    var newActivity = new TBL_PROFILE_GROUP_ACTIVITY()
                     {
-                        ActivityId = activity.activityId,
-                        GroupId = model.groupId,
-                        CanAdd = false,
-                        CanApprove = false,
-                        CanEdit = false,
-                        CanDelete = false,
-                        CanView = false,
-                        CreatedBy = model.createdBy,
-                        DateTimeCreated = DateTime.Now
+                        ACTIVITYID = activity.activityId,
+                        GROUPID = model.groupId,
+                        CANADD = false,
+                        CANAPPROVE = false,
+                        CANEDIT = false,
+                        CANDELETE = false,
+                        CANVIEW = false,
+                        CREATEDBY = model.createdBy,
+                        DATETIMECREATED = DateTime.Now
                     };
                     if (isExist)
                     {
-                        newActivity.DateTimeUpdated = DateTime.Now;
+                        newActivity.DATETIMEUPDATED = DateTime.Now;
                     }
 
-                    context.tbl_Profile_Group_Activity.Add(newActivity);
+                    context.TBL_PROFILE_GROUP_ACTIVITY.Add(newActivity);
                 }
             }
             var response = await context.SaveChangesAsync() > 0;
@@ -159,11 +159,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<Object> GetActivitiesByGroupId(int grpId)
         {
-            return context.tbl_Profile_Group_Activity.Where(a => a.GroupId == grpId)
+            return context.TBL_PROFILE_GROUP_ACTIVITY.Where(a => a.GROUPID == grpId)
                 .Select(x => new
                 {
-                    activityId = x.ActivityId,
-                    groupId = x.GroupId
+                    activityId = x.ACTIVITYID,
+                    groupId = x.GROUPID
                 });
         }
     }

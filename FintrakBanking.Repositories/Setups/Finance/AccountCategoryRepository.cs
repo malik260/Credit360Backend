@@ -41,30 +41,30 @@ namespace FintrakBanking.Repositories.Setups.Finance
         /// <returns></returns>
         public bool AddFinanceAccountCategorySetup(AccountCategoryViewModel category)
         {
-            var accountCategory = new tbl_Account_Category()
+            var accountCategory = new TBL_ACCOUNT_CATEGORY()
             {
-                AccountCategoryId = category.accountCategoryId,
-                AccountCategoryName = category.accountCategoryName
+                ACCOUNTCATEGORYID = category.accountCategoryId,
+                ACCOUNTCATEGORYNAME = category.accountCategoryName
             };
-            this.context.tbl_Account_Category.Add(accountCategory);
+            this.context.TBL_ACCOUNT_CATEGORY.Add(accountCategory);
 
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.AccountCategoryAdded,
-                StaffId = category.createdBy,
-                BranchId = (short)category.userBranchId,
-                Detail = $"Added Finance Account Category:  {accountCategory.AccountCategoryName}",
-                IPAddress = category.userIPAddress,
-                Url = category.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.AccountCategoryAdded,
+                STAFFID = category.createdBy,
+                BRANCHID = (short)category.userBranchId,
+                DETAIL = $"Added Finance Account Category:  {accountCategory.ACCOUNTCATEGORYNAME}",
+                IPADDRESS = category.userIPAddress,
+                URL = category.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
 
 
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
             return this.SaveAll();
@@ -76,10 +76,10 @@ namespace FintrakBanking.Repositories.Setups.Finance
         /// <returns></returns>
         public IEnumerable<AccountCategoryViewModel> GetAllAccountCategory()
         {
-            return context.tbl_Account_Category.Select(x => new AccountCategoryViewModel()
+            return context.TBL_ACCOUNT_CATEGORY.Select(x => new AccountCategoryViewModel()
             {
-                accountCategoryId = x.AccountCategoryId,
-                accountCategoryName = x.AccountCategoryName
+                accountCategoryId = x.ACCOUNTCATEGORYID,
+                accountCategoryName = x.ACCOUNTCATEGORYNAME
             });
         }
 
@@ -90,11 +90,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
         /// <returns></returns>
         public AccountCategoryViewModel GetAccountCategoryById(int categoryId)
         {
-            return context.tbl_Account_Category
+            return context.TBL_ACCOUNT_CATEGORY
                 .Select(x => new AccountCategoryViewModel()
                 {
-                    accountCategoryId = x.AccountCategoryId,
-                    accountCategoryName = x.AccountCategoryName
+                    accountCategoryId = x.ACCOUNTCATEGORYID,
+                    accountCategoryName = x.ACCOUNTCATEGORYNAME
                 }).FirstOrDefault(u => u.accountCategoryId == categoryId);
         }
     }

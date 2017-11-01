@@ -30,28 +30,28 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool AddCustomerFSCaptionGroup(CustomerFSCaptionGroupViewModel entity)
         {
-            var group = new tbl_Customer_FS_Caption_Group
+            var group = new TBL_CUSTOMER_FS_CAPTION_GROUP
             {
-                FSCaptionGroupName = entity.fsCaptionGroupName,
-                CompanyId = entity.companyId,
+                FSCAPTIONGROUPNAME = entity.fsCaptionGroupName,
+                COMPANYID = entity.companyId,
                 //GroupDescription = entity.groupDescription,
-                CreatedBy = (int)entity.createdBy,
-                DateTimeCreated = _genSetup.GetApplicationDate()
+                CREATEDBY = (int)entity.createdBy,
+                DATETIMECREATED = _genSetup.GetApplicationDate()
             };
 
-            context.tbl_Customer_FS_Caption_Group.Add(group);
+            context.TBL_CUSTOMER_FS_CAPTION_GROUP.Add(group);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerFSCaptionGroupAdded,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Added Customer FS Caption Group: { entity.fsCaptionGroupName } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionGroupAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added Customer FS Caption Group: { entity.fsCaptionGroupName } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -63,57 +63,57 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerFSCaptionGroupViewModel> GetCustomerFSCaptionGroup(int companyId)
         {
-            var data = (from a in context.tbl_Customer_FS_Caption_Group
-                                where a.CompanyId == companyId && a.Deleted == false
+            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_GROUP
+                                where a.COMPANYID == companyId && a.DELETED == false
                                 select new CustomerFSCaptionGroupViewModel
                                 {
-                                    fsCaptionGroupId = a.FSCaptionGroupId,
-                                    fsCaptionGroupName = a.FSCaptionGroupName,
-                                    companyId = a.CompanyId,     
-                                    companyName = a.tbl_Company.Name,
-                                    dateTimeCreated = a.DateTimeCreated,
-                                    createdBy = a.CreatedBy
+                                    fsCaptionGroupId = a.FSCAPTIONGROUPID,
+                                    fsCaptionGroupName = a.FSCAPTIONGROUPNAME,
+                                    companyId = a.COMPANYID,     
+                                    companyName = a.TBL_COMPANY.NAME,
+                                    dateTimeCreated = a.DATETIMECREATED,
+                                    createdBy = a.CREATEDBY
                                 }).ToList();
             return data;
         }
 
         public CustomerFSCaptionGroupViewModel GetCustomerFSCaptionGroupById(short fsCaptionGroupId)
         {
-            var data = (from a in context.tbl_Customer_FS_Caption_Group
-                        where a.FSCaptionGroupId == fsCaptionGroupId
+            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_GROUP
+                        where a.FSCAPTIONGROUPID == fsCaptionGroupId
                         select new CustomerFSCaptionGroupViewModel
                         {
-                            fsCaptionGroupId = a.FSCaptionGroupId,
-                            fsCaptionGroupName = a.FSCaptionGroupName,
-                            companyId = a.CompanyId,
-                            companyName = a.tbl_Company.Name,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = a.CreatedBy
+                            fsCaptionGroupId = a.FSCAPTIONGROUPID,
+                            fsCaptionGroupName = a.FSCAPTIONGROUPNAME,
+                            companyId = a.COMPANYID,
+                            companyName = a.TBL_COMPANY.NAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
                         }).FirstOrDefault();
             return data;
         }
 
         public bool UpdateCustomerFSCaptionGroup(short groupId, CustomerFSCaptionGroupViewModel entity)
         {
-            var group = this.context.tbl_Customer_FS_Caption_Group.Find(groupId);
+            var group = this.context.TBL_CUSTOMER_FS_CAPTION_GROUP.Find(groupId);
             if (group == null) return false;
 
-            group.FSCaptionGroupName = entity.fsCaptionGroupName;
+            group.FSCAPTIONGROUPNAME = entity.fsCaptionGroupName;
             
-            group.LastUpdatedBy = (int)entity.createdBy;
-            group.DateTimeUpdated = _genSetup.GetApplicationDate();
+            group.LASTUPDATEDBY = (int)entity.createdBy;
+            group.DATETIMEUPDATED = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerFSCaptionGroupUpdated,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Updated Customer FS Caption Group: { entity.fsCaptionGroupName } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionGroupUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated Customer FS Caption Group: { entity.fsCaptionGroupName } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);

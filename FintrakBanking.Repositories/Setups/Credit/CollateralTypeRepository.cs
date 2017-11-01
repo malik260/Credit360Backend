@@ -33,15 +33,15 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         #region Collateral Type
         private IEnumerable<CollateralTypeViewModel>  CollateralTypes()
         {
-            return (from m in context.tbl_Collateral_Type
+            return (from m in context.TBL_COLLATERAL_TYPE
                     select new CollateralTypeViewModel
                     {
-                        collateralTypeId = m.CollateralTypeId,
-                        collateralTypeName = m.CollateralTypeName,
-                        chargeGLAccountId = m.ChargeGLAccountId,
-                        requireInsurancePolicy = m.RequireInsurancePolicy,
-                        details = m.Details,
-                         position = m.Position 
+                        collateralTypeId = m.COLLATERALTYPEID,
+                        collateralTypeName = m.COLLATERALTYPENAME,
+                        chargeGLAccountId = m.CHARGEGLACCOUNTID,
+                        requireInsurancePolicy = m.REQUIREINSURANCEPOLICY,
+                        details = m.DETAILS,
+                         position = m.POSITION 
                     }).OrderBy(m=> m.position );
         }
 
@@ -58,25 +58,25 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
         public async Task<bool> UpdateCollateralTypes(int typeId, CollateralTypeViewModel entity)
         {
-            var type = context.tbl_Collateral_Type.SingleOrDefault(c => c.CollateralTypeId == typeId);
+            var type = context.TBL_COLLATERAL_TYPE.SingleOrDefault(c => c.COLLATERALTYPEID == typeId);
 
-            type.ChargeGLAccountId = (int)entity.chargeGLAccountId;
-            type.RequireInsurancePolicy = entity.requireInsurancePolicy;
-            type.DateTimeUpdated = genSetup.GetApplicationDate();
-            type.LastUpdatedBy = entity.lastUpdatedBy;
+            type.CHARGEGLACCOUNTID = (int)entity.chargeGLAccountId;
+            type.REQUIREINSURANCEPOLICY = entity.requireInsurancePolicy;
+            type.DATETIMEUPDATED = genSetup.GetApplicationDate();
+            type.LASTUPDATEDBY = entity.lastUpdatedBy;
             var respose = await context.SaveChangesAsync() != 0;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralTypeUpdated,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Updated Collateral Type: { entity.collateralTypeName } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralTypeUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated Collateral Type: { entity.collateralTypeName } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -90,29 +90,29 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         #region Collateral SubTypes
         private IEnumerable<CollateralSubTypeViewModel> CollateralSubType()
         {
-            return (from m in context.tbl_Collateral_Type_Sub
+            return (from m in context.TBL_COLLATERAL_TYPE_SUB
                     select new CollateralSubTypeViewModel
                     {
-                        collateralSubTypeId = m.CollateralSubTypeId,
-                        collateralTypeId = m.CollateralTypeId,
-                        collateralSubTypeName = m.CollateralSubTypeName,
-                        haircut = m.Haircut,
-                        revaluationDuration = m.RevaluationDuration,
-                        dateTimeCreated = m.DateTimeCreated.Date,
-                        createdBy = m.CreatedBy
+                        collateralSubTypeId = m.COLLATERALSUBTYPEID,
+                        collateralTypeId = m.COLLATERALTYPEID,
+                        collateralSubTypeName = m.COLLATERALSUBTYPENAME,
+                        haircut = m.HAIRCUT,
+                        revaluationDuration = m.REVALUATIONDURATION,
+                        dateTimeCreated = m.DATETIMECREATED.Date,
+                        createdBy = m.CREATEDBY
                     }).ToList();
         }
 
         public IEnumerable<CollateralSubTypeViewModel> GetCollateralSubTypes()
         {
-            return (from m in context.tbl_Collateral_Type_Sub
+            return (from m in context.TBL_COLLATERAL_TYPE_SUB
                     select new CollateralSubTypeViewModel
                     {
-                        collateralSubTypeId = m.CollateralSubTypeId,
-                        collateralTypeId = m.CollateralTypeId,
-                        collateralSubTypeName = m.CollateralSubTypeName,
-                        haircut = m.Haircut,
-                        revaluationDuration = m.RevaluationDuration,
+                        collateralSubTypeId = m.COLLATERALSUBTYPEID,
+                        collateralTypeId = m.COLLATERALTYPEID,
+                        collateralSubTypeName = m.COLLATERALSUBTYPENAME,
+                        haircut = m.HAIRCUT,
+                        revaluationDuration = m.REVALUATIONDURATION,
                     }).ToList();
         }
         
@@ -124,27 +124,27 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
         public async Task<bool> UpdateCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity)
         {
-            var subType = context.tbl_Collateral_Type_Sub.Find(subTypeId);
+            var subType = context.TBL_COLLATERAL_TYPE_SUB.Find(subTypeId);
 
-            subType.CollateralTypeId = entity.collateralTypeId;
-            subType.CollateralSubTypeName = entity.collateralSubTypeName;
-            subType.Haircut = entity.haircut;
-            subType.RevaluationDuration = entity.revaluationDuration;
-            subType.DateTimeUpdated = genSetup.GetApplicationDate();
-            subType.LastUpdatedBy = entity.lastUpdatedBy;
+            subType.COLLATERALTYPEID = entity.collateralTypeId;
+            subType.COLLATERALSUBTYPENAME = entity.collateralSubTypeName;
+            subType.HAIRCUT = entity.haircut;
+            subType.REVALUATIONDURATION = entity.revaluationDuration;
+            subType.DATETIMEUPDATED = genSetup.GetApplicationDate();
+            subType.LASTUPDATEDBY = entity.lastUpdatedBy;
             var respose = await context.SaveChangesAsync() != 0;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralTypeUpdated,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Updated Collateral Type: { entity.collateralSubTypeName } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralTypeUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated Collateral Type: { entity.collateralSubTypeName } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -155,23 +155,23 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
         public async Task<bool> DeleteCollateralSubTypes(int subTypeId, CollateralSubTypeViewModel entity, UserInfo user)
         {
-            var type = context.tbl_Collateral_Type_Sub.Find(subTypeId);
+            var type = context.TBL_COLLATERAL_TYPE_SUB.Find(subTypeId);
 
-            type.DateTimeCreated = DateTime.Now;
-            type.DeletedBy = entity.deletedBy;
-            type.Deleted = true;
+            type.DATETIMECREATED = DateTime.Now;
+            type.DELETEDBY = entity.deletedBy;
+            type.DELETED = true;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralTypeUpdated,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Collateral Sub Type: { entity.collateralSubTypeName } ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralTypeUpdated,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Collateral Sub Type: { entity.collateralSubTypeName } ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -182,28 +182,28 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
         public async Task<bool> AddCollateralSubTypes(CollateralSubTypeViewModel entity)
         {
-            var type = new tbl_Collateral_Type_Sub
+            var type = new TBL_COLLATERAL_TYPE_SUB
             {
-                CollateralSubTypeName = entity.collateralSubTypeName,
-                CollateralTypeId = entity.collateralTypeId,
-                Haircut = entity.haircut,
-                RevaluationDuration = entity.revaluationDuration,
-                CreatedBy = entity.createdBy,
-                DateTimeCreated = DateTime.Now,
+                COLLATERALSUBTYPENAME = entity.collateralSubTypeName,
+                COLLATERALTYPEID = entity.collateralTypeId,
+                HAIRCUT = entity.haircut,
+                REVALUATIONDURATION = entity.revaluationDuration,
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = DateTime.Now,
             };
-            context.tbl_Collateral_Type_Sub.Add(type);
+            context.TBL_COLLATERAL_TYPE_SUB.Add(type);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralTypeAdded,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Added Collateral Type sub: { entity.collateralSubTypeName } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralTypeAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added Collateral Type sub: { entity.collateralSubTypeName } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
