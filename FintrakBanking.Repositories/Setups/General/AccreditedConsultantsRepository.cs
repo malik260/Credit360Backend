@@ -27,30 +27,30 @@ namespace FintrakBanking.Repositories.Setups.General
         #region Solicitors
         public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId)
         {
-            return (from m in context.tbl_AccreditedConsultant
-                    where m.CompanyId == companyId
+            return (from m in context.TBL_ACCREDITEDCONSULTANT
+                    where m.COMPANYID == companyId
                     select new AccreditedConsultantsViewModel
                     {
-                        accreditedConsultantId = m.AccreditedConsultantId,
-                        registrationNumber = m.RegistrationNumber,
-                        name = m.Name,
-                        firmName = m.FirmName,
-                        accreditedConsultantTypeId = m.AccreditedConsultantTypeId,
-                        cityId = m.CityId,
-                        accountNumber = m.AccountNumber,
-                        solicitorBVN = m.SolicitorBVN,
-                        countryId = m.CountryId,
-                        emailAddress = m.EmailAddress,
-                        phoneNumber = m.PhoneNumber,
-                        address = m.Address,
-                        coreCompetence = m.CoreCompetence,
-                        accreditedConsultantStates = context.tbl_AccreditedConsultant_State.Where(x => x.AccreditedConsultantId == m.AccreditedConsultantId).Select(k =>
+                        accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
+                        registrationNumber = m.REGISTRATIONNUMBER,
+                        name = m.NAME,
+                        firmName = m.FIRMNAME,
+                        accreditedConsultantTypeId = m.ACCREDITEDCONSULTANTTYPEID,
+                        cityId = m.CITYID,
+                        accountNumber = m.ACCOUNTNUMBER,
+                        solicitorBVN = m.SOLICITORBVN,
+                        countryId = m.COUNTRYID,
+                        emailAddress = m.EMAILADDRESS,
+                        phoneNumber = m.PHONENUMBER,
+                        address = m.ADDRESS,
+                        coreCompetence = m.CORECOMPETENCE,
+                        accreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID).Select(k =>
                            new AccreditedConsultantStateViewModel()
                            {
-                               accreditedConsultantStateCoveredID = k.AccreditedConsultantStateCoveredID,
-                               stateId = k.StateId,
-                               stateName = context.tbl_State.FirstOrDefault(x=> x.StateId == k.StateId).StateName,
-                               accreditedConsultantId = k.AccreditedConsultantId
+                               accreditedConsultantStateCoveredID = k.ACCREDITEDCONSULTANTSTATECOVEREDID,
+                               stateId = k.STATEID,
+                               stateName = context.TBL_STATE.FirstOrDefault(x=> x.STATEID == k.STATEID).STATENAME,
+                               accreditedConsultantId = k.ACCREDITEDCONSULTANTID
                            }).ToList()
                     });
         }
@@ -61,57 +61,57 @@ namespace FintrakBanking.Repositories.Setups.General
                 return false;
             }
             bool output = false;
-            List<tbl_AccreditedConsultant_State> accreditedConsultantStates = new List<tbl_AccreditedConsultant_State>();
+            List<TBL_ACCREDITEDCONSULTANT_STATE> accreditedConsultantStates = new List<TBL_ACCREDITEDCONSULTANT_STATE>();
             if (entity.accreditedConsultantStates.Count > 0)
             {
                 foreach (var ent in entity.accreditedConsultantStates)
                 {
                     if (ent.accreditedConsultantStateCoveredID == 0)
                     {
-                        var state = new tbl_AccreditedConsultant_State();
+                        var state = new TBL_ACCREDITEDCONSULTANT_STATE();
                         //state.AccreditedConsultantId = AccreditedConsultantId;
-                        state.StateId = ent.stateId;
-                        context.tbl_AccreditedConsultant_State.Add(state);
+                        state.STATEID = ent.stateId;
+                        context.TBL_ACCREDITEDCONSULTANT_STATE.Add(state);
                     }
                 }
             }
-                var consultant = new tbl_AccreditedConsultant
+                var consultant = new TBL_ACCREDITEDCONSULTANT
             {
-                CityId = entity.cityId,
-                Name = entity.name,
-                FirmName = entity.firmName,
-                RegistrationNumber = entity.registrationNumber,
-                AccreditedConsultantTypeId = entity.accreditedConsultantTypeId,
-                SolicitorBVN = entity.solicitorBVN,
-                AccountNumber = entity.accountNumber,
-                CountryId = entity.countryId,
-                EmailAddress = entity.emailAddress,
-                PhoneNumber = entity.phoneNumber,
-                Address = entity.address,
-                CoreCompetence = entity.coreCompetence,
-                CompanyId = entity.companyId,
-                CreatedBy = entity.createdBy,
-                DateTimeCreated = DateTime.Now,
-                Deleted = false,
-                tbl_AccreditedConsultant_State = accreditedConsultantStates
+                CITYID = entity.cityId,
+                NAME = entity.name,
+                FIRMNAME = entity.firmName,
+                REGISTRATIONNUMBER = entity.registrationNumber,
+                ACCREDITEDCONSULTANTTYPEID = entity.accreditedConsultantTypeId,
+                SOLICITORBVN = entity.solicitorBVN,
+                ACCOUNTNUMBER = entity.accountNumber,
+                COUNTRYID = entity.countryId,
+                EMAILADDRESS = entity.emailAddress,
+                PHONENUMBER = entity.phoneNumber,
+                ADDRESS = entity.address,
+                CORECOMPETENCE = entity.coreCompetence,
+                COMPANYID = entity.companyId,
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false,
+                TBL_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates
             };
             // Audit Section ----------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralValuerAdded,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Added tbl_AccreditedConsultant with Id: {entity.accreditedConsultantId} ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralValuerAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added tbl_AccreditedConsultant with Id: {entity.accreditedConsultantId} ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
             };
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    context.tbl_AccreditedConsultant.Add(consultant);
+                    context.TBL_ACCREDITEDCONSULTANT.Add(consultant);
                     auditTrail.AddAuditTrail(audit);
                     //AccreditedConsultantId = consultant.AccreditedConsultantId;
                     //if (entity.accreditedConsultantStates.Count > 0)
@@ -134,21 +134,21 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public async Task<bool> UpdateAccreditedConsultants(AccreditedConsultantsViewModel entity, int id)
         {
-            var consultants = context.tbl_AccreditedConsultant.Find(id);
+            var consultants = context.TBL_ACCREDITEDCONSULTANT.Find(id);
             if (consultants != null)
             {
-                consultants.CityId = entity.cityId;
-                consultants.Name = entity.name;
-                consultants.FirmName = entity.firmName;
-                consultants.RegistrationNumber = entity.registrationNumber;
-                consultants.AccreditedConsultantTypeId = entity.accreditedConsultantTypeId;
-                consultants.SolicitorBVN = entity.solicitorBVN;
-                consultants.AccountNumber = entity.accountNumber;
-                consultants.CountryId = entity.countryId;
-                consultants.EmailAddress = entity.emailAddress;
-                consultants.PhoneNumber = entity.phoneNumber;
-                consultants.Address = entity.address;
-                consultants.CoreCompetence = entity.coreCompetence;
+                consultants.CITYID = entity.cityId;
+                consultants.NAME = entity.name;
+                consultants.FIRMNAME = entity.firmName;
+                consultants.REGISTRATIONNUMBER = entity.registrationNumber;
+                consultants.ACCREDITEDCONSULTANTTYPEID = entity.accreditedConsultantTypeId;
+                consultants.SOLICITORBVN = entity.solicitorBVN;
+                consultants.ACCOUNTNUMBER = entity.accountNumber;
+                consultants.COUNTRYID = entity.countryId;
+                consultants.EMAILADDRESS = entity.emailAddress;
+                consultants.PHONENUMBER = entity.phoneNumber;
+                consultants.ADDRESS = entity.address;
+                consultants.CORECOMPETENCE = entity.coreCompetence;
 
             };
             AccreditedConsultantId = entity.accreditedConsultantId;
@@ -157,16 +157,16 @@ namespace FintrakBanking.Repositories.Setups.General
                 AddUpdateAccreditedConsultantStates(entity.accreditedConsultantStates);
             }
             // Audit Section ----------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralTypeAdded,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Updated tbl_Collateral_Solicitors with Id: {entity.accreditedConsultantId} ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralTypeAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated tbl_Collateral_Solicitors with Id: {entity.accreditedConsultantId} ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -179,27 +179,27 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 if (ent.accreditedConsultantStateCoveredID == 0)
                 {
-                    var state = new tbl_AccreditedConsultant_State();
-                    state.AccreditedConsultantId = AccreditedConsultantId;
-                    state.StateId = ent.stateId;
-                    context.tbl_AccreditedConsultant_State.Add(state);
+                    var state = new TBL_ACCREDITEDCONSULTANT_STATE();
+                    state.ACCREDITEDCONSULTANTID = AccreditedConsultantId;
+                    state.STATEID = ent.stateId;
+                    context.TBL_ACCREDITEDCONSULTANT_STATE.Add(state);
                 }
                 else
                 {
-                    var state = context.tbl_AccreditedConsultant_State.Find(ent.accreditedConsultantStateCoveredID);
+                    var state = context.TBL_ACCREDITEDCONSULTANT_STATE.Find(ent.accreditedConsultantStateCoveredID);
                     if (state != null)
                     {
-                        state.StateId = ent.stateId;
+                        state.STATEID = ent.stateId;
                     }
                 }
             }
         }
         public async Task<bool> DeleteAccreditedConsultantStates(int id)
         {
-            var itemToRemove = context.tbl_AccreditedConsultant_State.SingleOrDefault(x => x.AccreditedConsultantStateCoveredID == id);
+            var itemToRemove = context.TBL_ACCREDITEDCONSULTANT_STATE.SingleOrDefault(x => x.ACCREDITEDCONSULTANTSTATECOVEREDID == id);
             if (itemToRemove != null)
             {
-                context.tbl_AccreditedConsultant_State.Remove(itemToRemove);
+                context.TBL_ACCREDITEDCONSULTANT_STATE.Remove(itemToRemove);
                 var response = await context.SaveChangesAsync() != 0;
                 return response;
             }
@@ -208,11 +208,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<AccreditedConsultantTypeViewModel> GetAccreditedConsultantType()
         {
-            var type = from a in context.tbl_AccreditedConsultant_Type
+            var type = from a in context.TBL_ACCREDITEDCONSULTANT_TYPE
                        select new AccreditedConsultantTypeViewModel
                        {
-                           accreditedConsultantTypeId = a.AccreditedConsultantId,
-                           name = a.Name
+                           accreditedConsultantTypeId = a.ACCREDITEDCONSULTANTID,
+                           name = a.NAME
                        };
             return type;
         }
