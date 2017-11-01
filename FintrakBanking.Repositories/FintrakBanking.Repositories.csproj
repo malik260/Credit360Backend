@@ -121,7 +121,6 @@
     <Compile Include="Setups\General\CountryRepository.cs" />
     <Compile Include="Setups\General\CustomFieldsRepository.cs" />
     <Compile Include="Setups\General\DepartmentRepository.cs" />
-    <Compile Include="Setups\General\FeeRepository.cs" />
     <Compile Include="Setups\General\GeneralSetupRepository.cs" />
     <Compile Include="Setups\General\JobTitleRepository.cs" />
     <Compile Include="Setups\General\MisInfoRepository.cs" />
