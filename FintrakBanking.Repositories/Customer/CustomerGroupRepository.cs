@@ -48,44 +48,45 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<KYCItemViewModel> GetKYCItems(int companyId)
         {
-           var kycItem = (from d in context.tbl_KYC_Item where d.tbl_Product.CompanyId == companyId select new KYCItemViewModel
+           var kycItem = (from d in context.TBL_KYC_ITEM where d.TBL_PRODUCT.COMPANYID == companyId select new KYCItemViewModel
             {
-                createdBy = (int)d.CreatedBy,
-                productId = (short)d.ProductId,
-                kYCItemId = d.KYCItemId,
-                item = d.Item,
-                isMandatory = d.IsMandatory,
-                dateTimeCreated = (DateTime)d.DateTimeCreated,
-                displayOrder = d.DisplayOrder,
-                productName = d.tbl_Product.ProductName
+                createdBy = (int)d.CREATEDBY,
+                productId = (short)d.PRODUCTID,
+                kYCItemId = d.KYCITEMID,
+                item = d.ITEM,
+                isMandatory = d.ISMANDATORY,
+                dateTimeCreated = (DateTime)d.DATETIMECREATED,
+                displayOrder = d.DISPLAYORDER,
+                productName = d.TBL_PRODUCT.PRODUCTNAME
             }).ToList();
             return kycItem;
         }
 
         public bool AddKycItem(KYCItemViewModel entity)
         {
-            var data = new tbl_KYC_Item
+            var data = new TBL_KYC_ITEM
             {
-                CreatedBy = entity.createdBy,
-                DateTimeCreated = genSetup.GetApplicationDate(),
-                DisplayOrder = entity.displayOrder,
-                Item = entity.item,
-               IsMandatory = entity.isMandatory,
-                KYCItemId = entity.kYCItemId,
-                ProductId = entity.productId
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                DISPLAYORDER = entity.displayOrder,
+                ITEM = entity.item,
+                ISMANDATORY = entity.isMandatory,
+                KYCITEMID = entity.kYCItemId,
+                PRODUCTID = entity.productId
             };
-            context.tbl_KYC_Item.Add(data);
+            context.TBL_KYC_ITEM.Add(data);
+
            // Audit Section ---------------------------
-           var audit = new tbl_Audit
+           var audit = new TBL_AUDIT
            {
-               AuditTypeId = (short)AuditTypeEnum.KYCItemAdded,
-               StaffId = entity.createdBy,
-               BranchId = (short)entity.userBranchId,
-               Detail = $"Added KYC Item: { entity.item  } ",
-               IPAddress = entity.userIPAddress,
-               Url = entity.applicationUrl,
-               ApplicationDate = genSetup.GetApplicationDate(),
-               SystemDateTime = DateTime.Now
+               AUDITTYPEID = (short)AuditTypeEnum.KYCItemAdded,
+               STAFFID = entity.createdBy,
+               BRANCHID = (short)entity.userBranchId,
+               DETAIL = $"Added KYC Item: { entity.item  } ",
+               IPADDRESS = entity.userIPAddress,
+               URL = entity.applicationUrl,
+               APPLICATIONDATE = genSetup.GetApplicationDate(),
+               SYSTEMDATETIME = DateTime.Now
            };
             this.auditTrail.AddAuditTrail(audit);
 
@@ -97,26 +98,26 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdatedKycItem(int kYCItemId, KYCItemViewModel entity)
         {
-            var data = context.tbl_KYC_Item.Where(c => c.KYCItemId == kYCItemId).SingleOrDefault();
+            var data = context.TBL_KYC_ITEM.Where(c => c.KYCITEMID == kYCItemId).SingleOrDefault();
            
-            data.DateTimeUpdated = DateTime.Now;
-            data.DisplayOrder = entity.displayOrder;
-            data.Item = entity.item;
-            data.LastUpdatedBy = entity.createdBy;
-            data.ProductId = entity.productId;
-           data.IsMandatory = entity.isMandatory;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.DISPLAYORDER = entity.displayOrder;
+            data.ITEM = entity.item;
+            data.LASTUPDATEDBY = entity.createdBy;
+            data.PRODUCTID = entity.productId;
+            data.ISMANDATORY = entity.isMandatory;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.KYCItemUpdated,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Updated KYC Item: { entity.item  } ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.KYCItemUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated KYC Item: { entity.item  } ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
 
@@ -128,31 +129,31 @@ namespace FintrakBanking.Repositories.Customer
 
         #endregion customer KYC
 
-        #region tbl_Customer - Group
+        #region TBL_CUSTOMER - Group
 
         public bool AddCustomerGroup(CustomerGroupViewModel entity)
         {
-            var group = new tbl_Customer_Group
+            var group = new TBL_CUSTOMER_GROUP
             {
-                GroupCode = entity.groupCode,
-                GroupName = entity.groupName,
-                GroupDescription = entity.groupDescription,
-                CreatedBy = (int)entity.createdBy,
-                DateTimeCreated = genSetup.GetApplicationDate()
+                GROUPCODE = entity.groupCode,
+                GROUPNAME = entity.groupName,
+                GROUPDESCRIPTION = entity.groupDescription,
+                CREATEDBY = (int)entity.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate()
             };
-            context.tbl_Customer_Group.Add(group);
+            context.TBL_CUSTOMER_GROUP.Add(group);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Added Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName } )",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName } )",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
 
@@ -162,37 +163,37 @@ namespace FintrakBanking.Repositories.Customer
         }
         public bool DoesGroupNameExist(string groupName, string groupCode)
         {
-            var exist = (from a in context.tbl_Customer_Group where
-                       a.GroupName == groupName || a.GroupCode == groupCode select a).Any();
+            var exist = (from a in context.TBL_CUSTOMER_GROUP where
+                       a.GROUPNAME == groupName || a.GROUPCODE == groupCode select a).Any();
             return exist;
         }
             public bool AddTempCustomerGroup(CustomerGroupViewModel custGroupModel)
         {
             bool output = false;
 
-            var tempGroup = new tbl_Temp_Customer_Group
+            var tempGroup = new TBL_TEMP_CUSTOMER_GROUP
             {
-                GroupCode = custGroupModel.groupCode,
-                GroupName = custGroupModel.groupName,
-                GroupDescription = custGroupModel.groupDescription,
-                CreatedBy = (int)custGroupModel.createdBy,
-                DateTimeCreated = genSetup.GetApplicationDate(),
-                ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-                CompanyId = custGroupModel.companyId,
-                IsCurrent = true
+                GROUPCODE = custGroupModel.groupCode,
+                GROUPNAME = custGroupModel.groupName,
+                GROUPDESCRIPTION = custGroupModel.groupDescription,
+                CREATEDBY = (int)custGroupModel.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                COMPANYID = custGroupModel.companyId,
+                ISCURRENT = true
             };
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
-                StaffId = custGroupModel.createdBy,
-                BranchId = (short)custGroupModel.userBranchId,
-                Detail = $"Added Customer Group: { custGroupModel.groupName } with Code: { custGroupModel.groupCode } ( { custGroupModel.groupName } )",
-                IPAddress = custGroupModel.userIPAddress,
-                Url = custGroupModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupAdded,
+                STAFFID = custGroupModel.createdBy,
+                BRANCHID = (short)custGroupModel.userBranchId,
+                DETAIL = $"Added Customer Group: { custGroupModel.groupName } with Code: { custGroupModel.groupCode } ( { custGroupModel.groupName } )",
+                IPADDRESS = custGroupModel.userIPAddress,
+                URL = custGroupModel.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             //end of Audit section -------------------------------
 
@@ -200,7 +201,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 try
                 {
-                    context.tbl_Temp_Customer_Group.Add(tempGroup);
+                    context.TBL_TEMP_CUSTOMER_GROUP.Add(tempGroup);
                     auditTrail.AddAuditTrail(audit);
                     output = this.SaveAll();
 
@@ -209,7 +210,7 @@ namespace FintrakBanking.Repositories.Customer
                         staffId = custGroupModel.createdBy,
                         companyId = custGroupModel.companyId,
                         approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = tempGroup.CustomerGroupId,
+                        targetId = tempGroup.CUSTOMERGROUPID,
                         operationId = (int)OperationsEnum.CustomerGroupCreation,
                         BranchId = custGroupModel.userBranchId,
                         externalInitialization = true
@@ -233,22 +234,23 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool DeleteCustomerGroup(int groupId, UserInfo user)
         {
-            var group = context.tbl_Customer_Group.Find(groupId);
-            group.Deleted = true;
-            group.DeletedBy = (int)user.createdBy;
-            group.DateTimeDeleted = genSetup.GetApplicationDate();
+            var group = context.TBL_CUSTOMER_GROUP.Find(groupId);
+            group.DELETED = true;
+            group.DELETEDBY = (int)user.createdBy;
+            group.DATETIMEDELETED = genSetup.GetApplicationDate();
             // Audit Section ---------------------------
-            var entity = context.tbl_Customer_Group.FirstOrDefault(x => x.CustomerGroupId == groupId);
-            var audit = new tbl_Audit
+            var entity = context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == groupId);
+
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Customer Group: { entity.GroupName } with Code: { entity.GroupCode } ( { entity.GroupName })",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Customer Group: { entity.GROUPNAME } with Code: { entity.GROUPCODE } ( { entity.GROUPNAME })",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -259,16 +261,16 @@ namespace FintrakBanking.Repositories.Customer
 
         private IQueryable<CustomerGroupViewModel> GetAllCustomerGroups()
         {
-            var data = (from a in context.tbl_Customer_Group
-                        where a.Deleted == false
+            var data = (from a in context.TBL_CUSTOMER_GROUP
+                        where a.DELETED == false
                         select new CustomerGroupViewModel
                         {
-                            groupCode = a.GroupCode,
-                            groupName = a.GroupName,
-                            groupDescription = a.GroupDescription,
-                            customerGroupId = a.CustomerGroupId,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = a.CreatedBy
+                            groupCode = a.GROUPCODE,
+                            groupName = a.GROUPNAME,
+                            groupDescription = a.GROUPDESCRIPTION,
+                            customerGroupId = a.CUSTOMERGROUPID,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
                         });
             return data;
         }
@@ -289,25 +291,25 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdateCustomerGroup(int customerGroupId, CustomerGroupViewModel entity)
         {
-            var group = this.context.tbl_Customer_Group.Find(customerGroupId);
+            var group = this.context.TBL_CUSTOMER_GROUP.Find(customerGroupId);
             if (group == null) return false;
-            group.GroupCode = entity.groupCode;
-            group.GroupName = entity.groupName;
-            group.GroupDescription = entity.groupDescription;
-            group.LastUpdatedBy = (int)entity.createdBy;
-            group.DateTimeUpdated = genSetup.GetApplicationDate();
+            group.GROUPCODE = entity.groupCode;
+            group.GROUPNAME = entity.groupName;
+            group.GROUPDESCRIPTION = entity.groupDescription;
+            group.LASTUPDATEDBY = (int)entity.createdBy;
+            group.DATETIMEUPDATED = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupUpdated,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Updated Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName })",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName })",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -321,18 +323,18 @@ namespace FintrakBanking.Repositories.Customer
             if (entity == null)
                 return false;
 
-            var existingTempGroup = context.tbl_Temp_Customer_Group.FirstOrDefault(x => x.GroupCode.ToLower() ==
-            entity.groupCode.ToLower() && x.IsCurrent == true &&
-            x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existingTempGroup = context.TBL_TEMP_CUSTOMER_GROUP.FirstOrDefault(x => x.GROUPCODE.ToLower() ==
+            entity.groupCode.ToLower() && x.ISCURRENT == true &&
+            x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
 
-            var unApprovedCustomerGroupEdit = context.tbl_Temp_Customer_Group.Where(x => x.IsCurrent == true
-                                                                                         && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && x.GroupCode.ToLower() == entity.groupCode.ToLower());
+            var unApprovedCustomerGroupEdit = context.TBL_TEMP_CUSTOMER_GROUP.Where(x => x.ISCURRENT == true
+                                                                                         && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.GROUPCODE.ToLower() == entity.groupCode.ToLower());
             if (unApprovedCustomerGroupEdit.Any())
             {
                 throw new Exception("Customer group is already undergoing approval");
             }
 
-            tbl_Temp_Customer_Group tempCustomerGroup = new tbl_Temp_Customer_Group();
+            TBL_TEMP_CUSTOMER_GROUP tempCustomerGroup = new TBL_TEMP_CUSTOMER_GROUP();
 
             if (existingTempGroup != null)
             {
@@ -343,53 +345,53 @@ namespace FintrakBanking.Repositories.Customer
                 //}
                 var tempGroupToUpdate = existingTempGroup;
 
-                tempGroupToUpdate.GroupCode = entity.groupCode;
-                tempGroupToUpdate.GroupName = entity.groupName;
-                tempGroupToUpdate.GroupDescription = entity.groupDescription;
-                tempGroupToUpdate.CreatedBy = entity.createdBy;
-                tempGroupToUpdate.DateTimeUpdated = DateTime.Now;
-                tempGroupToUpdate.CompanyId = entity.companyId;
-                tempGroupToUpdate.ApprovalStatusId = (int)ApprovalStatusEnum.Pending;
-                tempGroupToUpdate.IsCurrent = true;
+                tempGroupToUpdate.GROUPCODE = entity.groupCode;
+                tempGroupToUpdate.GROUPNAME = entity.groupName;
+                tempGroupToUpdate.GROUPDESCRIPTION = entity.groupDescription;
+                tempGroupToUpdate.CREATEDBY = entity.createdBy;
+                tempGroupToUpdate.DATETIMEUPDATED = DateTime.Now;
+                tempGroupToUpdate.COMPANYID = entity.companyId;
+                tempGroupToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                tempGroupToUpdate.ISCURRENT = true;
             }
             else
             {
-                var targetGroup = this.context.tbl_Customer_Group.Find(customerGroupId);
+                var targetGroup = this.context.TBL_CUSTOMER_GROUP.Find(customerGroupId);
 
-                tempCustomerGroup = new tbl_Temp_Customer_Group()
+                tempCustomerGroup = new TBL_TEMP_CUSTOMER_GROUP()
                 {
-                    GroupCode = targetGroup?.GroupCode,
-                    GroupName = entity.groupName,
-                    GroupDescription = entity.groupDescription,
-                    CreatedBy = entity.createdBy,
-                    DateTimeCreated = genSetup.GetApplicationDate(),
-                    CompanyId = entity.companyId,
-                    ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-                    IsCurrent = true,
+                    GROUPCODE = targetGroup?.GROUPCODE,
+                    GROUPNAME = entity.groupName,
+                    GROUPDESCRIPTION = entity.groupDescription,
+                    CREATEDBY = entity.createdBy,
+                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                    COMPANYID = entity.companyId,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    ISCURRENT = true,
                 };
 
-                context.tbl_Temp_Customer_Group.Add(tempCustomerGroup);
+                context.TBL_TEMP_CUSTOMER_GROUP.Add(tempCustomerGroup);
             }
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupUpdated,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Updated Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName })",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = customerGroupId
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName })",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = customerGroupId
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
             var output = this.SaveAll();
 
-            var targetGroupId = existingTempGroup?.CustomerGroupId ?? tempCustomerGroup.CustomerGroupId;
+            var targetGroupId = existingTempGroup?.CUSTOMERGROUPID ?? tempCustomerGroup.CUSTOMERGROUPID;
 
             var approvalEntity = new ApprovalViewModel
             {
@@ -430,47 +432,47 @@ namespace FintrakBanking.Repositories.Customer
 
         private bool ApproveCustomerGroup(int customerGroupId, short approvalStatusId, UserInfo user)
         {
-            var customerGroupModel = context.tbl_Temp_Customer_Group.Find(customerGroupId);
-            var customerGroupToUpdate = context.tbl_Customer_Group.Where(x => x.GroupCode == customerGroupModel.GroupCode);
+            var customerGroupModel = context.TBL_TEMP_CUSTOMER_GROUP.Find(customerGroupId);
+            var customerGroupToUpdate = context.TBL_CUSTOMER_GROUP.Where(x => x.GROUPCODE == customerGroupModel.GROUPCODE);
             var existingCustomerGroup = customerGroupToUpdate.FirstOrDefault();
 
             //Update existing customer group with tempCustomerGroup record
             if (customerGroupToUpdate.Any())
             {
-                existingCustomerGroup.GroupCode = customerGroupModel?.GroupCode;
-                existingCustomerGroup.GroupName = customerGroupModel?.GroupName;
-                existingCustomerGroup.GroupDescription = customerGroupModel?.GroupDescription;
-                existingCustomerGroup.CreatedBy = customerGroupModel.CreatedBy;
-                existingCustomerGroup.DateTimeUpdated = DateTime.Now;
+                existingCustomerGroup.GROUPCODE = customerGroupModel?.GROUPCODE;
+                existingCustomerGroup.GROUPNAME = customerGroupModel?.GROUPNAME;
+                existingCustomerGroup.GROUPDESCRIPTION = customerGroupModel?.GROUPDESCRIPTION;
+                existingCustomerGroup.CREATEDBY = customerGroupModel.CREATEDBY;
+                existingCustomerGroup.DATETIMEUPDATED = DateTime.Now;
             }
             else //Insert a new customer group record into the real customer group table
             {
-                var customerGroup = new tbl_Customer_Group()
+                var customerGroup = new TBL_CUSTOMER_GROUP()
                 {
-                    GroupCode = customerGroupModel.GroupCode,
-                    GroupName = customerGroupModel.GroupName,
-                    GroupDescription = customerGroupModel.GroupDescription,
-                    CreatedBy = customerGroupModel.CreatedBy,
-                    DateTimeCreated = genSetup.GetApplicationDate()
+                    GROUPCODE = customerGroupModel.GROUPCODE,
+                    GROUPNAME = customerGroupModel.GROUPNAME,
+                    GROUPDESCRIPTION = customerGroupModel.GROUPDESCRIPTION,
+                    CREATEDBY = customerGroupModel.CREATEDBY,
+                    DATETIMECREATED = genSetup.GetApplicationDate()
                 };
-                context.tbl_Customer_Group.Add(customerGroup);
+                context.TBL_CUSTOMER_GROUP.Add(customerGroup);
             }
 
-            customerGroupModel.IsCurrent = false;
-            customerGroupModel.ApprovalStatusId = approvalStatusId;
-            customerGroupModel.DateTimeUpdated = DateTime.Now;
+            customerGroupModel.ISCURRENT = false;
+            customerGroupModel.APPROVALSTATUSID = approvalStatusId;
+            customerGroupModel.DATETIMEUPDATED = DateTime.Now;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupApproved,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Approved Customer Group '{customerGroupModel.GroupName}' with group code'{customerGroupModel.GroupCode}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupApproved,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Approved Customer Group '{customerGroupModel.GROUPNAME}' with group code'{customerGroupModel.GROUPCODE}'",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -486,59 +488,59 @@ namespace FintrakBanking.Repositories.Customer
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            return (from c in context.tbl_Temp_Customer_Group
-                    join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
-                    join atrail in context.tbl_Approval_Trail on c.CustomerGroupId equals atrail.TargetId
-                    where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)OperationsEnum.CustomerGroupCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+            return (from c in context.TBL_TEMP_CUSTOMER_GROUP
+                    join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
+                    join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPID equals atrail.TARGETID
+                    where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
+                          && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                     select new CustomerGroupViewModel()
                     {
-                        companyId = c.CompanyId,
-                        companyName = c.tbl_Company.Name,
-                        customerGroupId = c.CustomerGroupId,
-                        groupName = c.GroupName,
-                        groupCode = c.GroupCode,
-                        groupDescription = c.GroupDescription,
-                        operationId = atrail.OperationId,
+                        companyId = c.COMPANYID,
+                        companyName = c.TBL_COMPANY.NAME,
+                        customerGroupId = c.CUSTOMERGROUPID,
+                        groupName = c.GROUPNAME,
+                        groupCode = c.GROUPCODE,
+                        groupDescription = c.GROUPDESCRIPTION,
+                        operationId = atrail.OPERATIONID,
                     });
         }
 
-        #endregion tbl_Customer - Group
+        #endregion TBL_CUSTOMER - Group
 
-        #region tbl_Customer Group Mapping
+        #region TBL_CUSTOMER Group Mapping
 
         public bool AddCustomerGroupMapping(CustomerGroupMappingViewModel entity)
         {
-            var groupMap = new tbl_Customer_Group_Mapping
+            var groupMap = new TBL_CUSTOMER_GROUP_MAPPING
             {
-                CustomerId = entity.customerId,
-                CustomerGroupId = entity.customerGroupId,
-                RelationshipTypeId = entity.relationshipTypeId,
+                CUSTOMERID = entity.customerId,
+                CUSTOMERGROUPID = entity.customerGroupId,
+                RELATIONSHIPTYPEID = entity.relationshipTypeId,
                 ////CreatedBy = entity.createdBy,
-                DateTimeCreated = DateTime.Now
+                DATETIMECREATED = DateTime.Now
             };
 
-            context.tbl_Customer_Group_Mapping.Add(groupMap);
+            context.TBL_CUSTOMER_GROUP_MAPPING.Add(groupMap);
 
             // Audit Section ---------------------------
-            var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
+            var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
                                                     .Select(x => new
                                                     {
-                                                        customerName = x.FirstName + " " + x.LastName
+                                                        customerName = x.FIRSTNAME + " " + x.LASTNAME
                                                     }).FirstOrDefault();
 
-            var groupName = this.context.tbl_Customer_Group.FirstOrDefault(x => x.CustomerGroupId == entity.customerGroupId).GroupName;
+            var groupName = this.context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == entity.customerGroupId).GROUPNAME;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupAdded,
                 //StaffId = entity.createdBy,
                 //BranchId = (short)entity.userBranchId,
-                Detail = $"Added Customer Group Mapping to customer: { customer } with code: {entity.customerCode } to group  ( { groupName } ) ",
+                DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {entity.customerCode } to group  ( { groupName } ) ",
                 //IPAddress = entity.userIPAddress,
                 //Url = entity.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -551,36 +553,36 @@ namespace FintrakBanking.Repositories.Customer
         {
             bool output = false;
 
-            var groupMap = new tbl_Temp_Customer_Group_Mapping
+            var groupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPING
             {
-                CustomerId = model.customerId,
-                CustomerGroupId = model.customerGroupId,
-                RelationshipTypeId = model.relationshipTypeId,
-                CreatedBy = model.createdBy,
-                ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-                CompanyId = model.companyId,
-                IsCurrent = true,
-                DateTimeCreated = DateTime.Now
+                CUSTOMERID = model.customerId,
+                CUSTOMERGROUPID = model.customerGroupId,
+                RELATIONSHIPTYPEID = model.relationshipTypeId,
+                CREATEDBY = model.createdBy,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                COMPANYID = model.companyId,
+                ISCURRENT = true,
+                DATETIMECREATED = DateTime.Now
             };
 
-            var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
+            var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
                                                     .Select(x => new
                                                     {
-                                                        customerName = x.FirstName + " " + x.LastName
+                                                        customerName = x.FIRSTNAME + " " + x.LASTNAME
                                                     }).FirstOrDefault();
 
-            var groupName = this.context.tbl_Customer_Group.FirstOrDefault(x => x.CustomerGroupId == model.customerGroupId).GroupName;
+            var groupName = this.context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == model.customerGroupId).GROUPNAME;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Customer Group Mapping to customer: { customer } with code: {model.customerCode } to group  ( { groupName } ) ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {model.customerCode } to group  ( { groupName } ) ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -588,7 +590,7 @@ namespace FintrakBanking.Repositories.Customer
                 try
                 {
                     auditTrail.AddAuditTrail(audit);
-                    context.tbl_Temp_Customer_Group_Mapping.Add(groupMap);
+                    context.TBL_TEMP_CUSTOMER_GROUP_MAPPING.Add(groupMap);
                     output = this.SaveAll();
 
                     var entity = new ApprovalViewModel
@@ -596,7 +598,7 @@ namespace FintrakBanking.Repositories.Customer
                         staffId = model.createdBy,
                         companyId = model.companyId,
                         approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        targetId = groupMap.CustomerGroupMappingId,
+                        targetId = groupMap.CUSTOMERGROUPMAPPINGID,
                         operationId = (int)OperationsEnum.CustomerGroupCreation,
                         BranchId = model.userBranchId,
                         externalInitialization = true
@@ -623,63 +625,63 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (customerGroups.Count <= 0)
                 return false;
-            List<tbl_Customer_Group_Mapping> listOfMappedGroup = new List<tbl_Customer_Group_Mapping>();
+            List<TBL_CUSTOMER_GROUP_MAPPING> listOfMappedGroup = new List<TBL_CUSTOMER_GROUP_MAPPING>();
             foreach (CustomerGroupMappingViewModel item in customerGroups)
             {
-                var group = this.context.tbl_Customer_Group_Mapping.FirstOrDefault(x => x.CustomerId == item.customerId && x.CustomerGroupId == item.customerGroupId);
+                var group = this.context.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault(x => x.CUSTOMERID == item.customerId && x.CUSTOMERGROUPID == item.customerGroupId);
                 if (group == null)
                 {
-                    var groupMap = new tbl_Customer_Group_Mapping
+                    var groupMap = new TBL_CUSTOMER_GROUP_MAPPING
                     {
-                        CustomerId = item.customerId,
-                        CustomerGroupId = item.customerGroupId,
-                        RelationshipTypeId = item.relationshipTypeId,
-                        CreatedBy = createdBy,
-                        Deleted = false,
-                        DateTimeCreated = DateTime.Now
+                        CUSTOMERID = item.customerId,
+                        CUSTOMERGROUPID = item.customerGroupId,
+                        RELATIONSHIPTYPEID = item.relationshipTypeId,
+                        CREATEDBY = createdBy,
+                        DELETED = false,
+                        DATETIMECREATED = DateTime.Now
                     };
                     listOfMappedGroup.Add(groupMap);
                   
                     // Audit Section ---------------------------
-                    var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
+                    var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
                                                             .Select(x => new
                                                             {
-                                                                customerName = x.FirstName + " " + x.LastName
+                                                                customerName = x.FIRSTNAME + " " + x.LASTNAME
                                                             }).FirstOrDefault();
-                    var groupName = (from gr in this.context.tbl_Customer_Group where gr.CustomerGroupId == item.customerGroupId select gr.GroupName).FirstOrDefault();
+                    var groupName = (from gr in this.context.TBL_CUSTOMER_GROUP where gr.CUSTOMERGROUPID == item.customerGroupId select gr.GROUPNAME).FirstOrDefault();
 
-                    var audit = new tbl_Audit
+                    var audit = new TBL_AUDIT
                     {
-                        AuditTypeId = (short)AuditTypeEnum.CustomerGroupAdded,
-                        StaffId = createdBy,
-                        BranchId = userBranchId,
-                        Detail = $"Added Customer Group Mapping to customer: { customer } with code: {item.customerCode } to group  ( { groupName } ) ",
+                        AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupAdded,
+                        STAFFID = createdBy,
+                        BRANCHID = userBranchId,
+                        DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {item.customerCode } to group  ( { groupName } ) ",
                         //IPAddress = entity.userIPAddress,
                         //Url = entity.applicationUrl,
-                        ApplicationDate = genSetup.GetApplicationDate(),
-                        SystemDateTime = DateTime.Now
+                        APPLICATIONDATE = genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
                     };
                     this.auditTrail.AddAuditTrail(audit);
                     //end of Audit section -----------------------
                   
                 }
             }
-            context.tbl_Customer_Group_Mapping.AddRange(listOfMappedGroup);
+            context.TBL_CUSTOMER_GROUP_MAPPING.AddRange(listOfMappedGroup);
             return context.SaveChanges() != 0;
           
         }
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
         {
-            var customerGroupMapping = from a in context.tbl_Customer_Group_Mapping
-                                       where a.Deleted == false
+            var customerGroupMapping = from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                       where a.DELETED == false
                                        select new CustomerGroupMappingViewModel
                                        {
-                                           customerGroupMappingId = a.CustomerGroupMappingId,
-                                           customerGroupId = a.CustomerGroupId,
-                                           relationshipTypeId = a.RelationshipTypeId,
+                                           customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                           customerGroupId = a.CUSTOMERGROUPID,
+                                           relationshipTypeId = a.RELATIONSHIPTYPEID,
                                            //createdBy = a.CreatedBy,
-                                           customerId = a.CustomerId,
+                                           customerId = a.CUSTOMERID,
                                            //dateTimeCreated = a.DateTimeCreated
                                        };
 
@@ -688,15 +690,15 @@ namespace FintrakBanking.Repositories.Customer
 
         public CustomerGroupMappingViewModel GetCustomerGroupMappingByGroupMapId(int groupMapId)
         {
-            var customerGroupMapping = from a in context.tbl_Customer_Group_Mapping
-                                       where a.CustomerGroupMappingId == groupMapId && a.Deleted == false
+            var customerGroupMapping = from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                       where a.CUSTOMERGROUPMAPPINGID == groupMapId && a.DELETED == false
                                        select new CustomerGroupMappingViewModel
                                        {
-                                           customerGroupMappingId = a.CustomerGroupMappingId,
-                                           customerGroupId = a.CustomerGroupId,
-                                           relationshipTypeId = a.RelationshipTypeId,
+                                           customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                           customerGroupId = a.CUSTOMERGROUPID,
+                                           relationshipTypeId = a.RELATIONSHIPTYPEID,
                                            //createdBy = a.CreatedBy,
-                                           customerId = a.CustomerId,
+                                           customerId = a.CUSTOMERID,
                                            //dateTimeCreated = a.DateTimeCreated
                                        };
 
@@ -705,19 +707,19 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMappingByGroupId(int customerGroupId)
         {
-            var customerGroupMapping = from a in context.tbl_Customer_Group_Mapping
-                                       where a.CustomerGroupId == customerGroupId && a.Deleted == false
+            var customerGroupMapping = from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                       where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
                                        select new CustomerGroupMappingViewModel
                                        {
-                                           customerGroupMappingId = a.CustomerGroupMappingId,
-                                           customerGroupId = a.CustomerGroupId,
-                                           relationshipTypeId = a.RelationshipTypeId,
-                                           relationshipTypeName = a.tbl_Customer_Group_RelationshipType.RelationshipTypeName,
+                                           customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                           customerGroupId = a.CUSTOMERGROUPID,
+                                           relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                           relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.RELATIONSHIPTYPENAME,
                                            //createdBy = a.CreatedBy,
-                                           customerId = a.CustomerId,
-                                           customerCode = a.tbl_Customer.CustomerCode,
-                                           customerName = a.tbl_Customer.LastName + " " + a.tbl_Customer.FirstName,
-                                           customerType = a.tbl_Customer.tbl_Customer_Type.Name,
+                                           customerId = a.CUSTOMERID,
+                                           customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                           customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                           customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                                            //dateTimeCreated = a.DateTimeCreated
                                        };
 
@@ -729,15 +731,15 @@ namespace FintrakBanking.Repositories.Customer
         {
             try
             {
-                var customerGroupMapping = from b in context.tbl_Customer_Group_Mapping
+                var customerGroupMapping = from b in context.TBL_CUSTOMER_GROUP_MAPPING
                                            
-                                           where b.CustomerGroupId == customerGroupId && b.Deleted  == false && b.tbl_Customer.CompanyId == companyId
+                                           where b.CUSTOMERGROUPID == customerGroupId && b.DELETED  == false && b.TBL_CUSTOMER.COMPANYID == companyId
                                            select new GroupCustomerMembersViewModel
                                            {
-                                               customerId = b.CustomerId,
-                                               customerCode = b.tbl_Customer.CustomerCode,
-                                               lastName = b.tbl_Customer.LastName,
-                                               firstName = b.tbl_Customer.FirstName
+                                               customerId = b.CUSTOMERID,
+                                               customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                                               lastName = b.TBL_CUSTOMER.LASTNAME,
+                                               firstName = b.TBL_CUSTOMER.FIRSTNAME
                                            };
 
                 return customerGroupMapping;
@@ -752,64 +754,64 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool DeleteCustomerGroupMaping(int groupMapId, UserInfo user)
         {
-            var groupMap = context.tbl_Customer_Group_Mapping.Find(groupMapId);
+            var groupMap = context.TBL_CUSTOMER_GROUP_MAPPING.Find(groupMapId);
 
-            groupMap.Deleted = true;
-            groupMap.DeletedBy = (int)user.createdBy;
-            groupMap.DateTimeDeleted = genSetup.GetApplicationDate();
+            groupMap.DELETED = true;
+            groupMap.DELETEDBY = (int)user.createdBy;
+            groupMap.DATETIMEDELETED = genSetup.GetApplicationDate();
 
-            var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
+            var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
                                                     .Select(x => new
                                                     {
-                                                        customerName = x.FirstName + " " + x.LastName
+                                                        customerName = x.FIRSTNAME + " " + x.LASTNAME
                                                     }).FirstOrDefault();
 
-            var customerGroupName = context.tbl_Customer_Group.Find(groupMap.CustomerGroupId).GroupName;
+            var customerGroupName = context.TBL_CUSTOMER_GROUP.Find(groupMap.CUSTOMERGROUPID).GROUPNAME;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupMappingDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Customer Group Mapping for customer: { customer} with Code: {groupMap.tbl_Customer.CustomerCode} to group({customerGroupName })",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Customer Group Mapping for customer: { customer} with Code: {groupMap.TBL_CUSTOMER.CUSTOMERCODE} to group({customerGroupName })",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
-            context.tbl_Audit.Add(audit);
+            context.TBL_AUDIT.Add(audit);
 
             return context.SaveChanges() != 0;
         }
 
         public bool UpdateCustomerGroupMapping(int groupMapId, CustomerGroupMappingViewModel entity)
         {
-            var groupMap = context.tbl_Customer_Group_Mapping.Find(groupMapId);
+            var groupMap = context.TBL_CUSTOMER_GROUP_MAPPING.Find(groupMapId);
             if (groupMap == null) return false;
 
-            groupMap.CustomerGroupMappingId = groupMapId;
+            groupMap.CUSTOMERGROUPMAPPINGID = groupMapId;
             //groupMap.LastUpdatedBy = (int)entity.createdBy;
-            groupMap.DateTimeUpdated = genSetup.GetApplicationDate();
+            groupMap.DATETIMEUPDATED = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
+            var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
                                                     .Select(x => new
                                                     {
-                                                        customerName = x.FirstName + " " + x.LastName
+                                                        customerName = x.FIRSTNAME + " " + x.LASTNAME
                                                     }).FirstOrDefault();
-            var groupName = this.context.tbl_Customer_Group.FirstOrDefault(x => x.CustomerGroupId == groupMap.CustomerGroupId).GroupName;
+            var groupName = this.context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == groupMap.CUSTOMERGROUPID).GROUPNAME;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupMappingUpdated,
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingUpdated,
                 ////StaffId = entity.createdBy,
                 //BranchId = (short)entity.userBranchId,
-                Detail = $"Updated Customer Group Mapping for customer: { customer }  with code:  { groupMap.tbl_Customer.CustomerCode } to group ( {groupName } ) ",
+                DETAIL = $"Updated Customer Group Mapping for customer: { customer }  with code:  { groupMap.TBL_CUSTOMER.CUSTOMERCODE } to group ( {groupName } ) ",
                 //IPAddress = entity.userIPAddress,
                 //Url = entity./*applicationUrl*/,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -821,25 +823,25 @@ namespace FintrakBanking.Repositories.Customer
             if (model == null)
                 return false;
 
-            var existStingTempGroupMapping = context.tbl_Temp_Customer_Group_Mapping.Where(x => x.CustomerGroupId ==
-            model.customerGroupId && x.IsCurrent == true &&
-            x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existStingTempGroupMapping = context.TBL_TEMP_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID ==
+            model.customerGroupId && x.ISCURRENT == true &&
+            x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
 
             if (existStingTempGroupMapping.Any())
             {
                 foreach (var item in existStingTempGroupMapping)
                 {
-                    item.IsCurrent = false;
-                    item.DateTimeUpdated = DateTime.Now;
+                    item.ISCURRENT = false;
+                    item.DATETIMEUPDATED = DateTime.Now;
                 }
             }
 
-            var targetGroupMapping = this.context.tbl_Customer_Group_Mapping.Find(groupMapId);
+            var targetGroupMapping = this.context.TBL_CUSTOMER_GROUP_MAPPING.Find(groupMapId);
 
-            var unApprovedCustomerGroupMapEdit = context.tbl_Temp_Customer_Group_Mapping.Where(x => x.IsCurrent == true
-            && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
+            var unApprovedCustomerGroupMapEdit = context.TBL_TEMP_CUSTOMER_GROUP_MAPPING.Where(x => x.ISCURRENT == true
+            && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending);
 
-            tbl_Temp_Customer_Group_Mapping tempCustomerGroupMap;
+            TBL_TEMP_CUSTOMER_GROUP_MAPPING tempCustomerGroupMap;
 
             if (unApprovedCustomerGroupMapEdit.Any())
             {
@@ -847,39 +849,39 @@ namespace FintrakBanking.Repositories.Customer
             }
             else
             {
-                tempCustomerGroupMap = new tbl_Temp_Customer_Group_Mapping()
+                tempCustomerGroupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPING()
                 {
-                    CustomerId = model.customerId,
-                    CustomerGroupId = targetGroupMapping.CustomerGroupId,
-                    RelationshipTypeId = model.relationshipTypeId,
-                    CreatedBy = model.createdBy,
-                    DateTimeCreated = genSetup.GetApplicationDate(),
-                    CompanyId = model.companyId,
-                    ApprovalStatusId = (int)ApprovalStatusEnum.Pending,
-                    IsCurrent = true,
+                    CUSTOMERID = model.customerId,
+                    CUSTOMERGROUPID = targetGroupMapping.CUSTOMERGROUPID,
+                    RELATIONSHIPTYPEID = model.relationshipTypeId,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                    COMPANYID = model.companyId,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    ISCURRENT = true,
                 };
 
-                context.tbl_Temp_Customer_Group_Mapping.Add(tempCustomerGroupMap);
+                context.TBL_TEMP_CUSTOMER_GROUP_MAPPING.Add(tempCustomerGroupMap);
             }
 
             // Audit Section ---------------------------
-            var customer = this.context.tbl_Customer.Where(x => x.CustomerId == targetGroupMapping.CustomerId).ToList()
+            var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == targetGroupMapping.CUSTOMERID).ToList()
                                                     .Select(x => new
                                                     {
-                                                        customerName = x.FirstName + " " + x.LastName
+                                                        customerName = x.FIRSTNAME + " " + x.LASTNAME
                                                     }).FirstOrDefault();
-            var groupName = this.context.tbl_Customer_Group.FirstOrDefault(x => x.CustomerGroupId == targetGroupMapping.CustomerGroupId).GroupName;
+            var groupName = this.context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == targetGroupMapping.CUSTOMERGROUPID).GROUPNAME;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupMappingUpdated,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated Customer Group Mapping for customer: { customer }  with code:  { targetGroupMapping.tbl_Customer.CustomerCode } to group ( {groupName } ) ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Customer Group Mapping for customer: { customer }  with code:  { targetGroupMapping.TBL_CUSTOMER.CUSTOMERCODE } to group ( {groupName } ) ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -891,7 +893,7 @@ namespace FintrakBanking.Repositories.Customer
                 staffId = model.createdBy,
                 companyId = model.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                targetId = tempCustomerGroupMap.CustomerGroupMappingId,
+                targetId = tempCustomerGroupMap.CUSTOMERGROUPMAPPINGID,
                 operationId = (int)OperationsEnum.CustomerGroupCreation,
                 BranchId = model.userBranchId
             };
@@ -902,31 +904,31 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool DeleteCustomerGroupMapping(int groupMapId, UserInfo user)
         {
-            var groupMap = context.tbl_Customer_Group_Mapping.Find(groupMapId);
+            var groupMap = context.TBL_CUSTOMER_GROUP_MAPPING.Find(groupMapId);
 
-            groupMap.Deleted = true;
-            groupMap.DeletedBy = (int)user.createdBy;
-            groupMap.DateTimeDeleted = genSetup.GetApplicationDate();
+            groupMap.DELETED = true;
+            groupMap.DELETEDBY = (int)user.createdBy;
+            groupMap.DATETIMEDELETED = genSetup.GetApplicationDate();
 
-            var customer = this.context.tbl_Customer.Where(x => x.CustomerId == groupMap.CustomerId).ToList()
+            var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
                                                     .Select(x => new
                                                     {
-                                                        customerName = x.FirstName + " " + x.LastName
+                                                        customerName = x.FIRSTNAME + " " + x.LASTNAME
                                                     }).FirstOrDefault();
 
-            var customerGroupName = context.tbl_Customer_Group.Find(groupMap.CustomerGroupId).GroupName;
-            var groupName = this.context.tbl_Customer_Group.FirstOrDefault(x => x.CustomerGroupId == groupMap.CustomerGroupId).GroupName;
+            var customerGroupName = context.TBL_CUSTOMER_GROUP.Find(groupMap.CUSTOMERGROUPID).GROUPNAME;
+            var groupName = this.context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == groupMap.CUSTOMERGROUPID).GROUPNAME;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupMappingDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Customer Group Mapping for customer: { customer} with Code: {groupMap.tbl_Customer.CustomerCode} to group({customerGroupName })",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Customer Group Mapping for customer: { customer} with Code: {groupMap.TBL_CUSTOMER.CUSTOMERCODE} to group({customerGroupName })",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -935,47 +937,47 @@ namespace FintrakBanking.Repositories.Customer
 
         private bool ApproveCustomerGroupMapping(int customerGroupMapId, short approvalStatusId, UserInfo user)
         {
-            var customerGroupMapModel = context.tbl_Temp_Customer_Group_Mapping.Find(customerGroupMapId);
-            var customerGroupMapToUpdate = context.tbl_Customer_Group_Mapping.Where(x => x.CustomerGroupMappingId == customerGroupMapId);
+            var customerGroupMapModel = context.TBL_TEMP_CUSTOMER_GROUP_MAPPING.Find(customerGroupMapId);
+            var customerGroupMapToUpdate = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPMAPPINGID == customerGroupMapId);
             var existingCustomerGroupMap = customerGroupMapToUpdate.FirstOrDefault();
 
             //Update existing customer group map with tempCustomerGroupMap record
             if (customerGroupMapToUpdate.Any())
             {
-                existingCustomerGroupMap.CustomerId = customerGroupMapModel.CustomerId;
-                existingCustomerGroupMap.CustomerGroupId = customerGroupMapModel.CustomerGroupId;
-                existingCustomerGroupMap.RelationshipTypeId = customerGroupMapModel.RelationshipTypeId;
-                existingCustomerGroupMap.CreatedBy = customerGroupMapModel.CreatedBy;
-                existingCustomerGroupMap.DateTimeUpdated = DateTime.Now;
+                existingCustomerGroupMap.CUSTOMERID = customerGroupMapModel.CUSTOMERID;
+                existingCustomerGroupMap.CUSTOMERGROUPID = customerGroupMapModel.CUSTOMERGROUPID;
+                existingCustomerGroupMap.RELATIONSHIPTYPEID = customerGroupMapModel.RELATIONSHIPTYPEID;
+                existingCustomerGroupMap.CREATEDBY = customerGroupMapModel.CREATEDBY;
+                existingCustomerGroupMap.DATETIMEUPDATED = DateTime.Now;
             }
             else //Insert a new customer group map record into the real customer group map table
             {
-                var customerGroupMap = new tbl_Customer_Group_Mapping()
+                var customerGroupMap = new TBL_CUSTOMER_GROUP_MAPPING()
                 {
-                    CustomerId = customerGroupMapModel.CustomerId,
-                    CustomerGroupId = customerGroupMapModel.CustomerGroupId,
-                    RelationshipTypeId = customerGroupMapModel.RelationshipTypeId,
-                    CreatedBy = customerGroupMapModel.CreatedBy,
-                    DateTimeCreated = DateTime.Now
+                    CUSTOMERID = customerGroupMapModel.CUSTOMERID,
+                    CUSTOMERGROUPID = customerGroupMapModel.CUSTOMERGROUPID,
+                    RELATIONSHIPTYPEID = customerGroupMapModel.RELATIONSHIPTYPEID,
+                    CREATEDBY = customerGroupMapModel.CREATEDBY,
+                    DATETIMECREATED = DateTime.Now
                 };
-                context.tbl_Customer_Group_Mapping.Add(customerGroupMap);
+                context.TBL_CUSTOMER_GROUP_MAPPING.Add(customerGroupMap);
             }
 
-            customerGroupMapModel.IsCurrent = false;
-            customerGroupMapModel.ApprovalStatusId = approvalStatusId;
-            customerGroupMapModel.DateTimeUpdated = DateTime.Now;
+            customerGroupMapModel.ISCURRENT = false;
+            customerGroupMapModel.APPROVALSTATUSID = approvalStatusId;
+            customerGroupMapModel.DATETIMEUPDATED = DateTime.Now;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomerGroupApproved,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Approved Customer Group Mapping '{customerGroupMapModel.CustomerGroupMappingId}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupApproved,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Approved Customer Group Mapping '{customerGroupMapModel.CUSTOMERGROUPMAPPINGID}'",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -991,136 +993,136 @@ namespace FintrakBanking.Repositories.Customer
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            return (from c in context.tbl_Temp_Customer_Group_Mapping
-                    join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
-                    join atrail in context.tbl_Approval_Trail on c.CustomerGroupId equals atrail.TargetId
-                    where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.OperationId == (int)OperationsEnum.CustomerGroupCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+            return (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPING
+                    join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
+                    join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPID equals atrail.TARGETID
+                    where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
+                          && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                     select new CustomerGroupMappingViewModel()
                     {
-                        companyId = c.CompanyId,
-                        customerGroupId = c.CustomerGroupId,
-                        customerGroupMappingId = c.CustomerGroupMappingId,
-                        customerCode = c.tbl_Customer.CustomerCode,
-                        customerId = c.CustomerId,
-                        relationshipTypeId = c.RelationshipTypeId,
-                        relationshipTypeName = c.tbl_Customer_Group_RelationshipType.RelationshipTypeName,
-                        customerName = c.tbl_Customer.FirstName + " " + c.tbl_Customer.LastName,
+                        companyId = c.COMPANYID,
+                        customerGroupId = c.CUSTOMERGROUPID,
+                        customerGroupMappingId = c.CUSTOMERGROUPMAPPINGID,
+                        customerCode = c.TBL_CUSTOMER.CUSTOMERCODE,
+                        customerId = c.CUSTOMERID,
+                        relationshipTypeId = c.RELATIONSHIPTYPEID,
+                        relationshipTypeName = c.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.RELATIONSHIPTYPENAME,
+                        customerName = c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.LASTNAME,
                     });
         }
 
         public IEnumerable<LookupViewModel> GetCustomerGroupRelationshipTypes()
         {
-            return from a in context.tbl_Customer_Group_RelationshipType
+            return from a in context.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE
                    select new LookupViewModel
                    {
-                       lookupId = a.RelationshipTypeId,
-                       lookupName = a.RelationshipTypeName
+                       lookupId = a.RELATIONSHIPTYPEID,
+                       lookupName = a.RELATIONSHIPTYPENAME
                    };
         }
         public bool AddCustomerGroupRelationshipTypes(LookupViewModel model )
         {
             if (model.lookupId > 0)
             {
-                var type = context.tbl_Customer_Group_RelationshipType.FirstOrDefault(x=> x.RelationshipTypeId == model.lookupId);
-                type.RelationshipTypeName = model.lookupName;
+                var type = context.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.FirstOrDefault(x=> x.RELATIONSHIPTYPEID == model.lookupId);
+                type.RELATIONSHIPTYPENAME = model.lookupName;
               
             }
             else
             {
-                var type = new tbl_Customer_Group_RelationshipType
+                var type = new TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE
                 {
-                    RelationshipTypeName = model.lookupName
+                    RELATIONSHIPTYPENAME = model.lookupName
                 };
-                context.tbl_Customer_Group_RelationshipType.Add(type);
+                context.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.Add(type);
             }
             return this.SaveAll();
         }
 
         private IQueryable<CustomerGroupViewModel> GellAllCustomerGroupMappings()
         {
-            var data = (from a in context.tbl_Customer_Group
-                        where a.Deleted == false
+            var data = (from a in context.TBL_CUSTOMER_GROUP
+                        where a.DELETED == false
                         select new CustomerGroupViewModel
                         {
-                            customerGroupId = a.CustomerGroupId,
-                            customerGroupName = a.GroupName,
-                            customerGroupCode = a.GroupCode,
-                            customerGroupMappings = context.tbl_Customer_Group_Mapping.Where(x => x.CustomerGroupId == a.CustomerGroupId).Select(s => new CustomerGroupMappingViewModel
+                            customerGroupId = a.CUSTOMERGROUPID,
+                            customerGroupName = a.GROUPNAME,
+                            customerGroupCode = a.GROUPCODE,
+                            customerGroupMappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(s => new CustomerGroupMappingViewModel
                             {
-                                customerGroupMappingId = s.CustomerGroupMappingId,
-                                customerGroupId = s.CustomerGroupId,
-                                customerId = s.CustomerId,
-                                customerCode = s.tbl_Customer.CustomerCode,
-                                customerName = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
-                                customerType = s.tbl_Customer.tbl_Customer_Type.Name,
-                                relationshipTypeId = s.RelationshipTypeId,
-                                relationshipTypeName = s.tbl_Customer_Group_RelationshipType.RelationshipTypeName,
-                                productAccountNumber = context.tbl_CASA.FirstOrDefault(x => x.CustomerId == s.CustomerId).ProductAccountNumber,
-                                accountHolder = s.tbl_Customer.FirstName + " " + s.tbl_Customer.LastName,
-                                companyId = s.tbl_Customer.CompanyId,
-                                branchId = s.tbl_Customer.BranchId,
-                                isBlackList = context.tbl_Customer_Blacklist.Any(x => x.CustomerId == s.CustomerId),
-                                isOnWatchList = context.tbl_Loan_PrudentialGuideline.Any(x => x.tbl_Loan.Any(l => l.CustomerId == s.CustomerId) && x.PrudentialGuidelineStatusId == (int)LoanPrudentialStatusEnum.WatchList),
-                                isCamsol = context.tbl_Loan_Camsol.Any(x => context.tbl_Loan.Any(l => l.TermLoanId == x.LoanId && l.CustomerId == s.CustomerId)),
-                                taxIdentificationNumber = s.tbl_Customer.TaxNumber,
-                                registrationNumber = s.tbl_Customer.tbl_Customer_CompanyInfomation.FirstOrDefault(x => x.CustomerId == s.CustomerId).RegistrationNumber,
-                                customerBvnInformation = context.tbl_Customer_BVN.Where(b => b.CustomerId == s.CustomerId).Select(b => new CustomerBvnViewModels()
+                                customerGroupMappingId = s.CUSTOMERGROUPMAPPINGID,
+                                customerGroupId = s.CUSTOMERGROUPID,
+                                customerId = s.CUSTOMERID,
+                                customerCode = s.TBL_CUSTOMER.CUSTOMERCODE,
+                                customerName = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.LASTNAME,
+                                customerType = s.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                relationshipTypeId = s.RELATIONSHIPTYPEID,
+                                relationshipTypeName = s.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.RELATIONSHIPTYPENAME,
+                                productAccountNumber = context.TBL_CASA.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                                accountHolder = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.LASTNAME,
+                                companyId = s.TBL_CUSTOMER.COMPANYID,
+                                branchId = s.TBL_CUSTOMER.BRANCHID,
+                                isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERID == s.CUSTOMERID),
+                                isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == s.CUSTOMERID) && x.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList),
+                                isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == s.CUSTOMERID)),
+                                taxIdentificationNumber = s.TBL_CUSTOMER.TAXNUMBER,
+                                registrationNumber = s.TBL_CUSTOMER.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).REGISTRATIONNUMBER,
+                                customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == s.CUSTOMERID).Select(b => new CustomerBvnViewModels()
                                 {
-                                    bankVerificationNumber = b.BankVerificationNumber,
-                                    customerBvnid = b.CustomerBVNId,
-                                    firstname = b.Firstname,
-                                    isValidBvn = b.IsValidBVN,
-                                    isPoliticallyExposed = b.IsPoliticallyExposed,
-                                    surname = b.Surname
+                                    bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
+                                    customerBvnid = b.CUSTOMERBVNID,
+                                    firstname = b.FIRSTNAME,
+                                    isValidBvn = b.ISVALIDBVN,
+                                    isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
+                                    surname = b.SURNAME
                                 }).ToList(),
-                                customerCompanyDirectors = context.tbl_Customer_Company_Director.Where(x => x.CustomerId == s.CustomerId &&
-                                x.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.BoardMember).Select(x => new CustomerCompanyDirectorsViewModels()
+                                customerCompanyDirectors = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == s.CUSTOMERID &&
+                                x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember).Select(x => new CustomerCompanyDirectorsViewModels()
                                 {
-                                    bankVerificationNumber = x.CustomerBVN,
-                                    companyDirectorTypeId = x.CompanyDirectorTypeId,
-                                    companyDirectorTypeName = x.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
-                                    customerId = x.CustomerId,
-                                    firstname = x.Firstname,
-                                    surname = x.Surname
+                                    bankVerificationNumber = x.CUSTOMERBVN,
+                                    companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
+                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                    customerId = x.CUSTOMERID,
+                                    firstname = x.FIRSTNAME,
+                                    surname = x.SURNAME
                                 }).ToList(),
-                                customerCompanyShareholders = context.tbl_Customer_Company_Director.Where(x => x.CustomerId == s.CustomerId &&
-                                x.CompanyDirectorTypeId == (short)CompanyDirectorTypeEnum.Shareholder).Select(x => new CustomerCompanyShareholdersViewModels()
+                                customerCompanyShareholders = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID == s.CUSTOMERID &&
+                                x.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder).Select(x => new CustomerCompanyShareholdersViewModels()
                                 {
-                                    bankVerificationNumber = x.CustomerBVN,
-                                    companyDirectorTypeId = x.CompanyDirectorTypeId,
-                                    companyDirectorTypeName = x.tbl_Customer_Company_DirectorType.CompanyDirectoryTypeName,
-                                    customerId = x.CustomerId,
-                                    firstname = x.Firstname,
-                                    surname = x.Surname
+                                    bankVerificationNumber = x.CUSTOMERBVN,
+                                    companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
+                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                    customerId = x.CUSTOMERID,
+                                    firstname = x.FIRSTNAME,
+                                    surname = x.SURNAME
                                 }).ToList(),
-                                customerClients = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == s.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Client)
+                                customerClients = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Client)
                                     .Select(cs => new CustomerClientOrSupplierViewModels()
                                     {
-                                        client_SupplierId = cs.Client_SupplierId,
-                                        clientOrSupplierName = cs.FirstName + " " + cs.LastName,
-                                        firstName = cs.FirstName,
-                                        middleName = cs.MiddleName,
-                                        lastName = cs.LastName,
-                                        client_SupplierAddress = cs.Address,
-                                        client_SupplierPhoneNumber = cs.PhoneNumber,
-                                        client_SupplierEmail = cs.EmailAddress,
-                                        client_SupplierTypeId = cs.Client_SupplierTypeId,
-                                        client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                                        client_SupplierId = cs.CLIENT_SUPPLIERID,
+                                        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                                        firstName = cs.FIRSTNAME,
+                                        middleName = cs.MIDDLENAME,
+                                        lastName = cs.LASTNAME,
+                                        client_SupplierAddress = cs.ADDRESS,
+                                        client_SupplierPhoneNumber = cs.PHONENUMBER,
+                                        client_SupplierEmail = cs.EMAILADDRESS,
+                                        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
                                     }).ToList(),
-                                customerSuppliers = context.tbl_Customer_Client_Supplier.Where(cs => cs.CustomerId == s.CustomerId && cs.Client_SupplierTypeId == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                                customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
                                     .Select(cs => new CustomerSupplierViewModels()
                                     {
-                                        client_SupplierId = cs.Client_SupplierId,
-                                        clientOrSupplierName = cs.FirstName + " " + cs.LastName,
-                                        firstName = cs.FirstName,
-                                        middleName = cs.MiddleName,
-                                        lastName = cs.LastName,
-                                        client_SupplierAddress = cs.Address,
-                                        client_SupplierPhoneNumber = cs.PhoneNumber,
-                                        client_SupplierEmail = cs.EmailAddress,
-                                        client_SupplierTypeId = cs.Client_SupplierTypeId,
-                                        client_SupplierTypeName = cs.tbl_Customer_Client_Supplier_Type.Client_SupplierTypeName
+                                        client_SupplierId = cs.CLIENT_SUPPLIERID,
+                                        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                                        firstName = cs.FIRSTNAME,
+                                        middleName = cs.MIDDLENAME,
+                                        lastName = cs.LASTNAME,
+                                        client_SupplierAddress = cs.ADDRESS,
+                                        client_SupplierPhoneNumber = cs.PHONENUMBER,
+                                        client_SupplierEmail = cs.EMAILADDRESS,
+                                        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
                                     }).ToList(),
                                 //relationshipOfficerId = context.tbl_Staff.FirstOrDefault(),
                                 //relationshipManagerId = ,
@@ -1161,6 +1163,6 @@ namespace FintrakBanking.Repositories.Customer
             return allGroups;
         }
 
-        #endregion tbl_Customer Group Mapping
+        #endregion TBL_CUSTOMER Group Mapping
     }
 }

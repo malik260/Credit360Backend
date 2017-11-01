@@ -43,10 +43,10 @@ namespace FintrakBanking.Repositories.Admin
 
         private IList<CanGroupViewModel> LoadUserResources(int userId)
         {
-            var userGroups = (from ug in context.tbl_Profile_UserGroup
-                              join u in context.tbl_Profile_Group on ug.GroupId equals u.GroupId
-                              where ug.UserId == userId
-                              select ug.GroupId).ToList();
+            var userGroups = (from ug in context.TBL_PROFILE_USERGROUP
+                              join u in context.TBL_PROFILE_GROUP on ug.GROUPID equals u.GROUPID
+                              where ug.USERID == userId
+                              select ug.GROUPID).ToList();
 
             IList<CanGroupViewModel> groupsActivities = null;
             IList<CanGroupViewModel> additionalActivities = null;
@@ -54,28 +54,28 @@ namespace FintrakBanking.Repositories.Admin
 
             if (userGroups.Any())
             {
-                groupsActivities = context.tbl_Profile_Group_Activity.Where(x => userGroups.Contains(x.GroupId))
+                groupsActivities = context.TBL_PROFILE_GROUP_ACTIVITY.Where(x => userGroups.Contains(x.GROUPID))
                                         .Select(x => new CanGroupViewModel
                                         {
-                                            ActivityId = x.ActivityId,
-                                            CanAdd = x.CanAdd.Value,
-                                            CanApprove = x.CanApprove.Value,
-                                            CanDelete = x.CanDelete.Value,
-                                            CanEdit = x.CanEdit.Value,
-                                            CanView = x.CanView.Value
+                                            ActivityId = x.ACTIVITYID,
+                                            CanAdd = x.CANADD.Value,
+                                            CanApprove = x.CANAPPROVE.Value,
+                                            CanDelete = x.CANDELETE.Value,
+                                            CanEdit = x.CANEDIT.Value,
+                                            CanView = x.CANVIEW.Value
 
                                         }).ToList();
 
 
-                additionalActivities = context.tbl_Profile_AdditionalActivity.Where(x => x.UserId == userId)
+                additionalActivities = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == userId)
                                         .Select(x => new CanGroupViewModel
                                         {
-                                            ActivityId = x.ActivityId,
-                                            CanAdd = x.CanAdd,
-                                            CanApprove = x.CanApprove,
-                                            CanDelete = x.CanDelete,
-                                            CanEdit = x.CanEdit,
-                                            CanView = x.CanView
+                                            ActivityId = x.ACTIVITYID,
+                                            CanAdd = x.CANADD,
+                                            CanApprove = x.CANAPPROVE,
+                                            CanDelete = x.CANDELETE,
+                                            CanEdit = x.CANEDIT,
+                                            CanView = x.CANVIEW
 
                                         }).ToList();
 

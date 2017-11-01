@@ -35,38 +35,38 @@ namespace FintrakBanking.Repositories.Finance
 
         private void UpdateCASABalances(int casaAccountId, decimal debitAmount, decimal creditAmount)
         {
-            var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
+            var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
 
             if (debitAmount > 0)
             {
-                account.LedgerBalance = account.LedgerBalance - debitAmount;
-                account.AvailableBalance = account.AvailableBalance - debitAmount;
+                account.LEDGERBALANCE = account.LEDGERBALANCE - debitAmount;
+                account.AVAILABLEBALANCE = account.AVAILABLEBALANCE - debitAmount;
             }
             else
             {
-                account.LedgerBalance = account.LedgerBalance + creditAmount;
-                account.AvailableBalance = account.AvailableBalance +  creditAmount;
+                account.LEDGERBALANCE = account.LEDGERBALANCE + creditAmount;
+                account.AVAILABLEBALANCE = account.AVAILABLEBALANCE +  creditAmount;
             }
         }
 
         public CasaBalanceViewModel GetCASABalance(int casaAccountId)
         {
-            var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
+            var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
 
-            return new CasaBalanceViewModel {availableBalance = account.AvailableBalance, ledgerBalance = account.LedgerBalance };
+            return new CasaBalanceViewModel {availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE };
         }
 
         public CasaBalanceViewModel GetCASABalanceFromTransactions(int casaAccountId)
         {
             CasaBalanceViewModel balance = new CasaBalanceViewModel();
 
-            var trans = (from data in context.tbl_Finance_Transaction
-                         where data.CasaAccountId == casaAccountId
-                         select data.CreditAmount - data.DebitAmount).Sum();
+            var trans = (from data in context.TBL_FINANCE_TRANSACTION
+                         where data.CASAACCOUNTID == casaAccountId
+                         select data.CREDITAMOUNT - data.DEBITAMOUNT).Sum();
 
-            var account = context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == casaAccountId);
+            var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
 
-            var lienBalance = GetLienBalance(account.ProductAccountNumber);
+            var lienBalance = GetLienBalance(account.PRODUCTACCOUNTNUMBER);
 
             balance.ledgerBalance = trans;
             balance.availableBalance = trans - lienBalance;
@@ -76,9 +76,9 @@ namespace FintrakBanking.Repositories.Finance
 
         public decimal GetLienBalance(string productAccountNumber)
         {            
-            var balance = (from data in context.tbl_CASA_Lien
-                         where data.ProductAccountNumber == productAccountNumber
-                         select data.LienCreditAmount - data.LienDebitAmount).Sum();
+            var balance = (from data in context.TBL_CASA_LIEN
+                         where data.PRODUCTACCOUNTNUMBER == productAccountNumber
+                         select data.LIENCREDITAMOUNT - data.LIENDEBITAMOUNT).Sum();
 
             return balance;
         }
@@ -96,7 +96,7 @@ namespace FintrakBanking.Repositories.Finance
             if(transactionCount.Sum() < 2) //transaction.transactionDetails.Count() < 2
                 throw new Exception("Specify both debit and credit transactions");
 
-            List<tbl_Finance_Transaction> transactions = new List<tbl_Finance_Transaction>();
+            List<TBL_FINANCE_TRANSACTION> transactions = new List<TBL_FINANCE_TRANSACTION>();
 
             var debitSum = (from a in inputTransactions
                             select a.transactionDetails.Sum(x => x.debitAmount));
@@ -124,52 +124,52 @@ namespace FintrakBanking.Repositories.Finance
                     if (item.creditAmount < 0)
                         throw new Exception("Credit Amount should NOT be less than 0");
 
-                    var glInfo = context.tbl_Chart_Of_Account.FirstOrDefault(x => x.GLAccountId == item.glAccountId);
+                    var glInfo = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId);
 
-                    GLClassEnum glClass = (GLClassEnum) glInfo.GLClassId;
+                    GLClassEnum glClass = (GLClassEnum) glInfo.GLCLASSID;
 
                     if (glClass == GLClassEnum.CASA)
                     {
                         if (item.casaAccountId == null)
-                            throw new Exception($"Specify the CASA Account Number in this transaction for GL Code {glInfo.AccountCode}");
+                            throw new Exception($"Specify the CASA Account Number in this transaction for GL Code {glInfo.ACCOUNTCODE}");
 
                         UpdateCASABalances(item.casaAccountId.Value, item.debitAmount, item.creditAmount);
                     }
                     else
                     { item.casaAccountId = null; }
 
-                    tbl_Finance_Transaction trans = new tbl_Finance_Transaction();
+                    TBL_FINANCE_TRANSACTION trans = new TBL_FINANCE_TRANSACTION();
 
-                    trans.BatchCode = batchCode;
-                    trans.OperationId = mainItem.operationId;
-                    trans.Description = mainItem.description;
-                    trans.ValueDate = mainItem.valueDate;
-                    trans.PostedDate = mainItem.transactionDate;
-                    trans.CurrencyId = mainItem.currencyId;
-                    trans.CurrencyRate = mainItem.currencyRate;
-                    trans.PostedDateTime = DateTime.Now;
-                    trans.IsApproved = mainItem.isApproved;
-                    trans.PostedBy = mainItem.postedBy;
-                    trans.ApprovedBy = mainItem.approvedBy;
-                    trans.ApprovedDate = mainItem.approvedDate;
-                    trans.ApprovedDateTime = mainItem.approvedDateTime;
-                    trans.SourceApplicationId = mainItem.sourceApplicationId;
-                    trans.CompanyId = mainItem.companyId;
+                    trans.BATCHCODE = batchCode;
+                    trans.OPERATIONID = mainItem.operationId;
+                    trans.DESCRIPTION = mainItem.description;
+                    trans.VALUEDATE = mainItem.valueDate;
+                    trans.POSTEDDATE = mainItem.transactionDate;
+                    trans.CURRENCYID = mainItem.currencyId;
+                    trans.CURRENCYRATE = mainItem.currencyRate;
+                    trans.POSTEDDATETIME = DateTime.Now;
+                    trans.ISAPPROVED = mainItem.isApproved;
+                    trans.POSTEDBY = mainItem.postedBy;
+                    trans.APPROVEDBY = mainItem.approvedBy;
+                    trans.APPROVEDDATE = mainItem.approvedDate;
+                    trans.APPROVEDDATETIME = mainItem.approvedDateTime;
+                    trans.SOURCEAPPLICATIONID = mainItem.sourceApplicationId;
+                    trans.COMPANYID = mainItem.companyId;
 
 
-                    trans.GLAccountId = item.glAccountId;
-                    trans.SourceReferenceNumber = item.sourceReferenceNumber;
-                    trans.CasaAccountId = item.casaAccountId;
-                    trans.DebitAmount = item.debitAmount;
-                    trans.CreditAmount = item.creditAmount;
-                    trans.SourceBranchId = item.sourceBranchId;
-                    trans.DestinationBranchId = item.destinationBranchId;
+                    trans.GLACCOUNTID = item.glAccountId;
+                    trans.SOURCEREFERENCENUMBER = item.sourceReferenceNumber;
+                    trans.CASAACCOUNTID = item.casaAccountId;
+                    trans.DEBITAMOUNT = item.debitAmount;
+                    trans.CREDITAMOUNT = item.creditAmount;
+                    trans.SOURCEBRANCHID = item.sourceBranchId;
+                    trans.DESTINATIONBRANCHID = item.destinationBranchId;
 
                     transactions.Add(trans);
                 }
             }
 
-            this.context.tbl_Finance_Transaction.AddRange(transactions);
+            this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
             context.SaveChanges();
 
             return batchCode;
@@ -178,37 +178,37 @@ namespace FintrakBanking.Repositories.Finance
         [OperationBehavior(TransactionScopeRequired = true)]
         public FinanceTransactionViewModel PostCollateralSearch(CasaLienViewModel model)
         {
-            var lienSearchAmount = this.context.tbl_CASA_Lien.FirstOrDefault(x => x.LienReferenceNumber == model.lienReferenceNumber).LienCreditAmount;
+            var lienSearchAmount = this.context.TBL_CASA_LIEN.FirstOrDefault(x => x.LIENREFERENCENUMBER == model.lienReferenceNumber).LIENCREDITAMOUNT;
 
 
-            var data = new tbl_CASA_Lien
+            var data = new TBL_CASA_LIEN
             {
 
 
-                ProductAccountNumber = model.productAccountNumber,
-                LienReferenceNumber = model.lienReferenceNumber, //CommonHelpers.GenerateRandomDigitCode(10),
-                BranchId = model.branchId,
-                CompanyId = model.companyId,
-                LienCreditAmount = 0,
-                LienDebitAmount = lienSearchAmount,//creditOperations.GetCollateralSearchChargeAmount(model.stateId),
-                LienTypeId = (short)LienTypeEnum.CollateralSearch,
-                CreatedBy = model.createdBy,
-                Description = "",
-                DateCreated = generalSetup.GetApplicationDate()
+                PRODUCTACCOUNTNUMBER = model.productAccountNumber,
+                LIENREFERENCENUMBER = model.lienReferenceNumber, //CommonHelpers.GenerateRandomDigitCode(10),
+                BRANCHID = model.branchId,
+                COMPANYID = model.companyId,
+                LIENCREDITAMOUNT = 0,
+                LIENDEBITAMOUNT = lienSearchAmount,//creditOperations.GetCollateralSearchChargeAmount(model.stateId),
+                LIENTYPEID = (short)LienTypeEnum.CollateralSearch,
+                CREATEDBY = model.createdBy,
+                DESCRIPTION = "",
+                DATECREATED = generalSetup.GetApplicationDate()
             };
 
-            context.tbl_CASA_Lien.Add(data);
+            context.TBL_CASA_LIEN.Add(data);
 
             FinanceTransactionViewModel collateralTransaction = new FinanceTransactionViewModel();
             
 
-            var casa = this.context.tbl_CASA.FirstOrDefault(x => x.ProductAccountNumber == model.productAccountNumber && x.CompanyId == model.companyId);
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId);
 
             collateralTransaction.operationId = (int)OperationsEnum.CollateralSearch;
             collateralTransaction.description = "Customer Collateral Search Charge";
             collateralTransaction.valueDate = generalSetup.GetApplicationDate();
             collateralTransaction.transactionDate = collateralTransaction.valueDate;
-            collateralTransaction.currencyId = casa.CurrencyId;
+            collateralTransaction.currencyId = casa.CURRENCYID;
             collateralTransaction.currencyRate = GetExchangeRate(collateralTransaction.valueDate, collateralTransaction.currencyId,   model.companyId).sellingRate;            
             collateralTransaction.isApproved = true;
             collateralTransaction.postedBy = model.createdBy;
@@ -219,19 +219,19 @@ namespace FintrakBanking.Repositories.Finance
             collateralTransaction.companyId = model.companyId;
 
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
-            debit.sourceReferenceNumber = casa.ProductAccountNumber;
-            debit.casaAccountId = casa.CasaAccountId;
+            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
+            debit.casaAccountId = casa.CASAACCOUNTID;
             debit.debitAmount = lienSearchAmount;
             debit.creditAmount = 0;
             debit.sourceBranchId = model.branchId;
-            debit.destinationBranchId = casa.BranchId;
+            debit.destinationBranchId = casa.BRANCHID;
 
-            var chargeGL = this.context.tbl_Collateral_Type.FirstOrDefault(x => x.CollateralTypeId == (int)CollateralTypeEnum.Property).ChargeGLAccountId.Value;
+            var chargeGL = this.context.TBL_COLLATERAL_TYPE.FirstOrDefault(x => x.COLLATERALTYPEID == (int)CollateralTypeEnum.Property).CHARGEGLACCOUNTID.Value;
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
             credit.glAccountId = chargeGL;
 
-            credit.sourceReferenceNumber = casa.ProductAccountNumber;
+            credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = lienSearchAmount;
@@ -249,16 +249,16 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LienAdded,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Applied for lien with reference number: {model.lienReferenceNumber}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Applied for lien with reference number: {model.lienReferenceNumber}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -271,7 +271,7 @@ namespace FintrakBanking.Repositories.Finance
 
         public CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId,   int companyId)
         {
-            var baseCurrency = this.context.tbl_Company.FirstOrDefault(x => x.CompanyId == companyId).CurrencyId;
+            var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
             
             //CurrencyExchangeRateViewModel rateInfo = new CurrencyExchangeRateViewModel();
 
@@ -282,19 +282,19 @@ namespace FintrakBanking.Repositories.Finance
             else
             {
                 //DateTime date = generalSetup.GetApplicationDate().Date;
-                var rateInfo = (from x in this.context.tbl_Currency_Rate
-                            where x.CurrencyId == currencyId && x.Date == date.Date
+                var rateInfo = (from x in this.context.TBL_CURRENCY_RATE
+                            where x.CURRENCYID == currencyId && x.DATE == date.Date
                             select x).FirstOrDefault();
 
                 if (rateInfo == null)
                     throw new Exception($"Exchange rate for {date} is not defined. Define the exchange rate and try again");
 
                 return new CurrencyExchangeRateViewModel {
-                    baseCurrencyId = rateInfo.BaseCurrencyId,
-                    currencyId = rateInfo.CurrencyId,
-                    buyingRate = rateInfo.BuyingRate,
-                    sellingRate = rateInfo.SellingRate,
-                    date = rateInfo.Date };
+                    baseCurrencyId = rateInfo.BASECURRENCYID,
+                    currencyId = rateInfo.CURRENCYID,
+                    buyingRate = rateInfo.BUYINGRATE,
+                    sellingRate = rateInfo.SELLINGRATE,
+                    date = rateInfo.DATE };
             }           
             
         }
@@ -320,10 +320,10 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             dailyInterestAccrualTransaction.companyId = model.companyId;
 
-            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = product.InterestReceivablePayableGL.Value;
-            debit.sourceReferenceNumber = product.ProductCode;
+            debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+            debit.sourceReferenceNumber = product.PRODUCTCODE;
             debit.casaAccountId = null;
             debit.debitAmount = (decimal)model.dailyAccuralAmount;
             debit.creditAmount = 0;
@@ -331,9 +331,9 @@ namespace FintrakBanking.Repositories.Finance
             debit.destinationBranchId = model.branchId;
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = product.InterestIncomeExpenseGL.Value; 
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; 
 
-            credit.sourceReferenceNumber = product.ProductCode;
+            credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = (decimal)model.dailyAccuralAmount;
@@ -351,16 +351,16 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanDailyInterestAccrual,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Loan Daily Interest Accrual Posting: {product.ProductCode}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Loan Daily Interest Accrual Posting: {product.PRODUCTCODE}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             //this.auditTrail.AddAuditTrail(audit);
@@ -391,10 +391,10 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             dailyInterestAccrualTransaction.companyId = model.companyId;
 
-            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = product.InterestReceivablePayableGL.Value;
-            debit.sourceReferenceNumber = product.ProductCode;
+            debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+            debit.sourceReferenceNumber = product.PRODUCTCODE;
             debit.casaAccountId = null;
             debit.debitAmount = (decimal)model.dailyAccuralAmount;
             debit.creditAmount = 0;
@@ -402,9 +402,9 @@ namespace FintrakBanking.Repositories.Finance
             debit.destinationBranchId = model.branchId;
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; ;
 
-            credit.sourceReferenceNumber = product.ProductCode;
+            credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = (decimal)model.dailyAccuralAmount;
@@ -422,16 +422,16 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanDailyInterestAccrual,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Authorised Overdraft Daily Interest Accrual Posting: {product.ProductCode}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Authorised Overdraft Daily Interest Accrual Posting: {product.PRODUCTCODE}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -461,10 +461,10 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             dailyInterestAccrualTransaction.companyId = model.companyId;
 
-            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = product.InterestReceivablePayableGL.Value;
-            debit.sourceReferenceNumber = product.ProductCode;
+            debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+            debit.sourceReferenceNumber = product.PRODUCTCODE;
             debit.casaAccountId = null;
             debit.debitAmount = (decimal)model.dailyAccuralAmount;
             debit.creditAmount = 0;
@@ -472,9 +472,9 @@ namespace FintrakBanking.Repositories.Finance
             debit.destinationBranchId = model.branchId;
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = product.InterestIncomeExpenseGL.Value;
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value;
 
-            credit.sourceReferenceNumber = product.ProductCode;
+            credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = (decimal)model.dailyAccuralAmount;
@@ -492,16 +492,16 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanDailyInterestAccrual,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Unauthorised Overdraft Daily Interest Accrual Posting: {product.ProductCode}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Unauthorised Overdraft Daily Interest Accrual Posting: {product.PRODUCTCODE}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -531,10 +531,10 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             dailyInterestAccrualTransaction.companyId = model.companyId;
 
-            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = product.InterestReceivablePayableGL.Value;
-            debit.sourceReferenceNumber = product.ProductCode;
+            debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+            debit.sourceReferenceNumber = product.PRODUCTCODE;
             debit.casaAccountId = null;
             debit.debitAmount = (decimal)model.dailyAccuralAmount;
             debit.creditAmount = 0;
@@ -542,9 +542,9 @@ namespace FintrakBanking.Repositories.Finance
             debit.destinationBranchId = model.branchId;
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; ;
 
-            credit.sourceReferenceNumber = product.ProductCode;
+            credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = (decimal)model.dailyAccuralAmount;
@@ -562,16 +562,16 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanDailyInterestAccrual,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Past Due Daily Interest Accrual Posting: {product.ProductCode}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Past Due Daily Interest Accrual Posting: {product.PRODUCTCODE}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -602,10 +602,10 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             dailyInterestAccrualTransaction.companyId = model.companyId;
 
-            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = product.InterestReceivablePayableGL.Value;
-            debit.sourceReferenceNumber = product.ProductCode;
+            debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+            debit.sourceReferenceNumber = product.PRODUCTCODE;
             debit.casaAccountId = null;
             debit.debitAmount = (decimal)model.dailyAccuralAmount;
             debit.creditAmount = 0;
@@ -613,9 +613,9 @@ namespace FintrakBanking.Repositories.Finance
             debit.destinationBranchId = model.branchId;
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-            credit.glAccountId = product.InterestIncomeExpenseGL.Value; ;
+            credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value; ;
 
-            credit.sourceReferenceNumber = product.ProductCode;
+            credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = (decimal)model.dailyAccuralAmount;
@@ -633,16 +633,16 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanDailyPrincipalAccrual,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Past Due Daily Principal Accrual Posting: {product.ProductCode}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyPrincipalAccrual,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Past Due Daily Principal Accrual Posting: {product.PRODUCTCODE}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -657,13 +657,13 @@ namespace FintrakBanking.Repositories.Finance
         {
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
-            var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
 
             loanTransaction.operationId = (int)OperationsEnum.LoanRepayment;
             loanTransaction.description = description; // "Loan Disbursment Amount";
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
-            loanTransaction.currencyId = casa.CurrencyId;
+            loanTransaction.currencyId = casa.CURRENCYID;
             loanTransaction.currencyRate = GetExchangeRate(loanTransaction.valueDate,loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = (int)SystemStaff.System; ;
@@ -674,13 +674,13 @@ namespace FintrakBanking.Repositories.Finance
             loanTransaction.companyId = model.companyId;
 
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = model.loanRefNo;
-            debit.casaAccountId = casa.CasaAccountId;
+            debit.casaAccountId = casa.CASAACCOUNTID;
             debit.debitAmount = postedAmount;
             debit.creditAmount = 0;
             debit.sourceBranchId = model.branchId;
-            debit.destinationBranchId = casa.BranchId;
+            debit.destinationBranchId = casa.BRANCHID;
 
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
@@ -710,13 +710,13 @@ namespace FintrakBanking.Repositories.Finance
         {
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
-            var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
 
             loanTransaction.operationId = (int)OperationsEnum.LoanRepayment;
             loanTransaction.description = description; // "Loan Disbursment Amount";
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
-            loanTransaction.currencyId = casa.CurrencyId;
+            loanTransaction.currencyId = casa.CURRENCYID;
             loanTransaction.currencyRate = GetExchangeRate(loanTransaction.valueDate, loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = model.createdBy;
@@ -727,13 +727,13 @@ namespace FintrakBanking.Repositories.Finance
             loanTransaction.companyId = model.companyId;
 
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = model.loanRefNo;
-            debit.casaAccountId = casa.CasaAccountId;
+            debit.casaAccountId = casa.CASAACCOUNTID;
             debit.debitAmount = postedAmount;
             debit.creditAmount = 0;
             debit.sourceBranchId = model.branchId;
-            debit.destinationBranchId = casa.BranchId;
+            debit.destinationBranchId = casa.BRANCHID;
 
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
@@ -765,13 +765,13 @@ namespace FintrakBanking.Repositories.Finance
                 FinanceTransactionViewModel feeTransaction = new FinanceTransactionViewModel();
 
 
-                var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId);
+                var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId);
 
                 feeTransaction.operationId = (int)OperationsEnum.TermLoanBooking;
                 feeTransaction.description = "Fee charge";
                 feeTransaction.valueDate = generalSetup.GetApplicationDate();
                 feeTransaction.transactionDate = feeTransaction.valueDate;
-                feeTransaction.currencyId = casa.CurrencyId;
+                feeTransaction.currencyId = casa.CURRENCYID;
                 feeTransaction.currencyRate = GetExchangeRate(feeTransaction.valueDate,feeTransaction.currencyId, model.companyId).sellingRate;
                 feeTransaction.isApproved = true;
                 feeTransaction.postedBy = model.createdBy;
@@ -782,17 +782,17 @@ namespace FintrakBanking.Repositories.Finance
                 feeTransaction.companyId = model.companyId;
 
                 FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-                debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+                debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                 debit.sourceReferenceNumber = model.loanReferenceNumber;
-                debit.casaAccountId = casa.CasaAccountId;
+                debit.casaAccountId = casa.CASAACCOUNTID;
                 debit.debitAmount = (decimal)model.totalAmount;
                 debit.creditAmount = 0;
                 debit.sourceBranchId = model.branchId;
-                debit.destinationBranchId = casa.BranchId;
+                debit.destinationBranchId = casa.BRANCHID;
 
-            var feeGL = this.context.tbl_Charge_Fee.FirstOrDefault(x => x.ChargeFeeId == model.chargeFeeId);//.Select(x => x.GLAccountId).FirstOrDefault();  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
+            var feeGL = this.context.TBL_CHARGE_FEE.FirstOrDefault(x => x.CHARGEFEEID == model.chargeFeeId);//.Select(x => x.GLAccountId).FirstOrDefault();  //context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
                 FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
-                credit.glAccountId = feeGL.GLAccountId;
+                credit.glAccountId = feeGL.GLACCOUNTID;
                 credit.sourceReferenceNumber = model.loanReferenceNumber;
                 credit.casaAccountId = null;
                 credit.debitAmount = 0;
@@ -816,16 +816,16 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanDailyInterestAccrual,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Interval Fees and Commission charge Posting : {model.loanReferenceNumber}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Interval Fees and Commission charge Posting : {model.loanReferenceNumber}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -840,15 +840,15 @@ namespace FintrakBanking.Repositories.Finance
         {
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
-            var loan = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == model.loanId && x.CompanyId == model.companyId);
+            var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId && x.COMPANYID == model.companyId);
 
-            var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == loan.CasaAccountId && x.CompanyId == model.companyId);
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
 
             loanTransaction.operationId = (int)OperationsEnum.LoanRepayment;
             loanTransaction.description = description; // "Loan Disbursment Amount";
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
-            loanTransaction.currencyId = casa.CurrencyId;
+            loanTransaction.currencyId = casa.CURRENCYID;
             loanTransaction.currencyRate = GetExchangeRate(loanTransaction.valueDate, loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = model.createdBy;
@@ -859,24 +859,24 @@ namespace FintrakBanking.Repositories.Finance
             loanTransaction.companyId = model.companyId;
 
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
-            debit.sourceReferenceNumber = loan.LoanReferenceNumber;
-            debit.casaAccountId = casa.CasaAccountId;
+            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            debit.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
+            debit.casaAccountId = casa.CASAACCOUNTID;
             debit.debitAmount = postedAmount;
             debit.creditAmount = 0;
-            debit.sourceBranchId = loan.BranchId;
-            debit.destinationBranchId = casa.BranchId;
+            debit.sourceBranchId = loan.BRANCHID;
+            debit.destinationBranchId = casa.BRANCHID;
 
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
             credit.glAccountId = creditGL;
 
-            credit.sourceReferenceNumber = loan.LoanReferenceNumber;
+            credit.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = postedAmount;
-            credit.sourceBranchId = loan.BranchId;
-            credit.destinationBranchId = loan.BranchId;
+            credit.sourceBranchId = loan.BRANCHID;
+            credit.destinationBranchId = loan.BRANCHID;
 
 
             loanTransaction.transactionDetails.Add(debit);
@@ -896,15 +896,15 @@ namespace FintrakBanking.Repositories.Finance
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
 
-            var loanData = this.context.tbl_Loan.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
+            var loanData = this.context.TBL_LOAN.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
 
-            var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == model.casaAccountId && x.CompanyId == model.companyId);
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
 
             loanTransaction.operationId = (int)OperationsEnum.Fee_chargeChange;
             loanTransaction.description = "Charge Reversal";
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
-            loanTransaction.currencyId = casa.CurrencyId;
+            loanTransaction.currencyId = casa.CURRENCYID;
             loanTransaction.currencyRate = GetExchangeRate(loanTransaction.valueDate,loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = model.createdBy;
@@ -919,24 +919,24 @@ namespace FintrakBanking.Repositories.Finance
             {
 
                 FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-                debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
-                debit.sourceReferenceNumber = loanData.LoanReferenceNumber;
+                debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
                 debit.casaAccountId = null;
                 debit.debitAmount = Math.Abs(model.feeAmountDiff);
                 debit.creditAmount = 0;
-                debit.sourceBranchId = loanData.BranchId;
-                debit.destinationBranchId = casa.BranchId;
+                debit.sourceBranchId = loanData.BRANCHID;
+                debit.destinationBranchId = casa.BRANCHID;
 
-                var feeGL = this.context.tbl_Charge_Fee.Where(x => x.ChargeFeeId == model.chargeFeeId).Select(x => x.GLAccountId).FirstOrDefault();
+                var feeGL = this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == model.chargeFeeId).Select(x => x.GLACCOUNTID).FirstOrDefault();
                 FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
                 credit.glAccountId = feeGL;
 
-                credit.sourceReferenceNumber = loanData.LoanReferenceNumber;
-                credit.casaAccountId = casa.CasaAccountId;
+                credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
+                credit.casaAccountId = casa.CASAACCOUNTID;
                 credit.debitAmount = 0;
                 credit.creditAmount = Math.Abs(model.feeAmountDiff);
-                credit.sourceBranchId = loanData.BranchId;
-                credit.destinationBranchId = loanData.BranchId;
+                credit.sourceBranchId = loanData.BRANCHID;
+                credit.destinationBranchId = loanData.BRANCHID;
 
                 loanTransaction.transactionDetails.Add(debit);
                 loanTransaction.transactionDetails.Add(credit);
@@ -945,24 +945,24 @@ namespace FintrakBanking.Repositories.Finance
             {
 
                 FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-                debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
-                debit.sourceReferenceNumber = loanData.LoanReferenceNumber;
+                debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
                 debit.casaAccountId = null;
                 debit.debitAmount = 0;
                 debit.creditAmount = Math.Abs(model.feeAmountDiff);
-                debit.sourceBranchId = loanData.BranchId;
-                debit.destinationBranchId = casa.BranchId;
+                debit.sourceBranchId = loanData.BRANCHID;
+                debit.destinationBranchId = casa.BRANCHID;
 
-                var feeGL = this.context.tbl_Charge_Fee.Where(x => x.ChargeFeeId == model.chargeFeeId).Select(x => x.GLAccountId).FirstOrDefault();
+                var feeGL = this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == model.chargeFeeId).Select(x => x.GLACCOUNTID).FirstOrDefault();
                 FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
                 credit.glAccountId = feeGL;
 
-                credit.sourceReferenceNumber = loanData.LoanReferenceNumber;
-                credit.casaAccountId = casa.CasaAccountId;
+                credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
+                credit.casaAccountId = casa.CASAACCOUNTID;
                 credit.debitAmount = Math.Abs(model.feeAmountDiff);
                 credit.creditAmount = 0;
-                credit.sourceBranchId = loanData.BranchId;
-                credit.destinationBranchId = loanData.BranchId;
+                credit.sourceBranchId = loanData.BRANCHID;
+                credit.destinationBranchId = loanData.BRANCHID;
 
                 loanTransaction.transactionDetails.Add(debit);
                 loanTransaction.transactionDetails.Add(credit);
@@ -985,7 +985,7 @@ namespace FintrakBanking.Repositories.Finance
         {
             FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
-            var casa = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == model.loanId && x.CompanyId == model.companyId);
+            var casa = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId && x.COMPANYID == model.companyId);
 
             ////var refNo  = this.context.tbl_Loan.FirstOrDefault(x => x.TermLoanId == model.loanId && x.CompanyId == model.companyId);
 
@@ -993,7 +993,7 @@ namespace FintrakBanking.Repositories.Finance
             loanTransaction.description = description; // "Loan Disbursment Amount";
             loanTransaction.valueDate = generalSetup.GetApplicationDate();
             loanTransaction.transactionDate = loanTransaction.valueDate;
-            loanTransaction.currencyId = casa.CurrencyId;
+            loanTransaction.currencyId = casa.CURRENCYID;
             loanTransaction.currencyRate = GetExchangeRate(loanTransaction.valueDate, loanTransaction.currencyId, model.companyId).sellingRate;
             loanTransaction.isApproved = true;
             loanTransaction.postedBy = model.createdBy;
@@ -1004,24 +1004,24 @@ namespace FintrakBanking.Repositories.Finance
             loanTransaction.companyId = model.companyId;
 
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
-            debit.sourceReferenceNumber = casa.LoanReferenceNumber;
-            debit.casaAccountId = casa.CasaAccountId;
+            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            debit.sourceReferenceNumber = casa.LOANREFERENCENUMBER;
+            debit.casaAccountId = casa.CASAACCOUNTID;
             debit.debitAmount = postedAmount;
             debit.creditAmount = 0;
-            debit.sourceBranchId = casa.BranchId;
-            debit.destinationBranchId = casa.BranchId;
+            debit.sourceBranchId = casa.BRANCHID;
+            debit.destinationBranchId = casa.BRANCHID;
 
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
             credit.glAccountId = creditGL;
 
-            credit.sourceReferenceNumber = casa.LoanReferenceNumber;
+            credit.sourceReferenceNumber = casa.LOANREFERENCENUMBER;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = postedAmount;
-            credit.sourceBranchId = casa.BranchId;
-            credit.destinationBranchId = casa.BranchId;
+            credit.sourceBranchId = casa.BRANCHID;
+            credit.destinationBranchId = casa.BRANCHID;
 
 
             loanTransaction.transactionDetails.Add(debit);
@@ -1039,18 +1039,18 @@ namespace FintrakBanking.Repositories.Finance
         [OperationBehavior(TransactionScopeRequired = true)]
         public FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model , decimal postedAmount, int creditGL, string description)
         {
-            var loanData  = this.context.tbl_Loan.Where(x => x.TermLoanId == loanId).FirstOrDefault();
+            var loanData  = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
 
             FinanceTransactionViewModel terminateAndRebookTransaction = new FinanceTransactionViewModel();
 
 
-            var casa = this.context.tbl_CASA.FirstOrDefault(x => x.CasaAccountId == loanData.CasaAccountId && x.CompanyId == model.companyId);
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanData.CASAACCOUNTID && x.COMPANYID == model.companyId);
 
             terminateAndRebookTransaction.operationId = (int)OperationsEnum.LoanTermination;
             terminateAndRebookTransaction.description = description;
             terminateAndRebookTransaction.valueDate = generalSetup.GetApplicationDate();
             terminateAndRebookTransaction.transactionDate = terminateAndRebookTransaction.valueDate;
-            terminateAndRebookTransaction.currencyId = casa.CurrencyId;
+            terminateAndRebookTransaction.currencyId = casa.CURRENCYID;
             terminateAndRebookTransaction.currencyRate = GetExchangeRate(terminateAndRebookTransaction.valueDate,terminateAndRebookTransaction.currencyId, model.companyId).sellingRate;
             terminateAndRebookTransaction.isApproved = true;
             terminateAndRebookTransaction.postedBy = model.createdBy;
@@ -1061,23 +1061,23 @@ namespace FintrakBanking.Repositories.Finance
             terminateAndRebookTransaction.companyId = model.companyId;
 
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = context.tbl_Product.FirstOrDefault(x => x.ProductId == casa.ProductId).PrincipalBalanceGL.Value;
-            debit.sourceReferenceNumber = casa.ProductAccountNumber;
-            debit.casaAccountId = casa.CasaAccountId;
+            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
+            debit.casaAccountId = casa.CASAACCOUNTID;
             debit.debitAmount = postedAmount;
             debit.creditAmount = 0;
-            debit.sourceBranchId = casa.BranchId;
-            debit.destinationBranchId = casa.BranchId;
+            debit.sourceBranchId = casa.BRANCHID;
+            debit.destinationBranchId = casa.BRANCHID;
 
             FinanceTransactionDetailViewModel credit = new FinanceTransactionDetailViewModel();
             credit.glAccountId = creditGL;
 
-            credit.sourceReferenceNumber = casa.ProductAccountNumber;
+            credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = postedAmount; ;
-            credit.sourceBranchId = casa.BranchId;
-            credit.destinationBranchId = casa.BranchId;
+            credit.sourceBranchId = casa.BRANCHID;
+            credit.destinationBranchId = casa.BRANCHID;
 
 
             terminateAndRebookTransaction.transactionDetails.Add(debit);
@@ -1107,10 +1107,10 @@ namespace FintrakBanking.Repositories.Finance
             dailyInterestAccrualTransaction.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             dailyInterestAccrualTransaction.companyId = model.companyId;
 
-            var product = context.tbl_Product.FirstOrDefault(x => x.ProductId == model.productId);
+            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
             FinanceTransactionDetailViewModel debit = new FinanceTransactionDetailViewModel();
-            debit.glAccountId = product.InterestReceivablePayableGL.Value;
-            debit.sourceReferenceNumber = product.ProductCode;
+            debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+            debit.sourceReferenceNumber = product.PRODUCTCODE;
             debit.casaAccountId = null;
             debit.debitAmount = (decimal)model.dailyAccuralAmount;
             debit.creditAmount = 0;
@@ -1121,7 +1121,7 @@ namespace FintrakBanking.Repositories.Finance
             var InterestSuspensionGL = 8;////to be change when interestsuspenses is created
             credit.glAccountId = InterestSuspensionGL; ///product.InterestIncomeExpenseGL.Value;
 
-            credit.sourceReferenceNumber = product.ProductCode;
+            credit.sourceReferenceNumber = product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = (decimal)model.dailyAccuralAmount;
@@ -1139,16 +1139,16 @@ namespace FintrakBanking.Repositories.Finance
 
             // Audit Section ---------------------------            
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LoanDailyInterestAccrual,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Interest Suspension Posting: {product.ProductCode}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Interest Suspension Posting: {product.PRODUCTCODE}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);

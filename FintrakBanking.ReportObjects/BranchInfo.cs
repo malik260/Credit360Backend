@@ -18,20 +18,20 @@ namespace FintrakBanking.ReportObjects
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
 
-            var branches = context.tbl_Branch.Where(x => x.Deleted == false).Select(x => new BranchViewModel
+            var branches = context.TBL_BRANCH.Where(x => x.DELETED == false).Select(x => new BranchViewModel
             {
-                branchId = x.BranchId,
-                stateId = x.StateId,
-                cityId = (int)x.CityId,
-                companyId = x.CompanyId,
-                stateName = x.tbl_State.StateName,
-                cityName = context.tbl_City.FirstOrDefault(c => c.CityId == x.CityId).CityName ?? string.Empty,
-                branchName = x.BranchName,
-                branchCode = x.BranchCode,
-                addressLine1 = x.AddressLine1,
-                addressLine2 = x.AddressLine2,
-                comment = x.Comment,
-                deleted = x.Deleted,
+                branchId = x.BRANCHID,
+                stateId = x.STATEID,
+                cityId = (int)x.CITYID,
+                companyId = x.COMPANYID,
+                stateName = x.TBL_STATE.STATENAME,
+                cityName = context.TBL_CITY.FirstOrDefault(c => c.CITYID == x.CITYID).CITYNAME ?? string.Empty,
+                branchName = x.BRANCHNAME,
+                branchCode = x.BRANCHCODE,
+                addressLine1 = x.ADDRESSLINE1,
+                addressLine2 = x.ADDRESSLINE2,
+                comment = x.COMMENT,
+                deleted = x.DELETED,
             }).ToList();
 
             return branches; ;
@@ -42,20 +42,20 @@ namespace FintrakBanking.ReportObjects
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
 
-            var branch = context.tbl_Branch.Find(id);
+            var branch = context.TBL_BRANCH.Find(id);
 
             if (branch != null)
             {
                 return new BranchViewModel()
                 {
-                    branchId = branch.BranchId,
-                    stateId = branch.StateId,
-                    companyId = branch.CompanyId,
-                    branchName = branch.BranchName,
-                    branchCode = branch.BranchCode,
-                    addressLine1 = branch.AddressLine1,
-                    addressLine2 = branch.AddressLine2,
-                    comment = branch.Comment,
+                    branchId = branch.BRANCHID,
+                    stateId = branch.STATEID,
+                    companyId = branch.COMPANYID,
+                    branchName = branch.BRANCHNAME,
+                    branchCode = branch.BRANCHCODE,
+                    addressLine1 = branch.ADDRESSLINE1,
+                    addressLine2 = branch.ADDRESSLINE2,
+                    comment = branch.COMMENT,
                 };
             }
 

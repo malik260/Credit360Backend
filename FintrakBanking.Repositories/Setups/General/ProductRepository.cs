@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private string GenerateProductCode(int companyId)
         {
-            var data = this.context.tbl_Product.Count(x => x.CompanyId == companyId);
+            var data = this.context.TBL_PRODUCT.Count(x => x.COMPANYID == companyId);
             int counter = data + 1;
             var productCode = string.Empty;
             do
@@ -61,100 +61,100 @@ namespace FintrakBanking.Repositories.Setups.General
                 productCode = string.Format("{0}", counter.ToString().PadLeft(4, '0'));
                 counter++;
             }
-            while (context.tbl_Temp_Product.Any(x => x.ProductCode == productCode) == true);
+            while (context.TBL_TEMP_PRODUCT.Any(x => x.PRODUCTCODE == productCode) == true);
 
             return productCode;
         }
 
         public IEnumerable<ProductCategoryViewModel> GetAllProductCategory()
         {
-            return this.context.tbl_Product_Category.Select(p => new ProductCategoryViewModel()
+            return this.context.TBL_PRODUCT_CATEGORY.Select(p => new ProductCategoryViewModel()
             {
-                productCategoryId = p.ProductCategoryId,
-                productCategoryName = p.ProductCategoryName
+                productCategoryId = p.PRODUCTCATEGORYID,
+                productCategoryName = p.PRODUCTCATEGORYNAME
             });
         }
 
         public IEnumerable<LookupViewModel> GetAllProductClass()
         {
-            return (from data in context.tbl_Product_Class
+            return (from data in context.TBL_PRODUCT_CLASS
                         //where data.OperationTypeId == operationTypeId
                     select new LookupViewModel()
                     {
-                        lookupId = (short)data.ProductClassId,
-                        lookupName = data.ProductClassName,
-                        lookupTypeId = data.ProductClassTypeId,
-                        lookupTypeName = data.tbl_Product_Class_Type.ProductClassTypeName
+                        lookupId = (short)data.PRODUCTCLASSID,
+                        lookupName = data.PRODUCTCLASSNAME,
+                        lookupTypeId = data.PRODUCTCLASSTYPEID,
+                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME
                     });
         }
 
         public IEnumerable<ProductGroupViewModel> GetAllProductGroup()
         {
-            return (from p in context.tbl_Product_Group
-                    where p.Deleted == false
-                    orderby p.ProductGroupName
+            return (from p in context.TBL_PRODUCT_GROUP
+                    where p.DELETED == false
+                    orderby p.PRODUCTGROUPNAME
                     select new ProductGroupViewModel()
                     {
-                        productGroupId = p.ProductGroupId,
-                        productGroupCode = p.ProductGroupCode,
-                        productGroupName = p.ProductGroupName
+                        productGroupId = p.PRODUCTGROUPID,
+                        productGroupCode = p.PRODUCTGROUPCODE,
+                        productGroupName = p.PRODUCTGROUPNAME
                     });
         }
 
         public ProductGroupViewModel GetProductGroupById(short productGroupId)
         {
-            var data = this.context.tbl_Product_Group.FirstOrDefault(x => x.ProductGroupId == productGroupId); // .Find(accountId);
+            var data = this.context.TBL_PRODUCT_GROUP.FirstOrDefault(x => x.PRODUCTGROUPID == productGroupId); // .Find(accountId);
 
             if (data == null)
                 return null;
 
             return new ProductGroupViewModel
             {
-                productGroupId = data.ProductGroupId,
-                productGroupCode = data.ProductGroupCode,
-                productGroupName = data.ProductGroupName
+                productGroupId = data.PRODUCTGROUPID,
+                productGroupCode = data.PRODUCTGROUPCODE,
+                productGroupName = data.PRODUCTGROUPNAME
             };
         }
 
         public bool AddProductGroup(ProductGroupViewModel productGroupModel)
         {
-            var isProductGroupExist = context.tbl_Product_Group.Any(x =>
-                x.ProductGroupName.ToLower() == productGroupModel.productGroupName.ToLower());
+            var isProductGroupExist = context.TBL_PRODUCT_GROUP.Any(x =>
+                x.PRODUCTGROUPNAME.ToLower() == productGroupModel.productGroupName.ToLower());
 
             if (isProductGroupExist)
             {
                 throw new Exception("Product group already exists!");
             }
 
-            var isProductCodeExist = context.tbl_Product_Group.Any(x =>
-                x.ProductGroupCode.ToLower() == productGroupModel.productGroupCode.ToLower());
+            var isProductCodeExist = context.TBL_PRODUCT_GROUP.Any(x =>
+                x.PRODUCTGROUPCODE.ToLower() == productGroupModel.productGroupCode.ToLower());
 
             if (isProductCodeExist)
             {
                 throw new Exception("Product group with that code already exists!");
             }
 
-            var data = new tbl_Product_Group()
+            var data = new TBL_PRODUCT_GROUP()
             {
-                ProductGroupCode = productGroupModel.productGroupCode,
-                ProductGroupName = productGroupModel.productGroupName,
-                CreatedBy = productGroupModel.createdBy,
-                DateTimeCreated = DateTime.Now,
+                PRODUCTGROUPCODE = productGroupModel.productGroupCode,
+                PRODUCTGROUPNAME = productGroupModel.productGroupName,
+                CREATEDBY = productGroupModel.createdBy,
+                DATETIMECREATED = DateTime.Now,
             };
 
-            this.context.tbl_Product_Group.Add(data);
+            this.context.TBL_PRODUCT_GROUP.Add(data);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductPriceIndexAdded,
-                StaffId = (int)productGroupModel.createdBy,
-                BranchId = (short)productGroupModel.userBranchId,
-                Detail = $"Added tbl_Product Group: '{productGroupModel.productGroupName}' ",
-                IPAddress = productGroupModel.userIPAddress,
-                Url = productGroupModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexAdded,
+                STAFFID = (int)productGroupModel.createdBy,
+                BRANCHID = (short)productGroupModel.userBranchId,
+                DETAIL = $"Added tbl_Product Group: '{productGroupModel.productGroupName}' ",
+                IPADDRESS = productGroupModel.userIPAddress,
+                URL = productGroupModel.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -172,23 +172,23 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool UpdateProductGroup(int productGroupId, ProductGroupViewModel productGroup)
         {
-            var data = this.context.tbl_Product_Group.FirstOrDefault(x => x.ProductGroupId == productGroupId);
+            var data = this.context.TBL_PRODUCT_GROUP.FirstOrDefault(x => x.PRODUCTGROUPID == productGroupId);
 
             if (data == null)
                 return false;
 
-            data.ProductGroupName = productGroup.productGroupName;
+            data.PRODUCTGROUPNAME = productGroup.productGroupName;
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductGroupAdded,
-                StaffId = productGroup.createdBy,
-                BranchId = (short)productGroup.userBranchId,
-                Detail = $"Updated tbl_Product Group: '{productGroup.productGroupName}' with code: '{productGroup.productGroupCode}' ",
-                IPAddress = productGroup.userIPAddress,
-                Url = productGroup.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductGroupAdded,
+                STAFFID = productGroup.createdBy,
+                BRANCHID = (short)productGroup.userBranchId,
+                DETAIL = $"Updated tbl_Product Group: '{productGroup.productGroupName}' with code: '{productGroup.productGroupCode}' ",
+                IPADDRESS = productGroup.userIPAddress,
+                URL = productGroup.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -197,27 +197,27 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool DeleteProductGroup(int productGroupId, UserInfo user)
         {
-            var data = context.tbl_Product_Group.Find(productGroupId);
+            var data = context.TBL_PRODUCT_GROUP.Find(productGroupId);
 
             if (data == null)
                 return false;
 
-            data.Deleted = true;
-            data.DateTimeDeleted = genSetup.GetApplicationDate();
+            data.DELETED = true;
+            data.DATETIMEDELETED = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var productPriceIndex = this.context.tbl_Product_Group.FirstOrDefault(x => x.ProductGroupId == data.ProductGroupId);
-            var audit = new tbl_Audit
+            var productPriceIndex = this.context.TBL_PRODUCT_GROUP.FirstOrDefault(x => x.PRODUCTGROUPID == data.PRODUCTGROUPID);
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductPriceIndexDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Product Group: '{productPriceIndex?.ProductGroupName}' with code '{productPriceIndex?.ProductGroupCode}' ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = productGroupId
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Product Group: '{productPriceIndex?.PRODUCTGROUPNAME}' with code '{productPriceIndex?.PRODUCTGROUPCODE}' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = productGroupId
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -228,24 +228,24 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IQueryable<ProductTypeViewModel> AllProductType()
         {
-            return (from p in context.tbl_Product_Type
-                    where p.Deleted == false
+            return (from p in context.TBL_PRODUCT_TYPE
+                    where p.DELETED == false
                     select new ProductTypeViewModel()
                     {
-                        productTypeId = p.ProductTypeId,
-                        productTypeName = p.ProductTypeName,
-                        productGroupId = p.ProductGroupId,
-                        productGroupName = p.tbl_Product_Group.ProductGroupName,
-                        requirePrincipalGl = p.RequirePrincipalGL,
-                        requireInterestIncomeExpenseGl = p.RequireInterestIncomeExpenseGL,
-                        requireInterestReceivablePayableGl = p.RequireInterestReceivablePayableGL,
-                        requirePremiumDiscountGl = p.RequirePremiumDiscountGL,
-                        requireDormantGl = p.RequireDormantGL,
-                        requireOverdrawnGL = p.RequireOverdrawnGL,
-                        requireRate = p.RequireRate,
-                        requireTenor = p.RequireTenor,
-                        dealClassificationId = p.DealClassificationId,
-                        requireScheduleType = p.RequireScheduleType
+                        productTypeId = p.PRODUCTTYPEID,
+                        productTypeName = p.PRODUCTTYPENAME,
+                        productGroupId = p.PRODUCTGROUPID,
+                        productGroupName = p.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
+                        requirePrincipalGl = p.REQUIREPRINCIPALGL,
+                        requireInterestIncomeExpenseGl = p.REQUIREINTERESTINCOMEEXPENSEGL,
+                        requireInterestReceivablePayableGl = p.REQUIREINTERESTRECEIVABLEPAYABLEGL,
+                        requirePremiumDiscountGl = p.REQUIREPREMIUMDISCOUNTGL,
+                        requireDormantGl = p.REQUIREDORMANTGL,
+                        requireOverdrawnGL = p.REQUIREOVERDRAWNGL,
+                        requireRate = p.REQUIRERATE,
+                        requireTenor = p.REQUIRETENOR,
+                        dealClassificationId = p.DEALCLASSIFICATIONID,
+                        requireScheduleType = p.REQUIRESCHEDULETYPE
                     });
         }
 
@@ -279,41 +279,41 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public short AddProductType(ProductTypeViewModel productType)
         {
-            var isProductTypeExist = context.tbl_Product_Type.Any(x => x.ProductTypeName.ToLower() == productType.productTypeName.ToLower());
+            var isProductTypeExist = context.TBL_PRODUCT_TYPE.Any(x => x.PRODUCTTYPENAME.ToLower() == productType.productTypeName.ToLower());
 
             if (isProductTypeExist)
             {
                 throw new Exception("Product type already exists!");
             }
-            var data = new tbl_Product_Type()
+            var data = new TBL_PRODUCT_TYPE()
             {
-                ProductTypeName = productType.productTypeName,
-                ProductGroupId = productType.productGroupId,
-                RequirePrincipalGL = productType.requirePrincipalGl,
-                RequireInterestIncomeExpenseGL = productType.requireInterestIncomeExpenseGl,
-                RequireInterestReceivablePayableGL = productType.requireInterestReceivablePayableGl,
-                RequirePremiumDiscountGL = productType.requirePremiumDiscountGl,
-                RequireDormantGL = productType.requireDormantGl,
-                RequireOverdrawnGL = productType.requireOverdrawnGL,
-                RequireRate = productType.requireRate,
-                RequireTenor = productType.requireTenor,
-                DealClassificationId = productType.dealClassificationId,
-                RequireScheduleType = productType.requireScheduleType
+                PRODUCTTYPENAME = productType.productTypeName,
+                PRODUCTGROUPID = productType.productGroupId,
+                REQUIREPRINCIPALGL = productType.requirePrincipalGl,
+                REQUIREINTERESTINCOMEEXPENSEGL = productType.requireInterestIncomeExpenseGl,
+                REQUIREINTERESTRECEIVABLEPAYABLEGL = productType.requireInterestReceivablePayableGl,
+                REQUIREPREMIUMDISCOUNTGL = productType.requirePremiumDiscountGl,
+                REQUIREDORMANTGL = productType.requireDormantGl,
+                REQUIREOVERDRAWNGL = productType.requireOverdrawnGL,
+                REQUIRERATE = productType.requireRate,
+                REQUIRETENOR = productType.requireTenor,
+                DEALCLASSIFICATIONID = productType.dealClassificationId,
+                REQUIRESCHEDULETYPE = productType.requireScheduleType
             };
 
-            this.context.tbl_Product_Type.Add(data);
+            this.context.TBL_PRODUCT_TYPE.Add(data);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductTypeAdded,
-                StaffId = productType.createdBy,
-                BranchId = (short)productType.userBranchId,
-                Detail = $"Added tbl_Product Type: '{productType.productTypeName}' ",
-                IPAddress = productType.userIPAddress,
-                Url = productType.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductTypeAdded,
+                STAFFID = productType.createdBy,
+                BRANCHID = (short)productType.userBranchId,
+                DETAIL = $"Added tbl_Product Type: '{productType.productTypeName}' ",
+                IPADDRESS = productType.userIPAddress,
+                URL = productType.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -322,51 +322,51 @@ namespace FintrakBanking.Repositories.Setups.General
             var status = this.SaveAll();
 
             if (status)
-                return data.ProductTypeId;
+                return data.PRODUCTTYPEID;
             else
                 return -1;
         }
 
         public bool UpdateProductType(int productTypeId, ProductTypeViewModel productType)
         {
-            var data = this.context.tbl_Product_Type.FirstOrDefault(x => x.ProductTypeId == productTypeId);
+            var data = this.context.TBL_PRODUCT_TYPE.FirstOrDefault(x => x.PRODUCTTYPEID == productTypeId);
 
             if (data == null)
                 return false;
 
-            if (data.ProductGroupId != productType.productGroupId)
+            if (data.PRODUCTGROUPID != productType.productGroupId)
             {
-                var countProductGroupUsed = this.context.tbl_Product.Count(x => x.ProductTypeId == productTypeId);
+                var countProductGroupUsed = this.context.TBL_PRODUCT.Count(x => x.PRODUCTTYPEID == productTypeId);
                 if (countProductGroupUsed > 0)
                 {
                     throw new Exception("The product group for this product type cannot be changed because the product type is already in use");
                 }
             }
 
-            data.ProductTypeName = productType.productTypeName;
-            data.ProductGroupId = productType.productGroupId;
-            data.RequirePrincipalGL = productType.requirePrincipalGl;
-            data.RequirePremiumDiscountGL = productType.requirePremiumDiscountGl;
-            data.RequireDormantGL = productType.requireDormantGl;
-            data.RequireOverdrawnGL = productType.requireOverdrawnGL;
-            data.RequireInterestIncomeExpenseGL = productType.requireInterestIncomeExpenseGl;
-            data.RequireInterestReceivablePayableGL = productType.requireInterestReceivablePayableGl;
-            data.DealClassificationId = productType.dealClassificationId;
-            data.RequireRate = productType.requireRate;
-            data.RequireTenor = productType.requireTenor;
-            data.RequireScheduleType = productType.requireScheduleType;
+            data.PRODUCTTYPENAME = productType.productTypeName;
+            data.PRODUCTGROUPID = productType.productGroupId;
+            data.REQUIREPRINCIPALGL = productType.requirePrincipalGl;
+            data.REQUIREPREMIUMDISCOUNTGL = productType.requirePremiumDiscountGl;
+            data.REQUIREDORMANTGL = productType.requireDormantGl;
+            data.REQUIREOVERDRAWNGL = productType.requireOverdrawnGL;
+            data.REQUIREINTERESTINCOMEEXPENSEGL = productType.requireInterestIncomeExpenseGl;
+            data.REQUIREINTERESTRECEIVABLEPAYABLEGL = productType.requireInterestReceivablePayableGl;
+            data.DEALCLASSIFICATIONID = productType.dealClassificationId;
+            data.REQUIRERATE = productType.requireRate;
+            data.REQUIRETENOR = productType.requireTenor;
+            data.REQUIRESCHEDULETYPE = productType.requireScheduleType;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductTypeUpdated,
-                StaffId = productType.createdBy,
-                BranchId = (short)productType.userBranchId,
-                Detail = $"Updated tbl_Product Type: '{productType.productTypeName}' ",
-                IPAddress = productType.userIPAddress,
-                Url = productType.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductTypeUpdated,
+                STAFFID = productType.createdBy,
+                BRANCHID = (short)productType.userBranchId,
+                DETAIL = $"Updated tbl_Product Type: '{productType.productTypeName}' ",
+                IPADDRESS = productType.userIPAddress,
+                URL = productType.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -376,27 +376,27 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool DeleteProductType(int productTypeId, UserInfo user)
         {
-            var data = this.context.tbl_Product_Type.Find(productTypeId);
+            var data = this.context.TBL_PRODUCT_TYPE.Find(productTypeId);
 
             if (data == null)
                 return false;
 
-            data.Deleted = true;
-            data.DateTimeDeleted = genSetup.GetApplicationDate();
+            data.DELETED = true;
+            data.DATETIMEDELETED = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var productPriceIndex = this.context.tbl_Product_Type.FirstOrDefault(x => x.ProductTypeId == data.ProductTypeId);
-            var audit = new tbl_Audit
+            var productPriceIndex = this.context.TBL_PRODUCT_TYPE.FirstOrDefault(x => x.PRODUCTTYPEID == data.PRODUCTTYPEID);
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductPriceIndexDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Product Type: '{data.ProductTypeName}' under group '{data.tbl_Product_Group.ProductGroupName}' ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = productTypeId
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Product Type: '{data.PRODUCTTYPENAME}' under group '{data.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME}' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = productTypeId
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -409,93 +409,93 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {
-            return from ap in context.tbl_Approval_Status
+            return from ap in context.TBL_APPROVAL_STATUS
                    select new ApprovalStatusViewModel
                    {
-                       approvalStatusId = ap.ApprovalStatusId,
-                       approvalStatusName = ap.ApprovalStatusName,
-                       forDisplay = ap.ForDisplay,
+                       approvalStatusId = ap.APPROVALSTATUSID,
+                       approvalStatusName = ap.APPROVALSTATUSNAME,
+                       forDisplay = ap.FORDISPLAY,
                    };
         }
 
         private IQueryable<ProductViewModel> AllProduct()
         {
-            return (from data in context.tbl_Product
+            return (from data in context.TBL_PRODUCT
                     select new ProductViewModel()
                     {
-                        productId = data.ProductId,
-                        companyId = data.CompanyId,
-                        productTypeId = data.ProductTypeId,
-                        productTypeName = data.tbl_Product_Type.ProductTypeName,
-                        productGroupName = data.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
-                        productCategoryId = data.ProductCategoryId,
-                        productCategoryName = data.tbl_Product_Category.ProductCategoryName,
-                        productClassId = data.ProductClassId,
-                        productClassName = data.tbl_Product_Class.ProductClassName,
+                        productId = data.PRODUCTID,
+                        companyId = data.COMPANYID,
+                        productTypeId = data.PRODUCTTYPEID,
+                        productTypeName = data.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                        productGroupName = data.TBL_PRODUCT_TYPE.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
+                        productCategoryId = data.PRODUCTCATEGORYID,
+                        productCategoryName = data.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
+                        productClassId = data.PRODUCTCLASSID,
+                        productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
-                        productPriceIndexId = data.ProductPriceIndexId,
-                        productPriceIndexName = data.tbl_Product_Price_Index.PriceIndexName,
-                        productPriceIndexSpread = data.ProductPriceIndexSpread,
+                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
+                        productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                        productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
 
-                        productCode = data.ProductCode,
-                        productName = data.ProductName,
-                        productDescription = data.ProductDescription,
+                        productCode = data.PRODUCTCODE,
+                        productName = data.PRODUCTNAME,
+                        productDescription = data.PRODUCTDESCRIPTION,
 
-                        productGroupId = data.tbl_Product_Type.ProductGroupId,
+                        productGroupId = data.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
 
-                        principalBalanceGl = data.PrincipalBalanceGL,
-                        principalBalanceGlCode = (data.PrincipalBalanceGL.HasValue ? data.tbl_Chart_Of_Account.AccountCode : ""),
+                        principalBalanceGl = data.PRINCIPALBALANCEGL,
+                        principalBalanceGlCode = (data.PRINCIPALBALANCEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        interestIncomeExpenseGl = data.InterestIncomeExpenseGL,
-                        interestIncomeExpenseGlCode = (data.InterestIncomeExpenseGL.HasValue ? data.tbl_Chart_Of_Account.AccountCode : ""),
+                        interestIncomeExpenseGl = data.INTERESTINCOMEEXPENSEGL,
+                        interestIncomeExpenseGlCode = (data.INTERESTINCOMEEXPENSEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        interestReceivablePayableGl = data.InterestReceivablePayableGL,
-                        interestReceivablePayableGlCode = (data.InterestReceivablePayableGL.HasValue ? data.tbl_Chart_Of_Account.AccountCode : ""),
+                        interestReceivablePayableGl = data.INTERESTRECEIVABLEPAYABLEGL,
+                        interestReceivablePayableGlCode = (data.INTERESTRECEIVABLEPAYABLEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        dormantGl = data.DormantGL,
-                        premiumDiscountGl = data.PremiumDiscountGL,
+                        dormantGl = data.DORMANTGL,
+                        premiumDiscountGl = data.PREMIUMDISCOUNTGL,
 
-                        dealTypeId = data.DealTypeId,
-                        dealTypeName = data.tbl_Deal_Type.DealTypeName,
-                        dealClassificationId = data.DealClassificationId,
-                        dealClassificationName = data.tbl_Deal_Classification.Classification,
-                        dayCountId = data.DayCountConventionId,
-                        dayCountName = data.tbl_Day_Count_Convention.DayCountConventionName,
+                        dealTypeId = data.DEALTYPEID,
+                        dealTypeName = data.TBL_DEAL_TYPE.DEALTYPENAME,
+                        dealClassificationId = data.DEALCLASSIFICATIONID,
+                        dealClassificationName = data.TBL_DEAL_CLASSIFICATION.CLASSIFICATION,
+                        dayCountId = data.DAYCOUNTCONVENTIONID,
+                        dayCountName = data.TBL_DAY_COUNT_CONVENTION.DAYCOUNTCONVENTIONNAME,
 
-                        maximumTenor = data.MaximumTenor,
-                        minimumTenor = data.MinimumTenor,
-                        maximumRate = data.MaximumRate,
-                        minimumRate = data.MinimumRate,
-                        minimumBalance = data.MinimumBalance,
-                        approvedBy = data.ApprovedBy,
-                        completed = data.Completed,
-                        approved = data.Approved,
-                        currencies = context.tbl_Product_Currency.Where(curr => curr.ProductId == data.ProductId && curr.Deleted != false)
+                        maximumTenor = data.MAXIMUMTENOR,
+                        minimumTenor = data.MINIMUMTENOR,
+                        maximumRate = data.MAXIMUMRATE,
+                        minimumRate = data.MINIMUMRATE,
+                        minimumBalance = data.MINIMUMBALANCE,
+                        approvedBy = data.APPROVEDBY,
+                        completed = data.COMPLETED,
+                        approved = data.APPROVED,
+                        currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == data.PRODUCTID && curr.DELETED != false)
                         .Select(c => new ProductCurrencyViewModel()
                         {
-                            productId = c.ProductId,
-                            productCurrencyId = c.ProductCurrencyId,
-                            currencyId = c.CurrencyId,
-                            currencyName = c.tbl_Currency.CurrencyCode + " -- " + c.tbl_Currency.CurrencyName
+                            productId = c.PRODUCTID,
+                            productCurrencyId = c.PRODUCTCURRENCYID,
+                            currencyId = c.CURRENCYID,
+                            currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
                         }).ToList(),
 
-                        dateTimeUpdated = data.DateTimeUpdated,
-                        deleted = data.Deleted,
-                        deletedBy = data.DeletedBy,
-                        dateTimeDeleted = data.DateTimeDeleted,
+                        dateTimeUpdated = data.DATETIMEUPDATED,
+                        deleted = data.DELETED,
+                        deletedBy = data.DELETEDBY,
+                        dateTimeDeleted = data.DATETIMEDELETED,
 
-                        allowCustomerAccountForceDebit = data.AllowCustomerAccountForceDebit,
-                        allowMoratorium = data.AllowMoratorium,
-                        allowScheduleTypeOverride = data.AllowScheduleTypeOverride,
-                        allowTenor = data.AllowTenor,
-                        allowRate = data.AllowOverdrawn,
-                        allowOverdrawn = data.AllowOverdrawn,
+                        allowCustomerAccountForceDebit = data.ALLOWCUSTOMERACCOUNTFORCEDEBIT,
+                        allowMoratorium = data.ALLOWMORATORIUM,
+                        allowScheduleTypeOverride = data.ALLOWSCHEDULETYPEOVERRIDE,
+                        allowTenor = data.ALLOWTENOR,
+                        allowRate = data.ALLOWOVERDRAWN,
+                        allowOverdrawn = data.ALLOWOVERDRAWN,
 
-                        cleanupPeriod = data.CleanupPeriod,
-                        defaultGracePeriod = data.DefaultGracePeriod,
-                        equityContribution = data.EquityContribution,
-                        expiryPeriod = data.ExpiryPeriod,
-                        scheduleTypeId = data.ScheduleTypeId
+                        cleanupPeriod = data.CLEANUPPERIOD,
+                        defaultGracePeriod = data.DEFAULTGRACEPERIOD,
+                        equityContribution = data.EQUITYCONTRIBUTION,
+                        expiryPeriod = data.EXPIRYPERIOD,
+                        scheduleTypeId = data.SCHEDULETYPEID
                     });
         }
 
@@ -531,115 +531,115 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            return (from c in context.tbl_Temp_Product
-                    join coy in context.tbl_Company on c.CompanyId equals coy.CompanyId
-                    join atrail in context.tbl_Approval_Trail on c.ProductId equals atrail.TargetId
-                    where atrail.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && c.IsCurrent == true
-                          && atrail.ResponseStaffId == null
-                          && atrail.OperationId == (int)OperationsEnum.ProductCreation && atrail.ToApprovalLevelId == staffApprovalLevelId
+            return (from c in context.TBL_TEMP_PRODUCT
+                    join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
+                    join atrail in context.TBL_APPROVAL_TRAIL on c.PRODUCTID equals atrail.TARGETID
+                    where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
+                          && atrail.RESPONSESTAFFID == null
+                          && atrail.OPERATIONID == (int)OperationsEnum.ProductCreation && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                     select new ProductViewModel()
                     {
-                        productId = c.ProductId,
-                        companyId = c.CompanyId,
-                        productTypeId = c.ProductTypeId,
-                        productTypeName = c.tbl_Product_Type.ProductTypeName,
-                        productCategoryId = c.ProductCategoryId,
-                        productCategoryName = c.tbl_Product_Category.ProductCategoryName,
-                        productClassId = c.ProductClassId,
-                        productClassName = c.tbl_Product_Class.ProductClassName,
+                        productId = c.PRODUCTID,
+                        companyId = c.COMPANYID,
+                        productTypeId = c.PRODUCTTYPEID,
+                        productTypeName = c.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                        productCategoryId = c.PRODUCTCATEGORYID,
+                        productCategoryName = c.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
+                        productClassId = c.PRODUCTCLASSID,
+                        productClassName = c.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
-                        productPriceIndexId = c.ProductPriceIndexId,
-                        productPriceIndexName = c.tbl_Product_Price_Index.PriceIndexName,
-                        productPriceIndexSpread = c.ProductPriceIndexSpread,
+                        productPriceIndexId = c.PRODUCTPRICEINDEXID,
+                        productPriceIndexName = c.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                        productPriceIndexSpread = c.PRODUCTPRICEINDEXSPREAD,
 
-                        productCode = c.ProductCode,
-                        productName = c.ProductName,
-                        productDescription = c.ProductDescription,
+                        productCode = c.PRODUCTCODE,
+                        productName = c.PRODUCTNAME,
+                        productDescription = c.PRODUCTDESCRIPTION,
 
-                        productGroupId = c.tbl_Product_Type.ProductGroupId,
-                        productGroupName = c.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
+                        productGroupId = c.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
+                        productGroupName = c.TBL_PRODUCT_TYPE.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
 
-                        principalBalanceGl = c.PrincipalBalanceGL,
-                        principalBalanceGlCode = (c.PrincipalBalanceGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
+                        principalBalanceGl = c.PRINCIPALBALANCEGL,
+                        principalBalanceGlCode = (c.PRINCIPALBALANCEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        interestIncomeExpenseGl = c.InterestIncomeExpenseGL,
-                        interestIncomeExpenseGlCode = (c.InterestIncomeExpenseGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
+                        interestIncomeExpenseGl = c.INTERESTINCOMEEXPENSEGL,
+                        interestIncomeExpenseGlCode = (c.INTERESTINCOMEEXPENSEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        interestReceivablePayableGl = c.InterestReceivablePayableGL,
-                        interestReceivablePayableGlCode = (c.InterestReceivablePayableGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
+                        interestReceivablePayableGl = c.INTERESTRECEIVABLEPAYABLEGL,
+                        interestReceivablePayableGlCode = (c.INTERESTRECEIVABLEPAYABLEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        dormantGl = c.DormantGL,
-                        dormantGlCode = (c.DormantGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
-                        premiumDiscountGl = c.PremiumDiscountGL,
-                        premiumDiscountGlCode = (c.PremiumDiscountGL.HasValue ? c.tbl_Chart_Of_Account.AccountCode : ""),
+                        dormantGl = c.DORMANTGL,
+                        dormantGlCode = (c.DORMANTGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                        premiumDiscountGl = c.PREMIUMDISCOUNTGL,
+                        premiumDiscountGlCode = (c.PREMIUMDISCOUNTGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+                        
+                        dealTypeId = c.DEALTYPEID,
+                        dealTypeName = c.TBL_DEAL_TYPE.DEALTYPENAME,
+                        dealClassificationId = c.DEALCLASSIFICATIONID,
+                        dealClassificationName = c.TBL_DEAL_CLASSIFICATION.CLASSIFICATION,
+                        dayCountId = c.DAYCOUNTCONVENTIONID,
+                        dayCountName = c.TBL_DAY_COUNT_CONVENTION.DAYCOUNTCONVENTIONNAME,
 
-                        dealTypeId = c.DealTypeId,
-                        dealTypeName = c.tbl_Deal_Type.DealTypeName,
-                        dealClassificationId = c.DealClassificationId,
-                        dealClassificationName = c.tbl_Deal_Classification.Classification,
-                        dayCountId = c.DayCountConventionId,
-                        dayCountName = c.tbl_Day_Count_Convention.DayCountConventionName,
-
-                        maximumTenor = c.MaximumTenor,
-                        minimumTenor = c.MinimumTenor,
-                        maximumRate = c.MaximumRate,
-                        minimumRate = c.MinimumRate,
-                        minimumBalance = c.MinimumBalance,
-                        approvedBy = c.ApprovedBy,
-                        completed = c.Completed,
-                        approved = c.Approved,
-                        approvalStatusId = c.ApprovalStatusId,
-                        operationId = atrail.OperationId,
-                        currencies = context.tbl_Temp_Product_Currency.Where(curr => curr.ProductId == c.ProductId && curr.Deleted == false).Select(pc => new ProductCurrencyViewModel()
+                        maximumTenor = c.MAXIMUMTENOR,
+                        minimumTenor = c.MINIMUMTENOR,
+                        maximumRate = c.MAXIMUMRATE,
+                        minimumRate = c.MINIMUMRATE,
+                        minimumBalance = c.MINIMUMBALANCE,
+                        approvedBy = c.APPROVEDBY,
+                        completed = c.COMPLETED,
+                        approved = c.APPROVED,
+                        approvalStatusId = c.APPROVALSTATUSID,
+                        operationId = atrail.OPERATIONID,
+                        currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == c.PRODUCTID && curr.DELETED == false).Select(pc => new ProductCurrencyViewModel()
                         {
-                            productId = c.ProductId,
-                            productCurrencyId = pc.ProductCurrencyId,
-                            currencyId = pc.CurrencyId,
-                            currencyName = pc.tbl_Currency.CurrencyCode + " -- " + pc.tbl_Currency.CurrencyName
+                            productId = c.PRODUCTID,
+                            productCurrencyId = pc.PRODUCTCURRENCYID,
+                            currencyId = pc.CURRENCYID,
+                            currencyName = pc.TBL_CURRENCY.CURRENCYCODE + " -- " + pc.TBL_CURRENCY.CURRENCYNAME
                         }).ToList(),
-                        fees = context.tbl_Temp_Product_Charge_Fee.Where(curr => curr.ProductId == c.ProductId && c.Deleted == false).Select(pf => new ProductFeeViewModel()
+                        fees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(curr => curr.PRODUCTID == c.PRODUCTID && c.DELETED == false).Select(pf => new ProductFeeViewModel()
                         {
-                            productFeeId = pf.ProductFeeId,
-                            productId = pf.ProductId,
-                            feeId = pf.ChargeFeeId,
-                            feeName = pf.tbl_Charge_Fee.ChargeFeeName,
-                            feeIntervalName = pf.tbl_Charge_Fee.tbl_Fee_Interval.FeeIntervalName,
-                            feeTargetName = pf.tbl_Charge_Fee.tbl_Fee_Target.FeeTargetName,
-                            feeTypeName = pf.tbl_Charge_Fee.tbl_Fee_Type.FeeTypeName,
-                            glAccountCode = pf.tbl_Charge_Fee.tbl_Chart_Of_Account.AccountCode,
-                            glAccountName = pf.tbl_Charge_Fee.tbl_Chart_Of_Account.AccountName,
-                            companyId = pf.CompanyId,
+                            productFeeId = pf.PRODUCTFEEID,
+                            productId = pf.PRODUCTID,
+                            feeId = pf.CHARGEFEEID,
+                            feeName = pf.TBL_CHARGE_FEE.CHARGEFEENAME,
+                            feeIntervalName = pf.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                            feeTargetName = pf.TBL_CHARGE_FEE.TBL_FEE_TARGET.FEETARGETNAME,
+                            feeTypeName = pf.TBL_CHARGE_FEE.TBL_FEE_TYPE.FEETYPENAME,
+                            glAccountCode = pf.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                            glAccountName = pf.TBL_CHARGE_FEE.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            companyId = pf.COMPANYID,
 
-                            rateValue = pf.RateValue,
-                            dependentAmount = pf.DependentAmount,
+                            rateValue = pf.RATEVALUE,
+                            dependentAmount = pf.DEPENDENTAMOUNT,
 
-                            createdBy = pf.CreatedBy,
-                            dateTimeCreated = pf.DateTimeCreated,
+                            createdBy = pf.CREATEDBY,
+                            dateTimeCreated = pf.DATETIMECREATED,
 
                         }).ToList(),
-                        collaterals = context.tbl_Temp_Product_CollateralType.Where(coll => coll.ProductId == c.ProductId && coll.Deleted == false).Select(prodColl => new ProductCollateralTypeViewModel()
+                        collaterals = context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Where(coll => coll.PRODUCTID == c.PRODUCTID && coll.DELETED == false).Select(prodColl => new ProductCollateralTypeViewModel()
                         {
-                            productId = prodColl.ProductId,
-                            productCollateralId = prodColl.ProductCollateralTypeId,
-                            collateralTypeName = prodColl.tbl_Collateral_Type.CollateralTypeName
+                            productId = prodColl.PRODUCTID,
+                            productCollateralId = prodColl.PRODUCTCOLLATERALTYPEID,
+                            collateralTypeName = prodColl.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
                         }).ToList(),
-                        dateTimeUpdated = c.DateTimeUpdated,
-                        deleted = c.Deleted,
-                        deletedBy = c.DeletedBy,
-                        dateTimeDeleted = c.DateTimeDeleted,
+                        dateTimeUpdated = c.DATETIMEUPDATED,
+                        deleted = c.DELETED,
+                        deletedBy = c.DELETEDBY,
+                        dateTimeDeleted = c.DATETIMEDELETED,
 
-                        allowCustomerAccountForceDebit = c.AllowCustomerAccountForceDebit,
-                        allowMoratorium = c.AllowMoratorium,
-                        allowScheduleTypeOverride = c.AllowScheduleTypeOverride,
-                        allowTenor = c.AllowTenor,
-                        allowRate = c.AllowOverdrawn,
-                        allowOverdrawn = c.AllowOverdrawn,
+                        allowCustomerAccountForceDebit = c.ALLOWCUSTOMERACCOUNTFORCEDEBIT,
+                        allowMoratorium = c.ALLOWMORATORIUM,
+                        allowScheduleTypeOverride = c.ALLOWSCHEDULETYPEOVERRIDE,
+                        allowTenor = c.ALLOWTENOR,
+                        allowRate = c.ALLOWRATE,
+                        allowOverdrawn = c.ALLOWOVERDRAWN,
 
-                        cleanupPeriod = c.CleanupPeriod,
-                        defaultGracePeriod = c.DefaultGracePeriod,
-                        equityContribution = c.EquityContribution,
-                        expiryPeriod = c.ExpiryPeriod,
-                        scheduleTypeId = c.ScheduleTypeId
+                        cleanupPeriod = c.CLEANUPPERIOD,
+                        defaultGracePeriod = c.DEFAULTGRACEPERIOD,
+                        equityContribution = c.EQUITYCONTRIBUTION,
+                        expiryPeriod = c.EXPIRYPERIOD,
+                        scheduleTypeId = c.SCHEDULETYPEID
                     }).GroupBy(x => x.productId).Select(g => g.FirstOrDefault());
         }
 
@@ -647,63 +647,63 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             //return GetTempStaffDetails().Where(x => x.StaffId == staffId).Single();
 
-            return (from tp in context.tbl_Temp_Product
-                    join coy in context.tbl_Company on tp.CompanyId equals coy.CompanyId
-                    where tp.ProductId == productId
+            return (from tp in context.TBL_TEMP_PRODUCT
+                    join coy in context.TBL_COMPANY on tp.COMPANYID equals coy.COMPANYID
+                    where tp.PRODUCTID == productId
                     select new ProductViewModel()
                     {
-                        productId = tp.ProductId,
-                        companyId = tp.CompanyId,
-                        productTypeId = tp.ProductTypeId,
-                        productTypeName = tp.tbl_Product_Type.ProductTypeName,
-                        productGroupName = tp.tbl_Product_Type.tbl_Product_Group.ProductGroupName,
-                        productCategoryId = tp.ProductCategoryId,
-                        productCategoryName = tp.tbl_Product_Category.ProductCategoryName,
-                        productClassId = tp.ProductClassId,
-                        productClassName = tp.tbl_Product_Class.ProductClassName,
+                        productId = tp.PRODUCTID,
+                        companyId = tp.COMPANYID,
+                        productTypeId = tp.PRODUCTTYPEID,
+                        productTypeName = tp.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                        productGroupName = tp.TBL_PRODUCT_TYPE.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
+                        productCategoryId = tp.PRODUCTCATEGORYID,
+                        productCategoryName = tp.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
+                        productClassId = tp.PRODUCTCLASSID,
+                        productClassName = tp.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
-                        productPriceIndexId = tp.ProductPriceIndexId,
-                        productPriceIndexName = tp.tbl_Product_Price_Index.PriceIndexName,
-                        productPriceIndexSpread = tp.ProductPriceIndexSpread,
+                        productPriceIndexId = tp.PRODUCTPRICEINDEXID,
+                        productPriceIndexName = tp.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                        productPriceIndexSpread = tp.PRODUCTPRICEINDEXSPREAD,
 
-                        productCode = tp.ProductCode,
-                        productName = tp.ProductName,
-                        productDescription = tp.ProductDescription,
+                        productCode = tp.PRODUCTCODE,
+                        productName = tp.PRODUCTNAME,
+                        productDescription = tp.PRODUCTDESCRIPTION,
 
-                        productGroupId = tp.tbl_Product_Type.ProductGroupId,
+                        productGroupId = tp.TBL_PRODUCT_TYPE.PRODUCTGROUPID,
 
-                        principalBalanceGl = tp.PrincipalBalanceGL,
-                        principalBalanceGlCode = (tp.PrincipalBalanceGL.HasValue ? tp.tbl_Chart_Of_Account.AccountCode : ""),
+                        principalBalanceGl = tp.PRINCIPALBALANCEGL,
+                        principalBalanceGlCode = (tp.PRINCIPALBALANCEGL.HasValue ? tp.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        interestIncomeExpenseGl = tp.InterestIncomeExpenseGL,
-                        interestIncomeExpenseGlCode = (tp.InterestIncomeExpenseGL.HasValue ? tp.tbl_Chart_Of_Account.AccountCode : ""),
+                        interestIncomeExpenseGl = tp.INTERESTINCOMEEXPENSEGL,
+                        interestIncomeExpenseGlCode = (tp.INTERESTINCOMEEXPENSEGL.HasValue ? tp.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        interestReceivablePayableGl = tp.InterestReceivablePayableGL,
-                        interestReceivablePayableGlCode = (tp.InterestReceivablePayableGL.HasValue ? tp.tbl_Chart_Of_Account.AccountCode : ""),
+                        interestReceivablePayableGl = tp.INTERESTRECEIVABLEPAYABLEGL,
+                        interestReceivablePayableGlCode = (tp.INTERESTRECEIVABLEPAYABLEGL.HasValue ? tp.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                        dormantGl = tp.DormantGL,
-                        premiumDiscountGl = tp.PremiumDiscountGL,
+                        dormantGl = tp.DORMANTGL,
+                        premiumDiscountGl = tp.PREMIUMDISCOUNTGL,
 
-                        dealTypeId = tp.DealTypeId,
-                        dealClassificationId = tp.DealClassificationId,
-                        dayCountId = tp.DayCountConventionId,
+                        dealTypeId = tp.DEALTYPEID,
+                        dealClassificationId = tp.DEALCLASSIFICATIONID,
+                        dayCountId = tp.DAYCOUNTCONVENTIONID,
 
-                        maximumTenor = tp.MaximumTenor,
-                        minimumTenor = tp.MinimumTenor,
-                        maximumRate = tp.MaximumRate,
-                        minimumRate = tp.MinimumRate,
-                        minimumBalance = tp.MinimumBalance,
-                        approvedBy = tp.ApprovedBy,
-                        completed = tp.Completed,
-                        approved = tp.Approved,
-                        approvalStatusId = tp.ApprovalStatusId,
+                        maximumTenor = tp.MAXIMUMTENOR,
+                        minimumTenor = tp.MINIMUMTENOR,
+                        maximumRate = tp.MAXIMUMRATE,
+                        minimumRate = tp.MINIMUMRATE,
+                        minimumBalance = tp.MINIMUMBALANCE,
+                        approvedBy = tp.APPROVEDBY,
+                        completed = tp.COMPLETED,
+                        approved = tp.APPROVED,
+                        approvalStatusId = tp.APPROVALSTATUSID,
 
-                        currencies = context.tbl_Temp_Product_Currency.Where(curr => curr.ProductId == tp.ProductId && curr.Deleted != false).Select(pc => new ProductCurrencyViewModel()
+                        currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == tp.PRODUCTID && curr.DELETED != false).Select(pc => new ProductCurrencyViewModel()
                         {
-                            productId = pc.ProductId,
-                            productCurrencyId = pc.ProductCurrencyId,
-                            currencyId = pc.CurrencyId,
-                            currencyName = pc.tbl_Currency.CurrencyCode + " -- " + pc.tbl_Currency.CurrencyName
+                            productId = pc.PRODUCTID,
+                            productCurrencyId = pc.PRODUCTCURRENCYID,
+                            currencyId = pc.CURRENCYID,
+                            currencyName = pc.TBL_CURRENCY.CURRENCYCODE + " -- " + pc.TBL_CURRENCY.CURRENCYNAME
                         }).ToList(),
 
                         //fees = context.tbl_Temp_Product_Fee.Where(curr => curr.ProductId == tp.ProductId && curr.Deleted != false).Select(pf => new ProductFeeViewModel()
@@ -721,18 +721,18 @@ namespace FintrakBanking.Repositories.Setups.General
                         //    glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
 
                         //}).ToList(),
-                        collaterals = context.tbl_Temp_Product_CollateralType.Where(curr => curr.ProductId == tp.ProductId && curr.Deleted != false).Select(pcc => new ProductCollateralTypeViewModel()
+                        collaterals = context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Where(curr => curr.PRODUCTID == tp.PRODUCTID && curr.DELETED != false).Select(pcc => new ProductCollateralTypeViewModel()
                         {
-                            productId = pcc.ProductId,
-                            productCollateralId = pcc.ProductCollateralTypeId,
-                            collateralTypeId = pcc.CollateralTypeId,
-                            collateralTypeName = pcc.tbl_Collateral_Type.CollateralTypeName
+                            productId = pcc.PRODUCTID,
+                            productCollateralId = pcc.PRODUCTCOLLATERALTYPEID,
+                            collateralTypeId = pcc.COLLATERALTYPEID,
+                            collateralTypeName = pcc.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
                         }).ToList(),
 
-                        dateTimeUpdated = tp.DateTimeUpdated,
-                        deleted = tp.Deleted,
-                        deletedBy = tp.DeletedBy,
-                        dateTimeDeleted = tp.DateTimeDeleted
+                        dateTimeUpdated = tp.DATETIMEUPDATED,
+                        deleted = tp.DELETED,
+                        deletedBy = tp.DELETEDBY,
+                        dateTimeDeleted = tp.DATETIMEDELETED
                     }).FirstOrDefault();
         }
 
@@ -786,91 +786,91 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private bool ApproveProduct(int productId, short approvalStatusId, UserInfo user)
         {
-            var productModel = context.tbl_Temp_Product.Find(productId);
-            var productToUpdate = context.tbl_Product.FirstOrDefault(x => x.ProductCode == productModel.ProductCode);
+            var productModel = context.TBL_TEMP_PRODUCT.Find(productId);
+            var productToUpdate = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTCODE == productModel.PRODUCTCODE);
 
-            var currModel = context.tbl_Temp_Product_Currency.Where(c => c.ProductId == productModel.ProductId && c.Deleted == false);
-            var currListToUpdate = new List<tbl_Product_Currency>();
+            var currModel = context.TBL_TEMP_PRODUCT_CURRENCY.Where(c => c.PRODUCTID == productModel.PRODUCTID && c.DELETED == false);
+            var currListToUpdate = new List<TBL_PRODUCT_CURRENCY>();
 
             var feeModel =
-                context.tbl_Temp_Product_Charge_Fee.Where(c => c.ProductId == productModel.ProductId && c.Deleted == false);
-            var feeListToUpdate = new List<tbl_Product_Charge_Fee>();
+                context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(c => c.PRODUCTID == productModel.PRODUCTID && c.DELETED == false);
+            var feeListToUpdate = new List<TBL_PRODUCT_CHARGE_FEE>();
 
             var collateralModel =
-                context.tbl_Temp_Product_CollateralType.Where(c =>
-                    c.ProductId == productModel.ProductId && c.Deleted == false);
-            var collateralListToUpdate = new List<tbl_Product_CollateralType>();
+                context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Where(c =>
+                    c.PRODUCTID == productModel.PRODUCTID && c.DELETED == false);
+            var collateralListToUpdate = new List<TBL_PRODUCT_COLLATERALTYPE>();
 
-            List<tbl_Product_Charge_Fee> productFees = new List<tbl_Product_Charge_Fee>();
-            List<tbl_Product_CollateralType> productCollateral = new List<tbl_Product_CollateralType>();
-            List<tbl_Product_Currency> productCurrencies = new List<tbl_Product_Currency>();
+            List<TBL_PRODUCT_CHARGE_FEE> productFees = new List<TBL_PRODUCT_CHARGE_FEE>();
+            List<TBL_PRODUCT_COLLATERALTYPE> productCollateral = new List<TBL_PRODUCT_COLLATERALTYPE>();
+            List<TBL_PRODUCT_CURRENCY> productCurrencies = new List<TBL_PRODUCT_CURRENCY>();
 
             if (productToUpdate != null) //Update existing product with tempProduct record
             {
-                currListToUpdate = context.tbl_Product_Currency.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+                currListToUpdate = context.TBL_PRODUCT_CURRENCY.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
 
                 feeListToUpdate =
-               context.tbl_Product_Charge_Fee.Where(x => x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
+               context.TBL_PRODUCT_CHARGE_FEE.Where(x => x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
 
                 collateralListToUpdate =
-                context.tbl_Product_CollateralType.Where(x =>
-                    x.ProductId == productToUpdate.ProductId && x.Deleted == false).ToList();
-
+                context.TBL_PRODUCT_COLLATERALTYPE.Where(x =>
+                    x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
+                
                 // remove exisiting records for currencies
                 foreach (var curr in currListToUpdate)
                 {
-                    context.tbl_Product_Currency.Remove(curr);
+                    context.TBL_PRODUCT_CURRENCY.Remove(curr);
                 }
 
                 foreach (var item in feeListToUpdate)
                 {
-                    context.tbl_Product_Charge_Fee.Remove(item);
+                    context.TBL_PRODUCT_CHARGE_FEE.Remove(item);
                 }
 
                 foreach (var item in collateralListToUpdate)
                 {
-                    context.tbl_Product_CollateralType.Remove(item);
+                    context.TBL_PRODUCT_COLLATERALTYPE.Remove(item);
                 }
 
                 // Insert updated records for currencies
                 foreach (var c in currModel)
                 {
-                    var curr = new tbl_Product_Currency()
+                    var curr = new TBL_PRODUCT_CURRENCY()
                     {
                         //ProductId = c.ProductId,
-                        CurrencyId = c.CurrencyId,
-                        CreatedBy = c.CreatedBy,
-                        DateTimeCreated = genSetup.GetApplicationDate(),
+                        CURRENCYID = c.CURRENCYID,
+                        CREATEDBY = c.CREATEDBY,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
                     };
                     productCurrencies.Add(curr);
                 }
 
                 foreach (var item in feeModel)
                 {
-                    var feeList = new tbl_Product_Charge_Fee()
+                    var feeList = new TBL_PRODUCT_CHARGE_FEE()
                     {
                         //ProductId = item.productId,
                         //ProductFeeId = item.ProductFeeId,
-                        ChargeFeeId = item.ChargeFeeId,
-                        DependentAmount = item.DependentAmount,
-                        RateValue = item.RateValue,
-                        CompanyId = (int)item.CompanyId,
-                        CreatedBy = (int)item.CreatedBy,
-                        DateTimeCreated = genSetup.GetApplicationDate(),
-                        Deleted = false
+                        CHARGEFEEID = item.CHARGEFEEID,
+                        DEPENDENTAMOUNT = item.DEPENDENTAMOUNT,
+                        RATEVALUE = item.RATEVALUE,
+                        COMPANYID = (int)item.COMPANYID,
+                        CREATEDBY = (int)item.CREATEDBY,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false
                     };
                     productFees.Add(feeList);
                 }
 
                 foreach (var item in collateralModel)
                 {
-                    var productCollaterals = new tbl_Product_CollateralType()
+                    var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
                     {
                         //ProductId = item.productId,
-                        CollateralTypeId = item.CollateralTypeId,
-                        CompanyId = item.CompanyId,
-                        CreatedBy = item.CreatedBy,
-                        DateTimeCreated = genSetup.GetApplicationDate()
+                        COLLATERALTYPEID = item.COLLATERALTYPEID,
+                        COMPANYID = item.COMPANYID,
+                        CREATEDBY = item.CREATEDBY,
+                        DATETIMECREATED = genSetup.GetApplicationDate()
                     };
                     productCollateral.Add(productCollaterals);
                 }
@@ -878,200 +878,200 @@ namespace FintrakBanking.Repositories.Setups.General
                 var existingProduct = productToUpdate;
                 if (productModel != null)
                 {
-                    existingProduct.ProductClassId = productModel.ProductClassId;
-                    existingProduct.ProductCode = productModel.ProductCode;
-                    existingProduct.ProductName = productModel.ProductName;
-                    existingProduct.ProductDescription = productModel.ProductDescription;
+                    existingProduct.PRODUCTCLASSID = productModel.PRODUCTCLASSID;
+                    existingProduct.PRODUCTCODE = productModel.PRODUCTCODE;
+                    existingProduct.PRODUCTNAME = productModel.PRODUCTNAME;
+                    existingProduct.PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION;
 
-                    existingProduct.PrincipalBalanceGL = productModel.PrincipalBalanceGL;
-                    existingProduct.InterestIncomeExpenseGL = productModel.InterestIncomeExpenseGL;
-                    existingProduct.InterestReceivablePayableGL = productModel.InterestReceivablePayableGL;
-                    existingProduct.DormantGL = productModel.DormantGL;
-                    existingProduct.PremiumDiscountGL = productModel.PremiumDiscountGL;
-                    existingProduct.OverdrawnGL = productModel.OverdrawnGL;
+                    existingProduct.PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL;
+                    existingProduct.INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL;
+                    existingProduct.INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL;
+                    existingProduct.DORMANTGL = productModel.DORMANTGL;
+                    existingProduct.PREMIUMDISCOUNTGL = productModel.PREMIUMDISCOUNTGL;
+                    existingProduct.OVERDRAWNGL = productModel.OVERDRAWNGL;
 
-                    existingProduct.ProductPriceIndexId = productModel.ProductPriceIndexId;
-                    existingProduct.ProductPriceIndexSpread = productModel.ProductPriceIndexSpread;
+                    existingProduct.PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID;
+                    existingProduct.PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD;
 
-                    existingProduct.DealTypeId = productModel.DealTypeId;
-                    existingProduct.DealClassificationId = productModel.DealClassificationId;
-                    existingProduct.DayCountConventionId = productModel.DayCountConventionId;
+                    existingProduct.DEALTYPEID = productModel.DEALTYPEID;
+                    existingProduct.DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID;
+                    existingProduct.DAYCOUNTCONVENTIONID = productModel.DAYCOUNTCONVENTIONID;
 
-                    existingProduct.MaximumTenor = productModel.MaximumTenor;
-                    existingProduct.MinimumTenor = productModel.MinimumTenor;
-                    existingProduct.MaximumRate = productModel.MaximumRate;
-                    existingProduct.MinimumRate = productModel.MinimumRate;
-                    existingProduct.MinimumBalance = productModel.MinimumBalance;
+                    existingProduct.MAXIMUMTENOR = productModel.MAXIMUMTENOR;
+                    existingProduct.MINIMUMTENOR = productModel.MINIMUMTENOR;
+                    existingProduct.MAXIMUMRATE = productModel.MAXIMUMRATE;
+                    existingProduct.MINIMUMRATE = productModel.MINIMUMRATE;
+                    existingProduct.MINIMUMBALANCE = productModel.MINIMUMBALANCE;
 
-                    existingProduct.AllowRate = productModel.AllowRate;
-                    existingProduct.AllowTenor = productModel.AllowTenor;
-                    existingProduct.AllowOverdrawn = productModel.AllowOverdrawn;
-                    existingProduct.AllowCustomerAccountForceDebit = productModel.AllowCustomerAccountForceDebit;
-                    existingProduct.AllowMoratorium = productModel.AllowMoratorium;
-                    existingProduct.AllowScheduleTypeOverride = productModel.AllowScheduleTypeOverride;
+                    existingProduct.ALLOWRATE = productModel.ALLOWRATE;
+                    existingProduct.ALLOWTENOR = productModel.ALLOWTENOR;
+                    existingProduct.ALLOWOVERDRAWN = productModel.ALLOWOVERDRAWN;
+                    existingProduct.ALLOWCUSTOMERACCOUNTFORCEDEBIT = productModel.ALLOWCUSTOMERACCOUNTFORCEDEBIT;
+                    existingProduct.ALLOWMORATORIUM = productModel.ALLOWMORATORIUM;
+                    existingProduct.ALLOWSCHEDULETYPEOVERRIDE = productModel.ALLOWSCHEDULETYPEOVERRIDE;
 
-                    existingProduct.CleanupPeriod = productModel.CleanupPeriod;
-                    existingProduct.DefaultGracePeriod = productModel.DefaultGracePeriod;
-                    existingProduct.EquityContribution = productModel.EquityContribution;
-                    existingProduct.ExpiryPeriod = productModel.ExpiryPeriod;
-                    existingProduct.IsMultipleCurency = productModel.IsMultipleCurency;
-                    existingProduct.ScheduleTypeId = productModel.ScheduleTypeId;
+                    existingProduct.CLEANUPPERIOD = productModel.CLEANUPPERIOD;
+                    existingProduct.DEFAULTGRACEPERIOD = productModel.DEFAULTGRACEPERIOD;
+                    existingProduct.EQUITYCONTRIBUTION = productModel.EQUITYCONTRIBUTION;
+                    existingProduct.EXPIRYPERIOD = productModel.EXPIRYPERIOD;
+                    existingProduct.ISMULTIPLECURENCY = productModel.ISMULTIPLECURENCY;
+                    existingProduct.SCHEDULETYPEID = productModel.SCHEDULETYPEID;
 
-                    existingProduct.tbl_Product_Currency = productCurrencies;
-                    existingProduct.tbl_Product_Charge_Fee = productFees;
-                    existingProduct.tbl_Product_CollateralType = productCollateral;
-                    existingProduct.Approved = true;
-                    existingProduct.Deleted = false;
-                    existingProduct.ApprovedBy = productModel.CreatedBy;
+                    existingProduct.TBL_PRODUCT_CURRENCY = productCurrencies;
+                    existingProduct.TBL_PRODUCT_CHARGE_FEE = productFees;
+                    existingProduct.TBL_PRODUCT_COLLATERALTYPE = productCollateral;
+                    existingProduct.APPROVED = true;
+                    existingProduct.DELETED = false;
+                    existingProduct.APPROVEDBY = productModel.CREATEDBY;
                 }
             }
             else //Insert a new product record into the real product table
             {
                 foreach (var c in currModel)
                 {
-                    var curr = new tbl_Product_Currency()
+                    var curr = new TBL_PRODUCT_CURRENCY()
                     {
                         //ProductId = c.ProductId,
-                        CurrencyId = c.CurrencyId,
-                        DateTimeCreated = genSetup.GetApplicationDate(),
-                        Deleted = false
+                        CURRENCYID = c.CURRENCYID,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false
                     };
                     productCurrencies.Add(curr);
                 }
 
                 foreach (var item in feeModel)
                 {
-                    var feeList = new tbl_Product_Charge_Fee()
+                    var feeList = new TBL_PRODUCT_CHARGE_FEE()
                     {
                         //ProductId = item.productId,
                         //ProductFeeId = item.ProductFeeId,
-                        ChargeFeeId = item.ChargeFeeId,
-                        DependentAmount = item.DependentAmount,
-                        RateValue = item.RateValue,
-                        CompanyId = (int)item.CompanyId,
-                        CreatedBy = (int)item.CreatedBy,
-                        DateTimeCreated = genSetup.GetApplicationDate(),
-                        Deleted = false
+                        CHARGEFEEID = item.CHARGEFEEID,
+                        DEPENDENTAMOUNT = item.DEPENDENTAMOUNT,
+                        RATEVALUE = item.RATEVALUE,
+                        COMPANYID = (int)item.COMPANYID,
+                        CREATEDBY = (int)item.CREATEDBY,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false
                     };
                     productFees.Add(feeList);
                 }
 
                 foreach (var item in collateralModel)
                 {
-                    var productCollaterals = new tbl_Product_CollateralType()
+                    var productCollaterals = new TBL_PRODUCT_COLLATERALTYPE()
                     {
                         //ProductId = item.productId,
-                        CollateralTypeId = item.CollateralTypeId,
-                        CompanyId = item.CompanyId,
-                        CreatedBy = item.CreatedBy,
-                        DateTimeCreated = genSetup.GetApplicationDate(),
-                        Deleted = false
+                        COLLATERALTYPEID = item.COLLATERALTYPEID,
+                        COMPANYID = item.COMPANYID,
+                        CREATEDBY = item.CREATEDBY,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false
                     };
                     productCollateral.Add(productCollaterals);
                 }
 
                 if (productModel != null)
                 {
-                    var product = new tbl_Product()
+                    var product = new TBL_PRODUCT()
                     {
-                        CompanyId = productModel.CompanyId,
-                        ProductTypeId = productModel.ProductTypeId,
-                        ProductCategoryId = productModel.ProductCategoryId,
-                        ProductClassId = productModel.ProductClassId,
-                        ProductCode = productModel.ProductCode,
-                        ProductName = productModel.ProductName,
-                        ProductDescription = productModel.ProductDescription,
+                        COMPANYID = productModel.COMPANYID,
+                        PRODUCTTYPEID = productModel.PRODUCTTYPEID,
+                        PRODUCTCATEGORYID = productModel.PRODUCTCATEGORYID,
+                        PRODUCTCLASSID = productModel.PRODUCTCLASSID,
+                        PRODUCTCODE = productModel.PRODUCTCODE,
+                        PRODUCTNAME = productModel.PRODUCTNAME,
+                        PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION,
 
-                        PrincipalBalanceGL = productModel.PrincipalBalanceGL,
-                        InterestIncomeExpenseGL = productModel.InterestIncomeExpenseGL,
-                        InterestReceivablePayableGL = productModel.InterestReceivablePayableGL,
-                        DormantGL = productModel.DormantGL,
-                        PremiumDiscountGL = productModel.PremiumDiscountGL,
-                        OverdrawnGL = productModel.OverdrawnGL,
+                        PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL,
+                        INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL,
+                        INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL,
+                        DORMANTGL = productModel.DORMANTGL,
+                        PREMIUMDISCOUNTGL = productModel.PREMIUMDISCOUNTGL,
+                        OVERDRAWNGL = productModel.OVERDRAWNGL,
 
-                        ProductPriceIndexId = productModel.ProductPriceIndexId,
-                        ProductPriceIndexSpread = productModel.ProductPriceIndexSpread,
+                        PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID,
+                        PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD,
 
-                        DealTypeId = productModel.DealTypeId,
-                        DealClassificationId = productModel.DealClassificationId,
-                        DayCountConventionId = productModel.DayCountConventionId,
+                        DEALTYPEID = productModel.DEALTYPEID,
+                        DEALCLASSIFICATIONID = productModel.DEALCLASSIFICATIONID,
+                        DAYCOUNTCONVENTIONID = productModel.DAYCOUNTCONVENTIONID,
 
-                        MaximumTenor = productModel.MaximumTenor,
-                        MinimumTenor = productModel.MinimumTenor,
-                        MaximumRate = productModel.MaximumRate,
-                        MinimumRate = productModel.MinimumRate,
-                        MinimumBalance = productModel.MinimumBalance,
+                        MAXIMUMTENOR = productModel.MAXIMUMTENOR,
+                        MINIMUMTENOR = productModel.MINIMUMTENOR,
+                        MAXIMUMRATE = productModel.MAXIMUMRATE,
+                        MINIMUMRATE = productModel.MINIMUMRATE,
+                        MINIMUMBALANCE = productModel.MINIMUMBALANCE,
 
-                        AllowRate = productModel.AllowRate,
-                        AllowTenor = productModel.AllowTenor,
-                        AllowOverdrawn = productModel.AllowOverdrawn,
+                        ALLOWRATE = productModel.ALLOWRATE,
+                        ALLOWTENOR = productModel.ALLOWTENOR,
+                        ALLOWOVERDRAWN = productModel.ALLOWOVERDRAWN,
 
-                        CreatedBy = productModel.CreatedBy,
-                        DateTimeCreated = genSetup.GetApplicationDate(),
+                        CREATEDBY = productModel.CREATEDBY,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
 
-                        IsMultipleCurency = productModel.IsMultipleCurency,
-                        DefaultGracePeriod = productModel.DefaultGracePeriod,
-                        EquityContribution = productModel.EquityContribution,
-                        ExpiryPeriod = productModel.ExpiryPeriod,
+                        ISMULTIPLECURENCY = productModel.ISMULTIPLECURENCY,
+                        DEFAULTGRACEPERIOD = productModel.DEFAULTGRACEPERIOD,
+                        EQUITYCONTRIBUTION = productModel.EQUITYCONTRIBUTION,
+                        EXPIRYPERIOD = productModel.EXPIRYPERIOD,
 
-                        AllowMoratorium = productModel.AllowMoratorium,
-                        AllowCustomerAccountForceDebit = productModel.AllowCustomerAccountForceDebit,
-                        CleanupPeriod = productModel.CleanupPeriod,
-                        AllowScheduleTypeOverride = productModel.AllowScheduleTypeOverride,
-                        ScheduleTypeId = productModel.ScheduleTypeId,
+                        ALLOWMORATORIUM = productModel.ALLOWMORATORIUM,
+                        ALLOWCUSTOMERACCOUNTFORCEDEBIT = productModel.ALLOWCUSTOMERACCOUNTFORCEDEBIT,
+                        CLEANUPPERIOD = productModel.CLEANUPPERIOD,
+                        ALLOWSCHEDULETYPEOVERRIDE = productModel.ALLOWSCHEDULETYPEOVERRIDE,
+                        SCHEDULETYPEID = productModel.SCHEDULETYPEID,
 
-                        tbl_Product_Currency = productCurrencies,
-                        tbl_Product_CollateralType = productCollateral,
-                        tbl_Product_Charge_Fee = productFees,
-                        Approved = true,
-                        Deleted = false,
-                        ApprovedBy = productModel.CreatedBy
+                        TBL_PRODUCT_CURRENCY = productCurrencies,
+                        TBL_PRODUCT_COLLATERALTYPE = productCollateral,
+                        TBL_PRODUCT_CHARGE_FEE = productFees,
+                        APPROVED = true,
+                        DELETED = false,
+                        APPROVEDBY = productModel.CREATEDBY
                     };
-                    context.tbl_Product.Add(product);
+                    context.TBL_PRODUCT.Add(product);
                 }
 
                 //productFee.ApproveProductFee(productId, user);
                 //productCollateralType.ApproveProductCollateral(productId, user);
             }
 
-            productModel.IsCurrent = false;
-            productModel.ApprovalStatusId = approvalStatusId;
-            productModel.DateTimeUpdated = DateTime.Now;
+            productModel.ISCURRENT = false;
+            productModel.APPROVALSTATUSID = approvalStatusId;
+            productModel.DATETIMEUPDATED = DateTime.Now;
 
             // Remove all tem products, currencies and fees
             //context.tbl_Temp_Product.Remove(productModel);
 
             //foreach (var curr in currModel)
             //{
-            //    context.tbl_Temp_Product_Currency.Remove(curr);
+            //    context.TBL_PRODUCT_CURRENCY.Remove(curr);
             //}
 
             //foreach (var fee in feeModel)
             //{
-            //    context.tbl_Temp_Product_Charge_Fee.Remove(fee);
+            //    context.TBL_TEMP_PRODUCT_CHARGE_FEE.Remove(fee);
             //}
 
             //foreach (var coll in collateralModel)
             //{
-            //    context.tbl_Temp_Product_CollateralType.Remove(coll);
+            //    context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Remove(coll);
             //}
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductUpdated,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Approved Product '{productModel.ProductName}' with product code'{productModel.ProductCode}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductUpdated,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Approved Product '{productModel.PRODUCTNAME}' with product code'{productModel.PRODUCTCODE}'",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             try
             {
-                context.tbl_Audit.Add(audit);
+                context.TBL_AUDIT.Add(audit);
                 // Audit Section ---------------------------
                 var output = context.SaveChanges() > 0;
 
@@ -1091,7 +1091,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<ProductViewModel> AddTempProduct(ProductViewModel productModel)
         {
-            var isPrincipalGLRequired = context.tbl_Product_Type.Any(x => x.ProductTypeId == productModel.productTypeId && x.RequirePrincipalGL == true);
+            var isPrincipalGLRequired = context.TBL_PRODUCT_TYPE.Any(x => x.PRODUCTTYPEID == productModel.productTypeId && x.REQUIREPRINCIPALGL == true);
 
             if (isPrincipalGLRequired)
             {
@@ -1100,23 +1100,23 @@ namespace FintrakBanking.Repositories.Setups.General
             }
 
             bool output = false;
-            var existingTempProduct = context.tbl_Temp_Product.FirstOrDefault(x => x.ProductCode.ToLower() == productModel.productCode.ToLower()
-                                                                  && x.IsCurrent == true && x.CompanyId == productModel.companyId
-                                                                  && x.ApprovalStatusId == (short)ApprovalStatusEnum.Pending);
+            var existingTempProduct = context.TBL_TEMP_PRODUCT.FirstOrDefault(x => x.PRODUCTCODE.ToLower() == productModel.productCode.ToLower()
+                                                                  && x.ISCURRENT == true && x.COMPANYID == productModel.companyId
+                                                                  && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending);
 
-            var existingProductCurrencies = new List<tbl_Temp_Product_Currency>();
-            var existingProductFees = new List<tbl_Temp_Product_Charge_Fee>();
-            var existingProductCollateral = new List<tbl_Temp_Product_CollateralType>();
+            var existingProductCurrencies = new List<TBL_TEMP_PRODUCT_CURRENCY>();
+            var existingProductFees = new List<TBL_TEMP_PRODUCT_CHARGE_FEE>();
+            var existingProductCollateral = new List<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
 
             //if (existingTempProduct != null)
             //{
-            //    existingProductCurrencies = context.tbl_Temp_Product_Currency.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false).ToList();
+            //    existingProductCurrencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false).ToList();
 
             //    existingProductFees =
-            //        context.tbl_Temp_Product_Charge_Fee.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false).ToList();
+            //        context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false).ToList();
 
             //    existingProductCollateral =
-            //        context.tbl_Temp_Product_CollateralType.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false).ToList();
+            //        context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Where(c => c.ProductId == existingTempProduct.ProductId && c.Deleted == false).ToList();
             //}
 
 
@@ -1130,7 +1130,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //{
             //    foreach (var curr in existingProductCurrencies)
             //    {
-            //        context.tbl_Temp_Product_Currency.Remove(curr);
+            //        context.TBL_TEMP_PRODUCT_CURRENCY.Remove(curr);
             //    }
             //}
 
@@ -1138,7 +1138,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //{
             //    foreach (var fee in existingProductFees)
             //    {
-            //        context.tbl_Temp_Product_Charge_Fee.Remove(fee);
+            //        context.TBL_TEMP_PRODUCT_CHARGE_FEE.Remove(fee);
             //    }
             //}
 
@@ -1146,25 +1146,25 @@ namespace FintrakBanking.Repositories.Setups.General
             //{
             //    foreach (var coll in existingProductCollateral)
             //    {
-            //        context.tbl_Temp_Product_CollateralType.Remove(coll);
+            //        context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Remove(coll);
             //    }
             //}
 
-            List<tbl_Temp_Product_Currency> currencies = new List<tbl_Temp_Product_Currency>();
-            List<tbl_Temp_Product_Charge_Fee> chargeFees = new List<tbl_Temp_Product_Charge_Fee>();
-            List<tbl_Temp_Product_CollateralType> collaterals = new List<tbl_Temp_Product_CollateralType>();
+            List<TBL_TEMP_PRODUCT_CURRENCY> currencies = new List<TBL_TEMP_PRODUCT_CURRENCY>();
+            List<TBL_TEMP_PRODUCT_CHARGE_FEE> chargeFees = new List<TBL_TEMP_PRODUCT_CHARGE_FEE>();
+            List<TBL_TEMP_PRODUCT_COLLATERALTYPE> collaterals = new List<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
 
             //Storing the product currencies
             if (productModel.currencies != null)
             {
                 foreach (var item in productModel.currencies)
                 {
-                    var productCurrency = new tbl_Temp_Product_Currency
+                    var productCurrency = new TBL_TEMP_PRODUCT_CURRENCY
                     {
                         //ProductId = (short)item.productId,
-                        CurrencyId = item.currencyId,
-                        CreatedBy = item.createdBy,
-                        DateTimeCreated = genSetup.GetApplicationDate()
+                        CURRENCYID = item.currencyId,
+                        CREATEDBY = item.createdBy,
+                        DATETIMECREATED = genSetup.GetApplicationDate()
                     };
                     currencies.Add(productCurrency);
                 }
@@ -1176,16 +1176,16 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 foreach (var item in productModel.fees)
                 {
-                    var productFees = new tbl_Temp_Product_Charge_Fee()
+                    var productFees = new TBL_TEMP_PRODUCT_CHARGE_FEE()
                     {
                         //ProductId = item.productId,
-                        ChargeFeeId = item.feeId,
-                        DependentAmount = item.dependentAmount,
-                        RateValue = item.rateValue,
-                        CompanyId = productModel.companyId,
-                        CreatedBy = (int)item.createdBy,
-                        DateTimeCreated = genSetup.GetApplicationDate(),
-                        Deleted = false,
+                        CHARGEFEEID = item.feeId,
+                        DEPENDENTAMOUNT = item.dependentAmount,
+                        RATEVALUE = item.rateValue,
+                        COMPANYID = productModel.companyId,
+                        CREATEDBY = (int)item.createdBy,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false,
                     };
                     chargeFees.Add(productFees);
                 }
@@ -1195,86 +1195,86 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 foreach (var item in productModel.collaterals)
                 {
-                    var productCollaterals = new tbl_Temp_Product_CollateralType()
+                    var productCollaterals = new TBL_TEMP_PRODUCT_COLLATERALTYPE()
                     {
                         //ProductId = item.productId,
-                        CollateralTypeId = item.collateralTypeId,
-                        CompanyId = productModel.companyId,
-                        CreatedBy = item.createdBy,
-                        DateTimeCreated = genSetup.GetApplicationDate(),
-                        Deleted = false,
+                        COLLATERALTYPEID = item.collateralTypeId,
+                        COMPANYID = productModel.companyId,
+                        CREATEDBY = item.createdBy,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false,
                     };
                     collaterals.Add(productCollaterals);
                 }
             }
 
-            var product = new tbl_Temp_Product()
+            var product = new TBL_TEMP_PRODUCT()
             {
-                CompanyId = productModel.companyId,
-                ProductTypeId = productModel.productTypeId,
-                ProductCategoryId = productModel.productCategoryId,
-                ProductClassId = productModel.productClassId,
-                ProductCode = GenerateProductCode(productModel.companyId),
-                ProductName = productModel.productName,
-                ProductDescription = productModel.productDescription,
+                COMPANYID = productModel.companyId,
+                PRODUCTTYPEID = productModel.productTypeId,
+                PRODUCTCATEGORYID = productModel.productCategoryId,
+                PRODUCTCLASSID = productModel.productClassId,
+                PRODUCTCODE = GenerateProductCode(productModel.companyId),
+                PRODUCTNAME = productModel.productName,
+                PRODUCTDESCRIPTION = productModel.productDescription,
 
-                PrincipalBalanceGL = productModel.principalBalanceGl,
-                InterestIncomeExpenseGL = productModel.interestIncomeExpenseGl,
-                InterestReceivablePayableGL = productModel.interestReceivablePayableGl,
-                DormantGL = productModel.dormantGl,
-                PremiumDiscountGL = productModel.premiumDiscountGl,
-                OverdrawnGL = productModel.overdrawnGl,
+                PRINCIPALBALANCEGL = productModel.principalBalanceGl,
+                INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl,
+                INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl,
+                DORMANTGL = productModel.dormantGl,
+                PREMIUMDISCOUNTGL = productModel.premiumDiscountGl,
+                OVERDRAWNGL = productModel.overdrawnGl,
 
-                ProductPriceIndexId = productModel.productPriceIndexId,
-                ProductPriceIndexSpread = productModel.productPriceIndexSpread,
+                PRODUCTPRICEINDEXID = productModel.productPriceIndexId,
+                PRODUCTPRICEINDEXSPREAD = productModel.productPriceIndexSpread,
+                
+                DEALTYPEID = productModel.dealTypeId,
+                DEALCLASSIFICATIONID = productModel.dealClassificationId,
+                DAYCOUNTCONVENTIONID = productModel.dayCountId,
 
-                DealTypeId = productModel.dealTypeId,
-                DealClassificationId = productModel.dealClassificationId,
-                DayCountConventionId = productModel.dayCountId,
+                MAXIMUMTENOR = productModel.maximumTenor,
+                MINIMUMTENOR = productModel.minimumTenor,
+                MAXIMUMRATE = productModel.maximumRate,
+                MINIMUMRATE = productModel.minimumRate,
+                MINIMUMBALANCE = productModel.minimumBalance,
 
-                MaximumTenor = productModel.maximumTenor,
-                MinimumTenor = productModel.minimumTenor,
-                MaximumRate = productModel.maximumRate,
-                MinimumRate = productModel.minimumRate,
-                MinimumBalance = productModel.minimumBalance,
+                ALLOWRATE = productModel.allowRate,
+                ALLOWTENOR = productModel.allowTenor,
+                ALLOWOVERDRAWN = productModel.allowOverdrawn,
 
-                AllowRate = productModel.allowRate,
-                AllowTenor = productModel.allowTenor,
-                AllowOverdrawn = productModel.allowOverdrawn,
+                CREATEDBY = productModel.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                ISCURRENT = true,
+                DELETED = false,
+                TBL_TEMP_PRODUCT_CURRENCY = currencies,
 
-                CreatedBy = productModel.createdBy,
-                DateTimeCreated = DateTime.Now,
-                ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-                IsCurrent = true,
-                Deleted = false,
-                tbl_Temp_Product_Currency = currencies,
+                ISMULTIPLECURENCY = productModel.currencies != null,
+                ALLOWCUSTOMERACCOUNTFORCEDEBIT = productModel.allowCustomerAccountForceDebit,
+                ALLOWMORATORIUM = productModel.allowMoratorium,
+                ALLOWSCHEDULETYPEOVERRIDE = productModel.allowScheduleTypeOverride,
+                SCHEDULETYPEID = productModel.scheduleTypeId,
 
-                IsMultipleCurency = productModel.currencies != null,
-                AllowCustomerAccountForceDebit = productModel.allowCustomerAccountForceDebit,
-                AllowMoratorium = productModel.allowMoratorium,
-                AllowScheduleTypeOverride = productModel.allowScheduleTypeOverride,
-                ScheduleTypeId = productModel.scheduleTypeId,
+                DEFAULTGRACEPERIOD = productModel.defaultGracePeriod,
+                CLEANUPPERIOD = productModel.cleanupPeriod,
+                EQUITYCONTRIBUTION = productModel.equityContribution,
+                EXPIRYPERIOD = productModel.expiryPeriod,
 
-                DefaultGracePeriod = productModel.defaultGracePeriod,
-                CleanupPeriod = productModel.cleanupPeriod,
-                EquityContribution = productModel.equityContribution,
-                ExpiryPeriod = productModel.expiryPeriod,
-
-                tbl_Temp_Product_Charge_Fee = chargeFees,
-                tbl_Temp_Product_CollateralType = collaterals
+                TBL_TEMP_PRODUCT_CHARGE_FEE = chargeFees,
+                TBL_TEMP_PRODUCT_COLLATERALTYPE = collaterals
             };
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductAdded,
-                StaffId = productModel.createdBy,
-                BranchId = (short)productModel.userBranchId,
-                Detail = $"Initiated Product Creation for '{productModel.productName}' with code'{productModel.productCode}'",
-                IPAddress = productModel.userIPAddress,
-                Url = productModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductAdded,
+                STAFFID = productModel.createdBy,
+                BRANCHID = (short)productModel.userBranchId,
+                DETAIL = $"Initiated Product Creation for '{productModel.productName}' with code'{productModel.productCode}'",
+                IPADDRESS = productModel.userIPAddress,
+                URL = productModel.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -1282,7 +1282,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 try
                 {
                     auditTrail.AddAuditTrail(audit);
-                    context.tbl_Temp_Product.Add(product);
+                    context.TBL_TEMP_PRODUCT.Add(product);
                     output = await context.SaveChangesAsync() > 0;
 
                     var entity = new ApprovalViewModel
@@ -1291,7 +1291,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         companyId = productModel.companyId,
                         approvalStatusId = (int)ApprovalStatusEnum.Pending,
                         comment = "Please approve this product",
-                        targetId = product.ProductId,
+                        targetId = product.PRODUCTID,
                         operationId = (int)OperationsEnum.ProductCreation,
                         BranchId = productModel.userBranchId,
                         externalInitialization = true
@@ -1304,7 +1304,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         if (output)
                         {
-                            return new ProductViewModel { productId = product.ProductId, productCode = product.ProductCode };
+                            return new ProductViewModel { productId = product.PRODUCTID, productCode = product.PRODUCTCODE };
                         }
                     }
                 }
@@ -1321,12 +1321,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool IsProductCodeAlreadyExist(string productCode)
         {
-            return context.tbl_Product.Any(x => x.ProductCode.ToLower() == productCode.ToLower());
+            return context.TBL_PRODUCT.Any(x => x.PRODUCTCODE.ToLower() == productCode.ToLower());
         }
 
         public bool IsProductExist(string productCode)
         {
-            return context.tbl_Temp_Product.Any(x => x.ProductCode.ToLower() == productCode.ToLower() && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending && x.IsCurrent == true);
+            return context.TBL_TEMP_PRODUCT.Any(x => x.PRODUCTCODE.ToLower() == productCode.ToLower() && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.ISCURRENT == true);
         }
 
         //private ProductViewModel AddProduct2(ProductViewModel product)
@@ -1406,24 +1406,24 @@ namespace FintrakBanking.Repositories.Setups.General
             bool output = false;
             var targetProductId = 0;
 
-            var existingTempProduct = context.tbl_Temp_Product
-                    .FirstOrDefault(x => x.ProductCode.ToLower() ==
-                        productModel.productCode.ToLower() && x.IsCurrent == false
-                            && x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existingTempProduct = context.TBL_TEMP_PRODUCT
+                    .FirstOrDefault(x => x.PRODUCTCODE.ToLower() ==
+                        productModel.productCode.ToLower() && x.ISCURRENT == false
+                            && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
 
-            var existingProductCurrencies = new List<tbl_Temp_Product_Currency>();
-            var existingProductFees = new List<tbl_Temp_Product_Charge_Fee>();
-            var existingProductCollateral = new List<tbl_Temp_Product_CollateralType>();
+            var existingProductCurrencies = new List<TBL_TEMP_PRODUCT_CURRENCY>();
+            var existingProductFees = new List<TBL_TEMP_PRODUCT_CHARGE_FEE>();
+            var existingProductCollateral = new List<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
 
-            List<tbl_Temp_Product_Charge_Fee> productFees = new List<tbl_Temp_Product_Charge_Fee>();
-            List<tbl_Temp_Product_CollateralType> productCollaterals = new List<tbl_Temp_Product_CollateralType>();
-            List<tbl_Temp_Product_Currency> productCurrencies = new List<tbl_Temp_Product_Currency>();
+            List<TBL_TEMP_PRODUCT_CHARGE_FEE> productFees = new List<TBL_TEMP_PRODUCT_CHARGE_FEE>();
+            List<TBL_TEMP_PRODUCT_COLLATERALTYPE> productCollaterals = new List<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
+            List<TBL_TEMP_PRODUCT_CURRENCY> productCurrencies = new List<TBL_TEMP_PRODUCT_CURRENCY>();
 
-            var unApprovedProductEdit = context.tbl_Temp_Product
-                .Where(x => x.IsCurrent == true && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending
-                && x.ProductCode.ToLower() == productModel.productCode.ToLower());
+            var unApprovedProductEdit = context.TBL_TEMP_PRODUCT
+                .Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                && x.PRODUCTCODE.ToLower() == productModel.productCode.ToLower());
 
-            tbl_Temp_Product tempProduct = new tbl_Temp_Product();
+            TBL_TEMP_PRODUCT tempProduct = new TBL_TEMP_PRODUCT();
 
             if (unApprovedProductEdit.Any())
             {
@@ -1432,16 +1432,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (existingTempProduct != null)
             {
-                existingProductCurrencies = context.tbl_Temp_Product_Currency.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
-                existingProductFees = context.tbl_Temp_Product_Charge_Fee.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
-                existingProductCollateral = context.tbl_Temp_Product_CollateralType.Where(x => x.ProductId == existingTempProduct.ProductId).ToList();
+                existingProductCurrencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(x => x.PRODUCTID == existingTempProduct.PRODUCTID).ToList();
+                existingProductFees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(x => x.PRODUCTID == existingTempProduct.PRODUCTID).ToList();
+                existingProductCollateral = context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Where(x => x.PRODUCTID == existingTempProduct.PRODUCTID).ToList();
 
                 // Remove exisiting product fees, currency and collaterals
                 if (existingProductCurrencies.Count > 0)
                 {
                     foreach (var curr in existingProductCurrencies)
                     {
-                        context.tbl_Temp_Product_Currency.Remove(curr);
+                        context.TBL_TEMP_PRODUCT_CURRENCY.Remove(curr);
                     }
                 }
 
@@ -1449,7 +1449,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     foreach (var fee in existingProductFees)
                     {
-                        context.tbl_Temp_Product_Charge_Fee.Remove(fee);
+                        context.TBL_TEMP_PRODUCT_CHARGE_FEE.Remove(fee);
                     }
                 }
 
@@ -1457,47 +1457,47 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     foreach (var coll in existingProductCollateral)
                     {
-                        context.tbl_Temp_Product_CollateralType.Remove(coll);
+                        context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Remove(coll);
                     }
                 }
 
                 foreach (var item in productModel.currencies)
                 {
-                    var productCurrency = new tbl_Temp_Product_Currency
+                    var productCurrency = new TBL_TEMP_PRODUCT_CURRENCY
                     {
                         //ProductId = (short)item.productId,
-                        CurrencyId = item.currencyId,
-                        CreatedBy = item.createdBy,
-                        DateTimeCreated = genSetup.GetApplicationDate()
+                        CURRENCYID = item.currencyId,
+                        CREATEDBY = item.createdBy,
+                        DATETIMECREATED = genSetup.GetApplicationDate()
                     };
                     productCurrencies.Add(productCurrency);
                 }
 
                 foreach (var item in productModel.fees)
                 {
-                    var fee = new tbl_Temp_Product_Charge_Fee()
+                    var fee = new TBL_TEMP_PRODUCT_CHARGE_FEE()
                     {
                         //ProductId = item.productId,
-                        ChargeFeeId = item.feeId,
-                        DependentAmount = item.dependentAmount,
-                        RateValue = item.rateValue,
-                        CompanyId = productModel.companyId,
-                        CreatedBy = (int)item.createdBy,
-                        DateTimeCreated = genSetup.GetApplicationDate(),
-                        Deleted = false
+                        CHARGEFEEID = item.feeId,
+                        DEPENDENTAMOUNT = item.dependentAmount,
+                        RATEVALUE = item.rateValue,
+                        COMPANYID = productModel.companyId,
+                        CREATEDBY = (int)item.createdBy,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false
                     };
                     productFees.Add(fee);
                 }
 
                 foreach (var item in productModel.collaterals)
                 {
-                    var collateral = new tbl_Temp_Product_CollateralType()
+                    var collateral = new TBL_TEMP_PRODUCT_COLLATERALTYPE()
                     {
                         //ProductId = item.productId,
-                        CollateralTypeId = item.collateralTypeId,
-                        CompanyId = productModel.companyId,
-                        CreatedBy = item.createdBy,
-                        DateTimeCreated = genSetup.GetApplicationDate()
+                        COLLATERALTYPEID = item.collateralTypeId,
+                        COMPANYID = productModel.companyId,
+                        CREATEDBY = item.createdBy,
+                        DATETIMECREATED = genSetup.GetApplicationDate()
                     };
                     productCollaterals.Add(collateral);
                 }
@@ -1505,83 +1505,83 @@ namespace FintrakBanking.Repositories.Setups.General
                 var tempProductToUpdate = existingTempProduct;
 
                 //tempProductToUpdate.ProductId = (short)productModel.productId;
-                tempProductToUpdate.ProductClassId = productModel.productClassId;
-                tempProductToUpdate.ProductCode = productModel.productCode;
-                tempProductToUpdate.ProductName = productModel.productName;
-                tempProductToUpdate.ProductDescription = productModel.productDescription;
+                tempProductToUpdate.PRODUCTCLASSID = productModel.productClassId;
+                tempProductToUpdate.PRODUCTCODE = productModel.productCode;
+                tempProductToUpdate.PRODUCTNAME = productModel.productName;
+                tempProductToUpdate.PRODUCTDESCRIPTION = productModel.productDescription;
 
-                tempProductToUpdate.PrincipalBalanceGL = productModel.principalBalanceGl;
-                tempProductToUpdate.InterestIncomeExpenseGL = productModel.interestIncomeExpenseGl;
-                tempProductToUpdate.InterestReceivablePayableGL = productModel.interestReceivablePayableGl;
-                tempProductToUpdate.DormantGL = productModel.dormantGl;
-                tempProductToUpdate.PremiumDiscountGL = productModel.premiumDiscountGl;
-                tempProductToUpdate.OverdrawnGL = productModel.overdrawnGl;
+                tempProductToUpdate.PRINCIPALBALANCEGL = productModel.principalBalanceGl;
+                tempProductToUpdate.INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl;
+                tempProductToUpdate.INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl;
+                tempProductToUpdate.DORMANTGL = productModel.dormantGl;
+                tempProductToUpdate.PREMIUMDISCOUNTGL = productModel.premiumDiscountGl;
+                tempProductToUpdate.OVERDRAWNGL = productModel.overdrawnGl;
 
-                tempProductToUpdate.ProductPriceIndexId = productModel.productPriceIndexId;
-                tempProductToUpdate.ProductPriceIndexSpread = productModel.productPriceIndexSpread;
+                tempProductToUpdate.PRODUCTPRICEINDEXID = productModel.productPriceIndexId;
+                tempProductToUpdate.PRODUCTPRICEINDEXSPREAD = productModel.productPriceIndexSpread;
 
-                tempProductToUpdate.DealTypeId = productModel.dealTypeId;
-                tempProductToUpdate.DealClassificationId = productModel.dealClassificationId;
-                tempProductToUpdate.DayCountConventionId = productModel.dayCountId;
+                tempProductToUpdate.DEALTYPEID = productModel.dealTypeId;
+                tempProductToUpdate.DEALCLASSIFICATIONID = productModel.dealClassificationId;
+                tempProductToUpdate.DAYCOUNTCONVENTIONID = productModel.dayCountId;
 
-                tempProductToUpdate.MaximumTenor = productModel.maximumTenor;
-                tempProductToUpdate.MinimumTenor = productModel.minimumTenor;
-                tempProductToUpdate.MaximumRate = productModel.maximumRate;
-                tempProductToUpdate.MinimumRate = productModel.minimumRate;
-                tempProductToUpdate.MinimumBalance = productModel.minimumBalance;
+                tempProductToUpdate.MAXIMUMTENOR = productModel.maximumTenor;
+                tempProductToUpdate.MINIMUMTENOR = productModel.minimumTenor;
+                tempProductToUpdate.MAXIMUMRATE = productModel.maximumRate;
+                tempProductToUpdate.MINIMUMRATE = productModel.minimumRate;
+                tempProductToUpdate.MINIMUMBALANCE = productModel.minimumBalance;
 
-                tempProductToUpdate.AllowRate = productModel.allowRate;
-                tempProductToUpdate.AllowTenor = productModel.allowTenor;
-                tempProductToUpdate.AllowOverdrawn = productModel.allowOverdrawn;
-                tempProductToUpdate.AllowCustomerAccountForceDebit = productModel.allowCustomerAccountForceDebit;
-                tempProductToUpdate.AllowMoratorium = productModel.allowMoratorium;
-                tempProductToUpdate.AllowScheduleTypeOverride = productModel.allowScheduleTypeOverride;
+                tempProductToUpdate.ALLOWRATE = productModel.allowRate;
+                tempProductToUpdate.ALLOWTENOR = productModel.allowTenor;
+                tempProductToUpdate.ALLOWOVERDRAWN = productModel.allowOverdrawn;
+                tempProductToUpdate.ALLOWCUSTOMERACCOUNTFORCEDEBIT = productModel.allowCustomerAccountForceDebit;
+                tempProductToUpdate.ALLOWMORATORIUM = productModel.allowMoratorium;
+                tempProductToUpdate.ALLOWSCHEDULETYPEOVERRIDE = productModel.allowScheduleTypeOverride;
 
-                tempProductToUpdate.CleanupPeriod = productModel.cleanupPeriod;
-                tempProductToUpdate.DefaultGracePeriod = productModel.defaultGracePeriod;
-                tempProductToUpdate.EquityContribution = productModel.equityContribution;
-                tempProductToUpdate.ExpiryPeriod = productModel.expiryPeriod;
-                tempProductToUpdate.IsMultipleCurency = productModel.currencies.Any();
-                tempProductToUpdate.ScheduleTypeId = productModel.scheduleTypeId;
-                tempProductToUpdate.IsCurrent = true;
-                tempProductToUpdate.DateTimeUpdated = DateTime.Now;
-                tempProductToUpdate.Deleted = false;
+                tempProductToUpdate.CLEANUPPERIOD = productModel.cleanupPeriod;
+                tempProductToUpdate.DEFAULTGRACEPERIOD = productModel.defaultGracePeriod;
+                tempProductToUpdate.EQUITYCONTRIBUTION = productModel.equityContribution;
+                tempProductToUpdate.EXPIRYPERIOD = productModel.expiryPeriod;
+                tempProductToUpdate.ISMULTIPLECURENCY = productModel.currencies.Any();
+                tempProductToUpdate.SCHEDULETYPEID = productModel.scheduleTypeId;
+                tempProductToUpdate.ISCURRENT = true;
+                tempProductToUpdate.DATETIMEUPDATED = DateTime.Now;
+                tempProductToUpdate.DELETED = false;
 
-                tempProductToUpdate.tbl_Temp_Product_Currency = productCurrencies;
-                tempProductToUpdate.tbl_Temp_Product_Charge_Fee = productFees;
-                tempProductToUpdate.tbl_Temp_Product_CollateralType = productCollaterals;
+                tempProductToUpdate.TBL_TEMP_PRODUCT_CURRENCY = productCurrencies;
+                tempProductToUpdate.TBL_TEMP_PRODUCT_CHARGE_FEE = productFees;
+                tempProductToUpdate.TBL_TEMP_PRODUCT_COLLATERALTYPE = productCollaterals;
 
             }
             else
             {
-                var targetProduct = context.tbl_Product.Find(productId);
+                var targetProduct = context.TBL_PRODUCT.Find(productId);
 
                 //Storing the updated product currencies
                 foreach (var item in productModel.currencies)
                 {
-                    var currency = new tbl_Temp_Product_Currency()
+                    var currency = new TBL_TEMP_PRODUCT_CURRENCY()
                     {
                         //ProductId = item.productId,
-                        CurrencyId = item.currencyId,
-                        CreatedBy = productModel.createdBy,
-                        DateTimeCreated = genSetup.GetApplicationDate()
+                        CURRENCYID = item.currencyId,
+                        CREATEDBY = productModel.createdBy,
+                        DATETIMECREATED = genSetup.GetApplicationDate()
                     };
                     productCurrencies.Add(currency);
                 }
 
                 foreach (var item in productModel.fees)
                 {
-                    var fee = new tbl_Temp_Product_Charge_Fee()
+                    var fee = new TBL_TEMP_PRODUCT_CHARGE_FEE()
                     {
-                        ChargeFeeId = item.feeId,
-                        CompanyId = productModel.companyId,
+                        CHARGEFEEID = item.feeId,
+                        COMPANYID = productModel.companyId,
 
-                        RateValue = item.rateValue,
-                        DependentAmount = item.dependentAmount,
+                        RATEVALUE = item.rateValue,
+                        DEPENDENTAMOUNT = item.dependentAmount,
 
-                        CreatedBy = item.createdBy,
-                        DateTimeCreated = genSetup.GetApplicationDate(),
-                        Deleted = false,
+                        CREATEDBY = item.createdBy,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false,
                         //IsCurrent = true
                     };
                     productFees.Add(fee);
@@ -1589,85 +1589,85 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var item in productModel.collaterals)
                 {
-                    var collateral = new tbl_Temp_Product_CollateralType()
+                    var collateral = new TBL_TEMP_PRODUCT_COLLATERALTYPE()
                     {
                         //ProductId = item.productId,
-                        CollateralTypeId = item.collateralTypeId,
-                        CompanyId = item.companyId,
-                        CreatedBy = item.createdBy,
-                        DateTimeCreated = genSetup.GetApplicationDate()
+                        COLLATERALTYPEID = item.collateralTypeId,
+                        COMPANYID = item.companyId,
+                        CREATEDBY = item.createdBy,
+                        DATETIMECREATED = genSetup.GetApplicationDate()
                     };
                     productCollaterals.Add(collateral);
                 }
 
                 //End of storing the updated product currencies
-                tempProduct = new tbl_Temp_Product()
+                tempProduct = new TBL_TEMP_PRODUCT()
                 {
-                    CompanyId = productModel.companyId,
-                    ProductTypeId = productModel.productTypeId,
-                    ProductCategoryId = productModel.productCategoryId,
-                    ProductClassId = productModel.productClassId,
-                    ProductCode = targetProduct?.ProductCode,
-                    ProductName = productModel.productName,
-                    ProductDescription = productModel.productDescription,
+                    COMPANYID = productModel.companyId,
+                    PRODUCTTYPEID = productModel.productTypeId,
+                    PRODUCTCATEGORYID = productModel.productCategoryId,
+                    PRODUCTCLASSID = productModel.productClassId,
+                    PRODUCTCODE = targetProduct?.PRODUCTCODE,
+                    PRODUCTNAME = productModel.productName,
+                    PRODUCTDESCRIPTION = productModel.productDescription,
 
-                    PrincipalBalanceGL = productModel.principalBalanceGl,
-                    InterestIncomeExpenseGL = productModel.interestIncomeExpenseGl,
-                    InterestReceivablePayableGL = productModel.interestReceivablePayableGl,
-                    DormantGL = productModel.dormantGl,
-                    PremiumDiscountGL = productModel.premiumDiscountGl,
-                    OverdrawnGL = productModel.overdrawnGl,
+                    PRINCIPALBALANCEGL = productModel.principalBalanceGl,
+                    INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl,
+                    INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl,
+                    DORMANTGL = productModel.dormantGl,
+                    PREMIUMDISCOUNTGL = productModel.premiumDiscountGl,
+                    OVERDRAWNGL = productModel.overdrawnGl,
 
-                    ProductPriceIndexId = productModel.productPriceIndexId,
-                    ProductPriceIndexSpread = productModel.productPriceIndexSpread,
+                    PRODUCTPRICEINDEXID = productModel.productPriceIndexId,
+                    PRODUCTPRICEINDEXSPREAD = productModel.productPriceIndexSpread,
 
-                    DealTypeId = productModel.dealTypeId,
-                    DealClassificationId = productModel.dealClassificationId,
-                    DayCountConventionId = productModel.dayCountId,
+                    DEALTYPEID = productModel.dealTypeId,
+                    DEALCLASSIFICATIONID = productModel.dealClassificationId,
+                    DAYCOUNTCONVENTIONID = productModel.dayCountId,
 
-                    MaximumTenor = productModel.maximumTenor,
-                    MinimumTenor = productModel.minimumTenor,
-                    MaximumRate = productModel.maximumRate,
-                    MinimumRate = productModel.minimumRate,
-                    MinimumBalance = productModel.minimumBalance,
+                    MAXIMUMTENOR = productModel.maximumTenor,
+                    MINIMUMTENOR = productModel.minimumTenor,
+                    MAXIMUMRATE = productModel.maximumRate,
+                    MINIMUMRATE = productModel.minimumRate,
+                    MINIMUMBALANCE = productModel.minimumBalance,
 
-                    AllowRate = productModel.allowRate,
-                    AllowTenor = productModel.allowTenor,
-                    AllowOverdrawn = productModel.allowOverdrawn,
+                    ALLOWRATE = productModel.allowRate,
+                    ALLOWTENOR = productModel.allowTenor,
+                    ALLOWOVERDRAWN = productModel.allowOverdrawn,
 
-                    CreatedBy = productModel.createdBy,
-                    DateTimeCreated = DateTime.Now,
-                    ApprovalStatusId = (short)ApprovalStatusEnum.Pending,
-                    IsCurrent = true,
-                    Deleted = false,
-                    AllowCustomerAccountForceDebit = productModel.allowCustomerAccountForceDebit,
-                    AllowScheduleTypeOverride = productModel.allowScheduleTypeOverride,
-                    AllowMoratorium = productModel.allowMoratorium,
-                    CleanupPeriod = productModel.cleanupPeriod,
-                    DefaultGracePeriod = productModel.defaultGracePeriod,
-                    EquityContribution = productModel.equityContribution,
-                    ExpiryPeriod = productModel.expiryPeriod,
-                    IsMultipleCurency = productModel.currencies.Any(),
+                    CREATEDBY = productModel.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                    ISCURRENT = true,
+                    DELETED = false,
+                    ALLOWCUSTOMERACCOUNTFORCEDEBIT = productModel.allowCustomerAccountForceDebit,
+                    ALLOWSCHEDULETYPEOVERRIDE = productModel.allowScheduleTypeOverride,
+                    ALLOWMORATORIUM = productModel.allowMoratorium,
+                    CLEANUPPERIOD = productModel.cleanupPeriod,
+                    DEFAULTGRACEPERIOD = productModel.defaultGracePeriod,
+                    EQUITYCONTRIBUTION = productModel.equityContribution,
+                    EXPIRYPERIOD = productModel.expiryPeriod,
+                    ISMULTIPLECURENCY = productModel.currencies.Any(),
 
-                    tbl_Temp_Product_Currency = productCurrencies,
-                    tbl_Temp_Product_CollateralType = productCollaterals,
-                    tbl_Temp_Product_Charge_Fee = productFees
+                    TBL_TEMP_PRODUCT_CURRENCY = productCurrencies,
+                    TBL_TEMP_PRODUCT_COLLATERALTYPE = productCollaterals,
+                    TBL_TEMP_PRODUCT_CHARGE_FEE = productFees
                 };
 
-                context.tbl_Temp_Product.Add(tempProduct);
+                context.TBL_TEMP_PRODUCT.Add(tempProduct);
             }
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.StaffUpdated,
-                StaffId = productModel.createdBy,
-                BranchId = (short)productModel.userBranchId,
-                Detail = $"Updated Product '{productModel.productName}' with code'{productModel.productCode}'",
-                IPAddress = productModel.userIPAddress,
-                Url = productModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = productId
+                AUDITTYPEID = (short)AuditTypeEnum.StaffUpdated,
+                STAFFID = productModel.createdBy,
+                BRANCHID = (short)productModel.userBranchId,
+                DETAIL = $"Updated Product '{productModel.productName}' with code'{productModel.productCode}'",
+                IPADDRESS = productModel.userIPAddress,
+                URL = productModel.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = productId
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -1679,7 +1679,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     output = await context.SaveChangesAsync() > 0;
 
-                    targetProductId = existingTempProduct?.ProductId ?? tempProduct.ProductId;
+                    targetProductId = existingTempProduct?.PRODUCTID ?? tempProduct.PRODUCTID;
 
                     var entity = new ApprovalViewModel
                     {
@@ -1773,19 +1773,19 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndex(int companyId)
         {
-            return (from data in context.tbl_Product_Price_Index
-                    where data.CompanyId == companyId && data.Deleted == false
+            return (from data in context.TBL_PRODUCT_PRICE_INDEX
+                    where data.COMPANYID == companyId && data.DELETED == false
                     select new ProductPriceIndexViewModel()
                     {
-                        productPriceIndexId = data.ProductPriceIndexId,
-                        priceIndexDescription = data.PriceIndexDescription,
-                        companyId = data.CompanyId,
-                        priceIndexName = data.PriceIndexName,
-                        priceIndexRate = data.PriceIndexRate,
-                        dateTimeUpdated = data.DateTimeUpdated,
-                        deleted = data.Deleted,
-                        deletedBy = data.DeletedBy,
-                        dateTimeDeleted = data.DateTimeDeleted
+                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
+                        priceIndexDescription = data.PRICEINDEXDESCRIPTION,
+                        companyId = data.COMPANYID,
+                        priceIndexName = data.PRICEINDEXNAME,
+                        priceIndexRate = data.PRICEINDEXRATE,
+                        dateTimeUpdated = data.DATETIMEUPDATED,
+                        deleted = data.DELETED,
+                        deletedBy = data.DELETEDBY,
+                        dateTimeDeleted = data.DATETIMEDELETED
                     });
         }
 
@@ -1801,35 +1801,35 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public ProductPriceIndexViewModel AddProductPriceIndex(ProductPriceIndexViewModel prodPriceIndex)
         {
-            var isProductPriceIndexExist = context.tbl_Product_Price_Index.Any(x => x.PriceIndexName.ToLower() == prodPriceIndex.priceIndexName.ToLower());
-
+            var isProductPriceIndexExist = context.TBL_PRODUCT_PRICE_INDEX.Any(x => x.PRICEINDEXNAME.ToLower() == prodPriceIndex.priceIndexName.ToLower());
+            
             if (isProductPriceIndexExist)
             {
                 throw new Exception("Product price already exists!");
             }
-            var data = new tbl_Product_Price_Index()
+            var data = new TBL_PRODUCT_PRICE_INDEX()
             {
-                CompanyId = prodPriceIndex.companyId,
-                PriceIndexDescription = prodPriceIndex.priceIndexDescription,
-                PriceIndexName = prodPriceIndex.priceIndexName,
-                PriceIndexRate = prodPriceIndex.priceIndexRate,
-                CreatedBy = prodPriceIndex.createdBy,
-                DateTimeCreated = DateTime.Now,
+                COMPANYID = prodPriceIndex.companyId,
+                PRICEINDEXDESCRIPTION = prodPriceIndex.priceIndexDescription,
+                PRICEINDEXNAME = prodPriceIndex.priceIndexName,
+                PRICEINDEXRATE = prodPriceIndex.priceIndexRate,
+                CREATEDBY = prodPriceIndex.createdBy,
+                DATETIMECREATED = DateTime.Now,
             };
 
-            this.context.tbl_Product_Price_Index.Add(data);
+            this.context.TBL_PRODUCT_PRICE_INDEX.Add(data);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductPriceIndexAdded,
-                StaffId = (int)prodPriceIndex.createdBy,
-                BranchId = (short)prodPriceIndex.userBranchId,
-                Detail = $"Added tbl_Product Price Index: '{prodPriceIndex.priceIndexName}' ",
-                IPAddress = prodPriceIndex.userIPAddress,
-                Url = prodPriceIndex.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexAdded,
+                STAFFID = (int)prodPriceIndex.createdBy,
+                BRANCHID = (short)prodPriceIndex.userBranchId,
+                DETAIL = $"Added tbl_Product Price Index: '{prodPriceIndex.priceIndexName}' ",
+                IPADDRESS = prodPriceIndex.userIPAddress,
+                URL = prodPriceIndex.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -1847,29 +1847,29 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool UpdateProductPriceIndex(int productPriceIndexId, ProductPriceIndexViewModel prodPriceIndex)
         {
-            var data = this.context.tbl_Product_Price_Index.FirstOrDefault(x => x.ProductPriceIndexId == productPriceIndexId);
+            var data = this.context.TBL_PRODUCT_PRICE_INDEX.FirstOrDefault(x => x.PRODUCTPRICEINDEXID == productPriceIndexId);
 
             if (data == null)
                 return false;
 
-            data.PriceIndexName = prodPriceIndex.priceIndexName;
-            data.PriceIndexDescription = prodPriceIndex.priceIndexDescription;
-            data.PriceIndexRate = prodPriceIndex.priceIndexRate;
+            data.PRICEINDEXNAME = prodPriceIndex.priceIndexName;
+            data.PRICEINDEXDESCRIPTION = prodPriceIndex.priceIndexDescription;
+            data.PRICEINDEXRATE = prodPriceIndex.priceIndexRate;
 
-            data.LastUpdatedBy = prodPriceIndex.lastUpdatedBy;
-            data.DateTimeUpdated = DateTime.Now;
+            data.LASTUPDATEDBY = prodPriceIndex.lastUpdatedBy;
+            data.DATETIMEUPDATED = DateTime.Now;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductPriceIndexUpdated,
-                StaffId = (int)prodPriceIndex.createdBy,
-                BranchId = (short)prodPriceIndex.userBranchId,
-                Detail = $"Updated tbl_Product Price Index: '{prodPriceIndex.priceIndexName}' ",
-                IPAddress = prodPriceIndex.userIPAddress,
-                Url = prodPriceIndex.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexUpdated,
+                STAFFID = (int)prodPriceIndex.createdBy,
+                BRANCHID = (short)prodPriceIndex.userBranchId,
+                DETAIL = $"Updated tbl_Product Price Index: '{prodPriceIndex.priceIndexName}' ",
+                IPADDRESS = prodPriceIndex.userIPAddress,
+                URL = prodPriceIndex.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -1879,27 +1879,27 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool DeleteProductPriceIndex(int productPriceIndexId, UserInfo user)
         {
-            var data = this.context.tbl_Product_Price_Index.Find(productPriceIndexId);
+            var data = this.context.TBL_PRODUCT_PRICE_INDEX.Find(productPriceIndexId);
 
             if (data == null)
                 return false;
 
-            data.Deleted = true;
-            data.DateTimeDeleted = genSetup.GetApplicationDate();
+            data.DELETED = true;
+            data.DATETIMEDELETED = genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var productPriceIndex = this.context.tbl_Product_Price_Index.FirstOrDefault(x => x.ProductPriceIndexId == data.ProductPriceIndexId);
-            var audit = new tbl_Audit
+            var productPriceIndex = this.context.TBL_PRODUCT_PRICE_INDEX.FirstOrDefault(x => x.PRODUCTPRICEINDEXID == data.PRODUCTPRICEINDEXID);
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ProductPriceIndexDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted tbl_Product Price Index: '{data.PriceIndexName}' with rate '{data.PriceIndexRate}' ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = productPriceIndexId
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted tbl_Product Price Index: '{data.PRICEINDEXNAME}' with rate '{data.PRICEINDEXRATE}' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = productPriceIndexId
             };
 
             this.auditTrail.AddAuditTrail(audit);

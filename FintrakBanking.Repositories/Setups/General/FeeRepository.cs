@@ -44,52 +44,52 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public int AddFee(FeeViewModel fee)
         {
-            var data = new tbl_Fee()
+            var data = new TBL_FEE()
             {
-                FeeName = fee.feeName,
-                AccountCategoryId = fee.accountCategoryId,
-                FeeTypeId = fee.feeTypeId,
-                FeeIntervalId = fee.feeIntervalId,
-                ProductTypeId = fee.productTypeId,
-                FeeTargetId = fee.feeTargetId,
-                IsIntegralFee = fee.isIntegralFee,
-                GLAccountId = fee.glAccountId,
-                FeeAmortisationTypeId = fee.feeAmortisationTypeId,
-                IncludeCutOffDay = fee.includeCutOffDay,
-                CutOffDay = fee.cutOffDay,
-                CompanyId = fee.companyId,
-                FeeDate = DateTime.Now,
+                FEENAME = fee.feeName,
+                ACCOUNTCATEGORYID = fee.accountCategoryId,
+                FEETYPEID = fee.feeTypeId,
+                FEEINTERVALID = fee.feeIntervalId,
+                PRODUCTTYPEID = fee.productTypeId,
+                FEETARGETID = fee.feeTargetId,
+                ISINTEGRALFEE = fee.isIntegralFee,
+                GLACCOUNTID = fee.glAccountId,
+                FEEAMORTISATIONTYPEID = fee.feeAmortisationTypeId,
+                INCLUDECUTOFFDAY = fee.includeCutOffDay,
+                CUTOFFDAY = fee.cutOffDay,
+                COMPANYID = fee.companyId,
+                FEEDATE = DateTime.Now,
 
-                CreatedBy = fee.createdBy,
-                DateTimeCreated = DateTime.Now,
-            };           
+                CREATEDBY = fee.createdBy,
+                DATETIMECREATED = DateTime.Now,
+            };
 
-            this.context.tbl_Fee.Add(data);
+            this.context.TBL_FEE.Add(data);
 
             var status = this.SaveAll();
 
             if (status)
             {
                 // Audit Section ---------------------------
-                var audit = new tbl_Audit
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.FeeAdded,
-                    StaffId = fee.createdBy,
-                    BranchId = (short)fee.userBranchId,
-                    Detail = $"Added fee: { fee.feeName } of type {fee.feeTypeName} ",
-                    IPAddress = fee.userIPAddress,
-                    Url = fee.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.FeeAdded,
+                    STAFFID = fee.createdBy,
+                    BRANCHID = (short)fee.userBranchId,
+                    DETAIL = $"Added fee: { fee.feeName } of type {fee.feeTypeName} ",
+                    IPADDRESS = fee.userIPAddress,
+                    URL = fee.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
 
                 //end of Audit section -------------------------------
 
-                return data.FeeId;
+                return data.FEEID;
             }
-            
+
             else
                 return -1;
         }
@@ -98,37 +98,37 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             bool output = false;
 
-            var tempFee = new tbl_Temp_Fee()
+            var tempFee = new TBL_TEMP_FEE()
             {
-                FeeName = feeModel.feeName,
-                AccountCategoryId = feeModel.accountCategoryId,
-                FeeTypeId = feeModel.feeTypeId,
-                FeeIntervalId = feeModel.feeIntervalId,
-                ProductTypeId = feeModel.productTypeId,
-                FeeTargetId = feeModel.feeTargetId,
-                IsIntegralFee = feeModel.isIntegralFee,
-                GLAccountId = feeModel.glAccountId,
-                FeeAmortisationTypeId = feeModel.feeAmortisationTypeId,
-                IncludeCutOffDay = feeModel.includeCutOffDay,
-                CutOffDay = feeModel.cutOffDay,
-                CompanyId = feeModel.companyId,
-                FeeDate = DateTime.Now,
+                FEENAME = feeModel.feeName,
+                ACCOUNTCATEGORYID = feeModel.accountCategoryId,
+                FEETYPEID = feeModel.feeTypeId,
+                FEEINTERVALID = feeModel.feeIntervalId,
+                PRODUCTTYPEID = feeModel.productTypeId,
+                FEETARGETID = feeModel.feeTargetId,
+                ISINTEGRALFEE = feeModel.isIntegralFee,
+                GLACCOUNTID = feeModel.glAccountId,
+                FEEAMORTISATIONTYPEID = feeModel.feeAmortisationTypeId,
+                INCLUDECUTOFFDAY = feeModel.includeCutOffDay,
+                CUTOFFDAY = feeModel.cutOffDay,
+                COMPANYID = feeModel.companyId,
+                FEEDATE = DateTime.Now,
 
-                CreatedBy = feeModel.createdBy,
-                DateTimeCreated = DateTime.Now,
+                CREATEDBY = feeModel.createdBy,
+                DATETIMECREATED = DateTime.Now,
             };
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.FeeAdded,
-                StaffId = feeModel.createdBy,
-                BranchId = (short)feeModel.userBranchId,
-                Detail = $"Added fee: { feeModel.feeName } of type {feeModel.feeTypeName} ",
-                IPAddress = feeModel.userIPAddress,
-                Url = feeModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.FeeAdded,
+                STAFFID = feeModel.createdBy,
+                BRANCHID = (short)feeModel.userBranchId,
+                DETAIL = $"Added fee: { feeModel.feeName } of type {feeModel.feeTypeName} ",
+                IPADDRESS = feeModel.userIPAddress,
+                URL = feeModel.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             //end of Audit section -------------------------------
 
@@ -140,7 +140,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     try
                     {
                         this.auditTrail.AddAuditTrail(audit);
-                        this.context.tbl_Temp_Fee.Add(tempFee);
+                        this.context.TBL_TEMP_FEE.Add(tempFee);
 
                         output = this.SaveAll();
 
@@ -175,108 +175,108 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<FeeViewModel> GetAllFee()
         {
-            return (from data in context.tbl_Fee
+            return (from data in context.TBL_FEE
                         //where account.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
                     select new FeeViewModel()
                     {
-                        feeId = data.FeeId,
-                        feeName = data.FeeName,
-                        accountCategoryId = data.AccountCategoryId,
-                        accountCategoryName = data.tbl_Account_Category.AccountCategoryName,
-                        feeTypeId = data.FeeTypeId,
+                        feeId = data.FEEID,
+                        feeName = data.FEENAME,
+                        accountCategoryId = data.ACCOUNTCATEGORYID,
+                        accountCategoryName = data.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+                        feeTypeId = data.FEETYPEID,
                         feeTypeName = string.Empty,//data.tbl_Fee_Type.FeeTypeName,
                         feeTypeByAmountRequired = false,//data.tbl_Fee_Type.ByAmountRequired,
                         byAmountRequired = false,//data.tbl_Fee_Type.ByAmountRequired,
-                        feeIntervalId = data.FeeIntervalId,
-                        isIntegralFee = data.IsIntegralFee,
-                        feeIntervalName = data.tbl_Fee_Interval.FeeIntervalName,
-                        productTypeId = data.ProductTypeId,
-                        productTypeName = data.tbl_Product_Type.ProductTypeName,
-                        feeTargetId = data.FeeTargetId,
-                        feeTargetName = data.tbl_Fee_Target.FeeTargetName,
-                        glAccountId = data.GLAccountId,
-                        glAccountCode = data.tbl_Chart_Of_Account.AccountCode,
-                        glAccountName = data.tbl_Chart_Of_Account.AccountName,
-                        includeCutOffDay = data.IncludeCutOffDay,
-                        feeAmortisationTypeId = data.FeeAmortisationTypeId,
+                        feeIntervalId = data.FEEINTERVALID,
+                        isIntegralFee = data.ISINTEGRALFEE,
+                        feeIntervalName = data.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                        productTypeId = data.PRODUCTTYPEID,
+                        productTypeName = data.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                        feeTargetId = data.FEETARGETID,
+                        feeTargetName = data.TBL_FEE_TARGET.FEETARGETNAME,
+                        glAccountId = data.GLACCOUNTID,
+                        glAccountCode = data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                        glAccountName = data.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                        includeCutOffDay = data.INCLUDECUTOFFDAY,
+                        feeAmortisationTypeId = data.FEEAMORTISATIONTYPEID,
 
-                        cutOffDay = data.CutOffDay,
-                        companyId = data.CompanyId,
-                        feeDate = data.FeeDate,
-                        createdBy = data.CreatedBy,
-                        
-                        dateTimeCreated = data.DateTimeCreated,
-                        dateTimeUpdated = data.DateTimeUpdated,
-                        deleted = data.Deleted,
-                        deletedBy = data.DeletedBy,
-                        dateTimeDeleted = data.DateTimeDeleted
+                        cutOffDay = data.CUTOFFDAY,
+                        companyId = data.COMPANYID,
+                        feeDate = data.FEEDATE,
+                        createdBy = data.CREATEDBY,
+
+                        dateTimeCreated = data.DATETIMECREATED,
+                        dateTimeUpdated = data.DATETIMEUPDATED,
+                        deleted = data.DELETED,
+                        deletedBy = data.DELETEDBY,
+                        dateTimeDeleted = data.DATETIMEDELETED
                     });
         }
 
         public FeeViewModel GetFeeViewModel(int feeId)
         {
-            return (from data in context.tbl_Fee
-                    where data.FeeId == feeId //orderby account.AccountCode ascending, account.AccountName ascending
+            return (from data in context.TBL_FEE
+                    where data.FEEID == feeId //orderby account.AccountCode ascending, account.AccountName ascending
                     select new FeeViewModel()
                     {
-                        feeId = data.FeeId,
-                        feeName = data.FeeName,
-                        accountCategoryId = data.AccountCategoryId,
-                        feeTypeId = data.FeeTypeId,
-                        feeIntervalId = data.FeeIntervalId,
-                        productTypeId = data.ProductTypeId,
-                        feeTargetId = data.FeeTargetId,
-                        glAccountId = data.GLAccountId,
-                        feeAmortisationTypeId = data.FeeAmortisationTypeId,
-                        isIntegralFee = data.IsIntegralFee,
-                        includeCutOffDay = data.IncludeCutOffDay,
-                        cutOffDay = data.CutOffDay,
-                        companyId = data.CompanyId,
-                        feeDate = data.FeeDate,
-                        createdBy = data.CreatedBy,
-                        dateTimeCreated = data.DateTimeCreated,
-                        dateTimeUpdated = data.DateTimeUpdated,
-                        deleted = data.Deleted,
-                        deletedBy = data.DeletedBy,
-                        dateTimeDeleted = data.DateTimeDeleted,
+                        feeId = data.FEEID,
+                        feeName = data.FEENAME,
+                        accountCategoryId = data.ACCOUNTCATEGORYID,
+                        feeTypeId = data.FEETYPEID,
+                        feeIntervalId = data.FEEINTERVALID,
+                        productTypeId = data.PRODUCTTYPEID,
+                        feeTargetId = data.FEETARGETID,
+                        glAccountId = data.GLACCOUNTID,
+                        feeAmortisationTypeId = data.FEEAMORTISATIONTYPEID,
+                        isIntegralFee = data.ISINTEGRALFEE,
+                        includeCutOffDay = data.INCLUDECUTOFFDAY,
+                        cutOffDay = data.CUTOFFDAY,
+                        companyId = data.COMPANYID,
+                        feeDate = data.FEEDATE,
+                        createdBy = data.CREATEDBY,
+                        dateTimeCreated = data.DATETIMECREATED,
+                        dateTimeUpdated = data.DATETIMEUPDATED,
+                        deleted = data.DELETED,
+                        deletedBy = data.DELETEDBY,
+                        dateTimeDeleted = data.DATETIMEDELETED,
                     }).FirstOrDefault();
         }
 
         public bool UpdateFee(int feeId, FeeViewModel fee)
         {
-            var feeModel = this.context.tbl_Fee.Find(feeId);
+            var feeModel = this.context.TBL_FEE.Find(feeId);
 
             if (feeModel == null)
                 return false;
 
-            feeModel.FeeName = fee.feeName;
-            feeModel.AccountCategoryId = fee.accountCategoryId;
-            feeModel.FeeTypeId = fee.feeTypeId;
-            feeModel.FeeIntervalId = fee.feeIntervalId;
-            feeModel.ProductTypeId = fee.productTypeId;
-            feeModel.FeeTargetId = fee.feeTargetId;
-            feeModel.IsIntegralFee = fee.isIntegralFee;
-            feeModel.GLAccountId = fee.glAccountId;
-            feeModel.FeeAmortisationTypeId = fee.feeAmortisationTypeId;
-            feeModel.IncludeCutOffDay = fee.includeCutOffDay;
-            feeModel.CutOffDay = fee.cutOffDay;
-            feeModel.CompanyId = fee.companyId;
-            feeModel.FeeDate = fee.feeDate;            
+            feeModel.FEENAME = fee.feeName;
+            feeModel.ACCOUNTCATEGORYID = fee.accountCategoryId;
+            feeModel.FEETYPEID = fee.feeTypeId;
+            feeModel.FEEINTERVALID = fee.feeIntervalId;
+            feeModel.PRODUCTTYPEID = fee.productTypeId;
+            feeModel.FEETARGETID = fee.feeTargetId;
+            feeModel.ISINTEGRALFEE = fee.isIntegralFee;
+            feeModel.GLACCOUNTID = fee.glAccountId;
+            feeModel.FEEAMORTISATIONTYPEID = fee.feeAmortisationTypeId;
+            feeModel.INCLUDECUTOFFDAY = fee.includeCutOffDay;
+            feeModel.CUTOFFDAY = fee.cutOffDay;
+            feeModel.COMPANYID = fee.companyId;
+            feeModel.FEEDATE = fee.feeDate;
 
-            feeModel.LastUpdatedBy = fee.lastUpdatedBy;
-            feeModel.DateTimeUpdated = DateTime.Now;
+            feeModel.LASTUPDATEDBY = fee.lastUpdatedBy;
+            feeModel.DATETIMEUPDATED = DateTime.Now;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralCategoryAdded,
-                StaffId = fee.createdBy,
-                BranchId = (short)fee.userBranchId,
-                Detail = $"Udated fee: { fee.feeName } of type {fee.feeTypeName} ",
-                IPAddress = fee.userIPAddress,
-                Url = fee.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralCategoryAdded,
+                STAFFID = fee.createdBy,
+                BRANCHID = (short)fee.userBranchId,
+                DETAIL = $"Udated fee: { fee.feeName } of type {fee.feeTypeName} ",
+                IPADDRESS = fee.userIPAddress,
+                URL = fee.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -290,25 +290,25 @@ namespace FintrakBanking.Repositories.Setups.General
             if (feeModel == null)
                 return false;
 
-            var existStingTempFee = context.tbl_Temp_Fee.Where(x => x.AccountCategoryId ==
-            feeModel.accountCategoryId && x.IsCurrent == true &&
-            x.ApprovalStatusId == (int)ApprovalStatusEnum.Approved);
+            var existStingTempFee = context.TBL_TEMP_FEE.Where(x => x.ACCOUNTCATEGORYID ==
+            feeModel.accountCategoryId && x.ISCURRENT == true &&
+            x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
 
             if (existStingTempFee.Any())
             {
                 foreach (var item in existStingTempFee)
                 {
-                    item.IsCurrent = false;
-                    item.DateTimeUpdated = DateTime.Now;
+                    item.ISCURRENT = false;
+                    item.DATETIMEUPDATED = DateTime.Now;
                 }
             }
 
-            var targetFee = this.context.tbl_Fee.Find(feeId);
+            var targetFee = this.context.TBL_FEE.Find(feeId);
 
-            var unApprovedFeeEdit = context.tbl_Temp_Fee.Where(x => x.IsCurrent == true
-            && x.ApprovalStatusId == (int)ApprovalStatusEnum.Pending);
+            var unApprovedFeeEdit = context.TBL_TEMP_FEE.Where(x => x.ISCURRENT == true
+            && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending);
 
-            tbl_Temp_Fee tempFee;
+            TBL_TEMP_FEE tempFee;
 
             if (unApprovedFeeEdit.Any())
             {
@@ -316,41 +316,41 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             else
             {
-                tempFee = new tbl_Temp_Fee()
+                tempFee = new TBL_TEMP_FEE()
                 {
-                    FeeName = feeModel.feeName,
-                    AccountCategoryId = targetFee.AccountCategoryId,
-                    FeeTypeId = feeModel.feeTypeId,
-                    FeeIntervalId = feeModel.feeIntervalId,
-                    ProductTypeId = feeModel.productTypeId,
-                    FeeTargetId = feeModel.feeTargetId,
-                    IsIntegralFee = feeModel.isIntegralFee,
-                    GLAccountId = feeModel.glAccountId,
-                    FeeAmortisationTypeId = feeModel.feeAmortisationTypeId,
-                    IncludeCutOffDay = feeModel.includeCutOffDay,
-                    CutOffDay = feeModel.cutOffDay,
-                    CompanyId = feeModel.companyId,
-                    FeeDate = DateTime.Now,
+                    FEENAME = feeModel.feeName,
+                    ACCOUNTCATEGORYID = targetFee.ACCOUNTCATEGORYID,
+                    FEETYPEID = feeModel.feeTypeId,
+                    FEEINTERVALID = feeModel.feeIntervalId,
+                    PRODUCTTYPEID = feeModel.productTypeId,
+                    FEETARGETID = feeModel.feeTargetId,
+                    ISINTEGRALFEE = feeModel.isIntegralFee,
+                    GLACCOUNTID = feeModel.glAccountId,
+                    FEEAMORTISATIONTYPEID = feeModel.feeAmortisationTypeId,
+                    INCLUDECUTOFFDAY = feeModel.includeCutOffDay,
+                    CUTOFFDAY = feeModel.cutOffDay,
+                    COMPANYID = feeModel.companyId,
+                    FEEDATE = DateTime.Now,
 
-                    CreatedBy = feeModel.createdBy,
-                    DateTimeCreated = DateTime.Now,
+                    CREATEDBY = feeModel.createdBy,
+                    DATETIMECREATED = DateTime.Now,
                 };
 
-                context.tbl_Temp_Fee.Add(tempFee);
+                context.TBL_TEMP_FEE.Add(tempFee);
             }
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.FeeUpdated,
-                StaffId = feeModel.createdBy,
-                BranchId = (short)feeModel.userBranchId,
-                Detail = $"Updated Fee: { feeModel.feeName } with fee account category '{feeModel.accountCategoryName}'",
-                IPAddress = feeModel.userIPAddress,
-                Url = feeModel.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = feeId
+                AUDITTYPEID = (short)AuditTypeEnum.FeeUpdated,
+                STAFFID = feeModel.createdBy,
+                BRANCHID = (short)feeModel.userBranchId,
+                DETAIL = $"Updated Fee: { feeModel.feeName } with fee account category '{feeModel.accountCategoryName}'",
+                IPADDRESS = feeModel.userIPAddress,
+                URL = feeModel.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = feeId
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section ------------------------------- 
@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 staffId = feeModel.createdBy,
                 companyId = feeModel.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                targetId = tempFee.FeeId,
+                targetId = tempFee.FEEID,
                 operationId = (int)OperationsEnum.FeeCreation,
                 BranchId = feeModel.userBranchId
             };
@@ -390,68 +390,68 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private bool ApproveFee(int feeId, short approvalStatusId, UserInfo user)
         {
-            var feeModel = context.tbl_Temp_Fee.Find(feeId);
-            var feeToUpdate = context.tbl_Fee.Where(x => x.AccountCategoryId == feeModel.AccountCategoryId);
+            var feeModel = context.TBL_TEMP_FEE.Find(feeId);
+            var feeToUpdate = context.TBL_FEE.Where(x => x.ACCOUNTCATEGORYID == feeModel.ACCOUNTCATEGORYID);
             var existingFee = feeToUpdate.FirstOrDefault();
 
             //Update existing fee with tempFee record
             if (feeToUpdate.Any())
             {
-                existingFee.FeeName = feeModel.FeeName;
-                existingFee.AccountCategoryId = feeModel.AccountCategoryId;
-                existingFee.FeeTypeId = feeModel.FeeTypeId;
-                existingFee.FeeIntervalId = feeModel.FeeIntervalId;
-                existingFee.ProductTypeId = feeModel.ProductTypeId;
-                existingFee.FeeTargetId = feeModel.FeeTargetId;
-                existingFee.IsIntegralFee = feeModel.IsIntegralFee;
-                existingFee.GLAccountId = feeModel.GLAccountId;
-                existingFee.FeeAmortisationTypeId = feeModel.FeeAmortisationTypeId;
-                existingFee.IncludeCutOffDay = feeModel.IncludeCutOffDay;
-                existingFee.CutOffDay = feeModel.CutOffDay;
-                existingFee.CompanyId = feeModel.CompanyId;
-                existingFee.FeeDate = feeModel.FeeDate;
+                existingFee.FEENAME = feeModel.FEENAME;
+                existingFee.ACCOUNTCATEGORYID = feeModel.ACCOUNTCATEGORYID;
+                existingFee.FEETYPEID = feeModel.FEETYPEID;
+                existingFee.FEEINTERVALID = feeModel.FEEINTERVALID;
+                existingFee.PRODUCTTYPEID = feeModel.PRODUCTTYPEID;
+                existingFee.FEETARGETID = feeModel.FEETARGETID;
+                existingFee.ISINTEGRALFEE = feeModel.ISINTEGRALFEE;
+                existingFee.GLACCOUNTID = feeModel.GLACCOUNTID;
+                existingFee.FEEAMORTISATIONTYPEID = feeModel.FEEAMORTISATIONTYPEID;
+                existingFee.INCLUDECUTOFFDAY = feeModel.INCLUDECUTOFFDAY;
+                existingFee.CUTOFFDAY = feeModel.CUTOFFDAY;
+                existingFee.COMPANYID = feeModel.COMPANYID;
+                existingFee.FEEDATE = feeModel.FEEDATE;
 
-                existingFee.CreatedBy = feeModel.CreatedBy;
-                existingFee.DateTimeUpdated = DateTime.Now;
+                existingFee.CREATEDBY = feeModel.CREATEDBY;
+                existingFee.DATETIMEUPDATED = DateTime.Now;
             }
             else //Insert a newfee record into the real fee table
             {
-                var fee = new tbl_Fee()
+                var fee = new TBL_FEE()
                 {
-                    FeeName = feeModel.FeeName,
-                    AccountCategoryId = feeModel.AccountCategoryId,
-                    FeeTypeId = feeModel.FeeTypeId,
-                    FeeIntervalId = feeModel.FeeIntervalId,
-                    ProductTypeId = feeModel.ProductTypeId,
-                    FeeTargetId = feeModel.FeeTargetId,
-                    IsIntegralFee = feeModel.IsIntegralFee,
-                    GLAccountId = feeModel.GLAccountId,
-                    FeeAmortisationTypeId = feeModel.FeeAmortisationTypeId,
-                    IncludeCutOffDay = feeModel.IncludeCutOffDay,
-                    CutOffDay = feeModel.CutOffDay,
-                    CompanyId = feeModel.CompanyId,
-                    FeeDate = DateTime.Now,
-                    DateTimeCreated = DateTime.Now
+                    FEENAME = feeModel.FEENAME,
+                    ACCOUNTCATEGORYID = feeModel.ACCOUNTCATEGORYID,
+                    FEETYPEID = feeModel.FEETYPEID,
+                    FEEINTERVALID = feeModel.FEEINTERVALID,
+                    PRODUCTTYPEID = feeModel.PRODUCTTYPEID,
+                    FEETARGETID = feeModel.FEETARGETID,
+                    ISINTEGRALFEE = feeModel.ISINTEGRALFEE,
+                    GLACCOUNTID = feeModel.GLACCOUNTID,
+                    FEEAMORTISATIONTYPEID = feeModel.FEEAMORTISATIONTYPEID,
+                    INCLUDECUTOFFDAY = feeModel.INCLUDECUTOFFDAY,
+                    CUTOFFDAY = feeModel.CUTOFFDAY,
+                    COMPANYID = feeModel.COMPANYID,
+                    FEEDATE = DateTime.Now,
+                    DATETIMECREATED = DateTime.Now
                 };
-                context.tbl_Fee.Add(fee);
+                context.TBL_FEE.Add(fee);
 
             }
 
-            feeModel.IsCurrent = false;
-            feeModel.ApprovalStatusId = approvalStatusId;
-            feeModel.DateTimeUpdated = DateTime.Now;
+            feeModel.ISCURRENT = false;
+            feeModel.APPROVALSTATUSID = approvalStatusId;
+            feeModel.DATETIMEUPDATED = DateTime.Now;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.FeeApproved,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Approved Fee '{feeModel.FeeName}' with fee account category '{feeModel.tbl_Account_Category.AccountCategoryName}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.FeeApproved,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Approved Fee '{feeModel.FEENAME}' with fee account category '{feeModel.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME}'",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -459,19 +459,19 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return this.SaveAll();
         }
-            #endregion tbl_Product Fee
+        #endregion tbl_Product Fee
 
-            #region Fee Related Lookups
+        #region Fee Related Lookups
 
-            public IEnumerable<LookupViewModel> GetFeeAccountCategory()
+        public IEnumerable<LookupViewModel> GetFeeAccountCategory()
         {
-            return (from data in context.tbl_Account_Category
-                    where data.AccountCategoryId == (short)AccountCategoryEnum.Income || data.AccountCategoryId == (short)AccountCategoryEnum.Expense
+            return (from data in context.TBL_ACCOUNT_CATEGORY
+                    where data.ACCOUNTCATEGORYID == (short)AccountCategoryEnum.Income || data.ACCOUNTCATEGORYID == (short)AccountCategoryEnum.Expense
                     //orderby data.FinType, data.Position
                     select new LookupViewModel()
                     {
-                        lookupId = data.AccountCategoryId,
-                        lookupName = data.AccountCategoryName
+                        lookupId = data.ACCOUNTCATEGORYID,
+                        lookupName = data.ACCOUNTCATEGORYNAME
                     });
         }
 
@@ -489,22 +489,22 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<LookupViewModel> GetFeeInterval()
         {
-            return (from data in context.tbl_Fee_Interval
+            return (from data in context.TBL_FEE_INTERVAL
                         //orderby data.FinType, data.Position
                     select new LookupViewModel()
                     {
-                        lookupId = data.FeeIntervalId,
-                        lookupName = data.FeeIntervalName
+                        lookupId = data.FEEINTERVALID,
+                        lookupName = data.FEEINTERVALNAME
                     });
         }
 
         public IEnumerable<LookupViewModel> GetFeeTarget()
         {
-            return (from data in context.tbl_Fee_Target
+            return (from data in context.TBL_FEE_TARGET
                     select new LookupViewModel()
                     {
-                        lookupId = data.FeeTargetId,
-                        lookupName = data.FeeTargetName
+                        lookupId = data.FEETARGETID,
+                        lookupName = data.FEETARGETNAME
                     });
         }
 

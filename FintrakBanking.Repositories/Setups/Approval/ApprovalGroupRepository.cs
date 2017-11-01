@@ -32,17 +32,17 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         private IEnumerable<ApprovalGroupViewModel> GetApprovalGroup(int companyId)
         {
-            var data = (from a in context.tbl_Approval_Group 
-                        where a.CompanyId == companyId && a.Deleted == false
+            var data = (from a in context.TBL_APPROVAL_GROUP 
+                        where a.COMPANYID == companyId && a.DELETED == false
                         select new ApprovalGroupViewModel
                         {
-                            groupId = a.GroupId,
-                            groupName = a.GroupName,
-                            isCommittee = a.IsCommittee,
-                            companyId = a.CompanyId,
-                            companyName = a.tbl_Company.Name,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = a.CreatedBy
+                            groupId = a.GROUPID,
+                            groupName = a.GROUPNAME,
+                            isCommittee = a.ISCOMMITTEE,
+                            companyId = a.COMPANYID,
+                            companyName = a.TBL_COMPANY.NAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
                         }).ToList();
             return data;
         }
@@ -57,30 +57,30 @@ namespace FintrakBanking.Repositories.Setups.Approval
         }
         public bool AddApprovalGroup(ApprovalGroupViewModel model)
         {
-            var data = new tbl_Approval_Group
+            var data = new TBL_APPROVAL_GROUP
             {                
-                GroupName = model.groupName,
-                IsCommittee = model.isCommittee,
-                CompanyId = model.companyId,
-                DateTimeCreated = _genSetup.GetApplicationDate(),
-                CreatedBy = (int)model.createdBy
+                GROUPNAME = model.groupName,
+                ISCOMMITTEE = model.isCommittee,
+                COMPANYID = model.companyId,
+                DATETIMECREATED = _genSetup.GetApplicationDate(),
+                CREATEDBY = (int)model.createdBy
             };
 
             //Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ApprovalGroupAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Approval Group '{model.groupName}' with Is Committee: {model.isCommittee} ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = model.groupId
+                AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Approval Group '{model.groupName}' with Is Committee: {model.isCommittee} ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = model.groupId
             };
 
-            context.tbl_Approval_Group.Add(data);
+            context.TBL_APPROVAL_GROUP.Add(data);
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
@@ -88,25 +88,25 @@ namespace FintrakBanking.Repositories.Setups.Approval
         }
         public bool UpdateApprovalGroup(int GroupId, ApprovalGroupViewModel model)
         {
-            var data = this.context.tbl_Approval_Group .Find(GroupId);
+            var data = this.context.TBL_APPROVAL_GROUP .Find(GroupId);
             if (data == null) return false;
-            data.GroupName = model.groupName;
-            data.IsCommittee = model.isCommittee;
-            data.DateTimeUpdated = _genSetup.GetApplicationDate();
-            data.LastUpdatedBy = (int)model.createdBy;
+            data.GROUPNAME = model.groupName;
+            data.ISCOMMITTEE = model.isCommittee;
+            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+            data.LASTUPDATEDBY = (int)model.createdBy;
 
             //Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ApprovalGroupUpdated,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated Approval Group '{model.groupName}' with Is Committee: {model.isCommittee} ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = model.groupId
+                AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Approval Group '{model.groupName}' with Is Committee: {model.isCommittee} ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = model.groupId
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -116,24 +116,24 @@ namespace FintrakBanking.Repositories.Setups.Approval
         }
         public bool DeleteApprovalGroup(int GroupId, UserInfo user)
         {
-            var data = this.context.tbl_Approval_Group.Find(GroupId);
-            data.Deleted = true;
-            data.DeletedBy = (int)user.staffId;
-            data.DateTimeDeleted = _genSetup.GetApplicationDate();
+            var data = this.context.TBL_APPROVAL_GROUP.Find(GroupId);
+            data.DELETED = true;
+            data.DELETEDBY = (int)user.staffId;
+            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
 
 
             //Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ApprovalGroupUpdated,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Deleted Approval Group '{data.GroupName}' with Is Committee: {data.IsCommittee} ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = data.GroupId
+                AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupUpdated,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Approval Group '{data.GROUPNAME}' with Is Committee: {data.ISCOMMITTEE} ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = data.GROUPID
             };
 
 

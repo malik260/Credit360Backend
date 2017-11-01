@@ -35,48 +35,48 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public int AddApprovalGroupMapping(ApprovalGroupMappingViewModel model)
         {
-            var entity = new tbl_Approval_Group_Mapping
+            var entity = new TBL_APPROVAL_GROUP_MAPPING
             {
-                OperationId = model.operationId,
-                GroupId = model.groupId,
-                ProductClassId = model.productClassId,
-                ProductId = model.productId,
-                Position = model.position,
+                OPERATIONID = model.operationId,
+                GROUPID = model.groupId,
+                PRODUCTCLASSID = model.productClassId,
+                PRODUCTID = model.productId,
+                POSITION = model.position,
 
-                CreatedBy = model.createdBy,
-                DateTimeCreated = generalSetup.GetApplicationDate()
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = generalSetup.GetApplicationDate()
             };
 
-            this.context.tbl_Approval_Group_Mapping.Add(entity);
+            this.context.TBL_APPROVAL_GROUP_MAPPING.Add(entity);
 
             // Audit Section ---------------------------
-            var operationName = this.context.tbl_Operations.FirstOrDefault(x => x.OperationId == model.operationId).OperationName;
-            var groupName = this.context.tbl_Approval_Group.FirstOrDefault(x => x.GroupId == model.groupId).GroupName;
-            var audit = new tbl_Audit
+            var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
+            var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == model.groupId).GROUPNAME;
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ApprovalGroupMappingAdded,
-                StaffId = (int)model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                SystemDateTime = DateTime.Now,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                TargetId = entity.GroupOperationMappingId
+                AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingAdded,
+                STAFFID = (int)model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                SYSTEMDATETIME = DateTime.Now,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                TARGETID = entity.GROUPOPERATIONMAPPINGID
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
             var status = this.SaveAll();
 
             if (status)
-                return entity.GroupOperationMappingId;
+                return entity.GROUPOPERATIONMAPPINGID;
             else
                 return -1;
         }
 
         public bool DeleteApprovalGroupMapping(int operationMappingId, UserInfo model)
         {
-            var entity = this.context.tbl_Approval_Group_Mapping.Find(operationMappingId);
+            var entity = this.context.TBL_APPROVAL_GROUP_MAPPING.Find(operationMappingId);
 
             if (entity == null)
                 return false;
@@ -86,44 +86,44 @@ namespace FintrakBanking.Repositories.Setups.Approval
             //entity.DateTimeDeleted = generalSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var operationName = this.context.tbl_Operations.FirstOrDefault(x => x.OperationId == entity.OperationId).OperationName;
-            var groupName = this.context.tbl_Approval_Group.FirstOrDefault(x => x.GroupId == entity.GroupId).GroupName;
-            var audit = new tbl_Audit
+            var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == entity.OPERATIONID).OPERATIONNAME;
+            var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == entity.GROUPID).GROUPNAME;
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ApprovalGroupMappingDeleted,
-                StaffId = (int)model.staffId,
-                BranchId = (short)model.BranchId,
-                Detail = $"Deleted Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                SystemDateTime = DateTime.Now,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                TargetId = entity.GroupOperationMappingId
+                AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingDeleted,
+                STAFFID = (int)model.staffId,
+                BRANCHID = (short)model.BranchId,
+                DETAIL = $"Deleted Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                SYSTEMDATETIME = DateTime.Now,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                TARGETID = entity.GROUPOPERATIONMAPPINGID
             };
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
-            context.tbl_Approval_Group_Mapping.Remove(entity);
+            context.TBL_APPROVAL_GROUP_MAPPING.Remove(entity);
 
             return this.context.SaveChanges() > 0;
         }
 
         public IQueryable<ApprovalGroupMappingViewModel> GetAllApprovalGroupMapping()
         {
-            var groupdata = (from data in context.tbl_Approval_Group_Mapping
-                             where data.Deleted == false //orderby account.AccountCode ascending, account.AccountName ascending
+            var groupdata = (from data in context.TBL_APPROVAL_GROUP_MAPPING
+                             where data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
                              select new ApprovalGroupMappingViewModel()
                              {
-                                 groupOperationMappingId = data.GroupOperationMappingId,
-                                 operationId = data.OperationId,
-                                 operationName = data.tbl_Operations.OperationName,
-                                 groupId = data.GroupId,
-                                 groupName = data.tbl_Approval_Group.GroupName,
-                                 productClassId = data.ProductClassId,
-                                 productClassName = data.ProductClassId.HasValue == true ? data.tbl_Product_Class.ProductClassName : "",
-                                 position = data.Position,
-                                 createdBy = data.CreatedBy,
+                                 groupOperationMappingId = data.GROUPOPERATIONMAPPINGID,
+                                 operationId = data.OPERATIONID,
+                                 operationName = data.TBL_OPERATIONS.OPERATIONNAME,
+                                 groupId = data.GROUPID,
+                                 groupName = data.TBL_APPROVAL_GROUP.GROUPNAME,
+                                 productClassId = data.PRODUCTCLASSID,
+                                 productClassName = data.PRODUCTCLASSID.HasValue == true ? data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME : "",
+                                 position = data.POSITION,
+                                 createdBy = data.CREATEDBY,
                              });
             return groupdata;
         }
@@ -141,22 +141,22 @@ namespace FintrakBanking.Repositories.Setups.Approval
             short? productId
             )
         {
-            var operationGroups = context.tbl_Approval_Group_Mapping
-                                            .Where(x => x.Deleted == false
-                                                && x.OperationId == operationId
-                                                && x.ProductClassId == productClassId
-                                                && x.ProductId == productId
+            var operationGroups = context.TBL_APPROVAL_GROUP_MAPPING
+                                            .Where(x => x.DELETED == false
+                                                && x.OPERATIONID == operationId
+                                                && x.PRODUCTCLASSID == productClassId
+                                                && x.PRODUCTID == productId
                                             )
                                             .Select(data => new ApprovalGroupMappingViewModel
                                             {
-                                                groupOperationMappingId = data.GroupOperationMappingId,
-                                                operationId = data.OperationId,
-                                                productClassId = data.ProductClassId,
-                                                operationName = data.tbl_Operations.OperationName,
-                                                groupId = data.GroupId,
-                                                groupName = data.tbl_Approval_Group.GroupName,
-                                                position = data.Position,
-                                                createdBy = data.CreatedBy,
+                                                groupOperationMappingId = data.GROUPOPERATIONMAPPINGID,
+                                                operationId = data.OPERATIONID,
+                                                productClassId = data.PRODUCTCLASSID,
+                                                operationName = data.TBL_OPERATIONS.OPERATIONNAME,
+                                                groupId = data.GROUPID,
+                                                groupName = data.TBL_APPROVAL_GROUP.GROUPNAME,
+                                                position = data.POSITION,
+                                                createdBy = data.CREATEDBY,
                                             })
                                             .OrderBy(x => x.position);
 
@@ -165,34 +165,34 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool UpdateApprovalGroupMapping(int operationMappingId, ApprovalGroupMappingViewModel model)
         {
-            var entity = this.context.tbl_Approval_Group_Mapping.Find(operationMappingId);
+            var entity = this.context.TBL_APPROVAL_GROUP_MAPPING.Find(operationMappingId);
 
             if (entity == null)
                 return false;
 
-            entity.OperationId = model.operationId;
-            entity.GroupId = model.groupId;
-            entity.ProductClassId = model.productClassId;
-            entity.ProductId = model.productId;
-            entity.Position = model.position;
+            entity.OPERATIONID = model.operationId;
+            entity.GROUPID = model.groupId;
+            entity.PRODUCTCLASSID = model.productClassId;
+            entity.PRODUCTID = model.productId;
+            entity.POSITION = model.position;
 
-            entity.LastUpdatedBy = model.createdBy;
-            entity.DateTimeUpdated = generalSetup.GetApplicationDate();
+            entity.LASTUPDATEDBY = model.createdBy;
+            entity.DATETIMEUPDATED = generalSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var operationName = this.context.tbl_Operations.FirstOrDefault(x => x.OperationId == model.operationId).OperationName;
-            var groupName = this.context.tbl_Approval_Group.FirstOrDefault(x => x.GroupId == model.groupId).GroupName;
-            var audit = new tbl_Audit
+            var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
+            var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == model.groupId).GROUPNAME;
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ApprovalGroupMappingUpdated,
-                StaffId = (int)model.lastUpdatedBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                SystemDateTime = DateTime.Now,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                TargetId = entity.GroupOperationMappingId
+                AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingUpdated,
+                STAFFID = (int)model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                SYSTEMDATETIME = DateTime.Now,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                TARGETID = entity.GROUPOPERATIONMAPPINGID
             };
 
             this.auditTrail.AddAuditTrail(audit);
