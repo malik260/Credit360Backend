@@ -153,8 +153,8 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     var groups = repo.GetAllGroups().Select(x => new
                     {
-                        groupId = x.GroupId,
-                        groupName = x.GroupName
+                        groupId = x.GROUPID,
+                        groupName = x.GROUPNAME
                     }).ToList();
 
                     if (groups.Any() == false)
@@ -192,17 +192,17 @@ namespace FintrakBanking.APICore.Controllers
 
                 var userActivities = _adminRepo.GetUserActivities(currUser.user_id);
 
-                var audit = new tbl_Audit()
+                var audit = new TBL_AUDIT()
                 {
-                    AuditTypeId = (short)AuditTypeEnum.LoggedIn,
-                    StaffId = currUser.staffId,
-                    BranchId = currUser.branchId,
-                    Detail = $"{currUser.username} logged in",
-                    IPAddress = CommonHelpers.GetUserIP(),
-                    Url = Request.RequestUri.AbsoluteUri,
-                    ApplicationDate = _genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now,
-                    TargetId = -1
+                    AUDITTYPEID = (short)AuditTypeEnum.LoggedIn,
+                    STAFFID = currUser.staffId,
+                    BRANCHID = currUser.branchId,
+                    DETAIL = $"{currUser.username} logged in",
+                    IPADDRESS = CommonHelpers.GetUserIP(),
+                    URL = Request.RequestUri.AbsoluteUri,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = -1
                 };
 
                 auditTrail.AddAuditTrail(audit);
@@ -249,17 +249,17 @@ namespace FintrakBanking.APICore.Controllers
 
                 Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
 
-                var audit = new tbl_Audit()
+                var audit = new TBL_AUDIT()
                 {
-                    AuditTypeId = (short)AuditTypeEnum.LoggedOut,
-                    StaffId = token.GetStaffId,
-                    BranchId = (short)token.GetBranchId,
-                    Detail = $"{token.GetUsername} logged out",
-                    IPAddress = CommonHelpers.GetUserIP(),
-                    Url = Request.RequestUri.AbsoluteUri,
-                    ApplicationDate = _genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now,
-                    TargetId = -1
+                    AUDITTYPEID = (short)AuditTypeEnum.LoggedOut,
+                    STAFFID = token.GetStaffId,
+                    BRANCHID = (short)token.GetBranchId,
+                    DETAIL = $"{token.GetUsername} logged out",
+                    IPADDRESS = CommonHelpers.GetUserIP(),
+                    URL = Request.RequestUri.AbsoluteUri,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = -1
                 };
 
                 auditTrail.AddAuditTrail(audit);

@@ -1779,7 +1779,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var pastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
                 var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId);
-                var casabalance = casa.AvailableBalance;
+                var casabalance = casa.AVAILABLEBALANCE;
                 if (casabalance >= item.totalAmount)
                 {
 
@@ -3982,7 +3982,7 @@ namespace FintrakBanking.Repositories.Credit
                 var unEarnedFee = from d in context.TBL_LOAN_SCHEDULE_DAILY
                                   where d.LOANID == item.loanId
                                   let sumUnEarnedFee = context.TBL_LOAN_SCHEDULE_DAILY.Where(a => a.LOANID == item.loanId
-                                  && a.DATE >= DbFunctions.TruncateTime(applicationDate)).Sum(a => (double?)a.UnEarnedFee ?? 0)
+                                  && a.DATE >= DbFunctions.TruncateTime(applicationDate)).Sum(a => (double?)a.UNEARNEDFEE ?? 0)
                                   select sumUnEarnedFee;
                 //item.integralFeeAmount = (double?)unEarnedFee.FirstOrDefault() ?? 0;
 
@@ -4691,7 +4691,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var principal = from d in context.TBL_LOAN_SCHEDULE_PERIODIC
                             where d.PAYMENTDATE >= DbFunctions.TruncateTime(applicationDate) && d.LOANID == loanId
-                            let sumPrincipalAmount = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(a => a.PAYMENTDATE >= DbFunctions.TruncateTime(applicationDate) && d.LOANID == loanId).Sum(a => a.PeriodPrincipalAmount)/// add repaymentpostedstatus = false after scaffording
+                            let sumPrincipalAmount = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(a => a.PAYMENTDATE >= DbFunctions.TruncateTime(applicationDate) && d.LOANID == loanId).Sum(a => a.PERIODPRINCIPALAMOUNT)/// add repaymentpostedstatus = false after scaffording
                             select sumPrincipalAmount;
             var accruedPrincipal = principal.FirstOrDefault();
 
