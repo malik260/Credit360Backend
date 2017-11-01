@@ -61,8 +61,8 @@ namespace FintrakBanking.Repositories.Setups.General
         //             on data.CountryId equals c.CountryId
         private IEnumerable<CompanyViewModel> tbl_Customer()
         {
-            return from data in context.tbl_Company
-                   join c in context.tbl_Country
+            return from data in context.TBL_COMPANY
+                   join c in context.TBL_COUNTRY
                      on data.CountryId equals c.CountryId
                    select new CompanyViewModel()
                    {
