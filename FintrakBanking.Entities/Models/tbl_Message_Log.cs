@@ -6,48 +6,48 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Message_Log")]
-    public partial class tbl_Message_Log
+    [Table("core.TBL_MESSAGE_LOG")]
+    public partial class TBL_MESSAGE_LOG
     {
         [Key]
-        public int MessageId { get; set; }
+        public int MESSAGEID { get; set; }
 
         [Required]
         [StringLength(1000)]
-        public string FromAddress { get; set; }
+        public string FROMADDRESS { get; set; }
 
         [Required]
         [StringLength(1000)]
-        public string ToAddress { get; set; }
+        public string TOADDRESS { get; set; }
 
         [Required]
-        public string MessageBody { get; set; }
+        public string MESSAGEBODY { get; set; }
 
         [Required]
         [StringLength(1000)]
-        public string MessageSubject { get; set; }
+        public string MESSAGESUBJECT { get; set; }
 
-        public short MessageStatusId { get; set; }
+        public short MESSAGESTATUSID { get; set; }
 
-        public short MessageTypeId { get; set; }
+        public short MESSAGETYPEID { get; set; }
 
-        public DateTime DateTimeReceived { get; set; }
+        public DateTime DATETIMERECEIVED { get; set; }
 
-        public DateTime SendOnDateTime { get; set; }
+        public DateTime SENDONDATETIME { get; set; }
 
-        public DateTime? DateTimeSent { get; set; }
+        public DateTime? DATETIMESENT { get; set; }
 
         [StringLength(2000)]
-        public string GatewayResponse { get; set; }
+        public string GATEWAYRESPONSE { get; set; }
 
-        public int? OperationId { get; set; }
+        public int? OPERATIONID { get; set; }
 
-        public int? TargetId { get; set; }
+        public int? TARGETID { get; set; }
 
-        public virtual tbl_Message_Log_Status tbl_Message_Log_Status { get; set; }
+        public virtual TBL_MESSAGE_LOG_STATUS TBL_MESSAGE_LOG_STATUS { get; set; }
 
-        public virtual tbl_Message_Log_Type tbl_Message_Log_Type { get; set; }
+        public virtual TBL_MESSAGE_LOG_TYPE TBL_MESSAGE_LOG_TYPE { get; set; }
 
-        public virtual tbl_Operations tbl_Operations { get; set; }
+        public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
     }
 }

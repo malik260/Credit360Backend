@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_CASA_Lien_Type")]
-    public partial class tbl_CASA_Lien_Type
+    [Table("core.TBL_CASA_LIEN_TYPE")]
+    public partial class TBL_CASA_LIEN_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_CASA_Lien_Type()
+        public TBL_CASA_LIEN_TYPE()
         {
-            tbl_CASA_Lien = new HashSet<tbl_CASA_Lien>();
+            TBL_CASA_LIEN = new HashSet<TBL_CASA_LIEN>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short LienTypeId { get; set; }
+        public short LIENTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LienTypeName { get; set; }
+        public string LIENTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
+        public virtual ICollection<TBL_CASA_LIEN> TBL_CASA_LIEN { get; set; }
     }
 }

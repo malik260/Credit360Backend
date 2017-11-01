@@ -6,35 +6,35 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Miscellaneous")]
-    public partial class tbl_Collateral_Miscellaneous
+    [Table("credit.TBL_COLLATERAL_MISCELLANEOUS")]
+    public partial class TBL_COLLATERAL_MISCELLANEOUS
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Collateral_Miscellaneous()
+        public TBL_COLLATERAL_MISCELLANEOUS()
         {
-            tbl_Collateral_Miscellaneous_Notes = new HashSet<tbl_Collateral_Miscellaneous_Notes>();
+            TBL_COLLATERAL_MISCELLANEOUS_NOTES = new HashSet<TBL_COLLATERAL_MISCELLANEOUS_NOTES>();
         }
 
         [Key]
-        public int CollateralMiscellaneousId { get; set; }
+        public int COLLATERALMISCELLANEOUSID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
-        public bool IsOwnedByCustomer { get; set; }
+        public bool ISOWNEDBYCUSTOMER { get; set; }
 
         [StringLength(50)]
-        public string NameOfSecurity { get; set; }
+        public string NAMEOFSECURITY { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal SecurityValue { get; set; }
+        public decimal SECURITYVALUE { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string Note { get; set; }
+        public string NOTE { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Miscellaneous_Notes> tbl_Collateral_Miscellaneous_Notes { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_MISCELLANEOUS_NOTES> TBL_COLLATERAL_MISCELLANEOUS_NOTES { get; set; }
     }
 }

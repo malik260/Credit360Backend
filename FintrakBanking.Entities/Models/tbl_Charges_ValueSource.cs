@@ -6,31 +6,31 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class tbl_Charges_ValueSource
+    public partial class TBL_CHARGES_VALUESOURCE
     {
         [Key]
-        public int ValueSourceId { get; set; }
+        public int VALUESOURCEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ValueSourceName { get; set; }
+        public string VALUESOURCENAME { get; set; }
 
-        public bool IsFixed { get; set; }
+        public bool ISFIXED { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
     }
 }

@@ -6,22 +6,22 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Fee_Schedule")]
-    public partial class tbl_Loan_Fee_Schedule
+    [Table("credit.TBL_LOAN_FEE_SCHEDULE")]
+    public partial class TBL_LOAN_FEE_SCHEDULE
     {
         [Key]
-        public int PeriodicLoanChargeFeeId { get; set; }
+        public int PERIODICLOANCHARGEFEEID { get; set; }
 
-        public int LoanChargeFeeId { get; set; }
+        public int LOANCHARGEFEEID { get; set; }
 
-        public int FeeNumber { get; set; }
+        public int FEENUMBER { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime FeeDate { get; set; }
+        public DateTime FEEDATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal FeeAmount { get; set; }
+        public decimal FEEAMOUNT { get; set; }
 
-        public virtual tbl_Loan_Fee tbl_Loan_Fee { get; set; }
+        public virtual TBL_LOAN_FEE TBL_LOAN_FEE { get; set; }
     }
 }

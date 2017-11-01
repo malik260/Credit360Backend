@@ -6,37 +6,37 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Checklist_TargetType")]
-    public partial class tbl_Checklist_TargetType
+    [Table("core.TBL_CHECKLIST_TARGETTYPE")]
+    public partial class TBL_CHECKLIST_TARGETTYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Checklist_TargetType()
+        public TBL_CHECKLIST_TARGETTYPE()
         {
-            tbl_Checklist_Detail = new HashSet<tbl_Checklist_Detail>();
+            TBL_CHECKLIST_DETAIL = new HashSet<TBL_CHECKLIST_DETAIL>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short TargetTypeId { get; set; }
+        public short TARGETTYPEID { get; set; }
 
         [StringLength(50)]
-        public string TargetTypeName { get; set; }
+        public string TARGETTYPENAME { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Checklist_Detail> tbl_Checklist_Detail { get; set; }
+        public virtual ICollection<TBL_CHECKLIST_DETAIL> TBL_CHECKLIST_DETAIL { get; set; }
     }
 }

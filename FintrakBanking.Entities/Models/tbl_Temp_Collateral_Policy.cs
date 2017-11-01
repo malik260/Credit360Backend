@@ -6,52 +6,52 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Collateral_Policy")]
-    public partial class tbl_Temp_Collateral_Policy
+    [Table("temp.TBL_TEMP_COLLATERAL_POLICY")]
+    public partial class TBL_TEMP_COLLATERAL_POLICY
     {
         [Key]
-        public int CollateralInsurancePolicyId { get; set; }
+        public int COLLATERALINSURANCEPOLICYID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
-        public short CollateralSubTypeId { get; set; }
+        public short COLLATERALSUBTYPEID { get; set; }
 
-        public bool IsOwnedByCustomer { get; set; }
+        public bool ISOWNEDBYCUSTOMER { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string InsurancePolicyNumber { get; set; }
+        public string INSURANCEPOLICYNUMBER { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal PremiumAmount { get; set; }
+        public decimal PREMIUMAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal PolicyAmount { get; set; }
+        public decimal POLICYAMOUNT { get; set; }
 
         [Required]
         [StringLength(10)]
-        public string InsuranceCompanyName { get; set; }
+        public string INSURANCECOMPANYNAME { get; set; }
 
         [Required]
         [StringLength(300)]
-        public string InsurerAddress { get; set; }
+        public string INSURERADDRESS { get; set; }
 
-        public DateTime PolicyStartDate { get; set; }
+        public DateTime POLICYSTARTDATE { get; set; }
 
-        public DateTime AssignDate { get; set; }
+        public DateTime ASSIGNDATE { get; set; }
 
-        public short? RenewalFrequencyTypeId { get; set; }
-
-        [StringLength(500)]
-        public string InsurerDetails { get; set; }
-
-        public DateTime PolicyRenewalDate { get; set; }
+        public short? RENEWALFREQUENCYTYPEID { get; set; }
 
         [StringLength(500)]
-        public string Remark { get; set; }
+        public string INSURERDETAILS { get; set; }
 
-        public virtual tbl_Frequency_Type tbl_Frequency_Type { get; set; }
+        public DateTime POLICYRENEWALDATE { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        [StringLength(500)]
+        public string REMARK { get; set; }
+
+        public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }
+
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

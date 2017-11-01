@@ -6,71 +6,71 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Application_Collateral")]
-    public partial class tbl_Loan_Application_Collateral
+    [Table("credit.TBL_LOAN_APPLICATION_COLLATERAL")]
+    public partial class TBL_LOAN_APPLICATION_COLLATERAL
     {
         [Key]
-        public int CustomerCollateralId { get; set; }
+        public int CUSTOMERCOLLATERALID { get; set; }
 
-        public int LoanApplicationId { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
 
-        public int CollateralTypeId { get; set; }
+        public int COLLATERALTYPEID { get; set; }
 
-        public int? CasaAccountId { get; set; }
+        public int? CASAACCOUNTID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string CollateralReferenceNumber { get; set; }
+        public string COLLATERALREFERENCENUMBER { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? CollateralValue { get; set; }
+        public decimal? COLLATERALVALUE { get; set; }
 
-        public bool? IsBankAccount { get; set; }
+        public bool? ISBANKACCOUNT { get; set; }
 
-        public int? CityId { get; set; }
-
-        [StringLength(50)]
-        public string DocumentTitle { get; set; }
-
-        public double? Latitude { get; set; }
-
-        public double? Longitude { get; set; }
+        public int? CITYID { get; set; }
 
         [StringLength(50)]
-        public string LocationAddress { get; set; }
+        public string DOCUMENTTITLE { get; set; }
+
+        public double? LATITUDE { get; set; }
+
+        public double? LONGITUDE { get; set; }
+
+        [StringLength(50)]
+        public string LOCATIONADDRESS { get; set; }
 
         [StringLength(250)]
-        public string NearestBusStop { get; set; }
+        public string NEARESTBUSSTOP { get; set; }
 
         [StringLength(250)]
-        public string NearestLandmark { get; set; }
+        public string NEARESTLANDMARK { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string OtherInformations { get; set; }
+        public string OTHERINFORMATIONS { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public DateTime SystemDateTime { get; set; }
+        public DateTime SYSTEMDATETIME { get; set; }
 
-        public virtual tbl_CASA tbl_CASA { get; set; }
+        public virtual TBL_CASA TBL_CASA { get; set; }
 
-        public virtual tbl_City tbl_City { get; set; }
+        public virtual TBL_CITY TBL_CITY { get; set; }
 
-        public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
+        public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE { get; set; }
 
-        public virtual tbl_Loan_Application tbl_Loan_Application { get; set; }
+        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
     }
 }

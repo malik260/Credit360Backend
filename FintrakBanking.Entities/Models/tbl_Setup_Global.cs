@@ -6,19 +6,19 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Setup_Global")]
-    public partial class tbl_Setup_Global
+    [Table("core.TBL_SETUP_GLOBAL")]
+    public partial class TBL_SETUP_GLOBAL
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short GlobalSetupId { get; set; }
+        public short GLOBALSETUPID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public double UnauthorisedOverdraft_InterestRate { get; set; }
+        public double UNAUTHORISEDOVERDRAFT_INTERESTRATE { get; set; }
 
-        public double PastDueInDefault_InterestRate { get; set; }
+        public double PASTDUEINDEFAULT_INTERESTRATE { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
     }
 }

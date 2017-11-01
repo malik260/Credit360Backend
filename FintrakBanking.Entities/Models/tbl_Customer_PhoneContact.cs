@@ -6,22 +6,22 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_PhoneContact")]
-    public partial class tbl_Customer_PhoneContact
+    [Table("core.TBL_CUSTOMER_PHONECONTACT")]
+    public partial class TBL_CUSTOMER_PHONECONTACT
     {
         [Key]
-        public int PhoneContactId { get; set; }
+        public int PHONECONTACTID { get; set; }
 
         [StringLength(20)]
-        public string Phone { get; set; }
+        public string PHONE { get; set; }
 
         [StringLength(12)]
-        public string PhoneNumber { get; set; }
+        public string PHONENUMBER { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
-        public bool Active { get; set; }
+        public bool ACTIVE { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }

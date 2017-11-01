@@ -6,32 +6,32 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Stock")]
-    public partial class tbl_Collateral_Stock
+    [Table("credit.TBL_COLLATERAL_STOCK")]
+    public partial class TBL_COLLATERAL_STOCK
     {
         [Key]
-        public int CollateralStockId { get; set; }
+        public int COLLATERALSTOCKID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string CompanyName { get; set; }
+        public string COMPANYNAME { get; set; }
 
-        public int ShareQuantity { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal MarketPrice { get; set; }
+        public int SHAREQUANTITY { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal Amount { get; set; }
+        public decimal MARKETPRICE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal SharesSecurityValue { get; set; }
+        public decimal AMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal ShareValueAmountToUse { get; set; }
+        public decimal SHARESSECURITYVALUE { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        [Column(TypeName = "money")]
+        public decimal SHAREVALUEAMOUNTTOUSE { get; set; }
+
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

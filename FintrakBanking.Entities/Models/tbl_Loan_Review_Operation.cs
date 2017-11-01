@@ -6,70 +6,70 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Review_Operation")]
-    public partial class tbl_Loan_Review_Operation
+    [Table("credit.TBL_LOAN_REVIEW_OPERATION")]
+    public partial class TBL_LOAN_REVIEW_OPERATION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Review_Operation()
+        public TBL_LOAN_REVIEW_OPERATION()
         {
-            tbl_Loan_Review_Operation_Irregular_Schedule = new HashSet<tbl_Loan_Review_Operation_Irregular_Schedule>();
+            TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE = new HashSet<TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE>();
         }
 
         [Key]
-        public int LoanReviewOperationId { get; set; }
+        public int LOANREVIEWOPERATIONID { get; set; }
 
-        public int LoanId { get; set; }
+        public int LOANID { get; set; }
 
-        public int ProductTypeId { get; set; }
+        public int PRODUCTTYPEID { get; set; }
 
-        public int OperationTypeId { get; set; }
+        public int OPERATIONTYPEID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime EffectiveDate { get; set; }
+        public DateTime EFFECTIVEDATE { get; set; }
 
         [Required]
-        public string ReviewDetails { get; set; }
+        public string REVIEWDETAILS { get; set; }
 
-        public double? InterateRate { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? Prepayment { get; set; }
-
-        public int? PrincipalFrequencyTypeId { get; set; }
-
-        public int? InterestFrequencyTypeId { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? PrincipalFirstPaymentDate { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? InterestFirstPaymentDate { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? MaturityDate { get; set; }
-
-        public int? Tenor { get; set; }
-
-        public int? CASA_AccountId { get; set; }
+        public double? INTERATERATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? OverDraftTopup { get; set; }
+        public decimal? PREPAYMENT { get; set; }
 
-        [Column(TypeName = "money")]
-        public decimal? Fee_Charges { get; set; }
+        public int? PRINCIPALFREQUENCYTYPEID { get; set; }
 
-        public int ApprovalStatusId { get; set; }
-
-        public bool IsManagementInterestRate { get; set; }
-
-        public bool OperationCompleted { get; set; }
-
-        public int CreatedBy { get; set; }
+        public int? INTERESTFREQUENCYTYPEID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime DateCreated { get; set; }
+        public DateTime? PRINCIPALFIRSTPAYMENTDATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? INTERESTFIRSTPAYMENTDATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? MATURITYDATE { get; set; }
+
+        public int? TENOR { get; set; }
+
+        public int? CASA_ACCOUNTID { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? OVERDRAFTTOPUP { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? FEE_CHARGES { get; set; }
+
+        public int APPROVALSTATUSID { get; set; }
+
+        public bool ISMANAGEMENTINTERESTRATE { get; set; }
+
+        public bool OPERATIONCOMPLETED { get; set; }
+
+        public int CREATEDBY { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime DATECREATED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Review_Operation_Irregular_Schedule> tbl_Loan_Review_Operation_Irregular_Schedule { get; set; }
+        public virtual ICollection<TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE> TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE { get; set; }
     }
 }

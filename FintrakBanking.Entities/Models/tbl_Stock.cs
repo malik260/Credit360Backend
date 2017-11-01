@@ -6,26 +6,26 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("treasury.tbl_Stock")]
-    public partial class tbl_Stock
+    [Table("treasury.TBL_STOCK")]
+    public partial class TBL_STOCK
     {
         [Key]
-        public int StockId { get; set; }
+        public int STOCKID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string StockCode { get; set; }
+        public string STOCKCODE { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string StockName { get; set; }
+        public string STOCKNAME { get; set; }
 
-        public bool IsQuoted { get; set; }
+        public bool ISQUOTED { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int SectorId { get; set; }
+        public int SECTORID { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
     }
 }

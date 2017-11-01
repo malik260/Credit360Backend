@@ -6,59 +6,59 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Approval_Trail")]
-    public partial class tbl_Approval_Trail
+    [Table("core.TBL_APPROVAL_TRAIL")]
+    public partial class TBL_APPROVAL_TRAIL
     {
         [Key]
-        public int ApprovalTrailId { get; set; }
+        public int APPROVALTRAILID { get; set; }
 
-        public int TargetId { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime ArrivalDate { get; set; }
-
-        public DateTime SystemArrivalDateTime { get; set; }
+        public int TARGETID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? ResponseDate { get; set; }
+        public DateTime ARRIVALDATE { get; set; }
 
-        public DateTime? SystemResponseDateTime { get; set; }
+        public DateTime SYSTEMARRIVALDATETIME { get; set; }
 
-        public int? ResponseStaffId { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime? RESPONSEDATE { get; set; }
 
-        public int CompanyId { get; set; }
+        public DateTime? SYSTEMRESPONSEDATETIME { get; set; }
 
-        public int RequestStaffId { get; set; }
+        public int? RESPONSESTAFFID { get; set; }
 
-        public int? FromApprovalLevelId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int? ToApprovalLevelId { get; set; }
+        public int REQUESTSTAFFID { get; set; }
 
-        public short ApprovalStateId { get; set; }
+        public int? FROMAPPROVALLEVELID { get; set; }
 
-        public short ApprovalStatusId { get; set; }
+        public int? TOAPPROVALLEVELID { get; set; }
 
-        public int OperationId { get; set; }
+        public short APPROVALSTATEID { get; set; }
+
+        public short APPROVALSTATUSID { get; set; }
+
+        public int OPERATIONID { get; set; }
 
         [StringLength(700)]
-        public string Comment { get; set; }
+        public string COMMENT { get; set; }
 
-        public bool VotedYes { get; set; }
+        public bool VOTEDYES { get; set; }
 
-        public virtual tbl_Approval_Level tbl_Approval_Level { get; set; }
+        public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
-        public virtual tbl_Approval_Level tbl_Approval_Level1 { get; set; }
+        public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL1 { get; set; }
 
-        public virtual tbl_Approval_State tbl_Approval_State { get; set; }
+        public virtual TBL_APPROVAL_STATE TBL_APPROVAL_STATE { get; set; }
 
-        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Operations tbl_Operations { get; set; }
+        public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
-        public virtual tbl_Staff tbl_Staff { get; set; }
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
 
-        public virtual tbl_Staff tbl_Staff1 { get; set; }
+        public virtual TBL_STAFF TBL_STAFF1 { get; set; }
     }
 }

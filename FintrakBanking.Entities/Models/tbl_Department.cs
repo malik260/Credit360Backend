@@ -6,47 +6,47 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Department")]
-    public partial class tbl_Department
+    [Table("core.TBL_DEPARTMENT")]
+    public partial class TBL_DEPARTMENT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Department()
+        public TBL_DEPARTMENT()
         {
-            tbl_Job_Request = new HashSet<tbl_Job_Request>();
-            tbl_Temp_Staff = new HashSet<tbl_Temp_Staff>();
+            TBL_JOB_REQUEST = new HashSet<TBL_JOB_REQUEST>();
+            TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
 
         [Key]
-        public short DepartmentId { get; set; }
+        public short DEPARTMENTID { get; set; }
 
-        public short? BranchId { get; set; }
+        public short? BRANCHID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string DepartmentCode { get; set; }
+        public string DEPARTMENTCODE { get; set; }
 
         [StringLength(50)]
-        public string DepartmentName { get; set; }
+        public string DEPARTMENTNAME { get; set; }
 
         [StringLength(250)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public int? CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool? Deleted { get; set; }
+        public bool? DELETED { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Job_Request> tbl_Job_Request { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Staff> tbl_Temp_Staff { get; set; }
+        public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
     }
 }

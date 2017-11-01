@@ -6,31 +6,31 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Covenant_Type")]
-    public partial class tbl_Loan_Covenant_Type
+    [Table("credit.TBL_LOAN_COVENANT_TYPE")]
+    public partial class TBL_LOAN_COVENANT_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Covenant_Type()
+        public TBL_LOAN_COVENANT_TYPE()
         {
-            tbl_Loan_Covenant_Detail = new HashSet<tbl_Loan_Covenant_Detail>();
+            TBL_LOAN_COVENANT_DETAIL = new HashSet<TBL_LOAN_COVENANT_DETAIL>();
         }
 
         [Key]
-        public short CovenantTypeId { get; set; }
+        public short COVENANTTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string CovenantTypeName { get; set; }
+        public string COVENANTTYPENAME { get; set; }
 
-        public bool RequireAmount { get; set; }
+        public bool REQUIREAMOUNT { get; set; }
 
-        public bool RequireFrequency { get; set; }
+        public bool REQUIREFREQUENCY { get; set; }
 
-        public bool IsCleanupCycle { get; set; }
+        public bool ISCLEANUPCYCLE { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Covenant_Detail> tbl_Loan_Covenant_Detail { get; set; }
+        public virtual ICollection<TBL_LOAN_COVENANT_DETAIL> TBL_LOAN_COVENANT_DETAIL { get; set; }
     }
 }

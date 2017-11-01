@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_IdentificationModeType")]
-    public partial class tbl_Customer_IdentificationModeType
+    [Table("core.TBL_CUSTOMER_IDENTIFICATIONMODETYPE")]
+    public partial class TBL_CUSTOMER_IDENTIFICATIONMODETYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Customer_IdentificationModeType()
+        public TBL_CUSTOMER_IDENTIFICATIONMODETYPE()
         {
-            tbl_Customer_Identification = new HashSet<tbl_Customer_Identification>();
+            TBL_CUSTOMER_IDENTIFICATION = new HashSet<TBL_CUSTOMER_IDENTIFICATION>();
         }
 
         [Key]
-        public int IdentificationModeId { get; set; }
+        public int IDENTIFICATIONMODEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string IdentificationMode { get; set; }
+        public string IDENTIFICATIONMODE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_Identification> tbl_Customer_Identification { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_IDENTIFICATION> TBL_CUSTOMER_IDENTIFICATION { get; set; }
     }
 }

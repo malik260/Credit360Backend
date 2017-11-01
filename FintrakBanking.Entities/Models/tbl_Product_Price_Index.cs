@@ -6,59 +6,59 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Product_Price_Index")]
-    public partial class tbl_Product_Price_Index
+    [Table("core.TBL_PRODUCT_PRICE_INDEX")]
+    public partial class TBL_PRODUCT_PRICE_INDEX
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Product_Price_Index()
+        public TBL_PRODUCT_PRICE_INDEX()
         {
-            tbl_Product = new HashSet<tbl_Product>();
-            tbl_Loan_Bulk_Interest_Review = new HashSet<tbl_Loan_Bulk_Interest_Review>();
-            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
+            TBL_PRODUCT = new HashSet<TBL_PRODUCT>();
+            TBL_LOAN_BULK_INTEREST_REVIEW = new HashSet<TBL_LOAN_BULK_INTEREST_REVIEW>();
+            TBL_TEMP_PRODUCT = new HashSet<TBL_TEMP_PRODUCT>();
         }
 
         [Key]
-        public short ProductPriceIndexId { get; set; }
+        public short PRODUCTPRICEINDEXID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string PriceIndexName { get; set; }
+        public string PRICEINDEXNAME { get; set; }
 
-        public double PriceIndexRate { get; set; }
+        public double PRICEINDEXRATE { get; set; }
 
-        public int Duration { get; set; }
+        public int DURATION { get; set; }
 
-        public bool AllowAutomaticRepricing { get; set; }
+        public bool ALLOWAUTOMATICREPRICING { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string PriceIndexDescription { get; set; }
+        public string PRICEINDEXDESCRIPTION { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public int? CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Bulk_Interest_Review> tbl_Loan_Bulk_Interest_Review { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
+        public virtual ICollection<TBL_LOAN_BULK_INTEREST_REVIEW> TBL_LOAN_BULK_INTEREST_REVIEW { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT { get; set; }
     }
 }

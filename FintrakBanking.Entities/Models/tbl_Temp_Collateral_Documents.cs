@@ -6,48 +6,48 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Collateral_Documents")]
-    public partial class tbl_Temp_Collateral_Documents
+    [Table("temp.TBL_TEMP_COLLATERAL_DOCUMENTS")]
+    public partial class TBL_TEMP_COLLATERAL_DOCUMENTS
     {
         [Key]
-        public long DocumentId { get; set; }
+        public long DOCUMENTID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string DocumentCategory { get; set; }
+        public string DOCUMENTCATEGORY { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string DocumentRef { get; set; }
+        public string DOCUMENTREF { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string DocumentCode { get; set; }
+        public string DOCUMENTCODE { get; set; }
 
         [StringLength(100)]
-        public string DocumentType { get; set; }
+        public string DOCUMENTTYPE { get; set; }
 
-        public bool IsMandatory { get; set; }
+        public bool ISMANDATORY { get; set; }
 
         [StringLength(500)]
-        public string Remark { get; set; }
+        public string REMARK { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Temp_Collateral_Customer tbl_Temp_Collateral_Customer { get; set; }
+        public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
     }
 }

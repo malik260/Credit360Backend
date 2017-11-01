@@ -6,47 +6,47 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Collateral_Stock")]
-    public partial class tbl_Temp_Collateral_Stock
+    [Table("temp.TBL_TEMP_COLLATERAL_STOCK")]
+    public partial class TBL_TEMP_COLLATERAL_STOCK
     {
-        public int? CollateralStockId { get; set; }
+        public int? COLLATERALSTOCKID { get; set; }
 
         [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
         [Key]
         [Column(Order = 1)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short CollateralSubTypeId { get; set; }
+        public short COLLATERALSUBTYPEID { get; set; }
 
         [Key]
         [Column(Order = 2)]
         [StringLength(250)]
-        public string CompanyName { get; set; }
+        public string COMPANYNAME { get; set; }
 
         [Key]
         [Column(Order = 3)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int ShareQuantity { get; set; }
+        public int SHAREQUANTITY { get; set; }
 
         [Key]
         [Column(Order = 4, TypeName = "money")]
-        public decimal MarketPrice { get; set; }
+        public decimal MARKETPRICE { get; set; }
 
         [Key]
         [Column(Order = 5, TypeName = "money")]
-        public decimal Amount { get; set; }
+        public decimal AMOUNT { get; set; }
 
         [Key]
         [Column(Order = 6, TypeName = "money")]
-        public decimal SharesSecurityValue { get; set; }
+        public decimal SHARESSECURITYVALUE { get; set; }
 
         [Key]
         [Column(Order = 7, TypeName = "money")]
-        public decimal ShareValueAmountToUse { get; set; }
+        public decimal SHAREVALUEAMOUNTTOUSE { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Risk_Assessment_Index_Type")]
-    public partial class tbl_Risk_Assessment_Index_Type
+    [Table("credit.TBL_RISK_ASSESSMENT_INDEX_TYPE")]
+    public partial class TBL_RISK_ASSESSMENT_INDEX_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Risk_Assessment_Index_Type()
+        public TBL_RISK_ASSESSMENT_INDEX_TYPE()
         {
-            tbl_Risk_Assessment_Index = new HashSet<tbl_Risk_Assessment_Index>();
+            TBL_RISK_ASSESSMENT_INDEX = new HashSet<TBL_RISK_ASSESSMENT_INDEX>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short IndexTypeId { get; set; }
+        public short INDEXTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string IndexTypeName { get; set; }
+        public string INDEXTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Risk_Assessment_Index> tbl_Risk_Assessment_Index { get; set; }
+        public virtual ICollection<TBL_RISK_ASSESSMENT_INDEX> TBL_RISK_ASSESSMENT_INDEX { get; set; }
     }
 }

@@ -6,11 +6,11 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class dev_CheckList
+    public partial class DEV_CHECKLIST
     {
-        public int Id { get; set; }
+        public int ID { get; set; }
 
         [StringLength(1000)]
-        public string Checklist { get; set; }
+        public string CHECKLIST { get; set; }
     }
 }

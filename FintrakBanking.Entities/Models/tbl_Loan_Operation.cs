@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Operation")]
-    public partial class tbl_Loan_Operation
+    [Table("credit.TBL_LOAN_OPERATION")]
+    public partial class TBL_LOAN_OPERATION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Operation()
+        public TBL_LOAN_OPERATION()
         {
-            tbl_Loan_Status = new HashSet<tbl_Loan_Status>();
+            TBL_LOAN_STATUS = new HashSet<TBL_LOAN_STATUS>();
         }
 
         [Key]
-        public short OperationId { get; set; }
+        public short OPERATIONID { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string Name { get; set; }
+        public string NAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Status> tbl_Loan_Status { get; set; }
+        public virtual ICollection<TBL_LOAN_STATUS> TBL_LOAN_STATUS { get; set; }
     }
 }

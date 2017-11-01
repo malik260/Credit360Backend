@@ -6,222 +6,222 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Staff")]
-    public partial class tbl_Staff
+    [Table("core.TBL_STAFF")]
+    public partial class TBL_STAFF
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Staff()
+        public TBL_STAFF()
         {
-            tbl_Approval_Level_Staff = new HashSet<tbl_Approval_Level_Staff>();
-            tbl_Approval_Trail = new HashSet<tbl_Approval_Trail>();
-            tbl_Approval_Trail1 = new HashSet<tbl_Approval_Trail>();
-            tbl_Audit = new HashSet<tbl_Audit>();
-            tbl_CASA = new HashSet<tbl_CASA>();
-            tbl_CASA1 = new HashSet<tbl_CASA>();
-            tbl_Customer = new HashSet<tbl_Customer>();
-            tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
-            tbl_Finance_Transaction1 = new HashSet<tbl_Finance_Transaction>();
-            tbl_Job_Request = new HashSet<tbl_Job_Request>();
-            tbl_Job_Request1 = new HashSet<tbl_Job_Request>();
-            tbl_Job_Request2 = new HashSet<tbl_Job_Request>();
-            tbl_Notification_Log = new HashSet<tbl_Notification_Log>();
-            tbl_Profile_User = new HashSet<tbl_Profile_User>();
-            tbl_Call_Memo = new HashSet<tbl_Call_Memo>();
-            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
-            tbl_Loan_Application1 = new HashSet<tbl_Loan_Application>();
-            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Archive1 = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
-            tbl_Loan_Contingent1 = new HashSet<tbl_Loan_Contingent>();
-            tbl_Loan = new HashSet<tbl_Loan>();
-            tbl_Loan1 = new HashSet<tbl_Loan>();
-            tbl_Loan_Preliminary_Evaluation = new HashSet<tbl_Loan_Preliminary_Evaluation>();
-            tbl_Loan_Preliminary_Evaluation1 = new HashSet<tbl_Loan_Preliminary_Evaluation>();
-            tbl_Loan_Relationship_Officer_History = new HashSet<tbl_Loan_Relationship_Officer_History>();
-            tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
-            tbl_Loan_Revolving1 = new HashSet<tbl_Loan_Revolving>();
+            TBL_APPROVAL_LEVEL_STAFF = new HashSet<TBL_APPROVAL_LEVEL_STAFF>();
+            TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
+            TBL_APPROVAL_TRAIL1 = new HashSet<TBL_APPROVAL_TRAIL>();
+            TBL_AUDIT = new HashSet<TBL_AUDIT>();
+            TBL_CASA = new HashSet<TBL_CASA>();
+            TBL_CASA1 = new HashSet<TBL_CASA>();
+            TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
+            TBL_FINANCE_TRANSACTION = new HashSet<TBL_FINANCE_TRANSACTION>();
+            TBL_FINANCE_TRANSACTION1 = new HashSet<TBL_FINANCE_TRANSACTION>();
+            TBL_JOB_REQUEST = new HashSet<TBL_JOB_REQUEST>();
+            TBL_JOB_REQUEST1 = new HashSet<TBL_JOB_REQUEST>();
+            TBL_JOB_REQUEST2 = new HashSet<TBL_JOB_REQUEST>();
+            TBL_NOTIFICATION_LOG = new HashSet<TBL_NOTIFICATION_LOG>();
+            TBL_PROFILE_USER = new HashSet<TBL_PROFILE_USER>();
+            TBL_CALL_MEMO = new HashSet<TBL_CALL_MEMO>();
+            TBL_LOAN_APPLICATION = new HashSet<TBL_LOAN_APPLICATION>();
+            TBL_LOAN_APPLICATION1 = new HashSet<TBL_LOAN_APPLICATION>();
+            TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
+            TBL_LOAN_ARCHIVE1 = new HashSet<TBL_LOAN_ARCHIVE>();
+            TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
+            TBL_LOAN_CONTINGENT1 = new HashSet<TBL_LOAN_CONTINGENT>();
+            TBL_LOAN = new HashSet<TBL_LOAN>();
+            TBL_LOAN1 = new HashSet<TBL_LOAN>();
+            TBL_LOAN_PRELIMINARY_EVALUATION = new HashSet<TBL_LOAN_PRELIMINARY_EVALUATION>();
+            TBL_LOAN_PRELIMINARY_EVALUATION1 = new HashSet<TBL_LOAN_PRELIMINARY_EVALUATION>();
+            TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY = new HashSet<TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY>();
+            TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
+            TBL_LOAN_REVOLVING1 = new HashSet<TBL_LOAN_REVOLVING>();
         }
 
         [Key]
-        public int StaffId { get; set; }
+        public int STAFFID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string StaffCode { get; set; }
+        public string STAFFCODE { get; set; }
 
-        public int CompanyId { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string FirstName { get; set; }
+        public int COMPANYID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LastName { get; set; }
+        public string FIRSTNAME { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string LASTNAME { get; set; }
 
         [StringLength(50)]
-        public string MiddleName { get; set; }
+        public string MIDDLENAME { get; set; }
 
-        public int JobTitleId { get; set; }
+        public int JOBTITLEID { get; set; }
 
-        public int RankId { get; set; }
-
-        [StringLength(100)]
-        public string Phone { get; set; }
+        public int RANKID { get; set; }
 
         [StringLength(100)]
-        public string Email { get; set; }
+        public string PHONE { get; set; }
 
         [StringLength(100)]
-        public string Address { get; set; }
+        public string EMAIL { get; set; }
+
+        [StringLength(100)]
+        public string ADDRESS { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? DateOfBirth { get; set; }
+        public DateTime? DATEOFBIRTH { get; set; }
 
         [StringLength(1)]
-        public string Gender { get; set; }
+        public string GENDER { get; set; }
 
         [StringLength(100)]
-        public string NameOfNOK { get; set; }
+        public string NAMEOFNOK { get; set; }
 
         [StringLength(100)]
-        public string PhoneOfNOK { get; set; }
+        public string PHONEOFNOK { get; set; }
 
         [StringLength(100)]
-        public string EmailOfNOK { get; set; }
+        public string EMAILOFNOK { get; set; }
 
         [StringLength(100)]
-        public string AddressOfNOK { get; set; }
+        public string ADDRESSOFNOK { get; set; }
 
         [StringLength(1)]
-        public string GenderOfNOK { get; set; }
+        public string GENDEROFNOK { get; set; }
 
         [StringLength(100)]
-        public string NOKRelationShip { get; set; }
+        public string NOKRELATIONSHIP { get; set; }
 
         [StringLength(100)]
-        public string Comment { get; set; }
+        public string COMMENT { get; set; }
 
-        public byte[] Staffsignature { get; set; }
+        public byte[] STAFFSIGNATURE { get; set; }
 
-        public short? BranchId { get; set; }
+        public short? BRANCHID { get; set; }
 
-        public int? MISInfoId { get; set; }
+        public int? MISINFOID { get; set; }
 
-        public short? DepartmentId { get; set; }
+        public short? DEPARTMENTID { get; set; }
 
-        public int? StateId { get; set; }
+        public int? STATEID { get; set; }
 
-        public int? CityId { get; set; }
+        public int? CITYID { get; set; }
 
-        public short CustomerSensitivityLevel { get; set; }
+        public short CUSTOMERSENSITIVITYLEVEL { get; set; }
 
-        public bool NPL_LimitExceeded { get; set; }
+        public bool NPL_LIMITEXCEEDED { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public int? CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Level_Staff> tbl_Approval_Level_Staff { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Trail> tbl_Approval_Trail { get; set; }
+        public virtual ICollection<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Trail> tbl_Approval_Trail1 { get; set; }
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Audit> tbl_Audit { get; set; }
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_CASA> tbl_CASA { get; set; }
+        public virtual ICollection<TBL_AUDIT> TBL_AUDIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_CASA> tbl_CASA1 { get; set; }
-
-        public virtual tbl_City tbl_City { get; set; }
-
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual ICollection<TBL_CASA> TBL_CASA { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer> tbl_Customer { get; set; }
+        public virtual ICollection<TBL_CASA> TBL_CASA1 { get; set; }
+
+        public virtual TBL_CITY TBL_CITY { get; set; }
+
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
+        public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction1 { get; set; }
+        public virtual ICollection<TBL_FINANCE_TRANSACTION> TBL_FINANCE_TRANSACTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Job_Request> tbl_Job_Request { get; set; }
+        public virtual ICollection<TBL_FINANCE_TRANSACTION> TBL_FINANCE_TRANSACTION1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Job_Request> tbl_Job_Request1 { get; set; }
+        public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Job_Request> tbl_Job_Request2 { get; set; }
+        public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Notification_Log> tbl_Notification_Log { get; set; }
+        public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST2 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_User> tbl_Profile_User { get; set; }
+        public virtual ICollection<TBL_NOTIFICATION_LOG> TBL_NOTIFICATION_LOG { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Call_Memo> tbl_Call_Memo { get; set; }
+        public virtual ICollection<TBL_PROFILE_USER> TBL_PROFILE_USER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
+        public virtual ICollection<TBL_CALL_MEMO> TBL_CALL_MEMO { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application1 { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive1 { get; set; }
+        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
+        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent1 { get; set; }
+        public virtual ICollection<TBL_LOAN_CONTINGENT> TBL_LOAN_CONTINGENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+        public virtual ICollection<TBL_LOAN_CONTINGENT> TBL_LOAN_CONTINGENT1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan> tbl_Loan1 { get; set; }
+        public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Preliminary_Evaluation> tbl_Loan_Preliminary_Evaluation { get; set; }
+        public virtual ICollection<TBL_LOAN> TBL_LOAN1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Preliminary_Evaluation> tbl_Loan_Preliminary_Evaluation1 { get; set; }
+        public virtual ICollection<TBL_LOAN_PRELIMINARY_EVALUATION> TBL_LOAN_PRELIMINARY_EVALUATION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Relationship_Officer_History> tbl_Loan_Relationship_Officer_History { get; set; }
+        public virtual ICollection<TBL_LOAN_PRELIMINARY_EVALUATION> TBL_LOAN_PRELIMINARY_EVALUATION1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
+        public virtual ICollection<TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY> TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving1 { get; set; }
+        public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; }
 
-        public virtual tbl_Staff_JobTitle tbl_Staff_JobTitle { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING1 { get; set; }
 
-        public virtual tbl_Staff_Rank tbl_Staff_Rank { get; set; }
+        public virtual TBL_STAFF_JOBTITLE TBL_STAFF_JOBTITLE { get; set; }
+
+        public virtual TBL_STAFF_RANK TBL_STAFF_RANK { get; set; }
     }
 }

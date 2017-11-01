@@ -6,42 +6,42 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Risk_Rating")]
-    public partial class tbl_Risk_Rating
+    [Table("credit.TBL_RISK_RATING")]
+    public partial class TBL_RISK_RATING
     {
         [Key]
-        public int RiskRatingId { get; set; }
+        public int RISKRATINGID { get; set; }
 
         [StringLength(10)]
-        public string Rates { get; set; }
+        public string RATES { get; set; }
 
-        public decimal? MaxRange { get; set; }
+        public decimal? MAXRANGE { get; set; }
 
-        public decimal? MinRange { get; set; }
+        public decimal? MINRANGE { get; set; }
 
-        public decimal? AdvicedRate { get; set; }
+        public decimal? ADVICEDRATE { get; set; }
 
         [StringLength(10)]
-        public string RatesDescription { get; set; }
+        public string RATESDESCRIPTION { get; set; }
 
-        public short ProductId { get; set; }
+        public short PRODUCTID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Product tbl_Product { get; set; }
+        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
     }
 }

@@ -6,17 +6,17 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Content_PlaceHolder")]
-    public partial class tbl_Content_PlaceHolder
+    [Table("core.TBL_CONTENT_PLACEHOLDER")]
+    public partial class TBL_CONTENT_PLACEHOLDER
     {
         [Key]
-        public int ContentPlaceHolderId { get; set; }
+        public int CONTENTPLACEHOLDERID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ContentPlaceHolder { get; set; }
+        public string CONTENTPLACEHOLDER { get; set; }
 
         [StringLength(50)]
-        public string CollumnName { get; set; }
+        public string COLLUMNNAME { get; set; }
     }
 }

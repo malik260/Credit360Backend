@@ -6,45 +6,45 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Call_Memo")]
-    public partial class tbl_Call_Memo
+    [Table("credit.TBL_CALL_MEMO")]
+    public partial class TBL_CALL_MEMO
     {
         [Key]
-        public int CallMemoId { get; set; }
+        public int CALLMEMOID { get; set; }
 
-        public int LoanApplicationId { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
 
-        public int StaffId { get; set; }
+        public int STAFFID { get; set; }
 
-        public short CallLimitTypeId { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime MemoDate { get; set; }
+        public short CALLLIMITTYPEID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? NextCallDate { get; set; }
+        public DateTime MEMODATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? NEXTCALLDATE { get; set; }
 
         [Required]
-        public string Purpose { get; set; }
+        public string PURPOSE { get; set; }
 
-        public string Discusion { get; set; }
+        public string DISCUSION { get; set; }
 
-        public string Summary { get; set; }
+        public string SUMMARY { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string Action { get; set; }
+        public string ACTION { get; set; }
 
         [StringLength(500)]
-        public string Recommendation { get; set; }
+        public string RECOMMENDATION { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime DateCreated { get; set; }
+        public DateTime DATECREATED { get; set; }
 
-        public virtual tbl_Staff tbl_Staff { get; set; }
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
 
-        public virtual tbl_Call_Memo_Type tbl_Call_Memo_Type { get; set; }
+        public virtual TBL_CALL_MEMO_TYPE TBL_CALL_MEMO_TYPE { get; set; }
     }
 }

@@ -6,34 +6,34 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Fee_Type")]
-    public partial class tbl_Fee_Type
+    [Table("core.TBL_FEE_TYPE")]
+    public partial class TBL_FEE_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Fee_Type()
+        public TBL_FEE_TYPE()
         {
-            tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
-            tbl_Fee = new HashSet<tbl_Fee>();
-            tbl_Temp_Fee = new HashSet<tbl_Temp_Fee>();
+            TBL_CHARGE_FEE = new HashSet<TBL_CHARGE_FEE>();
+            TBL_FEE = new HashSet<TBL_FEE>();
+            TBL_TEMP_FEE = new HashSet<TBL_TEMP_FEE>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short FeeTypeId { get; set; }
+        public short FEETYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string FeeTypeName { get; set; }
+        public string FEETYPENAME { get; set; }
 
-        public bool ByAmountRequired { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
+        public bool BYAMOUNTREQUIRED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Fee> tbl_Fee { get; set; }
+        public virtual ICollection<TBL_CHARGE_FEE> TBL_CHARGE_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Fee> tbl_Temp_Fee { get; set; }
+        public virtual ICollection<TBL_FEE> TBL_FEE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_FEE> TBL_TEMP_FEE { get; set; }
     }
 }

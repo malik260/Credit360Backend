@@ -6,42 +6,42 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Product_Charge_Fee")]
-    public partial class tbl_Temp_Product_Charge_Fee
+    [Table("temp.TBL_TEMP_PRODUCT_CHARGE_FEE")]
+    public partial class TBL_TEMP_PRODUCT_CHARGE_FEE
     {
         [Key]
-        public int ProductFeeId { get; set; }
+        public int PRODUCTFEEID { get; set; }
 
-        public short ProductId { get; set; }
+        public short PRODUCTID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int ChargeFeeId { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal RateValue { get; set; }
+        public int CHARGEFEEID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? DependentAmount { get; set; }
+        public decimal RATEVALUE { get; set; }
 
-        public int CreatedBy { get; set; }
+        [Column(TypeName = "money")]
+        public decimal? DEPENDENTAMOUNT { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public bool Deleted { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public bool DELETED { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_CHARGE_FEE TBL_CHARGE_FEE { get; set; }
 
-        public virtual tbl_Temp_Product tbl_Temp_Product { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+
+        public virtual TBL_TEMP_PRODUCT TBL_TEMP_PRODUCT { get; set; }
     }
 }

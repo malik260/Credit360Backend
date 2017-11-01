@@ -6,40 +6,40 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_ErrorLog")]
-    public partial class tbl_ErrorLog
+    [Table("core.TBL_ERRORLOG")]
+    public partial class TBL_ERRORLOG
     {
         [Key]
-        public int ErrorLogId { get; set; }
+        public int ERRORLOGID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Username { get; set; }
+        public string USERNAME { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string ErrorType { get; set; }
+        public string ERRORTYPE { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string ErrorSource { get; set; }
+        public string ERRORSOURCE { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string ErrorMessage { get; set; }
+        public string ERRORMESSAGE { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string APIEndpoint { get; set; }
+        public string APIENDPOINT { get; set; }
 
         [StringLength(250)]
-        public string ErrorPath { get; set; }
+        public string ERRORPATH { get; set; }
 
-        public int? StatusCode { get; set; }
+        public int? STATUSCODE { get; set; }
 
-        public DateTime TimeUtc { get; set; }
+        public DateTime TIMEUTC { get; set; }
 
         [Column(TypeName = "ntext")]
-        public string AllXml { get; set; }
+        public string ALLXML { get; set; }
     }
 }

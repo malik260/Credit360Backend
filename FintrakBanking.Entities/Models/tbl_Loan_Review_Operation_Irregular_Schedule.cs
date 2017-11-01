@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Review_Operation_Irregular_Schedule")]
-    public partial class tbl_Loan_Review_Operation_Irregular_Schedule
+    [Table("credit.TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE")]
+    public partial class TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE
     {
         [Key]
-        public int IrregularScheduleInputId { get; set; }
+        public int IRREGULARSCHEDULEINPUTID { get; set; }
 
-        public int LoanReviewOperationId { get; set; }
+        public int LOANREVIEWOPERATIONID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime PaymentDate { get; set; }
+        public DateTime PAYMENTDATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal PaymentAmount { get; set; }
+        public decimal PAYMENTAMOUNT { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public virtual tbl_Loan_Review_Operation tbl_Loan_Review_Operation { get; set; }
+        public virtual TBL_LOAN_REVIEW_OPERATION TBL_LOAN_REVIEW_OPERATION { get; set; }
     }
 }

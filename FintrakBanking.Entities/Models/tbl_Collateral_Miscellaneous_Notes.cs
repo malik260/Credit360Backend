@@ -6,35 +6,35 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Miscellaneous_Notes")]
-    public partial class tbl_Collateral_Miscellaneous_Notes
+    [Table("credit.TBL_COLLATERAL_MISCELLANEOUS_NOTES")]
+    public partial class TBL_COLLATERAL_MISCELLANEOUS_NOTES
     {
         [Key]
-        public int MiscellaneousNoteId { get; set; }
+        public int MISCELLANEOUSNOTEID { get; set; }
 
-        public int? MiscellaneousId { get; set; }
+        public int? MISCELLANEOUSID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ColumnName { get; set; }
+        public string COLUMNNAME { get; set; }
 
         [StringLength(250)]
-        public string ColumnValue { get; set; }
+        public string COLUMNVALUE { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Collateral_Miscellaneous tbl_Collateral_Miscellaneous { get; set; }
+        public virtual TBL_COLLATERAL_MISCELLANEOUS TBL_COLLATERAL_MISCELLANEOUS { get; set; }
     }
 }

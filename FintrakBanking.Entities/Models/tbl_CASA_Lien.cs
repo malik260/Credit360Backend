@@ -6,49 +6,49 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_CASA_Lien")]
-    public partial class tbl_CASA_Lien
+    [Table("core.TBL_CASA_LIEN")]
+    public partial class TBL_CASA_LIEN
     {
         [Key]
-        public int LienId { get; set; }
+        public int LIENID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string SourceReferenceNumber { get; set; }
+        public string SOURCEREFERENCENUMBER { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ProductAccountNumber { get; set; }
+        public string PRODUCTACCOUNTNUMBER { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LienReferenceNumber { get; set; }
+        public string LIENREFERENCENUMBER { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public short BranchId { get; set; }
+        public short BRANCHID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal LienCreditAmount { get; set; }
+        public decimal LIENCREDITAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal LienDebitAmount { get; set; }
+        public decimal LIENDEBITAMOUNT { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
-        public short LienTypeId { get; set; }
+        public short LIENTYPEID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime DateCreated { get; set; }
+        public DateTime DATECREATED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
-        public virtual tbl_CASA_Lien_Type tbl_CASA_Lien_Type { get; set; }
+        public virtual TBL_CASA_LIEN_TYPE TBL_CASA_LIEN_TYPE { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
     }
 }

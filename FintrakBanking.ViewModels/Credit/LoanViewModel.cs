@@ -162,6 +162,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
+        public decimal overdraftLimit { get; set; }
 
         //......End f Loan Relational Table View Mapping Models......//
     }
@@ -450,6 +451,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string relationshipOfficer { get; set; }
         public string officerEmail { get; set; }
         public int relationshipOfficerId { get; set; }
+        public int relationshipManagerId { get; set; }
     }
 
     public class DailyInterestAccrualViewModel : GeneralEntity

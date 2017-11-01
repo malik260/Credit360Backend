@@ -6,21 +6,21 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Solicitor_State_Mapping")]
-    public partial class tbl_Solicitor_State_Mapping
+    [Table("credit.TBL_SOLICITOR_STATE_MAPPING")]
+    public partial class TBL_SOLICITOR_STATE_MAPPING
     {
         [Key]
-        public int SolicitorStateId { get; set; }
+        public int SOLICITORSTATEID { get; set; }
 
-        public int SolicitorId { get; set; }
+        public int SOLICITORID { get; set; }
 
-        public int StateId { get; set; }
+        public int STATEID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal CollateralSearchChargeAmount { get; set; }
+        public decimal COLLATERALSEARCHCHARGEAMOUNT { get; set; }
 
-        public virtual tbl_State tbl_State { get; set; }
+        public virtual TBL_STATE TBL_STATE { get; set; }
 
-        public virtual tbl_Solicitor tbl_Solicitor { get; set; }
+        public virtual TBL_SOLICITOR TBL_SOLICITOR { get; set; }
     }
 }

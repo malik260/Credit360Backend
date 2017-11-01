@@ -6,103 +6,103 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Approval_Level")]
-    public partial class tbl_Approval_Level
+    [Table("core.TBL_APPROVAL_LEVEL")]
+    public partial class TBL_APPROVAL_LEVEL
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Approval_Level()
+        public TBL_APPROVAL_LEVEL()
         {
-            tbl_Approval_Level_Staff = new HashSet<tbl_Approval_Level_Staff>();
-            tbl_Approval_Trail = new HashSet<tbl_Approval_Trail>();
-            tbl_Approval_Trail1 = new HashSet<tbl_Approval_Trail>();
-            tbl_Credit_Appraisal_Memorandum_Document = new HashSet<tbl_Credit_Appraisal_Memorandum_Document>();
-            tbl_Credit_Template = new HashSet<tbl_Credit_Template>();
-            tbl_Checklist_Definition = new HashSet<tbl_Checklist_Definition>();
+            TBL_APPROVAL_LEVEL_STAFF = new HashSet<TBL_APPROVAL_LEVEL_STAFF>();
+            TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
+            TBL_APPROVAL_TRAIL1 = new HashSet<TBL_APPROVAL_TRAIL>();
+            TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT = new HashSet<TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT>();
+            TBL_CREDIT_TEMPLATE = new HashSet<TBL_CREDIT_TEMPLATE>();
+            TBL_CHECKLIST_DEFINITION = new HashSet<TBL_CHECKLIST_DEFINITION>();
         }
 
         [Key]
-        public int ApprovalLevelId { get; set; }
+        public int APPROVALLEVELID { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string LevelName { get; set; }
+        public string LEVELNAME { get; set; }
 
-        public int GroupId { get; set; }
+        public int GROUPID { get; set; }
 
-        public int Position { get; set; }
+        public int POSITION { get; set; }
 
-        public int? Tenor { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal MaximumAmount { get; set; }
+        public int? TENOR { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? InvestmentGradeAmount { get; set; }
+        public decimal MAXIMUMAMOUNT { get; set; }
 
-        public int NumberOfUsers { get; set; }
+        [Column(TypeName = "money")]
+        public decimal? INVESTMENTGRADEAMOUNT { get; set; }
 
-        public int NumberOfApprovals { get; set; }
+        public int NUMBEROFUSERS { get; set; }
 
-        public int SLAInterval { get; set; }
+        public int NUMBEROFAPPROVALS { get; set; }
 
-        public bool CanRouteBack { get; set; }
+        public int SLAINTERVAL { get; set; }
 
-        public bool IsPoliticallyExposed { get; set; }
+        public bool CANROUTEBACK { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool ISPOLITICALLYEXPOSED { get; set; }
 
-        public bool CanEdit { get; set; }
+        public bool ISACTIVE { get; set; }
 
-        public bool CanDoRiskAssessment { get; set; }
+        public bool CANEDIT { get; set; }
 
-        public bool CanRecieveAdjustment { get; set; }
+        public bool CANDORISKASSESSMENT { get; set; }
 
-        public bool CanRecieveEmail { get; set; }
+        public bool CANRECIEVEADJUSTMENT { get; set; }
 
-        public bool CanRecieveSMS { get; set; }
+        public bool CANRECIEVEEMAIL { get; set; }
 
-        public bool HasChecklist { get; set; }
+        public bool CANRECIEVESMS { get; set; }
 
-        public bool CanPerformFinancialAnalysis { get; set; }
+        public bool HASCHECKLIST { get; set; }
 
-        public bool RequireAuthorisation { get; set; }
+        public bool CANPERFORMFINANCIALANALYSIS { get; set; }
 
-        public bool CanOverideAuthorisation { get; set; }
+        public bool REQUIREAUTHORISATION { get; set; }
 
-        public bool RouteViaStaffOrganogram { get; set; }
+        public bool CANOVERIDEAUTHORISATION { get; set; }
 
-        public int CreatedBy { get; set; }
+        public bool ROUTEVIASTAFFORGANOGRAM { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public bool Deleted { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public bool DELETED { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public virtual tbl_Approval_Group tbl_Approval_Group { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Level_Staff> tbl_Approval_Level_Staff { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Trail> tbl_Approval_Trail { get; set; }
+        public virtual TBL_APPROVAL_GROUP TBL_APPROVAL_GROUP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Trail> tbl_Approval_Trail1 { get; set; }
+        public virtual ICollection<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Credit_Appraisal_Memorandum_Document> tbl_Credit_Appraisal_Memorandum_Document { get; set; }
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Credit_Template> tbl_Credit_Template { get; set; }
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Checklist_Definition> tbl_Checklist_Definition { get; set; }
+        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT> TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CREDIT_TEMPLATE> TBL_CREDIT_TEMPLATE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CHECKLIST_DEFINITION> TBL_CHECKLIST_DEFINITION { get; set; }
     }
 }

@@ -6,32 +6,32 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("finance.tbl_Chart_Of_Account_Currency")]
-    public partial class tbl_Chart_Of_Account_Currency
+    [Table("finance.TBL_CHART_OF_ACCOUNT_CURRENCY")]
+    public partial class TBL_CHART_OF_ACCOUNT_CURRENCY
     {
         [Key]
-        public int GLAccountCurrencyId { get; set; }
+        public int GLACCOUNTCURRENCYID { get; set; }
 
-        public int GLAccountId { get; set; }
+        public int GLACCOUNTID { get; set; }
 
-        public short CurrencyId { get; set; }
+        public short CURRENCYID { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual tbl_Currency tbl_Currency { get; set; }
+        public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
-        public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
+        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
     }
 }

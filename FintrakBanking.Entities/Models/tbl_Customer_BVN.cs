@@ -6,38 +6,38 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_BVN")]
-    public partial class tbl_Customer_BVN
+    [Table("core.TBL_CUSTOMER_BVN")]
+    public partial class TBL_CUSTOMER_BVN
     {
         [Key]
-        public int CustomerBVNId { get; set; }
+        public int CUSTOMERBVNID { get; set; }
 
-        public int CustomerId { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string Surname { get; set; }
+        public int CUSTOMERID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Firstname { get; set; }
+        public string SURNAME { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string FIRSTNAME { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string BankVerificationNumber { get; set; }
+        public string BANKVERIFICATIONNUMBER { get; set; }
 
-        public bool IsValidBVN { get; set; }
+        public bool ISVALIDBVN { get; set; }
 
-        public bool IsPoliticallyExposed { get; set; }
+        public bool ISPOLITICALLYEXPOSED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }

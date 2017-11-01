@@ -6,69 +6,69 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Operations")]
-    public partial class tbl_Operations
+    [Table("core.TBL_OPERATIONS")]
+    public partial class TBL_OPERATIONS
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Operations()
+        public TBL_OPERATIONS()
         {
-            tbl_Approval_Group_Mapping = new HashSet<tbl_Approval_Group_Mapping>();
-            tbl_Approval_Trail = new HashSet<tbl_Approval_Trail>();
-            tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
-            tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
-            tbl_Job_Request = new HashSet<tbl_Job_Request>();
-            tbl_Message_Log = new HashSet<tbl_Message_Log>();
-            tbl_Charges = new HashSet<tbl_Charges>();
-            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
-            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
-            tbl_Temp_Charge_Fee = new HashSet<tbl_Temp_Charge_Fee>();
+            TBL_APPROVAL_GROUP_MAPPING = new HashSet<TBL_APPROVAL_GROUP_MAPPING>();
+            TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
+            TBL_CHARGE_FEE = new HashSet<TBL_CHARGE_FEE>();
+            TBL_FINANCE_TRANSACTION = new HashSet<TBL_FINANCE_TRANSACTION>();
+            TBL_JOB_REQUEST = new HashSet<TBL_JOB_REQUEST>();
+            TBL_MESSAGE_LOG = new HashSet<TBL_MESSAGE_LOG>();
+            TBL_CHARGES = new HashSet<TBL_CHARGES>();
+            TBL_LOAN_APPLICATION = new HashSet<TBL_LOAN_APPLICATION>();
+            TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
+            TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int OperationId { get; set; }
+        public int OPERATIONID { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string OperationName { get; set; }
+        public string OPERATIONNAME { get; set; }
 
-        public short OperationTypeId { get; set; }
+        public short OPERATIONTYPEID { get; set; }
 
-        public bool TerminateIfDisapproved { get; set; }
+        public bool TERMINATEIFDISAPPROVED { get; set; }
 
         [StringLength(300)]
-        public string OperationURL { get; set; }
+        public string OPERATIONURL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Group_Mapping> tbl_Approval_Group_Mapping { get; set; }
+        public virtual ICollection<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Trail> tbl_Approval_Trail { get; set; }
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
+        public virtual ICollection<TBL_CHARGE_FEE> TBL_CHARGE_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
+        public virtual ICollection<TBL_FINANCE_TRANSACTION> TBL_FINANCE_TRANSACTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Job_Request> tbl_Job_Request { get; set; }
+        public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Message_Log> tbl_Message_Log { get; set; }
+        public virtual ICollection<TBL_MESSAGE_LOG> TBL_MESSAGE_LOG { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Charges> tbl_Charges { get; set; }
+        public virtual ICollection<TBL_CHARGES> TBL_CHARGES { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
 
-        public virtual tbl_Operations_Type tbl_Operations_Type { get; set; }
+        public virtual TBL_OPERATIONS_TYPE TBL_OPERATIONS_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Charge_Fee> tbl_Temp_Charge_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
     }
 }

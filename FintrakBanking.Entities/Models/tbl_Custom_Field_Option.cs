@@ -6,18 +6,18 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Custom_Field_Option")]
-    public partial class tbl_Custom_Field_Option
+    [Table("core.TBL_CUSTOM_FIELD_OPTION")]
+    public partial class TBL_CUSTOM_FIELD_OPTION
     {
         [Key]
-        public int CustomFieldOptionsId { get; set; }
+        public int CUSTOMFIELDOPTIONSID { get; set; }
 
-        public int CustomFieldId { get; set; }
-
-        [StringLength(50)]
-        public string OptionsKey { get; set; }
+        public int CUSTOMFIELDID { get; set; }
 
         [StringLength(50)]
-        public string OptionsValue { get; set; }
+        public string OPTIONSKEY { get; set; }
+
+        [StringLength(50)]
+        public string OPTIONSVALUE { get; set; }
     }
 }

@@ -6,37 +6,37 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_CheckList_Item")]
-    public partial class tbl_CheckList_Item
+    [Table("core.TBL_CHECKLIST_ITEM")]
+    public partial class TBL_CHECKLIST_ITEM
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_CheckList_Item()
+        public TBL_CHECKLIST_ITEM()
         {
-            tbl_Checklist_Definition = new HashSet<tbl_Checklist_Definition>();
+            TBL_CHECKLIST_DEFINITION = new HashSet<TBL_CHECKLIST_DEFINITION>();
         }
 
         [Key]
-        public int CheckListItemId { get; set; }
+        public int CHECKLISTITEMID { get; set; }
 
         [Required]
         [StringLength(2000)]
-        public string CheckListItemName { get; set; }
+        public string CHECKLISTITEMNAME { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Checklist_Definition> tbl_Checklist_Definition { get; set; }
+        public virtual ICollection<TBL_CHECKLIST_DEFINITION> TBL_CHECKLIST_DEFINITION { get; set; }
     }
 }

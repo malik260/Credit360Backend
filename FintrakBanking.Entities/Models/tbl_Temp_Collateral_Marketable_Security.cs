@@ -6,59 +6,59 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Collateral_Marketable_Security")]
-    public partial class tbl_Temp_Collateral_Marketable_Security
+    [Table("temp.TBL_TEMP_COLLATERAL_MARKETABLE_SECURITY")]
+    public partial class TBL_TEMP_COLLATERAL_MARKETABLE_SECURITY
     {
         [Key]
-        public int CollateralMarketableSecurityId { get; set; }
+        public int COLLATERALMARKETABLESECURITYID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
-        public short CollateralSubTypeId { get; set; }
+        public short COLLATERALSUBTYPEID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string SecurityType { get; set; }
+        public string SECURITYTYPE { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string DealReferenceNumber { get; set; }
+        public string DEALREFERENCENUMBER { get; set; }
 
-        public DateTime EffectiveDate { get; set; }
+        public DateTime EFFECTIVEDATE { get; set; }
 
-        public DateTime MaturityDate { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal DealAmount { get; set; }
+        public DateTime MATURITYDATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal SecurityValue { get; set; }
+        public decimal DEALAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal LienUsableAmount { get; set; }
+        public decimal SECURITYVALUE { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal LIENUSABLEAMOUNT { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string IssuerName { get; set; }
+        public string ISSUERNAME { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string IssuerReferenceNumber { get; set; }
+        public string ISSUERREFERENCENUMBER { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal UnitValue { get; set; }
+        public decimal UNITVALUE { get; set; }
 
-        public int NumberOfUnits { get; set; }
+        public int NUMBEROFUNITS { get; set; }
 
-        public short Rating { get; set; }
+        public short RATING { get; set; }
 
-        public short PercentageInterest { get; set; }
+        public short PERCENTAGEINTEREST { get; set; }
 
-        public short? InterestPaymentFrequency { get; set; }
+        public short? INTERESTPAYMENTFREQUENCY { get; set; }
 
         [StringLength(500)]
-        public string Remark { get; set; }
+        public string REMARK { get; set; }
 
-        public virtual tbl_Temp_Collateral_Customer tbl_Temp_Collateral_Customer { get; set; }
+        public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
     }
 }

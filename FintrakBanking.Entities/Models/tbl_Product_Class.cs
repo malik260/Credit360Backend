@@ -6,43 +6,43 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Product_Class")]
-    public partial class tbl_Product_Class
+    [Table("core.TBL_PRODUCT_CLASS")]
+    public partial class TBL_PRODUCT_CLASS
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Product_Class()
+        public TBL_PRODUCT_CLASS()
         {
-            tbl_Approval_Group_Mapping = new HashSet<tbl_Approval_Group_Mapping>();
-            tbl_Product = new HashSet<tbl_Product>();
-            tbl_Credit_Template = new HashSet<tbl_Credit_Template>();
-            tbl_Loan_Preliminary_Evaluation = new HashSet<tbl_Loan_Preliminary_Evaluation>();
-            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
+            TBL_APPROVAL_GROUP_MAPPING = new HashSet<TBL_APPROVAL_GROUP_MAPPING>();
+            TBL_PRODUCT = new HashSet<TBL_PRODUCT>();
+            TBL_CREDIT_TEMPLATE = new HashSet<TBL_CREDIT_TEMPLATE>();
+            TBL_LOAN_PRELIMINARY_EVALUATION = new HashSet<TBL_LOAN_PRELIMINARY_EVALUATION>();
+            TBL_TEMP_PRODUCT = new HashSet<TBL_TEMP_PRODUCT>();
         }
 
         [Key]
-        public short ProductClassId { get; set; }
+        public short PRODUCTCLASSID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string ProductClassName { get; set; }
+        public string PRODUCTCLASSNAME { get; set; }
 
-        public short ProductClassTypeId { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Group_Mapping> tbl_Approval_Group_Mapping { get; set; }
+        public short PRODUCTCLASSTYPEID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product { get; set; }
+        public virtual ICollection<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Credit_Template> tbl_Credit_Template { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Preliminary_Evaluation> tbl_Loan_Preliminary_Evaluation { get; set; }
-
-        public virtual tbl_Product_Class_Type tbl_Product_Class_Type { get; set; }
+        public virtual ICollection<TBL_CREDIT_TEMPLATE> TBL_CREDIT_TEMPLATE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
+        public virtual ICollection<TBL_LOAN_PRELIMINARY_EVALUATION> TBL_LOAN_PRELIMINARY_EVALUATION { get; set; }
+
+        public virtual TBL_PRODUCT_CLASS_TYPE TBL_PRODUCT_CLASS_TYPE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT { get; set; }
     }
 }

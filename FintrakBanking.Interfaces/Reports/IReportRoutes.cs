@@ -25,6 +25,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCollateralPropertyRevaluationReport(int companyId);
         string GetExpiredSelfLiquidatingLoansReport(int companyId);
         string GetNonPerformingLoansReport(int companyId);
+        string GetExpiredOverdraftLoansReport(int companyId);
 
         #endregion Offer Letter Generation & Loan Monitoring Reports
         string GetLoanCommercialReport(DateRange dateRange, int companyId);

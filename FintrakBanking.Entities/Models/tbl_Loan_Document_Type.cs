@@ -6,14 +6,14 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class tbl_Loan_Document_Type
+    public partial class TBL_LOAN_DOCUMENT_TYPE
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short LoanDocumentTypeId { get; set; }
+        public short LOANDOCUMENTTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string DocumentType { get; set; }
+        public string DOCUMENTTYPE { get; set; }
     }
 }

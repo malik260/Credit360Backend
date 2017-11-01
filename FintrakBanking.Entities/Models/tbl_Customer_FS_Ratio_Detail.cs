@@ -6,45 +6,45 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_FS_Ratio_Detail")]
-    public partial class tbl_Customer_FS_Ratio_Detail
+    [Table("core.TBL_CUSTOMER_FS_RATIO_DETAIL")]
+    public partial class TBL_CUSTOMER_FS_RATIO_DETAIL
     {
         [Key]
-        public int RatioDetailId { get; set; }
+        public int RATIODETAILID { get; set; }
 
-        public short RatioCaptionId { get; set; }
+        public short RATIOCAPTIONID { get; set; }
 
-        public int FSCaptionId { get; set; }
+        public int FSCAPTIONID { get; set; }
 
-        public short DivisorTypeId { get; set; }
+        public short DIVISORTYPEID { get; set; }
 
-        public double Multiplier { get; set; }
+        public double MULTIPLIER { get; set; }
 
         [StringLength(50)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
-        public short ValueTypeId { get; set; }
+        public short VALUETYPEID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Customer_FS_Caption tbl_Customer_FS_Caption { get; set; }
+        public virtual TBL_CUSTOMER_FS_CAPTION TBL_CUSTOMER_FS_CAPTION { get; set; }
 
-        public virtual tbl_Customer_FS_Ratio_Caption tbl_Customer_FS_Ratio_Caption { get; set; }
+        public virtual TBL_CUSTOMER_FS_RATIO_CAPTION TBL_CUSTOMER_FS_RATIO_CAPTION { get; set; }
 
-        public virtual tbl_Customer_FS_Ratio_DivisorType tbl_Customer_FS_Ratio_DivisorType { get; set; }
+        public virtual TBL_CUSTOMER_FS_RATIO_DIVISORTYPE TBL_CUSTOMER_FS_RATIO_DIVISORTYPE { get; set; }
 
-        public virtual tbl_Customer_FS_Ratio_ValueType tbl_Customer_FS_Ratio_ValueType { get; set; }
+        public virtual TBL_CUSTOMER_FS_RATIO_VALUETYPE TBL_CUSTOMER_FS_RATIO_VALUETYPE { get; set; }
     }
 }

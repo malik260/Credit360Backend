@@ -6,348 +6,348 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Company")]
-    public partial class tbl_Company
+    [Table("core.TBL_COMPANY")]
+    public partial class TBL_COMPANY
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Company()
+        public TBL_COMPANY()
         {
-            tbl_Approval_Group = new HashSet<tbl_Approval_Group>();
-            tbl_Approval_Trail = new HashSet<tbl_Approval_Trail>();
-            tbl_Branch = new HashSet<tbl_Branch>();
-            tbl_CASA = new HashSet<tbl_CASA>();
-            tbl_CASA_Lien = new HashSet<tbl_CASA_Lien>();
-            tbl_Charge_Fee = new HashSet<tbl_Charge_Fee>();
-            tbl_Checklist_Definition = new HashSet<tbl_Checklist_Definition>();
-            tbl_MIS_Info = new HashSet<tbl_MIS_Info>();
-            tbl_Product = new HashSet<tbl_Product>();
-            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
-            tbl_Call_Memo_Limit = new HashSet<tbl_Call_Memo_Limit>();
-            tbl_Chart_Of_Account = new HashSet<tbl_Chart_Of_Account>();
-            tbl_Temp_Chart_Of_Account = new HashSet<tbl_Temp_Chart_Of_Account>();
-            tbl_Collateral_Customer = new HashSet<tbl_Collateral_Customer>();
-            tbl_Temp_Collateral_Customer = new HashSet<tbl_Temp_Collateral_Customer>();
-            tbl_Company1 = new HashSet<tbl_Company>();
-            tbl_Credit_Appraisal_Memorandum = new HashSet<tbl_Credit_Appraisal_Memorandum>();
-            tbl_Credit_Template = new HashSet<tbl_Credit_Template>();
-            tbl_Customer_Blacklist = new HashSet<tbl_Customer_Blacklist>();
-            tbl_Customer_FS_Caption_Group = new HashSet<tbl_Customer_FS_Caption_Group>();
-            tbl_Customer_FS_Ratio_Caption = new HashSet<tbl_Customer_FS_Ratio_Caption>();
-            tbl_Customer_Risk_Rating = new HashSet<tbl_Customer_Risk_Rating>();
-            tbl_Customer = new HashSet<tbl_Customer>();
-            tbl_Daily_Accrual = new HashSet<tbl_Daily_Accrual>();
-            tbl_Finance_EndOfDay = new HashSet<tbl_Finance_EndOfDay>();
-            tbl_Finance_Transaction = new HashSet<tbl_Finance_Transaction>();
-            tbl_FinanceCurrentDate = new HashSet<tbl_FinanceCurrentDate>();
-            tbl_Limit = new HashSet<tbl_Limit>();
-            tbl_Loan_Application = new HashSet<tbl_Loan_Application>();
-            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Bulk_Interest_Review = new HashSet<tbl_Loan_Bulk_Interest_Review>();
-            tbl_Loan_Camsol = new HashSet<tbl_Loan_Camsol>();
-            tbl_Loan_Contingent = new HashSet<tbl_Loan_Contingent>();
-            tbl_Loan_Preliminary_Evaluation = new HashSet<tbl_Loan_Preliminary_Evaluation>();
-            tbl_Loan_Revolving = new HashSet<tbl_Loan_Revolving>();
-            tbl_Loan = new HashSet<tbl_Loan>();
-            tbl_Product_CollateralType = new HashSet<tbl_Product_CollateralType>();
-            tbl_Temp_Product_CollateralType = new HashSet<tbl_Temp_Product_CollateralType>();
-            tbl_Fee = new HashSet<tbl_Fee>();
-            tbl_Product_Charge_Fee = new HashSet<tbl_Product_Charge_Fee>();
-            tbl_Product_Price_Index = new HashSet<tbl_Product_Price_Index>();
-            tbl_Setup_Global = new HashSet<tbl_Setup_Global>();
-            tbl_Solicitor = new HashSet<tbl_Solicitor>();
-            tbl_Staff_Organogram = new HashSet<tbl_Staff_Organogram>();
-            tbl_Staff = new HashSet<tbl_Staff>();
-            tbl_Stock = new HashSet<tbl_Stock>();
-            tbl_Tax = new HashSet<tbl_Tax>();
-            tbl_Temp_Charge_Fee = new HashSet<tbl_Temp_Charge_Fee>();
-            tbl_Temp_Customer_Group_Mapping = new HashSet<tbl_Temp_Customer_Group_Mapping>();
-            tbl_Temp_Customer_Group = new HashSet<tbl_Temp_Customer_Group>();
-            tbl_Temp_Product_Charge_Fee = new HashSet<tbl_Temp_Product_Charge_Fee>();
-            tbl_Temp_Product_CollateralType1 = new HashSet<tbl_Temp_Product_CollateralType>();
-            tbl_Temp_Fee = new HashSet<tbl_Temp_Fee>();
-            tbl_Temp_Product_Fee = new HashSet<tbl_Temp_Product_Fee>();
-            tbl_Temp_Staff = new HashSet<tbl_Temp_Staff>();
+            TBL_APPROVAL_GROUP = new HashSet<TBL_APPROVAL_GROUP>();
+            TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
+            TBL_BRANCH = new HashSet<TBL_BRANCH>();
+            TBL_CASA = new HashSet<TBL_CASA>();
+            TBL_CASA_LIEN = new HashSet<TBL_CASA_LIEN>();
+            TBL_CHARGE_FEE = new HashSet<TBL_CHARGE_FEE>();
+            TBL_CHECKLIST_DEFINITION = new HashSet<TBL_CHECKLIST_DEFINITION>();
+            TBL_MIS_INFO = new HashSet<TBL_MIS_INFO>();
+            TBL_PRODUCT = new HashSet<TBL_PRODUCT>();
+            TBL_TEMP_PRODUCT = new HashSet<TBL_TEMP_PRODUCT>();
+            TBL_CALL_MEMO_LIMIT = new HashSet<TBL_CALL_MEMO_LIMIT>();
+            TBL_CHART_OF_ACCOUNT = new HashSet<TBL_CHART_OF_ACCOUNT>();
+            TBL_TEMP_CHART_OF_ACCOUNT = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT>();
+            TBL_COLLATERAL_CUSTOMER = new HashSet<TBL_COLLATERAL_CUSTOMER>();
+            TBL_TEMP_COLLATERAL_CUSTOMER = new HashSet<TBL_TEMP_COLLATERAL_CUSTOMER>();
+            TBL_COMPANY1 = new HashSet<TBL_COMPANY>();
+            TBL_CREDIT_APPRAISAL_MEMORANDUM = new HashSet<TBL_CREDIT_APPRAISAL_MEMORANDUM>();
+            TBL_CREDIT_TEMPLATE = new HashSet<TBL_CREDIT_TEMPLATE>();
+            TBL_CUSTOMER_BLACKLIST = new HashSet<TBL_CUSTOMER_BLACKLIST>();
+            TBL_CUSTOMER_FS_CAPTION_GROUP = new HashSet<TBL_CUSTOMER_FS_CAPTION_GROUP>();
+            TBL_CUSTOMER_FS_RATIO_CAPTION = new HashSet<TBL_CUSTOMER_FS_RATIO_CAPTION>();
+            TBL_CUSTOMER_RISK_RATING = new HashSet<TBL_CUSTOMER_RISK_RATING>();
+            TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
+            TBL_DAILY_ACCRUAL = new HashSet<TBL_DAILY_ACCRUAL>();
+            TBL_FINANCE_ENDOFDAY = new HashSet<TBL_FINANCE_ENDOFDAY>();
+            TBL_FINANCE_TRANSACTION = new HashSet<TBL_FINANCE_TRANSACTION>();
+            TBL_FINANCECURRENTDATE = new HashSet<TBL_FINANCECURRENTDATE>();
+            TBL_LIMIT = new HashSet<TBL_LIMIT>();
+            TBL_LOAN_APPLICATION = new HashSet<TBL_LOAN_APPLICATION>();
+            TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
+            TBL_LOAN_BULK_INTEREST_REVIEW = new HashSet<TBL_LOAN_BULK_INTEREST_REVIEW>();
+            TBL_LOAN_CAMSOL = new HashSet<TBL_LOAN_CAMSOL>();
+            TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
+            TBL_LOAN_PRELIMINARY_EVALUATION = new HashSet<TBL_LOAN_PRELIMINARY_EVALUATION>();
+            TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
+            TBL_LOAN = new HashSet<TBL_LOAN>();
+            TBL_PRODUCT_COLLATERALTYPE = new HashSet<TBL_PRODUCT_COLLATERALTYPE>();
+            TBL_TEMP_PRODUCT_COLLATERALTYPE = new HashSet<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
+            TBL_FEE = new HashSet<TBL_FEE>();
+            TBL_PRODUCT_CHARGE_FEE = new HashSet<TBL_PRODUCT_CHARGE_FEE>();
+            TBL_PRODUCT_PRICE_INDEX = new HashSet<TBL_PRODUCT_PRICE_INDEX>();
+            TBL_SETUP_GLOBAL = new HashSet<TBL_SETUP_GLOBAL>();
+            TBL_SOLICITOR = new HashSet<TBL_SOLICITOR>();
+            TBL_STAFF_ORGANOGRAM = new HashSet<TBL_STAFF_ORGANOGRAM>();
+            TBL_STAFF = new HashSet<TBL_STAFF>();
+            TBL_STOCK = new HashSet<TBL_STOCK>();
+            TBL_TAX = new HashSet<TBL_TAX>();
+            TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
+            TBL_TEMP_CUSTOMER_GROUP_MAPPING = new HashSet<TBL_TEMP_CUSTOMER_GROUP_MAPPING>();
+            TBL_TEMP_CUSTOMER_GROUP = new HashSet<TBL_TEMP_CUSTOMER_GROUP>();
+            TBL_TEMP_PRODUCT_CHARGE_FEE = new HashSet<TBL_TEMP_PRODUCT_CHARGE_FEE>();
+            TBL_TEMP_PRODUCT_COLLATERALTYPE1 = new HashSet<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
+            TBL_TEMP_FEE = new HashSet<TBL_TEMP_FEE>();
+            TBL_TEMP_PRODUCT_FEE = new HashSet<TBL_TEMP_PRODUCT_FEE>();
+            TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
 
         [Key]
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string Name { get; set; }
+        public string NAME { get; set; }
 
         [StringLength(250)]
-        public string Address { get; set; }
+        public string ADDRESS { get; set; }
 
         [StringLength(100)]
-        public string Telephone { get; set; }
+        public string TELEPHONE { get; set; }
 
         [StringLength(100)]
-        public string Email { get; set; }
+        public string EMAIL { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? ShareHoldersFund { get; set; }
+        public decimal? SHAREHOLDERSFUND { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? PreliminaryEvaluation_Limit { get; set; }
+        public decimal? PRELIMINARYEVALUATION_LIMIT { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? DateOfIncorporation { get; set; }
+        public DateTime? DATEOFINCORPORATION { get; set; }
 
-        public int CountryId { get; set; }
+        public int COUNTRYID { get; set; }
 
-        public short CurrencyId { get; set; }
+        public short CURRENCYID { get; set; }
 
-        public short? NatureOfBusinessId { get; set; }
-
-        [StringLength(50)]
-        public string NameOfScheme { get; set; }
+        public short? NATUREOFBUSINESSID { get; set; }
 
         [StringLength(50)]
-        public string FunctionsRegistered { get; set; }
+        public string NAMEOFSCHEME { get; set; }
+
+        [StringLength(50)]
+        public string FUNCTIONSREGISTERED { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? AuthorisedShareCapital { get; set; }
+        public decimal? AUTHORISEDSHARECAPITAL { get; set; }
 
         [StringLength(100)]
-        public string NameOfRegistrar { get; set; }
+        public string NAMEOFREGISTRAR { get; set; }
 
         [StringLength(100)]
-        public string NameOfTrustees { get; set; }
+        public string NAMEOFTRUSTEES { get; set; }
 
         [StringLength(50)]
-        public string FormerManagersTrustees { get; set; }
+        public string FORMERMANAGERSTRUSTEES { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? DateOfRenewalOfRegistration { get; set; }
+        public DateTime? DATEOFRENEWALOFREGISTRATION { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? DateOfCommencement { get; set; }
+        public DateTime? DATEOFCOMMENCEMENT { get; set; }
 
-        public int? InitialFloatation { get; set; }
+        public int? INITIALFLOATATION { get; set; }
 
-        public int? InitialSubscription { get; set; }
+        public int? INITIALSUBSCRIPTION { get; set; }
 
         [StringLength(100)]
-        public string RegisteredBy { get; set; }
+        public string REGISTEREDBY { get; set; }
 
         [StringLength(1000)]
-        public string TrusteesAddress { get; set; }
+        public string TRUSTEESADDRESS { get; set; }
 
         [StringLength(1000)]
-        public string InvestmentObjective { get; set; }
+        public string INVESTMENTOBJECTIVE { get; set; }
 
         [StringLength(100)]
-        public string Website { get; set; }
+        public string WEBSITE { get; set; }
 
         [StringLength(10)]
-        public string EBusinessCode { get; set; }
+        public string EBUSINESSCODE { get; set; }
 
         [StringLength(50)]
-        public string EOYProfitAndLossGL { get; set; }
+        public string EOYPROFITANDLOSSGL { get; set; }
 
-        public short? CompanyClassId { get; set; }
+        public short? COMPANYCLASSID { get; set; }
 
-        public short? CompanyTypeId { get; set; }
+        public short? COMPANYTYPEID { get; set; }
 
-        public short? AccountingStandardId { get; set; }
+        public short? ACCOUNTINGSTANDARDID { get; set; }
 
-        public short? ManagementTypeId { get; set; }
+        public short? MANAGEMENTTYPEID { get; set; }
 
-        public int? ParentId { get; set; }
+        public int? PARENTID { get; set; }
 
         [StringLength(100)]
-        public string LogoPath { get; set; }
+        public string LOGOPATH { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public int? CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public byte[] CompanyLogo { get; set; }
+        public byte[] COMPANYLOGO { get; set; }
 
-        public virtual tbl_Accounting_Standard tbl_Accounting_Standard { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Group> tbl_Approval_Group { get; set; }
+        public virtual TBL_ACCOUNTING_STANDARD TBL_ACCOUNTING_STANDARD { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Approval_Trail> tbl_Approval_Trail { get; set; }
+        public virtual ICollection<TBL_APPROVAL_GROUP> TBL_APPROVAL_GROUP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Branch> tbl_Branch { get; set; }
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_CASA> tbl_CASA { get; set; }
+        public virtual ICollection<TBL_BRANCH> TBL_BRANCH { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_CASA_Lien> tbl_CASA_Lien { get; set; }
+        public virtual ICollection<TBL_CASA> TBL_CASA { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Charge_Fee> tbl_Charge_Fee { get; set; }
+        public virtual ICollection<TBL_CASA_LIEN> TBL_CASA_LIEN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Checklist_Definition> tbl_Checklist_Definition { get; set; }
-
-        public virtual tbl_Company_Class tbl_Company_Class { get; set; }
-
-        public virtual tbl_Company_Type tbl_Company_Type { get; set; }
-
-        public virtual tbl_Country tbl_Country { get; set; }
-
-        public virtual tbl_Management_Type tbl_Management_Type { get; set; }
-
-        public virtual tbl_Nature_Of_Business tbl_Nature_Of_Business { get; set; }
+        public virtual ICollection<TBL_CHARGE_FEE> TBL_CHARGE_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_MIS_Info> tbl_MIS_Info { get; set; }
+        public virtual ICollection<TBL_CHECKLIST_DEFINITION> TBL_CHECKLIST_DEFINITION { get; set; }
+
+        public virtual TBL_COMPANY_CLASS TBL_COMPANY_CLASS { get; set; }
+
+        public virtual TBL_COMPANY_TYPE TBL_COMPANY_TYPE { get; set; }
+
+        public virtual TBL_COUNTRY TBL_COUNTRY { get; set; }
+
+        public virtual TBL_MANAGEMENT_TYPE TBL_MANAGEMENT_TYPE { get; set; }
+
+        public virtual TBL_NATURE_OF_BUSINESS TBL_NATURE_OF_BUSINESS { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product { get; set; }
+        public virtual ICollection<TBL_MIS_INFO> TBL_MIS_INFO { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Call_Memo_Limit> tbl_Call_Memo_Limit { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Chart_Of_Account> tbl_Chart_Of_Account { get; set; }
+        public virtual ICollection<TBL_CALL_MEMO_LIMIT> TBL_CALL_MEMO_LIMIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Chart_Of_Account> tbl_Temp_Chart_Of_Account { get; set; }
+        public virtual ICollection<TBL_CHART_OF_ACCOUNT> TBL_CHART_OF_ACCOUNT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Customer> tbl_Collateral_Customer { get; set; }
+        public virtual ICollection<TBL_TEMP_CHART_OF_ACCOUNT> TBL_TEMP_CHART_OF_ACCOUNT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_Customer> tbl_Temp_Collateral_Customer { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_CUSTOMER> TBL_COLLATERAL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Company> tbl_Company1 { get; set; }
-
-        public virtual tbl_Company tbl_Company2 { get; set; }
-
-        public virtual tbl_Currency tbl_Currency { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_CUSTOMER> TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Credit_Appraisal_Memorandum> tbl_Credit_Appraisal_Memorandum { get; set; }
+        public virtual ICollection<TBL_COMPANY> TBL_COMPANY1 { get; set; }
+
+        public virtual TBL_COMPANY TBL_COMPANY2 { get; set; }
+
+        public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Credit_Template> tbl_Credit_Template { get; set; }
+        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMORANDUM> TBL_CREDIT_APPRAISAL_MEMORANDUM { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_Blacklist> tbl_Customer_Blacklist { get; set; }
+        public virtual ICollection<TBL_CREDIT_TEMPLATE> TBL_CREDIT_TEMPLATE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_FS_Caption_Group> tbl_Customer_FS_Caption_Group { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_BLACKLIST> TBL_CUSTOMER_BLACKLIST { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_FS_Ratio_Caption> tbl_Customer_FS_Ratio_Caption { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_FS_CAPTION_GROUP> TBL_CUSTOMER_FS_CAPTION_GROUP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_Risk_Rating> tbl_Customer_Risk_Rating { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_FS_RATIO_CAPTION> TBL_CUSTOMER_FS_RATIO_CAPTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer> tbl_Customer { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_RISK_RATING> TBL_CUSTOMER_RISK_RATING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Daily_Accrual> tbl_Daily_Accrual { get; set; }
+        public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Finance_EndOfDay> tbl_Finance_EndOfDay { get; set; }
+        public virtual ICollection<TBL_DAILY_ACCRUAL> TBL_DAILY_ACCRUAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Finance_Transaction> tbl_Finance_Transaction { get; set; }
+        public virtual ICollection<TBL_FINANCE_ENDOFDAY> TBL_FINANCE_ENDOFDAY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_FinanceCurrentDate> tbl_FinanceCurrentDate { get; set; }
+        public virtual ICollection<TBL_FINANCE_TRANSACTION> TBL_FINANCE_TRANSACTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Limit> tbl_Limit { get; set; }
+        public virtual ICollection<TBL_FINANCECURRENTDATE> TBL_FINANCECURRENTDATE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Application> tbl_Loan_Application { get; set; }
+        public virtual ICollection<TBL_LIMIT> TBL_LIMIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Bulk_Interest_Review> tbl_Loan_Bulk_Interest_Review { get; set; }
+        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Camsol> tbl_Loan_Camsol { get; set; }
+        public virtual ICollection<TBL_LOAN_BULK_INTEREST_REVIEW> TBL_LOAN_BULK_INTEREST_REVIEW { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Contingent> tbl_Loan_Contingent { get; set; }
+        public virtual ICollection<TBL_LOAN_CAMSOL> TBL_LOAN_CAMSOL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Preliminary_Evaluation> tbl_Loan_Preliminary_Evaluation { get; set; }
+        public virtual ICollection<TBL_LOAN_CONTINGENT> TBL_LOAN_CONTINGENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Revolving> tbl_Loan_Revolving { get; set; }
+        public virtual ICollection<TBL_LOAN_PRELIMINARY_EVALUATION> TBL_LOAN_PRELIMINARY_EVALUATION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+        public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product_CollateralType> tbl_Product_CollateralType { get; set; }
+        public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_CollateralType> tbl_Temp_Product_CollateralType { get; set; }
+        public virtual ICollection<TBL_PRODUCT_COLLATERALTYPE> TBL_PRODUCT_COLLATERALTYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Fee> tbl_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT_COLLATERALTYPE> TBL_TEMP_PRODUCT_COLLATERALTYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product_Charge_Fee> tbl_Product_Charge_Fee { get; set; }
+        public virtual ICollection<TBL_FEE> TBL_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product_Price_Index> tbl_Product_Price_Index { get; set; }
+        public virtual ICollection<TBL_PRODUCT_CHARGE_FEE> TBL_PRODUCT_CHARGE_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Setup_Global> tbl_Setup_Global { get; set; }
+        public virtual ICollection<TBL_PRODUCT_PRICE_INDEX> TBL_PRODUCT_PRICE_INDEX { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Solicitor> tbl_Solicitor { get; set; }
+        public virtual ICollection<TBL_SETUP_GLOBAL> TBL_SETUP_GLOBAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Staff_Organogram> tbl_Staff_Organogram { get; set; }
+        public virtual ICollection<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Staff> tbl_Staff { get; set; }
+        public virtual ICollection<TBL_STAFF_ORGANOGRAM> TBL_STAFF_ORGANOGRAM { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Stock> tbl_Stock { get; set; }
+        public virtual ICollection<TBL_STAFF> TBL_STAFF { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Tax> tbl_Tax { get; set; }
+        public virtual ICollection<TBL_STOCK> TBL_STOCK { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Charge_Fee> tbl_Temp_Charge_Fee { get; set; }
+        public virtual ICollection<TBL_TAX> TBL_TAX { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Customer_Group_Mapping> tbl_Temp_Customer_Group_Mapping { get; set; }
+        public virtual ICollection<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Customer_Group> tbl_Temp_Customer_Group { get; set; }
+        public virtual ICollection<TBL_TEMP_CUSTOMER_GROUP_MAPPING> TBL_TEMP_CUSTOMER_GROUP_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_Charge_Fee> tbl_Temp_Product_Charge_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_CUSTOMER_GROUP> TBL_TEMP_CUSTOMER_GROUP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_CollateralType> tbl_Temp_Product_CollateralType1 { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT_CHARGE_FEE> TBL_TEMP_PRODUCT_CHARGE_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Fee> tbl_Temp_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT_COLLATERALTYPE> TBL_TEMP_PRODUCT_COLLATERALTYPE1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_Fee> tbl_Temp_Product_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_FEE> TBL_TEMP_FEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Staff> tbl_Temp_Staff { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT_FEE> TBL_TEMP_PRODUCT_FEE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
     }
 }

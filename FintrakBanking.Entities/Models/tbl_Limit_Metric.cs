@@ -6,38 +6,38 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Limit_Metric")]
-    public partial class tbl_Limit_Metric
+    [Table("credit.TBL_LIMIT_METRIC")]
+    public partial class TBL_LIMIT_METRIC
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Limit_Metric()
+        public TBL_LIMIT_METRIC()
         {
-            tbl_Limit = new HashSet<tbl_Limit>();
+            TBL_LIMIT = new HashSet<TBL_LIMIT>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public int LimitMetricId { get; set; }
+        public int LIMITMETRICID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LimitMetricName { get; set; }
+        public string LIMITMETRICNAME { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Limit> tbl_Limit { get; set; }
+        public virtual ICollection<TBL_LIMIT> TBL_LIMIT { get; set; }
     }
 }

@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Profile_Priviledge")]
-    public partial class tbl_Profile_Priviledge
+    [Table("core.TBL_PROFILE_PRIVILEDGE")]
+    public partial class TBL_PROFILE_PRIVILEDGE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Profile_Priviledge()
+        public TBL_PROFILE_PRIVILEDGE()
         {
-            tbl_Profile_Priviledge_Activity = new HashSet<tbl_Profile_Priviledge_Activity>();
+            TBL_PROFILE_PRIVILEDGE_ACTIVITY = new HashSet<TBL_PROFILE_PRIVILEDGE_ACTIVITY>();
         }
 
         [Key]
-        public short PriviledgeId { get; set; }
+        public short PRIVILEDGEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string PriviledgeName { get; set; }
+        public string PRIVILEDGENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_Priviledge_Activity> tbl_Profile_Priviledge_Activity { get; set; }
+        public virtual ICollection<TBL_PROFILE_PRIVILEDGE_ACTIVITY> TBL_PROFILE_PRIVILEDGE_ACTIVITY { get; set; }
     }
 }

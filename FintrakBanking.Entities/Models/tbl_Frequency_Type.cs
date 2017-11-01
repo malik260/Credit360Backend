@@ -6,70 +6,70 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Frequency_Type")]
-    public partial class tbl_Frequency_Type
+    [Table("core.TBL_FREQUENCY_TYPE")]
+    public partial class TBL_FREQUENCY_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Frequency_Type()
+        public TBL_FREQUENCY_TYPE()
         {
-            tbl_Call_Memo_Limit = new HashSet<tbl_Call_Memo_Limit>();
-            tbl_Collateral_Policy = new HashSet<tbl_Collateral_Policy>();
-            tbl_Limit_Detail = new HashSet<tbl_Limit_Detail>();
-            tbl_Loan_Archive = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Archive1 = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Archive2 = new HashSet<tbl_Loan_Archive>();
-            tbl_Loan_Covenant_Detail = new HashSet<tbl_Loan_Covenant_Detail>();
-            tbl_Loan = new HashSet<tbl_Loan>();
-            tbl_Loan1 = new HashSet<tbl_Loan>();
-            tbl_Loan2 = new HashSet<tbl_Loan>();
-            tbl_Temp_Collateral_Policy = new HashSet<tbl_Temp_Collateral_Policy>();
+            TBL_CALL_MEMO_LIMIT = new HashSet<TBL_CALL_MEMO_LIMIT>();
+            TBL_COLLATERAL_POLICY = new HashSet<TBL_COLLATERAL_POLICY>();
+            TBL_LIMIT_DETAIL = new HashSet<TBL_LIMIT_DETAIL>();
+            TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
+            TBL_LOAN_ARCHIVE1 = new HashSet<TBL_LOAN_ARCHIVE>();
+            TBL_LOAN_ARCHIVE2 = new HashSet<TBL_LOAN_ARCHIVE>();
+            TBL_LOAN_COVENANT_DETAIL = new HashSet<TBL_LOAN_COVENANT_DETAIL>();
+            TBL_LOAN = new HashSet<TBL_LOAN>();
+            TBL_LOAN1 = new HashSet<TBL_LOAN>();
+            TBL_LOAN2 = new HashSet<TBL_LOAN>();
+            TBL_TEMP_COLLATERAL_POLICY = new HashSet<TBL_TEMP_COLLATERAL_POLICY>();
         }
 
         [Key]
-        public short FrequencyTypeId { get; set; }
+        public short FREQUENCYTYPEID { get; set; }
 
         [Required]
         [StringLength(20)]
-        public string Mode { get; set; }
+        public string MODE { get; set; }
 
-        public double Value { get; set; }
+        public double VALUE { get; set; }
 
         [StringLength(100)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
-        public bool? IsVisible { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Call_Memo_Limit> tbl_Call_Memo_Limit { get; set; }
+        public bool? ISVISIBLE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Policy> tbl_Collateral_Policy { get; set; }
+        public virtual ICollection<TBL_CALL_MEMO_LIMIT> TBL_CALL_MEMO_LIMIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Limit_Detail> tbl_Limit_Detail { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_POLICY> TBL_COLLATERAL_POLICY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive { get; set; }
+        public virtual ICollection<TBL_LIMIT_DETAIL> TBL_LIMIT_DETAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive1 { get; set; }
+        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Archive> tbl_Loan_Archive2 { get; set; }
+        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Covenant_Detail> tbl_Loan_Covenant_Detail { get; set; }
+        public virtual ICollection<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE2 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan> tbl_Loan { get; set; }
+        public virtual ICollection<TBL_LOAN_COVENANT_DETAIL> TBL_LOAN_COVENANT_DETAIL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan> tbl_Loan1 { get; set; }
+        public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan> tbl_Loan2 { get; set; }
+        public virtual ICollection<TBL_LOAN> TBL_LOAN1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_Policy> tbl_Temp_Collateral_Policy { get; set; }
+        public virtual ICollection<TBL_LOAN> TBL_LOAN2 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_COLLATERAL_POLICY> TBL_TEMP_COLLATERAL_POLICY { get; set; }
     }
 }

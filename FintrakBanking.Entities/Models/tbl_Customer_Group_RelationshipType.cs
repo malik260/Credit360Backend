@@ -6,27 +6,27 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Group_RelationshipType")]
-    public partial class tbl_Customer_Group_RelationshipType
+    [Table("core.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE")]
+    public partial class TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Customer_Group_RelationshipType()
+        public TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE()
         {
-            tbl_Customer_Group_Mapping = new HashSet<tbl_Customer_Group_Mapping>();
-            tbl_Temp_Customer_Group_Mapping = new HashSet<tbl_Temp_Customer_Group_Mapping>();
+            TBL_CUSTOMER_GROUP_MAPPING = new HashSet<TBL_CUSTOMER_GROUP_MAPPING>();
+            TBL_TEMP_CUSTOMER_GROUP_MAPPING = new HashSet<TBL_TEMP_CUSTOMER_GROUP_MAPPING>();
         }
 
         [Key]
-        public short RelationshipTypeId { get; set; }
+        public short RELATIONSHIPTYPEID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string RelationshipTypeName { get; set; }
+        public string RELATIONSHIPTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_Group_Mapping> tbl_Customer_Group_Mapping { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_GROUP_MAPPING> TBL_CUSTOMER_GROUP_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Customer_Group_Mapping> tbl_Temp_Customer_Group_Mapping { get; set; }
+        public virtual ICollection<TBL_TEMP_CUSTOMER_GROUP_MAPPING> TBL_TEMP_CUSTOMER_GROUP_MAPPING { get; set; }
     }
 }

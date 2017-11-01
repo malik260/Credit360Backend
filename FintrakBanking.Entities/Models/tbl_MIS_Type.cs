@@ -6,34 +6,34 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_MIS_Type")]
-    public partial class tbl_MIS_Type
+    [Table("core.TBL_MIS_TYPE")]
+    public partial class TBL_MIS_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_MIS_Type()
+        public TBL_MIS_TYPE()
         {
-            tbl_MIS_Info = new HashSet<tbl_MIS_Info>();
+            TBL_MIS_INFO = new HashSet<TBL_MIS_INFO>();
         }
 
         [Key]
-        public short MISTypeId { get; set; }
+        public short MISTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string MISType { get; set; }
+        public string MISTYPE { get; set; }
 
         [StringLength(50)]
-        public string Category { get; set; }
+        public string CATEGORY { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public int? CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_MIS_Info> tbl_MIS_Info { get; set; }
+        public virtual ICollection<TBL_MIS_INFO> TBL_MIS_INFO { get; set; }
     }
 }

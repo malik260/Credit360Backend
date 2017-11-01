@@ -6,19 +6,20 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class sysdiagram
+    [Table("SYSDIAGRAMS")]
+    public partial class SYSDIAGRAM
     {
         [Required]
         [StringLength(128)]
-        public string name { get; set; }
+        public string NAME { get; set; }
 
-        public int principal_id { get; set; }
+        public int PRINCIPAL_ID { get; set; }
 
         [Key]
-        public int diagram_id { get; set; }
+        public int DIAGRAM_ID { get; set; }
 
-        public int? version { get; set; }
+        public int? VERSION { get; set; }
 
-        public byte[] definition { get; set; }
+        public byte[] DEFINITION { get; set; }
     }
 }

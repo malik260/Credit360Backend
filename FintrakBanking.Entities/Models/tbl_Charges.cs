@@ -6,45 +6,45 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("finance.tbl_Charges")]
-    public partial class tbl_Charges
+    [Table("finance.TBL_CHARGES")]
+    public partial class TBL_CHARGES
     {
         [Key]
-        public int ChargeId { get; set; }
+        public int CHARGEID { get; set; }
 
         [StringLength(50)]
-        public string ChargeName { get; set; }
+        public string CHARGENAME { get; set; }
 
-        public int? OperationId { get; set; }
+        public int? OPERATIONID { get; set; }
 
-        public decimal? SetValue { get; set; }
+        public decimal? SETVALUE { get; set; }
 
-        public int? GLAccountId { get; set; }
+        public int? GLACCOUNTID { get; set; }
 
-        public int? Frequency { get; set; }
+        public int? FREQUENCY { get; set; }
 
-        public bool? ApplyVAT { get; set; }
+        public bool? APPLYVAT { get; set; }
 
-        public bool? ApplyWHT { get; set; }
+        public bool? APPLYWHT { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Operations tbl_Operations { get; set; }
+        public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
-        public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
+        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
     }
 }

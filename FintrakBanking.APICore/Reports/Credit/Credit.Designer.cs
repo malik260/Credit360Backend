@@ -6486,6 +6486,8 @@ namespace FintrakBanking.APICore.Reports.Credit
 
             private global::System.Data.DataColumn columnloanTypeName;
 
+            private global::System.Data.DataColumn columnoverdraftLimit;
+
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public LoanMonitoringInformationDataTable()
@@ -6637,6 +6639,16 @@ namespace FintrakBanking.APICore.Reports.Credit
 
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn overdraftLimitColumn
+            {
+                get
+                {
+                    return this.columnoverdraftLimit;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count
             {
@@ -6677,7 +6689,7 @@ namespace FintrakBanking.APICore.Reports.Credit
 
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public LoanMonitoringInformationRow AddLoanMonitoringInformationRow(string applicationReferenceNumber, string loanReferenceNumber, string bookingDate, string disburseDate, string maturityDate, string productName, string nplDate, double outstandingInterest, double outstandingPrincipal, string productTypeName, string loanTypeName)
+            public LoanMonitoringInformationRow AddLoanMonitoringInformationRow(string applicationReferenceNumber, string loanReferenceNumber, string bookingDate, string disburseDate, string maturityDate, string productName, string nplDate, double outstandingInterest, double outstandingPrincipal, string productTypeName, string loanTypeName, double overdraftLimit)
             {
                 LoanMonitoringInformationRow rowLoanMonitoringInformationRow = ((LoanMonitoringInformationRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
@@ -6691,7 +6703,9 @@ namespace FintrakBanking.APICore.Reports.Credit
                         outstandingInterest,
                         outstandingPrincipal,
                         productTypeName,
-                        loanTypeName};
+                        loanTypeName,
+                        overdraftLimit
+                };
                 rowLoanMonitoringInformationRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowLoanMonitoringInformationRow);
                 return rowLoanMonitoringInformationRow;
@@ -6728,6 +6742,7 @@ namespace FintrakBanking.APICore.Reports.Credit
                 this.columnoutstandingPrincipal = base.Columns["outstandingPrincipal"];
                 this.columnproductTypeName = base.Columns["productTypeName"];
                 this.columnloanTypeName = base.Columns["loanTypeName"];
+                this.columnoverdraftLimit = base.Columns["overdraftLimit"];
             }
 
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -6756,6 +6771,8 @@ namespace FintrakBanking.APICore.Reports.Credit
                 base.Columns.Add(this.columnproductTypeName);
                 this.columnloanTypeName = new global::System.Data.DataColumn("loanTypeName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnloanTypeName);
+                this.columnoverdraftLimit = new global::System.Data.DataColumn("overdraftLimit", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnoverdraftLimit);
             }
 
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -14333,6 +14350,28 @@ namespace FintrakBanking.APICore.Reports.Credit
 
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public double overdraftLimit
+            {
+                get
+                {
+                    try
+                    {
+                        return ((double)(this[this.tableLoanMonitoringInformation.overdraftLimitColumn]));
+                    }
+                    catch (global::System.InvalidCastException e)
+                    {
+                        throw new global::System.Data.StrongTypingException("The value for column \'overdraftLimit\' in table \'LoanMonitoringInformation\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set
+                {
+                    this[this.tableLoanMonitoringInformation.overdraftLimitColumn] = value;
+                }
+            }
+
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsapplicationReferenceNumberNull()
             {
                 return this.IsNull(this.tableLoanMonitoringInformation.applicationReferenceNumberColumn);
@@ -14483,6 +14522,20 @@ namespace FintrakBanking.APICore.Reports.Credit
             public void SetloanTypeNameNull()
             {
                 this[this.tableLoanMonitoringInformation.loanTypeNameColumn] = global::System.Convert.DBNull;
+            }
+
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsoverdraftLimitNull()
+            {
+                return this.IsNull(this.tableLoanMonitoringInformation.overdraftLimitColumn);
+            }
+
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetoverdraftLimitNull()
+            {
+                this[this.tableLoanMonitoringInformation.overdraftLimitColumn] = global::System.Convert.DBNull;
             }
         }
 

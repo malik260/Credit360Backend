@@ -6,30 +6,30 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Custom_Field")]
-    public partial class tbl_Customer_Custom_Field
+    [Table("core.TBL_CUSTOMER_CUSTOM_FIELD")]
+    public partial class TBL_CUSTOMER_CUSTOM_FIELD
     {
         [Key]
-        public int CustomerCustomFieldId { get; set; }
+        public int CUSTOMERCUSTOMFIELDID { get; set; }
 
-        public int? CustomerId { get; set; }
+        public int? CUSTOMERID { get; set; }
 
-        public int DisplayOrder { get; set; }
+        public int DISPLAYORDER { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Label { get; set; }
+        public string LABEL { get; set; }
 
         [StringLength(250)]
-        public string Value { get; set; }
+        public string VALUE { get; set; }
 
-        public bool? ShowByDefault { get; set; }
+        public bool? SHOWBYDEFAULT { get; set; }
 
         [StringLength(100)]
-        public string CreatedBy { get; set; }
+        public string CREATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }

@@ -6,22 +6,22 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class tbl_COT
+    public partial class TBL_COT
     {
         [Key]
-        public int COTId { get; set; }
+        public int COTID { get; set; }
 
-        public int? AccountId { get; set; }
+        public int? ACCOUNTID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? COTAccountAmount { get; set; }
+        public decimal? COTACCOUNTAMOUNT { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? COTDate { get; set; }
+        public DateTime? COTDATE { get; set; }
 
         [StringLength(50)]
-        public string COTCreatedBy { get; set; }
+        public string COTCREATEDBY { get; set; }
 
-        public bool? IsCurrent { get; set; }
+        public bool? ISCURRENT { get; set; }
     }
 }

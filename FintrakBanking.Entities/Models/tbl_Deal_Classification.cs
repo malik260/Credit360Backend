@@ -6,35 +6,35 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("treasury.tbl_Deal_Classification")]
-    public partial class tbl_Deal_Classification
+    [Table("treasury.TBL_DEAL_CLASSIFICATION")]
+    public partial class TBL_DEAL_CLASSIFICATION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Deal_Classification()
+        public TBL_DEAL_CLASSIFICATION()
         {
-            tbl_Product = new HashSet<tbl_Product>();
-            tbl_Product_Type = new HashSet<tbl_Product_Type>();
-            tbl_Temp_Product = new HashSet<tbl_Temp_Product>();
+            TBL_PRODUCT = new HashSet<TBL_PRODUCT>();
+            TBL_PRODUCT_TYPE = new HashSet<TBL_PRODUCT_TYPE>();
+            TBL_TEMP_PRODUCT = new HashSet<TBL_TEMP_PRODUCT>();
         }
 
         [Key]
-        public short DealClassificationID { get; set; }
+        public short DEALCLASSIFICATIONID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Classification { get; set; }
+        public string CLASSIFICATION { get; set; }
 
         [Required]
         [StringLength(10)]
-        public string Code { get; set; }
+        public string CODE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product> tbl_Product { get; set; }
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Product_Type> tbl_Product_Type { get; set; }
+        public virtual ICollection<TBL_PRODUCT_TYPE> TBL_PRODUCT_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product> tbl_Temp_Product { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT { get; set; }
     }
 }

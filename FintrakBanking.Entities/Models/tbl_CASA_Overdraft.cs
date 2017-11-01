@@ -6,32 +6,32 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_CASA_Overdraft")]
-    public partial class tbl_CASA_Overdraft
+    [Table("core.TBL_CASA_OVERDRAFT")]
+    public partial class TBL_CASA_OVERDRAFT
     {
         [Key]
-        public int OverdraftId { get; set; }
+        public int OVERDRAFTID { get; set; }
 
-        public int CasaAccountId { get; set; }
+        public int CASAACCOUNTID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime EffectiveDate { get; set; }
+        public DateTime EFFECTIVEDATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal CreditAmount { get; set; }
+        public decimal CREDITAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal DebitAmount { get; set; }
+        public decimal DEBITAMOUNT { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime DateCreated { get; set; }
+        public DateTime DATECREATED { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public virtual tbl_CASA tbl_CASA { get; set; }
+        public virtual TBL_CASA TBL_CASA { get; set; }
     }
 }

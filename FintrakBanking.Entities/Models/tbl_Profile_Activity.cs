@@ -6,35 +6,35 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Profile_Activity")]
-    public partial class tbl_Profile_Activity
+    [Table("core.TBL_PROFILE_ACTIVITY")]
+    public partial class TBL_PROFILE_ACTIVITY
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Profile_Activity()
+        public TBL_PROFILE_ACTIVITY()
         {
-            tbl_Profile_AdditionalActivity = new HashSet<tbl_Profile_AdditionalActivity>();
-            tbl_Profile_Group_Activity = new HashSet<tbl_Profile_Group_Activity>();
-            tbl_Profile_Priviledge_Activity = new HashSet<tbl_Profile_Priviledge_Activity>();
+            TBL_PROFILE_ADDITIONALACTIVITY = new HashSet<TBL_PROFILE_ADDITIONALACTIVITY>();
+            TBL_PROFILE_GROUP_ACTIVITY = new HashSet<TBL_PROFILE_GROUP_ACTIVITY>();
+            TBL_PROFILE_PRIVILEDGE_ACTIVITY = new HashSet<TBL_PROFILE_PRIVILEDGE_ACTIVITY>();
         }
 
         [Key]
-        public int ActivityId { get; set; }
+        public int ACTIVITYID { get; set; }
 
-        public int ActivityParentId { get; set; }
+        public int ACTIVITYPARENTID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string ActivityName { get; set; }
+        public string ACTIVITYNAME { get; set; }
 
-        public virtual tbl_Profile_Activity_Parent tbl_Profile_Activity_Parent { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_AdditionalActivity> tbl_Profile_AdditionalActivity { get; set; }
+        public virtual TBL_PROFILE_ACTIVITY_PARENT TBL_PROFILE_ACTIVITY_PARENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_Group_Activity> tbl_Profile_Group_Activity { get; set; }
+        public virtual ICollection<TBL_PROFILE_ADDITIONALACTIVITY> TBL_PROFILE_ADDITIONALACTIVITY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Profile_Priviledge_Activity> tbl_Profile_Priviledge_Activity { get; set; }
+        public virtual ICollection<TBL_PROFILE_GROUP_ACTIVITY> TBL_PROFILE_GROUP_ACTIVITY { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_PROFILE_PRIVILEDGE_ACTIVITY> TBL_PROFILE_PRIVILEDGE_ACTIVITY { get; set; }
     }
 }

@@ -6,55 +6,55 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Solicitor")]
-    public partial class tbl_Solicitor
+    [Table("credit.TBL_SOLICITOR")]
+    public partial class TBL_SOLICITOR
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Solicitor()
+        public TBL_SOLICITOR()
         {
-            tbl_Solicitor_State_Mapping = new HashSet<tbl_Solicitor_State_Mapping>();
+            TBL_SOLICITOR_STATE_MAPPING = new HashSet<TBL_SOLICITOR_STATE_MAPPING>();
         }
 
         [Key]
-        public int SolicitorId { get; set; }
+        public int SOLICITORID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string RegistrationNumber { get; set; }
+        public string REGISTRATIONNUMBER { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string SolicitorName { get; set; }
+        public string SOLICITORNAME { get; set; }
 
         [Required]
         [StringLength(500)]
-        public string Address { get; set; }
+        public string ADDRESS { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string ContactPerson { get; set; }
+        public string CONTACTPERSON { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string Email { get; set; }
+        public string EMAIL { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string PhoneNumber { get; set; }
+        public string PHONENUMBER { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime DATECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
+        public virtual ICollection<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
     }
 }

@@ -6,29 +6,29 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Credit_Appraisal_Memorandum_Document")]
-    public partial class tbl_Credit_Appraisal_Memorandum_Document
+    [Table("credit.TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT")]
+    public partial class TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT
     {
         [Key]
-        public int CAMDocumentationId { get; set; }
+        public int CAMDOCUMENTATIONID { get; set; }
 
         [Required]
-        public string CAMDocumentation { get; set; }
+        public string CAMDOCUMENTATION { get; set; }
 
-        public int AppraisalMemorandumId { get; set; }
+        public int APPRAISALMEMORANDUMID { get; set; }
 
-        public int ApprovalLevelId { get; set; }
+        public int APPROVALLEVELID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual tbl_Approval_Level tbl_Approval_Level { get; set; }
+        public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
-        public virtual tbl_Credit_Appraisal_Memorandum tbl_Credit_Appraisal_Memorandum { get; set; }
+        public virtual TBL_CREDIT_APPRAISAL_MEMORANDUM TBL_CREDIT_APPRAISAL_MEMORANDUM { get; set; }
     }
 }

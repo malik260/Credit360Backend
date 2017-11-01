@@ -6,95 +6,95 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Charge_Fee")]
-    public partial class tbl_Temp_Charge_Fee
+    [Table("temp.TBL_TEMP_CHARGE_FEE")]
+    public partial class TBL_TEMP_CHARGE_FEE
     {
         [Key]
-        public int Temp_ChargeFeeId { get; set; }
+        public int TEMP_CHARGEFEEID { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string ChargeFeeName { get; set; }
+        public string CHARGEFEENAME { get; set; }
 
-        public short AccountCategoryId { get; set; }
+        public short ACCOUNTCATEGORYID { get; set; }
 
-        public short FeeIntervalId { get; set; }
+        public short FEEINTERVALID { get; set; }
 
-        public short ProductTypeId { get; set; }
+        public short PRODUCTTYPEID { get; set; }
 
-        public short FeeTargetId { get; set; }
+        public short FEETARGETID { get; set; }
 
-        public int GLAccountId { get; set; }
+        public int GLACCOUNTID { get; set; }
 
-        public short? FeeAmortisationTypeId { get; set; }
+        public short? FEEAMORTISATIONTYPEID { get; set; }
 
-        public bool IsIntegralFee { get; set; }
+        public bool ISINTEGRALFEE { get; set; }
 
-        public bool IncludeCutOffDay { get; set; }
+        public bool INCLUDECUTOFFDAY { get; set; }
 
-        public short? CutOffDay { get; set; }
+        public short? CUTOFFDAY { get; set; }
 
-        public int? OperationId { get; set; }
+        public int? OPERATIONID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal? Amount { get; set; }
+        public decimal? AMOUNT { get; set; }
 
-        public double? Rate { get; set; }
+        public double? RATE { get; set; }
 
-        public short FeeTypeId { get; set; }
+        public short FEETYPEID { get; set; }
 
-        public bool? Recurring { get; set; }
+        public bool? RECURRING { get; set; }
 
-        public int? PrimaryTaxId { get; set; }
+        public int? PRIMARYTAXID { get; set; }
 
-        public int? SecondaryTaxId { get; set; }
+        public int? SECONDARYTAXID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public bool IsCurrent { get; set; }
+        public bool ISCURRENT { get; set; }
 
-        public short ApprovalStatusId { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
-        public int? ChargeFeeId { get; set; }
+        public int? CHARGEFEEID { get; set; }
 
-        public int? Temp_Root_Id { get; set; }
+        public int? TEMP_ROOT_ID { get; set; }
 
-        public bool isUpdatestatus { get; set; }
+        public bool ISUPDATESTATUS { get; set; }
 
-        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Fee_Amortisation_Type tbl_Fee_Amortisation_Type { get; set; }
+        public virtual TBL_FEE_AMORTISATION_TYPE TBL_FEE_AMORTISATION_TYPE { get; set; }
 
-        public virtual tbl_Fee_Interval tbl_Fee_Interval { get; set; }
+        public virtual TBL_FEE_INTERVAL TBL_FEE_INTERVAL { get; set; }
 
-        public virtual tbl_Fee_Target tbl_Fee_Target { get; set; }
+        public virtual TBL_FEE_TARGET TBL_FEE_TARGET { get; set; }
 
-        public virtual tbl_Operations tbl_Operations { get; set; }
+        public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
-        public virtual tbl_Product_Type tbl_Product_Type { get; set; }
+        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
 
-        public virtual tbl_Tax tbl_Tax { get; set; }
+        public virtual TBL_TAX TBL_TAX { get; set; }
 
-        public virtual tbl_Tax tbl_Tax1 { get; set; }
+        public virtual TBL_TAX TBL_TAX1 { get; set; }
 
-        public virtual tbl_Account_Category tbl_Account_Category { get; set; }
+        public virtual TBL_ACCOUNT_CATEGORY TBL_ACCOUNT_CATEGORY { get; set; }
 
-        public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
+        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
     }
 }

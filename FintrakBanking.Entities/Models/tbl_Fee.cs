@@ -6,78 +6,78 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Fee")]
-    public partial class tbl_Fee
+    [Table("core.TBL_FEE")]
+    public partial class TBL_FEE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Fee()
+        public TBL_FEE()
         {
-            tbl_Temp_Product_Fee = new HashSet<tbl_Temp_Product_Fee>();
+            TBL_TEMP_PRODUCT_FEE = new HashSet<TBL_TEMP_PRODUCT_FEE>();
         }
 
         [Key]
-        public int FeeId { get; set; }
+        public int FEEID { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string FeeName { get; set; }
+        public string FEENAME { get; set; }
 
-        public short AccountCategoryId { get; set; }
+        public short ACCOUNTCATEGORYID { get; set; }
 
-        public short FeeTypeId { get; set; }
+        public short FEETYPEID { get; set; }
 
-        public short FeeIntervalId { get; set; }
+        public short FEEINTERVALID { get; set; }
 
-        public short ProductTypeId { get; set; }
+        public short PRODUCTTYPEID { get; set; }
 
-        public short FeeTargetId { get; set; }
+        public short FEETARGETID { get; set; }
 
-        public int GLAccountId { get; set; }
+        public int GLACCOUNTID { get; set; }
 
-        public short? FeeAmortisationTypeId { get; set; }
+        public short? FEEAMORTISATIONTYPEID { get; set; }
 
-        public bool IsIntegralFee { get; set; }
+        public bool ISINTEGRALFEE { get; set; }
 
-        public bool IncludeCutOffDay { get; set; }
+        public bool INCLUDECUTOFFDAY { get; set; }
 
-        public short? CutOffDay { get; set; }
+        public short? CUTOFFDAY { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime FeeDate { get; set; }
+        public DateTime FEEDATE { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Fee_Amortisation_Type tbl_Fee_Amortisation_Type { get; set; }
+        public virtual TBL_FEE_AMORTISATION_TYPE TBL_FEE_AMORTISATION_TYPE { get; set; }
 
-        public virtual tbl_Account_Category tbl_Account_Category { get; set; }
+        public virtual TBL_ACCOUNT_CATEGORY TBL_ACCOUNT_CATEGORY { get; set; }
 
-        public virtual tbl_Chart_Of_Account tbl_Chart_Of_Account { get; set; }
+        public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
 
-        public virtual tbl_Fee_Interval tbl_Fee_Interval { get; set; }
+        public virtual TBL_FEE_INTERVAL TBL_FEE_INTERVAL { get; set; }
 
-        public virtual tbl_Fee_Target tbl_Fee_Target { get; set; }
+        public virtual TBL_FEE_TARGET TBL_FEE_TARGET { get; set; }
 
-        public virtual tbl_Fee_Type tbl_Fee_Type { get; set; }
+        public virtual TBL_FEE_TYPE TBL_FEE_TYPE { get; set; }
 
-        public virtual tbl_Product_Type tbl_Product_Type { get; set; }
+        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Product_Fee> tbl_Temp_Product_Fee { get; set; }
+        public virtual ICollection<TBL_TEMP_PRODUCT_FEE> TBL_TEMP_PRODUCT_FEE { get; set; }
     }
 }

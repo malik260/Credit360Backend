@@ -6,41 +6,41 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Deposit")]
-    public partial class tbl_Collateral_Deposit
+    [Table("credit.TBL_COLLATERAL_DEPOSIT")]
+    public partial class TBL_COLLATERAL_DEPOSIT
     {
         [Key]
-        public int CollateralDepositId { get; set; }
+        public int COLLATERALDEPOSITID { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
         [StringLength(50)]
-        public string DealReferenceNumber { get; set; }
+        public string DEALREFERENCENUMBER { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string AccountNumber { get; set; }
+        public string ACCOUNTNUMBER { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal ExistingLienAmount { get; set; }
+        public decimal EXISTINGLIENAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal LienAmount { get; set; }
+        public decimal LIENAMOUNT { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal AvailableBalance { get; set; }
+        public decimal AVAILABLEBALANCE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal SecurityValue { get; set; }
+        public decimal SECURITYVALUE { get; set; }
 
-        public DateTime MaturityDate { get; set; }
+        public DateTime MATURITYDATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal MaturityAmount { get; set; }
+        public decimal MATURITYAMOUNT { get; set; }
 
         [StringLength(500)]
-        public string Remark { get; set; }
+        public string REMARK { get; set; }
 
-        public virtual tbl_Collateral_Customer tbl_Collateral_Customer { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }

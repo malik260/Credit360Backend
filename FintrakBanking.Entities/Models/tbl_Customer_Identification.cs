@@ -6,27 +6,27 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Customer_Identification")]
-    public partial class tbl_Customer_Identification
+    [Table("core.TBL_CUSTOMER_IDENTIFICATION")]
+    public partial class TBL_CUSTOMER_IDENTIFICATION
     {
         [Key]
-        public int IdentificationId { get; set; }
+        public int IDENTIFICATIONID { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
         [StringLength(25)]
-        public string IdentificationNo { get; set; }
+        public string IDENTIFICATIONNO { get; set; }
 
-        public int? IdentificationModeId { get; set; }
-
-        [StringLength(200)]
-        public string IssuePlace { get; set; }
+        public int? IDENTIFICATIONMODEID { get; set; }
 
         [StringLength(200)]
-        public string IssueAuthority { get; set; }
+        public string ISSUEPLACE { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        [StringLength(200)]
+        public string ISSUEAUTHORITY { get; set; }
 
-        public virtual tbl_Customer_IdentificationModeType tbl_Customer_IdentificationModeType { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
+
+        public virtual TBL_CUSTOMER_IDENTIFICATIONMODETYPE TBL_CUSTOMER_IDENTIFICATIONMODETYPE { get; set; }
     }
 }

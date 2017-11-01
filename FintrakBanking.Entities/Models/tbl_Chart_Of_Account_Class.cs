@@ -6,28 +6,28 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("finance.tbl_Chart_Of_Account_Class")]
-    public partial class tbl_Chart_Of_Account_Class
+    [Table("finance.TBL_CHART_OF_ACCOUNT_CLASS")]
+    public partial class TBL_CHART_OF_ACCOUNT_CLASS
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Chart_Of_Account_Class()
+        public TBL_CHART_OF_ACCOUNT_CLASS()
         {
-            tbl_Chart_Of_Account = new HashSet<tbl_Chart_Of_Account>();
-            tbl_Temp_Chart_Of_Account = new HashSet<tbl_Temp_Chart_Of_Account>();
+            TBL_CHART_OF_ACCOUNT = new HashSet<TBL_CHART_OF_ACCOUNT>();
+            TBL_TEMP_CHART_OF_ACCOUNT = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short GLClassId { get; set; }
+        public short GLCLASSID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string GLClassName { get; set; }
+        public string GLCLASSNAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Chart_Of_Account> tbl_Chart_Of_Account { get; set; }
+        public virtual ICollection<TBL_CHART_OF_ACCOUNT> TBL_CHART_OF_ACCOUNT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Chart_Of_Account> tbl_Temp_Chart_Of_Account { get; set; }
+        public virtual ICollection<TBL_TEMP_CHART_OF_ACCOUNT> TBL_TEMP_CHART_OF_ACCOUNT { get; set; }
     }
 }

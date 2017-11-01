@@ -6,26 +6,26 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_Company_Type")]
-    public partial class tbl_Company_Type
+    [Table("core.TBL_COMPANY_TYPE")]
+    public partial class TBL_COMPANY_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Company_Type()
+        public TBL_COMPANY_TYPE()
         {
-            tbl_Company = new HashSet<tbl_Company>();
+            TBL_COMPANY = new HashSet<TBL_COMPANY>();
         }
 
         [Key]
-        public short CompanyTypeId { get; set; }
+        public short COMPANYTYPEID { get; set; }
 
         [Required]
         [StringLength(250)]
-        public string Name { get; set; }
+        public string NAME { get; set; }
 
         [StringLength(250)]
-        public string Description { get; set; }
+        public string DESCRIPTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Company> tbl_Company { get; set; }
+        public virtual ICollection<TBL_COMPANY> TBL_COMPANY { get; set; }
     }
 }

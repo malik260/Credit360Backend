@@ -6,147 +6,147 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Customer")]
-    public partial class tbl_Collateral_Customer
+    [Table("credit.TBL_COLLATERAL_CUSTOMER")]
+    public partial class TBL_COLLATERAL_CUSTOMER
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Collateral_Customer()
+        public TBL_COLLATERAL_CUSTOMER()
         {
-            tbl_Collateral_Casa = new HashSet<tbl_Collateral_Casa>();
-            tbl_Collateral_Documents = new HashSet<tbl_Collateral_Documents>();
-            tbl_Collateral_Item_Policy = new HashSet<tbl_Collateral_Item_Policy>();
-            tbl_Collateral_Deposit = new HashSet<tbl_Collateral_Deposit>();
-            tbl_Collateral_Gaurantee = new HashSet<tbl_Collateral_Gaurantee>();
-            tbl_Collateral_Policy = new HashSet<tbl_Collateral_Policy>();
-            tbl_Collateral_Plant_And_Equipment = new HashSet<tbl_Collateral_Plant_And_Equipment>();
-            tbl_Collateral_Marketable_Security = new HashSet<tbl_Collateral_Marketable_Security>();
-            tbl_Collateral_Miscellaneous = new HashSet<tbl_Collateral_Miscellaneous>();
-            tbl_Collateral_PreciousMetal = new HashSet<tbl_Collateral_PreciousMetal>();
-            tbl_Collateral_Immovable_Property = new HashSet<tbl_Collateral_Immovable_Property>();
-            tbl_Collateral_Stock = new HashSet<tbl_Collateral_Stock>();
-            tbl_Collateral_Vehicle = new HashSet<tbl_Collateral_Vehicle>();
-            tbl_Loan_Collateral_Mapping = new HashSet<tbl_Loan_Collateral_Mapping>();
-            tbl_LoanApplication_Collateral_Mapping = new HashSet<tbl_LoanApplication_Collateral_Mapping>();
-            tbl_Temp_Collateral_Policy = new HashSet<tbl_Temp_Collateral_Policy>();
-            tbl_Temp_Collateral_Plant_And_Equipment = new HashSet<tbl_Temp_Collateral_Plant_And_Equipment>();
-            tbl_Temp_Collateral_PreciousMetal = new HashSet<tbl_Temp_Collateral_PreciousMetal>();
-            tbl_Temp_Collateral_Stock = new HashSet<tbl_Temp_Collateral_Stock>();
+            TBL_COLLATERAL_CASA = new HashSet<TBL_COLLATERAL_CASA>();
+            TBL_COLLATERAL_DOCUMENTS = new HashSet<TBL_COLLATERAL_DOCUMENTS>();
+            TBL_COLLATERAL_ITEM_POLICY = new HashSet<TBL_COLLATERAL_ITEM_POLICY>();
+            TBL_COLLATERAL_DEPOSIT = new HashSet<TBL_COLLATERAL_DEPOSIT>();
+            TBL_COLLATERAL_GAURANTEE = new HashSet<TBL_COLLATERAL_GAURANTEE>();
+            TBL_COLLATERAL_POLICY = new HashSet<TBL_COLLATERAL_POLICY>();
+            TBL_COLLATERAL_PLANT_AND_EQUIPMENT = new HashSet<TBL_COLLATERAL_PLANT_AND_EQUIPMENT>();
+            TBL_COLLATERAL_MARKETABLE_SECURITY = new HashSet<TBL_COLLATERAL_MARKETABLE_SECURITY>();
+            TBL_COLLATERAL_MISCELLANEOUS = new HashSet<TBL_COLLATERAL_MISCELLANEOUS>();
+            TBL_COLLATERAL_PRECIOUSMETAL = new HashSet<TBL_COLLATERAL_PRECIOUSMETAL>();
+            TBL_COLLATERAL_IMMOVABLE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVABLE_PROPERTY>();
+            TBL_COLLATERAL_STOCK = new HashSet<TBL_COLLATERAL_STOCK>();
+            TBL_COLLATERAL_VEHICLE = new HashSet<TBL_COLLATERAL_VEHICLE>();
+            TBL_LOAN_COLLATERAL_MAPPING = new HashSet<TBL_LOAN_COLLATERAL_MAPPING>();
+            TBL_LOANAPPLICATION_COLLATERAL_MAPPING = new HashSet<TBL_LOANAPPLICATION_COLLATERAL_MAPPING>();
+            TBL_TEMP_COLLATERAL_POLICY = new HashSet<TBL_TEMP_COLLATERAL_POLICY>();
+            TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT = new HashSet<TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT>();
+            TBL_TEMP_COLLATERAL_PRECIOUSMETAL = new HashSet<TBL_TEMP_COLLATERAL_PRECIOUSMETAL>();
+            TBL_TEMP_COLLATERAL_STOCK = new HashSet<TBL_TEMP_COLLATERAL_STOCK>();
         }
 
         [Key]
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
-        public int CollateralTypeId { get; set; }
+        public int COLLATERALTYPEID { get; set; }
 
-        public short CollateralSubTypeId { get; set; }
+        public short COLLATERALSUBTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string CollateralCode { get; set; }
+        public string COLLATERALCODE { get; set; }
 
-        public short CurrencyId { get; set; }
+        public short CURRENCYID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public bool AllowSharing { get; set; }
+        public bool ALLOWSHARING { get; set; }
 
-        public bool IsLocationBased { get; set; }
+        public bool ISLOCATIONBASED { get; set; }
 
-        public int? ValuationCycle { get; set; }
+        public int? VALUATIONCYCLE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal CollateralValue { get; set; }
+        public decimal COLLATERALVALUE { get; set; }
 
-        public double HairCut { get; set; }
+        public double HAIRCUT { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
         [StringLength(50)]
-        public string CamRefNumber { get; set; }
+        public string CAMREFNUMBER { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public int ApprovalStatus { get; set; }
+        public int APPROVALSTATUS { get; set; }
 
-        public DateTime? DateActedOn { get; set; }
+        public DateTime? DATEACTEDON { get; set; }
 
-        public int? ActedOnBy { get; set; }
+        public int? ACTEDONBY { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Currency tbl_Currency { get; set; }
+        public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Casa> tbl_Collateral_Casa { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Documents> tbl_Collateral_Documents { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_CASA> TBL_COLLATERAL_CASA { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Item_Policy> tbl_Collateral_Item_Policy { get; set; }
-
-        public virtual tbl_Collateral_Type tbl_Collateral_Type { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_DOCUMENTS> TBL_COLLATERAL_DOCUMENTS { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Deposit> tbl_Collateral_Deposit { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_ITEM_POLICY> TBL_COLLATERAL_ITEM_POLICY { get; set; }
+
+        public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Gaurantee> tbl_Collateral_Gaurantee { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_DEPOSIT> TBL_COLLATERAL_DEPOSIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Policy> tbl_Collateral_Policy { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_GAURANTEE> TBL_COLLATERAL_GAURANTEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Plant_And_Equipment> tbl_Collateral_Plant_And_Equipment { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_POLICY> TBL_COLLATERAL_POLICY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Marketable_Security> tbl_Collateral_Marketable_Security { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_PLANT_AND_EQUIPMENT> TBL_COLLATERAL_PLANT_AND_EQUIPMENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Miscellaneous> tbl_Collateral_Miscellaneous { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_MARKETABLE_SECURITY> TBL_COLLATERAL_MARKETABLE_SECURITY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_PreciousMetal> tbl_Collateral_PreciousMetal { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_MISCELLANEOUS> TBL_COLLATERAL_MISCELLANEOUS { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Immovable_Property> tbl_Collateral_Immovable_Property { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_PRECIOUSMETAL> TBL_COLLATERAL_PRECIOUSMETAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Stock> tbl_Collateral_Stock { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_IMMOVABLE_PROPERTY> TBL_COLLATERAL_IMMOVABLE_PROPERTY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Vehicle> tbl_Collateral_Vehicle { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_STOCK> TBL_COLLATERAL_STOCK { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Collateral_Mapping> tbl_Loan_Collateral_Mapping { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_VEHICLE> TBL_COLLATERAL_VEHICLE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_LoanApplication_Collateral_Mapping> tbl_LoanApplication_Collateral_Mapping { get; set; }
+        public virtual ICollection<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_Policy> tbl_Temp_Collateral_Policy { get; set; }
+        public virtual ICollection<TBL_LOANAPPLICATION_COLLATERAL_MAPPING> TBL_LOANAPPLICATION_COLLATERAL_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_Plant_And_Equipment> tbl_Temp_Collateral_Plant_And_Equipment { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_POLICY> TBL_TEMP_COLLATERAL_POLICY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_PreciousMetal> tbl_Temp_Collateral_PreciousMetal { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT> TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Collateral_Stock> tbl_Temp_Collateral_Stock { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_PRECIOUSMETAL> TBL_TEMP_COLLATERAL_PRECIOUSMETAL { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
     }
 }

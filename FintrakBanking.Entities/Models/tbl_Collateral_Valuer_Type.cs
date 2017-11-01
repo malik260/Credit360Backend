@@ -6,36 +6,36 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Collateral_Valuer_Type")]
-    public partial class tbl_Collateral_Valuer_Type
+    [Table("credit.TBL_COLLATERAL_VALUER_TYPE")]
+    public partial class TBL_COLLATERAL_VALUER_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Collateral_Valuer_Type()
+        public TBL_COLLATERAL_VALUER_TYPE()
         {
-            tbl_Collateral_Valuer = new HashSet<tbl_Collateral_Valuer>();
+            TBL_COLLATERAL_VALUER = new HashSet<TBL_COLLATERAL_VALUER>();
         }
 
         [Key]
-        public short CollateralValuerTypeId { get; set; }
+        public short COLLATERALVALUERTYPEID { get; set; }
 
         [StringLength(200)]
-        public string ValuerTypeName { get; set; }
+        public string VALUERTYPENAME { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Collateral_Valuer> tbl_Collateral_Valuer { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_VALUER> TBL_COLLATERAL_VALUER { get; set; }
     }
 }

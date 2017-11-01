@@ -6,30 +6,30 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class tbl_Media_Collateral_Documents
+    public partial class TBL_MEDIA_COLLATERAL_DOCUMENTS
     {
         [Key]
-        public int DocumentId { get; set; }
+        public int DOCUMENTID { get; set; }
 
         [Required]
         [StringLength(400)]
-        public string FileName { get; set; }
+        public string FILENAME { get; set; }
 
         [Required]
         [StringLength(10)]
-        public string FileExtension { get; set; }
+        public string FILEEXTENSION { get; set; }
 
         [Required]
-        public byte[] FileData { get; set; }
+        public byte[] FILEDATA { get; set; }
 
-        public DateTime SystemDateTime { get; set; }
+        public DateTime SYSTEMDATETIME { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string DocumentCode { get; set; }
+        public string DOCUMENTCODE { get; set; }
 
-        public int CollateralCustomerId { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
     }
 }

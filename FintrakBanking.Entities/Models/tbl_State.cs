@@ -6,60 +6,60 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.tbl_State")]
-    public partial class tbl_State
+    [Table("core.TBL_STATE")]
+    public partial class TBL_STATE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_State()
+        public TBL_STATE()
         {
-            tbl_Branch = new HashSet<tbl_Branch>();
-            tbl_City = new HashSet<tbl_City>();
-            tbl_Temp_Staff = new HashSet<tbl_Temp_Staff>();
-            tbl_Solicitor_State_Mapping = new HashSet<tbl_Solicitor_State_Mapping>();
+            TBL_BRANCH = new HashSet<TBL_BRANCH>();
+            TBL_CITY = new HashSet<TBL_CITY>();
+            TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
+            TBL_SOLICITOR_STATE_MAPPING = new HashSet<TBL_SOLICITOR_STATE_MAPPING>();
         }
 
         [Key]
-        public int StateId { get; set; }
+        public int STATEID { get; set; }
 
-        public int CountryId { get; set; }
+        public int COUNTRYID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string StateName { get; set; }
+        public string STATENAME { get; set; }
 
-        public int? RegionId { get; set; }
+        public int? REGIONID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal CollateralSearchChargeAmount { get; set; }
+        public decimal COLLATERALSEARCHCHARGEAMOUNT { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public int? CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool Deleted { get; set; }
+        public bool DELETED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Branch> tbl_Branch { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_City> tbl_City { get; set; }
-
-        public virtual tbl_Country tbl_Country { get; set; }
-
-        public virtual tbl_Region tbl_Region { get; set; }
+        public virtual ICollection<TBL_BRANCH> TBL_BRANCH { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Temp_Staff> tbl_Temp_Staff { get; set; }
+        public virtual ICollection<TBL_CITY> TBL_CITY { get; set; }
+
+        public virtual TBL_COUNTRY TBL_COUNTRY { get; set; }
+
+        public virtual TBL_REGION TBL_REGION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Solicitor_State_Mapping> tbl_Solicitor_State_Mapping { get; set; }
+        public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
     }
 }

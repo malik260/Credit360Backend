@@ -169,5 +169,43 @@ namespace FintrakBanking.ReportObjects.Credit
         {
             throw new NotImplementedException();
         }
+
+        public static IEnumerable<LoanViewModel> ExpiredOverDraftLoans(int companyId)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+            var applDate = context.tbl_FinanceCurrentDate.FirstOrDefault().CurrentDate;
+
+            var data = (from a in context.tbl_Loan_Revolving
+                        join b in context.tbl_Product on a.ProductId equals b.ProductId
+                        join c in context.tbl_Product_Type on b.ProductTypeId equals c.ProductTypeId
+                        join d in context.tbl_Loan_Application_Detail on a.LoanApplicationDetailId equals d.LoanApplicationDetailId
+                        where a.tbl_Product.ProductTypeId == (int)LoanProductTypeEnum.RevolvingLoan && a.CompanyId == companyId 
+                        && DbFunctions.DiffDays(a.MaturityDate, applDate) <= 90
+                        select new LoanViewModel
+                        {
+                            applicationReferenceNumber = d.tbl_Loan_Application.ApplicationReferenceNumber,
+                            loanReferenceNumber = a.LoanReferenceNumber,
+                            bookingDate = a.BookingDate,
+                            disburseDate = a.DisburseDate,
+                            maturityDate = a.MaturityDate,
+                            productName = b.ProductName,
+                            loanTypeName = a.tbl_Loan_Type.LoanTypeName,
+                            productTypeName = b.tbl_Product_Type.ProductTypeName,
+                            overdraftLimit = a.OverdraftLimit,
+                            relationshipManagerId = a.RelationshipManagerId,
+                            relationshipManagerName = a.tbl_Staff1.FirstName + " " + a.tbl_Staff1.LastName,
+                            relationshipManagerEmail = a.tbl_Staff1.Email,
+                            relationshipOfficerId = a.RelationshipOfficerId,
+                            relationshipOfficerName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.LastName,
+                            relationshipOfficerEmail = a.tbl_Staff.Email
+                        }).ToList();
+
+            if (data != null)
+            {
+                return data;
+            }
+
+            return new List<LoanViewModel>();
+        }
     }
 }

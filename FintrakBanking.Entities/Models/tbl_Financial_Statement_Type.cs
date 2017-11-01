@@ -6,24 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("finance.tbl_Financial_Statement_Type")]
-    public partial class tbl_Financial_Statement_Type
+    [Table("finance.TBL_FINANCIAL_STATEMENT_TYPE")]
+    public partial class TBL_FINANCIAL_STATEMENT_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Financial_Statement_Type()
+        public TBL_FINANCIAL_STATEMENT_TYPE()
         {
-            tbl_Customer_FS_Caption = new HashSet<tbl_Customer_FS_Caption>();
+            TBL_CUSTOMER_FS_CAPTION = new HashSet<TBL_CUSTOMER_FS_CAPTION>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short FSTypeId { get; set; }
+        public short FSTYPEID { get; set; }
 
         [Required]
         [StringLength(150)]
-        public string FSTypeName { get; set; }
+        public string FSTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Customer_FS_Caption> tbl_Customer_FS_Caption { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_FS_CAPTION> TBL_CUSTOMER_FS_CAPTION { get; set; }
     }
 }

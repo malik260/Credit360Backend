@@ -6,64 +6,64 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Fee")]
-    public partial class tbl_Loan_Fee
+    [Table("credit.TBL_LOAN_FEE")]
+    public partial class TBL_LOAN_FEE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public tbl_Loan_Fee()
+        public TBL_LOAN_FEE()
         {
-            tbl_Loan_Fee_Schedule = new HashSet<tbl_Loan_Fee_Schedule>();
+            TBL_LOAN_FEE_SCHEDULE = new HashSet<TBL_LOAN_FEE_SCHEDULE>();
         }
 
         [Key]
-        public int LoanChargeFeeId { get; set; }
+        public int LOANCHARGEFEEID { get; set; }
 
-        public int LoanId { get; set; }
+        public int LOANID { get; set; }
 
-        public short ProductTypeId { get; set; }
+        public short PRODUCTTYPEID { get; set; }
 
-        public int ChargeFeeId { get; set; }
+        public int CHARGEFEEID { get; set; }
 
-        public bool IsPosted { get; set; }
+        public bool ISPOSTED { get; set; }
 
-        public short ApprovalStatusId { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal FeeRateValue { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal FeeDependentAmount { get; set; }
+        public decimal FEERATEVALUE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal FeeAmount { get; set; }
+        public decimal FEEDEPENDENTAMOUNT { get; set; }
 
-        public bool IsIntegralFee { get; set; }
+        [Column(TypeName = "money")]
+        public decimal FEEAMOUNT { get; set; }
 
-        public bool IsRecurring { get; set; }
+        public bool ISINTEGRALFEE { get; set; }
 
-        public short RecurringPaymentDay { get; set; }
+        public bool ISRECURRING { get; set; }
 
-        public int CreatedBy { get; set; }
+        public short RECURRINGPAYMENTDAY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public bool Deleted { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public int? DeletedBy { get; set; }
+        public bool DELETED { get; set; }
 
-        public DateTime? DateTimeDeleted { get; set; }
+        public int? DELETEDBY { get; set; }
 
-        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual tbl_Charge_Fee tbl_Charge_Fee { get; set; }
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        public virtual tbl_Product_Type tbl_Product_Type { get; set; }
+        public virtual TBL_CHARGE_FEE TBL_CHARGE_FEE { get; set; }
+
+        public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<tbl_Loan_Fee_Schedule> tbl_Loan_Fee_Schedule { get; set; }
+        public virtual ICollection<TBL_LOAN_FEE_SCHEDULE> TBL_LOAN_FEE_SCHEDULE { get; set; }
     }
 }

@@ -6,111 +6,111 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.tbl_Temp_Staff")]
-    public partial class tbl_Temp_Staff
+    [Table("temp.TBL_TEMP_STAFF")]
+    public partial class TBL_TEMP_STAFF
     {
         [Key]
-        public int StaffId { get; set; }
+        public int STAFFID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string StaffCode { get; set; }
+        public string STAFFCODE { get; set; }
 
-        public int CompanyId { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string FirstName { get; set; }
+        public int COMPANYID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LastName { get; set; }
+        public string FIRSTNAME { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public string LASTNAME { get; set; }
 
         [StringLength(50)]
-        public string MiddleName { get; set; }
+        public string MIDDLENAME { get; set; }
 
-        public int JobTitleId { get; set; }
+        public int JOBTITLEID { get; set; }
 
-        public int RankId { get; set; }
-
-        [StringLength(100)]
-        public string Phone { get; set; }
+        public int RANKID { get; set; }
 
         [StringLength(100)]
-        public string Email { get; set; }
+        public string PHONE { get; set; }
 
         [StringLength(100)]
-        public string Address { get; set; }
+        public string EMAIL { get; set; }
+
+        [StringLength(100)]
+        public string ADDRESS { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? DateOfBirth { get; set; }
+        public DateTime? DATEOFBIRTH { get; set; }
 
         [StringLength(1)]
-        public string Gender { get; set; }
+        public string GENDER { get; set; }
 
         [StringLength(100)]
-        public string NameOfNOK { get; set; }
+        public string NAMEOFNOK { get; set; }
 
         [StringLength(100)]
-        public string PhoneOfNOK { get; set; }
+        public string PHONEOFNOK { get; set; }
 
         [StringLength(100)]
-        public string EmailOfNOK { get; set; }
+        public string EMAILOFNOK { get; set; }
 
         [StringLength(100)]
-        public string AddressOfNOK { get; set; }
+        public string ADDRESSOFNOK { get; set; }
 
         [StringLength(1)]
-        public string GenderOfNOK { get; set; }
+        public string GENDEROFNOK { get; set; }
 
         [StringLength(100)]
-        public string NOKRelationShip { get; set; }
+        public string NOKRELATIONSHIP { get; set; }
 
         [StringLength(100)]
-        public string Comment { get; set; }
+        public string COMMENT { get; set; }
 
-        public byte[] Staffsignature { get; set; }
+        public byte[] STAFFSIGNATURE { get; set; }
 
-        public short? BranchId { get; set; }
+        public short? BRANCHID { get; set; }
 
-        public int? MISInfoId { get; set; }
+        public int? MISINFOID { get; set; }
 
-        public short? DepartmentId { get; set; }
+        public short? DEPARTMENTID { get; set; }
 
-        public int? StateId { get; set; }
+        public int? STATEID { get; set; }
 
-        public int? CityId { get; set; }
+        public int? CITYID { get; set; }
 
-        public short CustomerSensitivityLevel { get; set; }
+        public short CUSTOMERSENSITIVITYLEVEL { get; set; }
 
-        public int? CreatedBy { get; set; }
+        public int? CREATEDBY { get; set; }
 
-        public int? LastUpdatedBy { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public DateTime? DateTimeUpdated { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
-        public bool IsCurrent { get; set; }
+        public bool ISCURRENT { get; set; }
 
-        public short ApprovalStatusId { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
-        public virtual tbl_Approval_Status tbl_Approval_Status { get; set; }
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
-        public virtual tbl_City tbl_City { get; set; }
+        public virtual TBL_CITY TBL_CITY { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Department tbl_Department { get; set; }
+        public virtual TBL_DEPARTMENT TBL_DEPARTMENT { get; set; }
 
-        public virtual tbl_MIS_Info tbl_MIS_Info { get; set; }
+        public virtual TBL_MIS_INFO TBL_MIS_INFO { get; set; }
 
-        public virtual tbl_Staff_JobTitle tbl_Staff_JobTitle { get; set; }
+        public virtual TBL_STAFF_JOBTITLE TBL_STAFF_JOBTITLE { get; set; }
 
-        public virtual tbl_Staff_Rank tbl_Staff_Rank { get; set; }
+        public virtual TBL_STAFF_RANK TBL_STAFF_RANK { get; set; }
 
-        public virtual tbl_State tbl_State { get; set; }
+        public virtual TBL_STATE TBL_STATE { get; set; }
     }
 }

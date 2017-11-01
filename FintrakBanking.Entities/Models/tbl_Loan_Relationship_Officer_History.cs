@@ -6,27 +6,27 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Relationship_Officer_History")]
-    public partial class tbl_Loan_Relationship_Officer_History
+    [Table("credit.TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY")]
+    public partial class TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY
     {
         [Key]
-        public short LoanRelationshipOfficerId { get; set; }
+        public short LOANRELATIONSHIPOFFICERID { get; set; }
 
-        public int LoanId { get; set; }
+        public int LOANID { get; set; }
 
-        public int StaffId { get; set; }
+        public int STAFFID { get; set; }
 
-        public DateTime? StartDate { get; set; }
+        public DateTime? STARTDATE { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        public DateTime? ENDDATE { get; set; }
 
-        public bool? IsCurrent { get; set; }
+        public bool? ISCURRENT { get; set; }
 
         [StringLength(100)]
-        public string CreatedBy { get; set; }
+        public string CREATEDBY { get; set; }
 
-        public DateTime? DateTimeCreated { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
 
-        public virtual tbl_Staff tbl_Staff { get; set; }
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
     }
 }

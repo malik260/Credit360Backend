@@ -6,141 +6,141 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.tbl_Loan_Revolving")]
-    public partial class tbl_Loan_Revolving
+    [Table("credit.TBL_LOAN_REVOLVING")]
+    public partial class TBL_LOAN_REVOLVING
     {
         [Key]
-        public int RevolvingLoanId { get; set; }
+        public int REVOLVINGLOANID { get; set; }
 
-        public int CustomerId { get; set; }
+        public int CUSTOMERID { get; set; }
 
-        public short ProductId { get; set; }
+        public short PRODUCTID { get; set; }
 
-        public int CompanyId { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int CasaAccountId { get; set; }
+        public int CASAACCOUNTID { get; set; }
 
-        public short BranchId { get; set; }
+        public short BRANCHID { get; set; }
 
-        public short CurrencyId { get; set; }
+        public short CURRENCYID { get; set; }
 
-        public int LoanApplicationDetailId { get; set; }
+        public int LOANAPPLICATIONDETAILID { get; set; }
 
-        public double ExchangeRate { get; set; }
+        public double EXCHANGERATE { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LoanReferenceNumber { get; set; }
+        public string LOANREFERENCENUMBER { get; set; }
 
-        public short SubSectorId { get; set; }
+        public short SUBSECTORID { get; set; }
 
-        public int RelationshipOfficerId { get; set; }
+        public int RELATIONSHIPOFFICERID { get; set; }
 
-        public int RelationshipManagerId { get; set; }
-
-        [StringLength(50)]
-        public string MISCode { get; set; }
+        public int RELATIONSHIPMANAGERID { get; set; }
 
         [StringLength(50)]
-        public string TeamMISCode { get; set; }
+        public string MISCODE { get; set; }
 
-        public double InterestRate { get; set; }
+        [StringLength(50)]
+        public string TEAMMISCODE { get; set; }
 
-        [Column(TypeName = "date")]
-        public DateTime EffectiveDate { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime MaturityDate { get; set; }
+        public double INTERESTRATE { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime BookingDate { get; set; }
+        public DateTime EFFECTIVEDATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime MATURITYDATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime BOOKINGDATE { get; set; }
 
         [Column(TypeName = "money")]
-        public decimal OverdraftLimit { get; set; }
+        public decimal OVERDRAFTLIMIT { get; set; }
 
-        public int ApprovalStatusId { get; set; }
+        public int APPROVALSTATUSID { get; set; }
 
         [StringLength(50)]
-        public string ApprovedBy { get; set; }
+        public string APPROVEDBY { get; set; }
 
         [StringLength(500)]
-        public string ApproverComment { get; set; }
+        public string APPROVERCOMMENT { get; set; }
 
-        public DateTime? DateApproved { get; set; }
+        public DateTime? DATEAPPROVED { get; set; }
 
-        public short LoanStatusId { get; set; }
+        public short LOANSTATUSID { get; set; }
 
-        public bool IsDisbursed { get; set; }
+        public bool ISDISBURSED { get; set; }
 
         [StringLength(50)]
-        public string DisbursedBy { get; set; }
+        public string DISBURSEDBY { get; set; }
 
         [StringLength(500)]
-        public string DisburserComment { get; set; }
+        public string DISBURSERCOMMENT { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? DisburseDate { get; set; }
+        public DateTime? DISBURSEDATE { get; set; }
 
-        public int? OperationId { get; set; }
+        public int? OPERATIONID { get; set; }
 
-        public int? CustomerGroupId { get; set; }
+        public int? CUSTOMERGROUPID { get; set; }
 
-        public short LoanTypeId { get; set; }
+        public short LOANTYPEID { get; set; }
 
         [StringLength(50)]
-        public string TrancheBatchCode { get; set; }
+        public string TRANCHEBATCHCODE { get; set; }
 
-        public bool DischargeLetter { get; set; }
+        public bool DISCHARGELETTER { get; set; }
 
-        public bool SuspendInterest { get; set; }
+        public bool SUSPENDINTEREST { get; set; }
 
-        public short DayCountConventionId { get; set; }
+        public short DAYCOUNTCONVENTIONID { get; set; }
 
-        public short CustomerSensitivityLevelId { get; set; }
+        public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
-        public int? InternalPrudentialGuidelineStatusId { get; set; }
+        public int? INTERNALPRUDENTIALGUIDELINESTATUSID { get; set; }
 
-        public int? ExternalPrudentialGuidelineStatusId { get; set; }
+        public int? EXTERNALPRUDENTIALGUIDELINESTATUSID { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime? NPLDate { get; set; }
+        public DateTime? NPLDATE { get; set; }
 
-        public int CreatedBy { get; set; }
+        public int CREATEDBY { get; set; }
 
-        public DateTime DateTimeCreated { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
 
-        public virtual tbl_Branch tbl_Branch { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
-        public virtual tbl_CASA tbl_CASA { get; set; }
+        public virtual TBL_CASA TBL_CASA { get; set; }
 
-        public virtual tbl_Company tbl_Company { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual tbl_Currency tbl_Currency { get; set; }
+        public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
-        public virtual tbl_Customer tbl_Customer { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual tbl_Customer_Group tbl_Customer_Group { get; set; }
+        public virtual TBL_CUSTOMER_GROUP TBL_CUSTOMER_GROUP { get; set; }
 
-        public virtual tbl_Customer_Sensitivity_Level tbl_Customer_Sensitivity_Level { get; set; }
+        public virtual TBL_CUSTOMER_SENSITIVITY_LEVEL TBL_CUSTOMER_SENSITIVITY_LEVEL { get; set; }
 
-        public virtual tbl_Day_Count_Convention tbl_Day_Count_Convention { get; set; }
+        public virtual TBL_DAY_COUNT_CONVENTION TBL_DAY_COUNT_CONVENTION { get; set; }
 
-        public virtual tbl_Product tbl_Product { get; set; }
+        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 
-        public virtual tbl_Staff tbl_Staff { get; set; }
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
 
-        public virtual tbl_Staff tbl_Staff1 { get; set; }
+        public virtual TBL_STAFF TBL_STAFF1 { get; set; }
 
-        public virtual tbl_Sub_Sector tbl_Sub_Sector { get; set; }
+        public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
 
-        public virtual tbl_Loan_Application_Detail tbl_Loan_Application_Detail { get; set; }
+        public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
 
-        public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline { get; set; }
+        public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE { get; set; }
 
-        public virtual tbl_Loan_PrudentialGuideline tbl_Loan_PrudentialGuideline1 { get; set; }
+        public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE1 { get; set; }
 
-        public virtual tbl_Loan_Status tbl_Loan_Status { get; set; }
+        public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
 
-        public virtual tbl_Loan_Type tbl_Loan_Type { get; set; }
+        public virtual TBL_LOAN_TYPE TBL_LOAN_TYPE { get; set; }
     }
 }
