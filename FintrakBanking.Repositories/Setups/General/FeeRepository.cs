@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 CREATEDBY = fee.createdBy,
                 DATETIMECREATED = DateTime.Now,
-            };           
+            };
 
             this.context.TBL_FEE.Add(data);
 
@@ -89,7 +89,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 return data.FEEID;
             }
-            
+
             else
                 return -1;
         }
@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         companyId = data.COMPANYID,
                         feeDate = data.FEEDATE,
                         createdBy = data.CREATEDBY,
-                        
+
                         dateTimeCreated = data.DATETIMECREATED,
                         dateTimeUpdated = data.DATETIMEUPDATED,
                         deleted = data.DELETED,
@@ -261,7 +261,7 @@ namespace FintrakBanking.Repositories.Setups.General
             feeModel.INCLUDECUTOFFDAY = fee.includeCutOffDay;
             feeModel.CUTOFFDAY = fee.cutOffDay;
             feeModel.COMPANYID = fee.companyId;
-            feeModel.FEEDATE = fee.feeDate;            
+            feeModel.FEEDATE = fee.feeDate;
 
             feeModel.LASTUPDATEDBY = fee.lastUpdatedBy;
             feeModel.DATETIMEUPDATED = DateTime.Now;
@@ -451,7 +451,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME  = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -459,11 +459,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return this.SaveAll();
         }
-            #endregion tbl_Product Fee
+        #endregion tbl_Product Fee
 
-            #region Fee Related Lookups
+        #region Fee Related Lookups
 
-            public IEnumerable<LookupViewModel> GetFeeAccountCategory()
+        public IEnumerable<LookupViewModel> GetFeeAccountCategory()
         {
             return (from data in context.TBL_ACCOUNT_CATEGORY
                     where data.ACCOUNTCATEGORYID == (short)AccountCategoryEnum.Income || data.ACCOUNTCATEGORYID == (short)AccountCategoryEnum.Expense

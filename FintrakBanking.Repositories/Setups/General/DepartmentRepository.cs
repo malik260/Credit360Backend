@@ -197,11 +197,11 @@ namespace FintrakBanking.Repositories.Setups.General
                                   DepartmentId = dept.DEPARTMENTID,
                                   firstname = s.FIRSTNAME,
                                   lastname = s.LASTNAME,
-                                  middlename = s.MiddleName,
-                                  fullname = s.LastName +" "+ s.FirstName + " "+ s.MiddleName,
-                                  staffId = s.StaffId,
-                                  rankName = s.tbl_Staff_Rank.RankName,
-                                  jobTitleName = s.tbl_Staff_JobTitle.JobTitleName
+                                  middlename = s.MIDDLENAME,
+                                  fullname = s.LASTNAME +" "+ s.FIRSTNAME + " "+ s.MIDDLENAME,
+                                  staffId = s.STAFFID,
+                                  rankName = s.TBL_STAFF_RANK.RANKNAME,
+                                  jobTitleName = s.TBL_STAFF_JOBTITLE.JOBTITLENAME
                               };
 
                 if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
