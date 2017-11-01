@@ -28,30 +28,30 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (String.IsNullOrEmpty(model.templateDocument)) { throw new Exception("Document is blank. Cannot create a blank document!"); }
 
-            var data = new tbl_Credit_Template
+            var data = new TBL_CREDIT_TEMPLATE
             {
-                CompanyId = model.companyId,
-                TemplateTitle = model.templateTitle,
-                TemplateDocument = model.templateDocument,
-                ApprovalLevelId = model.approvalLevelId,
+                COMPANYID = model.companyId,
+                TEMPLATETITLE = model.templateTitle,
+                TEMPLATEDOCUMENT = model.templateDocument,
+                APPROVALLEVELID = model.approvalLevelId,
                 //ProductClassId = model.productClassId,
-                CreatedBy = (int)model.createdBy,
-                DateTimeCreated = general.GetApplicationDate()
+                CREATEDBY = (int)model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate()
             };
 
-            context.tbl_Credit_Template.Add(data);
+            context.TBL_CREDIT_TEMPLATE.Add(data);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CreditTemplateAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added CreditTemplate '{ model.templateTitle }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CreditTemplateAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added CreditTemplate '{ model.templateTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -61,31 +61,31 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateCreditTemplate(CreditTemplateViewModel model, int creditTemplateId)
         {
-            var data = this.context.tbl_Credit_Template.Find(creditTemplateId);
+            var data = this.context.TBL_CREDIT_TEMPLATE.Find(creditTemplateId);
             if (data == null)
             {
                 return false;
             }
 
-            data.CompanyId = model.companyId;
-            data.TemplateTitle = model.templateTitle;
-            data.TemplateDocument = model.templateDocument;
-            data.ApprovalLevelId = model.approvalLevelId;
+            data.COMPANYID = model.companyId;
+            data.TEMPLATETITLE = model.templateTitle;
+            data.TEMPLATEDOCUMENT = model.templateDocument;
+            data.APPROVALLEVELID = model.approvalLevelId;
             //data.ProductClassId = model.productClassId;
-            data.LastUpdatedBy = model.lastUpdatedBy;
-            data.DateTimeUpdated = general.GetApplicationDate();
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CreditTemplateUpdated,
-                StaffId = model.lastUpdatedBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated CreditTemplate '{ model.templateTitle }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CreditTemplateUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated CreditTemplate '{ model.templateTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -95,20 +95,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CreditTemplateViewModel> GetAllCreditTemplate()
         {
-            return this.context.tbl_Credit_Template.Where(x => x.Deleted == false).Select(x => new CreditTemplateViewModel
+            return this.context.TBL_CREDIT_TEMPLATE.Where(x => x.DELETED == false).Select(x => new CreditTemplateViewModel
             {
-                creditTemplateId = x.CreditTemplateId,
-                companyId = x.CompanyId,
-                templateTitle = x.TemplateTitle,
-                templateDocument = x.TemplateDocument,
-                approvalLevelId = x.ApprovalLevelId,
+                creditTemplateId = x.CREDITTEMPLATEID,
+                companyId = x.COMPANYID,
+                templateTitle = x.TEMPLATETITLE,
+                templateDocument = x.TEMPLATEDOCUMENT,
+                approvalLevelId = x.APPROVALLEVELID,
                 //productClassId = x.ProductClassId,
             });
         }
 
         public CreditTemplateViewModel GetCreditTemplate(int creditTemplateId)
         {
-            var data = this.context.tbl_Credit_Template.Find(creditTemplateId);
+            var data = this.context.TBL_CREDIT_TEMPLATE.Find(creditTemplateId);
 
             if (data == null)
             {
@@ -117,11 +117,11 @@ namespace FintrakBanking.Repositories.Credit
 
             return new CreditTemplateViewModel
             {
-                creditTemplateId = data.CreditTemplateId,
-                companyId = data.CompanyId,
-                templateTitle = data.TemplateTitle,
-                templateDocument = data.TemplateDocument,
-                approvalLevelId = data.ApprovalLevelId,
+                creditTemplateId = data.CREDITTEMPLATEID,
+                companyId = data.COMPANYID,
+                templateTitle = data.TEMPLATETITLE,
+                templateDocument = data.TEMPLATEDOCUMENT,
+                approvalLevelId = data.APPROVALLEVELID,
                 //productClassId = data.ProductClassId,
             };
         }
@@ -144,7 +144,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CreditTemplateViewModel> GetAllCreditTemplateByProductClass(int productId, int staffId)
         {
-            var staffApprovalLevelIds = context.tbl_Approval_Level_Staff.Where(x => x.StaffId == staffId).Select(x => x.ApprovalLevelId);
+            var staffApprovalLevelIds = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId).Select(x => x.APPROVALLEVELID);
             return this.GetAllCreditTemplate().Where(x =>
                 staffApprovalLevelIds.Contains(x.approvalLevelId)
                 && x.productClassId == productId

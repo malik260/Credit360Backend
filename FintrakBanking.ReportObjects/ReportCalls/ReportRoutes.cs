@@ -9,12 +9,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
     public class ReportRoutes : IReportRoutes
     {
         string reportPath = "http://localhost:51336/Reports/";
-        private IQueryable<tbl_Loan_Application> LoanApplication(int companyId)
+        private IQueryable<TBL_LOAN_APPLICATION> LoanApplication(int companyId)
         {
-            IQueryable<tbl_Loan_Application> data;
+            IQueryable<TBL_LOAN_APPLICATION> data;
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                data = context.tbl_Loan_Application.Where(c => c.CompanyId == companyId);
+                data = context.TBL_LOAN_APPLICATION.Where(c => c.COMPANYID == companyId);
             }
             return data;
         }
