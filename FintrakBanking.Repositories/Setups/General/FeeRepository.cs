@@ -336,7 +336,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DATETIMECREATED = DateTime.Now,
                 };
 
-                context.tbl_Temp_Fee.Add(tempFee);
+                context.TBL_TEMP_FEE.Add(tempFee);
             }
 
             // Audit Section ---------------------------
@@ -444,14 +444,14 @@ namespace FintrakBanking.Repositories.Setups.General
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.FeeApproved,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Approved Fee '{feeModel.FeeName}' with fee account category '{feeModel.tbl_Account_Category.AccountCategoryName}'",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.FeeApproved,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Approved Fee '{feeModel.FEENAME}' with fee account category '{feeModel.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME}'",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);

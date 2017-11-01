@@ -115,20 +115,20 @@ namespace FintrakBanking.Repositories.Setups.General
                               where c.COMPANYID ==  companyId
                               select new DepartmentCustomersViewModel()
                               {
-                                  createdBy = d.CreatedBy.Value,
-                                  BranchId = d.BranchId,
-                                  BranchName = context.tbl_Branch.FirstOrDefault(x => x.BranchId == (short)d.BranchId).BranchName,
-                                  DepartmentName = d.DepartmentName,
-                                  DepartmentCode = d.DepartmentCode,
-                                  Description = d.Description,
-                                  DepartmentId = d.DepartmentId,
-                                  firstname = c.FirstName,
-                                  lastname = c.LastName,
-                                  staffId = c.StaffId,
-                                  middlename = c.MiddleName,
-                                  fullname = c.LastName + " " + c.FirstName + " " + c.MiddleName,
-                                  rankName = c.tbl_Staff_Rank.RankName,
-                                  jobTitleName = c.tbl_Staff_JobTitle.JobTitleName
+                                  createdBy = d.CREATEDBY.Value,
+                                  BranchId = d.BRANCHID,
+                                  BranchName = context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHID == (short)d.BRANCHID).BRANCHNAME,
+                                  DepartmentName = d.DEPARTMENTNAME,
+                                  DepartmentCode = d.DEPARTMENTCODE,
+                                  Description = d.DESCRIPTION,
+                                  DepartmentId = d.DEPARTMENTID,
+                                  firstname = c.FIRSTNAME,
+                                  lastname = c.LASTNAME,
+                                  staffId = c.STAFFID,
+                                  middlename = c.MIDDLENAME,
+                               
+                                  rankName = c.TBL_STAFF_RANK.RANKNAME,
+                                  jobTitleName = c.TBL_STAFF_JOBTITLE.JOBTITLENAME
                               });
             return department;
         }
@@ -209,20 +209,19 @@ namespace FintrakBanking.Repositories.Setups.General
                               where dept.DELETED == false && dept.DEPARTMENTID == departmentId && s.COMPANYID == companyId
                               select new DepartmentCustomersViewModel
                               {
-                                  createdBy = dept.CreatedBy.Value,
-                                  BranchId = dept.BranchId,
-                                  BranchName = context.tbl_Branch.FirstOrDefault(x => x.BranchId == (short)dept.BranchId).BranchName,
-                                  DepartmentName = dept.DepartmentName,
-                                  DepartmentCode = dept.DepartmentCode,
-                                  Description = dept.Description,
-                                  DepartmentId = dept.DepartmentId,
-                                  firstname = s.FirstName,
-                                  lastname = s.LastName,
-                                  middlename = s.MiddleName,
-                                  fullname = s.LastName +" "+ s.FirstName + " "+ s.MiddleName,
-                                  staffId = s.StaffId,
-                                  rankName = s.tbl_Staff_Rank.RankName,
-                                  jobTitleName = s.tbl_Staff_JobTitle.JobTitleName
+                                  createdBy = dept.CREATEDBY.Value,
+                                  BranchId = dept.BRANCHID,
+                                  BranchName = context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHID == (short)dept.BRANCHID).BRANCHNAME,
+                                  DepartmentName = dept.DEPARTMENTNAME,
+                                  DepartmentCode = dept.DEPARTMENTCODE,
+                                  Description = dept.DESCRIPTION,
+                                  DepartmentId = dept.DEPARTMENTID,
+                                  firstname = s.FIRSTNAME,
+                                  lastname = s.LASTNAME,
+                                  middlename = s.MIDDLENAME,                                
+                                  staffId = s.STAFFID,
+                                  rankName = s.TBL_STAFF_RANK.RANKNAME,
+                                  jobTitleName = s.TBL_STAFF_JOBTITLE.JOBTITLENAME
                               };
 
                 if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
