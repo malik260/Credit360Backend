@@ -38,14 +38,14 @@ namespace FintrakBanking.Repositories.Finance
         {
             var applicationDate = generalSetup.GetApplicationDate();
 
-            var financeEod = (from e in context.tbl_Finance_EndOfDay
-                              where e.CompanyId == model.companyId && e.Date == applicationDate
-                              select e.Date).Any();
+            var financeEod = (from e in context.TBL_FINANCE_ENDOFDAY
+                              where e.COMPANYID == model.companyId && e.DATE == applicationDate
+                              select e.DATE).Any();
 
             if (financeEod == true)
                 throw new Exception("End of Day for "+ applicationDate+" has already been run.");
 
-            var countryId = context.tbl_Company.FirstOrDefault(x => x.CompanyId == model.companyId).CountryId;
+            var countryId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).COUNTRYID;
 
             var nextWorkDay = publicHoliday.GetNextWorkDay(applicationDate, countryId);
 
@@ -63,22 +63,22 @@ namespace FintrakBanking.Repositories.Finance
                 while (runDate < nextWorkDay);
             }
 
-            var financeCurrentDate = context.tbl_FinanceCurrentDate.FirstOrDefault();
-            financeCurrentDate.CurrentDate = nextWorkDay;
+            var financeCurrentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
+            financeCurrentDate.CURRENTDATE = nextWorkDay;
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.RanEndOfDay,
-                StaffId = (int)model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Ran end of day from {applicationDate.ToString("dd/mmm/yyyy")} to {nextWorkDay.AddDays(-1).ToString("dd/mmm/yyyy")} successfully",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = applicationDate,
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.RanEndOfDay,
+                STAFFID = (int)model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Ran end of day from {applicationDate.ToString("dd/mmm/yyyy")} to {nextWorkDay.AddDays(-1).ToString("dd/mmm/yyyy")} successfully",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = applicationDate,
+                SYSTEMDATETIME = DateTime.Now
             };
 
-            this.auditTrail.AddAuditTrail(audit);
+            auditTrail.AddAuditTrail(audit);
 
             var response = context.SaveChanges();
 
@@ -88,15 +88,15 @@ namespace FintrakBanking.Repositories.Finance
 
         public IEnumerable<FinanceEndofdayViewModel> GetFinanceEndofday(int companyId)
         {
-            var financeEod = (from e in context.tbl_Finance_EndOfDay
-                              where e.CompanyId == companyId // e.EndDateTime == null && e.StartDateTime == null
+            var financeEod = (from e in context.TBL_FINANCE_ENDOFDAY
+                              where e.COMPANYID == companyId // e.EndDateTime == null && e.StartDateTime == null
                               select new FinanceEndofdayViewModel()
                               {
-                                  endOfDayId = e.EndOfDayId,
-                                  date = e.Date,
-                                  startDateTime = e.StartDateTime,
-                                  endDateTime = e.EndDateTime,
-                                  createdBy = e.CreatedBy,
+                                  endOfDayId = e.ENDOFDAYID,
+                                  date = e.DATE,
+                                  startDateTime = e.STARTDATETIME,
+                                  endDateTime = e.ENDDATETIME,
+                                  createdBy = e.CREATEDBY,
                               });
             return financeEod;
         }
@@ -104,12 +104,12 @@ namespace FintrakBanking.Repositories.Finance
         [OperationBehavior(TransactionScopeRequired = true)]
         public void ProcessEndOfDay(DateTime date, int companyId, int staffId)
         {
-            tbl_Finance_EndOfDay endOfDay = new tbl_Finance_EndOfDay();
+            TBL_FINANCE_ENDOFDAY endOfDay = new TBL_FINANCE_ENDOFDAY();
 
-            endOfDay.CompanyId = companyId;
-            endOfDay.Date = date;
-            endOfDay.CreatedBy = staffId;
-            endOfDay.StartDateTime = DateTime.Now;
+            endOfDay.COMPANYID = companyId;
+            endOfDay.DATE = date;
+            endOfDay.CREATEDBY = staffId;
+            endOfDay.STARTDATETIME = DateTime.Now;
 
             loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
 
@@ -121,9 +121,9 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
 
-            endOfDay.EndDateTime = DateTime.Now;
+            endOfDay.ENDDATETIME = DateTime.Now;
 
-            context.tbl_Finance_EndOfDay.Add(endOfDay);
+            context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
 
             context.SaveChanges();
         }

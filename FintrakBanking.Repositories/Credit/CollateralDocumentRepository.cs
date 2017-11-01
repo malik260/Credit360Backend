@@ -27,30 +27,30 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCollateralDocument(CollateralDocumentViewModel model, byte[] file)
         {
-            var data = new tbl_Media_Collateral_Documents
+            var data = new TBL_MEDIA_COLLATERAL_DOCUMENTS
             {
-                FileData = file,
-                DocumentCode = model.documentTitle,
-                FileName = model.fileName,
-                FileExtension = model.fileExtension,
-                CollateralCustomerId = model.collateralId,
-                SystemDateTime = DateTime.Now,
-                CreatedBy = (int)model.createdBy,
+                FILEDATA = file,
+                DOCUMENTCODE = model.documentTitle,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                COLLATERALCUSTOMERID = model.collateralId,
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = (int)model.createdBy,
             };
 
-            context.tbl_Media_Collateral_Documents.Add(data);
+            context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralDocumentAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Collateral Document '{ model.documentTitle }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralDocumentAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Collateral Document '{ model.documentTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -60,28 +60,28 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateCollateralDocument(CollateralDocumentViewModel model, int documentId)
         {
-            var data = this.context.tbl_Media_Collateral_Documents.Find(documentId);
+            var data = this.context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Find(documentId);
             if (data == null)
             {
                 return false;
             }
 
-            data.DocumentCode= model.documentTitle;
-            data.FileName = model.fileName;
-            data.FileExtension = model.fileExtension;
-            data.SystemDateTime = DateTime.Now;
+            data.DOCUMENTCODE= model.documentTitle;
+            data.FILENAME = model.fileName;
+            data.FILEEXTENSION = model.fileExtension;
+            data.SYSTEMDATETIME = DateTime.Now;
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CollateralDocumentUpdated,
-                StaffId = model.lastUpdatedBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Updated Collateral Document '{ model.documentTitle }' ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = general.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralDocumentUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Collateral Document '{ model.documentTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -91,20 +91,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CollateralDocumentViewModel> GetAllCollateralDocument()
         {
-            return this.context.tbl_Media_Collateral_Documents.Select(x => new CollateralDocumentViewModel
+            return this.context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Select(x => new CollateralDocumentViewModel
             {
-                collateralId = x.CollateralCustomerId,
-                documentId = x.DocumentId,
-                documentTitle = x.DocumentCode,
-                fileData = x.FileData,
-                fileName = x.FileName,
-                fileExtension = x.FileExtension,
+                collateralId = x.COLLATERALCUSTOMERID,
+                documentId = x.DOCUMENTID,
+                documentTitle = x.DOCUMENTCODE,
+                fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
             });
         }
 
         public CollateralDocumentViewModel GetCollateralDocument(int documentId)
         {
-            var data = this.context.tbl_Media_Collateral_Documents.Find(documentId);
+            var data = this.context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Find(documentId);
 
             if (data == null)
             {
@@ -113,11 +113,11 @@ namespace FintrakBanking.Repositories.Credit
 
             return new CollateralDocumentViewModel
             {
-                documentId = data.DocumentId,
-                documentTitle = data.DocumentCode,
-                fileData = data.FileData,
-                fileName = data.FileName,
-                fileExtension = data.FileExtension,
+                documentId = data.DOCUMENTID,
+                documentTitle = data.DOCUMENTCODE,
+                fileData = data.FILEDATA,
+                fileName = data.FILENAME,
+                fileExtension = data.FILEEXTENSION,
             };
         }
 
