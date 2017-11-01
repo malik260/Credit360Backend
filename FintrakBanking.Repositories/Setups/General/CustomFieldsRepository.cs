@@ -37,19 +37,19 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> AddCustomField(AddCustomFieldViewModel model)
         {
-            var custom = new tbl_Custom_Fields
+            var custom = new TBL_CUSTOM_FIELDS
             {
-                CompanyId = model.companyId,
-                CreatedBy = model.createdBy,
-                DateTimeCreated = DateTime.Now,
-                ControlType = model.controlType,
-                LabelName = model.labelName,
-                HostPageId = model.hostPageId,
-                ItemOrder = model.itemOrder,
-                Required = model.required
+                COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                CONTROLTYPE = model.controlType,
+                LABELNAME = model.labelName,
+                HOSTPAGEID = model.hostPageId,
+                ITEMORDER = model.itemOrder,
+                REQUIRED = model.required
             };
 
-            context.tbl_Custom_Fields.Add(custom);
+            context.TBL_CUSTOM_FIELDS.Add(custom);
 
             //foreach (var options in model.customFieldOption)
             //{
@@ -63,16 +63,16 @@ namespace FintrakBanking.Repositories.Setups.General
             //}
 
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomFieldAdd,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added the following custom field : { model.labelName} to  {context.tbl_Custom_HostPage.Find(model.hostPageId).HostPage } form ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomFieldAdd,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added the following custom field : { model.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(model.hostPageId).HOSTPAGE } form ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -89,14 +89,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             bool result = false;
 
-            var custom = context.tbl_Custom_Fields.Find(id);
-            custom.ControlType = model.controlType;
-            custom.LabelName = model.labelName;
-            custom.HostPageId = model.hostPageId;
-            custom.ItemOrder = model.itemOrder;
-            custom.Required = model.required;
-            custom.LastUpdatedBy = model.lastUpdatedBy;
-            custom.DateTimeUpdated = genSetup.GetApplicationDate().Date;
+            var custom = context.TBL_CUSTOM_FIELDS.Find(id);
+            custom.CONTROLTYPE = model.controlType;
+            custom.LABELNAME = model.labelName;
+            custom.HOSTPAGEID = model.hostPageId;
+            custom.ITEMORDER = model.itemOrder;
+            custom.REQUIRED = model.required;
+            custom.LASTUPDATEDBY = model.lastUpdatedBy;
+            custom.DATETIMEUPDATED = genSetup.GetApplicationDate().Date;
             //foreach (var option in model.customFieldOption)
             //{
             //    var options = context.TblCustomFieldOption.SingleOrDefault(c => c.CustomFieldOptionsId == option.customFieldOptionsId);
@@ -105,16 +105,16 @@ namespace FintrakBanking.Repositories.Setups.General
             //    options.CustomFieldId = option.customFieldId;
             //}
             // Audit Section ---------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.CustomFieldUpdate,
-                StaffId = model.lastUpdatedBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"updated the following custom field : { model.labelName} to  {context.tbl_Custom_HostPage.Find(model.hostPageId).HostPage } form ",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.CustomFieldUpdate,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"updated the following custom field : { model.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(model.hostPageId).HOSTPAGE } form ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -139,45 +139,45 @@ namespace FintrakBanking.Repositories.Setups.General
 
             foreach (var entity in listEntity)
             {
-                var custom = new tbl_Custom_Fields
+                var custom = new TBL_CUSTOM_FIELDS
                 {
-                    ActedOnBy = entity.actedOnBy,
-                    ApprovalStatus = entity.approvalStatus,
-                    CompanyId = entity.companyId,
-                    CreatedBy = entity.createdBy,
-                    DateTimeCreated = entity.dateTimeCreated,
-                    ControlType = entity.controlType,
-                    LabelName = entity.labelName,
-                    ControlKey = entity.controlKey,
-                    HostPageId = entity.hostPageId,
-                    ItemOrder = entity.itemOrder,
-                    Required = entity.required
+                    ACTEDONBY = entity.actedOnBy,
+                    APPROVALSTATUS = entity.approvalStatus,
+                    COMPANYID = entity.companyId,
+                    CREATEDBY = entity.createdBy,
+                    DATETIMECREATED = entity.dateTimeCreated,
+                    CONTROLTYPE = entity.controlType,
+                    LABELNAME = entity.labelName,
+                    CONTROLKEY = entity.controlKey,
+                    HOSTPAGEID = entity.hostPageId,
+                    ITEMORDER = entity.itemOrder,
+                    REQUIRED = entity.required
                 };
 
-                context.tbl_Custom_Fields.Add(custom);
+                context.TBL_CUSTOM_FIELDS.Add(custom);
 
                 foreach (var options in entity.customFieldOption)
                 {
-                    var option = new tbl_Custom_Field_Option
+                    var option = new TBL_CUSTOM_FIELD_OPTION
                     {
-                        OptionsKey = options.optionsKey,
-                        OptionsValue = options.optionsValue,
-                        CustomFieldId = options.customFieldId,
+                        OPTIONSKEY = options.optionsKey,
+                        OPTIONSVALUE = options.optionsValue,
+                        CUSTOMFIELDID = options.customFieldId,
                     };
-                    context.tbl_Custom_Field_Option.Add(option);
+                    context.TBL_CUSTOM_FIELD_OPTION.Add(option);
                 }
 
                 // Audit Section ---------------------------
-                var audit = new tbl_Audit
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.CustomFieldAdd,
-                    StaffId = entity.createdBy,
-                    BranchId = (short)entity.userBranchId,
-                    Detail = $"Added the following custom field : { entity.labelName} to  {context.tbl_Custom_HostPage.Find(entity.hostPageId).HostPage } form ",
-                    IPAddress = entity.userIPAddress,
-                    Url = entity.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomFieldAdd,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = $"Added the following custom field : { entity.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(entity.hostPageId).HOSTPAGE } form ",
+                    IPADDRESS = entity.userIPAddress,
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -191,19 +191,19 @@ namespace FintrakBanking.Repositories.Setups.General
 
         IEnumerable<CustomFieldViewModel> CustomFields(int companyId)
         {
-            return context.tbl_Custom_Fields .Where(c => c.CompanyId == companyId && c.Deleted == false).Select(c => new CustomFieldViewModel()
+            return context.TBL_CUSTOM_FIELDS .Where(c => c.COMPANYID == companyId && c.DELETED == false).Select(c => new CustomFieldViewModel()
             {
-                actedOnBy = c.ActedOnBy,
-                approvalStatus = c.ApprovalStatus,
-                controlType = c.ControlType,
-                labelName = c.LabelName,
-                controlKey = c.ControlKey,
-                companyId = c.CompanyId,
-                customFieldId = c.CustomFieldId,
-                hostPageId = c.HostPageId,
-                itemOrder = c.ItemOrder,
-                required = c.Required,
-                dateTimeCreated = c.DateTimeCreated
+                actedOnBy = c.ACTEDONBY,
+                approvalStatus = c.APPROVALSTATUS,
+                controlType = c.CONTROLTYPE,
+                labelName = c.LABELNAME,
+                controlKey = c.CONTROLKEY,
+                companyId = c.COMPANYID,
+                customFieldId = c.CUSTOMFIELDID,
+                hostPageId = c.HOSTPAGEID,
+                itemOrder = c.ITEMORDER,
+                required = c.REQUIRED,
+                dateTimeCreated = c.DATETIMECREATED
             });
         }
 
@@ -217,21 +217,21 @@ namespace FintrakBanking.Repositories.Setups.General
             bool result = false;
             for (int i = 0; customFields.Count > i; i++)
             {
-                var custom = context.tbl_Custom_Fields.Find(customFields[i].customFieldId);
-                custom.Deleted = true;
-                custom.DateTimeDeleted = genSetup.GetApplicationDate().Date;
-                custom.DeletedBy = user.staffId;
+                var custom = context.TBL_CUSTOM_FIELDS.Find(customFields[i].customFieldId);
+                custom.DELETED = true;
+                custom.DATETIMEDELETED = genSetup.GetApplicationDate().Date;
+                custom.DELETEDBY = user.staffId;
                 // Audit Section ---------------------------
-                var audit = new tbl_Audit
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.CustomFieldDelete,
-                    StaffId = user.staffId,
-                    BranchId = (short)user.BranchId,
-                    Detail = $"updated the following custom field : { custom.LabelName} to  {context.tbl_Custom_HostPage.Find(custom.HostPageId).HostPage } form ",
-                    IPAddress = user.userIPAddress,
-                    Url = user.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomFieldDelete,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"updated the following custom field : { custom.LABELNAME} to  {context.TBL_CUSTOM_HOSTPAGE.Find(custom.HOSTPAGEID).HOSTPAGE } form ",
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -248,37 +248,37 @@ namespace FintrakBanking.Repositories.Setups.General
             bool result = false;
             foreach (var entity in listEntity)
             {
-                var custom = context.tbl_Custom_Fields .Find(entity.customFieldId);
-                custom.ActedOnBy = entity.actedOnBy;
-                custom.ApprovalStatus = entity.approvalStatus;
-                custom.CompanyId = entity.companyId;
-                custom.CreatedBy = entity.createdBy;
-                custom.ControlKey = entity.controlKey;
-                custom.ControlType = entity.controlType;
-                custom.LabelName = entity.labelName;
-                custom.HostPageId = entity.hostPageId;
-                custom.ItemOrder = entity.itemOrder;
-                custom.Required = entity.required;
-                custom.LastUpdatedBy = entity.lastUpdatedBy;
-                custom.DateTimeUpdated = genSetup.GetApplicationDate().Date;
+                var custom = context.TBL_CUSTOM_FIELDS .Find(entity.customFieldId);
+                custom.ACTEDONBY = entity.actedOnBy;
+                custom.APPROVALSTATUS = entity.approvalStatus;
+                custom.COMPANYID = entity.companyId;
+                custom.CREATEDBY = entity.createdBy;
+                custom.CONTROLKEY = entity.controlKey;
+                custom.CONTROLTYPE = entity.controlType;
+                custom.LABELNAME = entity.labelName;
+                custom.HOSTPAGEID = entity.hostPageId;
+                custom.ITEMORDER = entity.itemOrder;
+                custom.REQUIRED = entity.required;
+                custom.LASTUPDATEDBY = entity.lastUpdatedBy;
+                custom.DATETIMEUPDATED = genSetup.GetApplicationDate().Date;
                 foreach (var option in entity.customFieldOption)
                 {
-                    var options = context.tbl_Custom_Field_Option .SingleOrDefault(c => c.CustomFieldOptionsId == option.customFieldOptionsId);
-                    options.OptionsKey = option.optionsKey;
-                    options.OptionsValue = option.optionsValue;
-                    options.CustomFieldId = option.customFieldId;
+                    var options = context.TBL_CUSTOM_FIELD_OPTION .SingleOrDefault(c => c.CUSTOMFIELDOPTIONSID == option.customFieldOptionsId);
+                    options.OPTIONSKEY = option.optionsKey;
+                    options.OPTIONSVALUE = option.optionsValue;
+                    options.CUSTOMFIELDID = option.customFieldId;
                 }
                 // Audit Section ---------------------------
-                var audit = new tbl_Audit
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.CustomFieldUpdate,
-                    StaffId = entity.lastUpdatedBy,
-                    BranchId = (short)entity.userBranchId,
-                    Detail = $"updated the following custom field : { entity.labelName} to  {context.tbl_Custom_HostPage.Find(entity.hostPageId).HostPage } form ",
-                    IPAddress = entity.userIPAddress,
-                    Url = entity.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomFieldUpdate,
+                    STAFFID = entity.lastUpdatedBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = $"updated the following custom field : { entity.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(entity.hostPageId).HOSTPAGE } form ",
+                    IPADDRESS = entity.userIPAddress,
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -301,36 +301,36 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 if (entity.isUpload)
                 {
-                    var fieldDetailsUpload = new tbl_Custom_Field_Data_Upload
+                    var fieldDetailsUpload = new TBL_CUSTOM_FIELD_DATA_UPLOAD
                     {
-                        CustomFieldDataUpload = entity.customFieldDataUpload,
-                        CustomFieldsDataId = entity.customFieldsDataId,
-                        DateTimeCreated = genSetup.GetApplicationDate().Date,
-                        CreatedBy = entity.createdBy
+                        CUSTOMFIELDDATAUPLOAD = entity.customFieldDataUpload,
+                        CUSTOMFIELDSDATAID = entity.customFieldsDataId,
+                        DATETIMECREATED = genSetup.GetApplicationDate().Date,
+                        CREATEDBY = entity.createdBy
                     };
-                    context.tbl_Custom_Field_Data_Upload.Add(fieldDetailsUpload);
+                    context.TBL_CUSTOM_FIELD_DATA_UPLOAD.Add(fieldDetailsUpload);
                 }
-                var fieldDetails = new tbl_Custom_Fields_Data
+                var fieldDetails = new TBL_CUSTOM_FIELDS_DATA
                 {
-                    CreatedBy = entity.createdBy,
+                    CREATEDBY = entity.createdBy,
 
-                    OwnerId = entity.ownerId,
-                    CustomFieldId = entity.customFieldId,
-                    DataDetails = entity.isUpload ? Guid.NewGuid().ToString() : entity.dataDetails,
-                    DateTimeCreated = genSetup.GetApplicationDate().Date 
+                    OWNERID = entity.ownerId,
+                    CUSTOMFIELDID = entity.customFieldId,
+                    DATADETAILS = entity.isUpload ? Guid.NewGuid().ToString() : entity.dataDetails,
+                    DATETIMECREATED = genSetup.GetApplicationDate().Date 
                 };
-                context.tbl_Custom_Fields_Data.Add(fieldDetails);
+                context.TBL_CUSTOM_FIELDS_DATA.Add(fieldDetails);
 
-                var audit = new tbl_Audit
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.CustomFieldDatadAdd,
-                    StaffId = entity.createdBy,
-                    BranchId = (short)entity.userBranchId,
-                    Detail = $"Added the following custom field : { entity.labelName} to  {context.tbl_Custom_HostPage.Find(entity.hostPageId).HostPage } form ",
-                    IPAddress = entity.userIPAddress,
-                    Url = entity.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomFieldDatadAdd,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = $"Added the following custom field : { entity.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(entity.hostPageId).HOSTPAGE } form ",
+                    IPADDRESS = entity.userIPAddress,
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -341,22 +341,22 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private IEnumerable<CustomFieldsDataViewModel> CustomFieldsData(int hostPageId, int customerId, int companyId)
         {
-            var CustomFieldData = context.tbl_Custom_Fields_Data;
-            var customs = (from d in context.tbl_Custom_Fields
-                           join s in context.tbl_Custom_HostPage on d.HostPageId equals s.HostPageId
-                           where s.HostPageId == hostPageId && d.CompanyId == companyId && d.Deleted == false
+            var CustomFieldData = context.TBL_CUSTOM_FIELDS_DATA;
+            var customs = (from d in context.TBL_CUSTOM_FIELDS
+                           join s in context.TBL_CUSTOM_HOSTPAGE on d.HOSTPAGEID equals s.HOSTPAGEID
+                           where s.HOSTPAGEID == hostPageId && d.COMPANYID == companyId && d.DELETED == false
                            select new CustomFieldsDataViewModel
                            {
-                               controlType = d.ControlType,
-                               customFieldId = d.CustomFieldId,
-                               itemOrder = d.ItemOrder,
-                               labelName = d.LabelName,
-                               hostPageId = s.HostPageId,
-                               parentHostPageId = s.ParentHostPageId,
-                               hostPage = s.HostPage,
-                               required = d.Required,
-                               isUpload = d.IsUpload,
-                               controlKey =d.ControlKey,
+                               controlType = d.CONTROLTYPE,
+                               customFieldId = d.CUSTOMFIELDID,
+                               itemOrder = d.ITEMORDER,
+                               labelName = d.LABELNAME,
+                               hostPageId = s.HOSTPAGEID,
+                               parentHostPageId = s.PARENTHOSTPAGEID,
+                               hostPage = s.HOSTPAGE,
+                               required = d.REQUIRED,
+                               isUpload = d.ISUPLOAD,
+                               controlKey =d.CONTROLKEY,
                                //customFieldOption = context.TblCustomFieldOption.Where(h => h.CustomFieldId == d.CustomFieldId)
                                //.Select(h => new CustomFieldOptionViewModel()
                                //{
@@ -371,15 +371,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var custom in customs)
                 {
-                    var check = CustomFieldData.Where(c => c.CustomFieldId == custom.customFieldId && c.OwnerId == customerId);
+                    var check = CustomFieldData.Where(c => c.CUSTOMFIELDID == custom.customFieldId && c.OWNERID == customerId);
                     if (check.Count() > 0)
                     {
                         var data = check.First();
-                        custom.customFieldDataUpload = custom.isUpload ? context.tbl_Custom_Field_Data_Upload.FirstOrDefault(d => d.CustomFieldsDataId == data.CustomFieldsDataId).CustomFieldDataUpload : null;
-                        custom.customFieldsDataId = data.CustomFieldsDataId;
-                        custom.dataDetails = data.DataDetails;
+
+                        custom.customFieldDataUpload = custom.isUpload ? context.TBL_CUSTOM_FIELD_DATA_UPLOAD.FirstOrDefault(d => d.CUSTOMFIELDSDATAID == data.CUSTOMFIELDSDATAID).CustomFieldDataUpload : null;
+                        custom.customFieldsDataId = data.CUSTOMFIELDSDATAID;
+                        custom.dataDetails = data.DATADETAILS;
                         custom.isUpload = custom.isUpload;
-                        custom.ownerId = data.OwnerId;
+                        custom.ownerId = data.OWNERID;
 
                     }
                 }
@@ -390,21 +391,21 @@ namespace FintrakBanking.Repositories.Setups.General
         public async  Task<bool> DeleteCustomFieldsData(List<CustomFieldsDataViewModel> listEntity, UserInfo user)
         {
             foreach (var entity in listEntity) {
-                var field = context.tbl_Custom_Fields_Data.Find(entity.customFieldsDataId);
-                field.Deleted = true;
-                field.DeletedBy = user.staffId;
-                field.DateTimeDeleted = genSetup.GetApplicationDate().Date;
+                var field = context.TBL_CUSTOM_FIELDS_DATA.Find(entity.customFieldsDataId);
+                field.DELETED = true;
+                field.DELETEDBY = user.staffId;
+                field.DATETIMEDELETED = genSetup.GetApplicationDate().Date;
 
-                var audit = new tbl_Audit
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.CustomFieldDataDelete,
-                    StaffId = entity.createdBy,
-                    BranchId = (short)entity.userBranchId,
-                    Detail = $"Deleted a custome field data for : { entity.labelName} from  {context.tbl_Custom_HostPage.Find(entity.hostPageId).HostPage }  ",
-                    IPAddress = entity.userIPAddress,
-                    Url = entity.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomFieldDataDelete,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = $"Deleted a custome field data for : { entity.labelName} from  {context.TBL_CUSTOM_HOSTPAGE.Find(entity.hostPageId).HOSTPAGE }  ",
+                    IPADDRESS = entity.userIPAddress,
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -419,30 +420,30 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 if (entity.isUpload)
                 {
-                    var fieldDetailsUpload = context.tbl_Custom_Field_Data_Upload.Find(entity.customFieldDataUpload);
-                    fieldDetailsUpload.CustomFieldDataUpload = entity.customFieldDataUpload;
-                    fieldDetailsUpload.CustomFieldsDataId = entity.customFieldsDataId;
-                    fieldDetailsUpload.DateTimeCreated = genSetup.GetApplicationDate().Date;
-                    fieldDetailsUpload.CreatedBy = entity.createdBy;                      
+                    var fieldDetailsUpload = context.TBL_CUSTOM_FIELD_DATA_UPLOAD.Find(entity.customFieldDataUpload);
+                    fieldDetailsUpload.CUSTOMFIELDDATAUPLOAD = entity.customFieldDataUpload;
+                    fieldDetailsUpload.CUSTOMFIELDSDATAID = entity.customFieldsDataId;
+                    fieldDetailsUpload.DATETIMECREATED = genSetup.GetApplicationDate().Date;
+                    fieldDetailsUpload.CREATEDBY = entity.createdBy;                      
                 }
-                var fieldDetails = context.tbl_Custom_Fields_Data.Find(entity.customFieldsDataId);
-                fieldDetails.CreatedBy = entity.createdBy;
-                fieldDetails.OwnerId = entity.ownerId;
-                fieldDetails.CustomFieldId = entity.customFieldId;
-                fieldDetails.DataDetails = entity.isUpload ? Guid.NewGuid().ToString() : entity.dataDetails;
-                fieldDetails.DateTimeCreated = genSetup.GetApplicationDate().Date;
+                var fieldDetails = context.TBL_CUSTOM_FIELDS_DATA.Find(entity.customFieldsDataId);
+                fieldDetails.CREATEDBY = entity.createdBy;
+                fieldDetails.OWNERID = entity.ownerId;
+                fieldDetails.CUSTOMFIELDID = entity.customFieldId;
+                fieldDetails.DATADETAILS = entity.isUpload ? Guid.NewGuid().ToString() : entity.dataDetails;
+                fieldDetails.DATETIMECREATED = genSetup.GetApplicationDate().Date;
               
 
-                var audit = new tbl_Audit
+                var audit = new TBL_AUDIT
                 {
-                    AuditTypeId = (short)AuditTypeEnum.CustomFieldDatadAdd,
-                    StaffId = entity.createdBy,
-                    BranchId = (short)entity.userBranchId,
-                    Detail = $"Added the following custom field : { entity.labelName} to  {context.tbl_Custom_HostPage.Find(entity.hostPageId).HostPage } form ",
-                    IPAddress = entity.userIPAddress,
-                    Url = entity.applicationUrl,
-                    ApplicationDate = genSetup.GetApplicationDate(),
-                    SystemDateTime = DateTime.Now
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomFieldDatadAdd,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = $"Added the following custom field : { entity.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(entity.hostPageId).HOSTPAGE } form ",
+                    IPADDRESS = entity.userIPAddress,
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -462,11 +463,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private IEnumerable<HostPageViewModel> HostPage()
         {
-            return context.tbl_Custom_HostPage.Select(c => new HostPageViewModel()
+            return context.TBL_CUSTOM_HOSTPAGE.Select(c => new HostPageViewModel()
             {
-                hostPage = c.HostPage,
-                hostPageId = c.HostPageId,
-                parentHostPageId = c.ParentHostPageId
+                hostPage = c.HOSTPAGE,
+                hostPageId = c.HOSTPAGEID,
+                parentHostPageId = c.PARENTHOSTPAGEID
             });
         }
 

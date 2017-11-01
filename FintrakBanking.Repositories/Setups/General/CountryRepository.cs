@@ -33,36 +33,36 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public IEnumerable<LookupViewModel> GetAllCityClass()
         {
-            var data = (from a in context.tbl_City_Class
+            var data = (from a in context.TBL_CITY_CLASS
                               select new LookupViewModel
                               {
-                                 lookupId = a.CityClassId,
-                                 lookupName = a.CityClassName
+                                 lookupId = a.CITYCLASSID,
+                                 lookupName = a.CITYCLASSNAME
                               });
             return data;
         }
 
         public bool AddCity(CityViewModel entity)
         {
-            var cityEntity = new tbl_City
+            var cityEntity = new TBL_CITY
             {
-                CityName = entity.cityName,
-                StateId = entity.stateId,
-                CityClassId = entity.cityClassId,
-                AllowedForCollateral = entity.allowedForCollateral
+                CITYNAME = entity.cityName,
+                STATEID = entity.stateId,
+                CITYCLASSID = entity.cityClassId,
+                ALLOWEDFORCOLLATERAL = entity.allowedForCollateral
 
             };
-            context.tbl_City.Add(cityEntity);
+            context.TBL_CITY.Add(cityEntity);
             return context.SaveChanges() != 0;
         }
         public bool UpdateCity(CityViewModel entity, int id)
         {
-            var cityEntity = context.tbl_City.Find(id);
+            var cityEntity = context.TBL_CITY.Find(id);
             {
-                cityEntity.CityName = entity.cityName;
-                cityEntity.StateId = entity.stateId;
-                cityEntity.CityClassId = entity.cityClassId;
-                cityEntity.AllowedForCollateral = entity.allowedForCollateral;
+                cityEntity.CITYNAME = entity.cityName;
+                cityEntity.STATEID = entity.stateId;
+                cityEntity.CITYCLASSID = entity.cityClassId;
+                cityEntity.ALLOWEDFORCOLLATERAL = entity.allowedForCollateral;
 
             }
           
@@ -71,16 +71,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<CityViewModel> GetCity()
         {
-            var cityEntity = (from a in context.tbl_City
+            var cityEntity = (from a in context.TBL_CITY
                               select new CityViewModel
                               {
-                                  cityId = a.CityId,
-                                  cityName = a.CityName,
-                                  stateId = a.StateId,
-                                  stateName = a.tbl_State.StateName,
-                                  cityClassId = a.CityClassId,
-                                  cityClassName = a.tbl_City_Class.CityClassName,
-                                  allowedForCollateral = a.AllowedForCollateral                                  
+                                  cityId = a.CITYID,
+                                  cityName = a.CITYNAME,
+                                  stateId = a.STATEID,
+                                  stateName = a.TBL_STATE.STATENAME,
+                                  cityClassId = a.CITYCLASSID,
+                                  cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
+                                  allowedForCollateral = a.ALLOWEDFORCOLLATERAL                                  
                               });
             return cityEntity;
         }
@@ -88,16 +88,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public CityViewModel GetCityById(int cityId)
         {
-            var cityEntity = (from a in context.tbl_City
-                              where a.CityId == cityId
+            var cityEntity = (from a in context.TBL_CITY
+                              where a.CITYID == cityId
                               select new CityViewModel
                               {
-                                  cityId = a.CityId,
-                                  cityName = a.CityName,
-                                  stateId = a.StateId,
-                                  cityClassId = a.CityClassId,
-                                  cityClassName = a.tbl_City_Class.CityClassName,
-                                  allowedForCollateral = a.AllowedForCollateral
+                                  cityId = a.CITYID,
+                                  cityName = a.CITYNAME,
+                                  stateId = a.STATEID,
+                                  cityClassId = a.CITYCLASSID,
+                                  cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
+                                  allowedForCollateral = a.ALLOWEDFORCOLLATERAL
                               });
             return cityEntity.FirstOrDefault();
         }
@@ -105,66 +105,66 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<CityViewModel> GetCityByStateId(int stateId)
         {
-            var stateEntity = (from a in context.tbl_City
-                               where a.StateId == stateId
+            var stateEntity = (from a in context.TBL_CITY
+                               where a.STATEID == stateId
                                select new CityViewModel
                                {
-                                   cityId = a.CityId,
-                                   cityName = a.CityName,
-                                   stateId = a.StateId,
-                                   cityClassId = a.CityClassId,
-                                   cityClassName = a.tbl_City_Class.CityClassName,
-                                   allowedForCollateral = a.AllowedForCollateral
+                                   cityId = a.CITYID,
+                                   cityName = a.CITYNAME,
+                                   stateId = a.STATEID,
+                                   cityClassId = a.CITYCLASSID,
+                                   cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
+                                   allowedForCollateral = a.ALLOWEDFORCOLLATERAL
                                });
             return stateEntity;
         }
 
         public IEnumerable<Object> GetAllCitiesByContryId(int countryId)
         {
-            return from c in context.tbl_Country
-                   join st in context.tbl_State
-                    on c.CountryId equals st.CountryId
-                   join ct in context.tbl_City on st.StateId equals ct.StateId
-                   where c.CountryId == countryId
+            return from c in context.TBL_COUNTRY
+                   join st in context.TBL_STATE
+                    on c.COUNTRYID equals st.COUNTRYID
+                   join ct in context.TBL_CITY on st.STATEID equals ct.STATEID
+                   where c.COUNTRYID == countryId
                    select new
                    {
-                       cityId = ct.CityId,
-                       cityName = ct.CityName,
-                       stateId = st.StateId,
-                       stateName = st.StateName,
-                       cityClassId = ct.CityClassId,
-                       cityClassName = ct.tbl_City_Class.CityClassName,
-                       allowedForCollateral = ct.AllowedForCollateral
+                       cityId = ct.CITYID,
+                       cityName = ct.CITYNAME,
+                       stateId = st.STATEID,
+                       stateName = st.STATENAME,
+                       cityClassId = ct.CITYCLASSID,
+                       cityClassName = ct.TBL_CITY_CLASS.CITYCLASSNAME,
+                       allowedForCollateral = ct.ALLOWEDFORCOLLATERAL
                    };
 
         }
 
         public IEnumerable<StateViewModel> GetStateByCountryId(int countryId)
         {
-            var stateEntity = (from a in context.tbl_State
-                               where a.CountryId == countryId
+            var stateEntity = (from a in context.TBL_STATE
+                               where a.COUNTRYID == countryId
                                select new StateViewModel
                                {
-                                   CountryId = a.CountryId,
-                                   StateName = a.StateName,
-                                   StateId = a.StateId
+                                   CountryId = a.COUNTRYID,
+                                   StateName = a.STATENAME,
+                                   StateId = a.STATEID
                                });
             return stateEntity;
         }
         public IEnumerable<StateViewModel> GetStateByCompanyId(int companyId)
         {
-            var countryId = context.tbl_Company.Find(companyId).CompanyId;
+            var countryId = context.TBL_COMPANY.Find(companyId).COMPANYID;
             if (countryId != 0)
             {
-                var stateEntity = (from a in context.tbl_State
-                                   where a.CountryId == countryId
+                var stateEntity = (from a in context.TBL_STATE
+                                   where a.COUNTRYID == countryId
                                    select new StateViewModel
                                    {
-                                       CountryId = a.CountryId,
-                                       StateName = a.StateName,
-                                       StateId = a.StateId,
-                                       CountryName = context.tbl_Country.FirstOrDefault(j => j.CountryId == a.CountryId).Name ?? string.Empty,
-                                       CollateralSearchChargeAmount = a.CollateralSearchChargeAmount
+                                       CountryId = a.COUNTRYID,
+                                       StateName = a.STATENAME,
+                                       StateId = a.STATEID,
+                                       CountryName = context.TBL_COUNTRY.FirstOrDefault(j => j.COUNTRYID == a.COUNTRYID).NAME ?? string.Empty,
+                                       CollateralSearchChargeAmount = a.COLLATERALSEARCHCHARGEAMOUNT
                                        
                                    });
                 return stateEntity;
@@ -173,24 +173,24 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public bool UpdateState(StateViewModel entity, int stateId)
         {
-            var state = context.tbl_State.Find(stateId);
+            var state = context.TBL_STATE.Find(stateId);
             if (state != null)
             {
-                state.CollateralSearchChargeAmount = entity.CollateralSearchChargeAmount;
-                state.StateName = entity.StateName;
+                state.COLLATERALSEARCHCHARGEAMOUNT = entity.CollateralSearchChargeAmount;
+                state.STATENAME = entity.StateName;
             }
            
             // Audit Section ----------------------------
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.DepartmentUpdated,
-                StaffId = entity.createdBy,
-                BranchId = (short)entity.userBranchId,
-                Detail = $"Updated tbl_State with Id: {entity.StateId} ",
-                IPAddress = entity.userIPAddress,
-                Url = entity.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
+                AUDITTYPEID = (short)AuditTypeEnum.DepartmentUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated tbl_State with Id: {entity.StateId} ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -198,35 +198,35 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public IEnumerable<CountryViewModel> GetCountry(int countryId)
         {
-            var countryEntity = (from a in context.tbl_Country where a.CountryId == countryId 
+            var countryEntity = (from a in context.TBL_COUNTRY where a.COUNTRYID == countryId 
 
                                  select new CountryViewModel
                                  {
-                                     CountryId = a.CountryId,
-                                     CountryName = a.Name
+                                     CountryId = a.COUNTRYID,
+                                     CountryName = a.NAME
                                  }).ToList();
             return countryEntity;
         }
         public IEnumerable<CountryViewModel> GetCountry()
         {
-            var countryEntity = (from a in context.tbl_Country                              
+            var countryEntity = (from a in context.TBL_COUNTRY                              
 
                                  select new CountryViewModel
                                  {
-                                     CountryId = a.CountryId,
-                                     CountryName = a.Name
+                                     CountryId = a.COUNTRYID,
+                                     CountryName = a.NAME
                                  }).ToList();
             return countryEntity;
         }
         public IEnumerable<StateViewModel> GetState()
         {
-            var stateEntity = (from a in context.tbl_State
+            var stateEntity = (from a in context.TBL_STATE
 
                                select new StateViewModel
                                {
-                                   CountryId = a.CountryId,
-                                   StateName = a.StateName,
-                                   StateId = a.StateId
+                                   CountryId = a.COUNTRYID,
+                                   StateName = a.STATENAME,
+                                   StateId = a.STATEID
                                });
             return stateEntity.ToList();
         }

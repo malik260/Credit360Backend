@@ -25,37 +25,37 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             //if (user.createdBy != null)
             //{
-            var _user = new tbl_Profile_User()
+            var _user = new TBL_PROFILE_USER()
             {
-                StaffId = user.staffId,
-                Username = user.username,
-                Password = user.password.EncryptSha512(StaticHelpers.EncryptionKey),
-                IsFirstLoginAttempt = false,
-                IsActive = true,
-                IsLocked = false,
-                FailedLogonAttempt = 0,
-                SecurityQuestion = user.securityQuestion,
-                SecurityAnswer = user.securityAnswer,
-                NextPasswordChangeDate = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),/// int.Parse(config["AppConstants:PasswordExpiredDays"])),
-                CreatedBy = user.createdBy ?? 0,
-                LastUpdatedBy = user.createdBy ?? 0,
-                DateTimeCreated = DateTime.Now
+                STAFFID = user.staffId,
+                USERNAME = user.username,
+                PASSWORD = user.password.EncryptSha512(StaticHelpers.EncryptionKey),
+                ISFIRSTLOGINATTEMPT = false,
+                ISACTIVE = true,
+                ISLOCKED = false,
+                FAILEDLOGONATTEMPT = 0,
+                SECURITYQUESTION = user.securityQuestion,
+                SECURITYANSWER = user.securityAnswer,
+                NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),/// int.Parse(config["AppConstants:PasswordExpiredDays"])),
+                CREATEDBY = user.createdBy ?? 0,
+                LASTUPDATEDBY = user.createdBy ?? 0,
+                DATETIMECREATED = DateTime.Now
             };
 
-            context.tbl_Profile_User.Add(_user);
+            context.TBL_PROFILE_USER.Add(_user);
             if (user.groupId.Count > 0)
             {
                 foreach (var grp in user.groupId)
                 {
-                    var grpItem = new tbl_Profile_UserGroup()
+                    var grpItem = new TBL_PROFILE_USERGROUP()
                     {
-                        GroupId = grp.groupId,
-                        UserId = _user.UserId,
-                        DateTimeCreated = DateTime.Now,
-                        CreatedBy = _user.CreatedBy ?? 0
+                        GROUPID = grp.groupId,
+                        USERID = _user.USERID,
+                        DATETIMECREATED = DateTime.Now,
+                        CREATEDBY = _user.CREATEDBY ?? 0
                     };
 
-                    context.tbl_Profile_UserGroup.Add(grpItem);
+                    context.TBL_PROFILE_USERGROUP.Add(grpItem);
                 }
             }
             //}
@@ -67,9 +67,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> DeleteUser(int userId)
         {
-            var targetUser = context.tbl_Profile_User.Find(userId);
+            var targetUser = context.TBL_PROFILE_USER.Find(userId);
 
-            context.tbl_Profile_User.Remove(targetUser ?? throw new InvalidOperationException());
+            context.TBL_PROFILE_USER.Remove(targetUser ?? throw new InvalidOperationException());
 
             var response = await context.SaveChangesAsync();
 
@@ -81,13 +81,13 @@ namespace FintrakBanking.Repositories.Setups.General
             bool result = false;
             try
             {
-                var targetUser = context.tbl_Profile_User.Find(userId);
+                var targetUser = context.TBL_PROFILE_USER.Find(userId);
                 if (targetUser == null)
                 {
                     return false;
                 }
 
-                targetUser.Username = user.username;
+                targetUser.USERNAME = user.username;
                 var response = await context.SaveChangesAsync();
                 result = true;
             }
@@ -100,34 +100,34 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public UserViewModel FindUserByUserName(string username)
         {
-            var _user = context.tbl_Profile_User.FirstOrDefault(x => x.Username == username );
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username );
 
             if (_user != null)
             {
                 try
                 {
-                    var data = (from p in context.tbl_Profile_User
-                                join st in context.tbl_Staff on p.StaffId equals st.StaffId
-                                join br in context.tbl_Branch on st.BranchId equals br.BranchId
-                                join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
-                                where p.Username == username
+                    var data = (from p in context.TBL_PROFILE_USER
+                                join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
+                                join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                                join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                                where p.USERNAME == username
                                 select new UserViewModel
                                 {
-                                    companyId = coy.CompanyId,
-                                    staffId = p.StaffId,
-                                    user_id = p.UserId,
-                                    username = p.Username,
-                                    staffName = st.FirstName + " " + st.MiddleName + " " + st.LastName,
-                                    branchId = st.BranchId.Value,
-                                    countryId = coy.CountryId,
-                                    branchName = br.BranchName,
-                                    companyName = coy.Name,
+                                    companyId = coy.COMPANYID,
+                                    staffId = p.STAFFID,
+                                    user_id = p.USERID,
+                                    username = p.USERNAME,
+                                    staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                    branchId = st.BRANCHID.Value,
+                                    countryId = coy.COUNTRYID,
+                                    branchName = br.BRANCHNAME,
+                                    companyName = coy.NAME,
 
                                 }).First();
 
                     if (data == null)
                     {
-                        _user.FailedLogonAttempt += 1;
+                        _user.FAILEDLOGONATTEMPT += 1;
 
                         context.SaveChanges();
                     }
@@ -146,34 +146,34 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public UserViewModel FindUserByUserNameAndPassword(string username, string password)
         {
-            var _user = context.tbl_Profile_User.FirstOrDefault(x => x.Username == username && x.Password == password);
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username && x.PASSWORD == password);
 
             if (_user != null)
             {
                 try
                 {
-                    var data = (from p in context.tbl_Profile_User
-                                join st in context.tbl_Staff on p.StaffId equals st.StaffId
-                                join br in context.tbl_Branch on st.BranchId equals br.BranchId
-                                join coy in context.tbl_Company on br.CompanyId equals coy.CompanyId
-                                where p.Username == username && p.Password == password
+                    var data = (from p in context.TBL_PROFILE_USER
+                                join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
+                                join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                                join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                                where p.USERNAME == username && p.PASSWORD == password
                                 select new UserViewModel
                                 {
-                                    companyId = coy.CompanyId,
-                                    staffId = p.StaffId,
-                                    user_id = p.UserId,
-                                    username = p.Username,
-                                    staffName = st.FirstName + " " + st.MiddleName + " " + st.LastName,
-                                    branchId = st.BranchId.Value,
-                                    countryId = coy.CountryId,
-                                    branchName = br.BranchName,
-                                    companyName = coy.Name,
+                                    companyId = coy.COMPANYID,
+                                    staffId = p.STAFFID,
+                                    user_id = p.USERID,
+                                    username = p.USERNAME,
+                                    staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                    branchId = st.BRANCHID.Value,
+                                    countryId = coy.COUNTRYID,
+                                    branchName = br.BRANCHNAME,
+                                    companyName = coy.NAME,
 
                                 }).First();
 
                     if (data == null)
                     {
-                        _user.FailedLogonAttempt += 1;
+                        _user.FAILEDLOGONATTEMPT += 1;
 
                         context.SaveChanges();
                     }
@@ -191,7 +191,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool IsUserExits(string username)
         {
-            return context.tbl_Profile_User.Any(x => x.Username.ToLower() == username);
+            return context.TBL_PROFILE_USER.Any(x => x.USERNAME.ToLower() == username);
         }
 
         public bool IsUserAccountValid(string username)
@@ -206,64 +206,64 @@ namespace FintrakBanking.Repositories.Setups.General
             return false;
         }
 
-        public IEnumerable<tbl_Profile_Group> GetAllGroups()
+        public IEnumerable<TBL_PROFILE_GROUP> GetAllGroups()
         {
-            return context.tbl_Profile_Group;
+            return context.TBL_PROFILE_GROUP;
         }
 
         public IEnumerable<UserViewModel> GetAllUsers()
         {
-            return (from u in context.tbl_Profile_User
-                    join st in context.tbl_Staff
-                    on u.StaffId equals st.StaffId
+            return (from u in context.TBL_PROFILE_USER
+                    join st in context.TBL_STAFF
+                    on u.STAFFID equals st.STAFFID
                     select new UserViewModel()
                     {
-                        user_id = u.UserId,
-                        staffId = u.StaffId,
-                        username = u.Username,
-                        isActive = u.IsActive,
-                        staffName = st.FirstName + " " + st.MiddleName + " " + st.LastName,
-                        email = st.Email,
-                        password = u.Password,
-                        securityQuestion = u.SecurityQuestion,
-                        securityAnswer = u.SecurityAnswer,
-                        groupId = u.tbl_Profile_UserGroup.Where(x => x.UserId == u.UserId)
+                        user_id = u.USERID,
+                        staffId = u.STAFFID,
+                        username = u.USERNAME,
+                        isActive = u.ISACTIVE,
+                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                        email = st.EMAIL,
+                        password = u.PASSWORD,
+                        securityQuestion = u.SECURITYQUESTION,
+                        securityAnswer = u.SECURITYANSWER,
+                        groupId = u.TBL_PROFILE_USERGROUP.Where(x => x.USERID == u.USERID)
                                     .Select(x => new UserGroupId
                                     {
-                                        groupId = x.GroupId,
-                                        groupKey = x.tbl_Profile_Group.GroupName
+                                        groupId = x.GROUPID,
+                                        groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
                                     }).ToList(),
-                        isLocked = u.IsLocked,
+                        isLocked = u.ISLOCKED,
                     });
         }
 
         public UserViewModel GetSingleUser(int userId)
         {
-            var user = (from u in context.tbl_Profile_User
-                        join st in context.tbl_Staff
-                        on u.StaffId equals st.StaffId
-                        where u.UserId == userId
+            var user = (from u in context.TBL_PROFILE_USER
+                        join st in context.TBL_STAFF
+                        on u.STAFFID equals st.STAFFID
+                        where u.USERID == userId
                         select new UserViewModel()
                         {
-                            user_id = u.UserId,
-                            staffId = u.StaffId,
-                            username = u.Username,
-                            isActive = u.IsActive,
-                            staffName = st.FirstName + " " + st.LastName,
-                            email = st.Email,
-                            password = u.Password,
-                            securityQuestion = u.SecurityQuestion,
-                            securityAnswer = u.SecurityAnswer
+                            user_id = u.USERID,
+                            staffId = u.STAFFID,
+                            username = u.USERNAME,
+                            isActive = u.ISACTIVE,
+                            staffName = st.FIRSTNAME + " " + st.LASTNAME,
+                            email = st.EMAIL,
+                            password = u.PASSWORD,
+                            securityQuestion = u.SECURITYQUESTION,
+                            securityAnswer = u.SECURITYANSWER
                         }).SingleOrDefault();
 
             if (user != null)
             {
 
-                user.groupId = context.tbl_Profile_UserGroup.Where(x => x.UserId == user.user_id)
+                user.groupId = context.TBL_PROFILE_USERGROUP.Where(x => x.USERID == user.user_id)
                                         .Select(x => new UserGroupId
                                         {
-                                            groupId = x.GroupId,
-                                            groupKey = x.tbl_Profile_Group.GroupName
+                                            groupId = x.GROUPID,
+                                            groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
                                         })
                             .ToList();
             }
@@ -273,18 +273,18 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public UserViewModel GetSingleUserByUserName(string userName)
         {
-            return (from u in context.tbl_Profile_User
-                    join st in context.tbl_Staff
-                    on u.StaffId equals st.StaffId
-                    where u.Username == userName
+            return (from u in context.TBL_PROFILE_USER
+                    join st in context.TBL_STAFF
+                    on u.STAFFID equals st.STAFFID
+                    where u.USERNAME == userName
                     select new UserViewModel()
                     {
-                        user_id = u.UserId,
-                        staffId = u.StaffId,
-                        username = u.Username,
-                        isActive = u.IsActive,
-                        staffName = st.FirstName + " " + st.MiddleName + " " + st.LastName,
-                        email = st.Email
+                        user_id = u.USERID,
+                        staffId = u.STAFFID,
+                        username = u.USERNAME,
+                        isActive = u.ISACTIVE,
+                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                        email = st.EMAIL
                     }).FirstOrDefault();
         }
 
