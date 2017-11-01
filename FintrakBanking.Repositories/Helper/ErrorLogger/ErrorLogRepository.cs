@@ -27,18 +27,18 @@ namespace FintrakBanking.Repositories.ErrorLogger
             }
 
             
-            var errorDetails = new tbl_ErrorLog()
+            var errorDetails = new TBL_ERRORLOG()
             {
-                APIEndpoint = url,
-                ErrorMessage = errorMsg,
-                ErrorSource = ex.Source,
-                ErrorType = ex.GetType().Name,
-                AllXml = errorMsg + " " + ex.StackTrace,
-                Username = username,
-                ErrorPath = "" ,
-                TimeUtc = DateTime.Now
+                APIENDPOINT = url,
+                ERRORMESSAGE = errorMsg,
+                ERRORSOURCE = ex.Source,
+                ERRORTYPE = ex.GetType().Name,
+                ALLXML = errorMsg + " " + ex.StackTrace,
+                USERNAME = username,
+                ERRORPATH = "" ,
+                TIMEUTC = DateTime.Now
             };
-            this.context.tbl_ErrorLog.Add(errorDetails);
+            this.context.TBL_ERRORLOG.Add(errorDetails);
             context.SaveChanges();
 
             //bool sendMail = bool.Parse(CommonHelpers.SendErrorMail);//  _config["AppConstants:sendErrorMail"]);
