@@ -30,70 +30,70 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         private IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaff(int companyId)
         {
-            var data = (from a in context.tbl_Approval_Level_Staff
-                        join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
+            var data = (from a in context.TBL_APPROVAL_LEVEL_STAFF
+                        join b in context.TBL_APPROVAL_LEVEL on a.APPROVALLEVELID equals b.APPROVALLEVELID
                         //join c in context.tbl_Approval_Group_Mapping on b.GroupId equals c.GroupId
-                        where a.tbl_Approval_Level.tbl_Approval_Group.CompanyId == companyId
-                        && a.Deleted == false
+                        where a.TBL_APPROVAL_LEVEL.TBL_APPROVAL_GROUP.COMPANYID == companyId
+                        && a.DELETED == false
                         select new ApprovalLevelStaffViewModel
                         {
-                            groupId = (int)a.tbl_Approval_Level.GroupId,
+                            groupId = (int)a.TBL_APPROVAL_LEVEL.GROUPID,
                             //operationId = c.OperationId,
-                            maximumAmount = a.MaximumAmount,
-                            processViewScope = a.ProcessViewScopeId,
-                            canViewDocument = a.CanViewCAMDocument,
-                            canViewUploadedFile = a.CanViewUploadedFile,
-                            canViewApproval = a.CanViewApproval,
-                            canApprove = a.CanApprove,
-                            canUploadFile = a.CanUploadFile,
-                            canSendRequest = a.CanSendJobRequest,
-                            canEdit = a.CanEdit,
-                            vetoPower = a.VetoPower,
+                            maximumAmount = a.MAXIMUMAMOUNT,
+                            processViewScope = a.PROCESSVIEWSCOPEID,
+                            canViewDocument = a.CANVIEWCAMDOCUMENT,
+                            canViewUploadedFile = a.CANVIEWUPLOADEDFILE,
+                            canViewApproval = a.CANVIEWAPPROVAL,
+                            canApprove = a.CANAPPROVE,
+                            canUploadFile = a.CANUPLOADFILE,
+                            canSendRequest = a.CANSENDJOBREQUEST,
+                            canEdit = a.CANEDIT,
+                            vetoPower = a.VETOPOWER,
                             //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
-                            position = a.tbl_Approval_Level.Position,
-                            approvalLevelId = a.ApprovalLevelId,
-                            approvalLevelName = a.tbl_Approval_Level.LevelName,
-                            staffId = a.StaffId,
-                            staffLevelId = a.StaffLevelId,// added
-                            staffLevelName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = (int)a.CreatedBy
+                            position = a.TBL_APPROVAL_LEVEL.POSITION,
+                            approvalLevelId = a.APPROVALLEVELID,
+                            approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                            staffId = a.STAFFID,
+                            staffLevelId = a.STAFFLEVELID,// added
+                            staffLevelName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = (int)a.CREATEDBY
                         }).ToList();
             return data;
         }
 
         private IEnumerable<ApprovalLevelStaffViewModel> GetAllDetailedApprovalLevelStaff(int companyId)
         {
-            var data = (from a in context.tbl_Approval_Level_Staff
-                        join e in context.tbl_Staff on a.StaffId equals e.StaffId
-                        join b in context.tbl_Approval_Level on a.ApprovalLevelId equals b.ApprovalLevelId
-                        join c in context.tbl_Approval_Group on b.GroupId equals c.GroupId
-                        join d in context.tbl_Approval_Group_Mapping on c.GroupId equals d.GroupId
-                        where c.CompanyId == companyId
-                        && a.Deleted == false
+            var data = (from a in context.TBL_APPROVAL_LEVEL_STAFF
+                        join e in context.TBL_STAFF on a.STAFFID equals e.STAFFID
+                        join b in context.TBL_APPROVAL_LEVEL on a.APPROVALLEVELID equals b.APPROVALLEVELID
+                        join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                        join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                        where c.COMPANYID == companyId
+                        && a.DELETED == false
                         select new ApprovalLevelStaffViewModel
                         {
-                            groupId = (int)a.tbl_Approval_Level.GroupId,
-                            operationId = d.OperationId,
-                            maximumAmount = a.MaximumAmount,
-                            processViewScope = a.ProcessViewScopeId,
-                            canViewDocument = a.CanViewCAMDocument,
-                            canViewUploadedFile = a.CanViewUploadedFile,
-                            canViewApproval = a.CanViewApproval,
-                            canApprove = a.CanApprove,
-                            canUploadFile = a.CanUploadFile,
-                            canSendRequest = a.CanSendJobRequest,
-                            canEdit = a.CanEdit,
-                            vetoPower = a.VetoPower,
+                            groupId = (int)a.TBL_APPROVAL_LEVEL.GROUPID,
+                            operationId = d.OPERATIONID,
+                            maximumAmount = a.MAXIMUMAMOUNT,
+                            processViewScope = a.PROCESSVIEWSCOPEID,
+                            canViewDocument = a.CANVIEWCAMDOCUMENT,
+                            canViewUploadedFile = a.CANVIEWUPLOADEDFILE,
+                            canViewApproval = a.CANVIEWAPPROVAL,
+                            canApprove = a.CANAPPROVE,
+                            canUploadFile = a.CANUPLOADFILE,
+                            canSendRequest = a.CANSENDJOBREQUEST,
+                            canEdit = a.CANEDIT,
+                            vetoPower = a.VETOPOWER,
                             //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
-                            position = a.tbl_Approval_Level.Position,
-                            approvalLevelId = a.ApprovalLevelId,
-                            approvalLevelName = a.tbl_Approval_Level.LevelName,
-                            staffId = a.StaffId,
-                            staffLevelId = a.StaffLevelId,// added
-                            staffLevelName = a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-                            dateTimeCreated = a.DateTimeCreated,
-                            createdBy = (int)a.CreatedBy
+                            position = a.TBL_APPROVAL_LEVEL.POSITION,
+                            approvalLevelId = a.APPROVALLEVELID,
+                            approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                            staffId = a.STAFFID,
+                            staffLevelId = a.STAFFLEVELID,// added
+                            staffLevelName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = (int)a.CREATEDBY
                         }).ToList();
             return data;
         }
@@ -135,42 +135,42 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool AddApprovalLevelStaff(ApprovalLevelStaffViewModel model)
         {
-            var data = new tbl_Approval_Level_Staff
+            var data = new TBL_APPROVAL_LEVEL_STAFF
             {
-                MaximumAmount = model.maximumAmount,
-                StaffId = model.staffId,
-                ApprovalLevelId = model.approvalLevelId,
-                ProcessViewScopeId = (short)model.processViewScope,
-                CanViewCAMDocument = model.canViewDocument,
-                CanViewUploadedFile = model.canViewUploadedFile,
-                CanViewApproval = model.canViewApproval,
-                CanApprove = model.canApprove,
-                CanUploadFile = model.canUploadFile,
-                CanSendJobRequest = model.canSendRequest,
-                CanEdit = model.canEdit,
-                VetoPower = model.vetoPower,
-                DateTimeCreated = _genSetup.GetApplicationDate(),
-                CreatedBy = (int)model.createdBy
+                MAXIMUMAMOUNT = model.maximumAmount,
+                STAFFID = model.staffId,
+                APPROVALLEVELID = model.approvalLevelId,
+                PROCESSVIEWSCOPEID = (short)model.processViewScope,
+                CANVIEWCAMDOCUMENT = model.canViewDocument,
+                CANVIEWUPLOADEDFILE = model.canViewUploadedFile,
+                CANVIEWAPPROVAL = model.canViewApproval,
+                CANAPPROVE = model.canApprove,
+                CANUPLOADFILE = model.canUploadFile,
+                CANSENDJOBREQUEST = model.canSendRequest,
+                CANEDIT = model.canEdit,
+                VETOPOWER = model.vetoPower,
+                DATETIMECREATED = _genSetup.GetApplicationDate(),
+                CREATEDBY = (int)model.createdBy
             };
 
             // Audit Section ---------------------------
-            var audit_staff_level = (context.tbl_Approval_Level.FirstOrDefault(x => x.ApprovalLevelId == data.ApprovalLevelId));
-            var audit_staff = (context.tbl_Staff.FirstOrDefault(x => x.StaffId == data.StaffId));
+            var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == data.APPROVALLEVELID));
+            var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ApprovalLevelStaffAdded,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Approval-Level '{audit_staff_level?.LevelName}' for user code '{audit_staff?.StaffCode}' .",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = model.staffLevelId
+                AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelStaffAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Approval-Level '{audit_staff_level?.LEVELNAME}' for user code '{audit_staff?.STAFFCODE}' .",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = model.staffLevelId
             };
 
-            context.tbl_Approval_Level_Staff.Add(data);
+            context.TBL_APPROVAL_LEVEL_STAFF.Add(data);
             this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
@@ -180,39 +180,39 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool UpdateApprovalLevelStaff(int StaffLevelId, ApprovalLevelStaffViewModel model)
         {
-            var data = this.context.tbl_Approval_Level_Staff.Find(StaffLevelId);
+            var data = this.context.TBL_APPROVAL_LEVEL_STAFF.Find(StaffLevelId);
             if (data == null) return false;
 
-            data.StaffId = model.staffId;
-            data.ApprovalLevelId = model.approvalLevelId;
-            data.MaximumAmount = model.maximumAmount;
-            data.ProcessViewScopeId = (short)model.processViewScope;
-            data.CanViewCAMDocument = model.canViewDocument;
-            data.CanViewUploadedFile = model.canViewUploadedFile;
-            data.CanViewApproval = model.canViewApproval;
-            data.CanApprove = model.canApprove;
-            data.CanUploadFile = model.canUploadFile;
-            data.CanSendJobRequest = model.canSendRequest;
-            data.CanEdit = model.canEdit;
-            data.VetoPower = model.vetoPower;
-            data.DateTimeUpdated = _genSetup.GetApplicationDate();
-            data.LastUpdatedBy = (int)model.createdBy;
+            data.STAFFID = model.staffId;
+            data.APPROVALLEVELID = model.approvalLevelId;
+            data.MAXIMUMAMOUNT = model.maximumAmount;
+            data.PROCESSVIEWSCOPEID = (short)model.processViewScope;
+            data.CANVIEWCAMDOCUMENT = model.canViewDocument;
+            data.CANVIEWUPLOADEDFILE = model.canViewUploadedFile;
+            data.CANVIEWAPPROVAL = model.canViewApproval;
+            data.CANAPPROVE = model.canApprove;
+            data.CANUPLOADFILE = model.canUploadFile;
+            data.CANSENDJOBREQUEST = model.canSendRequest;
+            data.CANEDIT = model.canEdit;
+            data.VETOPOWER = model.vetoPower;
+            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+            data.LASTUPDATEDBY = (int)model.createdBy;
 
             // Audit Section ---------------------------
             //var audit_staff_level = (context.TblApprovalLevel.FirstOrDefault(x => x.ApprovalLevelId == StaffLevelId));
-            var audit_staff = (context.tbl_Staff.FirstOrDefault(x => x.StaffId == data.StaffId));
+            var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ApprovalLevelStaffUpdated,
-                StaffId = model.createdBy,
-                BranchId = (short)model.userBranchId,
-                Detail = $"Added Approval Level for staff with code '{audit_staff.StaffCode}' to level {model.staffLevelName}'",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = model.staffLevelId
+                AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelStaffUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.staffLevelName}'",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = model.staffLevelId
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -224,104 +224,104 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public async Task<bool> DeleteApprovalLevelStaff(int StaffLevelId, UserInfo user)
         {
-            var data = this.context.tbl_Approval_Level_Staff.Find(StaffLevelId);
+            var data = this.context.TBL_APPROVAL_LEVEL_STAFF.Find(StaffLevelId);
 
             //Audit Section ---------------------------
-            var audit_staff_level = (context.tbl_Approval_Level.FirstOrDefault(x => x.ApprovalLevelId == data.ApprovalLevelId));
-            var audit_staff = (context.tbl_Staff.FirstOrDefault(x => x.StaffId == data.StaffId));
+            var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == data.APPROVALLEVELID));
+            var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.ApprovalLevelDeleted,
-                StaffId = user.staffId,
-                BranchId = (short)user.BranchId,
-                Detail = $"Added Approval Level Staff {audit_staff_level.LevelName}' for staff with code '{audit_staff.StaffCode}' ",
-                IPAddress = user.userIPAddress,
-                Url = user.applicationUrl,
-                ApplicationDate = _genSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now,
-                TargetId = data.StaffLevelId
+                AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Added Approval Level Staff {audit_staff_level.LEVELNAME}' for staff with code '{audit_staff.STAFFCODE}' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = data.STAFFLEVELID
             };
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
-            this.context.tbl_Approval_Level_Staff.Remove(data);
+            this.context.TBL_APPROVAL_LEVEL_STAFF.Remove(data);
 
             return await context.SaveChangesAsync() != 0;
         }
 
-        public bool AddApprovalTrail(tbl_Approval_Trail model)
+        public bool AddApprovalTrail(TBL_APPROVAL_TRAIL model)
         {
-            context.tbl_Approval_Trail.Add(model);
+            context.TBL_APPROVAL_TRAIL.Add(model);
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateApprovalTrail(tbl_Approval_Trail model)
+        public bool UpdateApprovalTrail(TBL_APPROVAL_TRAIL model)
         {
             bool result = false;
-            var update = context.tbl_Approval_Trail.SingleOrDefault(m => m.OperationId == model.OperationId
-                                                                     && m.ToApprovalLevelId == model.ToApprovalLevelId
-                                                                     && m.TargetId == model.TargetId
-                                                                 && m.ApprovalStatusId == 0);
+            var update = context.TBL_APPROVAL_TRAIL.SingleOrDefault(m => m.OPERATIONID == model.OPERATIONID
+                                                                     && m.TOAPPROVALLEVELID == model.TOAPPROVALLEVELID
+                                                                     && m.TARGETID == model.TARGETID
+                                                                 && m.APPROVALSTATUSID == 0);
 
             if (update != null)
             {
-                update.ApprovalStatusId = model.ApprovalStatusId;
-                update.ResponseDate = _genSetup.GetApplicationDate();
-                update.SystemResponseDateTime = model.SystemResponseDateTime;
-                update.ResponseStaffId = model.ResponseStaffId;
+                update.APPROVALSTATUSID = model.APPROVALSTATUSID;
+                update.RESPONSEDATE = _genSetup.GetApplicationDate();
+                update.SYSTEMRESPONSEDATETIME = model.SYSTEMRESPONSEDATETIME;
+                update.RESPONSESTAFFID = model.RESPONSESTAFFID;
 
                 result = context.SaveChanges() != 0;
             }
             return result;
         }
 
-        public IEnumerable<tbl_Staff_Organogram> GetStaffOrganogram(int companyId)
+        public IEnumerable<TBL_STAFF_ORGANOGRAM> GetStaffOrganogram(int companyId)
         {
-            return context.tbl_Staff_Organogram.Where(c => c.CompanyId == companyId);
+            return context.TBL_STAFF_ORGANOGRAM.Where(c => c.COMPANYID == companyId);
         }
 
-        public IQueryable<tbl_Approval_Trail> GetApprovalTrail(int operationId, int targetId, int approvalLevelId, int numberOfApprovals)
+        public IQueryable<TBL_APPROVAL_TRAIL> GetApprovalTrail(int operationId, int targetId, int approvalLevelId, int numberOfApprovals)
         {
-            return context.tbl_Approval_Trail
-                .Where(c => c.TargetId == targetId &&
-                c.OperationId == operationId &&
-                c.ToApprovalLevelId == approvalLevelId)
+            return context.TBL_APPROVAL_TRAIL
+                .Where(c => c.TARGETID == targetId &&
+                c.OPERATIONID == operationId &&
+                c.TOAPPROVALLEVELID == approvalLevelId)
                 .Take(numberOfApprovals);
         }
 
         private IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int companyId)
         {
-            var result = (from a in context.tbl_Approval_Trail
-                          join b in context.tbl_Approval_Level on a.FromApprovalLevelId equals b.ApprovalLevelId
-                          join c in context.tbl_Approval_Group on b.GroupId equals c.GroupId
-                          join d in context.tbl_Approval_Group_Mapping on c.GroupId equals d.GroupId
-                          join e in context.tbl_Operations on d.OperationId equals e.OperationId
+            var result = (from a in context.TBL_APPROVAL_TRAIL
+                          join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                          join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                          join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                          join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
 
-                          join f in context.tbl_Approval_Level on a.ToApprovalLevelId equals f.ApprovalLevelId
-                          join g in context.tbl_Approval_Group on f.GroupId equals g.GroupId
-                          join h in context.tbl_Approval_Group_Mapping on g.GroupId equals h.GroupId
-                          join i in context.tbl_Staff on a.RequestStaffId equals i.StaffId
-                          join j in context.tbl_Staff on a.ResponseStaffId equals j.StaffId
-                          join k in context.tbl_Approval_Status on a.ApprovalStatusId equals k.ApprovalStatusId
-                          where a.CompanyId == companyId
+                          join f in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals f.APPROVALLEVELID
+                          join g in context.TBL_APPROVAL_GROUP on f.GROUPID equals g.GROUPID
+                          join h in context.TBL_APPROVAL_GROUP_MAPPING on g.GROUPID equals h.GROUPID
+                          join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
+                          join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID
+                          join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
+                          where a.COMPANYID == companyId
                           select new WorkflowTrackerViewModel
 
                           {
-                              arrivalDate = a.ArrivalDate,
-                              responseApprovalLevel = a.ToApprovalLevelId.HasValue ? f.LevelName : "N/A",
-                              responseDate = a.SystemResponseDateTime ?? DateTime.Now,
-                              systemArrivalDate = a.SystemArrivalDateTime,
-                              systemResponseDate = a.SystemResponseDateTime,
-                              responseStaffName = !a.ResponseStaffId.HasValue ? "Awaiting Action" : j.FirstName + " " + j.LastName,
-                              comment = a.Comment,
-                              requestStaffName = i.FirstName + " " + i.LastName,
-                              requestApprovalLevel = !a.FromApprovalLevelId.HasValue ? "Initiation" : b.LevelName,
-                              TargetId = a.TargetId,
-                              operationId = e.OperationId,
-                              operationName = e.OperationName,
-                              approvalStatus = k.ApprovalStatusName
+                              arrivalDate = a.ARRIVALDATE,
+                              responseApprovalLevel = a.TOAPPROVALLEVELID.HasValue ? f.LEVELNAME : "N/A",
+                              responseDate = a.SYSTEMRESPONSEDATETIME ?? DateTime.Now,
+                              systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                              systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                              responseStaffName = !a.RESPONSESTAFFID.HasValue ? "Awaiting Action" : j.FIRSTNAME + " " + j.LASTNAME,
+                              comment = a.COMMENT,
+                              requestStaffName = i.FIRSTNAME + " " + i.LASTNAME,
+                              requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : b.LEVELNAME,
+                              TargetId = a.TARGETID,
+                              operationId = e.OPERATIONID,
+                              operationName = e.OPERATIONNAME,
+                              approvalStatus = k.APPROVALSTATUSNAME
                           });
             return result;
         }

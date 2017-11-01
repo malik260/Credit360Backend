@@ -15,32 +15,32 @@ namespace FintrakBanking.Repositories.Admin
             this.context = _contex;
         }
 
-        public void AddAllAuditTrail(List<tbl_Audit> auditInput)
+        public void AddAllAuditTrail(List<TBL_AUDIT> auditInput)
         {
-            context.tbl_Audit.AddRange(auditInput);
+            context.TBL_AUDIT.AddRange(auditInput);
         }
 
-        public void AddAuditTrail(tbl_Audit auditInput)
+        public void AddAuditTrail(TBL_AUDIT auditInput)
         {
-            context.tbl_Audit.Add(auditInput);
+            context.TBL_AUDIT.Add(auditInput);
         }
 
         public IQueryable<AuditViewModel> GetAuditTrail(short branchId)
         {
-            return from _audit in context.tbl_Audit
-                   join atype in context.tbl_Audit_Type on _audit.AuditTypeId equals atype.AuditTypeId
-                   join st in context.tbl_Staff on _audit.StaffId equals st.StaffId
-                   where _audit.BranchId == branchId
+            return from _audit in context.TBL_AUDIT
+                   join atype in context.TBL_AUDIT_TYPE on _audit.AUDITTYPEID equals atype.AUDITTYPEID
+                   join st in context.TBL_STAFF on _audit.STAFFID equals st.STAFFID
+                   where _audit.BRANCHID == branchId
                    select new AuditViewModel
                    {
-                       auditId = _audit.AuditId,
-                       applicationDate = _audit.ApplicationDate,
-                       auditType = atype.AuditTypeName,
-                       details = _audit.Detail,
-                       firstName = st.FirstName,
-                       lastName = st.LastName,
-                       systemDate = _audit.SystemDateTime,
-                       url = _audit.Url
+                       auditId = _audit.AUDITID,
+                       applicationDate = _audit.APPLICATIONDATE,
+                       auditType = atype.AUDITTYPENAME,
+                       details = _audit.DETAIL,
+                       firstName = st.FIRSTNAME,
+                       lastName = st.LASTNAME,
+                       systemDate = _audit.SYSTEMDATETIME,
+                       url = _audit.URL
                    };
         }
     }

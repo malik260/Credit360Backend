@@ -46,7 +46,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public decimal GetCollateralSearchChargeAmount(int stateId)
         {
-            var collateralSearchChargeAmount = this.context.tbl_State.FirstOrDefault(x => x.StateId == stateId).CollateralSearchChargeAmount;
+            var collateralSearchChargeAmount = this.context.TBL_STATE.FirstOrDefault(x => x.STATEID == stateId).COLLATERALSEARCHCHARGEAMOUNT;
 
 
             return collateralSearchChargeAmount;
@@ -56,36 +56,36 @@ namespace FintrakBanking.Repositories.Credit
         public bool AddCollateralSearchLien(CasaLienViewModel model)
         {
 
-            var data = new tbl_CASA_Lien
+            var data = new TBL_CASA_LIEN
             {
-                ProductAccountNumber = model.productAccountNumber,
-                LienReferenceNumber = CommonHelpers.GenerateRandomDigitCode(10),
-                SourceReferenceNumber = model.sourceReferenceNumber,
-                BranchId = model.userBranchId,
-                CompanyId = model.companyId,
-                LienCreditAmount = GetCollateralSearchChargeAmount(model.stateId),
-                LienDebitAmount = 0,
-                LienTypeId = (short)LienTypeEnum.CollateralSearch,
-                CreatedBy = model.createdBy,
-                Description = "lien placed due to loan application collateral search", // model.description,
-                DateCreated = generalSetup.GetApplicationDate()
+                PRODUCTACCOUNTNUMBER = model.productAccountNumber,
+                LIENREFERENCENUMBER = CommonHelpers.GenerateRandomDigitCode(10),
+                SOURCEREFERENCENUMBER = model.sourceReferenceNumber,
+                BRANCHID = model.userBranchId,
+                COMPANYID = model.companyId,
+                LIENCREDITAMOUNT = GetCollateralSearchChargeAmount(model.stateId),
+                LIENDEBITAMOUNT = 0,
+                LIENTYPEID = (short)LienTypeEnum.CollateralSearch,
+                CREATEDBY = model.createdBy,
+                DESCRIPTION = "lien placed due to loan application collateral search", // model.description,
+                DATECREATED = generalSetup.GetApplicationDate()
 
             };
 
-            context.tbl_CASA_Lien.Add(data);
+            context.TBL_CASA_LIEN.Add(data);
 
             // Audit Section ---------------------------            
 
-            var audit = new tbl_Audit
+            var audit = new TBL_AUDIT
             {
-                AuditTypeId = (short)AuditTypeEnum.LienAdded,
-                StaffId = model.createdBy,
-                BranchId = model.branchId,
-                Detail = $"Applied for lien with reference number: { model.sourceReferenceNumber}",
-                IPAddress = model.userIPAddress,
-                Url = model.applicationUrl,
-                ApplicationDate = generalSetup.GetApplicationDate(),
-                SystemDateTime = DateTime.Now
+                AUDITTYPEID = (short)AuditTypeEnum.LienAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Applied for lien with reference number: { model.sourceReferenceNumber}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
             };
             this.auditTrail.AddAuditTrail(audit);
 
@@ -104,53 +104,53 @@ namespace FintrakBanking.Repositories.Credit
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
-            var data = (from a in context.tbl_Loan_Schedule_Daily
-                        join b in context.tbl_Loan on a.LoanId equals b.TermLoanId
-                        join c in context.tbl_Loan_Schedule_Periodic on b.TermLoanId equals c.LoanId
-                        join d in context.tbl_Day_Count_Convention on b.ScheduleDayCountConventionId equals d.DayCountConventionId
-                        where a.Date == DbFunctions.TruncateTime(applicationDate) && b.LoanStatusId == (short)LoanStatusEnum.Active
-                        && a.PaymentDate == c.PaymentDate
+            var data = (from a in context.TBL_LOAN_SCHEDULE_DAILY
+                        join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                        join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
+                        join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
+                        where a.DATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                        && a.PAYMENTDATE == c.PAYMENTDATE
 
                         select new DailyInterestAccrualViewModel()
                         {
-                            referenceNumber = b.LoanReferenceNumber,
-                            productId = b.ProductId,
-                            branchId = b.BranchId,
-                            companyId = b.CompanyId,
-                            currencyId = b.CurrencyId,
-                            exchangeRate = b.ExchangeRate,
-                            interestRate = a.InterestRate,
+                            referenceNumber = b.LOANREFERENCENUMBER,
+                            productId = b.PRODUCTID,
+                            branchId = b.BRANCHID,
+                            companyId = b.COMPANYID,
+                            currencyId = b.CURRENCYID,
+                            exchangeRate = b.EXCHANGERATE,
+                            interestRate = a.INTERESTRATE,
                             date = applicationDate,
-                            dailyAccuralAmount = (double)a.DailyInterestAmount,
-                            mainAmount = c.PeriodInterestAmount,
+                            dailyAccuralAmount = (double)a.DAILYINTERESTAMOUNT,
+                            mainAmount = c.PERIODINTERESTAMOUNT,
                             categoryId = (short)DailyAccrualCategory.TermLoan,
                             transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                             baseReferenceNumber = null,
-                            dayCountConventionId = d.DayCountConventionId,
+                            dayCountConventionId = d.DAYCOUNTCONVENTIONID,
 
                         }).ToList();
 
-            List<tbl_Daily_Accrual> transAccrual = new List<tbl_Daily_Accrual>();
+            List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
 
 
             foreach (var item in data)
             {
-                tbl_Daily_Accrual dailyAccrual = new tbl_Daily_Accrual();
+                TBL_DAILY_ACCRUAL dailyAccrual = new TBL_DAILY_ACCRUAL();
 
-                dailyAccrual.ReferenceNumber = item.referenceNumber;
-                dailyAccrual.ProductId = item.productId;
-                dailyAccrual.BranchId = item.branchId;
-                dailyAccrual.ExchangeRate = item.exchangeRate;
-                dailyAccrual.CurrencyId = item.currencyId;
-                dailyAccrual.InterestRate = item.interestRate;
-                dailyAccrual.Date = item.date;
-                dailyAccrual.DailyAccuralAmount = (decimal)Math.Abs(item.dailyAccuralAmount);
-                dailyAccrual.MainAmount = item.mainAmount;
-                dailyAccrual.CategoryId = item.categoryId;
-                dailyAccrual.CompanyId = item.companyId;
-                dailyAccrual.DayCountConventionId = item.dayCountConventionId;
-                dailyAccrual.BaseReferenceNumber = item.baseReferenceNumber;
-                dailyAccrual.TransactionTypeId = item.transactionTypeId;
+                dailyAccrual.REFERENCENUMBER = item.referenceNumber;
+                dailyAccrual.PRODUCTID = item.productId;
+                dailyAccrual.BRANCHID = item.branchId;
+                dailyAccrual.EXCHANGERATE = item.exchangeRate;
+                dailyAccrual.CURRENCYID = item.currencyId;
+                dailyAccrual.INTERESTRATE = item.interestRate;
+                dailyAccrual.DATE = item.date;
+                dailyAccrual.DAILYACCURALAMOUNT = (decimal)Math.Abs(item.dailyAccuralAmount);
+                dailyAccrual.MAINAMOUNT = item.mainAmount;
+                dailyAccrual.CATEGORYID = item.categoryId;
+                dailyAccrual.COMPANYID = item.companyId;
+                dailyAccrual.DAYCOUNTCONVENTIONID = item.dayCountConventionId;
+                dailyAccrual.BASEREFERENCENUMBER = item.baseReferenceNumber;
+                dailyAccrual.TRANSACTIONTYPEID = item.transactionTypeId;
 
 
                 transAccrual.Add(dailyAccrual);
@@ -5185,15 +5185,15 @@ namespace FintrakBanking.Repositories.Credit
         #endregion
         public IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId)
         {
-            var excemptionsList = (from l in context.tbl_Loan
-                                   join p in context.tbl_Loan_PriceIndex_Exception
-                                     on l.TermLoanId  equals p.LoanId
-                                   where l.CompanyId == companyId
+            var excemptionsList = (from l in context.TBL_LOAN
+                                   join p in context.TBL_LOAN_PRICEINDEX_EXCEPTION
+                                     on l.TERMLOANID  equals p.LOANID
+                                   where l.COMPANYID == companyId
                     select new LoanViewModel()
                     {
-                        companyName = l.tbl_Company.Name,
-                        companyId = l.CompanyId,
-                        customerName = l.tbl_Customer.FirstName + " " + l.tbl_Customer.MiddleName + " " + l.tbl_Customer.LastName,
+                        companyName = l.TBL_COMPANY.NAME,
+                        companyId = l.COMPANYID,
+                        customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.MIDDLENAME + " " + l.TBL_CUSTOMER.LASTNAME,
                         customerId = l.CustomerId,
                         approvedAmount = l.PrincipalAmount,
                         branchName = l.tbl_Branch.BranchName,
