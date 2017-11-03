@@ -75,6 +75,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOMER_FS_RATIO_DIVISORTYPE> TBL_CUSTOMER_FS_RATIO_DIVISORTYPE { get; set; }
         public virtual DbSet<TBL_CUSTOMER_FS_RATIO_VALUETYPE> TBL_CUSTOMER_FS_RATIO_VALUETYPE { get; set; }
         public virtual DbSet<TBL_CUSTOMER_GROUP> TBL_CUSTOMER_GROUP { get; set; }
+        public virtual DbSet<TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL> TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL { get; set; }
         public virtual DbSet<TBL_CUSTOMER_GROUP_MAPPING> TBL_CUSTOMER_GROUP_MAPPING { get; set; }
         public virtual DbSet<TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE> TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE { get; set; }
         public virtual DbSet<TBL_CUSTOMER_GUARDIAN> TBL_CUSTOMER_GUARDIAN { get; set; }
@@ -90,6 +91,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DAY_COUNT_CONVENTION> TBL_DAY_COUNT_CONVENTION { get; set; }
         public virtual DbSet<TBL_DAY_INTEREST_TYPE> TBL_DAY_INTEREST_TYPE { get; set; }
         public virtual DbSet<TBL_DEPARTMENT> TBL_DEPARTMENT { get; set; }
+        public virtual DbSet<TBL_DEPARTMENT_UNIT> TBL_DEPARTMENT_UNIT { get; set; }
         public virtual DbSet<TBL_ERRORLOG> TBL_ERRORLOG { get; set; }
         public virtual DbSet<TBL_FEE> TBL_FEE { get; set; }
         public virtual DbSet<TBL_FEE_AMORTISATION_TYPE> TBL_FEE_AMORTISATION_TYPE { get; set; }
@@ -116,6 +118,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_OPERATIONS> TBL_OPERATIONS { get; set; }
         public virtual DbSet<TBL_OPERATIONS_TYPE> TBL_OPERATIONS_TYPE { get; set; }
         public virtual DbSet<TBL_PRODUCT> TBL_PRODUCT { get; set; }
+        public virtual DbSet<TBL_PRODUCT_BEHAVIOUR> TBL_PRODUCT_BEHAVIOUR { get; set; }
         public virtual DbSet<TBL_PRODUCT_CATEGORY> TBL_PRODUCT_CATEGORY { get; set; }
         public virtual DbSet<TBL_PRODUCT_CHARGE_FEE> TBL_PRODUCT_CHARGE_FEE { get; set; }
         public virtual DbSet<TBL_PRODUCT_CLASS> TBL_PRODUCT_CLASS { get; set; }
@@ -1181,6 +1184,11 @@ namespace FintrakBanking.Entities.Models
                 .WithOptional(e => e.TBL_CUSTOMER_FS_CAPTION2)
                 .HasForeignKey(e => e.PARENTIDFSCAPTIONID);
 
+            modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION>()
+                .HasMany(e => e.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL)
+                .WithRequired(e => e.TBL_CUSTOMER_FS_CAPTION)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION_DETAIL>()
                 .Property(e => e.AMOUNT)
                 .HasPrecision(19, 4);
@@ -1213,6 +1221,15 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_CUSTOMER_GROUP_MAPPING)
                 .WithRequired(e => e.TBL_CUSTOMER_GROUP)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER_GROUP>()
+                .HasMany(e => e.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL)
+                .WithRequired(e => e.TBL_CUSTOMER_GROUP)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL>()
+                .Property(e => e.AMOUNT)
+                .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE>()
                 .HasMany(e => e.TBL_CUSTOMER_GROUP_MAPPING)
@@ -1306,6 +1323,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN)
                 .WithRequired(e => e.TBL_DAY_INTEREST_TYPE)
                 .HasForeignKey(e => e.SCHEDULEDAYINTERESTTYPEID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_DEPARTMENT>()
+                .HasMany(e => e.TBL_DEPARTMENT_UNIT)
+                .WithRequired(e => e.TBL_DEPARTMENT)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_DEPARTMENT>()

@@ -12,6 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_DEPARTMENT()
         {
+            TBL_DEPARTMENT_UNIT = new HashSet<TBL_DEPARTMENT_UNIT>();
             TBL_JOB_REQUEST = new HashSet<TBL_JOB_REQUEST>();
             TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
@@ -42,6 +43,9 @@ namespace FintrakBanking.Entities.Models
         public bool? DELETED { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_DEPARTMENT_UNIT> TBL_DEPARTMENT_UNIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }

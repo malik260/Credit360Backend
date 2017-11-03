@@ -87,6 +87,8 @@ namespace FintrakBanking.Entities.Models
 
         public double? PRODUCTPRICEINDEXSPREAD { get; set; }
 
+        public short? PRODUCT_BEHAVIOURID { get; set; }
+
         public bool? ALLOWOVERDRAWN { get; set; }
 
         public int? OVERDRAWNGL { get; set; }
@@ -196,6 +198,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_DEAL_TYPE TBL_DEAL_TYPE { get; set; }
 
         public virtual TBL_LOAN_SCHEDULE_TYPE TBL_LOAN_SCHEDULE_TYPE { get; set; }
+
+        public virtual TBL_PRODUCT_BEHAVIOUR TBL_PRODUCT_BEHAVIOUR { get; set; }
 
         public virtual TBL_PRODUCT_CLASS TBL_PRODUCT_CLASS { get; set; }
 
