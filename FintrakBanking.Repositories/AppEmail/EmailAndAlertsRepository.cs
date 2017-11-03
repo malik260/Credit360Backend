@@ -623,6 +623,15 @@ namespace FintrakBanking.Repositories.AppEmail
 
         #endregion Overdraft Monitoring
 
+        #region Expired & Deferred Documents
+
+        public void SendAlertsOnExpiredAndDeferredDocuments()
+        {
+
+        }
+
+        #endregion Expired & Deferred Documents
+
         #region Helper Methods
 
         public void SaveMessageDetails(MessageLogViewModel model)

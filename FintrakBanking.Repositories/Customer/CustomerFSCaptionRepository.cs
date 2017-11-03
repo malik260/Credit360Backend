@@ -107,7 +107,7 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
 
-        public IEnumerable<CustomerFSCaptionViewModel> GetCustomerFSCaption(short fsCaptionGroupId)
+        public IEnumerable<CustomerFSCaptionViewModel> GetCustomerFSCaptionByGroupId(short fsCaptionGroupId)
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION
                         where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false

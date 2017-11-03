@@ -26,6 +26,7 @@ namespace FintrakBanking.Repositories.Customer
             auditTrail = _auditTrail;
         }
 
+        #region Customer FS Caption Detail
         public bool AddCustomerFSCaptionDetail(CustomerFSCaptionDetailViewModel entity)
         {
             //var targetEntity = context.tbl_Customer_FS_Caption_Detail.FirstOrDefault(x => x.FSCaptionId == entity.fsCaptionId);
@@ -135,7 +136,7 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
 
-        public bool DeleteMultileCustomerFSCaptionDetail(List<int> fsdetailIds, UserInfo user)
+        public bool DeleteMultipleCustomerFSCaptionDetail(List<int> fsdetailIds, UserInfo user)
         {
             if (fsdetailIds.Count <= 0)
                 return false;
@@ -234,5 +235,46 @@ namespace FintrakBanking.Repositories.Customer
             //end of Audit section -----------------------
             return context.SaveChanges() != 0;
         }
+
+        #endregion Customer FS Caption Detail
+
+        #region Customer Group FS Caption Detail 
+
+        public IEnumerable<CustomerGroupFSCaptionDetailViewModel> GetMappedCustomerGroupFsCaptionDetail(int customerGroupId, short fsCaptionGroupId, DateTime fsDate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CustomerGroupFSCaptionDetailViewModel GetCustomerGroupFSCaptionDetailById(int fsdetailId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddCustomerGroupFSCaptionDetail(CustomerGroupFSCaptionDetailViewModel entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddMultipleCustomerGroupFSCaptionDetail(List<CustomerGroupFSCaptionDetailViewModel> entities)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool UpdateCustomerGroupFSCaptionDetail(int fsdetailId, CustomerGroupFSCaptionDetailViewModel entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteCustomerGroupFSCaptionDetail(int fsdetailId, UserInfo user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool DeleteMultipleCustomerGroupFSCaptionDetail(List<int> fsdetailIds, UserInfo user)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion Customer Group FS Caption Detail
     }
 }
