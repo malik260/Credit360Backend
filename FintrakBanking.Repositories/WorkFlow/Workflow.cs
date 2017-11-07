@@ -16,13 +16,13 @@ namespace FintrakBanking.Repositories.WorkFlow
     {
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
-        private IEmailAndAlertsRepository email;
+        //private IEmailAndAlertsRepository email;
 
-        public Workflow(FinTrakBankingContext context, IGeneralSetupRepository general, IEmailAndAlertsRepository email)
+        public Workflow(FinTrakBankingContext context, IGeneralSetupRepository general)//, IEmailAndAlertsRepository email)
         {
             this.context = context;
             this.general = general;
-            this.email = email;
+            //this.email = email;
         }
 
         private int staffId;
@@ -551,7 +551,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if (emailNotification)
                 {
-                    this.email.SendEmailAlertsForWorkflow(emails,operationName,group,link);
+                    //this.email.SendEmailAlertsForWorkflow(emails,operationName,group,link);
                 }
 
                 if (smsNotification)
