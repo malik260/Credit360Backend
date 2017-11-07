@@ -182,7 +182,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = _fsCaptionRepo.GetCustomerFSCaption(fsCaptionGroupId);
+                var data = _fsCaptionRepo.GetCustomerFSCaptionByGroupId(fsCaptionGroupId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -493,7 +493,7 @@ namespace FintrakBanking.APICore.Controllers
                     userIPAddress = Request.RequestUri.Host
                 };
 
-                _fsDetailRepo.DeleteMultileCustomerFSCaptionDetail(fsdetailIds, user);
+                _fsDetailRepo.DeleteMultipleCustomerFSCaptionDetail(fsdetailIds, user);
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = 1, message = "record(s) has been deleted successfully" });

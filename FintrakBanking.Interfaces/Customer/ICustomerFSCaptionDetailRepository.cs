@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using FintrakBanking.ViewModels; 
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Interfaces.Customer
 {
     public interface ICustomerFSCaptionDetailRepository
     {
-        IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptionDetail(int customerIdshort, short fsCaptionGroupId, DateTime fsDate);
+        #region Customer FS Detail
+
+        IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptionDetail(int customerId, short fsCaptionGroupId, DateTime fsDate);
         CustomerFSCaptionDetailViewModel GetCustomerFSCaptionDetailById(int fsdetailId);
 
         bool AddCustomerFSCaptionDetail(CustomerFSCaptionDetailViewModel entity);
@@ -16,8 +18,24 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool UpdateCustomerFSCaptionDetail(int fsdetailId, CustomerFSCaptionDetailViewModel entity);
 
-
         bool DeleteCustomerFSCaptionDetail(int fsdetailId, UserInfo user);
-        bool DeleteMultileCustomerFSCaptionDetail(List<int> fsdetailIds, UserInfo user);
+        bool DeleteMultipleCustomerFSCaptionDetail(List<int> fsdetailIds, UserInfo user);
+
+        #endregion Customer FS Detail
+
+        #region Customer Group FS Detail
+
+        IEnumerable<CustomerGroupFSCaptionDetailViewModel> GetMappedCustomerGroupFsCaptionDetail(int customerGroupId, short fsCaptionGroupId, DateTime fsDate);
+        CustomerGroupFSCaptionDetailViewModel GetCustomerGroupFSCaptionDetailById(int fsdetailId);
+
+        bool AddCustomerGroupFSCaptionDetail(CustomerGroupFSCaptionDetailViewModel entity);
+        bool AddMultipleCustomerGroupFSCaptionDetail(List<CustomerGroupFSCaptionDetailViewModel> entities);
+
+        bool UpdateCustomerGroupFSCaptionDetail(int fsdetailId, CustomerGroupFSCaptionDetailViewModel entity);
+
+        bool DeleteCustomerGroupFSCaptionDetail(int fsdetailId, UserInfo user);
+        bool DeleteMultipleCustomerGroupFSCaptionDetail(List<int> fsdetailIds, UserInfo user);
+
+        #endregion Customer Group FS Detail
     }
 }
