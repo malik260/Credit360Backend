@@ -16,11 +16,13 @@ namespace FintrakBanking.Repositories.WorkFlow
     {
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
+        private IEmailAndAlertsRepository email;
 
-        public Workflow(FinTrakBankingContext context, IGeneralSetupRepository general)
+        public Workflow(FinTrakBankingContext context, IGeneralSetupRepository general, IEmailAndAlertsRepository email)
         {
             this.context = context;
             this.general = general;
+            this.email = email;
         }
 
         private int staffId;
@@ -81,19 +83,22 @@ namespace FintrakBanking.Repositories.WorkFlow
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
         private WorkflowSetup next;
+        private List<TBL_APPROVAL_TRAIL> trailLog;
 
         public bool LogActivity()
         {
             if (Validation() == false) { return false; }
             if (Authorization() == false) { return false; }
 
-            var request = context.TBL_APPROVAL_TRAIL.Where(x =>
+            this.trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
                                 && x.OPERATIONID == this.operationId
-                                && x.TARGETID == this.targetId 
-                                && x.RESPONSESTAFFID == null 
+                                && x.TARGETID == this.targetId
+                                && x.RESPONSESTAFFID == null
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
-                            ).OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
+                            ).ToList();
+
+            var request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
 
             if (request == null)
             {
@@ -514,16 +519,45 @@ namespace FintrakBanking.Repositories.WorkFlow
             return this.workflowSetup;
         }
 
-        private void SendNotifications() // TODO
+        private void SendNotifications()
         {
-            if (emailNotification)
+            if (emailNotification || smsNotification)
             {
-                //send(email);
-            }
+                string link = "#"; // TODO
+                bool group = true;
+                string[] emails = new string[0];
 
-            if (smsNotification)
-            {
-                //send(sms)
+                if (this.NextLevelId == null)
+                {
+                    var request = trailLog.OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
+                    if (request == null) { return; }
+                    int initiatingLevel = (int)request.FROMAPPROVALLEVELID;
+
+                    emails = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == initiatingLevel)
+                        .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF)
+                        .Select(x => x.TBL_STAFF.EMAIL)
+                        .ToArray();
+                }
+                else
+                {
+                    emails = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == this.NextLevelId)
+                        .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF)
+                        .Select(x => x.TBL_STAFF.EMAIL)
+                        .ToArray();
+                }
+
+                var operation = context.TBL_OPERATIONS.Find(this.operationId);
+                string operationName = operation == null ? "N/A" : operation.OPERATIONNAME;
+
+                if (emailNotification)
+                {
+                    this.email.SendEmailAlertsForWorkflow(emails,operationName,group,link);
+                }
+
+                if (smsNotification)
+                {
+                    // NOT IMPLEMENTED
+                }
             }
         }
 

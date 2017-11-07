@@ -15,6 +15,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         void SendAlertsOnSelfLiquidatingLoanExpiry();
 
+        void SendEmailAlertsForWorkflow(string[] emails, string operation, bool group, string link);
+
         bool CreateEmailMessageAndSend(MessageLogViewModel model);
 
         IEnumerable<MessageLogViewModel> GetMailingList();

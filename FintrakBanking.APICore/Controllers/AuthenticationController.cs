@@ -23,6 +23,7 @@ namespace FintrakBanking.APICore.Controllers
     public class AuthenticationController : ApiController
     {
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
+
         private IAuthenticationRepository repo;
         private IAuditTrailRepository auditTrail;
         private IErrorLogRepository errorLogger;
@@ -30,12 +31,14 @@ namespace FintrakBanking.APICore.Controllers
         private IGeneralSetupRepository _genSetup;
         private FinTrakBankingContext context;
 
-        public AuthenticationController(IAuthenticationRepository _repo,
-                                        IErrorLogRepository _errorLogger,
-                                        IAdminRepository adminRepo,
-                                        IAuditTrailRepository _auditTrail,
-            IGeneralSetupRepository genSetup, FinTrakBankingContext _context
-                                        )
+        public AuthenticationController(
+                IAuthenticationRepository _repo,
+                IErrorLogRepository _errorLogger,
+                IAdminRepository adminRepo,
+                IAuditTrailRepository _auditTrail,
+                IGeneralSetupRepository genSetup, 
+                FinTrakBankingContext _context
+            )
         {
             repo = _repo;
             _adminRepo = adminRepo;
