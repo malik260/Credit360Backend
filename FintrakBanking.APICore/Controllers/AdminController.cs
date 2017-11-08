@@ -162,12 +162,12 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = user, message = "User has been created successfully, now awaiting approval" });
+                       new { success = true, result = user, message = "User has been updated successfully, now awaiting approval" });
                 }
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, result = user, message = "User not created successfully" });
+                       new { success = false, result = user, message = "User not updated successfully" });
                 }
             }
             catch (Exception ex)

@@ -7,15 +7,21 @@ using FintrakBanking.ViewModels.Media;
 using System.Linq;
 using System.IO;
 using System.Collections.Generic;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.Interfaces.Setups.General;
 
 namespace FintrakBanking.Repositories.media
 {
     public class MediaRepository : IMediaRepository
     {
         private FinTrakBankingDocumentsContext context;
-        public MediaRepository(FinTrakBankingDocumentsContext _context)
+        private IGeneralSetupRepository genSetup;
+
+        public MediaRepository(FinTrakBankingDocumentsContext _context, IGeneralSetupRepository _genSetup)
         {
             this.context = _context;
+            genSetup = _genSetup;
         }
         public async Task<bool> AddFile(byte[] imgContent, string fileName, string extention)
         {
@@ -44,36 +50,39 @@ namespace FintrakBanking.Repositories.media
                     }).FirstOrDefault();
 
         }
-    //    public string GetDocumentToViewById(int id)
-    //    {
-    //        var viewdoc = (from doc in context.tbl_Media_Loan_Documents
-    //                where doc.DocumentId == id
-    //                select new DocumentViewModel()
-    //                {
-    //                    documentId = doc.DocumentId,
-    //                    fileData = doc.FileData,
-    //                    fileExtension = doc.FileExtension,
-    //                    fileName = doc.FileName
-    //                }).FirstOrDefault();
+        //    public string GetDocumentToViewById(int id)
+        //    {
+        //        var viewdoc = (from doc in context.tbl_Media_Loan_Documents
+        //                where doc.DocumentId == id
+        //                select new DocumentViewModel()
+        //                {
+        //                    documentId = doc.DocumentId,
+        //                    fileData = doc.FileData,
+        //                    fileExtension = doc.FileExtension,
+        //                    fileName = doc.FileName
+        //                }).FirstOrDefault();
 
-    //        String HtmlContent = "";
-    //        if (viewdoc != null)
-    //        {
-    //            ViewerConfig config = new ViewerConfig();
-    //            Stream stream = new MemoryStream(viewdoc.fileData);
-    //            HtmlOptions options = new HtmlOptions();
-    //            options.IsResourcesEmbedded = true;
-    //            ViewerHtmlHandler handler = new ViewerHtmlHandler(config);
-    //            List<PageHtml> AllPages = handler.GetPages(stream, options);
+        //        String HtmlContent = "";
+        //        if (viewdoc != null)
+        //        {
+        //            ViewerConfig config = new ViewerConfig();
+        //            Stream stream = new MemoryStream(viewdoc.fileData);
+        //            HtmlOptions options = new HtmlOptions();
+        //            options.IsResourcesEmbedded = true;
+        //            ViewerHtmlHandler handler = new ViewerHtmlHandler(config);
+        //            List<PageHtml> AllPages = handler.GetPages(stream, options);
 
-    //            foreach (PageHtml html in AllPages)
-    //            {
-    //                HtmlContent += html.HtmlContent;
-    //            }
+        //            foreach (PageHtml html in AllPages)
+        //            {
+        //                HtmlContent += html.HtmlContent;
+        //            }
 
-    //            return HtmlContent;
-    //        }
-    //        return null;
-    //    }
+        //            return HtmlContent;
+        //        }
+        //        return null;
+        //    }
+
+
+       
     }
 }

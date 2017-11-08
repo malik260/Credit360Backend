@@ -379,10 +379,54 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public List<ChecklistDetailViewModel> GetAllChecklistDetailByProductId(int targetTypeId, int targetId)
+        public List<ChecklistDetailViewModel> GetAllChecklistDetailByProductAndTargetId(int targetTypeId, int productId)
         {
             var data = (from a in context.TBL_CHECKLIST_DETAIL
-                        where a.DELETED == false && a.TARGETTYPEID == targetTypeId && a.TARGETID == targetId
+                        where a.DELETED == false && a.TARGETTYPEID == targetTypeId && a.TARGETID == productId
+                        select new ChecklistDetailViewModel
+                        {
+                            checklistId = a.CHECKLISTID,
+                            checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                            checkListDefinitionItemName = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                            targetTypeId = a.TARGETTYPEID,
+                            targetTypeName = a.TBL_CHECKLIST_TARGETTYPE.TARGETTYPENAME,
+                            targetId = a.TARGETID,
+                            checkListStatusId = a.CHECKLISTSTATUSID,
+                            checkedBy = a.CHECKEDBY,
+                            deferedDate = a.DEFEREDDATE,
+                            remark = a.REMARK,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = (int)a.CREATEDBY
+                        }).ToList();
+            return data;
+        }
+
+        public List<ChecklistDetailViewModel> GetAllChecklistDetailByProductId(int productId)
+        {
+            var data = (from a in context.TBL_CHECKLIST_DETAIL
+                        where a.DELETED == false && a.TARGETID == productId
+                        select new ChecklistDetailViewModel
+                        {
+                            checklistId = a.CHECKLISTID,
+                            checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                            checkListDefinitionItemName = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                            targetTypeId = a.TARGETTYPEID,
+                            targetTypeName = a.TBL_CHECKLIST_TARGETTYPE.TARGETTYPENAME,
+                            targetId = a.TARGETID,
+                            checkListStatusId = a.CHECKLISTSTATUSID,
+                            checkedBy = a.CHECKEDBY,
+                            deferedDate = a.DEFEREDDATE,
+                            remark = a.REMARK,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = (int)a.CREATEDBY
+                        }).ToList();
+            return data;
+        }
+
+        public List<ChecklistDetailViewModel> GetAllChecklistDetailByChecklistDefinitionId(int checklistDefinitionId)
+        {
+            var data = (from a in context.TBL_CHECKLIST_DETAIL
+                        where a.DELETED == false && a.CHECKLISTDEFINITIONID == checklistDefinitionId
                         select new ChecklistDetailViewModel
                         {
                             checklistId = a.CHECKLISTID,
