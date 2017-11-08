@@ -29,18 +29,6 @@ namespace FintrakBanking.Repositories.Customer
         #region Customer FS Caption Detail
         public bool AddCustomerFSCaptionDetail(CustomerFSCaptionDetailViewModel entity)
         {
-            //var targetEntity = context.tbl_Customer_FS_Caption_Detail.FirstOrDefault(x => x.FSCaptionId == entity.fsCaptionId);
-
-            //if (targetEntity != null)
-            //{
-            //    targetEntity.Deleted = false;
-            //    targetEntity.LastUpdatedBy = entity.createdBy;
-            //    targetEntity.DateTimeUpdated = DateTime.Now;
-            //}
-            //else
-            //{
-            //}
-
             var data = new TBL_CUSTOMER_FS_CAPTION_DETAIL
             {
                 CUSTOMERID = entity.customerId,
@@ -108,14 +96,6 @@ namespace FintrakBanking.Repositories.Customer
                 var customer =
                     $"Cutomer with code: {customerInfo?.CUSTOMERCODE} ({customerInfo?.FIRSTNAME}  {customerInfo?.LASTNAME})";
 
-                //var auditInfo = (from a in context.TblCustomerFsCaptionDetail
-                //                 where a.FsdetailId == data.FsdetailId
-                //                 select new
-                //                 {
-                //                     CustomerInfo = $"Cutomer with code: {a.tbl_Customer.CustomerCode} ({a.tbl_Customer.FirstName}  { a.tbl_Customer.LastName})",
-                //                     CaptionInfo = $"{a.Fscaption.FscaptionName} ({a.Fscaption.FscaptionCode})"
-                //                 }).FirstOrDefault();
-
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionDetailDeleted,
@@ -152,6 +132,33 @@ namespace FintrakBanking.Repositories.Customer
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
                         where a.CUSTOMERID == customerId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId
                         && a.FSDATE == fsDate
+                        && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
+                        && a.DELETED == false
+                        orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
+                        a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
+                        select new CustomerFSCaptionDetailViewModel
+                        {
+                            customerId = a.CUSTOMERID,
+                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                            fsdetailId = a.FSDETAILID,
+                            fsCaptionId = a.FSCAPTIONID,
+                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
+                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
+                            accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+                            fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+                            fsDate = a.FSDATE,
+                            amount = a.AMOUNT,
+
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptions(int customerId)
+        {
+            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
+                        where a.CUSTOMERID == customerId 
                         && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
                         && a.DELETED == false
                         orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
@@ -242,30 +249,243 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupFSCaptionDetailViewModel> GetMappedCustomerGroupFsCaptionDetail(int customerGroupId, short fsCaptionGroupId, DateTime fsDate)
         {
-            throw new NotImplementedException();
+            var data = (from a in context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+                        where a.CUSTOMERGROUPID == customerGroupId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId
+                        && a.FSDATE == fsDate
+                        && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
+                        && a.DELETED == false
+                        orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
+                        a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
+                        select new CustomerGroupFSCaptionDetailViewModel
+                        {
+                            customerGroupId = a.CUSTOMERGROUPID,
+                            customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
+                            fsdetailId = a.GROUPFSDETAILID,
+                            fsCaptionId = a.FSCAPTIONID,
+                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
+                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
+                            accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+                            fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+                            fsDate = a.FSDATE,
+                            amount = a.AMOUNT,
+
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<CustomerGroupFSCaptionDetailViewModel> GetMappedCustomerGroupFsCaptions(int customerGroupId)
+        {
+            var data = (from a in context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+                        where a.CUSTOMERGROUPID == customerGroupId
+                        && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
+                        && a.DELETED == false
+                        orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
+                        a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
+                        select new CustomerGroupFSCaptionDetailViewModel
+                        {
+                            customerGroupId = a.CUSTOMERGROUPID,
+                            customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
+                            fsdetailId = a.GROUPFSDETAILID,
+                            fsCaptionId = a.FSCAPTIONID,
+                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
+                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
+                            accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+                            fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+                            fsDate = a.FSDATE,
+                            amount = a.AMOUNT,
+
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
+                        }).ToList();
+            return data;
         }
 
         public CustomerGroupFSCaptionDetailViewModel GetCustomerGroupFSCaptionDetailById(int fsdetailId)
         {
-            throw new NotImplementedException();
+            var data = (from a in context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+                        where a.GROUPFSDETAILID == fsdetailId
+                        select new CustomerGroupFSCaptionDetailViewModel
+                        {
+                            customerGroupId = a.CUSTOMERGROUPID,
+                            customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
+                            fsdetailId = a.GROUPFSDETAILID,
+                            fsCaptionId = a.FSCAPTIONID,
+                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
+                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
+                            accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+                            fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+                            fsDate = a.FSDATE,
+                            amount = a.AMOUNT,
+
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
+                        }).FirstOrDefault();
+
+            return data;
         }
 
         public bool AddCustomerGroupFSCaptionDetail(CustomerGroupFSCaptionDetailViewModel entity)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var exisitingDeletedRecord = context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL.FirstOrDefault(x => x.FSCAPTIONID == entity.fsCaptionId 
+                &&  x.CUSTOMERGROUPID == entity.customerGroupId && x.DELETED == true);
+           
+                TBL_CUSTOMER_FS_CAPTION captionInfo;
+                string caption;
+                TBL_CUSTOMER_GROUP customerGrpInfo;
+                string customerGrp;
 
-        public bool AddMultipleCustomerGroupFSCaptionDetail(List<CustomerGroupFSCaptionDetailViewModel> entities)
-        {
-            throw new NotImplementedException();
+                if (exisitingDeletedRecord != null)
+                {
+                    exisitingDeletedRecord.DELETED = false;
+                    exisitingDeletedRecord.AMOUNT = entity.amount;
+                    exisitingDeletedRecord.DATETIMEUPDATED = DateTime.Now;
+                    exisitingDeletedRecord.LASTUPDATEDBY = entity.createdBy;
+                    exisitingDeletedRecord.FSDATE = entity.fsDate;
+
+                    captionInfo = context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == exisitingDeletedRecord.FSCAPTIONID);
+                    caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+                    customerGrpInfo = context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == exisitingDeletedRecord.CUSTOMERGROUPID);
+                    customerGrp = $"Cutomer Group with code: {customerGrpInfo?.GROUPCODE}";
+
+                    var auditRecord = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupFSCaptionDetailUpdated,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = entity.userBranchId,
+                        DETAIL = $"Added FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { exisitingDeletedRecord?.AMOUNT:#,##0} with date {exisitingDeletedRecord?.FSDATE:dd/MM/yyyy}",
+                        IPADDRESS = entity.userIPAddress,
+                        URL = entity.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                }
+                else
+                {
+                    var data = new TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+                    {
+                        CUSTOMERGROUPID = entity.customerGroupId,
+                        FSCAPTIONID = entity.fsCaptionId,
+                        FSDATE = entity.fsDate,
+                        AMOUNT = entity.amount,
+
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = _genSetup.GetApplicationDate()
+                    };
+
+                    context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL.Add(data);
+
+                    // Audit Section ---------------------------
+
+                    captionInfo = context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == data.FSCAPTIONID);
+                    caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+                    customerGrpInfo = context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == data.CUSTOMERGROUPID);
+                    customerGrp = $"Cutomer Group with code: {customerGrpInfo?.GROUPCODE}";
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupFSCaptionDetailAdded,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = entity.userBranchId,
+                        DETAIL = $"Added FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
+                        IPADDRESS = entity.userIPAddress,
+                        URL = entity.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+
+                    auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------
+
+                }
+
+                return context.SaveChanges() != 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public bool UpdateCustomerGroupFSCaptionDetail(int fsdetailId, CustomerGroupFSCaptionDetailViewModel entity)
         {
-            throw new NotImplementedException();
+            var data = context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL.Find(fsdetailId);
+            if (data == null) return false;
+
+            data.CUSTOMERGROUPID = entity.customerGroupId;
+            data.FSCAPTIONID = entity.fsCaptionId;
+            data.FSDATE = entity.fsDate;
+            data.AMOUNT = entity.amount;
+
+            data.LASTUPDATEDBY = entity.createdBy;
+            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var captionInfo = context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == data.FSCAPTIONID);
+            var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+            var customerGrpInfo = context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == data.CUSTOMERGROUPID);
+            var customerGrp = $"Cutomer Group with code: {customerGrpInfo?.GROUPCODE}";
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupFSCaptionDetailUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = entity.userBranchId,
+                DETAIL = $"Updated FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { data?.AMOUNT.ToString("#,##0") } with date {data?.FSDATE.ToString("dd/MM/yyyy")}",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -----------------------
+            return context.SaveChanges() != 0;
         }
 
         public bool DeleteCustomerGroupFSCaptionDetail(int fsdetailId, UserInfo user)
+        {
+            var data = context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL.Find(fsdetailId);
+            if (data != null)
+            {
+                data.DELETED = true;
+                data.DELETEDBY = user.createdBy;
+                data.DATETIMEDELETED = _genSetup.GetApplicationDate();
+
+                // Audit Section ---------------------------
+
+                var captionInfo =
+                    context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == data.FSCAPTIONID);
+                var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+                var customerGrpInfo = context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == data.CUSTOMERGROUPID);
+                var customerGrp =
+                    $"Cutomer Group with code: {customerGrpInfo?.GROUPCODE}";
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupFSCaptionDetailDeleted,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL =
+                        $"Deleted FS Caption Detail for customer {customerGrp} and caption {caption}. Amount is {data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                auditTrail.AddAuditTrail(audit);
+            }
+
+            //end of Audit section -----------------------
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddMultipleCustomerGroupFSCaptionDetail(List<CustomerGroupFSCaptionDetailViewModel> entities)
         {
             throw new NotImplementedException();
         }
