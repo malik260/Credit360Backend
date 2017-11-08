@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Setups.General;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
     {
         public int targetId { get; set; }
         public short departmentId { get; set; }
+        public short departmentUnitId { get; set; }
         public int jobRequestId { get; set; }
         public string jobRequestCode { get; set; }
         public short jobTypeId { get; set; }
@@ -33,6 +35,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string from { get; set; }
         public string to { get; set; }
         public string assignee { get; set; }
+        public Array emailList { get; set; }
+        public List<MessageLogViewModel> mailData { get; set; }
     }
 
     public class JobTypeViewModel : GeneralEntity
