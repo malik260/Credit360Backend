@@ -98,6 +98,8 @@ namespace FintrakBanking.Entities.Models
 
         public double? EQUITYCONTRIBUTION { get; set; }
 
+        public short? PRODUCT_BEHAVIOURID { get; set; }
+
         public bool? COMPLETED { get; set; }
 
         public bool? APPROVED { get; set; }
@@ -149,6 +151,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT5 { get; set; }
 
         public virtual TBL_DEAL_CLASSIFICATION TBL_DEAL_CLASSIFICATION { get; set; }
+
+        public virtual TBL_PRODUCT_BEHAVIOUR TBL_PRODUCT_BEHAVIOUR { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PRODUCT_COLLATERALTYPE> TBL_TEMP_PRODUCT_COLLATERALTYPE { get; set; }

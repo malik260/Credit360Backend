@@ -46,5 +46,10 @@ namespace FintrakBanking.Interfaces.Setups.General
         IQueryable<simpleStaffModel> SearchStaff(string searchString, int companyId); 
         IQueryable<simpleStaffModel> SearchStaffbyDepartmentId(string searchString, int companyId, int departmentId);
 
+
+        bool AddStaffSignature(StaffDocumentViewModel model, byte[] file);
+        bool UpdateStaffSignature(StaffDocumentViewModel model, int documentId);
+        IEnumerable<StaffDocumentViewModel> GetAllStaffSignatures();
+        IEnumerable<StaffDocumentViewModel> GetStaffSignatureByStaffCode(string staffCode);
     }
 }

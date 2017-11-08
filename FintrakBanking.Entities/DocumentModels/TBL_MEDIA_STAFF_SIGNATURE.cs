@@ -18,6 +18,10 @@ namespace FintrakBanking.Entities.DocumentModels
         public int COMPANYID { get; set; }
 
         [Required]
+        [StringLength(250)]
+        public string DOCUMENT_TITLE { get; set; }
+
+        [Required]
         [StringLength(400)]
         public string FILENAME { get; set; }
 

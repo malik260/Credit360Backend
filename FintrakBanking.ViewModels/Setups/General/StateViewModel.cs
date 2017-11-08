@@ -7,5 +7,8 @@
         public string StateName { get; set; }
         public string CountryName { get; set; }
         public decimal CollateralSearchChargeAmount { get; set; }
+        public decimal ChartingAmount { get; set; }
+        public decimal VerificationAmount { get; set; }
+
     }
 }

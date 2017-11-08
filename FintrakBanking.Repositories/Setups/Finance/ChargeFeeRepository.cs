@@ -19,32 +19,61 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository auditTrail;
+        private IWorkflow workFlow;
 
         public ChargeFeeRepository(
             FinTrakBankingContext context, 
             IGeneralSetupRepository general, 
-            IAuditTrailRepository _auditTrail
+            IAuditTrailRepository _auditTrail,
+            IWorkflow _workflow
             )
         {
             this.context = context;
             this.general = general;
             this.auditTrail = _auditTrail;
+            workFlow = _workflow;
         }
 
-        public async Task<bool> GoForApproval(ApprovalViewModel entity)
+        public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.UserCreation;
-            /*
-            var response = await workFlow.GoForApproval(entity);
+            entity.externalInitialization = false;
 
-            if (response.Item1)
+            using (var trans = context.Database.BeginTransaction())
             {
-                return ApproveChargeFee(entity.targetId, response.Item2.approvalStatusId, entity);
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
+
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApproveChargeFee(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
-            else
-            {*/
-                return false;
-            //}
 
         }
 

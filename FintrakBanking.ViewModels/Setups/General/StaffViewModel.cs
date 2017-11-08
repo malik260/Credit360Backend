@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Media;
+using System;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
@@ -24,7 +25,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string GenderOfNok { get; set; }
         public string NokrelationShip { get; set; }
         public string Comment { get; set; }
-        public byte[] Staffsignature { get; set; }
+        public byte[] StaffSignature { get; set; }
         public short? BranchId { get; set; }
         public string BranchName { get; set; }
         public int? MisinfoId { get; set; }
@@ -45,6 +46,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string StaffFullName { get { return this.FirstName + " " + this.MiddleName.Trim() + " " + this.LastName; } }
 
         public string JobTitleName { get; set; }
+
+        public StaffDocumentViewModel StaffSignatureDetails { get; set; }
     }
 
     public class StaffViewModel
@@ -131,5 +134,12 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     //}
 
-
+    public class StaffDocumentViewModel: DocumentViewModel
+    {
+        public string StaffCode { get; set; }
+        public string documentTitle { get; set; }
+        public short documentTypeId { get; set; }
+        public DateTime SystemDateTime { get; set; }
+        public string StaffName { get; set; }
+    }
 }
