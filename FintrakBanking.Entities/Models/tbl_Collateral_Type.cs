@@ -16,7 +16,6 @@ namespace FintrakBanking.Entities.Models
             TBL_TEMP_COLLATERAL_CUSTOMER = new HashSet<TBL_TEMP_COLLATERAL_CUSTOMER>();
             TBL_COLLATERAL_TYPE_SUB = new HashSet<TBL_COLLATERAL_TYPE_SUB>();
             TBL_COLLATERAL_VALUEBASE_TYPE = new HashSet<TBL_COLLATERAL_VALUEBASE_TYPE>();
-            TBL_LOAN_APPLICATION_COLLATERAL = new HashSet<TBL_LOAN_APPLICATION_COLLATERAL>();
             TBL_PRODUCT_COLLATERALTYPE = new HashSet<TBL_PRODUCT_COLLATERALTYPE>();
             TBL_TEMP_PRODUCT_COLLATERALTYPE = new HashSet<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
             TBL_TEMP_PRODUCT_COLLATERALTYPE1 = new HashSet<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
@@ -67,9 +66,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_COLLATERAL_VALUEBASE_TYPE> TBL_COLLATERAL_VALUEBASE_TYPE { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_APPLICATION_COLLATERAL> TBL_LOAN_APPLICATION_COLLATERAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PRODUCT_COLLATERALTYPE> TBL_PRODUCT_COLLATERALTYPE { get; set; }

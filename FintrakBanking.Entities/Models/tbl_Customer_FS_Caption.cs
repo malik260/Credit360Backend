@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
             TBL_CUSTOMER_FS_CAPTION_DETAIL = new HashSet<TBL_CUSTOMER_FS_CAPTION_DETAIL>();
             TBL_CUSTOMER_FS_RATIO_DETAIL = new HashSet<TBL_CUSTOMER_FS_RATIO_DETAIL>();
             TBL_CUSTOMER_FS_CAPTION1 = new HashSet<TBL_CUSTOMER_FS_CAPTION>();
+            TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL = new HashSet<TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL>();
         }
 
         [Key]
@@ -78,5 +79,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CUSTOMER_FS_CAPTION_GROUP TBL_CUSTOMER_FS_CAPTION_GROUP { get; set; }
 
         public virtual TBL_FINANCIAL_STATEMENT_TYPE TBL_FINANCIAL_STATEMENT_TYPE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL> TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL { get; set; }
     }
 }

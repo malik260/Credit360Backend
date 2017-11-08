@@ -37,7 +37,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete,
                 BRANCHID = entity.branchId,
-                CHILDDATEOFBIRTH = entity.childDateOfBirth,
+                //CHILDDATEOFBIRTH = entity.childDateOfBirth,
                 COMPANYID = entity.companyId,
                 CREATEDBY = (int)entity.createdBy,
                 CREATIONMAILSENT = entity.creationMailSent,
@@ -47,7 +47,7 @@ namespace FintrakBanking.Repositories.Customer
                 DATEOFBIRTH = entity.dateOfBirth,
                 DATETIMECREATED = DateTime.Now,
                 EMAILADDRESS = entity.emailAddress,
-                FIRSTCHILDNAME = entity.firstChildName,
+               // FIRSTCHILDNAME = entity.firstChildName,
                 FIRSTNAME = entity.firstName,
                 GENDER = entity.gender,
                 LASTNAME = entity.lastName,
@@ -773,17 +773,17 @@ namespace FintrakBanking.Repositories.Customer
                        accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
                        branchId = a.BRANCHID,
                        branchName = a.TBL_BRANCH.BRANCHNAME,
-                       childDateOfBirth = a.CHILDDATEOFBIRTH.Value,
+                       //childDateOfBirth = a.CHILDDATEOFBIRTH.Value,
                        companyMainId = a.COMPANYID,
                        createdBy = a.CREATEDBY,
                        creationMailSent = a.CREATIONMAILSENT,
                        customerCode = a.CUSTOMERCODE,
                        customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                        customerTypeId = a.CUSTOMERTYPEID.Value,
-                       dateOfBirth = a.DATEOFBIRTH,
+                      // dateOfBirth = a.DATEOFBIRTH,
                        customerId = a.CUSTOMERID,
                        emailAddress = a.EMAILADDRESS,
-                       firstChildName = a.FIRSTCHILDNAME,
+                       //firstChildName = a.FIRSTCHILDNAME,
                        firstName = a.FIRSTNAME,
                        gender = a.GENDER,
                        lastName = a.LASTNAME,
@@ -803,10 +803,9 @@ namespace FintrakBanking.Repositories.Customer
                        spouse = a.SPOUSE,
                        sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                       subSectorId = a.SUBSECTORID,
+                       subSectorId = (short)a.SUBSECTORID,
                        subSectorName = a.TBL_SUB_SECTOR.NAME,
-                       taxNumber = a.TAXNUMBER
-                       ,
+                       taxNumber = a.TAXNUMBER,
                        CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
                        {
                            address = x.ADDRESS,
@@ -1049,7 +1048,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 customer.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
                 customer.BRANCHID = entity.branchId;
-                customer.CHILDDATEOFBIRTH = entity.childDateOfBirth;
+                //customer.CHILDDATEOFBIRTH = entity.childDateOfBirth;
                 customer.COMPANYID = entity.companyMainId;
                 customer.CREATEDBY = (int)entity.createdBy;
                 customer.CREATIONMAILSENT = entity.creationMailSent;
@@ -1058,7 +1057,7 @@ namespace FintrakBanking.Repositories.Customer
                 customer.CUSTOMERTYPEID = entity.customerTypeId;
                 customer.DATEOFBIRTH = entity.dateOfBirth;
                 customer.EMAILADDRESS = entity.emailAddress;
-                customer.FIRSTCHILDNAME = entity.firstChildName;
+               // customer.FIRSTCHILDNAME = entity.firstChildName;
                 customer.FIRSTNAME = entity.firstName;
                 customer.GENDER = entity.gender;
                 customer.LASTNAME = entity.lastName;

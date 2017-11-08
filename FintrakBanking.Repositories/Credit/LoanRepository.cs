@@ -16,6 +16,7 @@ using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -241,16 +242,31 @@ namespace FintrakBanking.Repositories.Credit
                     };
 
                     //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                    if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                    if (model.feeOverride)
                     {
                         trans.Commit();
                         //............save Loan Covenant..........
                         AddLoanCovenant(model.loanCovenant, model.loanApplicationDetailId, loan.REVOLVINGLOANID, (short)model.productTypeId);
                         //............save Loan Fees..........
-                        AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)model.productTypeId);
+                        AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)model.productTypeId, model.companyId, model.feeOverride);
 
                         context.SaveChanges();
                     }
+                    else
+                    {
+                        if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                        {
+                            trans.Commit();
+                            //............save Loan Covenant..........
+                            AddLoanCovenant(model.loanCovenant, model.loanApplicationDetailId, loan.REVOLVINGLOANID, (short)model.productTypeId);
+                            //............save Loan Fees..........
+                            AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)model.productTypeId, model.companyId, model.feeOverride);
+                            PostLoanFees(model);
+
+                            context.SaveChanges();
+                        }
+                    }
+                 
                     //.......................END OF APPROVAL LOG......................................................
 
                     if (dataCount > 0)
@@ -376,17 +392,32 @@ namespace FintrakBanking.Repositories.Credit
                     };
 
                     //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                    if (LogApproval(approvalModel, (int)OperationsEnum.ContigentLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                    if (entity.feeOverride)
                     {
                         //.....Commit transaction ............
                         trans.Commit();
                         //............save Loan Covenant..........
                         AddLoanCovenant(entity.loanCovenant, entity.loanApplicationDetailId, loan.CONTINGENTLOANID, (short)entity.productTypeId);
                         //............save Loan Fees..........
-                        AddLoanFees(entity.loanChargeFee, loan.CONTINGENTLOANID, (short)entity.productTypeId);
+                        AddLoanFees(entity.loanChargeFee, loan.CONTINGENTLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
 
                         context.SaveChanges();
                     }
+                    else
+                    {
+                        if (LogApproval(approvalModel, (int)OperationsEnum.ContigentLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                        {
+                            //.....Commit transaction ............
+                            trans.Commit();
+                            //............save Loan Covenant..........
+                            AddLoanCovenant(entity.loanCovenant, entity.loanApplicationDetailId, loan.CONTINGENTLOANID, (short)entity.productTypeId);
+                            //............save Loan Fees..........
+                            AddLoanFees(entity.loanChargeFee, loan.CONTINGENTLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
+
+                            context.SaveChanges();
+                        }
+                    }
+                    
                     //.......................END OF APPROVAL LOG......................................................
 
                     if (dataCount > 0)
@@ -422,13 +453,14 @@ namespace FintrakBanking.Repositories.Credit
                                    let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
                                    select sumPrincipalAmount;
 
+            var approvedAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).FirstOrDefault().APPROVEDAMOUNT;
+            
             var totalPreviouslyBookedAmount = principalAmount.FirstOrDefault();
 
             var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.loanScheduleInput.principalAmount);
 
-            if (totalPrincipalAmount > (decimal)entity.loanScheduleInput.principalAmount)
+            if (totalPrincipalAmount > (decimal)approvedAmount)
                 throw new Exception("The loan amount cannot be greater than the availiable amount");
-
 
 
             var CurrRatings = context.TBL_CURRENCY_RATE.Where(x => x.CURRENCYID == entity.currencyId).FirstOrDefault();
@@ -562,7 +594,7 @@ namespace FintrakBanking.Repositories.Credit
                     };
 
                     //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                    if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                    if (entity.feeOverride)
                     {
                         //.....Commit transaction ............
                         trans.Commit();
@@ -584,9 +616,41 @@ namespace FintrakBanking.Repositories.Credit
 
                         }
                         AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)entity.productTypeId);
-                        AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)entity.productTypeId);
+                        AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)entity.productTypeId,entity.companyId, entity.feeOverride);
 
                         context.SaveChanges();
+                    }
+                    else
+                    {
+                        if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending))
+                        {
+                            //.....Commit transaction ............
+                            trans.Commit();
+
+                            if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.IrregularSchedule)
+                            {
+                                foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
+                                {
+                                    var irregularRecordData = new TBL_LOAN_SCHEDULE_IRREGULAR_INPUT
+                                    {
+                                        LOANID = loan.TERMLOANID,
+                                        PAYMENTAMOUNT = (decimal)irregular.paymentAmount,
+                                        PAYMENTDATE = irregular.paymentDate,
+                                        CREATEDBY = entity.createdBy,
+                                        DATETIMECREATED = generalSetup.GetApplicationDate()
+                                    };
+                                    context.TBL_LOAN_SCHEDULE_IRREGULAR_INPUT.Add(irregularRecordData);
+                                }
+
+                            }
+                            AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)entity.productTypeId);
+                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)entity.productTypeId, entity.companyId, entity.feeOverride);
+
+                            entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
+                            PostLoanFees(entity);
+
+                            context.SaveChanges();
+                        }
                     }
                     //.......................END OF APPROVAL LOG......................................................
 
@@ -1147,7 +1211,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="staffId">The staff identifier.</param>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        public IEnumerable<LoanChargeFeeViewModel> GetDeferredLoanFeeAwaitingApproval(int staffId, int companyId)
+        public IEnumerable<LoanChargeFeeViewModel> GetDeferredTermLoanFeeAwaitingApproval(int staffId, int companyId)
         {
 
             var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanBookingFeeDeferral);
@@ -1174,25 +1238,257 @@ namespace FintrakBanking.Repositories.Credit
                             productId = ln.PRODUCTID,
                             casaAccountId = ln.CASAACCOUNTID,
                             feeAmount = (decimal)(from tot in context.TBL_LOAN_FEE.Where(x => x.LOANID == ln.TERMLOANID) select tot).Sum(x => x.FEEAMOUNT),
+                            loanAmount = (from m in context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID) select m).Sum(x => x.APPROVEDAMOUNT),
+                            //loanDeferredFeeList = new List<LoanChargeFeeViewModel>()
+
+                        });
+            foreach(var a in data)
+            {
+                a.loanDeferredFeeList = (from tot in context.TBL_LOAN_FEE.Where(x => x.LOANID == a.loanId)
+                   select
+                    new LoanChargeFeeViewModel
+                    {
+                        feeAmount = tot.FEEAMOUNT,
+                        feeRateValue = tot.FEERATEVALUE,
+                        isIntegralFee = tot.ISINTEGRALFEE,
+                        recurring = tot.ISRECURRING,
+                        productTypeId = tot.PRODUCTTYPEID,
+                        isPosted = tot.ISPOSTED,
+                        chargeFeeId = tot.CHARGEFEEID,
+                        feeDependentAmount = tot.FEEDEPENDENTAMOUNT
+                    }).ToList();
+            }
+
+            return data;
+             
+        }
+
+                /// <summary>
+        /// Gets the term loan booking awaiting approval.
+        /// </summary>
+        /// <param name="staffId">The staff identifier.</param>
+        /// <param name="companyId">The company identifier.</param>
+        /// <returns></returns>
+        public IEnumerable<LoanChargeFeeViewModel> GetDeferredRevolvingLoanFeeAwaitingApproval(int staffId, int companyId)
+        {
+
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanBookingFeeDeferral);
+            //var levelResult = level.GetAllAssignedApprovalLevelStaff(companyId);
+            int staffApprovalLevelId = 0;
+
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            var data = (from ln in context.TBL_LOAN_REVOLVING
+                        join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
+                        join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                        join fee in context.TBL_LOAN_FEE on ln.REVOLVINGLOANID equals fee.LOANID
+                        join atrail in context.TBL_APPROVAL_TRAIL on fee.LOANID equals atrail.TARGETID
+                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                              && atrail.OPERATIONID == (int)OperationsEnum.LoanBookingFeeDeferral
+                              && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && atrail.RESPONSESTAFFID == null
+                        orderby ln.REVOLVINGLOANID descending
+
+                        select new LoanChargeFeeViewModel()
+                        {
+                            loanId = ln.REVOLVINGLOANID,
+                            operationId = (int)OperationsEnum.RevolvingLoanBooking,
+                            productId = ln.PRODUCTID,
+                            casaAccountId = ln.CASAACCOUNTID,
+                            feeAmount = (decimal)(from tot in context.TBL_LOAN_FEE.Where(x => x.LOANID == ln.REVOLVINGLOANID) select tot).Sum(x => x.FEEAMOUNT),
                             loanAmount = (from m in context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID) select m).Sum(x => x.APPROVEDAMOUNT),
 
-                            loanDeferredFeeList = (from tot in context.TBL_LOAN_FEE.Where(x => x.LOANID == ln.TERMLOANID) select
-                                         new LoanChargeFeeViewModel
-                                         {
-                                             feeAmount = tot.FEEAMOUNT,
-                                             feeRateValue = tot.FEERATEVALUE,
-                                             isIntegralFee = tot.ISINTEGRALFEE,
-                                             recurring = tot.ISRECURRING,
-                                             productTypeId = tot.PRODUCTTYPEID,
-                                             isPosted = tot.ISPOSTED,
-                                             chargeFeeId = tot.CHARGEFEEID,
-                                             feeDependentAmount = tot.FEEDEPENDENTAMOUNT
-                                         }).ToList(),
-  
-                        }).ToList();
+                            
+
+                        });
+
+            foreach(var a in data)
+            {
+                a.loanDeferredFeeList = (from tot in context.TBL_LOAN_FEE.Where(x => x.LOANID == a.loanId)
+                                         select
+                                              new LoanChargeFeeViewModel
+                                              {
+                                                  feeAmount = tot.FEEAMOUNT,
+                                                  feeRateValue = tot.FEERATEVALUE,
+                                                  isIntegralFee = tot.ISINTEGRALFEE,
+                                                  recurring = tot.ISRECURRING,
+                                                  productTypeId = tot.PRODUCTTYPEID,
+                                                  isPosted = tot.ISPOSTED,
+                                                  chargeFeeId = tot.CHARGEFEEID,
+                                                  feeDependentAmount = tot.FEEDEPENDENTAMOUNT
+                                              }).ToList();
+            }
 
             return data;
         }
+
+
+        /// <summary>
+        /// Gets the revolving loan booking awaiting approval.
+        /// </summary>
+        /// <param name="staffId">The staff identifier.</param>
+        /// <param name="companyId">The company identifier.</param>
+        /// <returns></returns>
+
+
+                /// <summary>
+        /// Gets the term loan booking awaiting approval.
+        /// </summary>
+        /// <param name="staffId">The staff identifier.</param>
+        /// <param name="companyId">The company identifier.</param>
+        /// <returns></returns>
+        public IEnumerable<LoanChargeFeeViewModel> GetDeferredContingentLoanFeeAwaitingApproval(int staffId, int companyId)
+        {
+
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanBookingFeeDeferral);
+            //var levelResult = level.GetAllAssignedApprovalLevelStaff(companyId);
+            int staffApprovalLevelId = 0;
+
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            var data = (from ln in context.TBL_LOAN_CONTINGENT
+                        join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
+                        join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
+                        join fee in context.TBL_LOAN_FEE on ln.CONTINGENTLOANID equals fee.LOANID
+                        join atrail in context.TBL_APPROVAL_TRAIL on fee.LOANID equals atrail.TARGETID
+                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                              && atrail.OPERATIONID == (int)OperationsEnum.LoanBookingFeeDeferral
+                              && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                              && atrail.RESPONSESTAFFID == null
+                        orderby ln.CONTINGENTLOANID descending
+
+                        select new LoanChargeFeeViewModel()
+                        {
+                            loanId = ln.CONTINGENTLOANID,
+                            operationId = (int)OperationsEnum.ContigentLoanBooking,
+                            productId = ln.PRODUCTID,
+                            casaAccountId = ln.CASAACCOUNTID,
+                            feeAmount = (decimal)(from tot in context.TBL_LOAN_FEE.Where(x => x.LOANID == ln.CONTINGENTLOANID) select tot).Sum(x => x.FEEAMOUNT),
+                            loanAmount = (from m in context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONDETAILID == ln.LOANAPPLICATIONDETAILID) select m).Sum(x => x.APPROVEDAMOUNT),
+                            
+                        });
+            foreach(var a in data)
+            {
+                a.loanDeferredFeeList = (from tot in context.TBL_LOAN_FEE.Where(x => x.LOANID == a.loanId)
+                                         select new LoanChargeFeeViewModel
+                                              {
+                                                  feeAmount = tot.FEEAMOUNT,
+                                                  feeRateValue = tot.FEERATEVALUE,
+                                                  isIntegralFee = tot.ISINTEGRALFEE,
+                                                  recurring = tot.ISRECURRING,
+                                                  productTypeId = tot.PRODUCTTYPEID,
+                                                  isPosted = tot.ISPOSTED,
+                                                  chargeFeeId = tot.CHARGEFEEID,
+                                                  feeDependentAmount = tot.FEEDEPENDENTAMOUNT
+                                              }).ToList();
+            }
+            return data;
+        }
+
+
+        /// <summary>
+        /// Gets the revolving loan booking awaiting approval.
+        /// </summary>
+        /// <param name="staffId">The staff identifier.</param>
+        /// <param name="companyId">The company identifier.</param>
+        /// <returns></returns>
+
+
+        /// <summary>
+        /// Gets the revolving loan booking awaiting approval.
+        /// </summary>
+        /// <param name="staffId">The staff identifier.</param>
+        /// <param name="companyId">The company identifier.</param>
+        /// <returns></returns>
+        public bool GoForFeeOverrideApproval(ApprovalViewModel entity)
+        {
+
+            entity.externalInitialization = false;
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    workflow.LogForApproval(entity);
+
+                    var b = workflow.NextLevelId ?? 0;
+
+                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended)
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
+
+                    try
+                    {
+                        
+                        if (workflow.NewState != (int)ApprovalState.Ended)
+                        {
+                            var feeRec = context.TBL_LOAN_FEE.Find(entity.targetId);
+                            var allTargetLoanFees = context.TBL_LOAN_FEE.Where(x => x.LOANID == feeRec.LOANID);
+                            foreach(var fee in allTargetLoanFees)
+                            {
+                                fee.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            }
+
+                            ApprovalViewModel approvalModel = new ApprovalViewModel();
+                            if (entity.operationId == (int)OperationsEnum.TermLoanBooking)
+                            {
+                                var termLoanRecord = context.TBL_LOAN.Find(feeRec.LOANID);
+                                approvalModel.targetId = termLoanRecord.TERMLOANID;
+                                approvalModel.amount = termLoanRecord.PRINCIPALAMOUNT;
+                            }
+                            else if (entity.operationId == (int)OperationsEnum.RevolvingLoanBooking)
+                            {
+                                var revolvingLoanRecord = context.TBL_LOAN_REVOLVING.Find(feeRec.LOANID);
+                                approvalModel.targetId = revolvingLoanRecord.REVOLVINGLOANID;
+                                approvalModel.amount = revolvingLoanRecord.OVERDRAFTLIMIT;
+                            }
+                            else if (entity.operationId == (int)OperationsEnum.ContigentLoanBooking)
+                            {
+                                var contingentLoanRecord = context.TBL_LOAN_CONTINGENT.Find(feeRec.LOANID);
+                                approvalModel.targetId = contingentLoanRecord.CONTINGENTLOANID;
+                                approvalModel.amount = contingentLoanRecord.CONTINGENTAMOUNT;
+                            }
+
+                            approvalModel.companyId = entity.companyId;
+                            approvalModel.createdBy = entity.createdBy;
+                            
+                            approvalModel.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+                            approvalModel.externalInitialization = true;
+                            approvalModel.operationId = (int)OperationsEnum.LoanBookingFeeDeferral;
+
+                            workflow.LogForApproval(approvalModel);
+
+                            return context.SaveChanges() > 0;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval failed. " + e.Message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Approves the loan booking.
+        /// </summary>
+        /// <param name="loanId">The loan identifier.</param>
+        /// <param name="approvalStatusId">The approval status identifier.</param>
+        /// <param name="user">The user.</param>
+        /// <returns></returns>
 
         /// <summary>
         /// Gets the revolving loan booking awaiting approval.
@@ -1816,7 +2112,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="loanId">The loan identifier.</param>
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
-        private bool AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short productTypeId)
+        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short productTypeId, int companyId, bool feeOverride)
         {
             var feeAmount = 0;
             foreach (var ent in feeModel)
@@ -1837,10 +2133,30 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now.Date,
                     ISPOSTED = ent.isPosted
                 };
+                if (feeOverride && ent.isPosted)
+                    throw new Exception("Fee posted must be must be disabled for fee override until after approval");
+
                 context.TBL_LOAN_FEE.Add(fee);
+                if (feeOverride)
+                {
+                    context.SaveChanges();
+                    var approvalModel = new ForwardViewModel
+                    {
+                        createdBy = fee.CREATEDBY,
+                        companyId = companyId,
+                        applicationId = fee.LOANCHARGEFEEID,
+                        comment = "Please approve this fee ",
+                        amount = fee.FEEAMOUNT,
+                    };
+                    LogApproval(approvalModel, (int)OperationsEnum.LoanBookingFeeDeferral, false, (int)ApprovalStatusEnum.Pending);
+                } else
+                {
+                    context.SaveChanges();
+                }
+                
             }
 
-            return context.SaveChanges() > 0;
+            //return context.SaveChanges() > 0;
         }
     
         /// <summary>
@@ -2296,7 +2612,7 @@ namespace FintrakBanking.Repositories.Credit
                             feeDependentAmount = p.DEPENDENTAMOUNT ?? 0,
                             chargeAmount = c.AMOUNT ?? 0,
                             feeIntervalName = c.TBL_FEE_INTERVAL.FEEINTERVALNAME,
-                            required = c.TBL_FEE_TYPE.BYAMOUNTREQUIRED,
+                            required = p.CANBEREVIEWED,
                             recurring = (bool)c.RECURRING,
                             feeTargetId = c.FEETARGETID,
                             feeTargetName = c.TBL_FEE_TARGET.FEETARGETNAME,
@@ -2510,17 +2826,17 @@ namespace FintrakBanking.Repositories.Credit
                        accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
                        branchId = a.BRANCHID,
                        branchName = a.TBL_BRANCH.BRANCHNAME,
-                       childDateOfBirth = a.CHILDDATEOFBIRTH.Value,
+                       //childDateOfBirth = a.CHILDDATEOFBIRTH.Value,
                        companyMainId = a.COMPANYID,
                        createdBy = a.CREATEDBY,
                        creationMailSent = a.CREATIONMAILSENT,
                        customerCode = a.CUSTOMERCODE,
                        customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                        customerTypeId = a.CUSTOMERTYPEID.Value,
-                       dateOfBirth = a.DATEOFBIRTH,
+                       //dateOfBirth = a.DATEOFBIRTH,
                        customerId = a.CUSTOMERID,
                        emailAddress = a.EMAILADDRESS,
-                       firstChildName = a.FIRSTCHILDNAME,
+                       //firstChildName = a.FIRSTCHILDNAME,
                        firstName = a.FIRSTNAME,
                        gender = a.GENDER,
                        lastName = a.LASTNAME,
@@ -2541,7 +2857,7 @@ namespace FintrakBanking.Repositories.Credit
                        spouse = a.SPOUSE,
                        sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                       subSectorId = a.SUBSECTORID,
+                       subSectorId = (short)a.SUBSECTORID,
                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                        taxNumber = a.TAXNUMBER
                        ,
@@ -2676,23 +2992,23 @@ namespace FintrakBanking.Repositories.Credit
         /// </summary>
         /// <param name="loanApplicationId">The loan application identifier.</param>
         /// <returns></returns>
-        public IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
-        {
-            var data = (from lac in context.TBL_LOAN_APPLICATION_COLLATERAL
-                        where lac.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loanApplicationId && lac.DELETED == false
-                        select new LoanApplicationCollateralViewModel()
-                        {
-                            customerCollateralId = lac.CUSTOMERCOLLATERALID,
-                            latitude = lac.LATITUDE,
-                            longitude = lac.LONGITUDE,
-                            nearestBusStop = lac.NEARESTBUSSTOP,
-                            nearestLandmark = lac.NEARESTLANDMARK,
-                            locationAddress = lac.LOCATIONADDRESS,
-                            documentTitle = lac.DOCUMENTTITLE,
-                            otherInformations = lac.OTHERINFORMATIONS
-                        });
-            return data;
-        }
+        //public IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
+        //{
+        //    var data = (from lac in context.TBL_LOAN_APPLICATION_COLLATERAL
+        //                where lac.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loanApplicationId && lac.DELETED == false
+        //                select new LoanApplicationCollateralViewModel()
+        //                {
+        //                    customerCollateralId = lac.CUSTOMERCOLLATERALID,
+        //                    latitude = lac.LATITUDE,
+        //                    longitude = lac.LONGITUDE,
+        //                    nearestBusStop = lac.NEARESTBUSSTOP,
+        //                    nearestLandmark = lac.NEARESTLANDMARK,
+        //                    locationAddress = lac.LOCATIONADDRESS,
+        //                    documentTitle = lac.DOCUMENTTITLE,
+        //                    otherInformations = lac.OTHERINFORMATIONS
+        //                });
+        //    return data;
+        //}
       
         /// <summary>
         /// Gets the appraisal memorandum loan updates.

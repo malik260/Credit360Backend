@@ -25,6 +25,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<StaffViewModel> GetStaffName();
 
+        IEnumerable<simpleStaffModel> GetStaffByUnitId(short departmentUnitId);
+
         bool DeleteStaff(int staffId, UserInfo user);
 
         bool IsStaffCodeAlreadyExist(string staffCode);
