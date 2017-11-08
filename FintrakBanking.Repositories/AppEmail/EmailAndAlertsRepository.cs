@@ -22,16 +22,21 @@ namespace FintrakBanking.Repositories.AppEmail
         private DateTime applDate;
         private IStaffRepository staffRepo;
 
-        public EmailAndAlertsRepository(FinTrakBankingContext _context, IAuditTrailRepository _auditTrail,
-            EmailHelpers _emailHelpers, IGeneralSetupRepository _general,
-            IStaffRepository _staffRepo)
-        {
-            context = _context;
-            auditTrail = _auditTrail;
-            emailHelpers = _emailHelpers;
-            genSetup = _general;
-            staffRepo = _staffRepo;
-        }
+        private readonly string supportEmail = ConfigurationManager.AppSettings["SupportEmailAddr"];
+
+        public EmailAndAlertsRepository(
+                FinTrakBankingContext _context,
+                IAuditTrailRepository _auditTrail,
+                EmailHelpers _emailHelpers,
+                IGeneralSetupRepository _general,
+                IStaffRepository _staffRepo
+            ) {
+                context = _context;
+                auditTrail = _auditTrail;
+                emailHelpers = _emailHelpers;
+                genSetup = _general;
+                staffRepo = _staffRepo;
+            }
 
         #region Covenant Monitoring
 
@@ -623,14 +628,75 @@ namespace FintrakBanking.Repositories.AppEmail
 
         #endregion Overdraft Monitoring
 
-        #region Expired & Deferred Documents
+        #region WORKFLOW
 
-        public void SendAlertsOnExpiredAndDeferredDocuments()
+        public void SendEmailAlertsForWorkflow(string[] emails, string operation, bool group, string link)
         {
+            string recipients = string.Join(";", emails);
+            string messageSubject = "PENDING APPROVAL FOR " + operation;
+            string templateUrl = "~/EmailTemplates/ApprovalWorkflow.html";
+            string messageContent;
 
+            try
+            {
+                if (group)
+                {
+                    messageContent =    "Dear Sir/Madam, <br /><br />" +
+                                       $"You have a new pending {operation} approval request. <br /><br />" +
+                                       $"See details here {link}";
+
+                    var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+
+                    var message = new TBL_MESSAGE_LOG
+                    {
+                        MESSAGESUBJECT = messageSubject,
+                        MESSAGEBODY = mailBody,
+                        MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                        MESSAGETYPEID = (short)MessageTypeEnum.Email,
+                        FROMADDRESS = this.supportEmail,
+                        TOADDRESS = recipients,
+                        DATETIMERECEIVED = DateTime.Now,
+                        SENDONDATETIME = DateTime.Now,
+                    };
+
+                    context.TBL_MESSAGE_LOG.Add(message);
+                }
+                else
+                {
+                    foreach (var recipient in emails)
+                    {
+                        messageContent = "Dear Sir/Madam, <br /><br />" + // TODO Sir/Madam with firstname
+                                           $"You have a new pending {operation} approval request. <br /><br />" +
+                                           $"See details here {link}";
+
+                        var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+
+                        var message = new TBL_MESSAGE_LOG
+                        {
+                            MESSAGESUBJECT = messageSubject,
+                            MESSAGEBODY = mailBody,
+                            MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                            MESSAGETYPEID = (short)MessageTypeEnum.Email,
+                            FROMADDRESS = this.supportEmail,
+                            TOADDRESS = recipient,
+                            DATETIMERECEIVED = DateTime.Now,
+                            SENDONDATETIME = DateTime.Now,
+                        };
+
+                        context.TBL_MESSAGE_LOG.Add(message);
+                    }
+                }
+
+                context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
-        #endregion Expired & Deferred Documents
+        #endregion WORKFLOW
 
         #region Helper Methods
 
