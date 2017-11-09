@@ -372,7 +372,76 @@ namespace FintrakBanking.Repositories.Customer
 
             return false;
         }
+        public bool AddCustomerCompanyInfomation(CustomerCompanyInfomationViewModels entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CUSTOMER_COMPANYINFOMATION company;
+                    if (entity.companyInfomationId != 0 || entity.companyInfomationId < 0)
+                    {
+                        company = context.TBL_CUSTOMER_COMPANYINFOMATION.Find(entity.companyInfomationId);
+                        if (company != null)
+                        {
+                            company.ANNUALTURNOVER = entity.annualTurnOver;
+                            company.COMPANYEMAIL = entity.companyEmail;
+                            company.COMPANYNAME = entity.companyName;
+                            company.COMPANYWEBSITE = entity.companyWebsite;
+                            company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
+                            company.CREDITRATING = entity.creditRating;
+                            company.PREVIOUSCREDITRATING = entity.previousCreditRating;
+                            company.REGISTEREDOFFICE = entity.registeredOffice;
+                            company.REGISTRATIONNUMBER = entity.registrationNumber;
+                            company.PAIDUPCAPITAL = entity.paidUpCapital;
+                            company.AUTHORISEDCAPITAL = entity.authorizedCapital;
+                        }
+                    }
+                    else
+                    {
+                        company = new TBL_CUSTOMER_COMPANYINFOMATION();
+                        company.ANNUALTURNOVER = entity.annualTurnOver;
+                        company.COMPANYEMAIL = entity.companyEmail;
+                        company.COMPANYNAME = entity.companyName;
+                        company.COMPANYWEBSITE = entity.companyWebsite;
+                        company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
+                        company.CREDITRATING = entity.creditRating;
+                        company.CUSTOMERID = customerId;
+                        company.PREVIOUSCREDITRATING = entity.previousCreditRating;
+                        company.REGISTEREDOFFICE = entity.registeredOffice;
+                        company.REGISTRATIONNUMBER = entity.registrationNumber;
+                        company.PAIDUPCAPITAL = entity.paidUpCapital;
+                        company.AUTHORISEDCAPITAL = entity.authorizedCapital;
+                        context.TBL_CUSTOMER_COMPANYINFOMATION.Add(company);
+                    }
+                    
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = (short)entity.userBranchId,
+                        DETAIL = "Added Customer's Company Information with CustomerId : " + entity.customerId,
+                        IPADDRESS = entity.userIPAddress,
+                        URL = entity.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.auditTrail.AddAuditTrail(audit);
 
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+               
+            }
+            return false;
+        }
+         
+        
         private void AddCustomerCompanyInfomation(List<CustomerCompanyInfomationViewModels> entity,
            int status)
         {

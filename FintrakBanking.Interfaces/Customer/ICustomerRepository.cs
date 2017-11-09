@@ -48,6 +48,8 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool AddCustomerPhoneContact(CustomerPhoneContactViewModels entity);
 
+        bool AddCustomerCompanyInfomation(CustomerCompanyInfomationViewModels entity);
+
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search) ;
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
