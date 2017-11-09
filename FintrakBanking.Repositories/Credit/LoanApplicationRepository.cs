@@ -941,7 +941,7 @@ namespace FintrakBanking.Repositories.Credit
                         loanPreliminaryEvaluationId = x.g.a.LOANPRELIMINARYEVALUATIONID,
                         operationId = x.g.a.OPERATIONID,
                     })
-                    //.Where(x => x.applicationReferenceNumber == searchString)
+                    .Where(x => x.applicationReferenceNumber == searchString)
                     ;
 
             return applications;
