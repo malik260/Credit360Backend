@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
 
         public short PROCESSVIEWSCOPEID { get; set; }
 
-        public int POSITION { get; set; }
+        //public int POSITION { get; set; }
 
         public bool CANVIEWCAMDOCUMENT { get; set; }
 

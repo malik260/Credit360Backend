@@ -415,6 +415,31 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("audit/log/search")]
+        public HttpResponseMessage FilterAuditLog([FromUri] int page, [FromUri] int itemsPerPage, string searchQuery)
+        {
+            try
+            {
+                var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId);
+                int totalItems = allAuditLog.Count();
+
+                allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage)
+                    .Where(x => x.auditType.ToLower().Contains(searchQuery.ToLower()) 
+                    || x.staffName.ToLower().Contains(searchQuery));
+
+                var data = allAuditLog.ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = totalItems });
+
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+
+        }
         #endregion
     }
 }

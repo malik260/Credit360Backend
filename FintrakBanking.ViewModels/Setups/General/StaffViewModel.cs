@@ -142,5 +142,11 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short documentTypeId { get; set; }
         public DateTime SystemDateTime { get; set; }
         public string StaffName { get; set; }
+        public short? branchId { get; set; }
+        public string branchName { get; set; }
+        public string departmentId { get; set; }
+        public short? departmentName { get; set; }
+        public int rankId { get; set; }
+        public string rankName { get; set; }
     }
 }
