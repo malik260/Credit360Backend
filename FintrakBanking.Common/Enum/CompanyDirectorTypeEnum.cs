@@ -10,7 +10,8 @@ namespace FintrakBanking.Common.Enum
     {
         BoardMember = 1,
         Shareholder = 2,
-        BoardMember_Shareholder = 3
+        BoardMember_Shareholder = 3,
+        Account_Signatory = 4
     }
     public enum CompanyClientOrSupplierTypeEnum
     {
