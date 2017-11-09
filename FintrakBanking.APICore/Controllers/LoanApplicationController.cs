@@ -212,12 +212,12 @@ namespace FintrakBanking.APICore.Controllers
                 entity.teamMisCode = "004";
 
                 var response =   repoApply.AddLoanApplication(entity);
-                if (response != null)
-                {
+                //if (response != null)
+                //{
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "The loan application completed successfully" });
-                }
+                //}
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception e)
             {
@@ -553,5 +553,25 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion Loan Preliminary Evaluation
+
+        [HttpPost]
+        [Route("loan-application/search")]
+        public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repoApply.Search(model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
     }
+
+
+
 }

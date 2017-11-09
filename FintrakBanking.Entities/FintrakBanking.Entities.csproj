@@ -126,6 +126,7 @@
     <Compile Include="Models\TBL_COMPANY.cs" />
     <Compile Include="Models\TBL_COMPANY_CLASS.cs" />
     <Compile Include="Models\TBL_COMPANY_TYPE.cs" />
+    <Compile Include="Models\TBL_CONDITION_PRECEDENT.cs" />
     <Compile Include="Models\TBL_CONTENT_PLACEHOLDER.cs" />
     <Compile Include="Models\TBL_COT.cs" />
     <Compile Include="Models\TBL_COUNTRY.cs" />

@@ -24,5 +24,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId);
 
         PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId, int operationId);
+
+        bool Confirmation(int type, int applicationId);
     }
 }
