@@ -492,6 +492,7 @@
     <Content Include="Content\Icons\first_bank_new_logo_2sm_icon.ico" />
     <Content Include="EmailTemplates\ApprovalWorkflow.html" />
     <Content Include="EmailTemplates\Monitoring.html" />
+    <Content Include="EmailTemplates\OfferLetter.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

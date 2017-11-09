@@ -1036,6 +1036,14 @@ namespace FintrakBanking.Repositories.Setups.General
                              select new StaffDocumentViewModel
                              {
                                  documentId = doc.DOCUMENTID,
+                                 companyId = s.COMPANYID,
+                                 companyName = s.TBL_COMPANY.NAME,
+                                 branchId = s.BRANCHID,
+                                 branchName = context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHID == s.BRANCHID).BRANCHNAME,
+                                 departmentId = context.TBL_DEPARTMENT.FirstOrDefault(x => x.DEPARTMENTID == s.DEPARTMENTID).DEPARTMENTNAME,
+                                 departmentName = s.DEPARTMENTID,
+                                 rankId = s.RANKID,
+                                 rankName = s.TBL_STAFF_RANK.RANKNAME,
                                  StaffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
                                  StaffCode = doc.STAFFCODE,
                                  documentTitle = doc.DOCUMENT_TITLE,
