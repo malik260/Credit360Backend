@@ -97,17 +97,17 @@ namespace FintrakBanking.Repositories.Credit
                              .Select(d => new LoanApplicationCollateralViewModel()
                              {
                                  //     collateralValue   = d.CollateralReferenceNumber,
-                                 cityId = d.CITYID,
+                                 //cityId = d.CITYID,
                                  //collateralTypeId = d.COLLATERALTYPEID,
                                  //customerCollateralId = d.CUSTOMERCOLLATERALID,
-                                 documentTitle = d.DOCUMENTTITLE,
-                                 latitude = d.LATITUDE,
+                                 //documentTitle = d.DOCUMENTTITLE,
+                                 //latitude = d.LATITUDE,
                                  loanApplicationId = d.LOANAPPLICATIONID,
-                                 locationAddress = d.LOCATIONADDRESS,
-                                 longitude = d.LONGITUDE,
-                                 nearestBusStop = d.NEARESTBUSSTOP,
-                                 nearestLandmark = d.NEARESTLANDMARK,
-                                 otherInformations = d.OTHERINFORMATIONS,
+                                 //locationAddress = d.LOCATIONADDRESS,
+                                 //longitude = d.LONGITUDE,
+                                 //nearestBusStop = d.NEARESTBUSSTOP,
+                                 //nearestLandmark = d.NEARESTLANDMARK,
+                                 //otherInformations = d.OTHERINFORMATIONS,
                                  //city = d.TBL_CITY.CITYNAME,
                                  //collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                  //companyName = d.TBL_LOAN_APPLICATION.TBL_COMPANY.NAME,
@@ -401,24 +401,24 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanCollateral = new TBL_LOAN_APPLICATION_COLLATERAL()
                 {
-                    COLLATERALREFERENCENUMBER = item.collateralReferenceNumber,
-                    CITYID = item.cityId,
-                    COLLATERALVALUE = item.collateralValue,
-                    ISBANKACCOUNT = item.isBankAccount,
+                    //COLLATERALREFERENCENUMBER = item.collateralReferenceNumber,
+                    //CITYID = item.cityId,
+                    //COLLATERALVALUE = item.collateralValue,
+                    //ISBANKACCOUNT = item.isBankAccount,
                     //COLLATERALTYPEID = item.collateralTypeId,
                     CREATEDBY = item.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
-                    OTHERINFORMATIONS = item.otherInformations,
-                    LATITUDE = item.latitude,
-                    LONGITUDE = item.longitude,
+                    //OTHERINFORMATIONS = item.otherInformations,
+                    //LATITUDE = item.latitude,
+                    //LONGITUDE = item.longitude,
 
-                    LOCATIONADDRESS = item.locationAddress,
-                    NEARESTBUSSTOP = item.nearestBusStop,
-                    NEARESTLANDMARK = item.nearestLandmark,
-                    DOCUMENTTITLE = item.documentTitle,
+                    //LOCATIONADDRESS = item.locationAddress,
+                    //NEARESTBUSSTOP = item.nearestBusStop,
+                    //NEARESTLANDMARK = item.nearestLandmark,
+                    //DOCUMENTTITLE = item.documentTitle,
                     //LoanApplicationId = item.loanApplicationId,
                     SYSTEMDATETIME = DateTime.Now,
-                    CASAACCOUNTID = item.casaAccountId
+                    //CASAACCOUNTID = item.casaAccountId
 
                 };
                 context.TBL_LOAN_APPLICATION_COLLATERAL.Add(loanCollateral);
