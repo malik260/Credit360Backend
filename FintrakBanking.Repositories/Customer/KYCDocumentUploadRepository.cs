@@ -87,5 +87,51 @@ namespace FintrakBanking.Repositories.Customer
                 physicalLocation = x.PHYSICALLOCATION,
             });
         }
+        
+       public bool CheckListDocumentUpload(CheckListDocumentUploadViewModel model, byte[] file)
+        {
+            try
+            {
+                var data = new TBL_MEDIA_CHECKLIST_DOCUMENTS
+                {
+                    FILEDATA = file,
+                   CHECKLISTDEFINITIONID = model.checkListDefinitionId,
+                    CHECKLISTSTATUSID = model.checkListStatusId,
+                    LOANAPPLICATIONID = model.loanApplicationId,
+                    LOANDETAILSID = model.loanDetailsId,
+                    FILENAME = model.fileName,
+                    FILEEXTENSION = model.fileExtension,
+                    SYSTEMDATETIME = DateTime.Now,
+                    PHYSICALFILENUMBER = model.physicalFileNumber,
+                    PHYSICALLOCATION = model.physicalLocation,
+                    CREATEDBY = (int)model.createdBy,
+                    DATECREATED = DateTime.Now
+                };
+
+                context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Add(data);
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added Checklist Document for item with ID: '{ model.checkListDefinitionId }' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.audit.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+
+                return context.SaveChanges() != 0;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }

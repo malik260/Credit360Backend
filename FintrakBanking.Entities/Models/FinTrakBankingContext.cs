@@ -1605,10 +1605,7 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_PRODUCT)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_PRODUCT_BEHAVIOUR>()
-                .HasMany(e => e.TBL_TEMP_PRODUCT)
-                .WithOptional(e => e.TBL_PRODUCT_BEHAVIOUR)
-                .HasForeignKey(e => e.PRODUCTBEHAVIOURID);
+          
 
             modelBuilder.Entity<TBL_PRODUCT_CATEGORY>()
                 .HasMany(e => e.TBL_PRODUCT)

@@ -406,7 +406,7 @@ namespace FintrakBanking.Repositories.Customer
                         company.COMPANYWEBSITE = entity.companyWebsite;
                         company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
                         company.CREDITRATING = entity.creditRating;
-                        company.CUSTOMERID = customerId;
+                        company.CUSTOMERID = entity.customerId;
                         company.PREVIOUSCREDITRATING = entity.previousCreditRating;
                         company.REGISTEREDOFFICE = entity.registeredOffice;
                         company.REGISTRATIONNUMBER = entity.registrationNumber;
