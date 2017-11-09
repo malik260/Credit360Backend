@@ -129,6 +129,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              RankId = c.RANKID,
                              BranchName = br.BRANCHNAME,
                              DepartmentName = dept.DEPARTMENTNAME,
+                             DepartmentUnitId = (short)c.DEPARTMENT_UNITID,
+                             DepartmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
                              //MisInfoCode = c.MISC,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
                              //State = c.State.StateName
@@ -228,6 +230,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.DATEOFBIRTH = staffModel.DateOfBirth;
                 tempStaffToUpdate.DATETIMEUPDATED = DateTime.Now;
                 tempStaffToUpdate.DEPARTMENTID = staffModel.DepartmentId;
+                tempStaffToUpdate.DEPARTMENTUNITID = (short)staffModel.DepartmentUnitId;
                 tempStaffToUpdate.EMAIL = staffModel.Email;
                 tempStaffToUpdate.EMAILOFNOK = staffModel.EmailOfNok;
                 tempStaffToUpdate.GENDER = staffModel.Gender;
@@ -266,6 +269,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     DATEOFBIRTH = staffModel.DateOfBirth,
                     DATETIMECREATED = DateTime.Now,
                     DEPARTMENTID = staffModel.DepartmentId,
+                    DEPARTMENTUNITID = (short)staffModel.DepartmentUnitId,
                     EMAIL = staffModel.Email,
                     EMAILOFNOK = staffModel.EmailOfNok,
                     GENDER = staffModel.Gender,
@@ -572,6 +576,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 DATEOFBIRTH = staffModel.DateOfBirth,
                 DATETIMECREATED = DateTime.Now,
                 DEPARTMENTID = staffModel.DepartmentId,
+                DEPARTMENTUNITID = (short)staffModel.DepartmentUnitId,
                 EMAIL = staffModel.Email,
                 EMAILOFNOK = staffModel.EmailOfNok,
                 GENDER = staffModel.Gender,
@@ -696,6 +701,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         RankName = c.TBL_STAFF_RANK.RANKNAME,
                         BranchName = br.BRANCHNAME,
                         DepartmentName = dept.DEPARTMENTNAME,
+                        DepartmentUnitId = c.DEPARTMENTUNITID,
+                        DepartmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
+
                         OperationId = atrail.OPERATIONID,
                         SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION
                     }).GroupBy(x => x.StaffId).Select(g => g.FirstOrDefault());
@@ -747,6 +755,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         RankId = c.RANKID,
                         Rank = c.TBL_STAFF_RANK.RANKNAME,
                         DepartmentName = dept.DEPARTMENTNAME,
+                        DepartmentUnitId = c.DEPARTMENTUNITID,
+                        DepartmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
                         ApprovalStatusId = c.APPROVALSTATUSID,
                         SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
                     }).FirstOrDefault();
@@ -850,6 +860,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             RankId = c.RANKID,
                             Rank = c.TBL_STAFF_RANK.RANKNAME,
                             DepartmentName = dept.DEPARTMENTNAME,
+                            DepartmentUnitId = (short)c.DEPARTMENT_UNITID,
+                            DepartmentUnitName = c.TBL_DEPARTMENT_UNIT.UNIT_NAME,
                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
                         });
 

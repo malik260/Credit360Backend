@@ -1349,6 +1349,12 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.DEPARTMENTUNITID)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_DEPARTMENT_UNIT>()
+                .HasMany(e => e.TBL_TEMP_STAFF)
+                .WithRequired(e => e.TBL_DEPARTMENT_UNIT)
+                .HasForeignKey(e => e.DEPARTMENTUNITID)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_FEE>()
                 .HasMany(e => e.TBL_TEMP_PRODUCT_FEE)
                 .WithRequired(e => e.TBL_FEE)

@@ -67,6 +67,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
         [HttpGet]
         [Route("department")]
         public HttpResponseMessage GetAllDepartment()
@@ -99,6 +100,27 @@ namespace FintrakBanking.APICore.Controllers
                 if (departmentUnits.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = departmentUnits, count = departmentUnits.Count });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No department found" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, Message = e.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("department/units")]
+        public HttpResponseMessage GetAllUnits()
+        {
+            var Message = string.Empty;
+            try
+            {
+                var units = repo.GetAllUnits().ToList();
+                if (units.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = units, count = units.Count });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No department found" });
@@ -197,6 +219,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+     
+
         [HttpPut]
         [Route("department/{departmentId}")]
         public HttpResponseMessage UpdateDepartment(int departmentId, DepartmentViewModel entity)
@@ -207,6 +231,29 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 var data = repo.UpdateDepartment(departmentId, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this group {data}" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this group {e.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [Route("unit/{unitId}")]
+        public HttpResponseMessage UpdateUnit(int unitId, DepartmentViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                var data = repo.UpdateDepartment(unitId, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully" });
