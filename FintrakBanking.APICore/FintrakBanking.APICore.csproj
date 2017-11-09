@@ -331,7 +331,6 @@
     <Compile Include="Controllers\CustomerGroupController.cs" />
     <Compile Include="Controllers\CustomFieldsController.cs" />
     <Compile Include="Controllers\DepartmentController.cs" />
-    <Compile Include="Controllers\FeeController.cs" />
     <Compile Include="Controllers\FileUploadController.cs" />
     <Compile Include="Controllers\GeneralSetupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -492,6 +491,7 @@
     <Content Include="Content\firstbank.png" />
     <Content Include="Content\Icons\first_bank_logo_kmH_icon.ico" />
     <Content Include="Content\Icons\first_bank_new_logo_2sm_icon.ico" />
+    <Content Include="EmailTemplates\ApprovalWorkflow.html" />
     <Content Include="EmailTemplates\Monitoring.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

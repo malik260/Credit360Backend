@@ -107,7 +107,7 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
 
-        public IEnumerable<CustomerFSCaptionViewModel> GetCustomerFSCaption(short fsCaptionGroupId)
+        public IEnumerable<CustomerFSCaptionViewModel> GetCustomerFSCaptionByGroupId(short fsCaptionGroupId)
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION
                         where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false
@@ -198,6 +198,47 @@ namespace FintrakBanking.Repositories.Customer
                            dateTimeCreated = a.DATETIMECREATED,
                            createdBy = a.CREATEDBY
                        });
+
+            if (dataList.Any())
+            {
+                captions = captions.Where(x => !dataList.Contains(x.fsCaptionId));
+            }
+
+            return captions;
+        }
+
+        public IEnumerable<CustomerFSCaptionViewModel> GetUnmappedCustomerGroupFSCaption(short fsCaptionGroupId, int customerGroupId, DateTime fsDate)
+        {
+            var dataList = (from data in context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+                            where data.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId && data.CUSTOMERGROUPID == customerGroupId
+                            && data.FSDATE == fsDate && data.DELETED == false
+                            select data.FSCAPTIONID).ToList();
+
+            var captions = (from a in context.TBL_CUSTOMER_FS_CAPTION
+                            where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.ISTOTALLINE == false && a.DELETED == false // && !dataList.Contains(data.ProductProductFeeId)
+                            orderby a.FSTYPEID, a.POSITION
+                            select new CustomerFSCaptionViewModel
+                            {
+                                fsCaptionId = a.FSCAPTIONID,
+                                fsCaptionCode = a.FSCAPTIONCODE,
+                                fsCaptionName = a.FSCAPTIONNAME,
+                                fsCaptionGroupId = a.FSCAPTIONGROUPID,
+                                fsCaptionGroupName = a.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME,
+                                parentIdFSCaptionId = a.PARENTIDFSCAPTIONID,
+                                parentIdFSCaptionName = a.TBL_CUSTOMER_FS_CAPTION2 != null ? a.TBL_CUSTOMER_FS_CAPTION2.FSCAPTIONNAME : "",
+                                accountCategoryId = a.ACCOUNTCATEGORYID,
+                                accountCategoryName = a.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+                                fsTypeId = a.FSTYPEID,
+                                fsTypeName = a.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+                                position = a.POSITION,
+                                refNote = a.REFNOTE,
+                                isTotalLine = a.ISTOTALLINE,
+                                reportColour = a.REPORTCOLOUR,
+                                multiplier = a.MULTIPLIER,
+
+                                dateTimeCreated = a.DATETIMECREATED,
+                                createdBy = a.CREATEDBY
+                            });
 
             if (dataList.Any())
             {

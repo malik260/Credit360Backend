@@ -409,6 +409,52 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("checklist-detail/target-type/{targetTypeId}/product/{productId}")]
+        public HttpResponseMessage GetAllChecklistDetailByProductAndTargetType(int targetTypeId, int productId)
+        {
+            try
+            {
+                var data = repo.GetAllChecklistDetailByProductAndTargetId(targetTypeId, productId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("checklist-detail/checklist-definition/{checklistDefinitionId}")]
+        public HttpResponseMessage GetAllChecklistDetailByChecklistDefinition(int checklistDefinitionId)
+        {
+            try
+            {
+                var data = repo.GetAllChecklistDetailByChecklistDefinitionId(checklistDefinitionId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
         [Route("checklist-detail/{ChecklistId}")]
         public HttpResponseMessage GetAllChecklistById(int ChecklistId)
         {

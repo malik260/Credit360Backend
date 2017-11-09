@@ -147,7 +147,11 @@ namespace FintrakBanking.Repositories.Setups.General
                                {
                                    CountryId = a.COUNTRYID,
                                    StateName = a.STATENAME,
-                                   StateId = a.STATEID
+                                   StateId = a.STATEID,
+                                   CountryName = context.TBL_COUNTRY.FirstOrDefault(j => j.COUNTRYID == a.COUNTRYID).NAME ?? string.Empty,
+                                   CollateralSearchChargeAmount = a.COLLATERALSEARCHCHARGEAMOUNT,
+                                   ChartingAmount = a.CHARTINGAMOUNT ?? 0,
+                                   VerificationAmount = a.VERIFICATIONAMOUNT ?? 0
                                });
             return stateEntity;
         }
@@ -164,26 +168,32 @@ namespace FintrakBanking.Repositories.Setups.General
                                        StateName = a.STATENAME,
                                        StateId = a.STATEID,
                                        CountryName = context.TBL_COUNTRY.FirstOrDefault(j => j.COUNTRYID == a.COUNTRYID).NAME ?? string.Empty,
-                                       CollateralSearchChargeAmount = a.COLLATERALSEARCHCHARGEAMOUNT
-                                       
+                                       CollateralSearchChargeAmount = a.COLLATERALSEARCHCHARGEAMOUNT,
+                                       ChartingAmount = a.CHARTINGAMOUNT ?? 0,
+                                       VerificationAmount = a.VERIFICATIONAMOUNT ?? 0
                                    });
                 return stateEntity;
             }
             return null;
         }
+
         public bool UpdateState(StateViewModel entity, int stateId)
         {
             var state = context.TBL_STATE.Find(stateId);
             if (state != null)
             {
                 state.COLLATERALSEARCHCHARGEAMOUNT = entity.CollateralSearchChargeAmount;
+                state.CHARTINGAMOUNT = entity.ChartingAmount;
+                state.VERIFICATIONAMOUNT = entity.VerificationAmount;
                 state.STATENAME = entity.StateName;
+                state.LASTUPDATEDBY = entity.createdBy;
+                state.DATETIMEUPDATED = DateTime.Now;
             }
            
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.DepartmentUpdated,
+                AUDITTYPEID = (short)AuditTypeEnum.StateUpdated,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated tbl_State with Id: {entity.StateId} ",
@@ -231,7 +241,31 @@ namespace FintrakBanking.Repositories.Setups.General
             return stateEntity.ToList();
         }
 
- 
+        public bool SetStateChartingAndVerificationAmounts(StateViewModel entity, int stateId)
+        {
+            var state = context.TBL_STATE.Find(stateId);
+            if (state != null)
+            {
+                state.CHARTINGAMOUNT = entity.ChartingAmount;
+                state.VERIFICATIONAMOUNT = entity.VerificationAmount;
+            }
+
+            // Audit Section ----------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DepartmentUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated tbl_State with Id: {entity.StateId} ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+            };
+
+            auditTrail.AddAuditTrail(audit);
+            return SaveAll();
+        }
 
 
     }

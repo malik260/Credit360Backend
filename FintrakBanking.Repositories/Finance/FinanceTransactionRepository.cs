@@ -271,6 +271,7 @@ namespace FintrakBanking.Repositories.Finance
 
         public CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId,   int companyId)
         {
+
             var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
             
             //CurrencyExchangeRateViewModel rateInfo = new CurrencyExchangeRateViewModel();
@@ -284,7 +285,7 @@ namespace FintrakBanking.Repositories.Finance
                 //DateTime date = generalSetup.GetApplicationDate().Date;
                 var rateInfo = (from x in this.context.TBL_CURRENCY_RATE
                             where x.CURRENCYID == currencyId && x.DATE == date.Date
-                            select x).FirstOrDefault();
+                                select x).FirstOrDefault();
 
                 if (rateInfo == null)
                     throw new Exception($"Exchange rate for {date} is not defined. Define the exchange rate and try again");

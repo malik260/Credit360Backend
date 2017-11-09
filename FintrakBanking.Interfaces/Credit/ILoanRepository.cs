@@ -52,15 +52,18 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanBookingAwaitingApproval(int staffId, int companyId);
 
         IEnumerable<ContingentLoanViewModel> GetContingentLoanBookingAwaitingApproval(int staffId, int companyId);
-        IEnumerable<LoanChargeFeeViewModel> GetDeferredLoanFeeAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanChargeFeeViewModel> GetDeferredTermLoanFeeAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanChargeFeeViewModel> GetDeferredRevolvingLoanFeeAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanChargeFeeViewModel> GetDeferredContingentLoanFeeAwaitingApproval(int staffId, int companyId);
 
         bool GoForApproval(ApprovalViewModel entity);
+        bool GoForFeeOverrideApproval(ApprovalViewModel entity);
 
         void PostLoanFees(LoanViewModel entity);
 
         AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId);
 
-        IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId);
+        //IEnumerable<LoanApplicationCollateralViewModel> GetAppraisalMemorandumCollateralChanges(int loanApplicationId);
 
         IQueryable<CustomerSearchItemViewModels> SearchCustomerCollateral(int companyId, string searchQuery);
 

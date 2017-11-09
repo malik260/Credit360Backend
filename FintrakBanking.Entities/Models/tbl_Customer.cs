@@ -77,7 +77,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string PLACEOFBIRTH { get; set; }
 
-       
         [StringLength(20)]
         public string NATIONALITY { get; set; }
 

@@ -1132,7 +1132,7 @@ namespace FintrakBanking.Repositories.Customer
             return data;
         }
 
-        public IQueryable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery)
+        public IQueryable<CustomerGroupViewModel> SearchForCustomerGroupRealtime(int companyId, string searchQuery)
         {
             IQueryable<CustomerGroupViewModel> allGroups = null;
 
@@ -1161,6 +1161,20 @@ namespace FintrakBanking.Repositories.Customer
             //}
 
             return allGroups;
+        }
+
+        public IEnumerable<CustomerGroupViewModel> CustomerGroupSearch(string search)
+        {
+            var customerGroups = GetAllCustomerGroups().ToList();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                customerGroups = customerGroups.Where(x =>
+               x.groupName.ToLower().Contains(search.ToLower())
+               || x.groupCode.ToLower().Contains(search.ToLower())
+               ).ToList();
+                
+            }
+            return customerGroups;
         }
 
         #endregion TBL_CUSTOMER Group Mapping

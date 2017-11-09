@@ -98,8 +98,8 @@ namespace FintrakBanking.Repositories.Credit
                              {
                                  //     collateralValue   = d.CollateralReferenceNumber,
                                  cityId = d.CITYID,
-                                 collateralTypeId = d.COLLATERALTYPEID,
-                                 customerCollateralId = d.CUSTOMERCOLLATERALID,
+                                 //collateralTypeId = d.COLLATERALTYPEID,
+                                 //customerCollateralId = d.CUSTOMERCOLLATERALID,
                                  documentTitle = d.DOCUMENTTITLE,
                                  latitude = d.LATITUDE,
                                  loanApplicationId = d.LOANAPPLICATIONID,
@@ -108,9 +108,9 @@ namespace FintrakBanking.Repositories.Credit
                                  nearestBusStop = d.NEARESTBUSSTOP,
                                  nearestLandmark = d.NEARESTLANDMARK,
                                  otherInformations = d.OTHERINFORMATIONS,
-                                 city = d.TBL_CITY.CITYNAME,
-                                 collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                                 companyName = d.TBL_LOAN_APPLICATION.TBL_COMPANY.NAME,
+                                 //city = d.TBL_CITY.CITYNAME,
+                                 //collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                 //companyName = d.TBL_LOAN_APPLICATION.TBL_COMPANY.NAME,
                                  // applicationReferanceNumber = int.Parse(d.tbl_Loan_Application.ApplicationReferenceNumber),
 
                              }).ToList(),
@@ -405,7 +405,7 @@ namespace FintrakBanking.Repositories.Credit
                     CITYID = item.cityId,
                     COLLATERALVALUE = item.collateralValue,
                     ISBANKACCOUNT = item.isBankAccount,
-                    COLLATERALTYPEID = item.collateralTypeId,
+                    //COLLATERALTYPEID = item.collateralTypeId,
                     CREATEDBY = item.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     OTHERINFORMATIONS = item.otherInformations,
@@ -649,8 +649,8 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CREDIT_APPRAISAL_MEMORANDUM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         join d in context.TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
                         join cust in context.TBL_CUSTOMER on a.CUSTOMERID equals cust.CUSTOMERID into cc
-                        from cust in
-cc.DefaultIfEmpty()
+                        from cust in cc.DefaultIfEmpty()
+
                         join cGrp in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals cGrp.CUSTOMERGROUPID into grp
                         from cGrp in grp.DefaultIfEmpty()
                         join ss in context.TBL_SUB_SECTOR on b.SUBSECTORID equals ss.SUBSECTORID into sec
@@ -705,7 +705,7 @@ cc.DefaultIfEmpty()
                             approvedAmount = g.Sum(x => x.APPROVEDAMOUNT),
                             applicationDate = g.Key.APPLICATIONDATE,
                             applicationStatusId = g.Key.APPLICATIONSTATUSID,
-                            subSectorId = g.Key.SUBSECTORID
+                            subSectorId = g.Key.SUBSECTORID,
                         });
 
             return data;

@@ -879,8 +879,7 @@ namespace FintrakBanking.Repositories.Customer
                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                        subSectorId = (short)a.SUBSECTORID,
                        subSectorName = a.TBL_SUB_SECTOR.NAME,
-                       taxNumber = a.TAXNUMBER
-                       ,
+                       taxNumber = a.TAXNUMBER,
                        CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
                        {
                            address = x.ADDRESS,
