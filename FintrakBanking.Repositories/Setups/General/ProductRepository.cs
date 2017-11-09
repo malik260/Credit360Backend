@@ -8,7 +8,6 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
-using ServiceStack.Text;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;

@@ -33,7 +33,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-
+             //   entity.customerCode = "C0029";
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
             //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -361,6 +361,27 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         [HttpGet]
+        [Route("kyc-document-type")]
+        public HttpResponseMessage GetKYCDocumentTypes()
+        {
+            try
+            {
+                var data = repo.GetKYCDocumentType();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
         [Route("directorsType")]
         public HttpResponseMessage GetDirectorsTypes()
         {
@@ -421,6 +442,31 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("customer-company-information")]
+        public HttpResponseMessage AddCustomerCompanyInformation([FromBody]CustomerCompanyInfomationViewModels entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddCustomerCompanyInfomation(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
         [HttpPost]
@@ -634,5 +680,6 @@ namespace FintrakBanking.APICore.Controllers
         //           new { success = false, message = $"There was an error creating this record {e.Message}" });
         //    }
         //}
+       
     }
 }

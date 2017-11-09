@@ -168,6 +168,27 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("staff/unit/{departmentUnitId}")]
+        public HttpResponseMessage GetStaff(short departmentUnitId)
+        {
+            try
+            {
+                var staffinfo = repo.GetStaffByUnitId(departmentUnitId);
+
+                if (staffinfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("approval-status")]
         public HttpResponseMessage GetApprovalStatus()
         {
