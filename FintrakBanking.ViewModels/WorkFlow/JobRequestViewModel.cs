@@ -33,6 +33,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public DateTime? acknowledgementDate { get; set; }
         public DateTime? systemAcknowledgementDate { get; set; }
         public string from { get; set; }
+        public string fromBranchName { get; set; }
         public string to { get; set; }
         public string assignee { get; set; }
         public Array emailList { get; set; }
