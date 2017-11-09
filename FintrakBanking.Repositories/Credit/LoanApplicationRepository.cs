@@ -384,7 +384,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
 
@@ -424,24 +424,24 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanCollateral = new TBL_LOAN_APPLICATION_COLLATERAL()
                 {
-                    COLLATERALREFERENCENUMBER = item.collateralReferenceNumber,
-                    CITYID = item.cityId,
-                    COLLATERALVALUE = item.collateralValue,
-                    ISBANKACCOUNT = item.isBankAccount,
-                    COLLATERALTYPEID = item.collateralTypeId,
+                    //COLLATERALREFERENCENUMBER = item.collateralReferenceNumber,
+                    //CITYID = item.cityId,
+                    //COLLATERALVALUE = item.collateralValue,
+                    //ISBANKACCOUNT = item.isBankAccount,
+                    //COLLATERALTYPEID = item.collateralTypeId,
                     CREATEDBY = item.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
-                    OTHERINFORMATIONS = item.otherInformations,
-                    LATITUDE = item.latitude,
-                    LONGITUDE = item.longitude,
+                    //OTHERINFORMATIONS = item.otherInformations,
+                    //LATITUDE = item.latitude,
+                    //LONGITUDE = item.longitude,
 
-                    LOCATIONADDRESS = item.locationAddress,
-                    NEARESTBUSSTOP = item.nearestBusStop,
-                    NEARESTLANDMARK = item.nearestLandmark,
-                    DOCUMENTTITLE = item.documentTitle,
+                    //LOCATIONADDRESS = item.locationAddress,
+                    //NEARESTBUSSTOP = item.nearestBusStop,
+                    //NEARESTLANDMARK = item.nearestLandmark,
+                    //DOCUMENTTITLE = item.documentTitle,
                     //LoanApplicationId = item.loanApplicationId,
                     SYSTEMDATETIME = DateTime.Now,
-                    CASAACCOUNTID = item.casaAccountId
+                    //CASAACCOUNTID = item.casaAccountId
 
                 };
                 context.TBL_LOAN_APPLICATION_COLLATERAL.Add(loanCollateral);
@@ -497,7 +497,7 @@ namespace FintrakBanking.Repositories.Credit
             return isExisting;
         }
 
-        #region PENDING APPLICATIONS
+        #region CAM Pending Applications
 
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int companyId, int branchId, int staffId)
         {
@@ -549,6 +549,10 @@ namespace FintrakBanking.Repositories.Credit
                             approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
                             loanInformation = x.a.LOANINFORMATION,
                             submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
+                            customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
+                            notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
+                            notInBlackbook = x.a.NOTINBLACKBOOK,
+                            notInCamsol = x.a.NOTINCAMSOL,
                             isRelatedParty = x.a.ISRELATEDPARTY,
                             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                             approvalStatusId = x.a.APPROVALSTATUSID,
@@ -625,6 +629,10 @@ namespace FintrakBanking.Repositories.Credit
                 currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                 loanInformation = x.a.LOANINFORMATION,
                 submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
+                customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
+                notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
+                notInBlackbook = x.a.NOTINBLACKBOOK,
+                notInCamsol = x.a.NOTINCAMSOL,
                 isRelatedParty = x.a.ISRELATEDPARTY,
                 isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                 approvalStatusId = x.a.APPROVALSTATUSID,
@@ -661,7 +669,7 @@ namespace FintrakBanking.Repositories.Credit
             return scope;
         }
 
-        #endregion PENDING APPLICATIONS
+        #endregion CAM Pending Applications
 
         #region OfferLetter & Availment Process
 
@@ -672,8 +680,8 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CREDIT_APPRAISAL_MEMORANDUM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         join d in context.TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
                         join cust in context.TBL_CUSTOMER on a.CUSTOMERID equals cust.CUSTOMERID into cc
-                        from cust in
-cc.DefaultIfEmpty()
+                        from cust in cc.DefaultIfEmpty()
+
                         join cGrp in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals cGrp.CUSTOMERGROUPID into grp
                         from cGrp in grp.DefaultIfEmpty()
                         join ss in context.TBL_SUB_SECTOR on b.SUBSECTORID equals ss.SUBSECTORID into sec
@@ -728,7 +736,7 @@ cc.DefaultIfEmpty()
                             approvedAmount = g.Sum(x => x.APPROVEDAMOUNT),
                             applicationDate = g.Key.APPLICATIONDATE,
                             applicationStatusId = g.Key.APPLICATIONSTATUSID,
-                            subSectorId = g.Key.SUBSECTORID
+                            subSectorId = g.Key.SUBSECTORID,
                         });
 
             return data;
@@ -833,6 +841,7 @@ cc.DefaultIfEmpty()
 
         #endregion OfferLetter & Availment Process
 
+
         #region "Loan Applications Awaiting Checklist"
         public IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId)
         {
@@ -889,5 +898,53 @@ cc.DefaultIfEmpty()
             return data.ToList();
         }
         #endregion
+
+        public IEnumerable<LoanApplicationViewModel> Search(string searchString)
+        {
+            var applications = context.TBL_LOAN_APPLICATION
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL,
+                        a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
+                    .Join(context.TBL_CUSTOMER,
+                        g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
+                    .Select(x => new LoanApplicationViewModel
+                    {
+                        loanApplicationId = x.g.a.LOANAPPLICATIONID,
+                        applicationReferenceNumber = x.g.a.APPLICATIONREFERENCENUMBER,
+                        customerId = x.g.a.CUSTOMERID,
+                        branchId = x.g.a.BRANCHID,
+                        customerGroupId = x.g.a.CUSTOMERGROUPID,
+                        loanTypeId = x.g.a.LOANTYPEID,
+                        relationshipOfficerId = x.g.a.RELATIONSHIPOFFICERID,
+                        relationshipManagerId = x.g.a.RELATIONSHIPMANAGERID,
+                        applicationDate = x.g.a.APPLICATIONDATE,
+                        applicationAmount = x.g.a.APPLICATIONAMOUNT,
+                        approvedAmount = x.g.a.APPROVEDAMOUNT,
+                        interestRate = x.g.a.INTERESTRATE,
+                        applicationTenor = x.g.a.APPLICATIONTENOR,
+                        loanInformation = x.g.a.LOANINFORMATION,
+                        submittedForAppraisal = x.g.a.SUBMITTEDFORAPPRAISAL,
+                        customerInfoValidated = x.g.a.CUSTOMERINFOVALIDATED,
+                        notInNegativeCrms = x.g.a.NOTINNEGATIVECRMS,
+                        notInBlackbook = x.g.a.NOTINBLACKBOOK,
+                        notInCamsol = x.g.a.NOTINCAMSOL,
+                        isRelatedParty = x.g.a.ISRELATEDPARTY,
+                        isPoliticallyExposed = x.g.a.ISPOLITICALLYEXPOSED,
+                        approvalStatusId = x.g.a.APPROVALSTATUSID,
+                        applicationStatusId = x.g.a.APPLICATIONSTATUSID,
+                        branchName = x.g.a.TBL_BRANCH.BRANCHNAME,
+                        relationshipOfficerName = x.g.a.TBL_STAFF.FIRSTNAME + " " + x.g.a.TBL_STAFF.MIDDLENAME + " " + x.g.a.TBL_STAFF.LASTNAME,
+                        relationshipManagerName = x.g.a.TBL_STAFF1.FIRSTNAME + " " + x.g.a.TBL_STAFF1.MIDDLENAME + " " + x.g.a.TBL_STAFF1.LASTNAME,
+                        misCode = x.g.a.MISCODE,
+                        customerGroupName = x.g.a.CUSTOMERGROUPID.HasValue ? x.g.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                        loanTypeName = x.g.a.TBL_LOAN_TYPE.LOANTYPENAME,
+                        createdBy = x.g.a.CREATEDBY,
+                        loanPreliminaryEvaluationId = x.g.a.LOANPRELIMINARYEVALUATIONID,
+                        operationId = x.g.a.OPERATIONID,
+                    })
+                    //.Where(x => x.applicationReferenceNumber == searchString)
+                    ;
+
+            return applications;
+        }
     }
 }

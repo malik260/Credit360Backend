@@ -10,7 +10,6 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_CUSTOMER_COMPANYINFOMATION
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int COMPANYINFOMATIONID { get; set; }
 
         public int CUSTOMERID { get; set; }

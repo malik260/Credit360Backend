@@ -32,6 +32,12 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal COLLATERALSEARCHCHARGEAMOUNT { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal? CHARTINGAMOUNT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? VERIFICATIONAMOUNT { get; set; }
+
         public int? CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

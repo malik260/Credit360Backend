@@ -2,7 +2,7 @@
 
 namespace FintrakBanking.Common.Enum
 { 
-    public  enum AuditTypeEnum 
+    public enum AuditTypeEnum 
     {
         AccountApproved = 1,
         AccountCategoryAdded = 2,
@@ -162,7 +162,13 @@ namespace FintrakBanking.Common.Enum
         KYCItemAdded = 151,
         KYCItemUpdated = 152,
         BulkRateLoanExcemption = 154,
-        CollateralAssignmentAction = 157
+        CollateralAssignmentAction = 157,
+        CustomerGroupFSCaptionDetailAdded = 158,
+        CustomerGroupFSCaptionDetailUpdated = 159,
+        CustomerGroupFSCaptionDetailDeleted = 160,
+        StaffSignatureUploaded = 161,
+        StaffSignatureUpdated = 162,
+        StateUpdated = 163
     };
 
 

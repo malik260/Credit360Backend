@@ -17,4 +17,10 @@ namespace FintrakBanking.ViewModels.Customer
         public DateTime fsDate { get; set; }
         public decimal amount { get; set; }
     }
+
+    public class CustomerGroupFSCaptionDetailViewModel: CustomerFSCaptionDetailViewModel
+    {
+        public int customerGroupId { get; set; }
+        public string customerGroupCode { get; set; }
+    }
 }

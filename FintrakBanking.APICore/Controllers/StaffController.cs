@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using System.Threading.Tasks;
+using System;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -152,6 +153,27 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var staffinfo = repo.GetStaffNames();
+
+                if (staffinfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("staff/unit/{departmentUnitId}")]
+        public HttpResponseMessage GetStaff(short departmentUnitId)
+        {
+            try
+            {
+                var staffinfo = repo.GetStaffByUnitId(departmentUnitId);
 
                 if (staffinfo == null)
                 {
@@ -403,6 +425,105 @@ namespace FintrakBanking.APICore.Controllers
                     });
             }
 
+        }
+
+        [HttpPost]
+        [Route("staff/upload-signature")]
+        public async Task<HttpResponseMessage> UploadStaffSignature()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                int uploadType;
+                if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                }
+
+                var entity = new StaffDocumentViewModel
+                {
+                    StaffCode = provider.FormData["staffCode"],
+                    documentTitle = provider.FormData["documentTitle"],
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = repo.AddStaffSignature(entity, buffer);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
+        }
+
+        [HttpPut]
+        [Route("staff/signature/{documentId}")]
+        public HttpResponseMessage UpdateStaffSignature([FromBody] StaffDocumentViewModel entity, int documentId)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.UpdateStaffSignature(entity, documentId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("staff/signature/staff-code/{staffCode}")]
+        public HttpResponseMessage GetStaffSignatureByStaffCode(string staffCcode)
+        {
+            try
+            {
+                var data = repo.GetStaffSignatureByStaffCode(staffCcode);
+                if (data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "No record found" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
     }
 }

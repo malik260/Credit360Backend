@@ -78,6 +78,7 @@
     <Compile Include="Customer\CustomerAddressViewModels.cs" />
     <Compile Include="Customer\CustomerBvnViewModels.cs" />
     <Compile Include="Customer\CustomerCompanyInfomationViewModels.cs" />
+    <Compile Include="Customer\CustomerDocumentUploadViewModel.cs" />
     <Compile Include="Customer\CustomerEditHistoryViewModels.cs" />
     <Compile Include="Customer\CustomerEmploymentHistoryViewModels.cs" />
     <Compile Include="Customer\CustomerFSCaptionDetailViewModel.cs" />

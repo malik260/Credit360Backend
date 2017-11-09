@@ -8,6 +8,9 @@
         public string DepartmentCode { get; set; }
         public string DepartmentName { get; set; }
         public string Description { get; set; }
+        public short? departmentUnitId { get; set; }
+        public string departmentUnitName { get; set; }
+        public string departmentUnitEmail { get; set; }
     }
 
     public class DepartmentCustomersViewModel : DepartmentViewModel

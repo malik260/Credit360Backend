@@ -19,30 +19,60 @@ namespace FintrakBanking.Repositories.Setups.Finance
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository auditTrail;
-        private IWorkFlowRepository workFlow;
+        private IWorkflow workFlow;
 
-        public ChargeFeeRepository(FinTrakBankingContext context, IGeneralSetupRepository general, 
-                                    IAuditTrailRepository _auditTrail, IWorkFlowRepository _workFlow)
+        public ChargeFeeRepository(
+            FinTrakBankingContext context, 
+            IGeneralSetupRepository general, 
+            IAuditTrailRepository _auditTrail,
+            IWorkflow _workflow
+            )
         {
             this.context = context;
             this.general = general;
             this.auditTrail = _auditTrail;
-            this.workFlow = _workFlow;
+            workFlow = _workflow;
         }
 
-        public async Task<bool> GoForApproval(ApprovalViewModel entity)
+        public bool GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.UserCreation;
+            entity.externalInitialization = false;
 
-            var response = await workFlow.GoForApproval(entity);
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
 
-            if (response.Item1)
-            {
-                return ApproveChargeFee(entity.targetId, response.Item2.approvalStatusId, entity);
-            }
-            else
-            {
-                return false;
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApproveChargeFee(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
             }
 
         }
@@ -106,7 +136,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
-
+/*
             if (workFlow.CheckRouteForOperation((int)OperationsEnum.FeeCreation, chargeFeemodel.companyId))
             {
                 using (var trans = context.Database.BeginTransaction())
@@ -138,7 +168,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             else
             {
                 throw new Exception("Approval route have not been defined for this operation");
-            }
+            }*/
             return output;
 
         }
