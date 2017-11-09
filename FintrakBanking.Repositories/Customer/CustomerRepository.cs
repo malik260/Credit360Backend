@@ -9,6 +9,7 @@ using FintrakBanking.ViewModels.Customer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -36,8 +37,7 @@ namespace FintrakBanking.Repositories.Customer
             var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete,
-                BRANCHID = entity.branchId,
-                CHILDDATEOFBIRTH = entity.childDateOfBirth,
+                BRANCHID = entity.userBranchId,
                 COMPANYID = entity.companyId,
                 CREATEDBY = (int)entity.createdBy,
                 CREATIONMAILSENT = entity.creationMailSent,
@@ -47,7 +47,6 @@ namespace FintrakBanking.Repositories.Customer
                 DATEOFBIRTH = entity.dateOfBirth,
                 DATETIMECREATED = DateTime.Now,
                 EMAILADDRESS = entity.emailAddress,
-                FIRSTCHILDNAME = entity.firstChildName,
                 FIRSTNAME = entity.firstName,
                 GENDER = entity.gender,
                 LASTNAME = entity.lastName,
@@ -60,7 +59,6 @@ namespace FintrakBanking.Repositories.Customer
                 NATIONALITY = entity.nationality,
                 OCCUPATION = entity.occupation,
                 PLACEOFBIRTH = entity.placeOfBirth,
-
                 ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed,
                 ISINVESTMENTGRADE = entity.isInvestmentGrade,
                 ISREALATEDPARTY = entity.isRealatedParty,
@@ -70,39 +68,48 @@ namespace FintrakBanking.Repositories.Customer
                 TAXNUMBER = entity.taxNumber
             };
             context.TBL_CUSTOMER.Add(customer);
-            customerId = customer.CUSTOMERID;
+            //customerId = customer.CUSTOMERID;
 
-            status = 1;
-            if (entity.CustomerAddresses.Count > 0)
+            //status = 1;
+            //if (entity.CustomerAddresses.Count > 0)
+            //{
+            //    AddCustomerAddresses(entity.CustomerAddresses, status);
+            //}
+
+            //if (entity.CustomerBvn.Count > 0)
+            //{
+            //    AddCustomerBvn(entity.CustomerBvn, status);
+            //}
+
+            //if (entity.CustomerPhoneContact.Count > 0)
+            //{
+            //    AddCustomerPhoneContact(entity.CustomerPhoneContact);
+            //}
+
+            //if (entity.CustomerCompanyInfomation.Count > 0)
+            //{
+            //    AddCustomerCompanyInfomation(entity.CustomerCompanyInfomation, status);
+            //}
+
+            //if (entity.CustomerIdentification.Count > 0)
+            //{
+            //    AddCustomerIdentification(entity.CustomerIdentification);
+            //}
+
+            //if (entity.CustomerEmploymentHistory.Count > 0)
+            //{
+            //    AddCustomerEmploymentHistory(entity.CustomerEmploymentHistory);
+            //}
+            try
             {
-                AddCustomerAddresses(entity.CustomerAddresses, status);
+                return context.SaveChanges() != 0;
+            }
+            catch (DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new DbEntityValidationException(errorMessages);
             }
 
-            if (entity.CustomerBvn.Count > 0)
-            {
-                AddCustomerBvn(entity.CustomerBvn, status);
-            }
-
-            if (entity.CustomerPhoneContact.Count > 0)
-            {
-                AddCustomerPhoneContact(entity.CustomerPhoneContact);
-            }
-
-            if (entity.CustomerCompanyInfomation.Count > 0)
-            {
-                AddCustomerCompanyInfomation(entity.CustomerCompanyInfomation, status);
-            }
-
-            if (entity.CustomerIdentification.Count > 0)
-            {
-                AddCustomerIdentification(entity.CustomerIdentification);
-            }
-
-            if (entity.CustomerEmploymentHistory.Count > 0)
-            {
-                AddCustomerEmploymentHistory(entity.CustomerEmploymentHistory);
-            }
-            var response = context.SaveChanges() != 0;
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -119,9 +126,9 @@ namespace FintrakBanking.Repositories.Customer
             auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
+       
 
-
-            return response;
+            // return response;
         }
 
 
@@ -365,7 +372,76 @@ namespace FintrakBanking.Repositories.Customer
 
             return false;
         }
+        public bool AddCustomerCompanyInfomation(CustomerCompanyInfomationViewModels entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CUSTOMER_COMPANYINFOMATION company;
+                    if (entity.companyInfomationId != 0 || entity.companyInfomationId < 0)
+                    {
+                        company = context.TBL_CUSTOMER_COMPANYINFOMATION.Find(entity.companyInfomationId);
+                        if (company != null)
+                        {
+                            company.ANNUALTURNOVER = entity.annualTurnOver;
+                            company.COMPANYEMAIL = entity.companyEmail;
+                            company.COMPANYNAME = entity.companyName;
+                            company.COMPANYWEBSITE = entity.companyWebsite;
+                            company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
+                            company.CREDITRATING = entity.creditRating;
+                            company.PREVIOUSCREDITRATING = entity.previousCreditRating;
+                            company.REGISTEREDOFFICE = entity.registeredOffice;
+                            company.REGISTRATIONNUMBER = entity.registrationNumber;
+                            company.PAIDUPCAPITAL = entity.paidUpCapital;
+                            company.AUTHORISEDCAPITAL = entity.authorizedCapital;
+                        }
+                    }
+                    else
+                    {
+                        company = new TBL_CUSTOMER_COMPANYINFOMATION();
+                        company.ANNUALTURNOVER = entity.annualTurnOver;
+                        company.COMPANYEMAIL = entity.companyEmail;
+                        company.COMPANYNAME = entity.companyName;
+                        company.COMPANYWEBSITE = entity.companyWebsite;
+                        company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
+                        company.CREDITRATING = entity.creditRating;
+                        company.CUSTOMERID = entity.customerId;
+                        company.PREVIOUSCREDITRATING = entity.previousCreditRating;
+                        company.REGISTEREDOFFICE = entity.registeredOffice;
+                        company.REGISTRATIONNUMBER = entity.registrationNumber;
+                        company.PAIDUPCAPITAL = entity.paidUpCapital;
+                        company.AUTHORISEDCAPITAL = entity.authorizedCapital;
+                        context.TBL_CUSTOMER_COMPANYINFOMATION.Add(company);
+                    }
+                    
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = (short)entity.userBranchId,
+                        DETAIL = "Added Customer's Company Information with CustomerId : " + entity.customerId,
+                        IPADDRESS = entity.userIPAddress,
+                        URL = entity.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.auditTrail.AddAuditTrail(audit);
 
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+               
+            }
+            return false;
+        }
+         
+        
         private void AddCustomerCompanyInfomation(List<CustomerCompanyInfomationViewModels> entity,
            int status)
         {
@@ -773,17 +849,15 @@ namespace FintrakBanking.Repositories.Customer
                        accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
                        branchId = a.BRANCHID,
                        branchName = a.TBL_BRANCH.BRANCHNAME,
-                       childDateOfBirth = a.CHILDDATEOFBIRTH.Value,
                        companyMainId = a.COMPANYID,
                        createdBy = a.CREATEDBY,
                        creationMailSent = a.CREATIONMAILSENT,
                        customerCode = a.CUSTOMERCODE,
                        customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
-                       customerTypeId = a.CUSTOMERTYPEID.Value,
-                       dateOfBirth = a.DATEOFBIRTH,
+                       customerTypeId = (short)a.CUSTOMERTYPEID,
+                       dateOfBirth = (DateTime)a.DATEOFBIRTH,
                        customerId = a.CUSTOMERID,
                        emailAddress = a.EMAILADDRESS,
-                       firstChildName = a.FIRSTCHILDNAME,
                        firstName = a.FIRSTNAME,
                        gender = a.GENDER,
                        lastName = a.LASTNAME,
@@ -803,10 +877,9 @@ namespace FintrakBanking.Repositories.Customer
                        spouse = a.SPOUSE,
                        sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                       subSectorId = a.SUBSECTORID,
+                       subSectorId = (short)a.SUBSECTORID,
                        subSectorName = a.TBL_SUB_SECTOR.NAME,
-                       taxNumber = a.TAXNUMBER
-                       ,
+                       taxNumber = a.TAXNUMBER,
                        CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
                        {
                            address = x.ADDRESS,
@@ -1009,6 +1082,16 @@ namespace FintrakBanking.Repositories.Customer
                        };
             return type;
         }
+        public IEnumerable<KYCDocumentTypeViewModel> GetKYCDocumentType()
+        {
+            var type = from a in context.TBL_KYC_DOCUMENTTYPE
+                       select new KYCDocumentTypeViewModel
+                       {
+                           documentTypeName = a.DOCUMENTTYPENAME,
+                           documentTypeId = a.DOCUMENTTYPEID
+                       };
+            return type;
+        }
         public IEnumerable<CustomerSupplierTypeViewModels> GetClientSupplierType()
         {
             var type = from a in context.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE
@@ -1049,7 +1132,6 @@ namespace FintrakBanking.Repositories.Customer
             {
                 customer.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
                 customer.BRANCHID = entity.branchId;
-                customer.CHILDDATEOFBIRTH = entity.childDateOfBirth;
                 customer.COMPANYID = entity.companyMainId;
                 customer.CREATEDBY = (int)entity.createdBy;
                 customer.CREATIONMAILSENT = entity.creationMailSent;
@@ -1058,7 +1140,6 @@ namespace FintrakBanking.Repositories.Customer
                 customer.CUSTOMERTYPEID = entity.customerTypeId;
                 customer.DATEOFBIRTH = entity.dateOfBirth;
                 customer.EMAILADDRESS = entity.emailAddress;
-                customer.FIRSTCHILDNAME = entity.firstChildName;
                 customer.FIRSTNAME = entity.firstName;
                 customer.GENDER = entity.gender;
                 customer.LASTNAME = entity.lastName;
@@ -1233,6 +1314,7 @@ namespace FintrakBanking.Repositories.Customer
             }
             return null;
         }
+        
     }
 }
 

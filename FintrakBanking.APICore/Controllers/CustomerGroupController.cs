@@ -218,11 +218,28 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("customer-group/search/")]
-        public HttpResponseMessage SearchCustomerGroup(string searchQuery)
+        public HttpResponseMessage SearchForCustomerGroupRealtime(string searchQuery)
         {
             try
             {
-                var data = repo.SearchForCustomerGroup(token.GetCompanyId, searchQuery);
+                var data = repo.SearchForCustomerGroupRealtime(token.GetCompanyId, searchQuery);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data.ToList() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-group/")]
+        public HttpResponseMessage CustomerGroupSearch(string searchQuery)
+        {
+            try
+            {
+                var data = repo.CustomerGroupSearch(searchQuery);
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data.ToList() });
             }

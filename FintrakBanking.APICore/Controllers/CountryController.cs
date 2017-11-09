@@ -188,11 +188,11 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "Updated successfully" });
+                        new { success = true, result = data, message = "State updated successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "An unknown error has occured" });
+                    new { success = false, message = "State not updated successfully" });
             }
             catch (Exception ex)
             {
@@ -200,7 +200,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
-        [Route("statebyCompanyId")]
+        [Route("state-by-company")]
         public HttpResponseMessage GetStateByCompanyId()
         {
             

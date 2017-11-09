@@ -245,25 +245,25 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpGet]
-        [Route("application-collateral-valuation/details/{loanApplicationId}")]
-        public HttpResponseMessage GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
-        {
-            try
-            {
-                var data = repo.GetAppraisalMemorandumCollateralChanges(loanApplicationId);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
+        //[HttpGet]
+        //[Route("application-collateral-valuation/details/{loanApplicationId}")]
+        //public HttpResponseMessage GetAppraisalMemorandumCollateralChanges(int loanApplicationId)
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetAppraisalMemorandumCollateralChanges(loanApplicationId);
+        //        if (!data.Any())
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
         [HttpGet]
         [Route("number-of-installments/tenor-mode/{tenorModeId}/frequency-type/{frequencyTypeId}/tenor/{tenor}")]
@@ -361,13 +361,13 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("loan-booking/deffered-fees/awaiting-approval")]
-        public HttpResponseMessage GetDeferredLoanFeeAwaitingApproval()
+        [Route("loan-booking/term/deffered-fees/awaiting-approval")]
+        public HttpResponseMessage GetDeferredTermLoanFeeAwaitingApproval()
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetDeferredLoanFeeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetDeferredTermLoanFeeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (data.Any() == false)
                 {
@@ -380,6 +380,50 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        [HttpGet]
+        [Route("loan-booking/revolving/deffered-fees/awaiting-approval")]
+        public HttpResponseMessage GetDeferredRevolvingLoanFeeAwaitingApproval()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetDeferredRevolvingLoanFeeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-booking/contingent/deffered-fees/awaiting-approval")]
+        public HttpResponseMessage GetDeferredContingentLoanFeeAwaitingApproval()
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetDeferredContingentLoanFeeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
 
         [HttpPost]
         [Route("loan-booking/approval")]
@@ -413,6 +457,40 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                     new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
+        [HttpPost]
+        [Route("loan-booking/fee-override/approval")]
+        public HttpResponseMessage ApproveLoaFeeOverride(ApprovalViewModel model)
+        {
+            try
+            {
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.BranchId = (short)token.GetBranchId;
+                model.staffId = token.GetStaffId;
+
+                var data = repo.GoForFeeOverrideApproval(model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, message = "Loan fee override has been approved successfully" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
 
         [HttpGet]
         [Route("customer/{customerId}")]

@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerFSCaptionViewModel> GetCustomerFSCaptionByGroupId(short fsCaptionGroupId);
         CustomerFSCaptionViewModel GetCustomerFSCaptionById(int fsCaptionId);
         IEnumerable<CustomerFSCaptionViewModel> GetUnmappedCustomerFSCaption(short fsCaptionGroupId, int customerId, DateTime fsDate);
+        IEnumerable<CustomerFSCaptionViewModel> GetUnmappedCustomerGroupFSCaption(short fsCaptionGroupId, int customerGroupId, DateTime fsDate);
 
         bool AddCustomerFSCaption(CustomerFSCaptionViewModel entity);       
         bool UpdateCustomerFSCaption(int fsCaptionId, CustomerFSCaptionViewModel entity);
