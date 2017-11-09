@@ -10,44 +10,13 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_LOAN_APPLICATION_COLLATERAL
     {
         [Key]
-        public int CUSTOMERCOLLATERALID { get; set; }
+        public int LOANAPPCOLLATERALID { get; set; }
+
+        public int COLLATERALCUSTOMERID { get; set; }
 
         public int LOANAPPLICATIONID { get; set; }
 
-        public int COLLATERALTYPEID { get; set; }
-
-        public int? CASAACCOUNTID { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        public string COLLATERALREFERENCENUMBER { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? COLLATERALVALUE { get; set; }
-
-        public bool? ISBANKACCOUNT { get; set; }
-
-        public int? CITYID { get; set; }
-
-        [StringLength(50)]
-        public string DOCUMENTTITLE { get; set; }
-
-        public double? LATITUDE { get; set; }
-
-        public double? LONGITUDE { get; set; }
-
-        [StringLength(50)]
-        public string LOCATIONADDRESS { get; set; }
-
-        [StringLength(250)]
-        public string NEARESTBUSSTOP { get; set; }
-
-        [StringLength(250)]
-        public string NEARESTLANDMARK { get; set; }
-
-        [Required]
-        [StringLength(500)]
-        public string OTHERINFORMATIONS { get; set; }
+        public int LOANAPPLICATIONDETAILID { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -65,12 +34,10 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime SYSTEMDATETIME { get; set; }
 
-        public virtual TBL_CASA TBL_CASA { get; set; }
-
-        public virtual TBL_CITY TBL_CITY { get; set; }
-
-        public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
 
         public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
     }
 }

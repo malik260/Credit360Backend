@@ -25,6 +25,7 @@ namespace FintrakBanking.Entities.Models
             TBL_COLLATERAL_IMMOVABLE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVABLE_PROPERTY>();
             TBL_COLLATERAL_STOCK = new HashSet<TBL_COLLATERAL_STOCK>();
             TBL_COLLATERAL_VEHICLE = new HashSet<TBL_COLLATERAL_VEHICLE>();
+            TBL_LOAN_APPLICATION_COLLATERAL = new HashSet<TBL_LOAN_APPLICATION_COLLATERAL>();
             TBL_LOAN_COLLATERAL_MAPPING = new HashSet<TBL_LOAN_COLLATERAL_MAPPING>();
             TBL_LOANAPPLICATION_COLLATERAL_MAPPING = new HashSet<TBL_LOANAPPLICATION_COLLATERAL_MAPPING>();
             TBL_TEMP_COLLATERAL_POLICY = new HashSet<TBL_TEMP_COLLATERAL_POLICY>();
@@ -130,6 +131,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_COLLATERAL_VEHICLE> TBL_COLLATERAL_VEHICLE { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_APPLICATION_COLLATERAL> TBL_LOAN_APPLICATION_COLLATERAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }

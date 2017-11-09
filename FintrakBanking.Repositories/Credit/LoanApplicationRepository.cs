@@ -97,20 +97,20 @@ namespace FintrakBanking.Repositories.Credit
                              .Select(d => new LoanApplicationCollateralViewModel()
                              {
                                  //     collateralValue   = d.CollateralReferenceNumber,
-                                 cityId = d.CITYID,
-                                 collateralTypeId = d.COLLATERALTYPEID,
-                                 customerCollateralId = d.CUSTOMERCOLLATERALID,
-                                 documentTitle = d.DOCUMENTTITLE,
-                                 latitude = d.LATITUDE,
+                                 //cityId = d.CITYID,
+                                 //collateralTypeId = d.COLLATERALTYPEID,
+                                 //customerCollateralId = d.CUSTOMERCOLLATERALID,
+                                 //documentTitle = d.DOCUMENTTITLE,
+                                 //latitude = d.LATITUDE,
                                  loanApplicationId = d.LOANAPPLICATIONID,
-                                 locationAddress = d.LOCATIONADDRESS,
-                                 longitude = d.LONGITUDE,
-                                 nearestBusStop = d.NEARESTBUSSTOP,
-                                 nearestLandmark = d.NEARESTLANDMARK,
-                                 otherInformations = d.OTHERINFORMATIONS,
-                                 city = d.TBL_CITY.CITYNAME,
-                                 collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                                 companyName = d.TBL_LOAN_APPLICATION.TBL_COMPANY.NAME,
+                                 //locationAddress = d.LOCATIONADDRESS,
+                                 //longitude = d.LONGITUDE,
+                                 //nearestBusStop = d.NEARESTBUSSTOP,
+                                 //nearestLandmark = d.NEARESTLANDMARK,
+                                 //otherInformations = d.OTHERINFORMATIONS,
+                                 //city = d.TBL_CITY.CITYNAME,
+                                 //collateralType = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                 //companyName = d.TBL_LOAN_APPLICATION.TBL_COMPANY.NAME,
                                  // applicationReferanceNumber = int.Parse(d.tbl_Loan_Application.ApplicationReferenceNumber),
 
                              }).ToList(),
@@ -401,24 +401,24 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanCollateral = new TBL_LOAN_APPLICATION_COLLATERAL()
                 {
-                    COLLATERALREFERENCENUMBER = item.collateralReferenceNumber,
-                    CITYID = item.cityId,
-                    COLLATERALVALUE = item.collateralValue,
-                    ISBANKACCOUNT = item.isBankAccount,
-                    COLLATERALTYPEID = item.collateralTypeId,
+                    //COLLATERALREFERENCENUMBER = item.collateralReferenceNumber,
+                    //CITYID = item.cityId,
+                    //COLLATERALVALUE = item.collateralValue,
+                    //ISBANKACCOUNT = item.isBankAccount,
+                    //COLLATERALTYPEID = item.collateralTypeId,
                     CREATEDBY = item.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
-                    OTHERINFORMATIONS = item.otherInformations,
-                    LATITUDE = item.latitude,
-                    LONGITUDE = item.longitude,
+                    //OTHERINFORMATIONS = item.otherInformations,
+                    //LATITUDE = item.latitude,
+                    //LONGITUDE = item.longitude,
 
-                    LOCATIONADDRESS = item.locationAddress,
-                    NEARESTBUSSTOP = item.nearestBusStop,
-                    NEARESTLANDMARK = item.nearestLandmark,
-                    DOCUMENTTITLE = item.documentTitle,
+                    //LOCATIONADDRESS = item.locationAddress,
+                    //NEARESTBUSSTOP = item.nearestBusStop,
+                    //NEARESTLANDMARK = item.nearestLandmark,
+                    //DOCUMENTTITLE = item.documentTitle,
                     //LoanApplicationId = item.loanApplicationId,
                     SYSTEMDATETIME = DateTime.Now,
-                    CASAACCOUNTID = item.casaAccountId
+                    //CASAACCOUNTID = item.casaAccountId
 
                 };
                 context.TBL_LOAN_APPLICATION_COLLATERAL.Add(loanCollateral);
@@ -657,8 +657,8 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CREDIT_APPRAISAL_MEMORANDUM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         join d in context.TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
                         join cust in context.TBL_CUSTOMER on a.CUSTOMERID equals cust.CUSTOMERID into cc
-                        from cust in
-cc.DefaultIfEmpty()
+                        from cust in cc.DefaultIfEmpty()
+
                         join cGrp in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals cGrp.CUSTOMERGROUPID into grp
                         from cGrp in grp.DefaultIfEmpty()
                         join ss in context.TBL_SUB_SECTOR on b.SUBSECTORID equals ss.SUBSECTORID into sec
@@ -713,7 +713,7 @@ cc.DefaultIfEmpty()
                             approvedAmount = g.Sum(x => x.APPROVEDAMOUNT),
                             applicationDate = g.Key.APPLICATIONDATE,
                             applicationStatusId = g.Key.APPLICATIONSTATUSID,
-                            subSectorId = g.Key.SUBSECTORID
+                            subSectorId = g.Key.SUBSECTORID,
                         });
 
             return data;

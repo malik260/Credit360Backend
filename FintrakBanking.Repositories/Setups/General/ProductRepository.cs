@@ -8,7 +8,6 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
-using ServiceStack.Text;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -88,6 +87,19 @@ namespace FintrakBanking.Repositories.Setups.General
                     });
         }
 
+        public IEnumerable<LookupViewModel> GetAllProductBehaviourTypes()
+        {
+            var data = (from p in context.TBL_PRODUCT_BEHAVIOUR
+                        select new LookupViewModel()
+                        {
+                            lookupId = p.PRODUCT_BEHAVIOURID,
+                            lookupName = p.PRODUCT_BEHAVIOUR_NAME
+                        });
+
+            return data;
+        }
+
+        #region Product Group
         public IEnumerable<ProductGroupViewModel> GetAllProductGroup()
         {
             return (from p in context.TBL_PRODUCT_GROUP
@@ -225,7 +237,9 @@ namespace FintrakBanking.Repositories.Setups.General
             // end of Audit section -------------------------------
             return this.SaveAll();
         }
+        #endregion Product Group
 
+        #region Product Type
         public IQueryable<ProductTypeViewModel> AllProductType()
         {
             return (from p in context.TBL_PRODUCT_TYPE
@@ -404,6 +418,7 @@ namespace FintrakBanking.Repositories.Setups.General
             // end of Audit section -------------------------------
             return this.SaveAll();
         }
+#endregion Product Type
 
         #region Product Region
 
@@ -495,7 +510,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         defaultGracePeriod = data.DEFAULTGRACEPERIOD,
                         equityContribution = data.EQUITYCONTRIBUTION,
                         expiryPeriod = data.EXPIRYPERIOD,
-                        scheduleTypeId = data.SCHEDULETYPEID
+                        scheduleTypeId = data.SCHEDULETYPEID,
+                        productBehaviourId = data.PRODUCT_BEHAVIOURID
                     });
         }
 
@@ -572,7 +588,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         dormantGlCode = (c.DORMANTGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
                         premiumDiscountGl = c.PREMIUMDISCOUNTGL,
                         premiumDiscountGlCode = (c.PREMIUMDISCOUNTGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
-                        
+
                         dealTypeId = c.DEALTYPEID,
                         dealTypeName = c.TBL_DEAL_TYPE.DEALTYPENAME,
                         dealClassificationId = c.DEALCLASSIFICATIONID,
@@ -635,11 +651,13 @@ namespace FintrakBanking.Repositories.Setups.General
                         allowRate = c.ALLOWRATE,
                         allowOverdrawn = c.ALLOWOVERDRAWN,
 
-                        cleanupPeriod = c.CLEANUPPERIOD,
-                        defaultGracePeriod = c.DEFAULTGRACEPERIOD,
-                        equityContribution = c.EQUITYCONTRIBUTION,
-                        expiryPeriod = c.EXPIRYPERIOD,
-                        scheduleTypeId = c.SCHEDULETYPEID
+                        cleanupPeriod = c.CLEANUPPERIOD ?? 0,
+                        defaultGracePeriod = c.DEFAULTGRACEPERIOD ?? 0,
+                        equityContribution = c.EQUITYCONTRIBUTION ?? 0,
+                        expiryPeriod = c.EXPIRYPERIOD ?? 0,
+                        scheduleTypeId = c.SCHEDULETYPEID,
+                        productBehaviourId = c.PRODUCT_BEHAVIOURID,
+                        productBehaviourName = c.TBL_PRODUCT_BEHAVIOUR.PRODUCT_BEHAVIOUR_NAME
                     }).GroupBy(x => x.productId).Select(g => g.FirstOrDefault());
         }
 
@@ -916,6 +934,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingProduct.EXPIRYPERIOD = productModel.EXPIRYPERIOD;
                     existingProduct.ISMULTIPLECURENCY = productModel.ISMULTIPLECURENCY;
                     existingProduct.SCHEDULETYPEID = productModel.SCHEDULETYPEID;
+                    existingProduct.PRODUCT_BEHAVIOURID = productModel.PRODUCT_BEHAVIOURID;
 
                     existingProduct.TBL_PRODUCT_CURRENCY = productCurrencies;
                     existingProduct.TBL_PRODUCT_CHARGE_FEE = productFees;
@@ -1019,6 +1038,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         CLEANUPPERIOD = productModel.CLEANUPPERIOD,
                         ALLOWSCHEDULETYPEOVERRIDE = productModel.ALLOWSCHEDULETYPEOVERRIDE,
                         SCHEDULETYPEID = productModel.SCHEDULETYPEID,
+                        PRODUCT_BEHAVIOURID = productModel.PRODUCT_BEHAVIOURID,
 
                         TBL_PRODUCT_CURRENCY = productCurrencies,
                         TBL_PRODUCT_COLLATERALTYPE = productCollateral,
@@ -1259,6 +1279,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 CLEANUPPERIOD = productModel.cleanupPeriod,
                 EQUITYCONTRIBUTION = productModel.equityContribution,
                 EXPIRYPERIOD = productModel.expiryPeriod,
+                PRODUCT_BEHAVIOURID = productModel.productBehaviourId,
 
                 TBL_TEMP_PRODUCT_CHARGE_FEE = chargeFees,
                 TBL_TEMP_PRODUCT_COLLATERALTYPE = collaterals
@@ -1546,6 +1567,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductToUpdate.ISCURRENT = true;
                 tempProductToUpdate.DATETIMEUPDATED = DateTime.Now;
                 tempProductToUpdate.DELETED = false;
+                tempProductToUpdate.PRODUCT_BEHAVIOURID = productModel.productBehaviourId;
 
                 tempProductToUpdate.TBL_TEMP_PRODUCT_CURRENCY = productCurrencies;
                 tempProductToUpdate.TBL_TEMP_PRODUCT_CHARGE_FEE = productFees;
@@ -1648,6 +1670,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     EQUITYCONTRIBUTION = productModel.equityContribution,
                     EXPIRYPERIOD = productModel.expiryPeriod,
                     ISMULTIPLECURENCY = productModel.currencies.Any(),
+                    PRODUCT_BEHAVIOURID = productModel.productBehaviourId,
 
                     TBL_TEMP_PRODUCT_CURRENCY = productCurrencies,
                     TBL_TEMP_PRODUCT_COLLATERALTYPE = productCollaterals,

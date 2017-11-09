@@ -221,12 +221,37 @@ namespace FintrakBanking.APICore.Controllers
 
         //[HttpGet("customer-fs-caption/unmapped/{fsCaptionGroupId}/customer/{customerId}/date/{fsDate}")]
         [HttpGet]
-        [Route("customer-fs-caption/unmapped")]
+        [Route("customer-fs-caption/customer/unmapped")]
         public HttpResponseMessage GetUnmappedCustomerFsCaption(short fsCaptionGroupId, int customerId, DateTime fsDate)
         {
             try
             {
                 var data = _fsCaptionRepo.GetUnmappedCustomerFSCaption(fsCaptionGroupId, customerId, fsDate);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, result = data, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-fs-caption/customer-group/unmapped")]
+        public HttpResponseMessage GetUnmappedCustomerGroupFsCaption(short fsCaptionGroupId, int customerGroupId, DateTime fsDate)
+        {
+            try
+            {
+                var data = _fsCaptionRepo.GetUnmappedCustomerGroupFSCaption(fsCaptionGroupId, customerGroupId, fsDate);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -312,6 +337,37 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
+        [Route("customer-group-fs-caption-detail")]
+        public HttpResponseMessage AddCustomerGroupFsCaptionDetail([FromBody] CustomerGroupFSCaptionDetailViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = _fsDetailRepo.AddCustomerGroupFSCaptionDetail(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
         [Route("customer-fs-caption-detail/multiple")]
         public HttpResponseMessage AddMultipleCustomerFsCaptionDetail([FromBody] List<CustomerFSCaptionDetailViewModel> entities)
         {
@@ -349,13 +405,128 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("customer-group-fs-caption-detail/multiple")]
+        public HttpResponseMessage AddMultipleCustomerGroupFsCaptionDetail([FromBody] List<CustomerGroupFSCaptionDetailViewModel> entities)
+        {
+            try
+            {
+                var userBranch = (short)token.GetBranchId;
+                var userIpAddress = Request.RequestUri.Host;
+                var applicationUrl = HttpContext.Current.Request.Path;
+                var createdBy = token.GetStaffId;
+
+                foreach (CustomerGroupFSCaptionDetailViewModel entity in entities)
+                {
+                    entity.userBranchId = userBranch;
+                    entity.userIPAddress = userIpAddress;
+                    entity.applicationUrl = applicationUrl;
+                    entity.createdBy = createdBy;
+                }
+
+                var data = _fsDetailRepo.AddMultipleCustomerGroupFSCaptionDetail(entities);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record(s) has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error creating these record(s)" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error creating these record(s) {ex.Message}" });
+            }
+        }
+
         [HttpGet]
-        [Route("customer-fs-caption-detail/customer")]
+        [Route("customer-fs-caption-detail/customer/")]
         public HttpResponseMessage GetMappedCustomerFsCaptionDetail(short fsCaptionGroupId, int customerId, DateTime fsDate)
         {
             try
             {
                 var data = _fsDetailRepo.GetMappedCustomerFsCaptionDetail(customerId, fsCaptionGroupId, fsDate);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, result = data, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-fs-caption-detail/customer/{customerId}")]
+        public HttpResponseMessage GetMappedCustomerFsCaptions(int customerId)
+        {
+            try
+            {
+                var data = _fsDetailRepo.GetMappedCustomerFsCaptions(customerId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, result = data, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-group-fs-caption-detail/customer-group/")]
+        public HttpResponseMessage GetMappedCustomerGroupFsCaptionDetail(short fsCaptionGroupId, int customerGroupId, DateTime fsDate)
+        {
+            try
+            {
+                var data = _fsDetailRepo.GetMappedCustomerGroupFsCaptionDetail(customerGroupId, fsCaptionGroupId, fsDate);
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, result = data, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-group-fs-caption-detail/customer-group/{customerGroupId}")]
+        public HttpResponseMessage GetMappedCustomerGroupFsCaptions(int customerGroupId)
+        {
+            try
+            {
+                var data = _fsDetailRepo.GetMappedCustomerGroupFsCaptions(customerGroupId);
+
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -449,6 +620,37 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("customer-group-fs-caption-detail/{fsDetailId}")]
+        public HttpResponseMessage UpdateCustomerGroupFsCaptionDetail(int fsDetailId, [FromBody] CustomerGroupFSCaptionDetailViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = _fsDetailRepo.UpdateCustomerGroupFSCaptionDetail(fsDetailId, entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+
         [HttpDelete]
         [Route("customer-fs-caption-detail/{fsdetailId}")]
         public HttpResponseMessage DeleteCustomerFsCaptionDetail(int fsdetailId)
@@ -466,6 +668,35 @@ namespace FintrakBanking.APICore.Controllers
                 };
 
                 _fsDetailRepo.DeleteCustomerFSCaptionDetail(fsdetailId, user);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = fsdetailId, message = "record has been deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("customer-group-fs-caption-detail/{fsdetailId}")]
+        public HttpResponseMessage DeleteCustomerGroupFsCaptionDetail(int fsdetailId)
+        {
+            try
+            {
+                var user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = Request.RequestUri.Host,
+                    createdBy = token.GetStaffId
+                };
+
+                _fsDetailRepo.DeleteCustomerGroupFSCaptionDetail(fsdetailId, user);
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = fsdetailId, message = "record has been deleted successfully" });

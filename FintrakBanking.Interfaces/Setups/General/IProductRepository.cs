@@ -28,7 +28,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool GoForApproval(ApprovalViewModel entity);
         Task<ProductViewModel> AddTempProduct(ProductViewModel product);
         Task<bool> UpdateProduct(int productId, ProductViewModel product);
-
+        IEnumerable<LookupViewModel> GetAllProductBehaviourTypes();
         //bool DeleteProduct(int productId);
 
         #endregion Product

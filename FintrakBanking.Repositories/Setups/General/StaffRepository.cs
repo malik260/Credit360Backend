@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common;
+using FintrakBanking.Entities.DocumentModels;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -23,18 +24,21 @@ namespace FintrakBanking.Repositories.Setups.General
         private IGeneralSetupRepository genSetup;
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
+        private FinTrakBankingDocumentsContext documentsContext;
 
         public StaffRepository(FinTrakBankingContext _context,
                                IAuditTrailRepository _auditTrail,
                                IGeneralSetupRepository _genSetup,
                                IWorkflow _workFlow,
-                               IApprovalLevelStaffRepository _level)
+                               IApprovalLevelStaffRepository _level,
+                               FinTrakBankingDocumentsContext _documentsContext)
         {
             this.context = _context;
             this.genSetup = _genSetup;
             auditTrail = _auditTrail;
             this.workFlow = _workFlow;
             level = _level;
+            documentsContext = _documentsContext;
         }
 
         private bool SaveAll()
@@ -117,7 +121,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              Phone = c.PHONE,
                              PhoneOfNok = c.PHONEOFNOK,
                              StateId = c.STATEID,
-                             //Staffsignature = c.Staffsignature,
+                             StaffSignature = c.STAFFSIGNATURE,
                              FirstName = c.FIRSTNAME,
                              MiddleName = c.MIDDLENAME,
                              LastName = c.LASTNAME,
@@ -164,7 +168,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              Phone = c.PHONE,
                              PhoneOfNok = c.PHONEOFNOK,
                              StateId = c.STATEID,
-                             Staffsignature = c.STAFFSIGNATURE,
+                             StaffSignature = c.STAFFSIGNATURE,
                              FirstName = c.FIRSTNAME,
                              MiddleName = c.MIDDLENAME,
                              LastName = c.LASTNAME,
@@ -235,9 +239,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.PHONEOFNOK = staffModel.PhoneOfNok;
                 tempStaffToUpdate.STATEID = staffModel.StateId;
                 tempStaffToUpdate.CITYID = staffModel.CityId;
-                tempStaffToUpdate.STAFFSIGNATURE = staffModel.Staffsignature;
+                tempStaffToUpdate.STAFFSIGNATURE = staffModel.StaffSignature;
                 tempStaffToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 tempStaffToUpdate.ISCURRENT = true;
+
             }
             else
             {
@@ -272,7 +277,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     PHONEOFNOK = staffModel.PhoneOfNok,
                     STATEID = staffModel.StateId,
                     CITYID = staffModel.CityId,
-                    STAFFSIGNATURE = staffModel.Staffsignature,
+                    STAFFSIGNATURE = staffModel.StaffSignature,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                     ISCURRENT = true
                 };
@@ -578,7 +583,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 PHONEOFNOK = staffModel.PhoneOfNok,
                 STATEID = staffModel.StateId,
                 CITYID = staffModel.CityId,
-                STAFFSIGNATURE = staffModel.Staffsignature,
+                STAFFSIGNATURE = staffModel.StaffSignature,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 ISCURRENT = true
             };
@@ -722,7 +727,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         company = coy.NAME,
                         JobTitle = c.TBL_STAFF_JOBTITLE.JOBTITLENAME,
                         MisInfo = c.TBL_MIS_INFO.MISNAME,
-                        Staffsignature = c.STAFFSIGNATURE,
+                        StaffSignature = c.STAFFSIGNATURE,
                         Email = c.EMAIL,
                         EmailOfNok = c.EMAILOFNOK,
                         Gender = c.GENDER,
@@ -825,7 +830,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             company = coy.NAME,
                             JobTitle = c.TBL_STAFF_JOBTITLE.JOBTITLENAME,
                             MisInfo = context.TBL_MIS_INFO.Find(c.MISINFOID).MISNAME,
-                            Staffsignature = c.STAFFSIGNATURE,
+                            StaffSignature = c.STAFFSIGNATURE,
                             Email = c.EMAIL,
                             EmailOfNok = c.EMAILOFNOK,
                             Gender = c.GENDER,
@@ -853,7 +858,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<simpleStaffModel> GetStaffNames()
         {
-            return from st in context.TBL_STAFF
+            var data =  from st in context.TBL_STAFF
                    select new simpleStaffModel
                    {
                        staffId = st.STAFFID,
@@ -861,8 +866,16 @@ namespace FintrakBanking.Repositories.Setups.General
                        firstName = st.FIRSTNAME,
                        middleName = st.MIDDLENAME,
                        lastName = st.LASTNAME,
-                       departmentId = (short)st.DEPARTMENTID
+                       departmentId = (short)st.DEPARTMENTID,
+                       departmentUnitId = (short)st.DEPARTMENT_UNITID
                    };
+
+            return data;
+        }
+
+        public IEnumerable<simpleStaffModel> GetStaffByUnitId(short departmentUnitId)
+        {
+            return this.GetStaffNames().Where(x => x.departmentUnitId == departmentUnitId);
         }
 
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
@@ -940,6 +953,126 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return staff;
         }
+
+        #region Staff Signature 
+
+        public bool AddStaffSignature(StaffDocumentViewModel model, byte[] file)
+        {
+            try
+            {
+                var document = new TBL_MEDIA_STAFF_SIGNATURE()
+                {
+                    DOCUMENT_TITLE = model.documentTitle,
+                    FILENAME = model.fileName,
+                    FILEEXTENSION = model.fileExtension,
+                    FILEDATA = file,
+                    SYSTEMDATETIME = DateTime.Now,
+                    COMPANYID = model.companyId,
+                    STAFFCODE = model.StaffCode,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = genSetup.GetApplicationDate()
+                };
+
+                documentsContext.TBL_MEDIA_STAFF_SIGNATURE.Add(document);
+
+                var staffInfo = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == model.StaffCode.ToLower());
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.StaffSignatureUploaded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added Signature for staff {staffInfo?.FIRSTNAME + ' ' + staffInfo?.LASTNAME} with code '{ model.StaffCode }' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                auditTrail.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+
+                return context.SaveChanges() != 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool UpdateStaffSignature(StaffDocumentViewModel model, int documentId)
+        {
+            var data = documentsContext.TBL_MEDIA_STAFF_SIGNATURE.Find(documentId);
+            if (data == null)
+            {
+                return false;
+            }
+
+            data.STAFFCODE = model.StaffCode;
+            data.DOCUMENT_TITLE = model.documentTitle;
+            data.FILENAME = model.fileName;
+            data.FILEEXTENSION = model.fileExtension;
+            data.SYSTEMDATETIME = DateTime.Now;
+            data.DATETIMEUPDATED = genSetup.GetApplicationDate();
+
+            var staffInfo = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == model.StaffCode.ToLower());
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffSignatureUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = model.userBranchId,
+                DETAIL = $"Updated Signature for staff {staffInfo?.FIRSTNAME + ' ' + staffInfo?.LASTNAME} with code '{ model.StaffCode }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            auditTrail.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public IEnumerable<StaffDocumentViewModel> GetAllStaffSignatures()
+        {
+            var documents = (from doc in documentsContext.TBL_MEDIA_STAFF_SIGNATURE
+                             join s in context.TBL_STAFF on doc.STAFFCODE.ToLower() equals s.STAFFCODE.ToLower()
+                             select new StaffDocumentViewModel
+                             {
+                                 documentId = doc.DOCUMENTID,
+                                 companyId = s.COMPANYID,
+                                 companyName = s.TBL_COMPANY.NAME,
+                                 branchId = s.BRANCHID,
+                                 branchName = context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHID == s.BRANCHID).BRANCHNAME,
+                                 departmentId = context.TBL_DEPARTMENT.FirstOrDefault(x => x.DEPARTMENTID == s.DEPARTMENTID).DEPARTMENTNAME,
+                                 departmentName = s.DEPARTMENTID,
+                                 rankId = s.RANKID,
+                                 rankName = s.TBL_STAFF_RANK.RANKNAME,
+                                 StaffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
+                                 StaffCode = doc.STAFFCODE,
+                                 documentTitle = doc.DOCUMENT_TITLE,
+                                 fileData = doc.FILEDATA,
+                                 fileName = doc.FILENAME,
+                                 fileExtension = doc.FILEEXTENSION,
+                                 SystemDateTime = doc.SYSTEMDATETIME,
+                                 dateTimeCreated = doc.DATETIMECREATED
+                             }).ToList();
+
+            return documents;
+        }
+
+        public IEnumerable<StaffDocumentViewModel> GetStaffSignatureByStaffCode(string staffCode)
+        {
+            var data = this.GetAllStaffSignatures().Where(x =>
+                string.Equals(x.StaffCode.ToLower(), staffCode.ToLower(), StringComparison.Ordinal)).ToList();
+            return data;
+        }
+
+        #endregion Staff Signature
 
     }
 }

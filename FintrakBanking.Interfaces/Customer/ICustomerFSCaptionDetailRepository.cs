@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Customer
         #region Customer FS Detail
 
         IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptionDetail(int customerId, short fsCaptionGroupId, DateTime fsDate);
+        IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptions(int customerId);
         CustomerFSCaptionDetailViewModel GetCustomerFSCaptionDetailById(int fsdetailId);
 
         bool AddCustomerFSCaptionDetail(CustomerFSCaptionDetailViewModel entity);
@@ -26,6 +27,7 @@ namespace FintrakBanking.Interfaces.Customer
         #region Customer Group FS Detail
 
         IEnumerable<CustomerGroupFSCaptionDetailViewModel> GetMappedCustomerGroupFsCaptionDetail(int customerGroupId, short fsCaptionGroupId, DateTime fsDate);
+        IEnumerable<CustomerGroupFSCaptionDetailViewModel> GetMappedCustomerGroupFsCaptions(int customerGroupId);
         CustomerGroupFSCaptionDetailViewModel GetCustomerGroupFSCaptionDetailById(int fsdetailId);
 
         bool AddCustomerGroupFSCaptionDetail(CustomerGroupFSCaptionDetailViewModel entity);
