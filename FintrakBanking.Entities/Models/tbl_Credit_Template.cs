@@ -23,8 +23,6 @@ namespace FintrakBanking.Entities.Models
 
         public int APPROVALLEVELID { get; set; }
 
-        public short PRODUCTCLASSID { get; set; }
-
         public int? LASTUPDATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
@@ -42,7 +40,5 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
-
-        public virtual TBL_PRODUCT_CLASS TBL_PRODUCT_CLASS { get; set; }
     }
 }

@@ -18,37 +18,6 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
-        public int? CASAACCOUNTID { get; set; }
-
-        [StringLength(50)]
-        public string COLLATERALREFERENCENUMBER { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? COLLATERALVALUE { get; set; }
-
-        public bool? ISBANKACCOUNT { get; set; }
-
-        public int? CITYID { get; set; }
-
-        [StringLength(50)]
-        public string DOCUMENTTITLE { get; set; }
-
-        public double? LATITUDE { get; set; }
-
-        public double? LONGITUDE { get; set; }
-
-        [StringLength(50)]
-        public string LOCATIONADDRESS { get; set; }
-
-        [StringLength(250)]
-        public string NEARESTBUSSTOP { get; set; }
-
-        [StringLength(250)]
-        public string NEARESTLANDMARK { get; set; }
-
-        [StringLength(500)]
-        public string OTHERINFORMATIONS { get; set; }
-
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
@@ -64,5 +33,11 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public DateTime SYSTEMDATETIME { get; set; }
+
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
     }
 }

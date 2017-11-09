@@ -342,17 +342,17 @@ namespace FintrakBanking.APICore.Controllers
                 if (model.Count <= 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                 new { success = false, message = "Please select all checklist to continue" });
+                 new { success = false, message = "Please select a checklist to continue" });
                 }
                 var data = repo.AddMultipleChecklistDetails(model, token.GetStaffId, (short)token.GetBranchId);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                 new { success = true, result = data, message = "The record has been created successfully" });
+                 new { success = true, result = data, message = "The Checklist has been created successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-            new { success = false, message = "There was an error creating this record" });
+            new { success = false, message = "There was an error creating this Checklist" });
             }
             catch (Exception e)
             {
@@ -761,6 +761,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+       
         #endregion
     }
 }

@@ -11,8 +11,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int conditionId { get; set; }
         public string condition { get; set; }
         public bool isExternal { get; set; }
+        public bool corporate { get; set; }
+        public bool retail { get; set; }
+        public int? productId { get; set; }
         public int loanApplicationId { get; set; }
-
         public string staffName { get; set; }
     }
 }
+
+
+

@@ -2833,7 +2833,7 @@ namespace FintrakBanking.Repositories.Credit
                        customerCode = a.CUSTOMERCODE,
                        customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                        customerTypeId = a.CUSTOMERTYPEID.Value,
-                       //dateOfBirth = a.DATEOFBIRTH,
+                       dateOfBirth = (DateTime)a.DATEOFBIRTH,
                        customerId = a.CUSTOMERID,
                        emailAddress = a.EMAILADDRESS,
                        //firstChildName = a.FIRSTCHILDNAME,

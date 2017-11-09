@@ -13,10 +13,6 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<OperationStaffViewModel> GetAllDepartmentStaff(int departmentId);
 
-        DepartmentViewModel GetDepartment(int departmentId);
-
-        DepartmentViewModel GetStaffDepartment(int staffId);
-
         IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery, int departmentId);
         IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery);
         IQueryable<DepartmentCustomersViewModel> SearchDepartment(int departmentId, int companyId, string searchQuery);

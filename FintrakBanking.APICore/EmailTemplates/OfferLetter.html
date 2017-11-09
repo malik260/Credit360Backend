@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style type="text/css">
+        body {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-size: 12px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        th, td {
+            padding: 5px;
+        }
+
+        th {
+            text-align: left;
+        }
+
+        .firstbankLogo {
+            padding-top: 5px;
+            margin-left: 15px;
+            margin-right: -15px;
+            height: auto;
+            display: inline-block;
+        }
+
+        .footerLogo {
+            padding-top: 5px;
+            padding-right: 5px;
+            margin-left: 80%;
+            height: auto;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <span>
+            <a class="firstbankLogo" href="http://uploads.im/lKakG.png">
+                <img src="../Content/firstbank.png" alt="first_bank_new_logo" style="max-width:40%;" border="0">
+            </a>
+        </span>
+    </div>
+    <div style="border-top:5px solid #e0ad0f">&nbsp;</div>
+    <br />
+    <p>{CurrentApplDate}</p>
+    <p>
+        Dear {ObligorName}, <br />
+        <h3><u>LOAN OFFER LETTER</u></h3>
+    </p>
+    <p>
+        We thank you for banking with <strong>FIRST BANK OF NIGERIA LIMITED</strong> by applying for a loan, and based on the information 
+        provided by you we are pleased to grant your request to obtain the loan amount of {TotalLoanAmount} {Currency}. 
+        Details of the loan are given below:
+    </p>
+    <p>
+        <div style="overflow-x:auto">
+            <span> {LoanDetails} </span>
+        </div>
+    </p>
+    <p>
+        <div style="overflow-x:auto">
+            <span> {ConditionPrecedent} </span>
+        </div>
+    </p>
+    <p>
+        Please note that the {InterestRate} interest on this loan is subject to 10% withholding tax (i.e) to be deducted on maturity. 
+        You are thereby encouraged to ensure that you go through the repayment schedule for a clearer understanding of how the loan is to be repaid.
+    </p>
+    <p>
+        In the event that you have to repay this loan prior to the maturity date indicated above, we require that you 
+        give us at least 24hours notice of such repayment. Any repayment either partial or full before the indicated maturity date attracts 
+        a penal charge of 25% on the accrued interest.
+    </p>
+    <p>
+        Please kindly confirm your acceptance of these terms and acknowledge receipt by signing and returning a copy of this offer letter to us.
+    </p>
+    <p>
+        Yours Faithfully, <br /><br />
+        <strong>FIRST BANK OF NIGERIA LIMITED</strong>
+    </p>
+</body>
+</html>
