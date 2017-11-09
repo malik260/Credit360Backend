@@ -90,6 +90,7 @@
     <Compile Include="Customer\CustomerFSRatioRepository.cs" />
     <Compile Include="Customer\CustomerGroupRepository.cs" />
     <Compile Include="Customer\CustomerRepository.cs" />
+    <Compile Include="Customer\KYCDocumentUploadRepository.cs" />
     <Compile Include="Finance\EndOfDayRepository.cs" />
     <Compile Include="Helper\ErrorLogger\ErrorLogRepository.cs" />
     <Compile Include="Finance\FinanceTransactionRepository.cs" />

@@ -29,6 +29,7 @@ namespace FintrakBanking.Entities.Models
             TBL_TEMP_COLLATERAL_CUSTOMER = new HashSet<TBL_TEMP_COLLATERAL_CUSTOMER>();
             TBL_CUSTOMER_BLACKLIST = new HashSet<TBL_CUSTOMER_BLACKLIST>();
             TBL_CUSTOMER_BVN = new HashSet<TBL_CUSTOMER_BVN>();
+            TBL_CUSTOMER_CHILDREN = new HashSet<TBL_CUSTOMER_CHILDREN>();
             TBL_CUSTOMER_COMPANYINFOMATION = new HashSet<TBL_CUSTOMER_COMPANYINFOMATION>();
             TBL_CUSTOMER_EMPLOYMENTHISTORY = new HashSet<TBL_CUSTOMER_EMPLOYMENTHISTORY>();
             TBL_CUSTOMER_FS_CAPTION_DETAIL = new HashSet<TBL_CUSTOMER_FS_CAPTION_DETAIL>();
@@ -54,7 +55,6 @@ namespace FintrakBanking.Entities.Models
 
         public int COMPANYID { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string TITLE { get; set; }
 
@@ -65,22 +65,19 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string MIDDLENAME { get; set; }
 
-        [Required]
         [StringLength(200)]
         public string LASTNAME { get; set; }
 
-        [Required]
         [StringLength(10)]
         public string GENDER { get; set; }
 
         [Column(TypeName = "date")]
-        public DateTime DATEOFBIRTH { get; set; }
+        public DateTime? DATEOFBIRTH { get; set; }
 
-        [Required]
         [StringLength(200)]
         public string PLACEOFBIRTH { get; set; }
 
-        [Required]
+       
         [StringLength(20)]
         public string NATIONALITY { get; set; }
 
@@ -94,12 +91,6 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(200)]
         public string SPOUSE { get; set; }
-
-        [StringLength(200)]
-        public string FIRSTCHILDNAME { get; set; }
-
-        [Column(TypeName = "date")]
-        public DateTime? CHILDDATEOFBIRTH { get; set; }
 
         [StringLength(100)]
         public string OCCUPATION { get; set; }
@@ -134,7 +125,7 @@ namespace FintrakBanking.Entities.Models
 
         public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
-        public short SUBSECTORID { get; set; }
+        public short? SUBSECTORID { get; set; }
 
         public short? FSCAPTIONGROUPID { get; set; }
 
@@ -215,6 +206,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER_BVN> TBL_CUSTOMER_BVN { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CUSTOMER_CHILDREN> TBL_CUSTOMER_CHILDREN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER_COMPANYINFOMATION> TBL_CUSTOMER_COMPANYINFOMATION { get; set; }

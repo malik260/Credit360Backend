@@ -66,6 +66,7 @@
     <Compile Include="Customer\ICustomerGroupRepository.cs" />
     <Compile Include="Customer\ICustomerRepository.cs" />
     <Compile Include="Credit\ILoanCovenantRepository.cs" />
+    <Compile Include="Customer\IKYCDocumentUploadRepository.cs" />
     <Compile Include="ErrorLogger\IErrorLogRepository.cs" />
     <Compile Include="Finance\IEndOfDayRepository.cs" />
     <Compile Include="Finance\IFinanceTransactionRepository.cs" />

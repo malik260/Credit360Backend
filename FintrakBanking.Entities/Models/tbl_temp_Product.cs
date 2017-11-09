@@ -98,6 +98,8 @@ namespace FintrakBanking.Entities.Models
 
         public double? EQUITYCONTRIBUTION { get; set; }
 
+        public short? PRODUCTBEHAVIOURID { get; set; }
+
         public bool? COMPLETED { get; set; }
 
         public bool? APPROVED { get; set; }
@@ -125,6 +127,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         public virtual TBL_DAY_COUNT_CONVENTION TBL_DAY_COUNT_CONVENTION { get; set; }
+
+        public virtual TBL_PRODUCT_BEHAVIOUR TBL_PRODUCT_BEHAVIOUR { get; set; }
 
         public virtual TBL_PRODUCT_CATEGORY TBL_PRODUCT_CATEGORY { get; set; }
 
