@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetBranchLoanAmountLimit(int branchId, int companyId);
         string GetWorkflowDefinition(int operationId, int companyId);
         string GetDisburstLoans(DateRange dateRange, int companyId);
-
+        string GetLoanStatement(int companyId, int loanId);
 
         #region Offer Letter Generation & Loan Monitoring Reports
 

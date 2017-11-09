@@ -908,6 +908,10 @@ namespace FintrakBanking.Repositories.Credit
                         g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
                     .Select(x => new LoanApplicationViewModel
                     {
+                        firstName = x.c.FIRSTNAME,
+                        middleName = x.c.MIDDLENAME,
+                        lastName = x.c.LASTNAME,
+                        customerCode = x.c.CUSTOMERCODE,
                         loanApplicationId = x.g.a.LOANAPPLICATIONID,
                         applicationReferenceNumber = x.g.a.APPLICATIONREFERENCENUMBER,
                         customerId = x.g.a.CUSTOMERID,
@@ -941,10 +945,14 @@ namespace FintrakBanking.Repositories.Credit
                         loanPreliminaryEvaluationId = x.g.a.LOANPRELIMINARYEVALUATIONID,
                         operationId = x.g.a.OPERATIONID,
                     })
-                    //.Where(x => x.applicationReferenceNumber == searchString)
+                    .Where(x => x.applicationReferenceNumber == searchString
+                        || x.firstName.ToLower().Contains(searchString.ToLower())
+                        || x.lastName.ToLower().Contains(searchString.ToLower())
+                        || x.middleName.ToLower().Contains(searchString.ToLower())
+                        || x.customerCode == searchString)
                     ;
 
-            return applications;
+            return applications.ToList();
         }
     }
 }

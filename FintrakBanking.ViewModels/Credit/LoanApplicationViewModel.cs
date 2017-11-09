@@ -93,6 +93,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool notInNegativeCrms { get; set; }
         public bool notInBlackbook { get; set; }
         public bool notInCamsol { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string customerCode { get; set; }
+        public string lastName { get; set; }
         //{
         //    get {  return (LoanApplicationDetail.Max(c => c.proposedTenor) / 12) * 365;
         //         }
