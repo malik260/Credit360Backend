@@ -288,10 +288,11 @@ namespace FintrakBanking.Repositories.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-        public bool AddLoanApplication(LoanApplicationViewModel loan)
+        public TBL_LOAN_APPLICATION AddLoanApplication(LoanApplicationViewModel loan)
         {
             try
             {
+               
                 bool isGroupLoan = false;
                 int response = 0;
                 if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
@@ -376,10 +377,12 @@ namespace FintrakBanking.Repositories.Credit
                 this.auditTrail.AddAuditTrail(audit);
 
                 //end of Audit section -------------------------------
-
+            
                 response = context.SaveChanges();
+                TBL_LOAN_APPLICATION  result;
+                if ( response > 0 )   result = data ;
 
-                return response > 0;
+                return data;
             }
             catch (Exception ex)
             {
@@ -876,7 +879,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL
                         on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                        where a.LOANAPPLICATIONID == loanApplicationId && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationCompleted
+                        where a.LOANAPPLICATIONID == loanApplicationId && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                         && b.STATUSID == (short)LoanApplicationDetailsStatusEnum.Pending
                         && b.HASDONECHECKLIST == false 
                         && a.COMPANYID == companyId && a.DELETED == false

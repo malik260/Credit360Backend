@@ -32,6 +32,26 @@ namespace FintrakBanking.Repositories.Customer
             _genSetup = genSetup;
         }
 
+        double StackHoldersFund = 1000000000000;
+
+
+
+        public dynamic GetCustomerRating(int custormerId)
+        {
+
+            var data = (from c in context.TBL_CUSTOMER
+                        where c.CUSTOMERID == custormerId 
+                        select new
+                        {
+
+                            shFund = c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE,
+                            isInvestment = c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
+                            rating = c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                            limit =  ((double)c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE / 100.00) *  StackHoldersFund
+                       }).FirstOrDefault();
+            return data;
+        }
+
         public bool AddCustomer(CustomerViewModels entity)
         {
             var customer = new TBL_CUSTOMER
