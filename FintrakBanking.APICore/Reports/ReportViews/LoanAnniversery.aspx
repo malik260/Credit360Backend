@@ -1,5 +1,5 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LoanMonthlyRepayment.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.LoanMonthlyRepayment" %>
-<%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LoanAnniversery.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.LoanAnniversery" %>
+ <%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
  <%@ Register assembly="Microsoft.ReportViewer.WebForms" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
@@ -17,11 +17,20 @@
 
         <rsweb:ReportViewer ID="ReportViewer" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="800px" WaitMessageFont-Names="Verdana" 
             WaitMessageFont-Size="14pt" Width="100%" BackColor="" ClientIDMode="AutoID" HighlightBackgroundColor="" InternalBorderColor="204, 204, 204" InternalBorderStyle="Solid" InternalBorderWidth="1px" LinkActiveColor="" LinkActiveHoverColor="" LinkDisabledColor="" PrimaryButtonBackgroundColor="" PrimaryButtonForegroundColor="" PrimaryButtonHoverBackgroundColor="" PrimaryButtonHoverForegroundColor="" SecondaryButtonBackgroundColor="" SecondaryButtonForegroundColor="" SecondaryButtonHoverBackgroundColor="" SecondaryButtonHoverForegroundColor="" SplitterBackColor="" ToolbarDividerColor="" ToolbarForegroundColor="" ToolbarForegroundDisabledColor="" ToolbarHoverBackgroundColor="" ToolbarHoverForegroundColor="" ToolBarItemBorderColor="" ToolBarItemBorderStyle="Solid" ToolBarItemBorderWidth="1px" ToolBarItemHoverBackColor="" ToolBarItemPressedBorderColor="51, 102, 153" ToolBarItemPressedBorderStyle="Solid" ToolBarItemPressedBorderWidth="1px" ToolBarItemPressedHoverBackColor="153, 187, 226">
-            <localreport reportpath="Reports\Report\LoanMonthlyRepayment.rdlc">
-            </localreport>
+            <LocalReport ReportPath="Reports\Report\LoanAnniversery.rdlc" >
+                
+                <datasources>
+                          <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="LoanAnniversery" />
+                      </datasources>
+            </LocalReport>
         </rsweb:ReportViewer>
      
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="LoanAnniversery" TypeName="FintrakBanking.ReportObjects.LoanReportObjects">
+        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="LoanAnniversery" TypeName="FintrakBanking.ReportObjects.LoanReportObjects" InsertMethod="LoanAnniversery">
+            <InsertParameters>
+                <asp:Parameter Name="startDate" Type="DateTime" />
+                <asp:Parameter Name="endDate" Type="DateTime" />
+                <asp:Parameter Name="companyId" Type="Int32" />
+            </InsertParameters>
             <SelectParameters> 
                 <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
@@ -30,11 +39,9 @@
             </SelectParameters>
         </asp:ObjectDataSource>
         </div>
-
         <asp:Label ID="endDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="startDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>
-
     </form>
 </body>
 </html>
