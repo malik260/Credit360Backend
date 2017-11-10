@@ -116,7 +116,7 @@ namespace FintrakBanking.APICore.Controllers
                 await Request.Content.ReadAsMultipartAsync(provider);
 
                 int uploadType;
-                if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                if (!Int32.TryParse(provider.FormData["checkListDefinitionId"], out uploadType))
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
                 }

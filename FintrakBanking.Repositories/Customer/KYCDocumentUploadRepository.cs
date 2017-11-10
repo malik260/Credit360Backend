@@ -19,9 +19,9 @@ namespace FintrakBanking.Repositories.Customer
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
 
-        public KYCDocumentUploadRepository(FinTrakBankingDocumentsContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+        public KYCDocumentUploadRepository(FinTrakBankingDocumentsContext _context, IGeneralSetupRepository general, IAuditTrailRepository audit)
         {
-            this.context = context;
+            this.context = _context;
             this.general = general;
             this.audit = audit;
         }

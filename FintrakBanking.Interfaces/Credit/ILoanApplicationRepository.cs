@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using FintrakBanking.Entities.Models;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -23,6 +24,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<ProductClassViewModel> GetProductClass();
 
+        bool UpdateApprovalStatusForApplication(int applocationId);
+
         IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId);
 
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId);
@@ -33,7 +36,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationsDetails(int loanApplicationId, int companyId);
 
-        bool AddLoanApplication(LoanApplicationViewModel loan);
+        TBL_LOAN_APPLICATION AddLoanApplication(LoanApplicationViewModel loan);
 
         //IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
 

@@ -5,6 +5,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -93,6 +94,55 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [Route("{customerId}")]
         public HttpResponseMessage GetCustomer(int custormerId)
+        {
+
+            try
+            {
+                var data = repo.GetCustomer(custormerId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("customerRating/{id}")]
+        public HttpResponseMessage GetCustomerRating(int id)
+        {
+
+            try
+            {
+                var data = repo.GetCustomerRating(id);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("customerbyid/")]
+        public HttpResponseMessage GetCustomerByCustomerId(int custormerId)
         {
 
             try
@@ -536,6 +586,34 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
 
                 var data = repo.AddCustomerBvn(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [Route("customer-children")]
+        public HttpResponseMessage AddCustomerChildren([FromBody] List<CustomerChildrenViewModel> entity)
+        {
+            try
+            {
+                if (entity.Count <= 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Please select add Children to continue" });
+                }
+                
+
+                var data = repo.AddCustomerChildren(entity, token.GetStaffId, (short)token.GetBranchId);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

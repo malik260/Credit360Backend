@@ -45,28 +45,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("department")]
-        public HttpResponseMessage DeleteDepartment(int departmentId)
-        {
-            var account = repo.GetDepartment(departmentId);
-            if (account == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
-
-            try
-            {
-                var depart = repo.DeleteDepartment(departmentId);
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = departmentId, message = "account has been deleted successfully" });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
+       
         [HttpGet]
         [Route("department")]
         public HttpResponseMessage GetAllDepartment()
@@ -89,7 +68,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("department/units{departmentId}")]
+        [Route("units/department/{departmentId}")]
         public HttpResponseMessage GetAllDepartmentUnits(short departmentId)
         {
             var Message = string.Empty;
@@ -106,6 +85,73 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, Message = e.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("units")]
+        public HttpResponseMessage GetAllUnits()
+        {
+            var Message = string.Empty;
+            try
+            {
+                var units = repo.GetAllUnits().ToList();
+                if (units.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = units, count = units.Count });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No department found" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, Message = e.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("unit")]
+        public HttpResponseMessage AddUnit(DepartmentViewModel entity)
+        {
+            if (entity == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Empty Record" });
+            }
+
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                var unit = repo.AddUnit(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = unit, message = "The record has been created successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("unit/{unitId}")]
+        public HttpResponseMessage UpdateUnit(short unitId, DepartmentViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                var data = repo.UpdateUnit(unitId, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this group {data}" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this group {e.Message}" });
             }
         }
 
@@ -176,26 +222,26 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
-        [Route("department/{departmentId}")]
-        public HttpResponseMessage GetDepartment(int departmentId)
-        {
-            var account = repo.GetDepartment(departmentId);
-            if (account == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+        //[HttpPost]
+        //[Route("department/{departmentId}")]
+        //public HttpResponseMessage GetDepartment(int departmentId)
+        //{
+        //    var account = repo.GetDepartment(departmentId);
+        //    if (account == null)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //    }
 
-            try
-            {
-                var depart = repo.GetDepartment(departmentId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = depart });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        //    try
+        //    {
+        //        var depart = repo.GetDepartment(departmentId);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = depart });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
         [HttpPut]
         [Route("department/{departmentId}")]
@@ -234,18 +280,18 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet, Route("department/user-department")]
-        public HttpResponseMessage GetUserDepartment()
-        {
-            try
-            {
-                var data = repo.GetStaffDepartment(token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
-        }
+        //[HttpGet, Route("department/user-department")]
+        //public HttpResponseMessage GetUserDepartment()
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetStaffDepartment(token.GetStaffId);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+        //    }
+        //}
     }
 }

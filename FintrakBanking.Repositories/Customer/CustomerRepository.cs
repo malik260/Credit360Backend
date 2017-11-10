@@ -32,6 +32,26 @@ namespace FintrakBanking.Repositories.Customer
             _genSetup = genSetup;
         }
 
+        double StackHoldersFund = 1000000000000;
+
+
+
+        public dynamic GetCustomerRating(int custormerId)
+        {
+
+            var data = (from c in context.TBL_CUSTOMER
+                        where c.CUSTOMERID == custormerId 
+                        select new
+                        {
+
+                            shFund = c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE,
+                            isInvestment = c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
+                            rating = c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                            limit =  ((double)c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE / 100.00) *  StackHoldersFund
+                       }).FirstOrDefault();
+            return data;
+        }
+
         public bool AddCustomer(CustomerViewModels entity)
         {
             var customer = new TBL_CUSTOMER
@@ -126,7 +146,7 @@ namespace FintrakBanking.Repositories.Customer
             auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
-       
+
 
             // return response;
         }
@@ -188,9 +208,9 @@ namespace FintrakBanking.Repositories.Customer
                         address.STATEID = entity.stateId;
                         address.HOMETOWN = entity.homeTown;
                         address.POBOX = entity.pobox;
-                        address.STATEID  = entity.stateId;
+                        address.STATEID = entity.stateId;
                         address.ELECTRICMETERNUMBER = entity.electricMeterNumber;
-                        address.NEARESTLANDMARK  = entity.nearestLandmark;
+                        address.NEARESTLANDMARK = entity.nearestLandmark;
                         context.TBL_CUSTOMER_ADDRESS.Add(address);
                     }
 
@@ -304,7 +324,61 @@ namespace FintrakBanking.Repositories.Customer
             }
             return false;
         }
+        public bool AddCustomerChildren(List<CustomerChildrenViewModel> models, int staffId, short BranchId)
+        {
+            if (models != null)
+            {
+                try
+                {
+                    TBL_CUSTOMER_CHILDREN child;
+                    foreach (CustomerChildrenViewModel entity in models)
+                    {
+                        if (entity.customerChildrenId != 0 || entity.customerChildrenId < 0)
+                        {
+                            child = context.TBL_CUSTOMER_CHILDREN.Find(entity.customerChildrenId);
+                            if (child != null)
+                            {
+                                child.CHILDNAME = entity.childName;
+                                child.CHILDDATEOFBIRTH = entity.childDateOfBirth;
+                            }
+                        }
+                        else
+                        {
+                            child = new TBL_CUSTOMER_CHILDREN()
+                            {
+                                CUSTOMERID = entity.customerId,
+                                CHILDNAME = entity.childName,
+                                CHILDDATEOFBIRTH = entity.childDateOfBirth
+                            };
+                            context.TBL_CUSTOMER_CHILDREN.Add(child);
+                        }
+                        // Audit Section ----------------------------
+                        var audit = new TBL_AUDIT
+                        {
+                            AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                            STAFFID = staffId,
+                            BRANCHID = BranchId,
+                            DETAIL = "Added new TBL_CUSTOMER_CHILDREN for customer ID: + (" + entity.customerId + ") ",
+                            IPADDRESS = entity.userIPAddress,
+                            URL = entity.applicationUrl,
+                            APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                            SYSTEMDATETIME = DateTime.Now
+                        };
 
+                        this.auditTrail.AddAuditTrail(audit);
+
+                        var response = context.SaveChanges() != 0;
+                        return response;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+
+            return false;
+        }
         private void AddCustomerPhoneContact(IEnumerable<CustomerPhoneContactViewModels> entity)
         {
             var phone = new TBL_CUSTOMER_PHONECONTACT();
@@ -414,7 +488,7 @@ namespace FintrakBanking.Repositories.Customer
                         company.AUTHORISEDCAPITAL = entity.authorizedCapital;
                         context.TBL_CUSTOMER_COMPANYINFOMATION.Add(company);
                     }
-                    
+
                     // Audit Section ---------------------------
                     var audit = new TBL_AUDIT
                     {
@@ -436,12 +510,12 @@ namespace FintrakBanking.Repositories.Customer
                 {
                     throw new Exception(ex.Message);
                 }
-               
+
             }
             return false;
         }
-         
-        
+
+
         private void AddCustomerCompanyInfomation(List<CustomerCompanyInfomationViewModels> entity,
            int status)
         {
@@ -984,6 +1058,23 @@ namespace FintrakBanking.Repositories.Customer
                            phoneNumber = s.PHONENUMBER,
                            email = s.EMAILADDRESS
                        }).ToList(),
+                       CustomerCompanyAccountSignatory = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory)
+                       .Select(s => new CustomerCompanyAccountSignatoryViewModels()
+                       {
+                           companyDirectorId = s.COMPANYDIRECTORID,
+                           surname = s.SURNAME,
+                           firstname = s.FIRSTNAME,
+                           numberOfShares = s.NUMBEROFSHARES,
+                           isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                           bankVerificationNumber = s.CUSTOMERBVN,
+                           companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                           customerId = s.CUSTOMERID,
+                           customerName = s.FIRSTNAME + " " + s.SURNAME,
+                           address = s.ADDRESS,
+                           phoneNumber = s.PHONENUMBER,
+                           email = s.EMAILADDRESS
+                       }).ToList(),
                        CustomerClientOrSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Client)
                        .Select(cs => new CustomerClientOrSupplierViewModels()
                        {
@@ -1029,6 +1120,14 @@ namespace FintrakBanking.Repositories.Customer
                            valuationCycle = x.VALUATIONCYCLE,
                            haircut = x.HAIRCUT,
                            approvalStatus = x.APPROVALSTATUS,
+                       }).ToList(),
+                       CustomerChildren = context.TBL_CUSTOMER_CHILDREN.Where(chd => chd.CUSTOMERID == a.CUSTOMERID)
+                       .Select(kk => new CustomerChildrenViewModel()
+                       {
+                           customerChildrenId = kk.CUSTOMERCHILDRENID,
+                           customerId = kk.CUSTOMERID,
+                           childName = kk.CHILDNAME,
+                           childDateOfBirth = kk.CHILDDATEOFBIRTH
                        }).ToList(),
                    };
 
@@ -1314,7 +1413,7 @@ namespace FintrakBanking.Repositories.Customer
             }
             return null;
         }
-        
+
     }
 }
 

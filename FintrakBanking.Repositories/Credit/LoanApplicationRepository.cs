@@ -45,6 +45,8 @@ namespace FintrakBanking.Repositories.Credit
 
         // public 
 
+            
+
         public IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId)
         {
             var data = context.TBL_LOAN_APPLICATION.Where(c => c.CUSTOMERID == customerId && c.COMPANYID == companyId)
@@ -201,7 +203,38 @@ namespace FintrakBanking.Repositories.Credit
             };
             return data.ToList();
 
-        }  
+        }
+
+        public async Task<bool> UpdateApprovalStatus(ApprovalViewModel entity)
+        {
+            var data = this.context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+            {
+                //data.LoanStatusId = (short)entity.approvalStatusId;
+                //data.ActedOnaBy = entity.staffId;
+                //data.DateActedOn = genSetup.GetApplicaionDate();
+                data.LOANAPPLICATIONID = (short)entity.approvalStatusId;
+            }
+
+            //Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ApprovalStatusUpdated,
+                STAFFID = entity.staffId,
+                BRANCHID = (short)entity.BranchId,
+                DETAIL =
+                    $"Change Loan Application Status with reference number '{data.APPLICATIONREFERENCENUMBER}' to {GetLoanStatus((short)entity.approvalStatusId)}",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.targetId
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            return await context.SaveChangesAsync() != 0;
+        }
 
 
         public IEnumerable<ProductClassViewModel> GetProductClass()
@@ -257,41 +290,43 @@ namespace FintrakBanking.Repositories.Credit
                 .ACCOUNTSTATUS;
         }
 
-        public async Task<bool> UpdateApprovalStatus(ApprovalViewModel entity)
+        public bool UpdateApprovalStatusForApplication(int  applocationId)//, object entity)
         {
-            var data = this.context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+            var data = this.context.TBL_LOAN_APPLICATION.FirstOrDefault( c=> c.LOANAPPLICATIONID == applocationId);
             {
                 //data.LoanStatusId = (short)entity.approvalStatusId;
                 //data.ActedOnaBy = entity.staffId;
                 //data.DateActedOn = genSetup.GetApplicaionDate();
-                data.LOANAPPLICATIONID = (short)entity.approvalStatusId;
+                
+                data.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
             }
 
             //Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.ApprovalStatusUpdated,
-                STAFFID = entity.staffId,
-                BRANCHID = (short)entity.BranchId,
-                DETAIL =
-                    $"Change Loan Application Status with reference number '{data.APPLICATIONREFERENCENUMBER}' to {GetLoanStatus((short)entity.approvalStatusId)}",
-                IPADDRESS = entity.userIPAddress,
-                URL = entity.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.targetId
-            };
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.ApprovalStatusUpdated,
+            //    STAFFID = entity.staffId,
+            //    BRANCHID = (short)entity.BranchId,
+            //    DETAIL =
+            //        $"Change Loan Application Status with reference number '{data.APPLICATIONREFERENCENUMBER}' to {GetLoanStatus((short)entity.approvalStatusId)}",
+            //    IPADDRESS = entity.userIPAddress,
+            //    URL = entity.applicationUrl,
+            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.targetId
+            //};
 
-            this.auditTrail.AddAuditTrail(audit);
+          //  this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
 
-            return await context.SaveChangesAsync() != 0;
+            return  context.SaveChanges() != 0;
         }
 
-        public bool AddLoanApplication(LoanApplicationViewModel loan)
+        public TBL_LOAN_APPLICATION AddLoanApplication(LoanApplicationViewModel loan)
         {
             try
             {
+               
                 bool isGroupLoan = false;
                 int response = 0;
                 if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
@@ -374,12 +409,14 @@ namespace FintrakBanking.Repositories.Credit
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
-
+               
                 //end of Audit section -------------------------------
 
                 response = context.SaveChanges();
+                TBL_LOAN_APPLICATION  result;
+                if ( response > 0 )   result = data ;
 
-                return response > 0;
+                return data;
             }
             catch (Exception ex)
             {
@@ -876,7 +913,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL
                         on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                        where a.LOANAPPLICATIONID == loanApplicationId && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationCompleted
+                        where a.LOANAPPLICATIONID == loanApplicationId && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                         && b.STATUSID == (short)LoanApplicationDetailsStatusEnum.Pending
                         && b.HASDONECHECKLIST == false 
                         && a.COMPANYID == companyId && a.DELETED == false
@@ -908,6 +945,10 @@ namespace FintrakBanking.Repositories.Credit
                         g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
                     .Select(x => new LoanApplicationViewModel
                     {
+                        firstName = x.c.FIRSTNAME,
+                        middleName = x.c.MIDDLENAME,
+                        lastName = x.c.LASTNAME,
+                        customerCode = x.c.CUSTOMERCODE,
                         loanApplicationId = x.g.a.LOANAPPLICATIONID,
                         applicationReferenceNumber = x.g.a.APPLICATIONREFERENCENUMBER,
                         customerId = x.g.a.CUSTOMERID,
@@ -941,10 +982,14 @@ namespace FintrakBanking.Repositories.Credit
                         loanPreliminaryEvaluationId = x.g.a.LOANPRELIMINARYEVALUATIONID,
                         operationId = x.g.a.OPERATIONID,
                     })
-                    .Where(x => x.applicationReferenceNumber == searchString)
+                    .Where(x => x.applicationReferenceNumber == searchString
+                        || x.firstName.ToLower().Contains(searchString.ToLower())
+                        || x.lastName.ToLower().Contains(searchString.ToLower())
+                        || x.middleName.ToLower().Contains(searchString.ToLower())
+                        || x.customerCode == searchString)
                     ;
 
-            return applications;
+            return applications.ToList();
         }
     }
 }

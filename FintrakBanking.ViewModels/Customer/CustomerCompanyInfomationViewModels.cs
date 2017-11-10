@@ -50,6 +50,22 @@
         public string phoneNumber { get; set; }
         public string email { get; set; }
     }
+    public class CustomerCompanyAccountSignatoryViewModels
+    {
+        public int companyDirectorId { get; set; }
+        public int customerId { get; set; }
+        public string customerName { get; set; }
+        public string surname { get; set; }
+        public string firstname { get; set; }
+        public string bankVerificationNumber { get; set; }
+        public short companyDirectorTypeId { get; set; }
+        public string companyDirectorTypeName { get; set; }
+        public int numberOfShares { get; set; }
+        public bool isPoliticallyExposed { get; set; }
+        public string address { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+    }
     public class CustomerClientOrSupplierViewModels : GeneralEntity
     {
         public int client_SupplierId { get; set; }

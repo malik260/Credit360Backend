@@ -13,6 +13,7 @@ using FintrakBanking.Interfaces.Credit;
 using System.ComponentModel.Composition;
 using System.ServiceModel;
 using FintrakBanking.Interfaces.Setups.General;
+using XLeratorDLL_financial;
 
 namespace FintrakBanking.Repositories.Credit
 {

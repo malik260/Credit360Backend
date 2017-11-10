@@ -18,7 +18,8 @@ namespace FintrakBanking.ViewModels.Customer
             CustomerPhoneContact = new List<CustomerPhoneContactViewModels>();
             CustomerCompanyDirectors = new List<CustomerCompanyDirectorsViewModels>();
             CustomerClientOrSupplier = new List<CustomerClientOrSupplierViewModels>();
-
+            CustomerChildren = new List<CustomerChildrenViewModel>();
+            CustomerCompanyAccountSignatory = new List<CustomerCompanyAccountSignatoryViewModels>();
         }
 
         public int customerId { get; set; }
@@ -72,10 +73,12 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerPhoneContactViewModels> CustomerPhoneContact { get; set; }
         public List<CustomerCompanyDirectorsViewModels> CustomerCompanyDirectors { get; set; }
         public List<CustomerCompanyShareholderViewModels> CustomerCompanyShareholder { get; set; }
+        public List<CustomerCompanyAccountSignatoryViewModels> CustomerCompanyAccountSignatory { get; set; }
         public List<CustomerClientOrSupplierViewModels> CustomerClientOrSupplier { get; set; }
         public List<CustomerSupplierViewModels> CustomerSupplier { get; set; }
         public List<CollateralViewModel> CustomerCollateral { get; set; }
-
+        public List<CustomerChildrenViewModel> CustomerChildren { get; set; }
+       
     }
 
     public class CustomerSearchItemViewModels
@@ -95,7 +98,14 @@ namespace FintrakBanking.ViewModels.Customer
         public short subSectorId { get; set; }
         public string subSectorName { get; set; }
     }
+    public class CustomerChildrenViewModel : GeneralEntity
+    {
+        public int customerChildrenId { get; set; }
+        public int customerId { get; set; }
+        public string childName { get; set; }
+        public DateTime childDateOfBirth { get; set; }
 
+    }
     public class CustomerSectorViewModel
     {
         public short subSectorId { get; set; }

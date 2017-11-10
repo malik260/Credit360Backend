@@ -1150,16 +1150,6 @@ namespace FintrakBanking.Repositories.Customer
                     ).Take(10);
             }
 
-            //foreach (var item in allGroups)
-            //{
-            //    foreach (var grpMap in item.customerGroupMappings)
-            //    {
-            //        grpMap.isBlackList = creditLimitRepo.ValidateBlackList(grpMap.customerId) > 0;
-            //        grpMap.isOnWatchList = creditLimitRepo.ValidateWatchList(grpMap.customerId) > 0;
-            //        grpMap.isCamsol = creditLimitRepo.ValidateCamsol(grpMap.customerId) > 0;
-            //    }
-            //}
-
             return allGroups;
         }
 
@@ -1177,6 +1167,17 @@ namespace FintrakBanking.Repositories.Customer
             return customerGroups;
         }
 
+        public CustomerGroupViewModel GetCustomerGroupDetailsByGroupId(int customerGroupId)
+        {
+            var data = GellAllCustomerGroupMappings().FirstOrDefault(x => x.customerGroupId == customerGroupId);
+
+            if (data != null)
+            {
+                return data;
+            }
+
+            return new CustomerGroupViewModel { };
+        }
         #endregion TBL_CUSTOMER Group Mapping
     }
 }
