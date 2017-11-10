@@ -250,6 +250,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("customer-group/{customerGroupId}/mapping-details")]
+        public HttpResponseMessage GetCustomerGroupDetailedMapping(int customerGroupId)
+        {
+            try
+            {
+                var data = repo.GetCustomerGroupDetailsByGroupId(customerGroupId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e}" });
+            }
+        }
+
         #endregion
 
         #region Customer Group Mapping
