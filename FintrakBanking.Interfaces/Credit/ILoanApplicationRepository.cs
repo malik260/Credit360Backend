@@ -33,7 +33,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationsDetails(int loanApplicationId, int companyId);
 
-        bool AddLoanApplication(LoanApplicationViewModel loan);
+        bool AddLoanApplication(LoanApplicationViewModel loan, out int loanId);
 
         //IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
 

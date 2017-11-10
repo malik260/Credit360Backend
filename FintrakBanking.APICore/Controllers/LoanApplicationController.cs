@@ -279,11 +279,11 @@ namespace FintrakBanking.APICore.Controllers
 
                 entity.misCode = "001";
                 entity.teamMisCode = "004";
-
-                var response =   repoApply.AddLoanApplication(entity);
+                int loanid;
+                var response =   repoApply.AddLoanApplication(entity, out loanid);
                 //if (response != null)
                 //{
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "The loan application completed successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true,  message = "The loan application completed successfully" });
                 //}
 
                 //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
