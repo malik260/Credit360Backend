@@ -159,21 +159,23 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LoadConditionPrecedent(int loanApplicationId)
         {
-            if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Any() == false)
+            //if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Any() == false)
+            //{
+            var conditions = context.TBL_CONDITION_PRECEDENT.ToList(); // -------- REFACTOR TO FILTER
+            foreach (var c in conditions)
             {
-                var conditions = context.TBL_CONDITION_PRECEDENT.ToList(); // -------- REFACTOR TO FILTER
-                foreach (var c in conditions)
+                var cond = new TBL_LOAN_CONDITION_PRECEDENT
                 {
-                    context.TBL_LOAN_CONDITION_PRECEDENT.Add(new TBL_LOAN_CONDITION_PRECEDENT
-                    {
-                        CONDITION = c.CONDITION,
-                        ISEXTERNAL = c.ISEXTERNAL,
-                        CREATEDBY = c.CREATEDBY,
-                        LOANAPPLICATIONID = loanApplicationId,
-                        DATETIMECREATED = DateTime.Now
-                    });
-                }
+                    CONDITION = c.CONDITION,
+                    ISEXTERNAL = c.ISEXTERNAL,
+                    CREATEDBY = c.CREATEDBY,
+                    LOANAPPLICATIONID = loanApplicationId,
+                    DATETIMECREATED = DateTime.Now
+                };
+                context.TBL_LOAN_CONDITION_PRECEDENT.Add(cond);
             }
+            context.SaveChanges();
+            //}
         }
 
         private int GetFirstApprovalLevelId(/*short productId, int productClassId, */int staffId = 0) // ---- REFACTOR!!!

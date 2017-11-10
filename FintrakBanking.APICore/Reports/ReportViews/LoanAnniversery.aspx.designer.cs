@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class LoanMonthlyRepayment {
+    public partial class LoanAnniversery {
         
         /// <summary>
         /// form1 control.
