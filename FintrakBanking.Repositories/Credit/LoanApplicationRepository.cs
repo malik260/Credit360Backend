@@ -288,10 +288,11 @@ namespace FintrakBanking.Repositories.Credit
             return await context.SaveChangesAsync() != 0;
         }
 
-        public bool AddLoanApplication(LoanApplicationViewModel loan, out int loanId)
+        public TBL_LOAN_APPLICATION AddLoanApplication(LoanApplicationViewModel loan)
         {
             try
             {
+               
                 bool isGroupLoan = false;
                 int response = 0;
                 if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
@@ -378,8 +379,10 @@ namespace FintrakBanking.Repositories.Credit
                 //end of Audit section -------------------------------
 
                 response = context.SaveChanges();
+                TBL_LOAN_APPLICATION  result;
+                if ( response > 0 )   result = data ;
 
-                return response > 0;
+                return data;
             }
             catch (Exception ex)
             {
