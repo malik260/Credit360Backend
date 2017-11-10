@@ -1611,6 +1611,8 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_PRODUCT)
                 .WillCascadeOnDelete(false);
 
+          
+
             modelBuilder.Entity<TBL_PRODUCT_CATEGORY>()
                 .HasMany(e => e.TBL_PRODUCT)
                 .WithRequired(e => e.TBL_PRODUCT_CATEGORY)
@@ -1631,11 +1633,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_PRODUCT_CLASS>()
                 .HasMany(e => e.TBL_PRODUCT)
-                .WithRequired(e => e.TBL_PRODUCT_CLASS)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_CLASS>()
-                .HasMany(e => e.TBL_CREDIT_TEMPLATE)
                 .WithRequired(e => e.TBL_PRODUCT_CLASS)
                 .WillCascadeOnDelete(false);
 

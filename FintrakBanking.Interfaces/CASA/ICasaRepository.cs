@@ -27,5 +27,7 @@ namespace FintrakBanking.Interfaces.CASA
         CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId);
 
         string GetAllCASAAccount(string casaAccountNumber, int companyId);
+
+        CasaCustomerSearchViewModel GetCustomerAccountDetailsById(int customerId);
     }
 }

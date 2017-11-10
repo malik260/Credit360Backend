@@ -9,12 +9,12 @@ namespace FintrakBanking.Interfaces.Setups.General
     {
         IEnumerable<DepartmentViewModel> GetAllDepartment();
         IEnumerable<DepartmentViewModel> GetAllDepartmentUnits(short departmentId);
+        IEnumerable<DepartmentViewModel> GetAllUnits();
+        bool AddUnit(DepartmentViewModel entity);
+        bool UpdateUnit(short unitId, DepartmentViewModel entity);
+
 
         IEnumerable<OperationStaffViewModel> GetAllDepartmentStaff(int departmentId);
-
-        DepartmentViewModel GetDepartment(int departmentId);
-
-        DepartmentViewModel GetStaffDepartment(int staffId);
 
         IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery, int departmentId);
         IQueryable<DepartmentCustomersViewModel> SearchForDepartmentStaff(int companyId, string searchQuery);

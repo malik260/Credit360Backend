@@ -64,6 +64,7 @@ namespace FintrakBanking.Interfaces.Customer
 
         IEnumerable<GroupCustomerMembersViewModel> GetGroupMembersByGroupId(int customerGroupId, int companyId);
         IQueryable<CustomerGroupViewModel> SearchForCustomerGroupRealtime(int companyId, string searchQuery);
+        CustomerGroupViewModel GetCustomerGroupDetailsByGroupId(int customerGroupId);
 
         #endregion tbl_Customer Group Mapping repository
     }

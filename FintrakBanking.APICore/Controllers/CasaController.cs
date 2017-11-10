@@ -1,26 +1,21 @@
-﻿using FintrakBanking.Interfaces.CASA;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.ViewModels.Setups.General; 
-using System.Linq;
+﻿using FintrakBanking.APICore.core;
+using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.ViewModels.CASA;
 using System;
-using System.Collections.Generic;
-using FintrakBanking.APICore.JWTAuth;
-using System.Web.Http;
-using System.Net.Http;
+using System.Linq;
 using System.Net;
-using FintrakBanking.APICore.core;
-
+using System.Net.Http;
+using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-
     [RoutePrefix("api/v1/casa")]
     public class CasaController : ApiControllerBase
     {
         private ICasaRepository repo;
 
-        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        private TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public CasaController(ICasaRepository _repo)
         {
@@ -34,15 +29,13 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 CasaViewModel data = repo.GetAccount(accountId);
-               
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-               
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
 
         [HttpGet]
@@ -86,11 +79,11 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = ex.Message });
             }
-
         }
+
         [HttpGet]
         [Route("all-customer-accounts/{customerId}")]
-        public HttpResponseMessage GetAllCASAAccount(string  casaAccountNumber)
+        public HttpResponseMessage GetAllCASAAccount(string casaAccountNumber)
         {
             try
             {
@@ -110,58 +103,52 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = ex.Message });
             }
-
         }
-
 
         [HttpGet]
         [Route("customer/{customerId}")]
-        public HttpResponseMessage GetAccountByCustomerId(  int customerId)
-        { 
-                try
+        public HttpResponseMessage GetAccountByCustomerId(int customerId)
+        {
+            try
+            {
+                var data = repo.GetAccountByCustomerId(customerId);
+                if (data != null)
                 {
-                    var data = repo.GetAccountByCustomerId(customerId);
-                    if (data != null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = true, message = "No record found" });
-                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
-                catch (Exception ex)
+                else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = ex.Message });
+                       new { success = true, message = "No record found" });
                 }
-                  
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
         [Route("account-number-name/")]
         public HttpResponseMessage FindAccount(string accountNumberOrName)
         {
-              
-                try
-                {
-
-                    var data = repo.FindAccount(accountNumberOrName, token.GetCompanyId);// token.GetCompanyId);
-                    if (data == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = false, message = "No record found" });
-                    }
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = true, result = data });
-                }
-                catch (System.Exception ex)
+            try
+            {
+                var data = repo.FindAccount(accountNumberOrName, token.GetCompanyId);// token.GetCompanyId);
+                if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                          new { success = false, message = ex.Message });
+                       new { success = false, message = "No record found" });
                 }
-                  
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
@@ -184,30 +171,46 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });
             }
-
         }
 
         [HttpGet]
         [Route("customer/search")]
-        public HttpResponseMessage SearchCustomer(  string q, string t)
-        { 
-                try
+        public HttpResponseMessage SearchCustomer(string q, string t)
+        {
+            try
+            {
+                var data = repo.SearchCustomer(int.Parse(t), token.GetCompanyId, q).ToList();
+                if (data == null)
                 {
-
-                    var data = repo.SearchCustomer(int.Parse(t), token.GetCompanyId, q).ToList();
-                    if (data == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = "No record found" });
-                    }
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
-                } 
-
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
- 
+        [HttpGet]
+        [Route("customer/{customerId}/account-details")]
+        public HttpResponseMessage SearchCustomerAccountDetails(int customerId)
+        {
+            try
+            {
+                var data = repo.GetCustomerAccountDetailsById(customerId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
-} 
+}

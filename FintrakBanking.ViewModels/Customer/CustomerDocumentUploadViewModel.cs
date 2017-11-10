@@ -20,6 +20,19 @@ namespace FintrakBanking.ViewModels.Customer
         public string physicalFileNumber { get; set; }
         public string physicalLocation { get; set; }
     }
+    public class CheckListDocumentUploadViewModel : GeneralEntity
+    {
+        public int checkListDefinitionId { get; set; }
+        public int checkListStatusId { get; set; }
+        public int loanApplicationId { get; set; }
+        public int loanDetailsId { get; set; }
+        public byte[] fileData { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public DateTime systemDateTime { get; set; }
+        public string physicalFileNumber { get; set; }
+        public string physicalLocation { get; set; }
+    }
     public class KYCDocumentTypeViewModel
     {
         public int documentTypeId { get; set; }
