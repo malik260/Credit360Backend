@@ -475,5 +475,16 @@ namespace FintrakBanking.Repositories.CASA
             return allCustomers;
         }
 
+        public CasaCustomerSearchViewModel GetCustomerAccountDetailsById(int customerId)
+        {
+            var data = GetAllAccounts().FirstOrDefault(x => x.customerId == customerId);
+
+            if (data != null)
+            {
+                return data;
+            }
+
+            return new CasaCustomerSearchViewModel { };
+        }
     }
 }
