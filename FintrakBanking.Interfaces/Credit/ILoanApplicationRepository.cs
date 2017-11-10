@@ -24,6 +24,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<ProductClassViewModel> GetProductClass();
 
+        bool UpdateApprovalStatusForApplication(int applocationId);
+
         IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId);
 
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId);
