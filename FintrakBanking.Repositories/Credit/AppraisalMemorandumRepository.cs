@@ -85,7 +85,6 @@ namespace FintrakBanking.Repositories.Credit
             return memo;
         }
 
-
         public AppraisalMemorandumViewModel AddAppraisalMemorandum(AppraisalMemorandumViewModel model)
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
@@ -160,18 +159,20 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LoadConditionPrecedent(int loanApplicationId)
         {
-            var conditions = context.TBL_CONDITION_PRECEDENT.Where(x=>x.CORPORATE == true || x.RETAIL == true); // <----------- refactor 
-            foreach (var c in conditions)
+            if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Any() == false)
             {
-                var data = new TBL_LOAN_CONDITION_PRECEDENT
+                var conditions = context.TBL_CONDITION_PRECEDENT.ToList(); // -------- REFACTOR TO FILTER
+                foreach (var c in conditions)
                 {
-                    CONDITION = c.CONDITION,
-                    ISEXTERNAL = c.ISEXTERNAL,
-                    CREATEDBY = c.CREATEDBY,
-                    LOANAPPLICATIONID = loanApplicationId,
-                    DATETIMECREATED = general.GetApplicationDate(),
-                };
-                context.TBL_LOAN_CONDITION_PRECEDENT.Add(data);
+                    context.TBL_LOAN_CONDITION_PRECEDENT.Add(new TBL_LOAN_CONDITION_PRECEDENT
+                    {
+                        CONDITION = c.CONDITION,
+                        ISEXTERNAL = c.ISEXTERNAL,
+                        CREATEDBY = c.CREATEDBY,
+                        LOANAPPLICATIONID = loanApplicationId,
+                        DATETIMECREATED = DateTime.Now
+                    });
+                }
             }
         }
 
@@ -441,7 +442,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return details;
         }
-        // tbl_Credit_Appraisal_Memorandum_Loan_Detail SHOULD LEAVE THE DB
 
         public IEnumerable<DocumentationViewModel> GetAllDocumentation(int applicationId)
         {

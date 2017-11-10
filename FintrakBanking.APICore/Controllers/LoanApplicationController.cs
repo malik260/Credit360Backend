@@ -283,7 +283,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response =   repoApply.AddLoanApplication(entity);
                 //if (response != null)
                 //{
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "The loan application completed successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response , message = "The loan application completed successfully" });
                 //}
 
                 //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
