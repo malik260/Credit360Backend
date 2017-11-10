@@ -51,7 +51,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool AddStaffSignature(StaffDocumentViewModel model, byte[] file);
         bool UpdateStaffSignature(StaffDocumentViewModel model, int documentId);
-        IEnumerable<StaffDocumentViewModel> GetAllStaffSignatures();
-        IEnumerable<StaffDocumentViewModel> GetStaffSignatureByStaffCode(string staffCode);
+        IEnumerable<StaffDocumentViewModel> GetAllStaffSignatures(int companyId);
+        StaffDocumentViewModel GetStaffSignatureByStaffCode(string staffCode, int companyId);
     }
 }

@@ -294,7 +294,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                
                 bool isGroupLoan = false;
-                int response = 0;
+                int response = 0; int loanId = 0;
                 if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
                 {
                     isGroupLoan = true;
