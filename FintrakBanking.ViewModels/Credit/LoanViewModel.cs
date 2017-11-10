@@ -326,7 +326,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string camReference { get; set; }
         public List<CasaViewModel> customerAccounts { get; set; }
         public int appraisalMemorandumId { get; set; }
-        public string customerCode { get; set; }
         public int? casaAccountId { get; set; }
         public string loanStatusName { get; set; }
         public string sectorName { get; set; }
