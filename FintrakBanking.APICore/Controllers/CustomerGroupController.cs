@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using System.Threading.Tasks;
+using FintrakBanking.Interfaces.ErrorLogger;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -20,12 +21,14 @@ namespace FintrakBanking.APICore.Controllers
     public class CustomerGroupController : ApiControllerBase
     {
         private ICustomerGroupRepository repo;
+        private IErrorLogRepository errorLogger;
 
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public CustomerGroupController(ICustomerGroupRepository _repo)
+        public CustomerGroupController(ICustomerGroupRepository _repo, IErrorLogRepository _errorLogger)
         {
             this.repo = _repo;
+            errorLogger = _errorLogger;
         }
 
         #region Customer Group
@@ -64,6 +67,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
@@ -96,6 +100,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error deleting this record {e.InnerException}" });
             }
@@ -118,6 +123,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
@@ -139,6 +146,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
@@ -154,6 +163,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
@@ -184,6 +194,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {e.Message}" });
             }
         }
@@ -212,6 +224,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An error occured: {ex.Message}" });
             }
         }
@@ -228,6 +242,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {e}" });
             }
@@ -245,6 +261,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {e}" });
             }
@@ -268,6 +286,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {e}" });
             }
@@ -300,6 +320,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
@@ -322,6 +344,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.InnerException}" });
             }
         }
@@ -354,6 +378,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error deleting this record {e.InnerException}" });
             }
         }
@@ -375,6 +401,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
@@ -404,6 +432,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
@@ -420,6 +450,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
@@ -435,6 +467,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
@@ -456,6 +490,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
@@ -485,6 +521,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
@@ -502,6 +540,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (System.Exception ex)
             {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
@@ -528,6 +568,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
+                errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
@@ -556,6 +598,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
