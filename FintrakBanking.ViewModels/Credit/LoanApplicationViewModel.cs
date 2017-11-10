@@ -89,13 +89,21 @@ namespace FintrakBanking.ViewModels.Credit
         //private int _tenor;
 
         public int tenor { get; set; }
+        public bool customerInfoValidated { get; set; }
+        public bool notInNegativeCrms { get; set; }
+        public bool notInBlackbook { get; set; }
+        public bool notInCamsol { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string customerCode { get; set; }
+        public string lastName { get; set; }
         //{
         //    get {  return (LoanApplicationDetail.Max(c => c.proposedTenor) / 12) * 365;
         //         }
         //    set { _tenor = value * (12 / 365); }
         //}
 
-       
+
     }
 
     public class CollateralLenPlacementViewModel : GeneralEntity
@@ -166,6 +174,11 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short productClassId { get; set; }
 
+    }
+
+    public class SearchViewModel
+    {
+        public string searchString { get; set; }
     }
 
 }

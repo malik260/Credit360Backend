@@ -107,6 +107,11 @@ namespace FintrakBanking.Entities.Models
         public int? ACTEDONBY { get; set; }
 
         public bool SUBMITTEDFORAPPRAISAL { get; set; }
+        
+        public bool CUSTOMERINFOVALIDATED { get; set; }
+        public bool NOTINNEGATIVECRMS { get; set; }
+        public bool NOTINBLACKBOOK { get; set; }
+        public bool NOTINCAMSOL { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

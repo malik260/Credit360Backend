@@ -196,6 +196,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_CAMSOL> TBL_LOAN_CAMSOL { get; set; }
         public virtual DbSet<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }
         public virtual DbSet<TBL_LOAN_COMMENT> TBL_LOAN_COMMENT { get; set; }
+        public virtual DbSet<TBL_CONDITION_PRECEDENT> TBL_CONDITION_PRECEDENT { get; set; }
         public virtual DbSet<TBL_LOAN_CONDITION_PRECEDENT> TBL_LOAN_CONDITION_PRECEDENT { get; set; }
         public virtual DbSet<TBL_LOAN_CONTINGENT> TBL_LOAN_CONTINGENT { get; set; }
         public virtual DbSet<TBL_LOAN_COVENANT_DETAIL> TBL_LOAN_COVENANT_DETAIL { get; set; }
@@ -1610,6 +1611,8 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_PRODUCT)
                 .WillCascadeOnDelete(false);
 
+          
+
             modelBuilder.Entity<TBL_PRODUCT_CATEGORY>()
                 .HasMany(e => e.TBL_PRODUCT)
                 .WithRequired(e => e.TBL_PRODUCT_CATEGORY)
@@ -1630,11 +1633,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_PRODUCT_CLASS>()
                 .HasMany(e => e.TBL_PRODUCT)
-                .WithRequired(e => e.TBL_PRODUCT_CLASS)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_CLASS>()
-                .HasMany(e => e.TBL_CREDIT_TEMPLATE)
                 .WithRequired(e => e.TBL_PRODUCT_CLASS)
                 .WillCascadeOnDelete(false);
 

@@ -31,7 +31,9 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? MisinfoId { get; set; }
         public string MisInfoCode { get; set; }
         public short? DepartmentId { get; set; }
+        public short? DepartmentUnitId { get; set; }
         public string DepartmentName { get; set; }
+        public string DepartmentUnitName { get; set; }
         public int? StateId { get; set; }
         public int? CityId { get; set; }
         public string CityName { get; set; }

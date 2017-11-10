@@ -45,28 +45,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("department")]
-        public HttpResponseMessage DeleteDepartment(int departmentId)
-        {
-            var account = repo.GetDepartment(departmentId);
-            if (account == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
-
-            try
-            {
-                var depart = repo.DeleteDepartment(departmentId);
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = departmentId, message = "account has been deleted successfully" });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
+       
         [HttpGet]
         [Route("department")]
         public HttpResponseMessage GetAllDepartment()
@@ -176,26 +155,26 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [HttpPost]
-        [Route("department/{departmentId}")]
-        public HttpResponseMessage GetDepartment(int departmentId)
-        {
-            var account = repo.GetDepartment(departmentId);
-            if (account == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            }
+        //[HttpPost]
+        //[Route("department/{departmentId}")]
+        //public HttpResponseMessage GetDepartment(int departmentId)
+        //{
+        //    var account = repo.GetDepartment(departmentId);
+        //    if (account == null)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //    }
 
-            try
-            {
-                var depart = repo.GetDepartment(departmentId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = depart });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        //    try
+        //    {
+        //        var depart = repo.GetDepartment(departmentId);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = depart });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
         [HttpPut]
         [Route("department/{departmentId}")]
@@ -234,18 +213,18 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet, Route("department/user-department")]
-        public HttpResponseMessage GetUserDepartment()
-        {
-            try
-            {
-                var data = repo.GetStaffDepartment(token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
-        }
+        //[HttpGet, Route("department/user-department")]
+        //public HttpResponseMessage GetUserDepartment()
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetStaffDepartment(token.GetStaffId);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+        //    }
+        //}
     }
 }

@@ -123,6 +123,21 @@ namespace FintrakBanking.Repositories.Setups.General
             return departmentUnits;
         }
 
+        public IEnumerable<DepartmentViewModel> GetAllUnits()
+        {
+            var departmentUnits = (from d in context.TBL_DEPARTMENT_UNIT
+                                   select new DepartmentViewModel()
+                                   {
+                                       departmentUnitId = d.DEPARTMENT_UNITID,
+                                       DepartmentId = d.DEPARTMENTID,
+                                       DepartmentName = d.TBL_DEPARTMENT.DEPARTMENTNAME,
+                                       departmentUnitName = d.UNIT_NAME,
+                                       departmentUnitEmail = d.EMAIL
+                                   });
+            return departmentUnits;
+        }
+
+
         private IQueryable<DepartmentCustomersViewModel> SearchDepartments(int companyId) 
         {
             var department = (from d in context.TBL_DEPARTMENT

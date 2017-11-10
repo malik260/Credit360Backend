@@ -40,12 +40,6 @@ namespace FintrakBanking.Entities.DocumentModels
         [StringLength(200)]
         public string PHYSICALLOCATION { get; set; }
 
-        [Required]
-        [StringLength(100)]
-        public string DOCUMENTCODE { get; set; }
-
-        public int COLLATERALCUSTOMERID { get; set; }
-
         public int CREATEDBY { get; set; }
 
         public DateTime DATECREATED { get; set; }
