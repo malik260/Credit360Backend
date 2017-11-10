@@ -168,7 +168,10 @@ namespace FintrakBanking.Common.Enum
         CustomerGroupFSCaptionDetailDeleted = 160,
         StaffSignatureUploaded = 161,
         StaffSignatureUpdated = 162,
-        StateUpdated = 163
+        StateUpdated = 163,
+        DepartmentUnitAdded = 164,
+        DepartmentUnitUpdated = 165,
+        DepartmentUnitDeleted = 166
     };
 
 
