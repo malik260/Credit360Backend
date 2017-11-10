@@ -375,7 +375,7 @@ namespace FintrakBanking.Repositories.Credit
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
-                loanId = data.LOANAPPLICATIONID;
+               // loanId = data.LOANAPPLICATIONID;
                 //end of Audit section -------------------------------
 
                 response = context.SaveChanges();
