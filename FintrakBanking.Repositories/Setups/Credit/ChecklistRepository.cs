@@ -262,7 +262,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -------------------------------
 
-            }      
+            }
 
             return context.SaveChanges() != 0;
         }
@@ -284,7 +284,7 @@ namespace FintrakBanking.Repositories.Credit
             //Audit Section ---------------------------
             var audit_product = (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == data.PRODUCTID)).PRODUCTNAME;
             var audit_checklist = (context.TBL_CHECKLIST_ITEM.FirstOrDefault(x => x.CHECKLISTITEMID == data.CHECKLISTITEMID)).CHECKLISTITEMNAME;
-            
+
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistUpdated,
@@ -444,12 +444,30 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
+        public IEnumerable<ChecklistDetailViewModel> GetChecklistByTargetId(int targetId)
+        {
+            var checkList = (from cl in context.TBL_CHECKLIST_DETAIL
+                             where cl.TARGETID == targetId && cl.TARGETTYPEID == (int)CheckListTargetTypeEnum.Loan 
+                             && cl.DELETED == false
+                             select new ChecklistDetailViewModel()
+                             {
+                                 checklistId = cl.CHECKLISTID,
+                                 checkListDefinitionId = cl.CHECKLISTDEFINITIONID,
+                                 remark = cl.REMARK,
+                                 checkedBy = cl.CHECKEDBY,
+                                 targetTypeId = cl.TARGETTYPEID,
+                                 targetId = cl.TARGETID,
+                                 checkListStatusId = cl.CHECKLISTSTATUSID,
+                                 deferedDate = cl.DEFEREDDATE
 
+                             }).ToList();
+            return checkList;
+        }
         public bool AddMultipleChecklistDetails(List<ChecklistDetailViewModel> models, int staffId, short BranchId)
         {
             if (models.Count <= 0)
                 return false;
-       
+
             int loanApplicationDetailId = models.FirstOrDefault().targetId;
             int loanApplicationId = (int)models.FirstOrDefault().checklistId;
             foreach (ChecklistDetailViewModel model in models)
@@ -467,7 +485,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanDetailsData.HASDONECHECKLIST = true;
             }
-            var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID ==loanApplicationId select l).ToList();
+            var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == loanApplicationId select l).ToList();
             if (loanData != null)
             {
                 var custNo = loanData.Count();
@@ -476,7 +494,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (item.HASDONECHECKLIST == true)
                     {
-                       ++checkedNo ;
+                        ++checkedNo;
                     }
                 }
                 if (custNo == checkedNo)
@@ -487,7 +505,7 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
                     }
                 }
-                
+
             }
             return context.SaveChanges() != 0; ;
         }
@@ -496,7 +514,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = new TBL_CHECKLIST_DETAIL
             {
                 CHECKLISTDEFINITIONID = model.checkListDefinitionId,
-                TARGETTYPEID = model.targetTypeId,
+                TARGETTYPEID = (int)CheckListTargetTypeEnum.Loan,
                 TARGETID = model.targetId,
                 CHECKLISTSTATUSID = model.checkListStatusId,
                 CHECKEDBY = (int)model.createdBy,
@@ -525,6 +543,48 @@ namespace FintrakBanking.Repositories.Credit
             this.auditTrail.AddAuditTrail(audit);
 
             //end of Audit section -------------------------------
+
+
+
+            var loanDetailsData = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.targetId);
+            if (loanDetailsData != null)
+            {
+                var productCheckListCount = (from dd in context.TBL_CHECKLIST_DEFINITION
+                                             where dd.PRODUCTID == loanDetailsData.PROPOSEDPRODUCTID
+                                             select dd).Count();
+
+                var loanCheckListCount = (from dd in context.TBL_CHECKLIST_DETAIL
+                                          where dd.TARGETID == loanDetailsData.LOANAPPLICATIONDETAILID
+                                          && dd.TARGETTYPEID == (int)CheckListTargetTypeEnum.Loan
+                                          select dd).Count();
+
+                if (productCheckListCount == (loanCheckListCount + 1))
+                {
+                    loanDetailsData.HASDONECHECKLIST = true;
+                }
+            }
+            var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == model.checklistId select l).ToList();
+            if (loanData != null)
+            {
+                var custNo = loanData.Count();
+                var checkedNo = 0;
+                foreach (var item in loanData)
+                {
+                    if (item.HASDONECHECKLIST == true)
+                    {
+                        ++checkedNo;
+                    }
+                }
+                if (custNo == checkedNo)
+                {
+                    var loanApplication = context.TBL_LOAN_APPLICATION.Find(model.checklistId);
+                    if (loanApplication != null)
+                    {
+                        loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
+                    }
+                }
+
+            }
 
             return context.SaveChanges() != 0;
         }
@@ -705,7 +765,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
-            {  
+            {
                 AUDITTYPEID = (short)AuditTypeEnum.ChecklistItemDeleted,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,

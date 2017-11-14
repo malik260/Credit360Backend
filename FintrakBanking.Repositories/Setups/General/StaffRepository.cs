@@ -134,8 +134,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              //MisInfoCode = c.MISC,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVEL).DESCRIPTION,
                              //State = c.State.StateName
-                             CityId = c.CITYID
-                         });
+                             CityId = c.CITYID,
+                         }).ToList();
             return staff;
         }
 
@@ -392,7 +392,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             entity.externalInitialization = false;
 
-            using ( var trans = context.Database.BeginTransaction())
+            using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
@@ -404,9 +404,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         throw new Exception("Approval Failed");
                     }
 
-                    if (workFlow.NewState == (int) ApprovalState.Ended)
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
-                        var response = ApproveStaff(entity.targetId, (short) workFlow.StatusId, entity);
+                        var response = ApproveStaff(entity.targetId, (short)workFlow.StatusId, entity);
 
                         if (response)
                         {
@@ -870,17 +870,17 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<simpleStaffModel> GetStaffNames()
         {
-            var data =  from st in context.TBL_STAFF
-                   select new simpleStaffModel
-                   {
-                       staffId = st.STAFFID,
-                       staffCode = st.STAFFCODE,
-                       firstName = st.FIRSTNAME,
-                       middleName = st.MIDDLENAME,
-                       lastName = st.LASTNAME,
-                       departmentId = (short)st.DEPARTMENTID,
-                       departmentUnitId = (short)st.DEPARTMENT_UNITID
-                   };
+            var data = from st in context.TBL_STAFF
+                       select new simpleStaffModel
+                       {
+                           staffId = st.STAFFID,
+                           staffCode = st.STAFFCODE,
+                           firstName = st.FIRSTNAME,
+                           middleName = st.MIDDLENAME,
+                           lastName = st.LASTNAME,
+                           departmentId = (short)st.DEPARTMENTID,
+                           departmentUnitId = (short)st.DEPARTMENT_UNITID
+                       };
 
             return data;
         }
@@ -1005,7 +1005,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 auditTrail.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                return documentsContext.SaveChanges() != 0;
             }
             catch (Exception ex)
             {
@@ -1049,22 +1049,14 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-        public IEnumerable<StaffDocumentViewModel> GetAllStaffSignatures()
+        public IEnumerable<StaffDocumentViewModel> GetAllStaffSignatures(int companyId)
         {
             var documents = (from doc in documentsContext.TBL_MEDIA_STAFF_SIGNATURE
-                             join s in context.TBL_STAFF on doc.STAFFCODE.ToLower() equals s.STAFFCODE.ToLower()
+                             where doc.COMPANYID == companyId
                              select new StaffDocumentViewModel
                              {
                                  documentId = doc.DOCUMENTID,
-                                 companyId = s.COMPANYID,
-                                 companyName = s.TBL_COMPANY.NAME,
-                                 branchId = s.BRANCHID,
-                                 branchName = context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHID == s.BRANCHID).BRANCHNAME,
-                                 departmentId = context.TBL_DEPARTMENT.FirstOrDefault(x => x.DEPARTMENTID == s.DEPARTMENTID).DEPARTMENTNAME,
-                                 departmentName = s.DEPARTMENTID,
-                                 rankId = s.RANKID,
-                                 rankName = s.TBL_STAFF_RANK.RANKNAME,
-                                 StaffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
+                                 companyId = doc.COMPANYID,
                                  StaffCode = doc.STAFFCODE,
                                  documentTitle = doc.DOCUMENT_TITLE,
                                  fileData = doc.FILEDATA,
@@ -1077,10 +1069,10 @@ namespace FintrakBanking.Repositories.Setups.General
             return documents;
         }
 
-        public IEnumerable<StaffDocumentViewModel> GetStaffSignatureByStaffCode(string staffCode)
+        public StaffDocumentViewModel GetStaffSignatureByStaffCode(string staffCode, int companyId)
         {
-            var data = this.GetAllStaffSignatures().Where(x =>
-                string.Equals(x.StaffCode.ToLower(), staffCode.ToLower(), StringComparison.Ordinal)).ToList();
+            var data = GetAllStaffSignatures(companyId).FirstOrDefault(x =>
+                string.Equals(x.StaffCode.ToLower(), staffCode.ToLower(), StringComparison.Ordinal));
             return data;
         }
 

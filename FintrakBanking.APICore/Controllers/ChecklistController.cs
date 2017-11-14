@@ -304,6 +304,32 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Checklist Detail
+        [HttpGet]
+        [Route("checklist-details-targetid/")]
+        public HttpResponseMessage GetChecklistDetailsById(int targetId)
+        {
+            try
+            {
+                var data = repo.GetChecklistByTargetId(targetId);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), count = data.Count() });
+
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    success = false,
+                    message = $"There was an error fetching the records {ex.Message}"
+                });
+            }
+
+        }
         [HttpPost]
         [Route("checklist-detail")]
         public HttpResponseMessage AddChecklistDetail([FromBody] ChecklistDetailViewModel model)
