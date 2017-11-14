@@ -329,6 +329,7 @@ namespace FintrakBanking.Repositories.Credit
                     SYSTEMDATETIME = DateTime.Now,
                     CUSTOMERGROUPID = loan.customerGroupId,
                     APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending ,
                     APPLICATIONAMOUNT = loan.proposedAmount,
                     APPLICATIONTENOR = Convert.ToInt32(Math.Round(((decimal)(loan.proposedTenor / 12) * (decimal)365))),
                     ISINVESTMENTGRADE = loan.isInvestmentGrade,
