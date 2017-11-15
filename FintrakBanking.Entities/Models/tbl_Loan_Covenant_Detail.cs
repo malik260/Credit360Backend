@@ -33,6 +33,8 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? NEXTCOVENANTDATE { get; set; }
 
+        public int? SAVINGSACCOUNTID { get; set; }
+
         public int COMPANYID { get; set; }
 
         public int CREATEDBY { get; set; }

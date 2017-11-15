@@ -1132,7 +1132,7 @@ namespace FintrakBanking.Repositories.Customer
             return data;
         }
 
-        public IQueryable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery)
+        public IQueryable<CustomerGroupViewModel> SearchForCustomerGroupRealtime(int companyId, string searchQuery)
         {
             IQueryable<CustomerGroupViewModel> allGroups = null;
 
@@ -1150,19 +1150,34 @@ namespace FintrakBanking.Repositories.Customer
                     ).Take(10);
             }
 
-            //foreach (var item in allGroups)
-            //{
-            //    foreach (var grpMap in item.customerGroupMappings)
-            //    {
-            //        grpMap.isBlackList = creditLimitRepo.ValidateBlackList(grpMap.customerId) > 0;
-            //        grpMap.isOnWatchList = creditLimitRepo.ValidateWatchList(grpMap.customerId) > 0;
-            //        grpMap.isCamsol = creditLimitRepo.ValidateCamsol(grpMap.customerId) > 0;
-            //    }
-            //}
-
             return allGroups;
         }
 
+        public IEnumerable<CustomerGroupViewModel> CustomerGroupSearch(string search)
+        {
+            var customerGroups = GetAllCustomerGroups().ToList();
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                customerGroups = customerGroups.Where(x =>
+               x.groupName.ToLower().Contains(search.ToLower())
+               || x.groupCode.ToLower().Contains(search.ToLower())
+               ).ToList();
+                
+            }
+            return customerGroups;
+        }
+
+        public CustomerGroupViewModel GetCustomerGroupDetailsByGroupId(int customerGroupId)
+        {
+            var data = GellAllCustomerGroupMappings().FirstOrDefault(x => x.customerGroupId == customerGroupId);
+
+            if (data != null)
+            {
+                return data;
+            }
+
+            return new CustomerGroupViewModel { };
+        }
         #endregion TBL_CUSTOMER Group Mapping
     }
 }

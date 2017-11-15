@@ -112,5 +112,94 @@ namespace FintrakBanking.Repositories.Credit
             return this.GetAllConditionPrecedent().Where(x => x.loanApplicationId == applicationId);
         }
 
+        #region CP Template
+
+        public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentTemplate()
+        {
+            return this.context.TBL_CONDITION_PRECEDENT
+            .Select(c => new ConditionPrecedentViewModel
+            {
+                conditionId = c.CONDITIONID,
+                condition = c.CONDITION,
+                isExternal = c.ISEXTERNAL,
+                corporate = c.CORPORATE,
+                retail = c.RETAIL,
+                productId = c.PRODUCTID,
+                dateTimeCreated = c.DATETIMECREATED,
+                dateTimeUpdated = c.DATETIMEUPDATED,
+            });
+        }
+
+        public bool AddConditionPrecedentTemplate(ConditionPrecedentViewModel model)
+        {
+            var data = new TBL_CONDITION_PRECEDENT
+            {
+                CONDITION = model.condition,
+                ISEXTERNAL = model.isExternal,
+                PRODUCTID = model.productId,
+                CORPORATE = model.corporate,
+                RETAIL = model.retail,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_CONDITION_PRECEDENT.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Condition Precedent template '{ model.conditionId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateConditionPrecedentTemplate(ConditionPrecedentViewModel model, int conditionId)
+        {
+            var data = this.context.TBL_CONDITION_PRECEDENT.Find(conditionId);
+            if (data == null)
+            {
+                return false;
+            }
+
+            data.CONDITION = model.condition;
+            data.ISEXTERNAL = model.isExternal;
+            data.PRODUCTID = model.productId;
+            data.CORPORATE = model.corporate;
+            data.RETAIL = model.retail;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Condition Precedent template '{ model.conditionId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        #endregion CP Template
+
     }
 }

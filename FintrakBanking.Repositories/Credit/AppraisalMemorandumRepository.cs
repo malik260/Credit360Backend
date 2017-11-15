@@ -33,7 +33,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
 
-            var groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => 
+            var groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
                 x.OPERATIONID == (int)OperationsEnum.CAM
             //&& x.ProductClassId == appl.tbl_Product.ProductClassId // ---- REFACTOR!!!
             //&& x.ProductId == appl.ProductId // ---- REFACTOR!!!
@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (groupMappings.Any() == false)
             {
-                groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => 
+                groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
                     x.OPERATIONID == (int)OperationsEnum.CAM
                 //&& x.ProductClassId == appl.tbl_Product.ProductClassId // ---- REFACTOR!!!
                 );
@@ -84,7 +84,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return memo;
         }
-
 
         public AppraisalMemorandumViewModel AddAppraisalMemorandum(AppraisalMemorandumViewModel model)
         {
@@ -141,6 +140,7 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             this.FlagSubmittedForAppraisal(model.loanApplicationId);
+            this.LoadConditionPrecedent(model.loanApplicationId);
 
             context.SaveChanges();
 
@@ -157,12 +157,33 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
+        private void LoadConditionPrecedent(int loanApplicationId)
+        {
+            //if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Any() == false)
+            //{
+            var conditions = context.TBL_CONDITION_PRECEDENT.ToList(); // -------- REFACTOR TO FILTER
+            foreach (var c in conditions)
+            {
+                var cond = new TBL_LOAN_CONDITION_PRECEDENT
+                {
+                    CONDITION = c.CONDITION,
+                    ISEXTERNAL = c.ISEXTERNAL,
+                    CREATEDBY = c.CREATEDBY,
+                    LOANAPPLICATIONID = loanApplicationId,
+                    DATETIMECREATED = DateTime.Now
+                };
+                context.TBL_LOAN_CONDITION_PRECEDENT.Add(cond);
+            }
+            context.SaveChanges();
+            //}
+        }
+
         private int GetFirstApprovalLevelId(/*short productId, int productClassId, */int staffId = 0) // ---- REFACTOR!!!
         {
             var groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
                 x.OPERATIONID == (int)OperationsEnum.CAM // GIVEN ---- REFACTOR!!!
-                //&& x.ProductClassId == productClassId
-                //&& x.ProductId == productId
+                                                         //&& x.ProductClassId == productClassId
+                                                         //&& x.ProductId == productId
             );
 
             if (groupMappings.Any() == false)
@@ -252,50 +273,50 @@ namespace FintrakBanking.Repositories.Credit
             // log
 
             workflow.LogActivity();
-            
-                var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
-                appl.APPROVALSTATUSID = workflow.StatusId;
 
-                if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) // redundant block
+            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+            appl.APPROVALSTATUSID = workflow.StatusId;
+
+            if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) // redundant block
+            {
+                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            }
+
+            var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Find(model.appraisalMemorandumId);
+
+            if (memo != null)
+            {
+                if (workflow.NewState == (int)ApprovalState.Ended) // cam status
                 {
-                    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                    memo.ISCOMPLETED = true;
                 }
 
-                var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Find(model.appraisalMemorandumId);
-
-                if (memo != null)
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Authorised) // approving authority
                 {
-                    if (workflow.NewState == (int)ApprovalState.Ended) // cam status
+                    var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == memo.LOANAPPLICATIONID);
+
+                    var approvedAmount = items.Where(x => x.STATUSID != (int)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
+                    appl.APPROVEDAMOUNT = approvedAmount;
+
+                    foreach (var item in items)
                     {
-                        appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
-                        memo.ISCOMPLETED = true;
-                    }
-
-                    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Authorised) // approving authority
-                    {
-                        var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == memo.LOANAPPLICATIONID);
-
-                        var approvedAmount = items.Where(x => x.STATUSID != (int)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
-                        appl.APPROVEDAMOUNT = approvedAmount;
-
-                        foreach (var item in items)
+                        var approved = model.lineItems.First(x => x.loanApplicationDetailId == item.LOANAPPLICATIONDETAILID);
+                        if (approved != null)
                         {
-                            var approved = model.lineItems.First(x => x.loanApplicationDetailId == item.LOANAPPLICATIONDETAILID);
-                            if (approved != null)
-                            {
-                                item.APPROVEDPRODUCTID = (short)approved.approvedProductId;
-                                item.APPROVEDAMOUNT = approved.approvedAmount;
-                                item.APPROVEDINTERESTRATE = approved.approvedRate;
-                                item.APPROVEDTENOR = approved.approvedTenor;
-                                item.STATUSID = approved.statusId;
-                                item.EXCHANGERATE = approved.exchangeRate;
-                                item.LASTUPDATEDBY = model.createdBy;
-                                item.DATETIMEUPDATED = DateTime.Now;
-                            }
+                            item.APPROVEDPRODUCTID = (short)approved.approvedProductId;
+                            item.APPROVEDAMOUNT = approved.approvedAmount;
+                            item.APPROVEDINTERESTRATE = approved.approvedRate;
+                            item.APPROVEDTENOR = approved.approvedTenor;
+                            item.STATUSID = approved.statusId;
+                            item.EXCHANGERATE = approved.exchangeRate;
+                            item.LASTUPDATEDBY = model.createdBy;
+                            item.DATETIMEUPDATED = DateTime.Now;
                         }
-
                     }
+
                 }
+            }
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -347,13 +368,12 @@ namespace FintrakBanking.Repositories.Credit
             var privilege = new PrivilegeViewModel();
 
             var application = this.context.TBL_LOAN_APPLICATION.Find(applicationId);
-            var grants = context.TBL_APPROVAL_GROUP_MAPPING
-                                    .Where(x => x.OPERATIONID == operationId) 
-                                    //.Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.tbl_Product.ProductClassId) // REFACTOR!!!!!!!!!!!!
+
+            var grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+                                //.Where(x => x.OperationId == (int)OperationsEnum.CAM && x.ProductClassId == application.tbl_Product.ProductClassId) // REFACTOR!!!!!!!!!!!!
                                 .Select(x => x.TBL_APPROVAL_GROUP)
                                 .SelectMany(x => x.TBL_APPROVAL_LEVEL)
-                                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF)
-                                    .Where(x => x.STAFFID == staffId);
+                                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId);
 
             var grant = grants.FirstOrDefault();
             //var staffApprovalLevelIds = grants.Select(x => x.ApprovalLevelId).ToList();
@@ -374,7 +394,6 @@ namespace FintrakBanking.Repositories.Credit
                     userApprovalLevelIds = grants.Select(x => x.APPROVALLEVELID).ToList()
                 };
             }
-
             return privilege;
         }
 
@@ -423,9 +442,8 @@ namespace FintrakBanking.Repositories.Credit
                     exchangeRate = x.EXCHANGERATE,
                 });
 
-                return details;
+            return details;
         }
-        // tbl_Credit_Appraisal_Memorandum_Loan_Detail SHOULD LEAVE THE DB
 
         public IEnumerable<DocumentationViewModel> GetAllDocumentation(int applicationId)
         {
@@ -443,6 +461,36 @@ namespace FintrakBanking.Repositories.Credit
             return documentation;
         }
 
+        public bool Confirmation(int type, int applicationId)
+        {
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            bool result = false;
 
+            switch (type)
+            {
+                case 1:
+                    application.CUSTOMERINFOVALIDATED = (application.CUSTOMERINFOVALIDATED == false) ? true : false;
+                    result = application.CUSTOMERINFOVALIDATED;
+                    break;
+                case 2:
+                    application.NOTINNEGATIVECRMS = (application.NOTINNEGATIVECRMS == false) ? true : false;
+                    result = application.NOTINNEGATIVECRMS;
+                    break;
+                case 3:
+                    application.NOTINBLACKBOOK = (application.NOTINBLACKBOOK == false) ? true : false;
+                    result = application.NOTINBLACKBOOK;
+                    break;
+                case 4:
+                    application.NOTINCAMSOL = (application.NOTINCAMSOL == false) ? true : false;
+                    result = application.NOTINCAMSOL;
+                    break;
+                default:
+                    break;
+            }
+
+            context.SaveChanges();
+
+            return result;
+        }
     }
 }

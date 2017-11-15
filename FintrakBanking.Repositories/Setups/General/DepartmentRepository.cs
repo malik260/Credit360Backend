@@ -58,7 +58,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 DEPARTMENTNAME = entity.DepartmentName,
                 DESCRIPTION = entity.Description
             };
+
             this.context.TBL_DEPARTMENT.Add(department);
+
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
             {
@@ -81,6 +83,104 @@ namespace FintrakBanking.Repositories.Setups.General
         /// </summary>
         /// <param name="departmentId"></param>
         /// <returns></returns>
+
+        /// <summary>
+        /// Adds the department unit.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public bool AddUnit(DepartmentViewModel entity)
+        {
+
+            var unit = new TBL_DEPARTMENT_UNIT
+            {
+               DEPARTMENTID = entity.DepartmentId,
+               EMAIL = entity.departmentUnitEmail,
+               UNIT_NAME = entity.departmentUnitName
+            };
+
+            this.context.TBL_DEPARTMENT_UNIT.Add(unit);
+
+            // Audit Section ----------------------------
+            var departmentName = context.TBL_DEPARTMENT.Where(x => x.DEPARTMENTID == entity.DepartmentId).FirstOrDefault().DEPARTMENTNAME;
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DepartmentUnitAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added new department unit {entity.departmentUnitName} to {departmentName} department",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            auditTrail.AddAuditTrail(audit);
+            return SaveAll();
+        }
+
+        /// <summary>
+        /// Updates the department unit.
+        /// </summary>
+        /// <param name="unitId">The department unit identifier.</param>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        public bool UpdateUnit(short unitId, DepartmentViewModel entity)
+        {
+            var unit = context.TBL_DEPARTMENT_UNIT.Find(unitId);
+
+            unit.DEPARTMENTID = entity.DepartmentId;
+            unit.DEPARTMENT_UNITID = unitId;
+            unit.UNIT_NAME = entity.departmentUnitName;
+            unit.EMAIL = entity.departmentUnitEmail;
+            // Audit Section ----------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DepartmentUnitUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated department unit with Id: {unitId} ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+            };
+
+            auditTrail.AddAuditTrail(audit);
+            return SaveAll();
+        }
+        /// <summary>
+        /// Update department unit staff.
+        /// </summary>
+        /// <param name="unitId">The department identifier.</param>
+        /// <returns></returns>
+        /// 
+
+        /// <summary>
+        /// Delete department unit using the id
+        /// </summary>
+        /// <param name="unitId"></param>
+        /// <returns></returns>
+        /// 
+        //public bool DeleteUnit(int unitId)
+        //{
+        //    var unit = this.context.TBL_DEPARTMENT_UNIT.Find(unitId);
+        //    unit.DELETED = true;
+        //    return SaveAll();
+        //}
+
+        /// <summary>
+        /// Gets all department.
+        /// </summary>
+        /// <returns></returns>
+        /// 
+
+        /// <summary>
+        /// Delete department using the id
+        /// </summary>
+        /// <param name="departmentId"></param>
+        /// <returns></returns>
+        /// 
         public bool DeleteDepartment(int departmentId)
         {
             var department = this.context.TBL_DEPARTMENT.Find(departmentId);
@@ -107,6 +207,34 @@ namespace FintrakBanking.Repositories.Setups.General
                               });
             return department;
         }
+
+        public IEnumerable<DepartmentViewModel> GetAllDepartmentUnits(short departmentId)
+        {
+            var departmentUnits = (from d in context.TBL_DEPARTMENT_UNIT where d.DEPARTMENTID == departmentId
+                                   select new DepartmentViewModel()
+                              {
+                                  departmentUnitId = d.DEPARTMENT_UNITID,
+                                  DepartmentId = d.DEPARTMENTID,
+                                  departmentUnitName = d.UNIT_NAME,
+                                  departmentUnitEmail = d.EMAIL
+                              });
+            return departmentUnits;
+        }
+
+        public IEnumerable<DepartmentViewModel> GetAllUnits()
+        {
+            var departmentUnits = (from d in context.TBL_DEPARTMENT_UNIT
+                                   select new DepartmentViewModel()
+                                   {
+                                       departmentUnitId = d.DEPARTMENT_UNITID,
+                                       DepartmentId = d.DEPARTMENTID,
+                                       DepartmentName = d.TBL_DEPARTMENT.DEPARTMENTNAME,
+                                       departmentUnitName = d.UNIT_NAME,
+                                       departmentUnitEmail = d.EMAIL
+                                   });
+            return departmentUnits;
+        }
+
 
         private IQueryable<DepartmentCustomersViewModel> SearchDepartments(int companyId) 
         {

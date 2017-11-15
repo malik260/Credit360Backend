@@ -38,6 +38,8 @@ namespace FintrakBanking.Entities.Models
 
         public short DEPARTMENTID { get; set; }
 
+        public short DEPARTMENTUNITID { get; set; }
+
         public int OPERATIONSID { get; set; }
 
         public short REQUESTSTATUSID { get; set; }
@@ -69,6 +71,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? SYSTEMACKNOWLEDGEMENTDATE { get; set; }
 
         public virtual TBL_DEPARTMENT TBL_DEPARTMENT { get; set; }
+
+        public virtual TBL_DEPARTMENT_UNIT TBL_DEPARTMENT_UNIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_JOB_REQUEST_DOCUMENT_MAPPING> TBL_JOB_REQUEST_DOCUMENT_MAPPING { get; set; }

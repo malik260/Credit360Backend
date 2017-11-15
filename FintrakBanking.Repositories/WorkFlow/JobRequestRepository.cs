@@ -92,6 +92,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 SENDERSTAFFID = model.createdBy,
                 RECEIVERSTAFFID = model.receiverStaffId,
                 DEPARTMENTID = model.departmentId,
+                DEPARTMENTUNITID = model.departmentUnitId,
                 REASSIGNEDTO = model.reassignedTo,
                 ISREASSIGNED = model.isReassigned,
                 ISACKNOWLEDGED = model.isAcknowledged,
@@ -247,7 +248,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             });
 
               return  context.TBL_JOB_REQUEST
-               .Where(t => ((t.RECEIVERSTAFFID == staffId) || (t.SENDERSTAFFID == staffId) || (t.REASSIGNEDTO == staffId) ))
+               .Where(t => ((t.DEPARTMENTUNITID == context.TBL_STAFF.Where(l=>l.STAFFID == staffId).FirstOrDefault().DEPARTMENT_UNITID) || (t.SENDERSTAFFID == staffId) || (t.REASSIGNEDTO == staffId) ))
                .Select(
                   x =>
                      new JobRequestViewModel
@@ -272,14 +273,16 @@ namespace FintrakBanking.Repositories.WorkFlow
                     systemResponseDate = x.SYSTEMRESPONSEDATE,
                     acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
                     systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
-                    from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
+                    from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
+                    fromBranchName = context.TBL_BRANCH.Where(c=>c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
                     to = allstaff.FirstOrDefault(s => s.id == x.RECEIVERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.RECEIVERSTAFFID).name,
                     assignee = allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO).name,
                     //from = allstaff.GetStaffName(s => s.id == x.SenderStaffId),
                     //to = allstaff.GetStaffName(s => s.id == x.ReceiverStaffId),
                     //assignee = allstaff.GetStaffName(s => s.id == x.ReassignedTo),
-                });
+                }).OrderByDescending(x=>x.arrivalDate).Take(500);
         }
+
         public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId)
         {
             return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId); 

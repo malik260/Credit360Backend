@@ -135,8 +135,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost]
-        [Route("loan-disburstloans")]
-        public HttpResponseMessage GetDisburstLoans(DateRange dateRange)
+        [Route("loan-disburstloans")]            
+        public HttpResponseMessage GetDisburstLoans(DateRange dateRange) 
         {
             var token = new TokenDecryptionHelper();
             try
@@ -404,5 +404,52 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loanstatement/loan/{id}")]
+        public HttpResponseMessage GetLoanStatement(int id)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetLoanStatement(token.GetCompanyId,id);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-LoanAnniversery")]
+        public HttpResponseMessage GetLoanAnniversery(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetLoanAnniversery(dateRange, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }
+
+
+

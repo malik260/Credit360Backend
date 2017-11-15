@@ -59,6 +59,20 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string GetLoanStatement(int companyId, int loanId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanStatement.aspx?companyId=" + companyId.ToString() + "&loanId=" + loanId.ToString();
+            return path;
+        }
+
+        public string GetLoanAnniversery(DateRange dateRange, int companyId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanAnniversery.aspx?companyId=" + companyId.ToString() + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
+            return path;
+        }
+
 
         #region Offer Letter Generation
 

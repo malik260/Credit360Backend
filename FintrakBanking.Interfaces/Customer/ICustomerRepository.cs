@@ -27,6 +27,8 @@ namespace FintrakBanking.Interfaces.Customer
 
         //Task<bool> AddCustomer(CustomerViewModels entity);
 
+        dynamic GetCustomerRating(int custormerId);
+
         bool AddCustomer(CustomerViewModels entity);
 
         //Task<bool> UpdateCustomer(int customerId, CustomerViewModels entity);
@@ -48,10 +50,15 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool AddCustomerPhoneContact(CustomerPhoneContactViewModels entity);
 
+        bool AddCustomerCompanyInfomation(CustomerCompanyInfomationViewModels entity);
+
+        bool AddCustomerChildren(List<CustomerChildrenViewModel> models, int staffId, short BranchId);
+
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search) ;
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
         IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery);
+        IEnumerable<KYCDocumentTypeViewModel> GetKYCDocumentType();
 
 
     }

@@ -32,6 +32,8 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool GoForApproval(ApprovalViewModel entity);
 
+        IEnumerable<CustomerGroupViewModel> CustomerGroupSearch(string search);
+
         #endregion tbl_Customer Group Repository
 
         #region tbl_Customer Group Mapping repository
@@ -61,7 +63,8 @@ namespace FintrakBanking.Interfaces.Customer
         bool DeleteCustomerGroupMapping(int groupMapId, UserInfo user);
 
         IEnumerable<GroupCustomerMembersViewModel> GetGroupMembersByGroupId(int customerGroupId, int companyId);
-        IQueryable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery);
+        IQueryable<CustomerGroupViewModel> SearchForCustomerGroupRealtime(int companyId, string searchQuery);
+        CustomerGroupViewModel GetCustomerGroupDetailsByGroupId(int customerGroupId);
 
         #endregion tbl_Customer Group Mapping repository
     }

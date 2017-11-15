@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
@@ -98,6 +99,42 @@ namespace FintrakBanking.ReportObjects
                 return loan.ToList();
             }
              
+        }
+
+        public static IList<LoanStatementViewModel> LoanStatement(int companyId, int loanId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                IQueryable<LoanStatementViewModel> Loandata = from a in context.TBL_LOAN
+                                                              join b in context.TBL_FINANCE_TRANSACTION on a.LOANREFERENCENUMBER equals b.SOURCEREFERENCENUMBER
+                                                              where a.COMPANYID == companyId && a.LOANSTATUSID == 1
+                                                              && a.TERMLOANID == loanId && b.CASAACCOUNTID == a.CASAACCOUNTID
+                                                              select new LoanStatementViewModel()
+                                                              {
+                                                                  balance = a.OUTSTANDINGPRINCIPAL,
+                                                                  companyName = a.TBL_COMPANY.NAME,
+                                                                  logoPath = a.TBL_COMPANY.LOGOPATH,
+                                                                  firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                                                                  lastName = a.TBL_CUSTOMER.LASTNAME,
+                                                                  middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                                                                  accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                                                  productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                                                  loanRefrenceNumber = a.LOANREFERENCENUMBER,
+                                                                  applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                                                  grantedAmount = a.PRINCIPALAMOUNT,
+                                                                  loanCurrency = a.TBL_CURRENCY.CURRENCYCODE,
+                                                                  productId = a.PRODUCTID,
+                                                                  postDate = b.POSTEDDATE,
+                                                                  valueDate = b.VALUEDATE,
+                                                                  creditAmount = b.CREDITAMOUNT,
+                                                                  debitAmount = b.DEBITAMOUNT,
+                                                                  discription = b.DESCRIPTION,
+                                                                  transactionCurrency = b.TBL_CURRENCY.CURRENCYCODE,
+                                                              };
+
+                return Loandata.ToList();
+            }
+
         }
 
         public  IEnumerable<DisburstLoanViewModel> GetDisburstLoans(DateTime startDate, DateTime endDate, int companyId)
@@ -203,6 +240,51 @@ namespace FintrakBanking.ReportObjects
                             }).ToList();
                 return data;
             }
+        }
+
+        public  IList<LoanAnniverseryViewModel> LoanAnniversery(DateTime startDate, DateTime endDate, int companyId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = from a in context.TBL_LOAN
+                                join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
+                                join c in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals c.CUSTOMERID
+                                where a.COMPANYID == companyId && a.LOANSTATUSID == 1
+                                && DbFunctions.TruncateTime(b.PAYMENTDATE) >= DbFunctions.TruncateTime(startDate)
+                                 && DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
+                                //&& DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(b.PAYMENTDATE)
+                                //&& DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
+                                select new LoanAnniverseryViewModel()
+                                {
+                                    customerId = a.CUSTOMERID,
+                                    maturityDate = a.MATURITYDATE,
+                                    grantedAmount = a.PRINCIPALAMOUNT,
+                                    outstandingIntrestAmt = a.OUTSTANDINGINTEREST,
+                                    outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                                    loanRefrenceNumber = a.LOANREFERENCENUMBER,
+                                    applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                    accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                    productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                    productId = a.PRODUCTID,
+                                    companyName = a.TBL_COMPANY.NAME,
+                                    logoPath = a.TBL_COMPANY.LOGOPATH,
+                                    firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                                    lastName = a.TBL_CUSTOMER.LASTNAME,
+
+                                    middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                                    totalperiodicPaymentAmt = b.PERIODPAYMENTAMOUNT,
+                                    periodicInterestAmt = b.PERIODINTERESTAMOUNT,
+                                    periodicPrincipalAmt = b.PERIODPRINCIPALAMOUNT,
+                                    paymentdate = b.PAYMENTDATE,
+                                    intrestrate = b.INTERESTRATE,
+                                    emailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+                                    phoneNumber = c.PHONENUMBER
+
+                                };               
+
+                return data.ToList();
+            }
+
         }
 
         public List<dynamic> LoanUtilization()

@@ -25,6 +25,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<StaffViewModel> GetStaffName();
 
+        IEnumerable<simpleStaffModel> GetStaffByUnitId(short departmentUnitId);
+
         bool DeleteStaff(int staffId, UserInfo user);
 
         bool IsStaffCodeAlreadyExist(string staffCode);
@@ -46,5 +48,10 @@ namespace FintrakBanking.Interfaces.Setups.General
         IQueryable<simpleStaffModel> SearchStaff(string searchString, int companyId); 
         IQueryable<simpleStaffModel> SearchStaffbyDepartmentId(string searchString, int companyId, int departmentId);
 
+
+        bool AddStaffSignature(StaffDocumentViewModel model, byte[] file);
+        bool UpdateStaffSignature(StaffDocumentViewModel model, int documentId);
+        IEnumerable<StaffDocumentViewModel> GetAllStaffSignatures(int companyId);
+        StaffDocumentViewModel GetStaffSignatureByStaffCode(string staffCode, int companyId);
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Media
 {
-    public class DocumentViewModel
+    public class DocumentViewModel: GeneralEntity
     {
         public int documentId { get; set; }
         public string fileName { get; set; }

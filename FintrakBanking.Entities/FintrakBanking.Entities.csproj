@@ -36,9 +36,16 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.SqlServerCompact.6.2.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
@@ -54,9 +61,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_CHECKLIST_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_COLLATERAL_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_JOB_REQUEST_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_KYC_DOCUMENTS.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_LOAN_DOCUMENTS.cs" />
+    <Compile Include="DocumentModels\TBL_MEDIA_STAFF_SIGNATURE.cs" />
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
@@ -125,6 +135,7 @@
     <Compile Include="Models\TBL_COMPANY.cs" />
     <Compile Include="Models\TBL_COMPANY_CLASS.cs" />
     <Compile Include="Models\TBL_COMPANY_TYPE.cs" />
+    <Compile Include="Models\TBL_CONDITION_PRECEDENT.cs" />
     <Compile Include="Models\TBL_CONTENT_PLACEHOLDER.cs" />
     <Compile Include="Models\TBL_COT.cs" />
     <Compile Include="Models\TBL_COUNTRY.cs" />
@@ -139,6 +150,7 @@
     <Compile Include="Models\TBL_CUSTOMER_ADDRESS.cs" />
     <Compile Include="Models\TBL_CUSTOMER_BLACKLIST.cs" />
     <Compile Include="Models\TBL_CUSTOMER_BVN.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_CHILDREN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_CLIENT_SUPPLIER.cs" />
     <Compile Include="Models\TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_COMPANYINFOMATION.cs" />
@@ -156,6 +168,7 @@
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DIVISORTYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_VALUETYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP_MAPPING.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GUARDIAN.cs" />
@@ -178,6 +191,7 @@
     <Compile Include="Models\TBL_DEAL_CLASSIFICATION.cs" />
     <Compile Include="Models\TBL_DEAL_TYPE.cs" />
     <Compile Include="Models\TBL_DEPARTMENT.cs" />
+    <Compile Include="Models\TBL_DEPARTMENT_UNIT.cs" />
     <Compile Include="Models\TBL_ERRORLOG.cs" />
     <Compile Include="Models\TBL_FEE.cs" />
     <Compile Include="Models\TBL_FEE_AMORTISATION_TYPE.cs" />
@@ -194,6 +208,7 @@
     <Compile Include="Models\TBL_JOB_REQUEST_DOCUMENT_MAPPING.cs" />
     <Compile Include="Models\TBL_JOB_REQUEST_STATUS.cs" />
     <Compile Include="Models\TBL_JOB_TYPE.cs" />
+    <Compile Include="Models\TBL_KYC_DOCUMENTTYPE.cs" />
     <Compile Include="Models\TBL_KYC_ITEM.cs" />
     <Compile Include="Models\TBL_LIMIT.cs" />
     <Compile Include="Models\TBL_LIMIT_DETAIL.cs" />
@@ -255,6 +270,7 @@
     <Compile Include="Models\TBL_OPERATIONS.cs" />
     <Compile Include="Models\TBL_OPERATIONS_TYPE.cs" />
     <Compile Include="Models\TBL_PRODUCT.cs" />
+    <Compile Include="Models\TBL_PRODUCT_BEHAVIOUR.cs" />
     <Compile Include="Models\TBL_PRODUCT_CATEGORY.cs" />
     <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS.cs" />
@@ -321,6 +337,7 @@
     <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
+    <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -332,5 +349,13 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    if not exist "$(TargetDir)x86" md "$(TargetDir)x86"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\x86\*.*" "$(TargetDir)x86"
+    if not exist "$(TargetDir)amd64" md "$(TargetDir)amd64"
+    xcopy /s /y "$(SolutionDir)packages\Microsoft.SqlServer.Compact.4.0.8876.1\NativeBinaries\amd64\*.*" "$(TargetDir)amd64"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

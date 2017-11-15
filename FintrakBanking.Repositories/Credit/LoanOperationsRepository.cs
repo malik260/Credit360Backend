@@ -5531,7 +5531,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedBy = (int)ln.APPROVEDBY,
                             approverComment = ln.APPROVERCOMMENT,
                             dateApproved = ln.DATEAPPROVED,
-                            //loanStatusId = ln.LoanStatusId,
+                            loanStatusId = ln.LOANSTATUSID,
                             scheduleTypeId = ln.SCHEDULETYPEID,
                             isDisbursed = ln.ISDISBURSED,
                             disbursedBy = (int)ln.DISBURSEDBY,
