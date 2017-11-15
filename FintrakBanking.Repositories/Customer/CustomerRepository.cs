@@ -40,15 +40,15 @@ namespace FintrakBanking.Repositories.Customer
         {
 
             var data = (from c in context.TBL_CUSTOMER
-                        where c.CUSTOMERID == custormerId 
+                        where c.CUSTOMERID == custormerId
                         select new
                         {
 
                             shFund = c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE,
                             isInvestment = c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
                             rating = c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                            limit =  ((double)c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE / 100.00) *  StackHoldersFund
-                       }).FirstOrDefault();
+                            limit = ((double)c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE / 100.00) * StackHoldersFund
+                        }).FirstOrDefault();
             return data;
         }
 
@@ -939,6 +939,7 @@ namespace FintrakBanking.Repositories.Customer
                        maritalStatus = a.MARITALSTATUS.Value,
                        title = a.TITLE,
                        middleName = a.MIDDLENAME,
+                       customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID ).PRODUCTACCOUNTNUMBER,
                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                        misCode = a.MISCODE,
                        misStaff = a.MISSTAFF,
@@ -1285,7 +1286,6 @@ namespace FintrakBanking.Repositories.Customer
 
         }
 
-
         public IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search)
         {
             var customer = GetCustomerByCompanyId(companyId).ToList();
@@ -1414,6 +1414,210 @@ namespace FintrakBanking.Repositories.Customer
             return null;
         }
 
+#region Single Customer Information By CustomerID
+        public CustomerViewModels GetSingleCustomerGeneralInfo(int customerId)
+        {
+            var data = (from a in context.TBL_CUSTOMER
+                        where a.DELETED == false && a.CUSTOMERID == customerId
+                        select new CustomerViewModels
+                        {
+                            accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
+                            branchId = a.BRANCHID,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            companyMainId = a.COMPANYID,
+                            createdBy = a.CREATEDBY,
+                            creationMailSent = a.CREATIONMAILSENT,
+                            customerCode = a.CUSTOMERCODE,
+                            customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                            customerTypeId = (short)a.CUSTOMERTYPEID,
+                            dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                            customerId = a.CUSTOMERID,
+                            emailAddress = a.EMAILADDRESS,
+                            firstName = a.FIRSTNAME,
+                            gender = a.GENDER,
+                            lastName = a.LASTNAME,
+                            maidenName = a.MAIDENNAME,
+                            maritalStatus = a.MARITALSTATUS.Value,
+                            title = a.TITLE,
+                            middleName = a.MIDDLENAME,
+                            customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                            misCode = a.MISCODE,
+                            misStaff = a.MISSTAFF,
+                            nationality = a.NATIONALITY,
+                            occupation = a.OCCUPATION,
+                            placeOfBirth = a.PLACEOFBIRTH,
+                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                            spouse = a.SPOUSE,
+                            sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
+                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                            subSectorId = (short)a.SUBSECTORID,
+                            subSectorName = a.TBL_SUB_SECTOR.NAME,
+                            taxNumber = a.TAXNUMBER
+                        }).FirstOrDefault();
+
+            return data;
+        }
+        public CustomerCompanyInfomationViewModels GetSingleCustomerCompanyInfo(int customerId)
+        {
+            var comany = (from d in context.TBL_CUSTOMER_COMPANYINFOMATION
+                          where d.CUSTOMERID == customerId
+                          select new CustomerCompanyInfomationViewModels()
+                          {
+                              annualTurnOver = d.ANNUALTURNOVER,
+                              companyEmail = d.COMPANYEMAIL,
+                              companyId = d.CUSTOMERID,
+                              companyName = d.COMPANYNAME,
+                              companyWebsite = d.COMPANYWEBSITE,
+                              companyInfomationId = d.COMPANYINFOMATIONID,
+                              corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
+                              creditRating = d.CREDITRATING,
+                              registeredOffice = d.REGISTEREDOFFICE,
+                              previousCreditRating = d.PREVIOUSCREDITRATING,
+                              registrationNumber = d.REGISTRATIONNUMBER,
+                              paidUpCapital = d.PAIDUPCAPITAL,
+                              authorizedCapital = d.AUTHORISEDCAPITAL
+
+                          }).FirstOrDefault();
+            return comany;
+        }
+        public IEnumerable<CustomerAddressViewModels> GetSingleCustomerAddressInfo(int customerId)
+        {
+            var address = (from x in context.TBL_CUSTOMER_ADDRESS
+                           where x.CUSTOMERID == customerId
+                           select new CustomerAddressViewModels()
+                           {
+                               address = x.ADDRESS,
+                               addressTypeId = x.ADDRESSTYPEID,
+                               cityId = x.CITYID,
+                               customerId = x.CUSTOMERID,
+                               homeTown = x.HOMETOWN,
+                               nearestLandmark = x.NEARESTLANDMARK,
+                               electricMeterNumber = x.ELECTRICMETERNUMBER,
+                               pobox = x.POBOX,
+                               stateId = x.STATEID,
+                               addressId = x.ADDRESSID
+                           }).ToList();
+            return address;
+        }
+        public IEnumerable<CustomerPhoneContactViewModels> GetSingleCustomerPhoneContactInfo(int customerId)
+        {
+            var phoneContact = (from c in context.TBL_CUSTOMER_PHONECONTACT
+                                where c.CUSTOMERID == customerId
+                                select new CustomerPhoneContactViewModels
+                                {
+                                    active = c.ACTIVE,
+                                    customerId = c.CUSTOMERID,
+                                    phone = c.PHONE,
+                                    phoneContactId = c.PHONECONTACTID,
+                                    phoneNumber = c.PHONENUMBER
+                                }).ToList();
+            return phoneContact;
+        }
+        public IEnumerable<CustomerBvnViewModels> GetSingleCustomerBVNInfo(int customerId)
+        {
+            var customerBvn = (from b in context.TBL_CUSTOMER_BVN
+                               where b.CUSTOMERID == customerId
+                               select new CustomerBvnViewModels()
+                               {
+                                   bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
+                                   customerBvnid = b.CUSTOMERBVNID,
+                                   firstname = b.FIRSTNAME,
+                                   isValidBvn = b.ISVALIDBVN,
+                                   isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
+                                   surname = b.SURNAME
+                               }).ToList();
+            return customerBvn;
+        }
+        public IEnumerable<CustomerIdentificationViewModels> GetSingleCustomerIdentificationInfo(int customerId)
+        {
+            var identification = (from e in context.TBL_CUSTOMER_IDENTIFICATION
+                                  where e.CUSTOMERID == customerId
+                                  select new CustomerIdentificationViewModels()
+                                  {
+                                      identificationId = e.IDENTIFICATIONID,
+                                      identificationModeId = e.IDENTIFICATIONMODEID.Value,
+                                      identificationMode = context.TBL_CUSTOMER_IDENTIFICATIONMODETYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
+                                      identificationNo = e.IDENTIFICATIONNO,
+                                      issueAuthority = e.ISSUEAUTHORITY,
+                                      issuePlace = e.ISSUEPLACE
+                                  }).ToList();
+            return identification;
+        }
+        public IEnumerable<CustomerEmploymentHistoryViewModels> GetSingleCustomerEmploymentHistoryInfo(int customerId)
+        {
+            var employmentHistory = (from s in context.TBL_CUSTOMER_EMPLOYMENTHISTORY
+                                     where s.CUSTOMERID == customerId
+                                     select new CustomerEmploymentHistoryViewModels()
+                                     {
+                                         active = s.ACTIVE,
+                                         previousEmployer = s.PREVIOUSEMPLOYER,
+                                         customerId = s.CUSTOMERID,
+                                         employDate = s.EMPLOYDATE,
+                                         placeOfWorkId = s.PLACEOFWORKID,
+                                         employerAddress = s.EMPLOYERADDRESS,
+                                         employerCountryId = s.EMPLOYERCOUNTRYID,
+                                         employerName = s.EMPLOYERNAME,
+                                         officePhone = s.OFFICEPHONE,
+                                         employerStateId = s.EMPLOYERSTATEID
+                                     }).ToList();
+            return employmentHistory;
+        }
+        public IEnumerable<CustomerCompanyDirectorsViewModels> GetSingleCustomerDirectorInfo(int customerId, short directorTypeId)
+        {
+            var companyDirectors = (from s in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                    where s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == directorTypeId
+                                    select new CustomerCompanyDirectorsViewModels()
+                                    {
+                                        companyDirectorId = s.COMPANYDIRECTORID,
+                                        surname = s.SURNAME,
+                                        firstname = s.FIRSTNAME,
+                                        numberOfShares = s.NUMBEROFSHARES,
+                                        isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                                        bankVerificationNumber = s.CUSTOMERBVN,
+                                        companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                                        companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                        customerId = s.CUSTOMERID,
+                                        customerName = s.FIRSTNAME + " " + s.SURNAME,
+                                        address = s.ADDRESS,
+                                        phoneNumber = s.PHONENUMBER,
+                                        email = s.EMAILADDRESS
+                                    }).ToList();
+            return companyDirectors;
+        }
+        public IEnumerable<CustomerClientOrSupplierViewModels> GetSingleCustomerClientOrSupplierInfo(int customerId, short clientTypeId)
+        {
+            var clientOrSupplier = (from cs in context.TBL_CUSTOMER_CLIENT_SUPPLIER
+                                    where cs.CUSTOMERID == customerId && cs.CLIENT_SUPPLIERTYPEID == clientTypeId
+                                    select new CustomerClientOrSupplierViewModels()
+                                    {
+                                        client_SupplierId = cs.CLIENT_SUPPLIERID,
+                                        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                                        firstName = cs.FIRSTNAME,
+                                        middleName = cs.MIDDLENAME,
+                                        lastName = cs.LASTNAME,
+                                        client_SupplierAddress = cs.ADDRESS,
+                                        client_SupplierPhoneNumber = cs.PHONENUMBER,
+                                        client_SupplierEmail = cs.EMAILADDRESS,
+                                        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                    }).ToList();
+            return clientOrSupplier;
+        }
+        public IEnumerable<CustomerChildrenViewModel> GetSingleCustomerChildrenInfo(int customerId)
+        {
+            var children = (from chd in context.TBL_CUSTOMER_CHILDREN
+                            where chd.CUSTOMERID == customerId
+                            select new CustomerChildrenViewModel()
+                            {
+                                customerChildrenId = chd.CUSTOMERCHILDRENID,
+                                customerId = chd.CUSTOMERID,
+                                childName = chd.CHILDNAME,
+                                childDateOfBirth = chd.CHILDDATEOFBIRTH
+                            }).ToList();
+            return children;
+        }
+#endregion
     }
 }
 
