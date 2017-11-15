@@ -4,7 +4,8 @@
     {
         Turnover = 1,
         BusinessAgreement = 2,
-        Cleanup = 6
+        Cleanup = 6,
+        SinkingFund = 7
 
     };
 
