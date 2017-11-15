@@ -48,8 +48,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string StaffFullName { get { return this.FirstName + " " + this.MiddleName.Trim() + " " + this.LastName; } }
 
         public string JobTitleName { get; set; }
-
-        public StaffDocumentViewModel StaffSignatureDetails { get; set; }
+        public string documentTitle { get; set; }
+        public byte[] fileData { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
     }
 
     public class StaffViewModel

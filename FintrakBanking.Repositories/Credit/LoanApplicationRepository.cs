@@ -328,7 +328,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                
                 bool isGroupLoan = false;
-                int response = 0;
+                int response = 0; int loanId = 0;
                 if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
                 {
                     isGroupLoan = true;
@@ -363,6 +363,7 @@ namespace FintrakBanking.Repositories.Credit
                     SYSTEMDATETIME = DateTime.Now,
                     CUSTOMERGROUPID = loan.customerGroupId,
                     APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending ,
                     APPLICATIONAMOUNT = loan.proposedAmount,
                     APPLICATIONTENOR = Convert.ToInt32(Math.Round(((decimal)(loan.proposedTenor / 12) * (decimal)365))),
                     ISINVESTMENTGRADE = loan.isInvestmentGrade,

@@ -78,6 +78,7 @@
     <Compile Include="Credit\LimitViewModel.cs" />
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
     <Compile Include="Credit\LoanApplicationViewModel.cs" />
+    <Compile Include="Credit\DocumentDeferralViewModel.cs" />
     <Compile Include="Credit\LoanDocumentViewModel.cs" />
     <Compile Include="Credit\LoanOperationViewModel.cs" />
     <Compile Include="Credit\LoanPaymentScheduleInput.cs" />
