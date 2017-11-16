@@ -25,7 +25,6 @@ namespace FintrakBanking.Interfaces.Customer
 
         IEnumerable<CustomerViewModels> GetCustomerByTypeId(int customerTypeId);
 
-        //Task<bool> AddCustomer(CustomerViewModels entity);
 
         dynamic GetCustomerRating(int custormerId);
 
@@ -60,6 +59,19 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery);
         IEnumerable<KYCDocumentTypeViewModel> GetKYCDocumentType();
 
+
+        #region Single Customer Information By CustomerID
+        CustomerViewModels GetSingleCustomerGeneralInfo(string customerCode);
+        CustomerCompanyInfomationViewModels GetSingleCustomerCompanyInfo(int customerId);
+        IEnumerable<CustomerAddressViewModels> GetSingleCustomerAddressInfo(int customerId);
+        IEnumerable<CustomerPhoneContactViewModels> GetSingleCustomerPhoneContactInfo(int customerId);
+        IEnumerable<CustomerBvnViewModels> GetSingleCustomerBVNInfo(int customerId);
+        IEnumerable<CustomerIdentificationViewModels> GetSingleCustomerIdentificationInfo(int customerId);
+        IEnumerable<CustomerEmploymentHistoryViewModels> GetSingleCustomerEmploymentHistoryInfo(int customerId);
+        IEnumerable<CustomerCompanyDirectorsViewModels> GetSingleCustomerDirectorInfo(int customerId, short directorTypeId);
+        IEnumerable<CustomerClientOrSupplierViewModels> GetSingleCustomerClientOrSupplierInfo(int customerId, short clientTypeId);
+        IEnumerable<CustomerChildrenViewModel> GetSingleCustomerChildrenInfo(int customerId);
+        #endregion
 
     }
 }
