@@ -207,6 +207,7 @@
     <Compile Include="Models\TBL_JOB_REQUEST.cs" />
     <Compile Include="Models\TBL_JOB_REQUEST_DOCUMENT_MAPPING.cs" />
     <Compile Include="Models\TBL_JOB_REQUEST_STATUS.cs" />
+    <Compile Include="Models\TBL_JOB_REQUEST_STATUS_FEEDBACK.cs" />
     <Compile Include="Models\TBL_JOB_TYPE.cs" />
     <Compile Include="Models\TBL_KYC_DOCUMENTTYPE.cs" />
     <Compile Include="Models\TBL_KYC_ITEM.cs" />
@@ -265,6 +266,7 @@
     <Compile Include="Models\TBL_MESSAGE_LOG_TYPE.cs" />
     <Compile Include="Models\TBL_MIS_INFO.cs" />
     <Compile Include="Models\TBL_MIS_TYPE.cs" />
+    <Compile Include="Models\TBL_MONITORING_SETUP.cs" />
     <Compile Include="Models\TBL_NATURE_OF_BUSINESS.cs" />
     <Compile Include="Models\TBL_NOTIFICATION_LOG.cs" />
     <Compile Include="Models\TBL_OPERATIONS.cs" />
@@ -273,7 +275,9 @@
     <Compile Include="Models\TBL_PRODUCT_BEHAVIOUR.cs" />
     <Compile Include="Models\TBL_PRODUCT_CATEGORY.cs" />
     <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE_CUSTOMER.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CLASS_PROCESS.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS_TYPE.cs" />
     <Compile Include="Models\TBL_PRODUCT_COLLATERALTYPE.cs" />
     <Compile Include="Models\TBL_PRODUCT_CURRENCY.cs" />

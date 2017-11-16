@@ -33,6 +33,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CASAACCOUNTID { get; set; }
 
+        public int? CASAACCOUNTID2 { get; set; }
+
         public short BRANCHID { get; set; }
 
         public short SUBSECTORID { get; set; }
@@ -44,6 +46,9 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string LOANREFERENCENUMBER { get; set; }
+
+        [StringLength(50)]
+        public string RELATED_LOAN_REFERENCE_NUMBER { get; set; }
 
         public short? PRINCIPALFREQUENCYTYPEID { get; set; }
 
@@ -171,6 +176,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CASA TBL_CASA { get; set; }
 
         public virtual TBL_CASA TBL_CASA1 { get; set; }
+
+        public virtual TBL_CASA TBL_CASA2 { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
