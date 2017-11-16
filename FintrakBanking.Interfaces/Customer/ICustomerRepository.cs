@@ -61,7 +61,7 @@ namespace FintrakBanking.Interfaces.Customer
 
 
         #region Single Customer Information By CustomerID
-        CustomerViewModels GetSingleCustomerGeneralInfo(int customerId);
+        CustomerViewModels GetSingleCustomerGeneralInfo(string customerCode);
         CustomerCompanyInfomationViewModels GetSingleCustomerCompanyInfo(int customerId);
         IEnumerable<CustomerAddressViewModels> GetSingleCustomerAddressInfo(int customerId);
         IEnumerable<CustomerPhoneContactViewModels> GetSingleCustomerPhoneContactInfo(int customerId);

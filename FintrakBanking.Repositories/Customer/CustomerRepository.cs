@@ -463,8 +463,6 @@ namespace FintrakBanking.Repositories.Customer
                             company.COMPANYNAME = entity.companyName;
                             company.COMPANYWEBSITE = entity.companyWebsite;
                             company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
-                            company.CREDITRATING = entity.creditRating;
-                            company.PREVIOUSCREDITRATING = entity.previousCreditRating;
                             company.REGISTEREDOFFICE = entity.registeredOffice;
                             company.REGISTRATIONNUMBER = entity.registrationNumber;
                             company.PAIDUPCAPITAL = entity.paidUpCapital;
@@ -479,9 +477,7 @@ namespace FintrakBanking.Repositories.Customer
                         company.COMPANYNAME = entity.companyName;
                         company.COMPANYWEBSITE = entity.companyWebsite;
                         company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
-                        company.CREDITRATING = entity.creditRating;
                         company.CUSTOMERID = entity.customerId;
-                        company.PREVIOUSCREDITRATING = entity.previousCreditRating;
                         company.REGISTEREDOFFICE = entity.registeredOffice;
                         company.REGISTRATIONNUMBER = entity.registrationNumber;
                         company.PAIDUPCAPITAL = entity.paidUpCapital;
@@ -527,9 +523,7 @@ namespace FintrakBanking.Repositories.Customer
                 info.COMPANYNAME = ent.companyName;
                 info.COMPANYWEBSITE = ent.companyWebsite;
                 info.CORPORATEBUSINESSCATEGORY = ent.corporateBusinessCategory;
-                info.CREDITRATING = ent.creditRating;
                 info.CUSTOMERID = customerId;
-                info.PREVIOUSCREDITRATING = ent.previousCreditRating;
                 info.REGISTEREDOFFICE = ent.registeredOffice;
                 info.REGISTRATIONNUMBER = ent.registrationNumber;
                 // info.paidUpCapital = ent.PaidUpCapital;
@@ -569,9 +563,7 @@ namespace FintrakBanking.Repositories.Customer
                     info.COMPANYNAME = ent.companyName;
                     info.COMPANYWEBSITE = ent.companyWebsite;
                     info.CORPORATEBUSINESSCATEGORY = ent.corporateBusinessCategory;
-                    info.CREDITRATING = ent.creditRating;
                     info.CUSTOMERID = ent.customerId;
-                    info.PREVIOUSCREDITRATING = ent.previousCreditRating;
                     info.REGISTEREDOFFICE = ent.registeredOffice;
                     info.REGISTRATIONNUMBER = ent.registrationNumber;
                 }
@@ -995,9 +987,7 @@ namespace FintrakBanking.Repositories.Customer
                            companyInfomationId = d.COMPANYINFOMATIONID,
                            corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
                            createdBy = a.CREATEDBY,
-                           creditRating = d.CREDITRATING,
                            registeredOffice = d.REGISTEREDOFFICE,
-                           previousCreditRating = d.PREVIOUSCREDITRATING,
                            registrationNumber = d.REGISTRATIONNUMBER,
                            paidUpCapital = d.PAIDUPCAPITAL,
                            authorizedCapital = d.AUTHORISEDCAPITAL
@@ -1237,7 +1227,7 @@ namespace FintrakBanking.Repositories.Customer
                 customer.CREATIONMAILSENT = entity.creationMailSent;
                 customer.CUSTOMERCODE = entity.customerCode;
                 customer.CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId;
-                customer.CUSTOMERTYPEID = entity.customerTypeId;
+            //    customer.CUSTOMERTYPEID = entity.customerTypeId;
                 customer.DATEOFBIRTH = entity.dateOfBirth;
                 customer.EMAILADDRESS = entity.emailAddress;
                 customer.FIRSTNAME = entity.firstName;
@@ -1415,10 +1405,10 @@ namespace FintrakBanking.Repositories.Customer
         }
 
 #region Single Customer Information By CustomerID
-        public CustomerViewModels GetSingleCustomerGeneralInfo(int customerId)
+        public CustomerViewModels GetSingleCustomerGeneralInfo(string customerCode)
         {
             var data = (from a in context.TBL_CUSTOMER
-                        where a.DELETED == false && a.CUSTOMERID == customerId
+                        where a.DELETED == false && a.CUSTOMERCODE == customerCode
                         select new CustomerViewModels
                         {
                             accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
@@ -1471,9 +1461,7 @@ namespace FintrakBanking.Repositories.Customer
                               companyWebsite = d.COMPANYWEBSITE,
                               companyInfomationId = d.COMPANYINFOMATIONID,
                               corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
-                              creditRating = d.CREDITRATING,
                               registeredOffice = d.REGISTEREDOFFICE,
-                              previousCreditRating = d.PREVIOUSCREDITRATING,
                               registrationNumber = d.REGISTRATIONNUMBER,
                               paidUpCapital = d.PAIDUPCAPITAL,
                               authorizedCapital = d.AUTHORISEDCAPITAL

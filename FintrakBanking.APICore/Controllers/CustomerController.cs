@@ -717,11 +717,11 @@ namespace FintrakBanking.APICore.Controllers
         #region Single Customer Information By CustomerID
         [HttpGet]
         [Route("single-customer-general-info/")]
-        public HttpResponseMessage GetSingleCustomerGeneralInfo(int customerId)
+        public HttpResponseMessage GetSingleCustomerGeneralInfo(string customerCode)
         {
             try
             {
-                var data = repo.GetSingleCustomerGeneralInfo(customerId);
+                var data = repo.GetSingleCustomerGeneralInfo(customerCode);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
