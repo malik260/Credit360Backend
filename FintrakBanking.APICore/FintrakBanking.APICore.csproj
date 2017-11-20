@@ -465,12 +465,6 @@
     <Compile Include="Reports\ReportViews\GrantedFacilities.aspx.designer.cs">
       <DependentUpon>GrantedFacilities.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportViews\LoanMonthlyRepayment.aspx.cs">
-      <DependentUpon>LoanMonthlyRepayment.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportViews\LoanMonthlyRepayment.aspx.designer.cs">
-      <DependentUpon>LoanMonthlyRepayment.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportViews\LoanRepaymentSchedule.aspx.cs">
       <DependentUpon>LoanRepaymentSchedule.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -537,7 +531,6 @@
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
-    <Content Include="Reports\ReportViews\LoanMonthlyRepayment.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
@@ -692,7 +685,6 @@
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
-    <EmbeddedResource Include="Reports\Report\LoanMonthlyRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
