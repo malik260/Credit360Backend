@@ -463,8 +463,8 @@ namespace FintrakBanking.Repositories.Customer
                             company.COMPANYNAME = entity.companyName;
                             company.COMPANYWEBSITE = entity.companyWebsite;
                             company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
-                            company.CREDITRATING = entity.creditRating;
-                            company.PREVIOUSCREDITRATING = entity.previousCreditRating;
+                            //company.CREDITRATING = entity.creditRating;
+                            //company.PREVIOUSCREDITRATING = entity.previousCreditRating;
                             company.REGISTEREDOFFICE = entity.registeredOffice;
                             company.REGISTRATIONNUMBER = entity.registrationNumber;
                             company.PAIDUPCAPITAL = entity.paidUpCapital;
@@ -479,9 +479,9 @@ namespace FintrakBanking.Repositories.Customer
                         company.COMPANYNAME = entity.companyName;
                         company.COMPANYWEBSITE = entity.companyWebsite;
                         company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
-                        company.CREDITRATING = entity.creditRating;
+                        //company.CREDITRATING = entity.creditRating;
                         company.CUSTOMERID = entity.customerId;
-                        company.PREVIOUSCREDITRATING = entity.previousCreditRating;
+                        //company.PREVIOUSCREDITRATING = entity.previousCreditRating;
                         company.REGISTEREDOFFICE = entity.registeredOffice;
                         company.REGISTRATIONNUMBER = entity.registrationNumber;
                         company.PAIDUPCAPITAL = entity.paidUpCapital;
@@ -527,9 +527,9 @@ namespace FintrakBanking.Repositories.Customer
                 info.COMPANYNAME = ent.companyName;
                 info.COMPANYWEBSITE = ent.companyWebsite;
                 info.CORPORATEBUSINESSCATEGORY = ent.corporateBusinessCategory;
-                info.CREDITRATING = ent.creditRating;
+                //info.CREDITRATING = ent.creditRating;
                 info.CUSTOMERID = customerId;
-                info.PREVIOUSCREDITRATING = ent.previousCreditRating;
+                //info.PREVIOUSCREDITRATING = ent.previousCreditRating;
                 info.REGISTEREDOFFICE = ent.registeredOffice;
                 info.REGISTRATIONNUMBER = ent.registrationNumber;
                 // info.paidUpCapital = ent.PaidUpCapital;
@@ -569,9 +569,9 @@ namespace FintrakBanking.Repositories.Customer
                     info.COMPANYNAME = ent.companyName;
                     info.COMPANYWEBSITE = ent.companyWebsite;
                     info.CORPORATEBUSINESSCATEGORY = ent.corporateBusinessCategory;
-                    info.CREDITRATING = ent.creditRating;
+                    //info.CREDITRATING = ent.creditRating;
                     info.CUSTOMERID = ent.customerId;
-                    info.PREVIOUSCREDITRATING = ent.previousCreditRating;
+                    //info.PREVIOUSCREDITRATING = ent.previousCreditRating;
                     info.REGISTEREDOFFICE = ent.registeredOffice;
                     info.REGISTRATIONNUMBER = ent.registrationNumber;
                 }
@@ -994,9 +994,9 @@ namespace FintrakBanking.Repositories.Customer
                            companyInfomationId = d.COMPANYINFOMATIONID,
                            corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
                            createdBy = a.CREATEDBY,
-                           creditRating = d.CREDITRATING,
+                           //creditRating = d.CREDITRATING,
                            registeredOffice = d.REGISTEREDOFFICE,
-                           previousCreditRating = d.PREVIOUSCREDITRATING,
+                           //previousCreditRating = d.PREVIOUSCREDITRATING,
                            registrationNumber = d.REGISTRATIONNUMBER,
                            paidUpCapital = d.PAIDUPCAPITAL,
                            authorizedCapital = d.AUTHORISEDCAPITAL

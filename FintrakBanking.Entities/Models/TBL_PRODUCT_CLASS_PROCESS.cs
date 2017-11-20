@@ -6,25 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_JOB_TYPE")]
-    public partial class TBL_JOB_TYPE
+    [Table("core.TBL_PRODUCT_CLASS_PROCESS")]
+    public partial class TBL_PRODUCT_CLASS_PROCESS
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_JOB_TYPE()
+        public TBL_PRODUCT_CLASS_PROCESS()
         {
-            TBL_JOB_REQUEST = new HashSet<TBL_JOB_REQUEST>();
+            TBL_PRODUCT_CLASS = new HashSet<TBL_PRODUCT_CLASS>();
         }
 
         [Key]
-        public short JOBTYPEID { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public short PRODUCT_CLASS_PROCESSID { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string JOBTYPENAME { get; set; }
-
-        public bool INUSE { get; set; }
+        public string PRODUCT_CLASS_PROCESS_NAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }
+        public virtual ICollection<TBL_PRODUCT_CLASS> TBL_PRODUCT_CLASS { get; set; }
     }
 }

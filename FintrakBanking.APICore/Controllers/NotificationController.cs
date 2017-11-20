@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.ViewModels.Notification;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -25,12 +26,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("all")]
+        [Route("workflow/all")]
         public HttpResponseMessage GetNotification()
         {
             try
             {
-                var data = repo.GetNotification(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetWorkflowNotifications(token.GetStaffId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
@@ -45,17 +46,61 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("completed-approval/all")]
-        public HttpResponseMessage GetNotificationForFinalState()
+        [Route("pending-action/all")]
+        public HttpResponseMessage GetAllNotifications()
         {
             try
             {
-                var data = repo.GetNotificationForFinalState(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetAllNotifications(token.GetStaffId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("pending-action/{notificationId}")]
+        public HttpResponseMessage UpdateNotificationState(int notificationId)
+        {
+            try
+            {
+                var data = repo.UpdateNotificationState(notificationId);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Notification state updated!" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Notification state not updated" });
+            }
+            catch (Exception ex)
+            {
+                errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("pending-action")]
+        public HttpResponseMessage AddNotificationState(NotificationViewModel model)
+        {
+            try
+            {
+                var data = repo.AddNotification(model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Notification added successfully!" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Notification not added successfully" });
             }
             catch (Exception ex)
             {

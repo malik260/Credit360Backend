@@ -265,6 +265,7 @@
     <Compile Include="Models\TBL_MESSAGE_LOG_TYPE.cs" />
     <Compile Include="Models\TBL_MIS_INFO.cs" />
     <Compile Include="Models\TBL_MIS_TYPE.cs" />
+    <Compile Include="Models\TBL_MONITORING_SETUP.cs" />
     <Compile Include="Models\TBL_NATURE_OF_BUSINESS.cs" />
     <Compile Include="Models\TBL_NOTIFICATION_LOG.cs" />
     <Compile Include="Models\TBL_OPERATIONS.cs" />
@@ -273,7 +274,9 @@
     <Compile Include="Models\TBL_PRODUCT_BEHAVIOUR.cs" />
     <Compile Include="Models\TBL_PRODUCT_CATEGORY.cs" />
     <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE_CUSTOMER.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS.cs" />
+    <Compile Include="Models\TBL_PRODUCT_CLASS_PROCESS.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS_TYPE.cs" />
     <Compile Include="Models\TBL_PRODUCT_COLLATERALTYPE.cs" />
     <Compile Include="Models\TBL_PRODUCT_CURRENCY.cs" />
@@ -330,6 +333,7 @@
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP_MAPPING.cs" />
     <Compile Include="Models\TBL_TEMP_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_COLLATERALTYPE.cs" />

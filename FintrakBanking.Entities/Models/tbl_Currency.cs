@@ -41,6 +41,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(250)]
         public string CURRENCYNAME { get; set; }
 
+        public bool INUSE { get; set; }
+
         public int? CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
