@@ -23,6 +23,10 @@ namespace FintrakBanking.Interfaces.Customer
 
         IEnumerable<CompanyDirectorTypeViewModels> GetDirectorsTypes();
 
+        IEnumerable<CustomerAddressTypeViewModels> GetCustomerAddressType();
+
+        IEnumerable<CustomerRiskRatingViewModels> GetCustomerRiskRating();
+
         IEnumerable<CustomerViewModels> GetCustomerByTypeId(int customerTypeId);
 
 

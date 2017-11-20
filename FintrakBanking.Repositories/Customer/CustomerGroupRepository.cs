@@ -714,7 +714,7 @@ namespace FintrakBanking.Repositories.Customer
                                            customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
                                            customerGroupId = a.CUSTOMERGROUPID,
                                            relationshipTypeId = a.RELATIONSHIPTYPEID,
-                                           relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.RELATIONSHIPTYPENAME,
+                                           relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
                                            //createdBy = a.CreatedBy,
                                            customerId = a.CUSTOMERID,
                                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
@@ -1006,14 +1006,14 @@ namespace FintrakBanking.Repositories.Customer
                         customerCode = c.TBL_CUSTOMER.CUSTOMERCODE,
                         customerId = c.CUSTOMERID,
                         relationshipTypeId = c.RELATIONSHIPTYPEID,
-                        relationshipTypeName = c.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.RELATIONSHIPTYPENAME,
+                        relationshipTypeName = c.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
                         customerName = c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.LASTNAME,
                     });
         }
 
         public IEnumerable<LookupViewModel> GetCustomerGroupRelationshipTypes()
         {
-            return from a in context.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE
+            return from a in context.TBL_CUSTOMER_GROUP_RELATN_TYPE
                    select new LookupViewModel
                    {
                        lookupId = a.RELATIONSHIPTYPEID,
@@ -1024,17 +1024,17 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (model.lookupId > 0)
             {
-                var type = context.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.FirstOrDefault(x=> x.RELATIONSHIPTYPEID == model.lookupId);
+                var type = context.TBL_CUSTOMER_GROUP_RELATN_TYPE.FirstOrDefault(x=> x.RELATIONSHIPTYPEID == model.lookupId);
                 type.RELATIONSHIPTYPENAME = model.lookupName;
               
             }
             else
             {
-                var type = new TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE
+                var type = new TBL_CUSTOMER_GROUP_RELATN_TYPE
                 {
                     RELATIONSHIPTYPENAME = model.lookupName
                 };
-                context.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.Add(type);
+                context.TBL_CUSTOMER_GROUP_RELATN_TYPE.Add(type);
             }
             return this.SaveAll();
         }
@@ -1057,7 +1057,7 @@ namespace FintrakBanking.Repositories.Customer
                                 customerName = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.LASTNAME,
                                 customerType = s.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                                 relationshipTypeId = s.RELATIONSHIPTYPEID,
-                                relationshipTypeName = s.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.RELATIONSHIPTYPENAME,
+                                relationshipTypeName = s.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
                                 productAccountNumber = context.TBL_CASA.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                                 accountHolder = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.LASTNAME,
                                 companyId = s.TBL_CUSTOMER.COMPANYID,
@@ -1081,7 +1081,7 @@ namespace FintrakBanking.Repositories.Customer
                                 {
                                     bankVerificationNumber = x.CUSTOMERBVN,
                                     companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
-                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                     customerId = x.CUSTOMERID,
                                     firstname = x.FIRSTNAME,
                                     surname = x.SURNAME
@@ -1091,7 +1091,7 @@ namespace FintrakBanking.Repositories.Customer
                                 {
                                     bankVerificationNumber = x.CUSTOMERBVN,
                                     companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
-                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                     customerId = x.CUSTOMERID,
                                     firstname = x.FIRSTNAME,
                                     surname = x.SURNAME
@@ -1108,7 +1108,7 @@ namespace FintrakBanking.Repositories.Customer
                                         client_SupplierPhoneNumber = cs.PHONENUMBER,
                                         client_SupplierEmail = cs.EMAILADDRESS,
                                         client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                                     }).ToList(),
                                 customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
                                     .Select(cs => new CustomerSupplierViewModels()
@@ -1122,7 +1122,7 @@ namespace FintrakBanking.Repositories.Customer
                                         client_SupplierPhoneNumber = cs.PHONENUMBER,
                                         client_SupplierEmail = cs.EMAILADDRESS,
                                         client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                                     }).ToList(),
                                 //relationshipOfficerId = context.tbl_Staff.FirstOrDefault(),
                                 //relationshipManagerId = ,

@@ -141,7 +141,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 return (from data in context.TBL_LOAN_SCHEDULE_TYPE
-                        join t in context.TBL_LOAN_SCHEDULE_TYPE_PRODUCT 
+                        join t in context.TBL_LOAN_SCHEDULE_TYPE_PRODUCT
                         on data.SCHEDULETYPEID equals t.SCHEDULETYPEID
                         where t.PRODUCTTYPEID == productTypeId
                         select new LookupViewModel()

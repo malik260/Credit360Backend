@@ -2841,7 +2841,7 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            this.context.TBL_LOAN_SCHEDULE_PERIODIC_ARCH.AddRange(loanSchedulePeriodicArchive); //TBL_LOAN_SCHEDULE_PERIODIC_ARCHIVE
+            this.context.TBL_LOAN_SCHEDULE_PERIODIC_ARCH.AddRange(loanSchedulePeriodicArchive);
 
             context.SaveChanges();
             return model;
@@ -4157,14 +4157,14 @@ namespace FintrakBanking.Repositories.Credit
 
 
                     //---------------save irregular loan schedule input---------------------------
-                    List<TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE>();
+                    List<TBL_LOAN_REVIEW_OPRATN_IREG_SCH> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SCH>();
                     LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
                     if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
                     {
                         var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
                         foreach (var item in data)
                         {
-                            TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE schedule = new TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE();
+                            TBL_LOAN_REVIEW_OPRATN_IREG_SCH schedule = new TBL_LOAN_REVIEW_OPRATN_IREG_SCH();
                             schedule.LOANREVIEWOPERATIONID = loanId;
                             schedule.PAYMENTDATE = item.paymentDate;
                             schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);

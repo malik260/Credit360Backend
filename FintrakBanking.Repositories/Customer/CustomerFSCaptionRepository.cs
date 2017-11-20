@@ -209,7 +209,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerFSCaptionViewModel> GetUnmappedCustomerGroupFSCaption(short fsCaptionGroupId, int customerGroupId, DateTime fsDate)
         {
-            var dataList = (from data in context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+            var dataList = (from data in context.TBL_CUSTOMER_GROUP_FS_CAPTN_DET
                             where data.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId && data.CUSTOMERGROUPID == customerGroupId
                             && data.FSDATE == fsDate && data.DELETED == false
                             select data.FSCAPTIONID).ToList();
