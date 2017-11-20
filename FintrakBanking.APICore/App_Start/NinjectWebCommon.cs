@@ -179,6 +179,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IEndOfDayRepository>().To<EndOfDayRepository>();
             kernel.Bind<IFinanceTransactionsReport>().To<FinanceTransactionsReport>();
             kernel.Bind<IKYCDocumentUploadRepository>().To<KYCDocumentUploadRepository>();
+            kernel.Bind<IMonitoringSetupRepository>().To<MonitoringSetupRepository>();
         }
     }
 }

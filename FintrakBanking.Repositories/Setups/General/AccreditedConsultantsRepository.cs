@@ -47,7 +47,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         accreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID).Select(k =>
                            new AccreditedConsultantStateViewModel()
                            {
-                               accreditedConsultantStateCoveredID = k.ACCREDITEDCONSULTANTSTATECOVEREDID,
+                               accreditedConsultantStateCoveredID = k.ACCREDIT_CONSULT_STATE_COVREDID,
                                stateId = k.STATEID,
                                stateName = context.TBL_STATE.FirstOrDefault(x=> x.STATEID == k.STATEID).STATENAME,
                                accreditedConsultantId = k.ACCREDITEDCONSULTANTID
@@ -196,7 +196,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public async Task<bool> DeleteAccreditedConsultantStates(int id)
         {
-            var itemToRemove = context.TBL_ACCREDITEDCONSULTANT_STATE.SingleOrDefault(x => x.ACCREDITEDCONSULTANTSTATECOVEREDID == id);
+            var itemToRemove = context.TBL_ACCREDITEDCONSULTANT_STATE.SingleOrDefault(x => x.ACCREDIT_CONSULT_STATE_COVREDID == id);
             if (itemToRemove != null)
             {
                 context.TBL_ACCREDITEDCONSULTANT_STATE.Remove(itemToRemove);

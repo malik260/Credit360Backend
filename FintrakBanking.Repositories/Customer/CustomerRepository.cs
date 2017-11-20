@@ -162,7 +162,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 address.ACTIVE = ent.active;
                 address.ADDRESS = ent.address;
-                address.ADDRESSTYPEID = ent.addressTypeId;
+                address.ADDRESSTYPEID = (short)ent.addressTypeId;
                 address.CITYID = ent.cityId;
                 address.CUSTOMERID = ent.customerId;
                 address.STATEID = ent.stateId;
@@ -189,7 +189,7 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             address.ACTIVE = entity.active;
                             address.ADDRESS = entity.address;
-                            address.ADDRESSTYPEID = entity.addressTypeId;
+                            address.ADDRESSTYPEID = (short)entity.addressTypeId;
                             address.CITYID = entity.cityId;
                             address.STATEID = entity.stateId;
                             address.HOMETOWN = entity.homeTown;
@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.Customer
                         address = new TBL_CUSTOMER_ADDRESS();
                         address.ACTIVE = entity.active;
                         address.ADDRESS = entity.address;
-                        address.ADDRESSTYPEID = entity.addressTypeId;
+                        address.ADDRESSTYPEID = (short)entity.addressTypeId;
                         address.CITYID = entity.cityId;
                         address.CUSTOMERID = entity.customerId;
                         address.STATEID = entity.stateId;

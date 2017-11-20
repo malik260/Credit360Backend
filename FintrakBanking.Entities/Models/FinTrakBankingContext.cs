@@ -248,7 +248,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RISK_RATING> TBL_RISK_RATING { get; set; }
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -291,7 +291,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
-        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -1323,11 +1322,6 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER_TYPE)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_CUSTOMER_TYPE>()
-                .HasMany(e => e.TBL_PRODUCT_CLASS)
-                .WithRequired(e => e.TBL_CUSTOMER_TYPE)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<TBL_DAILY_ACCRUAL>()
                 .Property(e => e.MAINAMOUNT)
                 .HasPrecision(19, 4);
@@ -1745,10 +1739,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_TEMP_PRODUCT)
                 .WithRequired(e => e.TBL_PRODUCT_CLASS)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_CLASS_PROCESS>()
-                .Property(e => e.MAXIMUM_AMOUNT)
-                .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_PRODUCT_CLASS_PROCESS>()
                 .HasMany(e => e.TBL_PRODUCT_CLASS)
@@ -3953,18 +3943,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
                 .Property(e => e.SHAREVALUEAMOUNTTOUSE)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LEVELMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.INVESTMENTGRADEAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.STAFFMAXIMUMAMOUNT)
                 .HasPrecision(19, 4);
         }
     }
