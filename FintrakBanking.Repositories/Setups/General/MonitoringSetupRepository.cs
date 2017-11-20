@@ -51,6 +51,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     MESSAGE_TEMPLATE = entity.messageTemplate,
                     MESSAGETYPEID = entity.messageTypeId,
                     NOTIFICATION_PERIOD = entity.notificationPeriod,
+                    PRODUCTID = entity.productId,
                 };
 
                 this.context.TBL_MONITORING_SETUP.Add(MonitoringSetup);
@@ -98,6 +99,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                   messageTypeId = d.MESSAGETYPEID,
                                   messageTemplate = d.MESSAGE_TEMPLATE,
                                   messageTypeName = d.TBL_MESSAGE_LOG_TYPE.MESSAGETYPENAME,
+                                  productId = d.TBL_PRODUCT.PRODUCTID,
 
                               }).ToList();
             return MonitoringSetup;
@@ -117,6 +119,19 @@ namespace FintrakBanking.Repositories.Setups.General
             return MonitoringSetup;
         }
 
+
+        public IEnumerable<MonitoringSetupViewModel> GetAllProduct()
+        {
+            var MonitoringSetup = (from d in context.TBL_PRODUCT 
+                                   select new MonitoringSetupViewModel()
+                                   {
+                                       productId = d.PRODUCTID,
+                                       productName = d.PRODUCTNAME,
+
+                                   }).ToList();
+            return MonitoringSetup;
+        }
+
         public MonitoringSetupViewModel GetMonitoringSetup(int MonitoringSetupId)
         {
             var MonitoringSetup = (from d in context.TBL_MONITORING_SETUP
@@ -128,6 +143,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                   notificationPeriod = d.NOTIFICATION_PERIOD,
                                   messageTypeId = d.MESSAGETYPEID,
                                   messageTemplate = d.MESSAGE_TEMPLATE,
+                                  productId = d.PRODUCTID,
                               }).SingleOrDefault();
             return MonitoringSetup;
         }
