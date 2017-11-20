@@ -44,10 +44,10 @@ namespace FintrakBanking.Repositories.Customer
                         select new
                         {
 
-                            shFund = c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE,
+                            shFund = c.TBL_CUSTOMER_RISK_RATING.MAX_SHAREHOLDER_FUND_PERCENTAGE,
                             isInvestment = c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
                             rating = c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                            limit = ((double)c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE / 100.00) * StackHoldersFund
+                            limit = ((double)c.TBL_CUSTOMER_RISK_RATING.MAX_SHAREHOLDER_FUND_PERCENTAGE / 100.00) * StackHoldersFund
                         }).FirstOrDefault();
             return data;
         }
@@ -1006,7 +1006,7 @@ namespace FintrakBanking.Repositories.Customer
                        {
                            identificationId = e.IDENTIFICATIONID,
                            identificationModeId = e.IDENTIFICATIONMODEID.Value,
-                           identificationMode = context.TBL_CUSTOMER_IDENTIFICATIONMODETYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
+                           identificationMode = context.TBL_CUSTOMER_IDENTI_MODE_TYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
                            identificationNo = e.IDENTIFICATIONNO,
                            issueAuthority = e.ISSUEAUTHORITY,
                            issuePlace = e.ISSUEPLACE
@@ -1034,7 +1034,7 @@ namespace FintrakBanking.Repositories.Customer
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -1051,7 +1051,7 @@ namespace FintrakBanking.Repositories.Customer
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -1068,7 +1068,7 @@ namespace FintrakBanking.Repositories.Customer
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -1092,7 +1092,7 @@ namespace FintrakBanking.Repositories.Customer
                            client_SupplierPhoneNumber = cs.PHONENUMBER,
                            client_SupplierEmail = cs.EMAILADDRESS,
                            client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                        }).ToList(),
                        CustomerSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
                        .Select(cs => new CustomerSupplierViewModels()
@@ -1106,7 +1106,7 @@ namespace FintrakBanking.Repositories.Customer
                            client_SupplierPhoneNumber = cs.PHONENUMBER,
                            client_SupplierEmail = cs.EMAILADDRESS,
                            client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                        }).ToList(),
                        CustomerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID)
                        .Select(x => new CollateralViewModel()
@@ -1219,7 +1219,7 @@ namespace FintrakBanking.Repositories.Customer
         }
         public IEnumerable<CustomerSupplierTypeViewModels> GetClientSupplierType()
         {
-            var type = from a in context.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE
+            var type = from a in context.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE
                        select new CustomerSupplierTypeViewModels
                        {
                            name = a.CLIENT_SUPPLIERTYPENAME,
@@ -1230,7 +1230,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerIdentificationModeTypeViewModels> GetIdentificationMode()
         {
-            var type = from a in context.TBL_CUSTOMER_IDENTIFICATIONMODETYPE
+            var type = from a in context.TBL_CUSTOMER_IDENTI_MODE_TYPE
                        select new CustomerIdentificationModeTypeViewModels
                        {
                            name = a.IDENTIFICATIONMODE,
@@ -1240,7 +1240,7 @@ namespace FintrakBanking.Repositories.Customer
         }
         public IEnumerable<CompanyDirectorTypeViewModels> GetDirectorsTypes()
         {
-            var type = from a in context.TBL_CUSTOMER_COMPANY_DIRECTORTYPE
+            var type = from a in context.TBL_CUSTOMER_COMPANY_DIREC_TYPE
                        select new CompanyDirectorTypeViewModels
                        {
                            name = a.COMPANYDIRECTORYTYPENAME,
@@ -1558,7 +1558,7 @@ namespace FintrakBanking.Repositories.Customer
                                   {
                                       identificationId = e.IDENTIFICATIONID,
                                       identificationModeId = e.IDENTIFICATIONMODEID.Value,
-                                      identificationMode = context.TBL_CUSTOMER_IDENTIFICATIONMODETYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
+                                      identificationMode = context.TBL_CUSTOMER_IDENTI_MODE_TYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
                                       identificationNo = e.IDENTIFICATIONNO,
                                       issueAuthority = e.ISSUEAUTHORITY,
                                       issuePlace = e.ISSUEPLACE
@@ -1597,7 +1597,7 @@ namespace FintrakBanking.Repositories.Customer
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                                         bankVerificationNumber = s.CUSTOMERBVN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                        companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                        companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                         customerId = s.CUSTOMERID,
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
                                         address = s.ADDRESS,
@@ -1628,7 +1628,7 @@ namespace FintrakBanking.Repositories.Customer
                                         client_SupplierPhoneNumber = cs.PHONENUMBER,
                                         client_SupplierEmail = cs.EMAILADDRESS,
                                         client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                                     }).ToList();
             return clientOrSupplier;
         }
