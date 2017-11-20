@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_FORCE_DEBIT = new HashSet<TBL_LOAN_FORCE_DEBIT>();
             TBL_LOAN_GUARANTOR = new HashSet<TBL_LOAN_GUARANTOR>();
             TBL_LOAN_PAST_DUE = new HashSet<TBL_LOAN_PAST_DUE>();
-            TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING = new HashSet<TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING>();
+            TBL_LOAN_SCHEDULE_TYPE_PRODUCT = new HashSet<TBL_LOAN_SCHEDULE_TYPE_PRODUCT>();
             TBL_TEMP_CHARGE_FEE = new HashSet<TBL_TEMP_CHARGE_FEE>();
             TBL_TEMP_FEE = new HashSet<TBL_TEMP_FEE>();
         }
@@ -39,7 +39,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool REQUIREINTERESTINCOMEEXPENSEGL { get; set; }
 
-        public bool REQUIREINTERESTRECEIVABLEPAYABLEGL { get; set; }
+        public bool REQUIRE_INT_RECEIVABLE_PAYABLGL { get; set; }
 
         public bool REQUIREDORMANTGL { get; set; }
 
@@ -89,7 +89,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_PAST_DUE> TBL_LOAN_PAST_DUE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING> TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING { get; set; }
+        public virtual ICollection<TBL_LOAN_SCHEDULE_TYPE_PRODUCT> TBL_LOAN_SCHEDULE_TYPE_PRODUCT { get; set; }
 
         public virtual TBL_DEAL_CLASSIFICATION TBL_DEAL_CLASSIFICATION { get; set; }
 

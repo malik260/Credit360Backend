@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CITYID { get; set; }
 
-        public int ADDRESSTYPEID { get; set; }
+        public short ADDRESSTYPEID { get; set; }
 
         [Required]
         [StringLength(200)]
@@ -39,5 +39,7 @@ namespace FintrakBanking.Entities.Models
         public bool ACTIVE { get; set; }
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
+
+        public virtual TBL_CUSTOMER_ADDRESS_TYPE TBL_CUSTOMER_ADDRESS_TYPE { get; set; }
     }
 }

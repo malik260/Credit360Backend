@@ -78,7 +78,7 @@ namespace FintrakBanking.Repositories.Credit
                 PROJECTFINANCINGPLAN = model.projectFinancingPlan,
                 PROPOSEDTERMSANDCONDITIONS = model.proposedTermsAndConditions,
                 RISKSANDCONCERNS = model.risksAndConcerns,
-                PRUDENTIALEXPOSURELIMITIMPLICATIONS = model.prudentialExposureLimitImplications,
+                PRUDENT_EXPOSUR_LIMIT_IMPLICATN = model.prudentialExposureLimitImplications,
                 RELATIONSHIPMANAGERID = model.relationshipManagerId,
                 RELATIONSHIPOFFICERID = model.relationshipOfficerId,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -206,7 +206,7 @@ namespace FintrakBanking.Repositories.Credit
                     PROJECTFINANCINGPLAN = item.projectFinancingPlan,
                     PROPOSEDTERMSANDCONDITIONS = item.proposedTermsAndConditions,
                     RISKSANDCONCERNS = item.risksAndConcerns,
-                    PRUDENTIALEXPOSURELIMITIMPLICATIONS = item.prudentialExposureLimitImplications,
+                    PRUDENT_EXPOSUR_LIMIT_IMPLICATN = item.prudentialExposureLimitImplications,
                     RELATIONSHIPMANAGERID = item.relationshipManagerId,
                     RELATIONSHIPOFFICERID = item.relationshipOfficerId,
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Credit
                             projectFinancingPlan = pen.PROJECTFINANCINGPLAN,
                             proposedTermsAndConditions = pen.PROPOSEDTERMSANDCONDITIONS,
                             risksAndConcerns = pen.RISKSANDCONCERNS,
-                            prudentialExposureLimitImplications = pen.PRUDENTIALEXPOSURELIMITIMPLICATIONS,
+                            prudentialExposureLimitImplications = pen.PRUDENT_EXPOSUR_LIMIT_IMPLICATN,
                             relationshipManagerId = pen.RELATIONSHIPMANAGERID,
                             relationshipOfficerId = pen.RELATIONSHIPOFFICERID,
                             taxIdentificationNumber = pen.TAXIDENTIFICATIONNUMBER,
@@ -384,7 +384,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -395,7 +395,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -413,7 +413,7 @@ namespace FintrakBanking.Repositories.Credit
                                 client_SupplierPhoneNumber = cs.PHONENUMBER,
                                 client_SupplierEmail = cs.EMAILADDRESS,
                                 client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                             }).ToList(),
                             customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == pen.CUSTOMERID &&
                             cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
@@ -428,7 +428,7 @@ namespace FintrakBanking.Repositories.Credit
                                  client_SupplierPhoneNumber = cs.PHONENUMBER,
                                  client_SupplierEmail = cs.EMAILADDRESS,
                                  client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                              }).ToList(),
                             loanAmount = pen.LOANAMOUNT,
                             loanTypeId = pen.LOANTYPEID,
@@ -485,7 +485,7 @@ namespace FintrakBanking.Repositories.Credit
                             projectFinancingPlan = pen.PROJECTFINANCINGPLAN,
                             proposedTermsAndConditions = pen.PROPOSEDTERMSANDCONDITIONS,
                             risksAndConcerns = pen.RISKSANDCONCERNS,
-                            prudentialExposureLimitImplications = pen.PRUDENTIALEXPOSURELIMITIMPLICATIONS,
+                            prudentialExposureLimitImplications = pen.PRUDENT_EXPOSUR_LIMIT_IMPLICATN,
                             relationshipManagerId = pen.RELATIONSHIPMANAGERID,
                             relationshipOfficerId = pen.RELATIONSHIPOFFICERID,
                             taxIdentificationNumber = pen.TAXIDENTIFICATIONNUMBER,
@@ -501,7 +501,7 @@ namespace FintrakBanking.Repositories.Credit
                                 //customerTypeId = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == p.CustomerId).CustomerTypeId,
                                 customerType = s.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                                 relationshipTypeId = s.RELATIONSHIPTYPEID,
-                                relationshipTypeName = s.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.RELATIONSHIPTYPENAME,
+                                relationshipTypeName = s.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
                                 productAccountNumber = context.TBL_CASA.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                                 taxIdentificationNumber = s.TBL_CUSTOMER.TAXNUMBER,
                                 registrationNumber = s.TBL_CUSTOMER.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).REGISTRATIONNUMBER,
@@ -520,7 +520,7 @@ namespace FintrakBanking.Repositories.Credit
                                {
                                    bankVerificationNumber = x.CUSTOMERBVN,
                                    companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
-                                   companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                   companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                    customerId = x.CUSTOMERID,
                                    firstname = x.FIRSTNAME,
                                    surname = x.SURNAME
@@ -531,7 +531,7 @@ namespace FintrakBanking.Repositories.Credit
                                {
                                    bankVerificationNumber = cs.CUSTOMERBVN,
                                    companyDirectorTypeId = cs.COMPANYDIRECTORTYPEID,
-                                   companyDirectorTypeName = cs.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                   companyDirectorTypeName = cs.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                    customerId = cs.CUSTOMERID,
                                    firstname = cs.FIRSTNAME,
                                    surname = cs.SURNAME
@@ -549,7 +549,7 @@ namespace FintrakBanking.Repositories.Credit
                                    client_SupplierPhoneNumber = cs.PHONENUMBER,
                                    client_SupplierEmail = cs.EMAILADDRESS,
                                    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                   client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                   client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                                }).ToList(),
                                 customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER
                                    .Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
@@ -564,7 +564,7 @@ namespace FintrakBanking.Repositories.Credit
                                    client_SupplierPhoneNumber = cs.PHONENUMBER,
                                    client_SupplierEmail = cs.EMAILADDRESS,
                                    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                   client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                   client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                                }).ToList(),
                             }).ToList(),
                             approvalStatusId = pen.APPROVALSTATUSID,
@@ -704,7 +704,7 @@ namespace FintrakBanking.Repositories.Credit
                             projectFinancingPlan = p.PROJECTFINANCINGPLAN,
                             proposedTermsAndConditions = p.PROPOSEDTERMSANDCONDITIONS,
                             risksAndConcerns = p.RISKSANDCONCERNS,
-                            prudentialExposureLimitImplications = p.PRUDENTIALEXPOSURELIMITIMPLICATIONS,
+                            prudentialExposureLimitImplications = p.PRUDENT_EXPOSUR_LIMIT_IMPLICATN,
                             relationshipManagerId = p.RELATIONSHIPMANAGERID,
                             relationshipOfficerId = p.RELATIONSHIPOFFICERID,
                             taxIdentificationNumber = p.TAXIDENTIFICATIONNUMBER,
@@ -724,7 +724,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -735,7 +735,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -753,7 +753,7 @@ namespace FintrakBanking.Repositories.Credit
                                 client_SupplierPhoneNumber = cs.PHONENUMBER,
                                 client_SupplierEmail = cs.EMAILADDRESS,
                                 client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                             }).ToList(),
                             customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == p.CUSTOMERID &&
                             cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
@@ -768,7 +768,7 @@ namespace FintrakBanking.Repositories.Credit
                                  client_SupplierPhoneNumber = cs.PHONENUMBER,
                                  client_SupplierEmail = cs.EMAILADDRESS,
                                  client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                              }).ToList(),
                             approvalStatusId = p.APPROVALSTATUSID,
                             dateTimeCreated = p.DATETIMECREATED,
@@ -822,7 +822,7 @@ namespace FintrakBanking.Repositories.Credit
                             projectFinancingPlan = p.PROJECTFINANCINGPLAN,
                             proposedTermsAndConditions = p.PROPOSEDTERMSANDCONDITIONS,
                             risksAndConcerns = p.RISKSANDCONCERNS,
-                            prudentialExposureLimitImplications = p.PRUDENTIALEXPOSURELIMITIMPLICATIONS,
+                            prudentialExposureLimitImplications = p.PRUDENT_EXPOSUR_LIMIT_IMPLICATN,
                             relationshipManagerId = p.RELATIONSHIPMANAGERID,
                             relationshipOfficerId = p.RELATIONSHIPOFFICERID,
                             customerGroupMappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == p.CUSTOMERGROUPID).Select(s => new CustomerGroupMappingViewModel()
@@ -834,7 +834,7 @@ namespace FintrakBanking.Repositories.Credit
                                 //customerTypeId = context.tbl_Customer.FirstOrDefault(x => x.CustomerId == p.CustomerId).CustomerTypeId,
                                 customerType = s.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                                 relationshipTypeId = s.RELATIONSHIPTYPEID,
-                                relationshipTypeName = s.TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.RELATIONSHIPTYPENAME,
+                                relationshipTypeName = s.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
                                 productAccountNumber = context.TBL_CASA.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                                 taxIdentificationNumber = s.TBL_CUSTOMER.TAXNUMBER,
                                 registrationNumber = s.TBL_CUSTOMER.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == s.CUSTOMERID).REGISTRATIONNUMBER,
@@ -853,7 +853,7 @@ namespace FintrakBanking.Repositories.Credit
                                 {
                                     bankVerificationNumber = x.CUSTOMERBVN,
                                     companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
-                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                     customerId = x.CUSTOMERID,
                                     firstname = x.FIRSTNAME,
                                     surname = x.SURNAME
@@ -864,7 +864,7 @@ namespace FintrakBanking.Repositories.Credit
                                 {
                                     bankVerificationNumber = cs.CUSTOMERBVN,
                                     companyDirectorTypeId = cs.COMPANYDIRECTORTYPEID,
-                                    companyDirectorTypeName = cs.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                    companyDirectorTypeName = cs.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                     customerId = cs.CUSTOMERID,
                                     firstname = cs.FIRSTNAME,
                                     surname = cs.SURNAME
@@ -882,7 +882,7 @@ namespace FintrakBanking.Repositories.Credit
                                     client_SupplierPhoneNumber = cs.PHONENUMBER,
                                     client_SupplierEmail = cs.EMAILADDRESS,
                                     client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                                 }).ToList(),
                                 customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER
                                     .Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
@@ -897,7 +897,7 @@ namespace FintrakBanking.Repositories.Credit
                                     client_SupplierPhoneNumber = cs.PHONENUMBER,
                                     client_SupplierEmail = cs.EMAILADDRESS,
                                     client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                                 }).ToList(),
                             }).ToList(),
                             approvalStatusId = p.APPROVALSTATUSID,
@@ -952,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
                 penRecord.PROJECTFINANCINGPLAN = model.projectFinancingPlan;
                 penRecord.PROPOSEDTERMSANDCONDITIONS = model.proposedTermsAndConditions;
                 penRecord.RISKSANDCONCERNS = model.risksAndConcerns;
-                penRecord.PRUDENTIALEXPOSURELIMITIMPLICATIONS = model.prudentialExposureLimitImplications;
+                penRecord.PRUDENT_EXPOSUR_LIMIT_IMPLICATN = model.prudentialExposureLimitImplications;
                 penRecord.RELATIONSHIPMANAGERID = model.relationshipManagerId;
                 penRecord.RELATIONSHIPOFFICERID = model.relationshipOfficerId;
                 penRecord.APPROVALSTATUSID = model.sentForEvaluation ? (short)ApprovalStatusEnum.Processing

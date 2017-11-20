@@ -76,6 +76,26 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("job-request/comments/{jobRequestId}")]
+        public HttpResponseMessage GetJobComments(int jobRequestId)
+        {
+            try
+            {
+                var data = repo.GetJobComments(jobRequestId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("operation-staff/{operationId}")]
         public HttpResponseMessage GetOperationStaff(int operationId)
         {
@@ -142,8 +162,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
         [HttpPost]
         [Route("job-request")]
         public HttpResponseMessage AddJobRequest([FromBody] JobRequestViewModel entity)
@@ -193,6 +211,32 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error logging this request", error = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("job-request/comment")]
+        public HttpResponseMessage AddJobComment([FromBody] JobRequestMessageViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.AddJobComment(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Comment added successfully." });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error commenting on this job" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error commenting on this request", error = ex.Message });
+            }
+        }
+
 
         [HttpPut, Route("job-request/reply/{jobRequestId}")]
         public HttpResponseMessage ReplyJobRequest([FromBody] JobRequestViewModel entity, int jobRequestId)
@@ -330,6 +374,21 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetAllJobType();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("job-sub-type/{jobId}")]
+        public HttpResponseMessage GetJobSubType(short jobId)
+        {
+            try
+            {
+                var data = repo.GetJobSubType(jobId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)

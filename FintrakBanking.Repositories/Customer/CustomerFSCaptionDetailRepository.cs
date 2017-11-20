@@ -249,7 +249,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupFSCaptionDetailViewModel> GetMappedCustomerGroupFsCaptionDetail(int customerGroupId, short fsCaptionGroupId, DateTime fsDate)
         {
-            var data = (from a in context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+            var data = (from a in context.TBL_CUSTOMER_GROUP_FS_CAPTN_DET
                         where a.CUSTOMERGROUPID == customerGroupId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId
                         && a.FSDATE == fsDate
                         && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
@@ -277,7 +277,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupFSCaptionDetailViewModel> GetMappedCustomerGroupFsCaptions(int customerGroupId)
         {
-            var data = (from a in context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+            var data = (from a in context.TBL_CUSTOMER_GROUP_FS_CAPTN_DET
                         where a.CUSTOMERGROUPID == customerGroupId
                         && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
                         && a.DELETED == false
@@ -304,7 +304,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public CustomerGroupFSCaptionDetailViewModel GetCustomerGroupFSCaptionDetailById(int fsdetailId)
         {
-            var data = (from a in context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+            var data = (from a in context.TBL_CUSTOMER_GROUP_FS_CAPTN_DET
                         where a.GROUPFSDETAILID == fsdetailId
                         select new CustomerGroupFSCaptionDetailViewModel
                         {
@@ -330,7 +330,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             try
             {
-                var exisitingDeletedRecord = context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL.FirstOrDefault(x => x.FSCAPTIONID == entity.fsCaptionId 
+                var exisitingDeletedRecord = context.TBL_CUSTOMER_GROUP_FS_CAPTN_DET.FirstOrDefault(x => x.FSCAPTIONID == entity.fsCaptionId 
                 &&  x.CUSTOMERGROUPID == entity.customerGroupId && x.DELETED == true);
            
                 TBL_CUSTOMER_FS_CAPTION captionInfo;
@@ -365,7 +365,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 else
                 {
-                    var data = new TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+                    var data = new TBL_CUSTOMER_GROUP_FS_CAPTN_DET
                     {
                         CUSTOMERGROUPID = entity.customerGroupId,
                         FSCAPTIONID = entity.fsCaptionId,
@@ -376,7 +376,7 @@ namespace FintrakBanking.Repositories.Customer
                         DATETIMECREATED = _genSetup.GetApplicationDate()
                     };
 
-                    context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL.Add(data);
+                    context.TBL_CUSTOMER_GROUP_FS_CAPTN_DET.Add(data);
 
                     // Audit Section ---------------------------
 
@@ -412,7 +412,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdateCustomerGroupFSCaptionDetail(int fsdetailId, CustomerGroupFSCaptionDetailViewModel entity)
         {
-            var data = context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL.Find(fsdetailId);
+            var data = context.TBL_CUSTOMER_GROUP_FS_CAPTN_DET.Find(fsdetailId);
             if (data == null) return false;
 
             data.CUSTOMERGROUPID = entity.customerGroupId;
@@ -449,7 +449,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool DeleteCustomerGroupFSCaptionDetail(int fsdetailId, UserInfo user)
         {
-            var data = context.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL.Find(fsdetailId);
+            var data = context.TBL_CUSTOMER_GROUP_FS_CAPTN_DET.Find(fsdetailId);
             if (data != null)
             {
                 data.DELETED = true;

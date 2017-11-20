@@ -252,7 +252,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productGroupName = p.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
                         requirePrincipalGl = p.REQUIREPRINCIPALGL,
                         requireInterestIncomeExpenseGl = p.REQUIREINTERESTINCOMEEXPENSEGL,
-                        requireInterestReceivablePayableGl = p.REQUIREINTERESTRECEIVABLEPAYABLEGL,
+                        requireInterestReceivablePayableGl = p.REQUIRE_INT_RECEIVABLE_PAYABLGL,
                         requirePremiumDiscountGl = p.REQUIREPREMIUMDISCOUNTGL,
                         requireDormantGl = p.REQUIREDORMANTGL,
                         requireOverdrawnGL = p.REQUIREOVERDRAWNGL,
@@ -305,7 +305,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 PRODUCTGROUPID = productType.productGroupId,
                 REQUIREPRINCIPALGL = productType.requirePrincipalGl,
                 REQUIREINTERESTINCOMEEXPENSEGL = productType.requireInterestIncomeExpenseGl,
-                REQUIREINTERESTRECEIVABLEPAYABLEGL = productType.requireInterestReceivablePayableGl,
+                REQUIRE_INT_RECEIVABLE_PAYABLGL = productType.requireInterestReceivablePayableGl,
                 REQUIREPREMIUMDISCOUNTGL = productType.requirePremiumDiscountGl,
                 REQUIREDORMANTGL = productType.requireDormantGl,
                 REQUIREOVERDRAWNGL = productType.requireOverdrawnGL,
@@ -364,7 +364,7 @@ namespace FintrakBanking.Repositories.Setups.General
             data.REQUIREDORMANTGL = productType.requireDormantGl;
             data.REQUIREOVERDRAWNGL = productType.requireOverdrawnGL;
             data.REQUIREINTERESTINCOMEEXPENSEGL = productType.requireInterestIncomeExpenseGl;
-            data.REQUIREINTERESTRECEIVABLEPAYABLEGL = productType.requireInterestReceivablePayableGl;
+            data.REQUIRE_INT_RECEIVABLE_PAYABLGL = productType.requireInterestReceivablePayableGl;
             data.DEALCLASSIFICATIONID = productType.dealClassificationId;
             data.REQUIRERATE = productType.requireRate;
             data.REQUIRETENOR = productType.requireTenor;

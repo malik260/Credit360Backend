@@ -44,6 +44,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE { get; set; }
+        public virtual TBL_CUSTOMER_GROUP_RELATN_TYPE TBL_CUSTOMER_GROUP_RELATN_TYPE { get; set; }
     }
 }

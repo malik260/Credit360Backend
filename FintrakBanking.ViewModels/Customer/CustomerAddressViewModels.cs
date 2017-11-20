@@ -11,7 +11,7 @@
         public string electricMeterNumber { get; set; }
         public string pobox { get; set; }
         public int customerId { get; set; }
-        public int addressTypeId { get; set; }
+        public short addressTypeId { get; set; }
         public bool active { get; set; }
     }
 

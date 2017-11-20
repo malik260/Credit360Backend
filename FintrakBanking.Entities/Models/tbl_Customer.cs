@@ -132,6 +132,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string TAXNUMBER { get; set; }
 
+        [StringLength(50)]
+        public string CUSTOMERBVN { get; set; }
+
         public short? RISKRATINGID { get; set; }
 
         public int CREATEDBY { get; set; }

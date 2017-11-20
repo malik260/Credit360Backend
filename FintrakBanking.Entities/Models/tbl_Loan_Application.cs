@@ -44,6 +44,8 @@ namespace FintrakBanking.Entities.Models
 
         public int RELATIONSHIPMANAGERID { get; set; }
 
+        public int CASAACCOUNTID { get; set; }
+
         [Column(TypeName = "date")]
         public DateTime APPLICATIONDATE { get; set; }
 
@@ -117,6 +119,8 @@ namespace FintrakBanking.Entities.Models
         public bool NOTINCAMSOL { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
+
+        public virtual TBL_CASA TBL_CASA { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 

@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_CUSTOMER_GROUP()
         {
             TBL_CUSTOMER_GROUP_MAPPING = new HashSet<TBL_CUSTOMER_GROUP_MAPPING>();
-            TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL = new HashSet<TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL>();
+            TBL_CUSTOMER_GROUP_FS_CAPTN_DET = new HashSet<TBL_CUSTOMER_GROUP_FS_CAPTN_DET>();
             TBL_LOAN_APPLICATION = new HashSet<TBL_LOAN_APPLICATION>();
             TBL_LOAN_ARCHIVE = new HashSet<TBL_LOAN_ARCHIVE>();
             TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
@@ -54,7 +54,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_CUSTOMER_GROUP_MAPPING> TBL_CUSTOMER_GROUP_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL> TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_GROUP_FS_CAPTN_DET> TBL_CUSTOMER_GROUP_FS_CAPTN_DET { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION { get; set; }
