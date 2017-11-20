@@ -8,7 +8,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
     {
         public int groupId { get; set; }
         public string groupName { get; set; }
-        public bool isCommittee { get; set; }
-        public bool isBeforeCamapproval { get; set; }
+        public int roleId { get; set; }
+        public bool branchFilter { get; set; }
     }
 }

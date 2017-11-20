@@ -23,6 +23,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int operationId { get; set; }
         public string comment { get; set; }
         public string staffName { get; set; }
+        public string fromApprovalLevelName { get; set; }
     }
     public class ApprovalTrailDetailsViewModel : ApprovalTrailViewModel
     {

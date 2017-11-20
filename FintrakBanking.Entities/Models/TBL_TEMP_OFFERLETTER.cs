@@ -6,7 +6,6 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_OFFERLETTER")]
     public partial class TBL_TEMP_OFFERLETTER
     {
         [Key]
@@ -14,7 +13,6 @@ namespace FintrakBanking.Entities.Models
 
         public string HTML_DOCUMENT { get; set; }
 
-        [StringLength(50)]
         public string APPLICATIONREFERENCENUMBER { get; set; }
 
         public short? PRODUCTID { get; set; }
@@ -25,9 +23,5 @@ namespace FintrakBanking.Entities.Models
         public bool? ISACCEPTED { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
-
-        public virtual TBL_TEMP_OFFERLETTER TBL_TEMP_OFFERLETTER1 { get; set; }
-
-        public virtual TBL_TEMP_OFFERLETTER TBL_TEMP_OFFERLETTER2 { get; set; }
     }
 }

@@ -28,8 +28,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId);
 
-        IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId);
-
         IEnumerable<LoanApplicationViewModel> FindLoanApplication(string referenceNumberOrName, int companyId);
 
         Task<bool> UpdateApprovalStatus(ApprovalViewModel entity);
@@ -51,5 +49,15 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId);
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
+
+        OfferLetterTemplateViewModel GenerateOfferLetterTemplate(string applicationRefNumber);
+
+        OfferLetterTemplateViewModel GetPreparedOfferLetterByApplRefNumber(string applicationRefNumber);
+
+        IEnumerable<OfferLetterTemplateViewModel> GetAllPreparedOfferLetters();
+
+        bool SaveDraftOfferLetter(OfferLetterTemplateViewModel model);
+
+        bool UpdateDraftOfferLetter(int documentId, OfferLetterTemplateViewModel model);
     }
 }

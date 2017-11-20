@@ -80,30 +80,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("condition-precedent/{conditionPrecedentId}")]
-        public HttpResponseMessage UpdateConditionPrecedent([FromBody] ConditionPrecedentViewModel entity, int conditionPrecedentId)
-        {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.lastUpdatedBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+        //[HttpPut]
+        //[Route("condition-precedent/{conditionPrecedentId}")]
+        //public HttpResponseMessage UpdateConditionPrecedent([FromBody] ConditionPrecedentViewModel entity, int conditionPrecedentId)
+        //{
+        //    try
+        //    {
+        //        entity.userBranchId = (short)token.GetBranchId;
+        //        entity.companyId = token.GetCompanyId;
+        //        entity.lastUpdatedBy = token.GetStaffId;
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.UpdateConditionPrecedent(entity, conditionPrecedentId);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
-                }
+        //        var data = repo.UpdateConditionPrecedent(entity, conditionPrecedentId);
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}", error = ex.InnerException });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}", error = ex.InnerException });
+        //    }
+        //}
 
         #region CP template
 
@@ -173,6 +173,54 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion CP template
+
+        [HttpPut]
+        [Route("condition-precedent-edit/{id}")]
+        public HttpResponseMessage EditLoanCditionPrecedent([FromBody] ConditionPrecedentViewModel entity, int id)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.EditLoanConditionPrecedent(id, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been modified successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpDelete]
+        [Route("condition-precedent-remove/{id}")]
+        public HttpResponseMessage RemoveLoanConditionPrecedent(int id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
+                var data = repo.RemoveLoanConditionPrecedent(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been removed successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
 
     }
 }
