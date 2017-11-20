@@ -57,12 +57,12 @@ namespace WinApp
             //decimal vCountry =  NunCountry.Value;
             DateTime vDate = dtpDate.Value;
             int vStaff = 1;
-            int vLoan  = 215;
+           // int vLoan  = 215;
             decimal vAmount  = NunCountry.Value;
             short vReview  = 19;
 
             short priceIndex = 1;
-            double newRate = 17.5;
+            double newRate = 20;
             //string vDesc = txtDesc.Text;
 
             //model.CountryId = 1;//(int)vCountry;
@@ -94,7 +94,7 @@ namespace WinApp
             //loanOperation.ProcessLoanRepaymentPostingPastDue(vDate);
             //loanOperation.ProcessLoanRepaymentPostingForceDebit(vDate);
             //loanOperation.ProcessAuthorisedOverdraftRepaymentPostingForceDebit(vDate);
-            //loanOperation.BulkRateReview(priceIndex,newRate,vDate,vStaff,vReview);
+            loanOperation.BulkRateReview(priceIndex,newRate,vDate,vStaff,vReview);
 
             MessageBox.Show("Successful", "Fintrak");
 

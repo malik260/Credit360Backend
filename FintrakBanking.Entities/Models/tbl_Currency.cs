@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
             TBL_CASA = new HashSet<TBL_CASA>();
             TBL_COMPANY = new HashSet<TBL_COMPANY>();
             TBL_CHART_OF_ACCOUNT_CURRENCY = new HashSet<TBL_CHART_OF_ACCOUNT_CURRENCY>();
-            TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY>();
+            TBL_TEMP_CHART_OF_ACCOUNT_CUR = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT_CUR>();
             TBL_COLLATERAL_CUSTOMER = new HashSet<TBL_COLLATERAL_CUSTOMER>();
             TBL_CURRENCY_RATE = new HashSet<TBL_CURRENCY_RATE>();
             TBL_CURRENCY_RATE1 = new HashSet<TBL_CURRENCY_RATE>();
@@ -41,6 +41,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(250)]
         public string CURRENCYNAME { get; set; }
 
+        public bool INUSE { get; set; }
+
         public int? CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
@@ -59,7 +61,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_CHART_OF_ACCOUNT_CURRENCY> TBL_CHART_OF_ACCOUNT_CURRENCY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY> TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY { get; set; }
+        public virtual ICollection<TBL_TEMP_CHART_OF_ACCOUNT_CUR> TBL_TEMP_CHART_OF_ACCOUNT_CUR { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_COLLATERAL_CUSTOMER> TBL_COLLATERAL_CUSTOMER { get; set; }

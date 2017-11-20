@@ -40,15 +40,15 @@ namespace FintrakBanking.Repositories.Customer
         {
 
             var data = (from c in context.TBL_CUSTOMER
-                        where c.CUSTOMERID == custormerId 
+                        where c.CUSTOMERID == custormerId
                         select new
                         {
 
-                            shFund = c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE,
+                            shFund = c.TBL_CUSTOMER_RISK_RATING.MAX_SHAREHOLDER_FUND_PERCENTAGE,
                             isInvestment = c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
                             rating = c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                            limit =  ((double)c.TBL_CUSTOMER_RISK_RATING.MAXIMUMSHAREHOLDERFUNDPERCENTAGE / 100.00) *  StackHoldersFund
-                       }).FirstOrDefault();
+                            limit = ((double)c.TBL_CUSTOMER_RISK_RATING.MAX_SHAREHOLDER_FUND_PERCENTAGE / 100.00) * StackHoldersFund
+                        }).FirstOrDefault();
             return data;
         }
 
@@ -85,7 +85,9 @@ namespace FintrakBanking.Repositories.Customer
                 RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
                 SPOUSE = entity.spouse,
                 SUBSECTORID = entity.subSectorId,
-                TAXNUMBER = entity.taxNumber
+                TAXNUMBER = entity.taxNumber,
+                RISKRATINGID = entity.riskRatingId,
+                CUSTOMERBVN = entity.customerBVN
             };
             context.TBL_CUSTOMER.Add(customer);
             //customerId = customer.CUSTOMERID;
@@ -160,7 +162,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 address.ACTIVE = ent.active;
                 address.ADDRESS = ent.address;
-                address.ADDRESSTYPEID = ent.addressTypeId;
+                address.ADDRESSTYPEID = (short)ent.addressTypeId;
                 address.CITYID = ent.cityId;
                 address.CUSTOMERID = ent.customerId;
                 address.STATEID = ent.stateId;
@@ -187,7 +189,7 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             address.ACTIVE = entity.active;
                             address.ADDRESS = entity.address;
-                            address.ADDRESSTYPEID = entity.addressTypeId;
+                            address.ADDRESSTYPEID = (short)entity.addressTypeId;
                             address.CITYID = entity.cityId;
                             address.STATEID = entity.stateId;
                             address.HOMETOWN = entity.homeTown;
@@ -202,7 +204,7 @@ namespace FintrakBanking.Repositories.Customer
                         address = new TBL_CUSTOMER_ADDRESS();
                         address.ACTIVE = entity.active;
                         address.ADDRESS = entity.address;
-                        address.ADDRESSTYPEID = entity.addressTypeId;
+                        address.ADDRESSTYPEID = (short)entity.addressTypeId;
                         address.CITYID = entity.cityId;
                         address.CUSTOMERID = entity.customerId;
                         address.STATEID = entity.stateId;
@@ -463,8 +465,6 @@ namespace FintrakBanking.Repositories.Customer
                             company.COMPANYNAME = entity.companyName;
                             company.COMPANYWEBSITE = entity.companyWebsite;
                             company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
-                            company.CREDITRATING = entity.creditRating;
-                            company.PREVIOUSCREDITRATING = entity.previousCreditRating;
                             company.REGISTEREDOFFICE = entity.registeredOffice;
                             company.REGISTRATIONNUMBER = entity.registrationNumber;
                             company.PAIDUPCAPITAL = entity.paidUpCapital;
@@ -479,9 +479,7 @@ namespace FintrakBanking.Repositories.Customer
                         company.COMPANYNAME = entity.companyName;
                         company.COMPANYWEBSITE = entity.companyWebsite;
                         company.CORPORATEBUSINESSCATEGORY = entity.corporateBusinessCategory;
-                        company.CREDITRATING = entity.creditRating;
                         company.CUSTOMERID = entity.customerId;
-                        company.PREVIOUSCREDITRATING = entity.previousCreditRating;
                         company.REGISTEREDOFFICE = entity.registeredOffice;
                         company.REGISTRATIONNUMBER = entity.registrationNumber;
                         company.PAIDUPCAPITAL = entity.paidUpCapital;
@@ -527,9 +525,7 @@ namespace FintrakBanking.Repositories.Customer
                 info.COMPANYNAME = ent.companyName;
                 info.COMPANYWEBSITE = ent.companyWebsite;
                 info.CORPORATEBUSINESSCATEGORY = ent.corporateBusinessCategory;
-                info.CREDITRATING = ent.creditRating;
                 info.CUSTOMERID = customerId;
-                info.PREVIOUSCREDITRATING = ent.previousCreditRating;
                 info.REGISTEREDOFFICE = ent.registeredOffice;
                 info.REGISTRATIONNUMBER = ent.registrationNumber;
                 // info.paidUpCapital = ent.PaidUpCapital;
@@ -569,9 +565,7 @@ namespace FintrakBanking.Repositories.Customer
                     info.COMPANYNAME = ent.companyName;
                     info.COMPANYWEBSITE = ent.companyWebsite;
                     info.CORPORATEBUSINESSCATEGORY = ent.corporateBusinessCategory;
-                    info.CREDITRATING = ent.creditRating;
                     info.CUSTOMERID = ent.customerId;
-                    info.PREVIOUSCREDITRATING = ent.previousCreditRating;
                     info.REGISTEREDOFFICE = ent.registeredOffice;
                     info.REGISTRATIONNUMBER = ent.registrationNumber;
                 }
@@ -600,6 +594,10 @@ namespace FintrakBanking.Repositories.Customer
             {
                 try
                 {
+                    if (entity.companyDirectorTypeId != (int)CompanyDirectorTypeEnum.Shareholder)
+                    {
+                        entity.customerTypeId = 1;
+                    }
                     TBL_CUSTOMER_COMPANY_DIRECTOR directors;
                     if (entity.companyDirectorId != 0 || entity.companyDirectorId < 0)
                     {
@@ -612,6 +610,8 @@ namespace FintrakBanking.Repositories.Customer
                             directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                             directors.CUSTOMERBVN = entity.bankVerificationNumber;
                             directors.NUMBEROFSHARES = entity.numberOfShares;
+                            directors.REGISTRATION_NUMBER = entity.rcNumber;
+                            directors.TAX_NUMBER = entity.taxNumber;
                             directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
                             directors.ADDRESS = entity.address;
                             directors.PHONENUMBER = entity.phoneNumber;
@@ -625,8 +625,11 @@ namespace FintrakBanking.Repositories.Customer
                         directors.CUSTOMERID = entity.customerId;
                         directors.SURNAME = entity.surname;
                         directors.FIRSTNAME = entity.firstname;
+                        directors.CUSTOMERTYPEID = entity.customerTypeId;
                         directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                         directors.CUSTOMERBVN = entity.bankVerificationNumber;
+                        directors.REGISTRATION_NUMBER = entity.rcNumber;
+                        directors.TAX_NUMBER = entity.taxNumber;
                         directors.NUMBEROFSHARES = entity.numberOfShares;
                         directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
                         directors.ADDRESS = entity.address;
@@ -758,6 +761,11 @@ namespace FintrakBanking.Repositories.Customer
                             clientSupplier.FIRSTNAME = entity.firstName;
                             clientSupplier.MIDDLENAME = entity.middleName;
                             clientSupplier.LASTNAME = entity.lastName;
+                            clientSupplier.TAX_NUMBER = entity.taxNumber;
+                            clientSupplier.REGISTRATION_NUMBER = entity.rcNumber;
+                            clientSupplier.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
+                            clientSupplier.CASA_ACCOUNTNO = entity.casaAccountNumber;
+                            clientSupplier.CONTACT_PERSON = entity.contactPerson;
                             clientSupplier.ADDRESS = entity.client_SupplierAddress;
                             clientSupplier.PHONENUMBER = entity.client_SupplierPhoneNumber;
                             clientSupplier.EMAILADDRESS = entity.client_SupplierEmail;
@@ -777,6 +785,11 @@ namespace FintrakBanking.Repositories.Customer
                         clientSupplier.ADDRESS = entity.client_SupplierAddress;
                         clientSupplier.PHONENUMBER = entity.client_SupplierPhoneNumber;
                         clientSupplier.EMAILADDRESS = entity.client_SupplierEmail;
+                        clientSupplier.TAX_NUMBER = entity.taxNumber;
+                        clientSupplier.REGISTRATION_NUMBER = entity.rcNumber;
+                        clientSupplier.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
+                        clientSupplier.CASA_ACCOUNTNO = entity.casaAccountNumber;
+                        clientSupplier.CONTACT_PERSON = entity.contactPerson;
                         clientSupplier.CLIENT_SUPPLIERTYPEID = entity.client_SupplierTypeId;
                         clientSupplier.CREATEDBY = entity.createdBy;
                         clientSupplier.DATECREATED = DateTime.Now;
@@ -939,13 +952,13 @@ namespace FintrakBanking.Repositories.Customer
                        maritalStatus = a.MARITALSTATUS.Value,
                        title = a.TITLE,
                        middleName = a.MIDDLENAME,
+                       customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                        misCode = a.MISCODE,
                        misStaff = a.MISSTAFF,
                        nationality = a.NATIONALITY,
                        occupation = a.OCCUPATION,
                        placeOfBirth = a.PLACEOFBIRTH,
-
                        isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                        relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                        spouse = a.SPOUSE,
@@ -954,6 +967,8 @@ namespace FintrakBanking.Repositories.Customer
                        subSectorId = (short)a.SUBSECTORID,
                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                        taxNumber = a.TAXNUMBER,
+                       riskRatingId = a.RISKRATINGID,
+                       customerBVN = a.CUSTOMERBVN,
                        CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
                        {
                            address = x.ADDRESS,
@@ -966,15 +981,6 @@ namespace FintrakBanking.Repositories.Customer
                            pobox = x.POBOX,
                            stateId = x.STATEID,
                            addressId = x.ADDRESSID
-                       }).ToList(),
-                       CustomerBvn = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == a.CUSTOMERID).Select(b => new CustomerBvnViewModels()
-                       {
-                           bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
-                           customerBvnid = b.CUSTOMERBVNID,
-                           firstname = b.FIRSTNAME,
-                           isValidBvn = b.ISVALIDBVN,
-                           isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
-                           surname = b.SURNAME
                        }).ToList(),
                        CustomerPhoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => new CustomerPhoneContactViewModels
                        {
@@ -994,9 +1000,7 @@ namespace FintrakBanking.Repositories.Customer
                            companyInfomationId = d.COMPANYINFOMATIONID,
                            corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
                            createdBy = a.CREATEDBY,
-                           creditRating = d.CREDITRATING,
                            registeredOffice = d.REGISTEREDOFFICE,
-                           previousCreditRating = d.PREVIOUSCREDITRATING,
                            registrationNumber = d.REGISTRATIONNUMBER,
                            paidUpCapital = d.PAIDUPCAPITAL,
                            authorizedCapital = d.AUTHORISEDCAPITAL
@@ -1006,7 +1010,7 @@ namespace FintrakBanking.Repositories.Customer
                        {
                            identificationId = e.IDENTIFICATIONID,
                            identificationModeId = e.IDENTIFICATIONMODEID.Value,
-                           identificationMode = context.TBL_CUSTOMER_IDENTIFICATIONMODETYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
+                           identificationMode = context.TBL_CUSTOMER_IDENTI_MODE_TYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
                            identificationNo = e.IDENTIFICATIONNO,
                            issueAuthority = e.ISSUEAUTHORITY,
                            issuePlace = e.ISSUEPLACE
@@ -1034,7 +1038,7 @@ namespace FintrakBanking.Repositories.Customer
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -1051,7 +1055,7 @@ namespace FintrakBanking.Repositories.Customer
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -1068,7 +1072,7 @@ namespace FintrakBanking.Repositories.Customer
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -1083,11 +1087,16 @@ namespace FintrakBanking.Repositories.Customer
                            firstName = cs.FIRSTNAME,
                            middleName = cs.MIDDLENAME,
                            lastName = cs.LASTNAME,
+                           taxNumber = cs.TAX_NUMBER,
+                           rcNumber = cs.REGISTRATION_NUMBER,
+                           hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
+                           casaAccountNumber = cs.CASA_ACCOUNTNO,
+                           contactPerson = cs.CONTACT_PERSON,
                            client_SupplierAddress = cs.ADDRESS,
                            client_SupplierPhoneNumber = cs.PHONENUMBER,
                            client_SupplierEmail = cs.EMAILADDRESS,
                            client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                        }).ToList(),
                        CustomerSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
                        .Select(cs => new CustomerSupplierViewModels()
@@ -1101,7 +1110,7 @@ namespace FintrakBanking.Repositories.Customer
                            client_SupplierPhoneNumber = cs.PHONENUMBER,
                            client_SupplierEmail = cs.EMAILADDRESS,
                            client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                        }).ToList(),
                        CustomerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID)
                        .Select(x => new CollateralViewModel()
@@ -1181,6 +1190,27 @@ namespace FintrakBanking.Repositories.Customer
                        };
             return type;
         }
+        public IEnumerable<CustomerAddressTypeViewModels> GetCustomerAddressType()
+        {
+            var type = from a in context.TBL_CUSTOMER_ADDRESS_TYPE
+                       select new CustomerAddressTypeViewModels
+                       {
+                           addressTypeName = a.ADDRESS_TYPE_NAME,
+                           addressTypeId = a.ADDRESSTYPEID
+                       };
+            return type;
+        }
+
+        public IEnumerable<CustomerRiskRatingViewModels> GetCustomerRiskRating()
+        {
+            var type = from a in context.TBL_CUSTOMER_RISK_RATING
+                       select new CustomerRiskRatingViewModels
+                       {
+                           riskRating = a.RISKRATING,
+                           riskRatingId = a.RISKRATINGID
+                       };
+            return type;
+        }
         public IEnumerable<KYCDocumentTypeViewModel> GetKYCDocumentType()
         {
             var type = from a in context.TBL_KYC_DOCUMENTTYPE
@@ -1193,7 +1223,7 @@ namespace FintrakBanking.Repositories.Customer
         }
         public IEnumerable<CustomerSupplierTypeViewModels> GetClientSupplierType()
         {
-            var type = from a in context.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE
+            var type = from a in context.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE
                        select new CustomerSupplierTypeViewModels
                        {
                            name = a.CLIENT_SUPPLIERTYPENAME,
@@ -1204,7 +1234,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerIdentificationModeTypeViewModels> GetIdentificationMode()
         {
-            var type = from a in context.TBL_CUSTOMER_IDENTIFICATIONMODETYPE
+            var type = from a in context.TBL_CUSTOMER_IDENTI_MODE_TYPE
                        select new CustomerIdentificationModeTypeViewModels
                        {
                            name = a.IDENTIFICATIONMODE,
@@ -1214,7 +1244,7 @@ namespace FintrakBanking.Repositories.Customer
         }
         public IEnumerable<CompanyDirectorTypeViewModels> GetDirectorsTypes()
         {
-            var type = from a in context.TBL_CUSTOMER_COMPANY_DIRECTORTYPE
+            var type = from a in context.TBL_CUSTOMER_COMPANY_DIREC_TYPE
                        select new CompanyDirectorTypeViewModels
                        {
                            name = a.COMPANYDIRECTORYTYPENAME,
@@ -1230,13 +1260,9 @@ namespace FintrakBanking.Repositories.Customer
             if (customer != null)
             {
                 customer.ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete;
-                customer.BRANCHID = entity.branchId;
-                customer.COMPANYID = entity.companyMainId;
-                customer.CREATEDBY = (int)entity.createdBy;
                 customer.CREATIONMAILSENT = entity.creationMailSent;
                 customer.CUSTOMERCODE = entity.customerCode;
                 customer.CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId;
-                customer.CUSTOMERTYPEID = entity.customerTypeId;
                 customer.DATEOFBIRTH = entity.dateOfBirth;
                 customer.EMAILADDRESS = entity.emailAddress;
                 customer.FIRSTNAME = entity.firstName;
@@ -1260,6 +1286,8 @@ namespace FintrakBanking.Repositories.Customer
                 customer.TAXNUMBER = entity.taxNumber;
                 customer.DATETIMEUPDATED = DateTime.Now;
                 customer.LASTUPDATEDBY = entity.deletedBy;
+                customer.RISKRATINGID = entity.riskRatingId;
+                customer.CUSTOMERBVN = entity.customerBVN;
             }
 
             if (entity.CustomerCompanyInfomation.Count > 0)
@@ -1284,7 +1312,6 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
 
         }
-
 
         public IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search)
         {
@@ -1414,6 +1441,217 @@ namespace FintrakBanking.Repositories.Customer
             return null;
         }
 
+        #region Single Customer Information By CustomerID
+        public CustomerViewModels GetSingleCustomerGeneralInfo(string customerCode)
+        {
+            var data = (from a in context.TBL_CUSTOMER
+                        where a.DELETED == false && a.CUSTOMERCODE == customerCode
+                        select new CustomerViewModels
+                        {
+                            accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
+                            branchId = a.BRANCHID,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            companyMainId = a.COMPANYID,
+                            createdBy = a.CREATEDBY,
+                            creationMailSent = a.CREATIONMAILSENT,
+                            customerCode = a.CUSTOMERCODE,
+                            customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
+                            customerTypeId = (short)a.CUSTOMERTYPEID,
+                            dateOfBirth = (DateTime)a.DATEOFBIRTH,
+                            customerId = a.CUSTOMERID,
+                            emailAddress = a.EMAILADDRESS,
+                            firstName = a.FIRSTNAME,
+                            gender = a.GENDER,
+                            lastName = a.LASTNAME,
+                            maidenName = a.MAIDENNAME,
+                            maritalStatus = a.MARITALSTATUS.Value,
+                            title = a.TITLE,
+                            middleName = a.MIDDLENAME,
+                            customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                            misCode = a.MISCODE,
+                            misStaff = a.MISSTAFF,
+                            nationality = a.NATIONALITY,
+                            occupation = a.OCCUPATION,
+                            placeOfBirth = a.PLACEOFBIRTH,
+                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                            spouse = a.SPOUSE,
+                            sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
+                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                            subSectorId = (short)a.SUBSECTORID,
+                            subSectorName = a.TBL_SUB_SECTOR.NAME,
+                            taxNumber = a.TAXNUMBER
+                        }).FirstOrDefault();
+
+            return data;
+        }
+        public CustomerCompanyInfomationViewModels GetSingleCustomerCompanyInfo(int customerId)
+        {
+            var comany = (from d in context.TBL_CUSTOMER_COMPANYINFOMATION
+                          where d.CUSTOMERID == customerId
+                          select new CustomerCompanyInfomationViewModels()
+                          {
+                              annualTurnOver = d.ANNUALTURNOVER,
+                              companyEmail = d.COMPANYEMAIL,
+                              companyId = d.CUSTOMERID,
+                              companyName = d.COMPANYNAME,
+                              companyWebsite = d.COMPANYWEBSITE,
+                              companyInfomationId = d.COMPANYINFOMATIONID,
+                              corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
+                              registeredOffice = d.REGISTEREDOFFICE,
+                              registrationNumber = d.REGISTRATIONNUMBER,
+                              paidUpCapital = d.PAIDUPCAPITAL,
+                              authorizedCapital = d.AUTHORISEDCAPITAL
+
+                          }).FirstOrDefault();
+            return comany;
+        }
+        public IEnumerable<CustomerAddressViewModels> GetSingleCustomerAddressInfo(int customerId)
+        {
+            var address = (from x in context.TBL_CUSTOMER_ADDRESS
+                           where x.CUSTOMERID == customerId
+                           select new CustomerAddressViewModels()
+                           {
+                               address = x.ADDRESS,
+                               addressTypeId = x.ADDRESSTYPEID,
+                               cityId = x.CITYID,
+                               customerId = x.CUSTOMERID,
+                               homeTown = x.HOMETOWN,
+                               nearestLandmark = x.NEARESTLANDMARK,
+                               electricMeterNumber = x.ELECTRICMETERNUMBER,
+                               pobox = x.POBOX,
+                               stateId = x.STATEID,
+                               addressId = x.ADDRESSID
+                           }).ToList();
+            return address;
+        }
+        public IEnumerable<CustomerPhoneContactViewModels> GetSingleCustomerPhoneContactInfo(int customerId)
+        {
+            var phoneContact = (from c in context.TBL_CUSTOMER_PHONECONTACT
+                                where c.CUSTOMERID == customerId
+                                select new CustomerPhoneContactViewModels
+                                {
+                                    active = c.ACTIVE,
+                                    customerId = c.CUSTOMERID,
+                                    phone = c.PHONE,
+                                    phoneContactId = c.PHONECONTACTID,
+                                    phoneNumber = c.PHONENUMBER
+                                }).ToList();
+            return phoneContact;
+        }
+        public IEnumerable<CustomerBvnViewModels> GetSingleCustomerBVNInfo(int customerId)
+        {
+            var customerBvn = (from b in context.TBL_CUSTOMER_BVN
+                               where b.CUSTOMERID == customerId
+                               select new CustomerBvnViewModels()
+                               {
+                                   bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
+                                   customerBvnid = b.CUSTOMERBVNID,
+                                   firstname = b.FIRSTNAME,
+                                   isValidBvn = b.ISVALIDBVN,
+                                   isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
+                                   surname = b.SURNAME
+                               }).ToList();
+            return customerBvn;
+        }
+        public IEnumerable<CustomerIdentificationViewModels> GetSingleCustomerIdentificationInfo(int customerId)
+        {
+            var identification = (from e in context.TBL_CUSTOMER_IDENTIFICATION
+                                  where e.CUSTOMERID == customerId
+                                  select new CustomerIdentificationViewModels()
+                                  {
+                                      identificationId = e.IDENTIFICATIONID,
+                                      identificationModeId = e.IDENTIFICATIONMODEID.Value,
+                                      identificationMode = context.TBL_CUSTOMER_IDENTI_MODE_TYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
+                                      identificationNo = e.IDENTIFICATIONNO,
+                                      issueAuthority = e.ISSUEAUTHORITY,
+                                      issuePlace = e.ISSUEPLACE
+                                  }).ToList();
+            return identification;
+        }
+        public IEnumerable<CustomerEmploymentHistoryViewModels> GetSingleCustomerEmploymentHistoryInfo(int customerId)
+        {
+            var employmentHistory = (from s in context.TBL_CUSTOMER_EMPLOYMENTHISTORY
+                                     where s.CUSTOMERID == customerId
+                                     select new CustomerEmploymentHistoryViewModels()
+                                     {
+                                         active = s.ACTIVE,
+                                         previousEmployer = s.PREVIOUSEMPLOYER,
+                                         customerId = s.CUSTOMERID,
+                                         employDate = s.EMPLOYDATE,
+                                         placeOfWorkId = s.PLACEOFWORKID,
+                                         employerAddress = s.EMPLOYERADDRESS,
+                                         employerCountryId = s.EMPLOYERCOUNTRYID,
+                                         employerName = s.EMPLOYERNAME,
+                                         officePhone = s.OFFICEPHONE,
+                                         employerStateId = s.EMPLOYERSTATEID
+                                     }).ToList();
+            return employmentHistory;
+        }
+        public IEnumerable<CustomerCompanyDirectorsViewModels> GetSingleCustomerDirectorInfo(int customerId, short directorTypeId)
+        {
+            var companyDirectors = (from s in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                    where s.CUSTOMERID == customerId && s.COMPANYDIRECTORTYPEID == directorTypeId
+                                    select new CustomerCompanyDirectorsViewModels()
+                                    {
+                                        companyDirectorId = s.COMPANYDIRECTORID,
+                                        surname = s.SURNAME,
+                                        firstname = s.FIRSTNAME,
+                                        numberOfShares = s.NUMBEROFSHARES,
+                                        isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                                        bankVerificationNumber = s.CUSTOMERBVN,
+                                        companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                                        rcNumber = s.REGISTRATION_NUMBER,
+                                        taxNumber = s.TAX_NUMBER,
+                                        companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                        customerId = s.CUSTOMERID,
+                                        customerName = s.FIRSTNAME + " " + s.SURNAME,
+                                        address = s.ADDRESS,
+                                        phoneNumber = s.PHONENUMBER,
+                                        email = s.EMAILADDRESS
+                                    }).ToList();
+            return companyDirectors;
+        }
+        public IEnumerable<CustomerClientOrSupplierViewModels> GetSingleCustomerClientOrSupplierInfo(int customerId, short clientTypeId)
+        {
+            var clientOrSupplier = (from cs in context.TBL_CUSTOMER_CLIENT_SUPPLIER
+                                    where cs.CUSTOMERID == customerId && cs.CLIENT_SUPPLIERTYPEID == clientTypeId
+                                    select new CustomerClientOrSupplierViewModels()
+                                    {
+                                        customerTypeId = cs.CUSTOMERTYPEID,
+                                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
+                                        client_SupplierId = cs.CLIENT_SUPPLIERID,
+                                        clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
+                                        firstName = cs.FIRSTNAME,
+                                        middleName = cs.MIDDLENAME,
+                                        lastName = cs.LASTNAME,
+                                        taxNumber = cs.TAX_NUMBER,
+                                        rcNumber = cs.REGISTRATION_NUMBER,
+                                        hasCASAAccount = cs.HAS_CASA_ACCOUNT,
+                                        casaAccountNumber = cs.CASA_ACCOUNTNO,
+                                        contactPerson = cs.CONTACT_PERSON,
+                                        client_SupplierAddress = cs.ADDRESS,
+                                        client_SupplierPhoneNumber = cs.PHONENUMBER,
+                                        client_SupplierEmail = cs.EMAILADDRESS,
+                                        client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                    }).ToList();
+            return clientOrSupplier;
+        }
+        public IEnumerable<CustomerChildrenViewModel> GetSingleCustomerChildrenInfo(int customerId)
+        {
+            var children = (from chd in context.TBL_CUSTOMER_CHILDREN
+                            where chd.CUSTOMERID == customerId
+                            select new CustomerChildrenViewModel()
+                            {
+                                customerChildrenId = chd.CUSTOMERCHILDRENID,
+                                customerId = chd.CUSTOMERID,
+                                childName = chd.CHILDNAME,
+                                childDateOfBirth = chd.CHILDDATEOFBIRTH
+                            }).ToList();
+            return children;
+        }
+        #endregion
     }
 }
 

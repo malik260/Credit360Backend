@@ -59,7 +59,7 @@ namespace FintrakBanking.Repositories.Credit
             .Where(x => x.staffId == staffId);
 
             var memos = context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Where(x => x.LOANAPPLICATIONID == applicationId)
-                .SelectMany(x => x.TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT)
+                .SelectMany(x => x.TBL_CREDIT_APPRAISAL_MEMO_DOCUM)
                 .Select(x => new
                 {
                     doc = x,
@@ -112,7 +112,7 @@ namespace FintrakBanking.Repositories.Credit
                 memo = context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Add(newMemo);
             }
 
-            var newDocument = new TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT
+            var newDocument = new TBL_CREDIT_APPRAISAL_MEMO_DOCUM
             {
                 CAMDOCUMENTATION = "New",
                 APPRAISALMEMORANDUMID = memo.APPRAISALMEMORANDUMID,
@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now
             };
 
-            var document = context.TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT.Add(newDocument);
+            var document = context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM.Add(newDocument);
 
 
             // Audit Section ---------------------------
@@ -224,7 +224,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int documentId)
         {
-            var data = this.context.TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT.Find(documentId);
+            var data = this.context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM.Find(documentId);
 
             if (data == null) { return false; }
 
@@ -346,7 +346,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string LineItemChanges(List<RecommendedChangesViewModel> recommendedChanges)
         {
-            return "NOT SUPPORTED!";
+            return "N/A";
         }
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId)
@@ -479,7 +479,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var documentation = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x => x.TBL_CREDIT_APPRAISAL_MEMORANDUM).First()
-                .SelectMany(x => x.TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT)
+                .SelectMany(x => x.TBL_CREDIT_APPRAISAL_MEMO_DOCUM)
                 .Select(x => new DocumentationViewModel
                 {
                     documentationId = x.CAMDOCUMENTATIONID,

@@ -58,6 +58,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -128,6 +129,7 @@
     <Compile Include="Setups\General\CompanyRepository.cs" />
     <Compile Include="Setups\General\CountryRepository.cs" />
     <Compile Include="Setups\General\CustomFieldsRepository.cs" />
+    <Compile Include="Setups\General\MonitoringSetupRepository.cs" />
     <Compile Include="Setups\General\DepartmentRepository.cs" />
     <Compile Include="Setups\General\GeneralSetupRepository.cs" />
     <Compile Include="Setups\General\JobTitleRepository.cs" />

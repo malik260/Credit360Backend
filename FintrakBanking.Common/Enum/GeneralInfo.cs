@@ -172,7 +172,10 @@ namespace FintrakBanking.Common.Enum
         DepartmentUnitAdded = 164,
         DepartmentUnitUpdated = 165,
         DepartmentUnitDeleted = 166,
-        ForwardAppraisalMemorandum = 167,
+        MonitoringSetupAdded = 167,
+        MonitoringSetupUpdated = 168,
+        MonitoringSetupDeleted = 169,
+        ForwardAppraisalMemorandum = 170
     };
 
 

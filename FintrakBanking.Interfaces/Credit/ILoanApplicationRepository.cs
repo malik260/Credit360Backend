@@ -49,5 +49,15 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId);
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
+
+        OfferLetterTemplateViewModel GenerateOfferLetterTemplate(string applicationRefNumber);
+
+        OfferLetterTemplateViewModel GetPreparedOfferLetterByApplRefNumber(string applicationRefNumber);
+
+        IEnumerable<OfferLetterTemplateViewModel> GetAllPreparedOfferLetters();
+
+        bool SaveDraftOfferLetter(OfferLetterTemplateViewModel model);
+
+        bool UpdateDraftOfferLetter(int documentId, OfferLetterTemplateViewModel model);
     }
 }

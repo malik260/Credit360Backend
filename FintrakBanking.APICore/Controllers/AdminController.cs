@@ -418,20 +418,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("audit/log/search")]
-        public HttpResponseMessage FilterAuditLog([FromUri] int page, [FromUri] int itemsPerPage, string searchQuery)
+        public HttpResponseMessage FilterAuditLog([FromUri] int page, string searchQuery)
         {
             try
             {
                 var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId);
-                int totalItems = allAuditLog.Count();
 
-                allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage)
+                allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page)
                     .Where(x => x.auditType.ToLower().Contains(searchQuery.ToLower()) 
-                    || x.staffName.ToLower().Contains(searchQuery));
+                   // || x.firstName.ToLower().Contains(searchQuery) || x.lastName.ToLower().Contains(searchQuery)
+                    );
 
                 var data = allAuditLog.ToList();
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = totalItems });
+                int totalItems = allAuditLog.Count();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = allAuditLog.ToList(), count = allAuditLog.Count() });
 
             }
             catch (Exception ex)

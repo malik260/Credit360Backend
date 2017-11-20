@@ -66,6 +66,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<LookupViewModel> GetAllCurrency()
         {
             return (from data in context.TBL_CURRENCY
+                    where data.INUSE == true
                     select new LookupViewModel()
                     {
                         lookupId = data.CURRENCYID,

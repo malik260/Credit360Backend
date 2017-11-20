@@ -9,14 +9,17 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
+        public int loggedInStaffId;
+
         public int targetId { get; set; }
         public short departmentId { get; set; }
         public short departmentUnitId { get; set; }
         public int jobRequestId { get; set; }
+        public string requestTitle { get; set; }
         public string jobRequestCode { get; set; }
         public short jobTypeId { get; set; }
         public int senderStaffId { get; set; }
-        public int receiverStaffId { get; set; }
+        public int? receiverStaffId { get; set; }
         public int? reassignedTo { get; set; }
         public bool isReassigned { get; set; }
         public bool isAcknowledged { get; set; }
@@ -40,10 +43,54 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public List<MessageLogViewModel> mailData { get; set; }
     }
 
+    public  class JobRequestMessageViewModel : GeneralEntity
+    {
+        public int jobRequestMessageId { get; set; }
+
+        public int jobRequestId { get; set; }
+
+        public string message { get; set; }
+
+        public int staffId { get; set; }
+        public string staffName { get; set; }
+        public DateTime datetimeSent { get; set; }
+    }
+
+    public class JobRequestDetailViewModel : GeneralEntity
+    {
+        public int jobRequestDetailId { get; set; }
+
+        public int jobRequestId { get; set; }
+
+        public short JobSubTypeId { get; set; }
+
+        public string description { get; set; }
+
+        public decimal? amount { get; set; }
+    }
+
+    public class JobRequestStatusFeedbackViewModel : GeneralEntity
+    {
+        public short jobStatusFeedbackId { get; set; }
+
+        public string jobStatusFeedbackName { get; set; }
+
+        public short requestStatusId { get; set; }
+
+        public short jobTypeId { get; set; }
+
+    }
+
     public class JobTypeViewModel : GeneralEntity
     {
         public short jobTypeId { get; set; }
         public string jobTypeName { get; set; }
+    }
+
+    public class JobSubTypeViewModel : JobTypeViewModel
+    {
+        public short jobSubTypeId { get; set; }
+        public string jobSubTypeName { get; set; }
     }
 
     public class OperationStaffViewModel : GeneralEntity
