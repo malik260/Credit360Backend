@@ -79,7 +79,7 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(500)]
-        public string PRUDENTIALEXPOSURELIMITIMPLICATIONS { get; set; }
+        public string PRUDENT_EXPOSUR_LIMIT_IMPLICATN { get; set; }
 
         [Required]
         [StringLength(500)]

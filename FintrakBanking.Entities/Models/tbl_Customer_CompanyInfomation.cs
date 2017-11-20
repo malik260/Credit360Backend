@@ -35,12 +35,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string CORPORATEBUSINESSCATEGORY { get; set; }
 
-        [StringLength(200)]
-        public string CREDITRATING { get; set; }
-
-        [StringLength(200)]
-        public string PREVIOUSCREDITRATING { get; set; }
-
         public int? PAIDUPCAPITAL { get; set; }
 
         public int? AUTHORISEDCAPITAL { get; set; }

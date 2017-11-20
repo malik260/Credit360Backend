@@ -12,8 +12,8 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_COLLATERAL_VALUEBASE_TYPE()
         {
-            TBL_COLLATERAL_PLANT_AND_EQUIPMENT = new HashSet<TBL_COLLATERAL_PLANT_AND_EQUIPMENT>();
-            TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT = new HashSet<TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT>();
+            TBL_COLLATERAL_PLANT_AND_EQUIP = new HashSet<TBL_COLLATERAL_PLANT_AND_EQUIP>();
+            TBL_TEMP_COLLATERAL_PLANT_EQUIP = new HashSet<TBL_TEMP_COLLATERAL_PLANT_EQUIP>();
         }
 
         [Key]
@@ -43,11 +43,11 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_COLLATERAL_PLANT_AND_EQUIPMENT> TBL_COLLATERAL_PLANT_AND_EQUIPMENT { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_PLANT_AND_EQUIP> TBL_COLLATERAL_PLANT_AND_EQUIP { get; set; }
 
         public virtual TBL_COLLATERAL_TYPE TBL_COLLATERAL_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT> TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_PLANT_EQUIP> TBL_TEMP_COLLATERAL_PLANT_EQUIP { get; set; }
     }
 }

@@ -18,19 +18,19 @@ namespace FintrakBanking.Entities.Models
             TBL_COLLATERAL_DEPOSIT = new HashSet<TBL_COLLATERAL_DEPOSIT>();
             TBL_COLLATERAL_GAURANTEE = new HashSet<TBL_COLLATERAL_GAURANTEE>();
             TBL_COLLATERAL_POLICY = new HashSet<TBL_COLLATERAL_POLICY>();
-            TBL_COLLATERAL_PLANT_AND_EQUIPMENT = new HashSet<TBL_COLLATERAL_PLANT_AND_EQUIPMENT>();
-            TBL_COLLATERAL_MARKETABLE_SECURITY = new HashSet<TBL_COLLATERAL_MARKETABLE_SECURITY>();
+            TBL_COLLATERAL_PLANT_AND_EQUIP = new HashSet<TBL_COLLATERAL_PLANT_AND_EQUIP>();
+            TBL_COLLATERAL_MKT_SECURITY = new HashSet<TBL_COLLATERAL_MKT_SECURITY>();
             TBL_COLLATERAL_MISCELLANEOUS = new HashSet<TBL_COLLATERAL_MISCELLANEOUS>();
             TBL_COLLATERAL_PRECIOUSMETAL = new HashSet<TBL_COLLATERAL_PRECIOUSMETAL>();
-            TBL_COLLATERAL_IMMOVABLE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVABLE_PROPERTY>();
+            TBL_COLLATERAL_IMMOVE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVE_PROPERTY>();
             TBL_COLLATERAL_STOCK = new HashSet<TBL_COLLATERAL_STOCK>();
             TBL_COLLATERAL_VEHICLE = new HashSet<TBL_COLLATERAL_VEHICLE>();
             TBL_LOAN_APPLICATION_COLLATERAL = new HashSet<TBL_LOAN_APPLICATION_COLLATERAL>();
             TBL_LOAN_COLLATERAL_MAPPING = new HashSet<TBL_LOAN_COLLATERAL_MAPPING>();
-            TBL_LOANAPPLICATION_COLLATERAL_MAPPING = new HashSet<TBL_LOANAPPLICATION_COLLATERAL_MAPPING>();
+            TBL_LOANAPPLICATION_COLATRL_MAP = new HashSet<TBL_LOANAPPLICATION_COLATRL_MAP>();
             TBL_TEMP_COLLATERAL_POLICY = new HashSet<TBL_TEMP_COLLATERAL_POLICY>();
-            TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT = new HashSet<TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT>();
-            TBL_TEMP_COLLATERAL_PRECIOUSMETAL = new HashSet<TBL_TEMP_COLLATERAL_PRECIOUSMETAL>();
+            TBL_TEMP_COLLATERAL_PLANT_EQUIP = new HashSet<TBL_TEMP_COLLATERAL_PLANT_EQUIP>();
+            TBL_TEMP_COLLATERAL_PREC_METAL = new HashSet<TBL_TEMP_COLLATERAL_PREC_METAL>();
             TBL_TEMP_COLLATERAL_STOCK = new HashSet<TBL_TEMP_COLLATERAL_STOCK>();
         }
 
@@ -112,10 +112,10 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_COLLATERAL_POLICY> TBL_COLLATERAL_POLICY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_COLLATERAL_PLANT_AND_EQUIPMENT> TBL_COLLATERAL_PLANT_AND_EQUIPMENT { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_PLANT_AND_EQUIP> TBL_COLLATERAL_PLANT_AND_EQUIP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_COLLATERAL_MARKETABLE_SECURITY> TBL_COLLATERAL_MARKETABLE_SECURITY { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_MKT_SECURITY> TBL_COLLATERAL_MKT_SECURITY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_COLLATERAL_MISCELLANEOUS> TBL_COLLATERAL_MISCELLANEOUS { get; set; }
@@ -124,7 +124,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_COLLATERAL_PRECIOUSMETAL> TBL_COLLATERAL_PRECIOUSMETAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_COLLATERAL_IMMOVABLE_PROPERTY> TBL_COLLATERAL_IMMOVABLE_PROPERTY { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_IMMOVE_PROPERTY> TBL_COLLATERAL_IMMOVE_PROPERTY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_COLLATERAL_STOCK> TBL_COLLATERAL_STOCK { get; set; }
@@ -139,16 +139,16 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOANAPPLICATION_COLLATERAL_MAPPING> TBL_LOANAPPLICATION_COLLATERAL_MAPPING { get; set; }
+        public virtual ICollection<TBL_LOANAPPLICATION_COLATRL_MAP> TBL_LOANAPPLICATION_COLATRL_MAP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_COLLATERAL_POLICY> TBL_TEMP_COLLATERAL_POLICY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT> TBL_TEMP_COLLATERAL_PLANT_AND_EQUIPMENT { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_PLANT_EQUIP> TBL_TEMP_COLLATERAL_PLANT_EQUIP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_PRECIOUSMETAL> TBL_TEMP_COLLATERAL_PRECIOUSMETAL { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_PREC_METAL> TBL_TEMP_COLLATERAL_PREC_METAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }

@@ -54,6 +54,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool HASDONECHECKLIST { get; set; }
 
+        public bool ISPOLITICALLYEXPOSED { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

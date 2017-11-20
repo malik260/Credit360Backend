@@ -328,7 +328,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                
                 bool isGroupLoan = false;
-                int response = 0;
+                int response = 0; int loanId = 0;
                 if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
                 {
                     isGroupLoan = true;
@@ -363,6 +363,7 @@ namespace FintrakBanking.Repositories.Credit
                     SYSTEMDATETIME = DateTime.Now,
                     CUSTOMERGROUPID = loan.customerGroupId,
                     APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending ,
                     APPLICATIONAMOUNT = loan.proposedAmount,
                     APPLICATIONTENOR = Convert.ToInt32(Math.Round(((decimal)(loan.proposedTenor / 12) * (decimal)365))),
                     ISINVESTMENTGRADE = loan.isInvestmentGrade,
@@ -715,7 +716,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in context.TBL_CREDIT_APPRAISAL_MEMORANDUM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                        join d in context.TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
+                        join d in context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
                         join cust in context.TBL_CUSTOMER on a.CUSTOMERID equals cust.CUSTOMERID into cc
                         from cust in cc.DefaultIfEmpty()
 

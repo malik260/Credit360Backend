@@ -42,6 +42,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_APPLICATION_DETAIL = new HashSet<TBL_LOAN_APPLICATION_DETAIL>();
             TBL_LOAN_APPLICATION = new HashSet<TBL_LOAN_APPLICATION>();
             TBL_LOAN_PRELIMINARY_EVALUATION = new HashSet<TBL_LOAN_PRELIMINARY_EVALUATION>();
+            TBL_PRODUCT_CHARGE_FEE_CUSTOMER = new HashSet<TBL_PRODUCT_CHARGE_FEE_CUSTOMER>();
         }
 
         [Key]
@@ -130,6 +131,9 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(50)]
         public string TAXNUMBER { get; set; }
+
+        [StringLength(50)]
+        public string CUSTOMERBVN { get; set; }
 
         public short? RISKRATINGID { get; set; }
 
@@ -250,5 +254,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_PRELIMINARY_EVALUATION> TBL_LOAN_PRELIMINARY_EVALUATION { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_PRODUCT_CHARGE_FEE_CUSTOMER> TBL_PRODUCT_CHARGE_FEE_CUSTOMER { get; set; }
     }
 }

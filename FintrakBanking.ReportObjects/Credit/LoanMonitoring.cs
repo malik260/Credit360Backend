@@ -20,7 +20,7 @@ namespace FintrakBanking.ReportObjects.Credit
                         join c in context.TBL_STAFF on a.CREATEDBY equals c.STAFFID
                         join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
                         join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
-                        join f in context.TBL_COLLATERAL_IMMOVABLE_PROPERTY on a.COLLATERALCUSTOMERID equals f
+                        join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f
                             .COLLATERALCUSTOMERID
                         where (DbFunctions.DiffDays(DbFunctions.AddDays(f.LASTVALUATIONDATE, a.VALUATIONCYCLE), applDate) <= 30)
                         && a.COMPANYID == companyId
@@ -93,7 +93,7 @@ namespace FintrakBanking.ReportObjects.Credit
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                         join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                         join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-                        where b.INTERNALPRUDENTIALGUIDELINESTATUSID != (int)LoanPrudentialStatusEnum.Performing
+                        where b.INT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
                         && b.COMPANYID == companyId
                         select new LoanViewModel
                         {

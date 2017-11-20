@@ -14,11 +14,11 @@ namespace FintrakBanking.Entities.Models
         {
             TBL_TEMP_COLLATERAL_CASA = new HashSet<TBL_TEMP_COLLATERAL_CASA>();
             TBL_TEMP_COLLATERAL_DOCUMENTS = new HashSet<TBL_TEMP_COLLATERAL_DOCUMENTS>();
-            TBL_TEMP_COLLATERAL_MARKETABLE_SECURITY = new HashSet<TBL_TEMP_COLLATERAL_MARKETABLE_SECURITY>();
+            TBL_TEMP_COLLATERAL_MKT_SEC = new HashSet<TBL_TEMP_COLLATERAL_MKT_SEC>();
             TBL_TEMP_COLLATERAL_DEPOSIT = new HashSet<TBL_TEMP_COLLATERAL_DEPOSIT>();
             TBL_TEMP_COLLATERAL_GAURANTEE = new HashSet<TBL_TEMP_COLLATERAL_GAURANTEE>();
-            TBL_TEMP_COLLATERAL_MISCELLANEOUS = new HashSet<TBL_TEMP_COLLATERAL_MISCELLANEOUS>();
-            TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY = new HashSet<TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY>();
+            TBL_TEMP_COLLATERAL_MISC = new HashSet<TBL_TEMP_COLLATERAL_MISC>();
+            TBL_TEMP_COLLATERAL_IMMOVE_PROP = new HashSet<TBL_TEMP_COLLATERAL_IMMOVE_PROP>();
         }
 
         [Key]
@@ -86,7 +86,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_TEMP_COLLATERAL_DOCUMENTS> TBL_TEMP_COLLATERAL_DOCUMENTS { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_MARKETABLE_SECURITY> TBL_TEMP_COLLATERAL_MARKETABLE_SECURITY { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_MKT_SEC> TBL_TEMP_COLLATERAL_MKT_SEC { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_COLLATERAL_DEPOSIT> TBL_TEMP_COLLATERAL_DEPOSIT { get; set; }
@@ -95,9 +95,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_TEMP_COLLATERAL_GAURANTEE> TBL_TEMP_COLLATERAL_GAURANTEE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_MISCELLANEOUS> TBL_TEMP_COLLATERAL_MISCELLANEOUS { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_MISC> TBL_TEMP_COLLATERAL_MISC { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY> TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVE_PROP> TBL_TEMP_COLLATERAL_IMMOVE_PROP { get; set; }
     }
 }
