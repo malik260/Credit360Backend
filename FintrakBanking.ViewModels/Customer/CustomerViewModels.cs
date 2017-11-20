@@ -10,7 +10,7 @@ namespace FintrakBanking.ViewModels.Customer
         public CustomerViewModels()
         {
             CustomerAddresses = new List<CustomerAddressViewModels>();
-            CustomerBvn = new List<CustomerBvnViewModels>();
+            //CustomerBvn = new List<CustomerBvnViewModels>();
             CustomerEditHistory = new List<CustomerEditHistoryViewModels>();
             CustomerCompanyInfomation = new List<CustomerCompanyInfomationViewModels>();
             CustomerEmploymentHistory = new List<CustomerEmploymentHistoryViewModels>();
@@ -65,8 +65,10 @@ namespace FintrakBanking.ViewModels.Customer
         public string taxNumber { get; set; }
         public bool isInvestmentGrade { get; set; }
         public bool isRealatedParty { get; set; }
+        public string customerBVN { get; set; }
+        public short? riskRatingId { get; set; }
         public List<CustomerAddressViewModels> CustomerAddresses { get; set; }
-        public List<CustomerBvnViewModels> CustomerBvn { get; set; }
+        //public List<CustomerBvnViewModels> CustomerBvn { get; set; }
         public List<CustomerCompanyInfomationViewModels> CustomerCompanyInfomation { get; set; }
         public List<CustomerEditHistoryViewModels> CustomerEditHistory { get; set; }
         public List<CustomerEmploymentHistoryViewModels> CustomerEmploymentHistory { get; set; }

@@ -6,6 +6,17 @@
         public string name { get; set; }
     }
 
+    public class CustomerAddressTypeViewModels
+    {
+        public short addressTypeId { get; set; }
+        public string addressTypeName { get; set; }
+    }
+
+    public class CustomerRiskRatingViewModels
+    {
+        public short riskRatingId { get; set; }
+        public string riskRating { get; set; }
+    }
     public class CustomerSupplierTypeViewModels
     { 
         public short client_SupplierTypeId { get; set; }
