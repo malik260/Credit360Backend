@@ -141,7 +141,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 return (from data in context.TBL_LOAN_SCHEDULE_TYPE
-                        join t in context.TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING
+                        join t in context.TBL_LOAN_SCHEDULE_TYPE_PRODUCT 
                         on data.SCHEDULETYPEID equals t.SCHEDULETYPEID
                         where t.PRODUCTTYPEID == productTypeId
                         select new LookupViewModel()
@@ -1133,14 +1133,14 @@ namespace FintrakBanking.Repositories.Credit
 
 
             //---------------save irregular loan schedule input---------------------------
-            List<TBL_LOAN_SCHEDULE_IRREGULAR_INPUT> tblIrregularSchedule = new List<TBL_LOAN_SCHEDULE_IRREGULAR_INPUT>();
+            List<TBL_LOAN_SCHEDULE_IRREGUL_INPUT> tblIrregularSchedule = new List<TBL_LOAN_SCHEDULE_IRREGUL_INPUT>();
             LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
             if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
             {
                 var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
                 foreach (var item in data)
                 {
-                    TBL_LOAN_SCHEDULE_IRREGULAR_INPUT schedule = new TBL_LOAN_SCHEDULE_IRREGULAR_INPUT();
+                    TBL_LOAN_SCHEDULE_IRREGUL_INPUT schedule = new TBL_LOAN_SCHEDULE_IRREGUL_INPUT();
                     schedule.LOANID = loanId;
                     schedule.PAYMENTDATE = item.paymentDate;
                     schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);
