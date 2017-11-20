@@ -10,6 +10,7 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_MONITORING_SETUP
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int MONITORING_ITEMID { get; set; }
 
         [Required]

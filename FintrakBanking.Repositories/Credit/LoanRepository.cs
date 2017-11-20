@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -490,7 +491,7 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTNUMBEROFINSTALLMENT = 0,
                 //IsScheduledPrepayment = null,
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
-                SCHEDULEDPREPAYMENTFREQUENCYTYPEID = null,
+                SCH_PREPAYMENT_FREQUENCY_TYPEID = null,
                 PRODUCTPRICEINDEXRATE = (double)priceIndex,
 
                 CUSTOMERGROUPID = (entity.customerGroupId != 0 ? entity.customerGroupId : null),
@@ -603,7 +604,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
                             {
-                                var irregularRecordData = new TBL_LOAN_SCHEDULE_IRREGULAR_INPUT
+                                var irregularRecordData = new TBL_LOAN_SCHEDULE_IRREGUL_INPUT
                                 {
                                     LOANID = loan.TERMLOANID,
                                     PAYMENTAMOUNT = (decimal)irregular.paymentAmount,
@@ -611,7 +612,7 @@ namespace FintrakBanking.Repositories.Credit
                                     CREATEDBY = entity.createdBy,
                                     DATETIMECREATED = generalSetup.GetApplicationDate()
                                 };
-                                context.TBL_LOAN_SCHEDULE_IRREGULAR_INPUT.Add(irregularRecordData);
+                                context.TBL_LOAN_SCHEDULE_IRREGUL_INPUT.Add(irregularRecordData);
                             }
 
                         }
@@ -631,7 +632,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
                                 {
-                                    var irregularRecordData = new TBL_LOAN_SCHEDULE_IRREGULAR_INPUT
+                                    var irregularRecordData = new TBL_LOAN_SCHEDULE_IRREGUL_INPUT
                                     {
                                         LOANID = loan.TERMLOANID,
                                         PAYMENTAMOUNT = (decimal)irregular.paymentAmount,
@@ -639,7 +640,7 @@ namespace FintrakBanking.Repositories.Credit
                                         CREATEDBY = entity.createdBy,
                                         DATETIMECREATED = generalSetup.GetApplicationDate()
                                     };
-                                    context.TBL_LOAN_SCHEDULE_IRREGULAR_INPUT.Add(irregularRecordData);
+                                    context.TBL_LOAN_SCHEDULE_IRREGUL_INPUT.Add(irregularRecordData);
                                 }
 
                             }
@@ -1676,7 +1677,7 @@ namespace FintrakBanking.Repositories.Credit
         private LoanPaymentScheduleInputViewModel BuildScheduleModel(int targetId, int createdBy)
         {
             List<IrregularLoanScheduleInputViewModel> irregularPaymentScheduleList = new List<IrregularLoanScheduleInputViewModel>();
-            var loanIrregularRecord = context.TBL_LOAN_SCHEDULE_IRREGULAR_INPUT.Where(x => x.LOANID == targetId);
+            var loanIrregularRecord = context.TBL_LOAN_SCHEDULE_IRREGUL_INPUT.Where(x => x.LOANID == targetId);
             foreach (var irregularLoan in loanIrregularRecord)
             {
                 var irregularViewData = new IrregularLoanScheduleInputViewModel
@@ -2612,11 +2613,22 @@ namespace FintrakBanking.Repositories.Credit
                             feeDependentAmount = p.DEPENDENTAMOUNT ?? 0,
                             chargeAmount = c.AMOUNT ?? 0,
                             feeIntervalName = c.TBL_FEE_INTERVAL.FEEINTERVALNAME,
-                            required = p.CANBEREVIEWED,
+                            required = c.TBL_FEE_TYPE.BYAMOUNTREQUIRED,
                             recurring = (bool)c.RECURRING,
                             feeTargetId = c.FEETARGETID,
                             feeTargetName = c.TBL_FEE_TARGET.FEETARGETNAME,
                             isIntegralFee = c.ISINTEGRALFEE,
+                            chargeRange = (from r in context.TBL_CHARGE_RANGE 
+                                          where r.CHARGEFEEID == c.CHARGEFEEID
+                                           select new ChargeRangeViewModel
+                                          {
+                                             maximum = r.MAXIMUM,
+                                             minimum = r.MINIMUM,
+                                             rate = r.RATE,
+                                             amount = r.AMOUNT,
+                                             maximumAndBelow = r.MAXIMUMANDBELOW,
+                                             minimumAndAbove = r.MINIMUMANDABOVE,
+                                          }).ToList(),
 
                         }).ToList();
             return data;
@@ -2892,7 +2904,9 @@ namespace FintrakBanking.Repositories.Credit
                            companyInfomationId = d.COMPANYINFOMATIONID,
                            corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
                            createdBy = a.CREATEDBY,
+                           creditRating = d.CREDITRATING,
                            registeredOffice = d.REGISTEREDOFFICE,
+                           previousCreditRating = d.PREVIOUSCREDITRATING,
                            registrationNumber = d.REGISTRATIONNUMBER,
                            paidUpCapital = d.PAIDUPCAPITAL,
                            authorizedCapital = d.AUTHORISEDCAPITAL
@@ -2902,7 +2916,7 @@ namespace FintrakBanking.Repositories.Credit
                        {
                            identificationId = e.IDENTIFICATIONID,
                            identificationModeId = e.IDENTIFICATIONMODEID.Value,
-                           identificationMode = context.TBL_CUSTOMER_IDENTIFICATIONMODETYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
+                           identificationMode = context.TBL_CUSTOMER_IDENTI_MODE_TYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
                            identificationNo = e.IDENTIFICATIONNO,
                            issueAuthority = e.ISSUEAUTHORITY,
                            issuePlace = e.ISSUEPLACE
@@ -2930,7 +2944,7 @@ namespace FintrakBanking.Repositories.Credit
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -2947,7 +2961,7 @@ namespace FintrakBanking.Repositories.Credit
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -3006,7 +3020,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public AppraisalMemorandumLoanDetailViewModel GetAppraisalMemorandumLoanUpdates(int appraisalMemorandumId)
         {
-            return (from data in context.TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL
+            return (from data in context.TBL_CREDIT_APPRAISAL_MEMO_DETL
                     where data.APPRAISALMEMORANDUMID == appraisalMemorandumId
                     orderby data.APPRAISALMEMORANDUMLOANDETAILID descending
                     select new AppraisalMemorandumLoanDetailViewModel()
@@ -3040,12 +3054,16 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = m.CUSTOMERID ?? 0,
                             customerCode = cust.CUSTOMERCODE,
                             customerName = m.CUSTOMERID.HasValue ? m.TBL_CUSTOMER.FIRSTNAME + " " + m.TBL_CUSTOMER.MIDDLENAME + " " + m.TBL_CUSTOMER.LASTNAME : "",
-
+                            isRelatedParty = m.ISRELATEDPARTY,
                             customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                             customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
                             customerSensitivityLevelId = d.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
-
+                            customerOccupation = d.TBL_CUSTOMER.OCCUPATION,
+                            customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
+                            isInvestmentGrade = m.ISINVESTMENTGRADE,
+                            
                             customerAccounts = (from k in context.TBL_CASA
                                                 where k.DELETED == false
                                                 && k.CUSTOMERID == d.CUSTOMERID
@@ -3062,6 +3080,49 @@ namespace FintrakBanking.Repositories.Credit
                                      tenor = (int)k.TENOR,
                                  })).ToList(),
                             loanInformation = m.LOANINFORMATION,
+                            companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION where a.CUSTOMERID == d.CUSTOMERID
+                                                  select new CustomerCompanyInfomationViewModels
+                                                  {
+                                                       annualTurnOver = a.ANNUALTURNOVER,
+                                                       authorizedCapital = a.AUTHORISEDCAPITAL,
+                                                       companyName = a.COMPANYNAME,
+                                                       companyEmail = a.COMPANYEMAIL,
+                                                       companyWebsite = a.COMPANYWEBSITE,
+                                                       corporateBusinessCategory = a.CORPORATEBUSINESSCATEGORY,
+                                                       paidUpCapital = a.PAIDUPCAPITAL,
+                                                       creditRating = a.TBL_CUSTOMER.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                                                       previousCreditRating = "",
+                                                       companyDiretcors =(from b in context.TBL_CUSTOMER_COMPANY_DIRECTOR where b.CUSTOMERID == a.CUSTOMERID 
+                                                                          && ((b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember) 
+                                                                                    || (b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember_Shareholder) )
+                                                                          select new CustomerCompanyDirectorsViewModels
+                                                                          {
+                                                                             numberOfShares = b.NUMBEROFSHARES,
+                                                                             companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                             fullname = b.FIRSTNAME +" "+ b.SURNAME,
+                                                                             isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
+                                                                          }).ToList(),
+                                                      companyShareholders = (from e in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                                                             where e.CUSTOMERID == a.CUSTOMERID 
+                                                                             && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder
+                                                                             select new CustomerCompanyShareholdersViewModels
+                                                                          {
+                                                                              numberOfShares = e.NUMBEROFSHARES,
+                                                                              companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                              fullname = e.FIRSTNAME + " " + e.SURNAME,
+                                                                              isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
+                                                                          }).ToList(),
+                                                      companyAccountSignatories = (from e in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                                                             where e.CUSTOMERID == a.CUSTOMERID
+                                                                             && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory
+                                                                             select new CustomerCompanyAccountSignatoryViewModels
+                                                                             {
+                                                                                 numberOfShares = e.NUMBEROFSHARES,
+                                                                                 companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                                 fullname = e.FIRSTNAME + " " + e.SURNAME,
+                                                                                 isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
+                                                                             }).ToList(),
+                                                  }).FirstOrDefault(),
                             companyId = m.COMPANYID,
                             branchId = m.BRANCHID,
                             branchName = m.TBL_BRANCH.BRANCHNAME,
@@ -3091,8 +3152,6 @@ namespace FintrakBanking.Repositories.Credit
                             teamMisCode = m.TEAMMISCODE,
 
                             interestRate = d.APPROVEDINTERESTRATE,
-                            isRelatedParty = m.ISRELATEDPARTY,
-                            isPoliticallyExposed = m.ISPOLITICALLYEXPOSED,
                             submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
                             approvedAmount = d.APPROVEDAMOUNT,
                             groupApprovedAmount = m.APPROVEDAMOUNT,
