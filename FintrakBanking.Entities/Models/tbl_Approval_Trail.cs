@@ -33,6 +33,8 @@ namespace FintrakBanking.Entities.Models
         public int? FROMAPPROVALLEVELID { get; set; }
 
         public int? TOAPPROVALLEVELID { get; set; }
+        public int? TOSTAFFID { get; set; }
+        public int? TOBRANCHID { get; set; }
 
         public short APPROVALSTATEID { get; set; }
 
@@ -43,7 +45,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(700)]
         public string COMMENT { get; set; }
 
-        public bool VOTEDYES { get; set; }
+        public int? VOTE { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

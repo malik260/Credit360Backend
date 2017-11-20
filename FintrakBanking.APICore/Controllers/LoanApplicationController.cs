@@ -328,26 +328,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet, Route("loan-application/pending")]
-        public HttpResponseMessage GetPendingLoanApplications([FromUri] int page, [FromUri] int itemsPerPage)
-        {
-            try
-            {
-                var items = repoApply.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId);
-
-                var data = items.OrderByDescending(x => x.applicationDate)
-                    .ThenByDescending(x => x.loanApplicationId)
-                    .Skip(page).Take(itemsPerPage)
-                    .ToList();
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
-        }
-
         //[HttpGet]
         //[Route("loan-application/job")]
         //public HttpResponseMessage GetLoanApplicationJobs(int page, int itemsPerPage, int level, int scope)

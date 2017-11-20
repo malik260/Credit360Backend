@@ -2,6 +2,7 @@
 using FintrakBanking.ViewModels.Credit;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -26,5 +27,7 @@ namespace FintrakBanking.Interfaces.Credit
         PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId, int operationId);
 
         bool Confirmation(int type, int applicationId);
+
+        IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId);
     }
 }
