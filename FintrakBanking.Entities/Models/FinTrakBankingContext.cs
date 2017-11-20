@@ -252,6 +252,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
+        public virtual DbSet<TBL_TEMP_OFFERLETTER> TBL_TEMP_OFFERLETTER { get; set; }
         public virtual DbSet<TBL_ACCOUNT_CATEGORY> TBL_ACCOUNT_CATEGORY { get; set; }
         public virtual DbSet<TBL_ACCOUNT_TYPE> TBL_ACCOUNT_TYPE { get; set; }
         public virtual DbSet<TBL_CHARGE_RANGE> TBL_CHARGE_RANGE { get; set; }
@@ -1714,6 +1715,19 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE>()
+                .Property(e => e.DEPENDENTAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE>()
+                .HasMany(e => e.TBL_PRODUCT_CHARGE_FEE_CUSTOMER)
+                .WithRequired(e => e.TBL_PRODUCT_CHARGE_FEE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE_CUSTOMER>()
+                .Property(e => e.RATEVALUE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE_CUSTOMER>()
                 .Property(e => e.DEPENDENTAMOUNT)
                 .HasPrecision(19, 4);
 
@@ -3427,6 +3441,14 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_COT>()
                 .Property(e => e.COTCREATEDBY)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<TBL_TEMP_OFFERLETTER>()
+                .Property(e => e.HTML_DOCUMENT)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<TBL_TEMP_OFFERLETTER>()
+                .Property(e => e.COMMENTS)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_ACCOUNT_CATEGORY>()

@@ -21,8 +21,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string otherInformations { get; set; }
         public int loanApplicationId { get; set; }
       public int? casaAccountId { get; set; }
-
-
+        public string collateralCode { get; set; }
     }
 
 

@@ -340,6 +340,7 @@
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP_MAPPING.cs" />
     <Compile Include="Models\TBL_TEMP_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_COLLATERALTYPE.cs" />
