@@ -2886,16 +2886,7 @@ namespace FintrakBanking.Repositories.Credit
                            stateId = x.STATEID,
                            addressId = x.ADDRESSID
                        }).ToList(),
-                       CustomerBvn = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == a.CUSTOMERID).Select(b => new CustomerBvnViewModels()
-                       {
-                           bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
-                           customerBvnid = b.CUSTOMERBVNID,
-                           firstname = b.FIRSTNAME,
-                           isValidBvn = b.ISVALIDBVN,
-                           isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
-                           surname = b.SURNAME
-                       }).ToList(),
-                       CustomerPhoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => new CustomerPhoneContactViewModels
+                      CustomerPhoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => new CustomerPhoneContactViewModels
                        {
                            active = c.ACTIVE,
                            customerId = c.CUSTOMERID,
