@@ -57,7 +57,7 @@ namespace WinApp
             //decimal vCountry =  NunCountry.Value;
             DateTime vDate = dtpDate.Value;
             int vStaff = 1;
-            int vLoan  = 215;
+           // int vLoan  = 215;
             decimal vAmount  = NunCountry.Value;
             short vReview  = 19;
 

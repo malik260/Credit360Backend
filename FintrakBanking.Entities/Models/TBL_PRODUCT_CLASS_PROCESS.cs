@@ -23,6 +23,11 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string PRODUCT_CLASS_PROCESS_NAME { get; set; }
 
+        public bool USE_AMOUNT_LIMIT { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? MAXIMUM_AMOUNT { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PRODUCT_CLASS> TBL_PRODUCT_CLASS { get; set; }
     }

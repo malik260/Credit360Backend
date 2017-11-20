@@ -594,7 +594,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 try
                 {
-                    if(entity.companyDirectorTypeId != (int)CompanyDirectorTypeEnum.Shareholder)
+                    if (entity.companyDirectorTypeId != (int)CompanyDirectorTypeEnum.Shareholder)
                     {
                         entity.customerTypeId = 1;
                     }
@@ -610,6 +610,8 @@ namespace FintrakBanking.Repositories.Customer
                             directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                             directors.CUSTOMERBVN = entity.bankVerificationNumber;
                             directors.NUMBEROFSHARES = entity.numberOfShares;
+                            directors.REGISTRATION_NUMBER = entity.rcNumber;
+                            directors.TAX_NUMBER = entity.taxNumber;
                             directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
                             directors.ADDRESS = entity.address;
                             directors.PHONENUMBER = entity.phoneNumber;
@@ -626,6 +628,8 @@ namespace FintrakBanking.Repositories.Customer
                         directors.CUSTOMERTYPEID = entity.customerTypeId;
                         directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                         directors.CUSTOMERBVN = entity.bankVerificationNumber;
+                        directors.REGISTRATION_NUMBER = entity.rcNumber;
+                        directors.TAX_NUMBER = entity.taxNumber;
                         directors.NUMBEROFSHARES = entity.numberOfShares;
                         directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
                         directors.ADDRESS = entity.address;
@@ -1597,6 +1601,8 @@ namespace FintrakBanking.Repositories.Customer
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                                         bankVerificationNumber = s.CUSTOMERBVN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                                        rcNumber = s.REGISTRATION_NUMBER,
+                                        taxNumber = s.TAX_NUMBER,
                                         companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                         customerId = s.CUSTOMERID,
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
@@ -1613,7 +1619,7 @@ namespace FintrakBanking.Repositories.Customer
                                     select new CustomerClientOrSupplierViewModels()
                                     {
                                         customerTypeId = cs.CUSTOMERTYPEID,
-                                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x=> x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
+                                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(x => x.CUSTOMERTYPEID == cs.CUSTOMERTYPEID).NAME,
                                         client_SupplierId = cs.CLIENT_SUPPLIERID,
                                         clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME,
                                         firstName = cs.FIRSTNAME,

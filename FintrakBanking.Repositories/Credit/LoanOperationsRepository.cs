@@ -5474,8 +5474,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     throw new Exception(ex.Message);
-                    return false;
-               
                 }
             }
         }
