@@ -27,7 +27,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string HOMETOWN { get; set; }
 
-        [StringLength(20)]
+        [StringLength(200)]
         public string POBOX { get; set; }
 
         [StringLength(300)]
