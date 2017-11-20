@@ -242,16 +242,19 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
-        public  IList<LoanMonthlyRepaymentViewModel> LoanAnniversery(DateTime startDate, DateTime endDate, int companyId)
+        public  IList<LoanAnniverseryViewModel> LoanAnniversery(DateTime startDate, DateTime endDate, int companyId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var LoanRepay = from a in context.TBL_LOAN
+                var data = from a in context.TBL_LOAN
                                 join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
+                                join c in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals c.CUSTOMERID
                                 where a.COMPANYID == companyId && a.LOANSTATUSID == 1
-                                 && DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(b.PAYMENTDATE)
+                                && DbFunctions.TruncateTime(b.PAYMENTDATE) >= DbFunctions.TruncateTime(startDate)
                                  && DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
-                                select new LoanMonthlyRepaymentViewModel()
+                                //&& DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(b.PAYMENTDATE)
+                                //&& DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
+                                select new LoanAnniverseryViewModel()
                                 {
                                     customerId = a.CUSTOMERID,
                                     maturityDate = a.MATURITYDATE,
@@ -275,20 +278,11 @@ namespace FintrakBanking.ReportObjects
                                     paymentdate = b.PAYMENTDATE,
                                     intrestrate = b.INTERESTRATE,
                                     emailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
-                                };
+                                    phoneNumber = c.PHONENUMBER
 
-                foreach (var item in LoanRepay)
-                {
-                    string phoneNumber = "";
-                    var phones = context.TBL_CUSTOMER_PHONECONTACT.Where(c => c.CUSTOMERID == item.customerId);
-                    foreach (var i in phones)
-                    {
-                        phoneNumber += " " + i.PHONENUMBER;
-                    }
+                                };               
 
-                    item.phoneNumber = phoneNumber;
-                }
-                return LoanRepay.ToList();
+                return data.ToList();
             }
 
         }

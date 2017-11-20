@@ -2913,9 +2913,9 @@ namespace FintrakBanking.Repositories.Credit
                            companyInfomationId = d.COMPANYINFOMATIONID,
                            corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
                            createdBy = a.CREATEDBY,
-                           //creditRating = d.CREDITRATING,
+                           creditRating = d.CREDITRATING,
                            registeredOffice = d.REGISTEREDOFFICE,
-                           //previousCreditRating = d.PREVIOUSCREDITRATING,
+                           previousCreditRating = d.PREVIOUSCREDITRATING,
                            registrationNumber = d.REGISTRATIONNUMBER,
                            paidUpCapital = d.PAIDUPCAPITAL,
                            authorizedCapital = d.AUTHORISEDCAPITAL

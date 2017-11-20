@@ -218,6 +218,40 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("update-loan-application-application/application")]
+        public  HttpResponseMessage UpdateApprovalStatusForApplication( [FromBody] int id)
+        {
+            try
+            {
+                var responseMessage = string.Empty;
+
+                //model.applicationUrl = HttpContext.Current.Request.Path;
+                //model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                //model.userBranchId = (short)token.GetBranchId;
+                //model.createdBy = token.GetStaffId;
+                //model.companyId = token.GetCompanyId;
+                //model.branchId = (short)token.GetBranchId;
+
+               
+
+                var response =   repoApply.UpdateApprovalStatusForApplication(id);
+
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = $"{responseMessage}" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Updated successful" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
         //[HttpDelete("loan-application/{aid}/approval-status/{id}")]
         //public IActionResult UpdateApprovalStatus(int aid, ApprovalStatusEnum id)
         //{
@@ -283,7 +317,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response =   repoApply.AddLoanApplication(entity);
                 //if (response != null)
                 //{
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "The loan application completed successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response , message = "The loan application completed successfully" });
                 //}
 
                 //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });

@@ -29,12 +29,8 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCT_CLASS_PROCESSID { get; set; }
 
-        public short CUSTOMERTYPEID { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
-
-        public virtual TBL_CUSTOMER_TYPE TBL_CUSTOMER_TYPE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT { get; set; }

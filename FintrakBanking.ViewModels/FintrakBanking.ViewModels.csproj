@@ -78,6 +78,7 @@
     <Compile Include="Credit\LimitViewModel.cs" />
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
     <Compile Include="Credit\LoanApplicationViewModel.cs" />
+    <Compile Include="Credit\DocumentDeferralViewModel.cs" />
     <Compile Include="Credit\LoanDocumentViewModel.cs" />
     <Compile Include="Credit\LoanOperationViewModel.cs" />
     <Compile Include="Credit\LoanPaymentScheduleInput.cs" />
@@ -116,7 +117,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report\ApprovalWorkflowTrackerViewModel.cs" />
     <Compile Include="Report\LoanInformation.cs" />
-    <Compile Include="Report\LoanMonthlyRepaymentViewModel.cs" />
     <Compile Include="Report\LoanScheduleViewModel.cs" />
     <Compile Include="Report\LoanStatementViewModel.cs" />
     <Compile Include="Report\SectorLimitViewModel.cs" />

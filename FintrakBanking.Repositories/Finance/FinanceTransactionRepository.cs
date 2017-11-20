@@ -278,7 +278,7 @@ namespace FintrakBanking.Repositories.Finance
 
             if (currencyId == baseCurrency)
             {
-                return new CurrencyExchangeRateViewModel { baseCurrencyId = baseCurrency, currencyId = currencyId, buyingRate = 1, sellingRate = 1, date = date };
+                return new CurrencyExchangeRateViewModel { baseCurrencyId = baseCurrency, currencyId = currencyId, buyingRate = 1, sellingRate = 1, date = date, isBaseCurrency = true};
             }
             else
             {
@@ -295,7 +295,9 @@ namespace FintrakBanking.Repositories.Finance
                     currencyId = rateInfo.CURRENCYID,
                     buyingRate = rateInfo.BUYINGRATE,
                     sellingRate = rateInfo.SELLINGRATE,
-                    date = rateInfo.DATE };
+                    date = rateInfo.DATE,
+                    isBaseCurrency = false 
+                };
             }           
             
         }
