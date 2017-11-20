@@ -37,7 +37,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public int ValidateWatchList(int customerId)
         {
             var watchlist = (from a in context.TBL_LOAN
-                             join b in context.TBL_LOAN_PRUDENTIALGUIDELINE on a.EXTERNALPRUDENTIALGUIDELINESTATUSID equals b.PRUDENTIALGUIDELINESTATUSID
+                             join b in context.TBL_LOAN_PRUDENTIALGUIDELINE on a.EXT_PRUDENT_GUIDELINE_STATUSID equals b.PRUDENTIALGUIDELINESTATUSID
                              where a.CUSTOMERID == customerId && b.PRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList
                              select a);
             int watchlistresults = watchlist.Count();

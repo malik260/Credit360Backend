@@ -1323,11 +1323,6 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER_TYPE)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_CUSTOMER_TYPE>()
-                .HasMany(e => e.TBL_PRODUCT_CLASS)
-                .WithRequired(e => e.TBL_CUSTOMER_TYPE)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<TBL_DAILY_ACCRUAL>()
                 .Property(e => e.MAINAMOUNT)
                 .HasPrecision(19, 4);
@@ -1745,10 +1740,6 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_TEMP_PRODUCT)
                 .WithRequired(e => e.TBL_PRODUCT_CLASS)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_CLASS_PROCESS>()
-                .Property(e => e.MAXIMUM_AMOUNT)
-                .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_PRODUCT_CLASS_PROCESS>()
                 .HasMany(e => e.TBL_PRODUCT_CLASS)

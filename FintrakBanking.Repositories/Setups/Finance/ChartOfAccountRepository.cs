@@ -97,7 +97,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             var accountToUpdate = context.TBL_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTCODE == accountModel.ACCOUNTCODE);
             var existingAccount = accountToUpdate.FirstOrDefault();
 
-            var currModel = context.TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY.Where(c => c.GLACCOUNTID == accountModel.GLACCOUNTID && c.DELETED == false);
+            var currModel = context.TBL_TEMP_CHART_OF_ACCOUNT_CUR.Where(c => c.GLACCOUNTID == accountModel.GLACCOUNTID && c.DELETED == false);
             var currListToUpdate = new List<TBL_CHART_OF_ACCOUNT_CURRENCY>();
 
             List<TBL_CHART_OF_ACCOUNT_CURRENCY> coaCurrencies = new List<TBL_CHART_OF_ACCOUNT_CURRENCY>();
@@ -290,7 +290,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             if (accountModel.currencies.Count < 1)
                 throw new Exception("Chart of Account Currency must be specified");
 
-            List<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY> currencies = new List<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY>();
+            List<TBL_TEMP_CHART_OF_ACCOUNT_CUR> currencies = new List<TBL_TEMP_CHART_OF_ACCOUNT_CUR>();
 
             bool output = false;
             var existStingTempAccount = context.TBL_TEMP_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTCODE.ToLower() == accountModel.accountCode.ToLower()
@@ -305,7 +305,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             //Storing the chart of account currencies
             foreach (var item in accountModel.currencies)
             {
-                var chartOfAccountCurrency = new TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY()
+                var chartOfAccountCurrency = new TBL_TEMP_CHART_OF_ACCOUNT_CUR()
                 {
                     //GLAccountId = item.glaccountId,
                     CURRENCYID = item.currencyId,
@@ -332,7 +332,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 DATETIMECREATED = _genSetup.GetApplicationDate(),
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 ISCURRENT = true,
-                TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY = currencies,
+                TBL_TEMP_CHART_OF_ACCOUNT_CUR = currencies,
                 GLCLASSID = accountModel.glClassId,
                 DELETED = false
             };
@@ -534,10 +534,10 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 .FirstOrDefault(x => x.ACCOUNTCODE.ToLower() == accountModel.accountCode.ToLower()
                 && x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
 
-            var existingTempCurrencies = new List<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY>();
+            var existingTempCurrencies = new List<TBL_TEMP_CHART_OF_ACCOUNT_CUR>();
 
             TBL_TEMP_CHART_OF_ACCOUNT tempAccount = new TBL_TEMP_CHART_OF_ACCOUNT();
-            List<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY> tempCurrencies = new List<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY>();
+            List<TBL_TEMP_CHART_OF_ACCOUNT_CUR> tempCurrencies = new List<TBL_TEMP_CHART_OF_ACCOUNT_CUR>();
 
             var unApprovedAccountEdit = context.TBL_TEMP_CHART_OF_ACCOUNT
                 .Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending &&
@@ -550,19 +550,19 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             if (existingTempAccount != null)
             {
-                existingTempCurrencies = context.TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY.Where(x => x.GLACCOUNTID == existingTempAccount.GLACCOUNTID).ToList();
+                existingTempCurrencies = context.TBL_TEMP_CHART_OF_ACCOUNT_CUR.Where(x => x.GLACCOUNTID == existingTempAccount.GLACCOUNTID).ToList();
 
                 if (existingTempCurrencies.Count > 0)
                 {
                     foreach (var curr in existingTempCurrencies)
                     {
-                        context.TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY.Remove(curr);
+                        context.TBL_TEMP_CHART_OF_ACCOUNT_CUR.Remove(curr);
                     }
                 }
 
                 foreach (var item in accountModel.currencies)
                 {
-                    var chartOfAccountCurrency = new TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY()
+                    var chartOfAccountCurrency = new TBL_TEMP_CHART_OF_ACCOUNT_CUR()
                     {
                         //GLAccountId = item.glaccountId,
                         CURRENCYID = item.currencyId,
@@ -593,7 +593,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 tempAccountToUpdate.GLCLASSID = accountModel.glClassId;
                 tempAccountToUpdate.DELETED = false;
 
-                tempAccountToUpdate.TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY = tempCurrencies;
+                tempAccountToUpdate.TBL_TEMP_CHART_OF_ACCOUNT_CUR = tempCurrencies;
             }
             else
             {
@@ -602,7 +602,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 //Storing the updated chart of account currencies
                 foreach (var item in accountModel.currencies)
                 {
-                    var chartOfAccountCurrency = new TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY()
+                    var chartOfAccountCurrency = new TBL_TEMP_CHART_OF_ACCOUNT_CUR()
                     {
                         //GLAccountId = item.glaccountId,
                         CURRENCYID = item.currencyId,
@@ -633,7 +633,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     GLCLASSID = accountModel.glClassId,
                     DELETED = false,
 
-                    TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY = tempCurrencies,
+                    TBL_TEMP_CHART_OF_ACCOUNT_CUR = tempCurrencies,
                 };
 
                 context.TBL_TEMP_CHART_OF_ACCOUNT.Add(tempAccount);
@@ -714,7 +714,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             accountCategoryId = c.TBL_ACCOUNT_TYPE.ACCOUNTCATEGORYID,
                             accountCategoryName = c.TBL_ACCOUNT_TYPE.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
                             accountStatusId = c.ACCOUNTSTATUSID,
-                            currencies = context.TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY
+                            currencies = context.TBL_TEMP_CHART_OF_ACCOUNT_CUR
                                 .Where(curr => curr.GLACCOUNTID == c.GLACCOUNTID && curr.DELETED == false).Select(coa =>
                                     new ChartOfAccountCurrencyViewModel()
                                     {

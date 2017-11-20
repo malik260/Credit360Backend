@@ -154,7 +154,6 @@
     <Compile Include="Models\TBL_CUSTOMER_BVN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_CHILDREN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_CLIENT_SUPPLIER.cs" />
-    <Compile Include="Models\TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_COMPANYINFOMATION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_COMPANY_BENEFICIA.cs" />
@@ -170,14 +169,11 @@
     <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION_GROUP.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_CAPTION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DETAIL.cs" />
-    <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DIVISORTYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DIVI_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_VALUETYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP.cs" />
-    <Compile Include="Models\TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP_FS_CAPTN_DET.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP_MAPPING.cs" />
-    <Compile Include="Models\TBL_CUSTOMER_GROUP_RELATIONSHIPTYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP_RELATN_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GUARDIAN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_IDENTIFICATION.cs" />
@@ -260,7 +256,6 @@
     <Compile Include="Models\TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY.cs" />
     <Compile Include="Models\TBL_LOAN_RELATIONSHIP_OFF_HIST.cs" />
     <Compile Include="Models\TBL_LOAN_REVIEW_OPERATION.cs" />
-    <Compile Include="Models\TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE.cs" />
     <Compile Include="Models\TBL_LOAN_REVIEW_OPRATN_IREG_SCH.cs" />
     <Compile Include="Models\TBL_LOAN_REVOLVING.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_CATEGORY.cs" />
@@ -270,11 +265,9 @@
     <Compile Include="Models\TBL_LOAN_SCHEDULE_IRREGUL_INPUT.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_PERIODIC.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_PERIODIC_ARCH.cs" />
-    <Compile Include="Models\TBL_LOAN_SCHEDULE_PERIODIC_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_PERIODIC_TEMP.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE_PRODUCT.cs" />
-    <Compile Include="Models\TBL_LOAN_SCHEDULE_TYPE_PRODUCT_TYPE_MAPPING.cs" />
     <Compile Include="Models\TBL_LOAN_STATUS.cs" />
     <Compile Include="Models\TBL_LOAN_TRANSACTION_TYPE.cs" />
     <Compile Include="Models\TBL_LOAN_TYPE.cs" />
