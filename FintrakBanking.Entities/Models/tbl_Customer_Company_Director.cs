@@ -52,6 +52,12 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string OTHERS { get; set; }
 
+        [StringLength(50)]
+        public string REGISTRATION_NUMBER { get; set; }
+
+        [StringLength(50)]
+        public string TAX_NUMBER { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATECREATED { get; set; }
