@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
             TBL_APPROVAL_LEVEL_STAFF = new HashSet<TBL_APPROVAL_LEVEL_STAFF>();
             TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
             TBL_APPROVAL_TRAIL1 = new HashSet<TBL_APPROVAL_TRAIL>();
+            TBL_APPROVAL_TRAIL2 = new HashSet<TBL_APPROVAL_TRAIL>();
             TBL_AUDIT = new HashSet<TBL_AUDIT>();
             TBL_CASA = new HashSet<TBL_CASA>();
             TBL_CASA1 = new HashSet<TBL_CASA>();
@@ -143,6 +144,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL2 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_AUDIT> TBL_AUDIT { get; set; }

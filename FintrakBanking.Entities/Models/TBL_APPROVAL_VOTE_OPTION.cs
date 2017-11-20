@@ -6,26 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_SECTOR")]
-    public partial class TBL_SECTOR
+    [Table("core.TBL_APPROVAL_VOTE_OPTION")]
+    public partial class TBL_APPROVAL_VOTE_OPTION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_SECTOR()
+        public TBL_APPROVAL_VOTE_OPTION()
         {
-            TBL_SUB_SECTOR = new HashSet<TBL_SUB_SECTOR>();
+            TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
         }
 
         [Key]
-        public short SECTORID { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public short VOTE_OPTIONID { get; set; }
 
         [Required]
-        [StringLength(200)]
-        public string NAME { get; set; }
-
-        [StringLength(10)]
-        public string CODE { get; set; }
+        [StringLength(50)]
+        public string VOTE_OPTION_NAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_SUB_SECTOR> TBL_SUB_SECTOR { get; set; }
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
     }
 }
