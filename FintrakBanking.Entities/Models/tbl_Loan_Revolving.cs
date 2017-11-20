@@ -98,9 +98,9 @@ namespace FintrakBanking.Entities.Models
 
         public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
-        public int? INTERNALPRUDENTIALGUIDELINESTATUSID { get; set; }
+        public int? INT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
-        public int? EXTERNALPRUDENTIALGUIDELINESTATUSID { get; set; }
+        public int? EXT_PRUDENT_GUIDELINE_STATUSID { get; set; }
 
         [Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }

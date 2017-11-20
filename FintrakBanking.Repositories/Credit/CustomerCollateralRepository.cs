@@ -189,7 +189,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddEquipmentCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_PLANT_AND_EQUIPMENT.Add(new TBL_COLLATERAL_PLANT_AND_EQUIPMENT
+            context.TBL_COLLATERAL_PLANT_AND_EQUIP.Add(new TBL_COLLATERAL_PLANT_AND_EQUIP
             {
                 COLLATERALCUSTOMERID = collateralId,
                 MACHINENAME = entity.machineName,
@@ -209,7 +209,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void UpdateEquipmentCollateral(CollateralViewModel model)
         {
-            var collateral = context.TBL_COLLATERAL_PLANT_AND_EQUIPMENT
+            var collateral = context.TBL_COLLATERAL_PLANT_AND_EQUIP
                 .Where(x => x.COLLATERALCUSTOMERID == model.collateralId)
                 .FirstOrDefault();
 
@@ -284,7 +284,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach (var note in entity.notes)
                 {
-                    context.TBL_COLLATERAL_MISCELLANEOUS_NOTES.Add(new TBL_COLLATERAL_MISCELLANEOUS_NOTES
+                    context.TBL_COLLATERAL_MISC_NOTES.Add(new TBL_COLLATERAL_MISC_NOTES
                     {
                         MISCELLANEOUSID = miscellaneousId,
                         COLUMNNAME = note.labelName,
@@ -311,7 +311,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void UpdateMiscellaneousNotes(CollateralViewModel entity, int miscellaneousId)
         {
-            var notes = context.TBL_COLLATERAL_MISCELLANEOUS_NOTES.Where(x => x.MISCELLANEOUSID == miscellaneousId);
+            var notes = context.TBL_COLLATERAL_MISC_NOTES.Where(x => x.MISCELLANEOUSID == miscellaneousId);
             foreach (var note in notes)
             {
                 note.COLUMNVALUE = entity.notes.FirstOrDefault(x => x.labelName == note.COLUMNNAME).labelValue;
@@ -462,7 +462,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private CollateralViewModel GetMiscellaneousNotes(CollateralViewModel details)
         {
-            var notes = context.TBL_COLLATERAL_MISCELLANEOUS_NOTES.Where(x => x.MISCELLANEOUSID == details.detailId);
+            var notes = context.TBL_COLLATERAL_MISC_NOTES.Where(x => x.MISCELLANEOUSID == details.detailId);
             var list = new List<MiscellaneousNote>();
             foreach (var note in notes)
             {
@@ -479,7 +479,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private CollateralViewModel GetCollateralMachinery(int collateralId)
         {
-            var specifics = context.TBL_COLLATERAL_PLANT_AND_EQUIPMENT.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
+            var specifics = context.TBL_COLLATERAL_PLANT_AND_EQUIP.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
             var details = new CollateralViewModel
             {
                 collateralId = specifics.COLLATERALCUSTOMERID,
@@ -826,7 +826,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddImmovablePropertyCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_IMMOVABLE_PROPERTY.Add(new TBL_COLLATERAL_IMMOVABLE_PROPERTY
+            context.TBL_COLLATERAL_IMMOVE_PROPERTY.Add(new TBL_COLLATERAL_IMMOVE_PROPERTY
             {
                 COLLATERALCUSTOMERID = collateralId,
                 PROPERTYNAME = entity.propertyName,
@@ -858,7 +858,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void UpdateImmovablePropertyCollateral(CollateralViewModel entity)
         {
-            var collateral = context.TBL_COLLATERAL_IMMOVABLE_PROPERTY
+            var collateral = context.TBL_COLLATERAL_IMMOVE_PROPERTY
                 .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
                 .FirstOrDefault();
 
@@ -890,7 +890,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private CollateralViewModel GetCollateralImmovableProperty(int collateralId)
         {
-            var specifics = context.TBL_COLLATERAL_IMMOVABLE_PROPERTY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
+            var specifics = context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
             var details = new CollateralViewModel
             {
                 collateralId = specifics.COLLATERALCUSTOMERID,
@@ -929,7 +929,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddMarketableSecuritiesCollateral(int collateralId, CollateralViewModel entity)
         {
-            context.TBL_COLLATERAL_MARKETABLE_SECURITY.Add(new TBL_COLLATERAL_MARKETABLE_SECURITY
+            context.TBL_COLLATERAL_MKT_SECURITY.Add(new TBL_COLLATERAL_MKT_SECURITY
             {
                 COLLATERALCUSTOMERID = collateralId,
                 SECURITYTYPE = entity.securityType,
@@ -952,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void UpdateMarketableSecuritiesCollateral(CollateralViewModel entity)
         {
-            var collateral = context.TBL_COLLATERAL_MARKETABLE_SECURITY
+            var collateral = context.TBL_COLLATERAL_MKT_SECURITY
                 .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
                 .FirstOrDefault();
 
@@ -975,7 +975,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private CollateralViewModel GetCollateralMarketableSecurities(int collateralId)
         {
-            var specifics = context.TBL_COLLATERAL_MARKETABLE_SECURITY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
+            var specifics = context.TBL_COLLATERAL_MKT_SECURITY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
             var details = new CollateralViewModel
             {
                 collateralId = specifics.COLLATERALCUSTOMERID,
@@ -1661,16 +1661,16 @@ namespace FintrakBanking.Repositories.Credit
         #endregion Collateral Customer
 
         #region Property
-        private ICollection<TBL_COLLATERAL_IMMOVABLE_PROPERTY> AddCollateralProperty(CollateralTypeEnum collateralType, CollateralPropertyViewModel entity)
+        private ICollection<TBL_COLLATERAL_IMMOVE_PROPERTY> AddCollateralProperty(CollateralTypeEnum collateralType, CollateralPropertyViewModel entity)
         {
-            ICollection<TBL_COLLATERAL_IMMOVABLE_PROPERTY> collateral;
+            ICollection<TBL_COLLATERAL_IMMOVE_PROPERTY> collateral;
 
             if (collateralType != CollateralTypeEnum.Property)
                 return null;
 
-            collateral = new List<TBL_COLLATERAL_IMMOVABLE_PROPERTY>();
+            collateral = new List<TBL_COLLATERAL_IMMOVE_PROPERTY>();
 
-            collateral.Add(new TBL_COLLATERAL_IMMOVABLE_PROPERTY
+            collateral.Add(new TBL_COLLATERAL_IMMOVE_PROPERTY
             {
                 //CollateralPropertyId = entity.collateralPropertyId,
                 //CollateralCustomerId = entity.collateralCustomerId,
@@ -1701,7 +1701,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private CollateralPropertyViewModel CollateralProperty(int collateralCustomerId)
         {
-            return (from m in context.TBL_COLLATERAL_IMMOVABLE_PROPERTY
+            return (from m in context.TBL_COLLATERAL_IMMOVE_PROPERTY
                     join c in context.TBL_COLLATERAL_CUSTOMER on m.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                     where c.DELETED == false && m.COLLATERALCUSTOMERID == collateralCustomerId
                     select new CollateralPropertyViewModel
@@ -1843,16 +1843,16 @@ namespace FintrakBanking.Repositories.Credit
         #endregion End of CASA
 
         #region Plants and Equipment
-        private ICollection<TBL_COLLATERAL_PLANT_AND_EQUIPMENT> AddCollateralMachineDetail(CollateralTypeEnum collateralType, CollateralPlantsAndEquipmentViewModel entity)
+        private ICollection<TBL_COLLATERAL_PLANT_AND_EQUIP> AddCollateralMachineDetail(CollateralTypeEnum collateralType, CollateralPlantsAndEquipmentViewModel entity)
         {
-            ICollection<TBL_COLLATERAL_PLANT_AND_EQUIPMENT> collateral;
+            ICollection<TBL_COLLATERAL_PLANT_AND_EQUIP> collateral;
 
             if (collateralType != CollateralTypeEnum.PlantAndMachinery)
                 return null;
 
-            collateral = new List<TBL_COLLATERAL_PLANT_AND_EQUIPMENT>();
+            collateral = new List<TBL_COLLATERAL_PLANT_AND_EQUIP>();
 
-            collateral.Add(new TBL_COLLATERAL_PLANT_AND_EQUIPMENT
+            collateral.Add(new TBL_COLLATERAL_PLANT_AND_EQUIP
             {
                 MACHINENAME = entity.machineName,
                 DESCRIPTION = entity.description,
@@ -1873,7 +1873,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private CollateralPlantsAndEquipmentViewModel CollateralMachineDetail(int collateralCustomerId)
         {
-            return (from m in context.TBL_COLLATERAL_PLANT_AND_EQUIPMENT
+            return (from m in context.TBL_COLLATERAL_PLANT_AND_EQUIP
                     join c in context.TBL_COLLATERAL_CUSTOMER on m.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                     where m.COLLATERALCUSTOMERID == collateralCustomerId
                     select new CollateralPlantsAndEquipmentViewModel
@@ -1902,16 +1902,16 @@ namespace FintrakBanking.Repositories.Credit
         #endregion Plants and Equipment
 
         #region Marketable Security
-        private ICollection<TBL_COLLATERAL_MARKETABLE_SECURITY> AddCollateralMarketableSecurity(CollateralTypeEnum collateralType, CollateralMarketableSecurityViewModel entity)
+        private ICollection<TBL_COLLATERAL_MKT_SECURITY> AddCollateralMarketableSecurity(CollateralTypeEnum collateralType, CollateralMarketableSecurityViewModel entity)
         {
-            ICollection<TBL_COLLATERAL_MARKETABLE_SECURITY> collateral;
+            ICollection<TBL_COLLATERAL_MKT_SECURITY> collateral;
 
             if (collateralType != CollateralTypeEnum.MarketableSecurities)
                 return null;
 
-            collateral = new List<TBL_COLLATERAL_MARKETABLE_SECURITY>();
+            collateral = new List<TBL_COLLATERAL_MKT_SECURITY>();
 
-            collateral.Add(new TBL_COLLATERAL_MARKETABLE_SECURITY
+            collateral.Add(new TBL_COLLATERAL_MKT_SECURITY
             {
                 SECURITYTYPE = entity.securityType,
                 DEALREFERENCENUMBER = entity.dealReferenceNumber,
@@ -1936,7 +1936,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private CollateralMarketableSecurityViewModel CollateralMarketableSecurity(int collateralCustomerId)
         {
-            return (from m in context.TBL_COLLATERAL_MARKETABLE_SECURITY
+            return (from m in context.TBL_COLLATERAL_MKT_SECURITY
                     join c in context.TBL_COLLATERAL_CUSTOMER on m.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                     where m.COLLATERALCUSTOMERID == collateralCustomerId
                     select new CollateralMarketableSecurityViewModel
@@ -2188,7 +2188,7 @@ namespace FintrakBanking.Repositories.Credit
                 //CollateralCustomerId = entity.collateralCustomerId,
                 NAMEOFSECURITY = entity.nameOfSecurity,
                 SECURITYVALUE = entity.securityValue,
-                TBL_COLLATERAL_MISCELLANEOUS_NOTES = AddCollateralMiscNotes(entity.collateralMiscellaneousNotes)
+                TBL_COLLATERAL_MISC_NOTES = AddCollateralMiscNotes(entity.collateralMiscellaneousNotes)
             });
 
             return collateral;
@@ -2217,13 +2217,13 @@ namespace FintrakBanking.Repositories.Credit
         #endregion Miscellaneous
 
         #region Miscellaneous Notes
-        private ICollection<TBL_COLLATERAL_MISCELLANEOUS_NOTES> AddCollateralMiscNotes(List<CollateralMiscellaneousNotesViewModel> entity)
+        private ICollection<TBL_COLLATERAL_MISC_NOTES> AddCollateralMiscNotes(List<CollateralMiscellaneousNotesViewModel> entity)
         {
-            ICollection<TBL_COLLATERAL_MISCELLANEOUS_NOTES> collateral;
-            collateral = new List<TBL_COLLATERAL_MISCELLANEOUS_NOTES>();
+            ICollection<TBL_COLLATERAL_MISC_NOTES> collateral;
+            collateral = new List<TBL_COLLATERAL_MISC_NOTES>();
             foreach (var note in entity)
             {
-                collateral.Add(new TBL_COLLATERAL_MISCELLANEOUS_NOTES
+                collateral.Add(new TBL_COLLATERAL_MISC_NOTES
                 {
                     MISCELLANEOUSNOTEID = note.miscellaneousNoteId,
                     MISCELLANEOUSID = note.miscellaneousNoteId,
@@ -2247,7 +2247,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private List<CollateralMiscellaneousNotesViewModel> MiscellaneousNotes(int miscellaneousId)
         {
-            return (from m in context.TBL_COLLATERAL_MISCELLANEOUS_NOTES
+            return (from m in context.TBL_COLLATERAL_MISC_NOTES
                     join c in context.TBL_COLLATERAL_MISCELLANEOUS on m.MISCELLANEOUSID equals c.COLLATERALMISCELLANEOUSID
                     where m.MISCELLANEOUSID == miscellaneousId
                     select new CollateralMiscellaneousNotesViewModel
@@ -2451,7 +2451,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CollateralSeniorityOfClaimsViewModel> GetCollateralSeniorityOfClaims()
         {
-            return (from m in context.TBL_COLLATERAL_SENIORITYOFCLAIMS
+            return (from m in context.TBL_COLLATERAL_SENIORITY_CLAIMS
                     select new CollateralSeniorityOfClaimsViewModel
                     {
                         seniorityOfClaimId = m.COLLATERALSENIORITYOFCLAIMID,

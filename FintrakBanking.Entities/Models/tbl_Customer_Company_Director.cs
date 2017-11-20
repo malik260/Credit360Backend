@@ -9,8 +9,14 @@ namespace FintrakBanking.Entities.Models
     [Table("core.TBL_CUSTOMER_COMPANY_DIRECTOR")]
     public partial class TBL_CUSTOMER_COMPANY_DIRECTOR
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_CUSTOMER_COMPANY_DIRECTOR()
+        {
+            TBL_CUSTOMER_COMPANY_BENEFICIA = new HashSet<TBL_CUSTOMER_COMPANY_BENEFICIA>();
+        }
+
         [Key]
-        public short COMPANYDIRECTORID { get; set; }
+        public int COMPANYDIRECTORID { get; set; }
 
         public int CUSTOMERID { get; set; }
 
@@ -21,6 +27,8 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string FIRSTNAME { get; set; }
+
+        public short CUSTOMERTYPEID { get; set; }
 
         public short COMPANYDIRECTORTYPEID { get; set; }
 
@@ -52,6 +60,11 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEUPDATED { get; set; }
 
-        public virtual TBL_CUSTOMER_COMPANY_DIRECTORTYPE TBL_CUSTOMER_COMPANY_DIRECTORTYPE { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CUSTOMER_COMPANY_BENEFICIA> TBL_CUSTOMER_COMPANY_BENEFICIA { get; set; }
+
+        public virtual TBL_CUSTOMER_COMPANY_DIREC_TYPE TBL_CUSTOMER_COMPANY_DIREC_TYPE { get; set; }
+
+        public virtual TBL_CUSTOMER_TYPE TBL_CUSTOMER_TYPE { get; set; }
     }
 }

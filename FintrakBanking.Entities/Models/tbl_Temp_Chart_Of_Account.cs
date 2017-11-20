@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_TEMP_CHART_OF_ACCOUNT()
         {
-            TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY>();
+            TBL_TEMP_CHART_OF_ACCOUNT_CUR = new HashSet<TBL_TEMP_CHART_OF_ACCOUNT_CUR>();
         }
 
         [Key]
@@ -76,6 +76,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_FINANCIAL_STATEMENT_CAPTION TBL_FINANCIAL_STATEMENT_CAPTION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY> TBL_TEMP_CHART_OF_ACCOUNT_CURRENCY { get; set; }
+        public virtual ICollection<TBL_TEMP_CHART_OF_ACCOUNT_CUR> TBL_TEMP_CHART_OF_ACCOUNT_CUR { get; set; }
     }
 }

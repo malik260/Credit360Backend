@@ -6,13 +6,15 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_MARKETABLE_SECURITY")]
-    public partial class TBL_COLLATERAL_MARKETABLE_SECURITY
+    [Table("temp.TBL_TEMP_COLLATERAL_MKT_SEC")]
+    public partial class TBL_TEMP_COLLATERAL_MKT_SEC
     {
         [Key]
         public int COLLATERALMARKETABLESECURITYID { get; set; }
 
         public int COLLATERALCUSTOMERID { get; set; }
+
+        public short COLLATERALSUBTYPEID { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -57,6 +59,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string REMARK { get; set; }
 
-        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+        public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
     }
 }

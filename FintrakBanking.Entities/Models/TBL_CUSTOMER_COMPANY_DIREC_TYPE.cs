@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_IDENTIFICATIONMODETYPE")]
-    public partial class TBL_CUSTOMER_IDENTIFICATIONMODETYPE
+    [Table("core.TBL_CUSTOMER_COMPANY_DIREC_TYPE")]
+    public partial class TBL_CUSTOMER_COMPANY_DIREC_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_CUSTOMER_IDENTIFICATIONMODETYPE()
+        public TBL_CUSTOMER_COMPANY_DIREC_TYPE()
         {
-            TBL_CUSTOMER_IDENTIFICATION = new HashSet<TBL_CUSTOMER_IDENTIFICATION>();
+            TBL_CUSTOMER_COMPANY_DIRECTOR = new HashSet<TBL_CUSTOMER_COMPANY_DIRECTOR>();
         }
 
         [Key]
-        public int IDENTIFICATIONMODEID { get; set; }
+        public short COMPANYDIRECTORYTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string IDENTIFICATIONMODE { get; set; }
+        [StringLength(100)]
+        public string COMPANYDIRECTORYTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CUSTOMER_IDENTIFICATION> TBL_CUSTOMER_IDENTIFICATION { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_COMPANY_DIRECTOR> TBL_CUSTOMER_COMPANY_DIRECTOR { get; set; }
     }
 }

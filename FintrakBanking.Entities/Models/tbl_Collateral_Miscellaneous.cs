@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_COLLATERAL_MISCELLANEOUS()
         {
-            TBL_COLLATERAL_MISCELLANEOUS_NOTES = new HashSet<TBL_COLLATERAL_MISCELLANEOUS_NOTES>();
+            TBL_COLLATERAL_MISC_NOTES = new HashSet<TBL_COLLATERAL_MISC_NOTES>();
         }
 
         [Key]
@@ -35,6 +35,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_COLLATERAL_MISCELLANEOUS_NOTES> TBL_COLLATERAL_MISCELLANEOUS_NOTES { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_MISC_NOTES> TBL_COLLATERAL_MISC_NOTES { get; set; }
     }
 }

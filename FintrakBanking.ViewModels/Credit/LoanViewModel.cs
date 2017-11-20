@@ -338,6 +338,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal groupApprovedAmount { get; set; }
         public int approvedTenor { get; set; }
         public decimal ? customerAvailableAmount { get; set; }
+        public string customerOccupation { get; set; }
+        public string customerType { get; set; }
 
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
@@ -345,6 +347,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
+        public CustomerCompanyInfomationViewModels companyInformation { get; set; }
 
         //......End f Loan Relational Table View Mapping Models......//
     }
@@ -380,6 +383,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int feeTypeId { get; set; }
         public string feeTypeName { get; set; }
         public bool isIntegralFee { get; set; }
+        public List<ChargeRangeViewModel> chargeRange { get; set; }
         public decimal newFeeAmount { get; set; }
         public decimal feeAmountDiff { get; set; }
         public int casaAccountId { get; set; }

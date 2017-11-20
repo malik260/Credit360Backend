@@ -6,13 +6,15 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_IMMOVABLE_PROPERTY")]
-    public partial class TBL_COLLATERAL_IMMOVABLE_PROPERTY
+    [Table("temp.TBL_TEMP_COLLATERAL_IMMOVE_PROP")]
+    public partial class TBL_TEMP_COLLATERAL_IMMOVE_PROP
     {
         [Key]
         public int COLLATERALPROPERTYID { get; set; }
 
         public int COLLATERALCUSTOMERID { get; set; }
+
+        public short COLLATERALSUBTYPEID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -69,10 +71,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string REMARK { get; set; }
 
-        [StringLength(250)]
+        [StringLength(100)]
         public string NEARESTLANDMARK { get; set; }
 
-        [StringLength(250)]
+        [StringLength(100)]
         public string NEARESTBUSSTOP { get; set; }
 
         public decimal? LONGITUDE { get; set; }
@@ -81,6 +83,12 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CITY TBL_CITY { get; set; }
 
-        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+        public virtual TBL_COLLATERAL_TYPE_SUB TBL_COLLATERAL_TYPE_SUB { get; set; }
+
+        public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
+
+        public virtual TBL_TEMP_COLLATERAL_IMMOVE_PROP TBL_TEMP_COLLATERAL_IMMOVE_PROP1 { get; set; }
+
+        public virtual TBL_TEMP_COLLATERAL_IMMOVE_PROP TBL_TEMP_COLLATERAL_IMMOVE_PROP2 { get; set; }
     }
 }

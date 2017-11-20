@@ -12,8 +12,8 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_CREDIT_APPRAISAL_MEMORANDUM()
         {
-            TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT = new HashSet<TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT>();
-            TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL = new HashSet<TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL>();
+            TBL_CREDIT_APPRAISAL_MEMO_DETL = new HashSet<TBL_CREDIT_APPRAISAL_MEMO_DETL>();
+            TBL_CREDIT_APPRAISAL_MEMO_DOCUM = new HashSet<TBL_CREDIT_APPRAISAL_MEMO_DOCUM>();
         }
 
         [Key]
@@ -48,10 +48,10 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT> TBL_CREDIT_APPRAISAL_MEMORANDUM_DOCUMENT { get; set; }
+        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMO_DETL> TBL_CREDIT_APPRAISAL_MEMO_DETL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL> TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL { get; set; }
+        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMO_DOCUM> TBL_CREDIT_APPRAISAL_MEMO_DOCUM { get; set; }
 
         public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
     }

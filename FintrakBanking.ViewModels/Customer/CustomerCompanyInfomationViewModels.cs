@@ -1,4 +1,6 @@
-﻿namespace FintrakBanking.ViewModels.Customer
+﻿using System.Collections.Generic;
+
+namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerCompanyInfomationViewModels : GeneralEntity
     {
@@ -14,8 +16,10 @@
         public string previousCreditRating { get; set; }
         public int? paidUpCapital { get; set; }
         public int? authorizedCapital { get; set; }
+        public List<CustomerCompanyDirectorsViewModels> companyDiretcors { get; set; }
+        public List<CustomerCompanyShareholdersViewModels> companyShareholders { get; set; }
+        public List<CustomerCompanyAccountSignatoryViewModels> companyAccountSignatories { get; set; }
 
-       
     }
 
     public class CustomerCompanyDirectorsViewModels : GeneralEntity
@@ -25,6 +29,7 @@
         public string customerName { get; set; }
         public string surname { get; set; }
         public string firstname { get; set; }
+        public string fullname { get; set; }
         public string bankVerificationNumber { get; set; }
         public short companyDirectorTypeId { get; set; }
         public string companyDirectorTypeName { get; set; }
@@ -41,6 +46,7 @@
         public string customerName { get; set; }
         public string surname { get; set; }
         public string firstname { get; set; }
+        public string fullname { get; set; }
         public string bankVerificationNumber { get; set; }
         public short companyDirectorTypeId { get; set; }
         public string companyDirectorTypeName { get; set; }
@@ -55,6 +61,7 @@
         public int companyDirectorId { get; set; }
         public int customerId { get; set; }
         public string customerName { get; set; }
+        public string fullname { get; set; }
         public string surname { get; set; }
         public string firstname { get; set; }
         public string bankVerificationNumber { get; set; }

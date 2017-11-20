@@ -43,7 +43,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CUSTOMER_FS_RATIO_CAPTION TBL_CUSTOMER_FS_RATIO_CAPTION { get; set; }
 
-        public virtual TBL_CUSTOMER_FS_RATIO_DIVISORTYPE TBL_CUSTOMER_FS_RATIO_DIVISORTYPE { get; set; }
+        public virtual TBL_CUSTOMER_FS_RATIO_DIVI_TYPE TBL_CUSTOMER_FS_RATIO_DIVI_TYPE { get; set; }
 
         public virtual TBL_CUSTOMER_FS_RATIO_VALUETYPE TBL_CUSTOMER_FS_RATIO_VALUETYPE { get; set; }
     }

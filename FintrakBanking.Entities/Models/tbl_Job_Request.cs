@@ -12,7 +12,9 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_JOB_REQUEST()
         {
-            TBL_JOB_REQUEST_DOCUMENT_MAPPING = new HashSet<TBL_JOB_REQUEST_DOCUMENT_MAPPING>();
+            TBL_JOB_REQUEST_DETAIL = new HashSet<TBL_JOB_REQUEST_DETAIL>();
+            TBL_JOB_REQUEST_DOCUMENT_MAPPIN = new HashSet<TBL_JOB_REQUEST_DOCUMENT_MAPPIN>();
+            TBL_JOB_REQUEST_MESSAGE = new HashSet<TBL_JOB_REQUEST_MESSAGE>();
         }
 
         [Key]
@@ -26,7 +28,7 @@ namespace FintrakBanking.Entities.Models
 
         public int SENDERSTAFFID { get; set; }
 
-        public int RECEIVERSTAFFID { get; set; }
+        public int? RECEIVERSTAFFID { get; set; }
 
         public int? REASSIGNEDTO { get; set; }
 
@@ -43,6 +45,11 @@ namespace FintrakBanking.Entities.Models
         public int OPERATIONSID { get; set; }
 
         public short REQUESTSTATUSID { get; set; }
+
+        public short? JOB_STATUS_FEEDBACKID { get; set; }
+
+        [StringLength(400)]
+        public string JOB_TITLE { get; set; }
 
         [StringLength(2000)]
         public string SENDERCOMMENT { get; set; }
@@ -75,9 +82,17 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_DEPARTMENT_UNIT TBL_DEPARTMENT_UNIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_JOB_REQUEST_DOCUMENT_MAPPING> TBL_JOB_REQUEST_DOCUMENT_MAPPING { get; set; }
+        public virtual ICollection<TBL_JOB_REQUEST_DETAIL> TBL_JOB_REQUEST_DETAIL { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_JOB_REQUEST_DOCUMENT_MAPPIN> TBL_JOB_REQUEST_DOCUMENT_MAPPIN { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_JOB_REQUEST_MESSAGE> TBL_JOB_REQUEST_MESSAGE { get; set; }
 
         public virtual TBL_JOB_REQUEST_STATUS TBL_JOB_REQUEST_STATUS { get; set; }
+
+        public virtual TBL_JOB_REQUEST_STATUS_FEEDBACK TBL_JOB_REQUEST_STATUS_FEEDBACK { get; set; }
 
         public virtual TBL_JOB_TYPE TBL_JOB_TYPE { get; set; }
 

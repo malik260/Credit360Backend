@@ -26,6 +26,17 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string LASTNAME { get; set; }
 
+        [StringLength(50)]
+        public string TAX_NUMBER { get; set; }
+
+        [StringLength(50)]
+        public string REGISTRATION_NUMBER { get; set; }
+
+        public bool? HAS_CASA_ACCOUNT { get; set; }
+
+        [StringLength(50)]
+        public string CASA_ACCOUNTNO { get; set; }
+
         [StringLength(500)]
         public string ADDRESS { get; set; }
 
@@ -36,6 +47,9 @@ namespace FintrakBanking.Entities.Models
         public string EMAILADDRESS { get; set; }
 
         public short CLIENT_SUPPLIERTYPEID { get; set; }
+
+        [StringLength(100)]
+        public string CONTACT_PERSON { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -49,6 +63,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE { get; set; }
+        public virtual TBL_CUSTOMER_CLIENT_SUPPLR_TYPE TBL_CUSTOMER_CLIENT_SUPPLR_TYPE { get; set; }
     }
 }
