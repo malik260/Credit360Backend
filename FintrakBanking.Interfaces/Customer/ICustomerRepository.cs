@@ -27,6 +27,8 @@ namespace FintrakBanking.Interfaces.Customer
 
         //Task<bool> AddCustomer(CustomerViewModels entity);
 
+        dynamic GetCustomerAndType(int custormerId);
+
         dynamic GetCustomerRating(int custormerId);
 
         bool AddCustomer(CustomerViewModels entity);

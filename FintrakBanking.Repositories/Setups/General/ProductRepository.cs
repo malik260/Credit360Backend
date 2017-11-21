@@ -16,8 +16,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    [Export(typeof(IProductRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+
     public class ProductRepository : IProductRepository
     {
         private FinTrakBankingContext context;
@@ -50,6 +49,14 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.context.SaveChanges() > 0;
         }
 
+       //public  IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId)
+       // {
+       //     var data = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCT_CLASS_PROCESSID == processId).Select(c => new ProductClassViewModel
+       //     {
+                 
+       //     });
+       // }
+
         private string GenerateProductCode(int companyId)
         {
             var data = this.context.TBL_PRODUCT.Count(x => x.COMPANYID == companyId);
@@ -78,6 +85,45 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return (from data in context.TBL_PRODUCT_CLASS
                         //where data.OperationTypeId == operationTypeId
+                    select new LookupViewModel()
+                    {
+                        lookupId = (short)data.PRODUCTCLASSID,
+                        lookupName = data.PRODUCTCLASSNAME,
+                        lookupTypeId = data.PRODUCTCLASSTYPEID,
+                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME
+                    });
+        }
+
+        public IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId)
+        {
+            return (from data in context.TBL_PRODUCT_CLASS
+                    where data.CUSTOMERTYPEID == customerTypeId && data.PRODUCT_CLASS_PROCESSID == processId
+                    //where data.OperationTypeId == operationTypeId
+                    select new LookupViewModel()
+                    {
+                        lookupId = (short)data.PRODUCTCLASSID,
+                        lookupName = data.PRODUCTCLASSNAME,
+                        lookupTypeId = data.PRODUCTCLASSTYPEID,
+                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME
+                    });
+        }
+
+        public IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId)
+        {
+            return (from data in context.TBL_PRODUCT_CLASS.Where(c=> c.PRODUCT_CLASS_PROCESSID == processId)
+                        //where data.OperationTypeId == operationTypeId
+                    select new LookupViewModel()
+                    {
+                        lookupId = (short)data.PRODUCTCLASSID,
+                        lookupName = data.PRODUCTCLASSNAME,
+                        lookupTypeId = data.PRODUCTCLASSTYPEID,
+                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME
+                    }).ToList();
+        }
+        public IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId)
+        {
+            return (from data in context.TBL_PRODUCT_CLASS where data.CUSTOMERTYPEID == customerTypeId
+                    //where data.OperationTypeId == operationTypeId
                     select new LookupViewModel()
                     {
                         lookupId = (short)data.PRODUCTCLASSID,
@@ -418,7 +464,7 @@ namespace FintrakBanking.Repositories.Setups.General
             // end of Audit section -------------------------------
             return this.SaveAll();
         }
-#endregion Product Type
+        #endregion Product Type
 
         #region Product Region
 
@@ -447,6 +493,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         productCategoryName = data.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
                         productClassId = data.PRODUCTCLASSID,
                         productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+
+                        customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
 
                         productPriceIndexId = data.PRODUCTPRICEINDEXID,
                         productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
@@ -518,6 +566,16 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<ProductViewModel> GetAllProduct()
         {
             return AllProduct();
+        }
+
+        public IEnumerable<ProductViewModel> GetAllLoanProduct()
+        {
+            return AllProduct().Where(c => c.productTypeId == 1 || c.productTypeId == 7);
+        }
+
+        public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId)
+        {
+            return AllProduct().Where(c => c.productClassId == productClassId && (c.productTypeId == 1 || c.productTypeId == 7));
         }
 
         public ProductViewModel GetProductById(int productId)
@@ -833,7 +891,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 collateralListToUpdate =
                 context.TBL_PRODUCT_COLLATERALTYPE.Where(x =>
                     x.PRODUCTID == productToUpdate.PRODUCTID && x.DELETED == false).ToList();
-                
+
                 // remove exisiting records for currencies
                 foreach (var curr in currListToUpdate)
                 {
@@ -1116,7 +1174,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (isPrincipalGLRequired)
             {
                 if (productModel.currencies == null)
-                       throw new Exception("Product Currency must be specified. Please select a principal GL with mapped currencies");
+                    throw new Exception("Product Currency must be specified. Please select a principal GL with mapped currencies");
             }
 
             bool output = false;
@@ -1247,7 +1305,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 PRODUCTPRICEINDEXID = productModel.productPriceIndexId,
                 PRODUCTPRICEINDEXSPREAD = productModel.productPriceIndexSpread,
-                
+
                 DEALTYPEID = productModel.dealTypeId,
                 DEALCLASSIFICATIONID = productModel.dealClassificationId,
                 DAYCOUNTCONVENTIONID = productModel.dayCountId,
@@ -1825,7 +1883,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public ProductPriceIndexViewModel AddProductPriceIndex(ProductPriceIndexViewModel prodPriceIndex)
         {
             var isProductPriceIndexExist = context.TBL_PRODUCT_PRICE_INDEX.Any(x => x.PRICEINDEXNAME.ToLower() == prodPriceIndex.priceIndexName.ToLower());
-            
+
             if (isProductPriceIndexExist)
             {
                 throw new Exception("Product price already exists!");
@@ -1932,5 +1990,41 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
         #endregion product Price Index
+
+
+        #region Product Process
+
+        public IEnumerable< productClassProcess> GetAllProductClassProcess()
+        {
+            var data = context.TBL_PRODUCT_CLASS_PROCESS.Select
+            (c => new productClassProcess
+            {
+                maximumAmount = c.MAXIMUM_AMOUNT,
+                productClassProcessId = c.PRODUCT_CLASS_PROCESSID,
+                productClassProscessName = c.PRODUCT_CLASS_PROCESS_NAME,
+                UserAmountLimit = c.USE_AMOUNT_LIMIT
+
+            });
+
+            return data.ToList();
+        }
+
+        public productClassProcess GetProductProcessByProcessId(int proccessId)
+        {
+            var data = context.TBL_PRODUCT_CLASS_PROCESS.Where(c => c.PRODUCT_CLASS_PROCESSID == proccessId).Select
+            (c => new productClassProcess
+            {
+                maximumAmount = c.MAXIMUM_AMOUNT,
+                productClassProcessId = c.PRODUCT_CLASS_PROCESSID,
+                productClassProscessName = c.PRODUCT_CLASS_PROCESS_NAME,
+                UserAmountLimit = c.USE_AMOUNT_LIMIT
+
+            });
+
+            return data.FirstOrDefault();
+        }
+
+        #endregion
+
     }
 }

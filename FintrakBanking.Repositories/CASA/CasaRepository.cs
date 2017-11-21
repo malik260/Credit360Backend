@@ -180,18 +180,37 @@ namespace FintrakBanking.Repositories.CASA
                     }).FirstOrDefault();
         }
 
-        public IEnumerable<dynamic> GetAllCustomerAccountByCustomerId(int customerId, int companyId)
+        public IEnumerable<dynamic> GetAllCustomerAccount(int customerId,int applicationTypeId , int companyId)
         {
-            var data = (from a in context.TBL_CASA
-                        where a.CUSTOMERID == customerId && a.COMPANYID == companyId //orderby account.AccountCode ascending, account.AccountName ascending
-                        select new
+            IEnumerable<dynamic> data = null;
+            if (applicationTypeId == 1 || applicationTypeId == 2)
+            {
+                data = (from a in  context.TBL_CUSTOMER_GROUP_MAPPING join b in context.TBL_CASA on a.CUSTOMERID equals b.CUSTOMERID 
+                            where a.CUSTOMERID == customerId && a.TBL_CUSTOMER.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
+                            select new
+                            {
+                                casaAccountId = b.CASAACCOUNTID,
+                                productAccountNumber = b.PRODUCTACCOUNTNUMBER + "(" + b.PRODUCTACCOUNTNAME + " - " + b.TBL_CURRENCY.CURRENCYCODE + ")",
+                                productAccountName = b.PRODUCTACCOUNTNAME,
+                                availableBalance = b.AVAILABLEBALANCE
+                            }).Distinct();
+            }
+         
+            if (applicationTypeId == 3) {
+                  data = (from a in context.TBL_CASA
+                            where a.CUSTOMERID == customerId && a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
+                            select new
 
-                        {
-                            casaAccountId = a.CASAACCOUNTID,
-                            productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE  + ")",
-                            productAccountName = a.PRODUCTACCOUNTNAME,
-                            availableBalance = a.AVAILABLEBALANCE
-                        });
+                            {
+                                casaAccountId = a.CASAACCOUNTID,
+                                productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE + ")",
+                                productAccountName = a.PRODUCTACCOUNTNAME,
+                                availableBalance = a.AVAILABLEBALANCE
+                            }).Distinct();
+            }
+          
+
+
             return data;
         }
 
@@ -333,6 +352,9 @@ namespace FintrakBanking.Repositories.CASA
                                            customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
                                            lastName = b.TBL_CUSTOMER.LASTNAME,
                                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                                            customerTypeId = (short) b.TBL_CUSTOMER .CUSTOMERTYPEID,
+                                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE .NAME ,
+
                                        
                                        };
 
@@ -485,6 +507,21 @@ namespace FintrakBanking.Repositories.CASA
             }
 
             return new CasaCustomerSearchViewModel { };
+        }
+
+        public IEnumerable<dynamic> GetAllCustomerAccountByCustomerId(int customerId, int companyId)
+        {
+         var   data = (from a in context.TBL_CASA
+                    where a.CUSTOMERID == customerId && a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
+                    select new
+
+                    {
+                        casaAccountId = a.CASAACCOUNTID,
+                        productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE + ")",
+                        productAccountName = a.PRODUCTACCOUNTNAME,
+                        availableBalance = a.AVAILABLEBALANCE
+                    });
+            return data.ToList();
         }
     }
 }

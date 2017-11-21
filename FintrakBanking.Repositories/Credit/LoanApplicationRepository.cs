@@ -345,6 +345,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var data = new TBL_LOAN_APPLICATION
                 {
+                     
                     APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                     LOANTYPEID = loan.loanTypeId,
                     COMPANYID = loan.companyId,

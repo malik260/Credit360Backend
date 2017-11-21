@@ -22,6 +22,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string FIRSTNAME { get; set; }
 
+        public short CUSTOMERTYPEID { get; set; }
+
         public short COMPANYDIRECTORTYPEID { get; set; }
 
         [Required]
@@ -53,5 +55,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public virtual TBL_CUSTOMER_COMPANY_DIRECTORTYPE TBL_CUSTOMER_COMPANY_DIRECTORTYPE { get; set; }
+
+        public virtual TBL_CUSTOMER_TYPE TBL_CUSTOMER_TYPE { get; set; }
     }
 }
