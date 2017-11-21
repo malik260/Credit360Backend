@@ -321,7 +321,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
                 }
 
-               // return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception e)
 
