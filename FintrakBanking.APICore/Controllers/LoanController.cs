@@ -197,6 +197,26 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+        [HttpGet]
+        [Route("gaurantor/application/{applicationReferenceNumber}")]
+        public HttpResponseMessage GetLoanGuarantors(int applicationReferenceNumber)
+        {
+            try
+            {
+                var data = repo.GetLoanGuarantors(applicationReferenceNumber);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [Route("loan-booking")]
         public  HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
@@ -224,6 +244,35 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
+        [HttpPost]
+        [Route("gaurantor/product-type/{productTypeId}/application/{applicationReferenceNumber}")]
+        public HttpResponseMessage AddLoanGuarantor( [FromBody] LoanGuarantorViewModel entity, short productTypeId, int applicationReferenceNumber)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.AddLoanGuarantor(entity, productTypeId, applicationReferenceNumber);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The Loan Gaurantor successful added " });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error saving gaurantor" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving gaurantor {e.Message}" });
+            }
+        }
+
 
         [HttpGet]
         [Route("appraisal-loan-details-updates/{appraisalMemorandumId}")]

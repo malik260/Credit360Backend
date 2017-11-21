@@ -222,10 +222,10 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.TBL_LOAN_REVOLVING.Add(data);
 
                     //...................Saving Loan Collaterals Mapping.......................
-                    AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
+                   // AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId);
 
                     //...................Saving Loan Gaurantors................................
-                    AddLoanGuarantor(model.loanGuarantor, (short)model.productTypeId, model.loanApplicationId);
+                    //AddLoanGuarantor(model.loanGuarantor, (short)model.productTypeId, model.loanApplicationId);
 
                     //...................Adding Audit...............................
                     context.TBL_AUDIT.Add(audit);
@@ -372,10 +372,10 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.TBL_LOAN_CONTINGENT.Add(data);
 
                     //...................Saving Loan Collaterals Mapping.......................
-                    AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
+                   // AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
 
                     //...................Saving Loan Gaurantors................................
-                    AddLoanGuarantor(entity.loanGuarantor,  (short)entity.productTypeId, entity.loanApplicationId);
+                    //AddLoanGuarantor(entity.loanGuarantor,  (short)entity.productTypeId, entity.loanApplicationId);
 
                     //...................Adding Audit...............................
                     context.TBL_AUDIT.Add(audit);
@@ -577,10 +577,10 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.TBL_LOAN.Add(data);
 
                     //...................Saving Loan Collaterals Mapping.......................
-                    AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
+                    //AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
 
                     //...................Saving Loan Gaurantors................................
-                    AddLoanGuarantor(entity.loanGuarantor, (short)entity.productTypeId, entity.loanApplicationId);
+                    //AddLoanGuarantor(entity.loanGuarantor, (short)entity.productTypeId, entity.loanApplicationId);
 
                     //...................Adding Audit...............................
                     var dataCount = context.SaveChanges();
@@ -2023,31 +2023,29 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="productTypeId">The product type identifier.</param>
         /// <param name="loanApplicationId">The loan application identifier.</param>
         /// <returns></returns>
-        public bool AddLoanGuarantor(List<LoanGuarantorViewModel> guarantorModel, short productTypeId, int loanApplicationId)
+        public bool AddLoanGuarantor(LoanGuarantorViewModel entity, short productTypeId, int loanApplicationId)
         {
-
-            foreach (LoanGuarantorViewModel entity in guarantorModel)
+            var guarantor = new TBL_LOAN_GUARANTOR
             {
-                var guarantor = new TBL_LOAN_GUARANTOR
-                {
-                    PRODUCTTYPEID = productTypeId,
-                    LOANAPPLICATIONID = loanApplicationId,
-                    FIRSTNAME = entity.firstname,
-                    LASTNAME = entity.lastname,
-                    MIDDLENAME = entity.middlename,
-                    ADDRESS = entity.address,
-                    PHONENUMBER1 = entity.phoneNumber1,
-                    PHONENUMBER2 = entity.phoneNumber2,
-                    RELATIONSHIP = entity.relationship,
-                    RELATIONSHIPDURATION = (short)entity.relationshipDuration,
-                    BVN = entity.bvn,
-                    EMAILADDRESS = entity.emailAddress,
-                    CREATEDBY = 1,
-                    DATETIMECREATED = generalSetup.GetApplicationDate()
-                };
-                context.TBL_LOAN_GUARANTOR.Add(guarantor);
-            }
-
+                PRODUCTTYPEID = productTypeId,
+                LOANAPPLICATIONID = loanApplicationId,
+                FIRSTNAME = entity.firstname,
+                LASTNAME = entity.lastname,
+                MIDDLENAME = entity.middlename,
+                ADDRESS = entity.address,
+                PHONENUMBER1 = entity.phoneNumber1,
+                PHONENUMBER2 = entity.phoneNumber2,
+                RELATIONSHIP = entity.relationship,
+                RELATIONSHIPDURATION = (short)entity.relationshipDuration,
+                BVN = entity.bvn,
+                REGISTRATION_NUMBER = entity.rcNumber,
+                TAX_NUMBER = entity.rcNumber,
+                CUSTOMERTYPEID = entity.customerTypeId,
+                EMAILADDRESS = entity.emailAddress,
+                CREATEDBY = 1,
+                DATETIMECREATED = generalSetup.GetApplicationDate()
+            };
+            context.TBL_LOAN_GUARANTOR.Add(guarantor);
             //return context.SaveChanges() > 0
             return true;
         }
@@ -2776,6 +2774,10 @@ namespace FintrakBanking.Repositories.Credit
                             relationship = c.RELATIONSHIP,
                             relationshipDuration = (short)c.RELATIONSHIPDURATION,
                             bvn = c.BVN,
+                            taxNumber = c.TAX_NUMBER,
+                            rcNumber = c.REGISTRATION_NUMBER,
+                            customerTypeId = c.CUSTOMERTYPEID,
+                            customerTypeName = c.TBL_CUSTOMER_TYPE.NAME,
                             emailAddress = c.EMAILADDRESS,
                             fullName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME
 
@@ -3189,6 +3191,10 @@ namespace FintrakBanking.Repositories.Credit
                                                           address = g.ADDRESS,
                                                           bvn = g.BVN,
                                                           relationship = g.RELATIONSHIP,
+                                                          rcNumber = g.REGISTRATION_NUMBER,
+                                                          taxNumber = g.TAX_NUMBER,
+                                                          customerTypeId = g.CUSTOMERTYPEID,
+                                                          customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
                                                           relationshipDuration = g.RELATIONSHIPDURATION
                                                       })).ToList(),
 
