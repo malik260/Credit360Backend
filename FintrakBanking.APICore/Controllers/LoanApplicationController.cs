@@ -675,7 +675,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpPost]
         [Route("loan-application/prepared-offer-letter")]
         public HttpResponseMessage SaveDraftOfferLetter([FromBody] OfferLetterTemplateViewModel model)

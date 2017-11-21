@@ -21,7 +21,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         int NewState { get; }
         int? NextLevelId { get; set; }
         bool EmailNotification { set; }
-        int? Vote { set; }
+        short? Vote { set; }
         bool InvestmentGrade { set; }
         bool PoliticallyExposed { set; }
         bool SmsNotification { set; }
