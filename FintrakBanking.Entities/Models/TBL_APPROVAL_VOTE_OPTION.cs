@@ -6,29 +6,24 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_PRODUCT_CLASS_PROCESS")]
-    public partial class TBL_PRODUCT_CLASS_PROCESS
+    [Table("core.TBL_APPROVAL_VOTE_OPTION")]
+    public partial class TBL_APPROVAL_VOTE_OPTION
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_PRODUCT_CLASS_PROCESS()
+        public TBL_APPROVAL_VOTE_OPTION()
         {
-            TBL_PRODUCT_CLASS = new HashSet<TBL_PRODUCT_CLASS>();
+            TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
         }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short PRODUCT_CLASS_PROCESSID { get; set; }
+        public short VOTE_OPTIONID { get; set; }
 
         [Required]
-        [StringLength(100)]
-        public string PRODUCT_CLASS_PROCESS_NAME { get; set; }
-
-        public bool USE_AMOUNT_LIMIT { get; set; }
-
-        [Column(TypeName = "money")]
-        public decimal? MAXIMUM_AMOUNT { get; set; }
+        [StringLength(50)]
+        public string VOTE_OPTION_NAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_PRODUCT_CLASS> TBL_PRODUCT_CLASS { get; set; }
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
     }
 }

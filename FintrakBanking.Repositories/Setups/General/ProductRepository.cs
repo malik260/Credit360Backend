@@ -2014,7 +2014,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 var data = new TBL_PRODUCT_CLASS_PROCESS()
                 {
                     PRODUCT_CLASS_PROCESS_NAME = model.productClassProcessName,
-                    MAXIMUM_AMOUNT = model.maximumAmount,
+                    MAXIMUM_AMOUNT =(decimal) model.maximumAmount,
                     USE_AMOUNT_LIMIT = model.useAmountLimit
                 };
 
@@ -2040,7 +2040,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (data != null)
             {
                 data.PRODUCT_CLASS_PROCESS_NAME = model.productClassProcessName;
-                data.MAXIMUM_AMOUNT = model.maximumAmount;
+                data.MAXIMUM_AMOUNT = (decimal) model.maximumAmount;
                 data.USE_AMOUNT_LIMIT = model.useAmountLimit;
 
                 try

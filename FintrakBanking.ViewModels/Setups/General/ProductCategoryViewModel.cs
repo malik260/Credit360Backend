@@ -17,6 +17,6 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public bool UserAmountLimit { get; set; }
 
-        public Decimal maximumAmount { get; set; }
+        public Decimal? maximumAmount { get; set; }
     }
 }

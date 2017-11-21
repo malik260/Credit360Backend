@@ -20,7 +20,6 @@ namespace FintrakBanking.Entities.Models
 
         public int CUSTOMERID { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string SURNAME { get; set; }
 
@@ -32,7 +31,6 @@ namespace FintrakBanking.Entities.Models
 
         public short COMPANYDIRECTORTYPEID { get; set; }
 
-        [Required]
         [StringLength(20)]
         public string CUSTOMERBVN { get; set; }
 

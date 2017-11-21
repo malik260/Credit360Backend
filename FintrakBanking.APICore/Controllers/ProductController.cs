@@ -1108,7 +1108,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("product-class-process")]
-        public HttpResponseMessage GetAllProductClassProcess()
+        public HttpResponseMessage GetAllProductClassProcesses()
         {
             try
             {
