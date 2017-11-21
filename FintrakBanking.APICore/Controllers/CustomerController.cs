@@ -1,5 +1,6 @@
 using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
@@ -34,10 +35,17 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-             //   entity.customerCode = "C0029";
+                string createUpdate = "";
+                if (entity.customerId != 0 || entity.customerId < 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                }
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
-            //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
 
@@ -45,10 +53,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The record has been created successfully" });
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "There was an error creating this record" });
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
             }
             catch (Exception e)
             {
@@ -256,27 +264,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpGet] [Route("customer-by-branch")]
-        //public HttpResponseMessage GetCustomerByBranchId()
-        //{
-        //    try
-        //    {
-        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
-
-        //        var data = repo.GetCustomerByBranchId(token.GetBranchId);
-        //        if (!data.Any())
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-
-        //}
-
         [HttpGet]
         [Route("customer")]
         public HttpResponseMessage SearchCustomer(string search)
@@ -347,7 +334,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetCustomerByCompanyId(companyId);
-                if (data == null )
+                if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
@@ -519,12 +506,65 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        [HttpGet]
+        [Route("customer-address-type")]
+        public HttpResponseMessage GetCustomerAddressType()
+        {
+            try
+            {
+                var data = repo.GetCustomerAddressType();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("customer-risk-rating")]
+        public HttpResponseMessage GetCustomerRiskRating()
+        {
+            try
+            {
+                var data = repo.GetCustomerRiskRating();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [Route("customer-company-information")]
         public HttpResponseMessage AddCustomerCompanyInformation([FromBody]CustomerCompanyInfomationViewModels entity)
         {
             try
             {
+                string createUpdate = "";
+                if (entity.companyInfomationId != 0 || entity.companyInfomationId < 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                }
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
@@ -533,10 +573,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The record has been created successfully" });
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "There was an error creating this record" });
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
             }
             catch (Exception e)
             {
@@ -550,9 +590,17 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-
+                string createUpdate = "";
+                if (entity.phoneContactId != 0 || entity.phoneContactId < 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                }
                 entity.userBranchId = (short)token.GetBranchId;
-              
+
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
 
@@ -560,10 +608,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The record has been created successfully" });
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "There was an error creating this record" });
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
             }
             catch (Exception e)
             {
@@ -577,8 +625,16 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-
-                entity.userBranchId = (short)token.GetBranchId;
+                string createUpdate = "";
+                if (entity.addressId != 0 || entity.addressId < 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                }
+                    entity.userBranchId = (short)token.GetBranchId;
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
@@ -587,7 +643,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The record has been created successfully" });
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "There was an error creating this record" });
@@ -636,7 +692,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                  new { success = false, message = "Please select add Children to continue" });
                 }
-                
+
 
                 var data = repo.AddCustomerChildren(entity, token.GetStaffId, (short)token.GetBranchId);
                 if (data)
@@ -659,6 +715,15 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                string createUpdate = "";
+                if (entity.placeOfWorkId != 0 || entity.placeOfWorkId < 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                }
                 entity.userBranchId = (short)token.GetBranchId;
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -668,10 +733,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The record has been created successfully" });
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "There was an error creating this record" });
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
             }
             catch (Exception e)
             {
@@ -685,6 +750,15 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                string createUpdate = "";
+                if (entity.companyDirectorId != 0 || entity.companyDirectorId < 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                }
                 entity.userBranchId = (short)token.GetBranchId;
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -694,10 +768,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The record has been created successfully" });
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "There was an error creating this record" });
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
             }
             catch (Exception e)
             {
@@ -711,6 +785,15 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                string createUpdate = "";
+                if (entity.client_SupplierId != 0 || entity.client_SupplierId < 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                }
                 entity.userBranchId = (short)token.GetBranchId;
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -720,10 +803,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The record has been created successfully" });
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "There was an error creating this record" });
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
             }
             catch (Exception e)
             {
@@ -737,6 +820,15 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                string createUpdate = "";
+                if (entity.identificationModeId != 0 || entity.identificationModeId < 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                }
                 entity.userBranchId = (short)token.GetBranchId;
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -746,10 +838,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The record has been created successfully" });
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "There was an error creating this record" });
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
             }
             catch (Exception e)
             {
@@ -757,32 +849,250 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
-        //[HttpPost]
-        //[Route("customer-company")]
-        //public HttpResponseMessage AddCustomerIdentification([FromBody]CustomerIdentificationViewModels entity)
-        //{
-        //    try
-        //    {
-        //        entity.userBranchId = (short)token.GetBranchId;
-
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
-        //        entity.createdBy = token.GetStaffId;
-
-        //        var data = repo.AddCustomerIdentification(entity);
-        //        if (data)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK,
-        //                new { success = true, result = data, message = "The record has been created successfully" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //           new { success = false, message = "There was an error creating this record" });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //           new { success = false, message = $"There was an error creating this record {e.Message}" });
-        //    }
-        //}
        
+        
+        #region Single Customer Information By CustomerID
+        [HttpGet]
+        [Route("single-customer-general-info/")]
+        public HttpResponseMessage GetSingleCustomerGeneralInfo(string customerCode)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerGeneralInfo(customerCode);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-company-info/")]
+        public HttpResponseMessage GetSingleCustomerCompanyInfo(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerCompanyInfo(customerId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data});
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-address-info/")]
+        public HttpResponseMessage GetSingleCustomerAddressInfo(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerAddressInfo(customerId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-phonecontact-info/")]
+        public HttpResponseMessage GetSingleCustomerPhoneContactInfo(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerPhoneContactInfo(customerId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-bvn-info/")]
+        public HttpResponseMessage GetSingleCustomerBVNInfo(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerBVNInfo(customerId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-identification-info/")]
+        public HttpResponseMessage GetSingleCustomerIdentificationInfo(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerIdentificationInfo(customerId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-employment-info/")]
+        public HttpResponseMessage GetSingleCustomerEmploymentHistoryInfo(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerEmploymentHistoryInfo(customerId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-board-info/")]
+        public HttpResponseMessage GetSingleCustomerBoardInfo(int customerId)
+        {
+            try
+            {
+                var directorTypeId = (short)CompanyDirectorTypeEnum.BoardMember;
+                var data = repo.GetSingleCustomerDirectorInfo(customerId, directorTypeId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-shareholder-info/")]
+        public HttpResponseMessage GetSingleCustomerShareholderInfo(int customerId)
+        {
+            try
+            {
+                var directorTypeId = (short)CompanyDirectorTypeEnum.Shareholder;
+                var data = repo.GetSingleCustomerDirectorInfo(customerId, directorTypeId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-accountsignatory-info/")]
+        public HttpResponseMessage GetSingleCustomerAccountSignatoryInfo(int customerId)
+        {
+            try
+            {
+                var directorTypeId = (short)CompanyDirectorTypeEnum.Account_Signatory;
+                var data = repo.GetSingleCustomerDirectorInfo(customerId, directorTypeId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-client-info/")]
+        public HttpResponseMessage GetSingleCustomerClientInfo(int customerId)
+        {
+            try
+            {
+                var clientTypeId = (short)CompanyClientOrSupplierTypeEnum.Client;
+                var data = repo.GetSingleCustomerClientOrSupplierInfo(customerId, clientTypeId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-supplier-info/")]
+        public HttpResponseMessage GetSingleCustomerSupplierInfo(int customerId)
+        {
+            try
+            {
+                var supplierTypeId = (short)CompanyClientOrSupplierTypeEnum.Supplier;
+                var data = repo.GetSingleCustomerClientOrSupplierInfo(customerId, supplierTypeId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-children-info/")]
+        public HttpResponseMessage GetSingleCustomerChildrenInfo(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerChildrenInfo(customerId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        
+        #endregion
+
     }
 }

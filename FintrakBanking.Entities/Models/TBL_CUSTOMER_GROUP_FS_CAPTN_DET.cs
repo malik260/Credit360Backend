@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL")]
-    public partial class TBL_CUSTOMER_GROUP_FS_CAPTION_DETAIL
+    [Table("core.TBL_CUSTOMER_GROUP_FS_CAPTN_DET")]
+    public partial class TBL_CUSTOMER_GROUP_FS_CAPTN_DET
     {
         [Key]
         public int GROUPFSDETAILID { get; set; }

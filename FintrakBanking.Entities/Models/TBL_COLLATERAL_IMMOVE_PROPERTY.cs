@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_IMMOVABLE_PROPERTY")]
-    public partial class TBL_COLLATERAL_IMMOVABLE_PROPERTY
+    [Table("credit.TBL_COLLATERAL_IMMOVE_PROPERTY")]
+    public partial class TBL_COLLATERAL_IMMOVE_PROPERTY
     {
         [Key]
         public int COLLATERALPROPERTYID { get; set; }

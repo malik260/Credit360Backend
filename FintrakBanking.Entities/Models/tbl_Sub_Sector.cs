@@ -27,7 +27,7 @@ namespace FintrakBanking.Entities.Models
         public short? SECTORID { get; set; }
 
         [Required]
-        [StringLength(50)]
+        [StringLength(200)]
         public string NAME { get; set; }
 
         [StringLength(10)]

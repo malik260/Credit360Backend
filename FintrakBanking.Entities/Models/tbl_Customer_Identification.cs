@@ -27,6 +27,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual TBL_CUSTOMER_IDENTIFICATIONMODETYPE TBL_CUSTOMER_IDENTIFICATIONMODETYPE { get; set; }
+        public virtual TBL_CUSTOMER_IDENTI_MODE_TYPE TBL_CUSTOMER_IDENTI_MODE_TYPE { get; set; }
     }
 }

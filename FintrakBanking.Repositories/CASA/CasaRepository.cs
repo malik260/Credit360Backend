@@ -397,7 +397,7 @@ namespace FintrakBanking.Repositories.CASA
                             taxIdentificationNumber = cust.TAXNUMBER,
                             registrationNumber = cust.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == cust.CUSTOMERID).REGISTRATIONNUMBER,
                             isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERID == cust.CUSTOMERID),
-                            isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == cust.CUSTOMERID && l.EXTERNALPRUDENTIALGUIDELINESTATUSID == (int)LoanPrudentialStatusEnum.WatchList)),
+                            isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == cust.CUSTOMERID && l.EXT_PRUDENT_GUIDELINE_STATUSID == (int)LoanPrudentialStatusEnum.WatchList)),
                             isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == cust.CUSTOMERID)),
                             customerTypeId = cust.CUSTOMERTYPEID,
                             customerTypeName = cust.TBL_CUSTOMER_TYPE.NAME,
@@ -416,7 +416,7 @@ namespace FintrakBanking.Repositories.CASA
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -427,7 +427,7 @@ namespace FintrakBanking.Repositories.CASA
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIRECTORTYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -445,7 +445,7 @@ namespace FintrakBanking.Repositories.CASA
                                 client_SupplierPhoneNumber = cs.PHONENUMBER,
                                 client_SupplierEmail = cs.EMAILADDRESS,
                                 client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                             }).ToList(),
                             customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == casa.CUSTOMERID &&
                             cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
@@ -460,7 +460,7 @@ namespace FintrakBanking.Repositories.CASA
                                  client_SupplierPhoneNumber = cs.PHONENUMBER,
                                  client_SupplierEmail = cs.EMAILADDRESS,
                                  client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE.CLIENT_SUPPLIERTYPENAME
+                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
                              }).ToList(),
                         });
 

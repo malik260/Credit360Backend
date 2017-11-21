@@ -145,6 +145,12 @@ namespace FintrakBanking.ViewModels.Credit
         public int casaAccountId { get; set; }
         public byte transactionTypeId { get; set; }
 
+        public int loanApplicationNumberId { get; set; }
+        public int checklistId { get; set; }
+
+
+
+
     }
 
 

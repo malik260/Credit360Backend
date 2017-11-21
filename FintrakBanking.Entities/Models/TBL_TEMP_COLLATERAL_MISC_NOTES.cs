@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_MISCELLANEOUS_NOTES")]
-    public partial class TBL_COLLATERAL_MISCELLANEOUS_NOTES
+    [Table("temp.TBL_TEMP_COLLATERAL_MISC_NOTES")]
+    public partial class TBL_TEMP_COLLATERAL_MISC_NOTES
     {
         [Key]
         public int MISCELLANEOUSNOTEID { get; set; }
@@ -35,6 +35,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual TBL_COLLATERAL_MISCELLANEOUS TBL_COLLATERAL_MISCELLANEOUS { get; set; }
+        public virtual TBL_TEMP_COLLATERAL_MISC TBL_TEMP_COLLATERAL_MISC { get; set; }
     }
 }

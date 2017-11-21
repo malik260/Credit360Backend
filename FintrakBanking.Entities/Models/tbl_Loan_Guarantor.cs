@@ -16,6 +16,8 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCTTYPEID { get; set; }
 
+        public short CUSTOMERTYPEID { get; set; }
+
         [StringLength(50)]
         public string BVN { get; set; }
 
@@ -45,6 +47,12 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string ADDRESS { get; set; }
 
+        [StringLength(50)]
+        public string REGISTRATION_NUMBER { get; set; }
+
+        [StringLength(50)]
+        public string TAX_NUMBER { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
@@ -58,6 +66,8 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual TBL_CUSTOMER_TYPE TBL_CUSTOMER_TYPE { get; set; }
 
         public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
 

@@ -298,7 +298,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productGroupName = p.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
                         requirePrincipalGl = p.REQUIREPRINCIPALGL,
                         requireInterestIncomeExpenseGl = p.REQUIREINTERESTINCOMEEXPENSEGL,
-                        requireInterestReceivablePayableGl = p.REQUIREINTERESTRECEIVABLEPAYABLEGL,
+                        requireInterestReceivablePayableGl = p.REQUIRE_INT_RECEIVABLE_PAYABLGL,
                         requirePremiumDiscountGl = p.REQUIREPREMIUMDISCOUNTGL,
                         requireDormantGl = p.REQUIREDORMANTGL,
                         requireOverdrawnGL = p.REQUIREOVERDRAWNGL,
@@ -351,7 +351,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 PRODUCTGROUPID = productType.productGroupId,
                 REQUIREPRINCIPALGL = productType.requirePrincipalGl,
                 REQUIREINTERESTINCOMEEXPENSEGL = productType.requireInterestIncomeExpenseGl,
-                REQUIREINTERESTRECEIVABLEPAYABLEGL = productType.requireInterestReceivablePayableGl,
+                REQUIRE_INT_RECEIVABLE_PAYABLGL = productType.requireInterestReceivablePayableGl,
                 REQUIREPREMIUMDISCOUNTGL = productType.requirePremiumDiscountGl,
                 REQUIREDORMANTGL = productType.requireDormantGl,
                 REQUIREOVERDRAWNGL = productType.requireOverdrawnGL,
@@ -410,7 +410,7 @@ namespace FintrakBanking.Repositories.Setups.General
             data.REQUIREDORMANTGL = productType.requireDormantGl;
             data.REQUIREOVERDRAWNGL = productType.requireOverdrawnGL;
             data.REQUIREINTERESTINCOMEEXPENSEGL = productType.requireInterestIncomeExpenseGl;
-            data.REQUIREINTERESTRECEIVABLEPAYABLEGL = productType.requireInterestReceivablePayableGl;
+            data.REQUIRE_INT_RECEIVABLE_PAYABLGL = productType.requireInterestReceivablePayableGl;
             data.DEALCLASSIFICATIONID = productType.dealClassificationId;
             data.REQUIRERATE = productType.requireRate;
             data.REQUIRETENOR = productType.requireTenor;
@@ -1990,6 +1990,72 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
         #endregion product Price Index
+
+        #region Product Class Process 
+
+        public IEnumerable<ProductClassProcessViewModel> GetAllProductClassProcesses()
+        {
+            var data = (from p in context.TBL_PRODUCT_CLASS_PROCESS
+                        select new ProductClassProcessViewModel
+                        {
+                            productClassProcessId = p.PRODUCT_CLASS_PROCESSID,
+                            productClassProcessName = p.PRODUCT_CLASS_PROCESS_NAME,
+                            maximumAmount = p.MAXIMUM_AMOUNT,
+                            useAmountLimit = p.USE_AMOUNT_LIMIT
+                        }).ToList();
+
+            return data;
+        }
+
+        public bool AddProductClassProcess(ProductClassProcessViewModel model)
+        {
+            if (model != null)
+            {
+                var data = new TBL_PRODUCT_CLASS_PROCESS()
+                {
+                    PRODUCT_CLASS_PROCESS_NAME = model.productClassProcessName,
+                    MAXIMUM_AMOUNT = model.maximumAmount,
+                    USE_AMOUNT_LIMIT = model.useAmountLimit
+                };
+
+                try
+                {
+                    context.TBL_PRODUCT_CLASS_PROCESS.Add(data);
+
+                    return context.SaveChanges() > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+
+            return false;
+        }
+
+        public bool UpdateProductClassProcess(int productClassProcessId, ProductClassProcessViewModel model)
+        {
+            var data = context.TBL_PRODUCT_CLASS_PROCESS.Find(productClassProcessId);
+
+            if (data != null)
+            {
+                data.PRODUCT_CLASS_PROCESS_NAME = model.productClassProcessName;
+                data.MAXIMUM_AMOUNT = model.maximumAmount;
+                data.USE_AMOUNT_LIMIT = model.useAmountLimit;
+
+                try
+                {
+                    return context.SaveChanges() > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+
+            return false;
+        }
+        #endregion Product Class Process
 
 
         #region Product Process

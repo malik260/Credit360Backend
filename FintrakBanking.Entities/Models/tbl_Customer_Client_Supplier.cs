@@ -63,6 +63,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
-        public virtual TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE TBL_CUSTOMER_CLIENT_SUPPLIER_TYPE { get; set; }
+        public virtual TBL_CUSTOMER_CLIENT_SUPPLR_TYPE TBL_CUSTOMER_CLIENT_SUPPLR_TYPE { get; set; }
     }
 }

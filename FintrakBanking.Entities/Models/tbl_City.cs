@@ -13,9 +13,9 @@ namespace FintrakBanking.Entities.Models
         public TBL_CITY()
         {
             TBL_BRANCH = new HashSet<TBL_BRANCH>();
-            TBL_COLLATERAL_IMMOVABLE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVABLE_PROPERTY>();
+            TBL_COLLATERAL_IMMOVE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVE_PROPERTY>();
             TBL_STAFF = new HashSet<TBL_STAFF>();
-            TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY = new HashSet<TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY>();
+            TBL_TEMP_COLLATERAL_IMMOVE_PROP = new HashSet<TBL_TEMP_COLLATERAL_IMMOVE_PROP>();
             TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
 
@@ -40,13 +40,13 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CITY_CLASS TBL_CITY_CLASS { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_COLLATERAL_IMMOVABLE_PROPERTY> TBL_COLLATERAL_IMMOVABLE_PROPERTY { get; set; }
+        public virtual ICollection<TBL_COLLATERAL_IMMOVE_PROPERTY> TBL_COLLATERAL_IMMOVE_PROPERTY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_STAFF> TBL_STAFF { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY> TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVE_PROP> TBL_TEMP_COLLATERAL_IMMOVE_PROP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }

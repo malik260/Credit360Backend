@@ -83,14 +83,14 @@ namespace FintrakBanking.Repositories.WorkFlow
             var applicationDate = general.GetApplicationDate();
             model.jobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode();
             model.requestStatusId = 1;
-            if(model.operationsId == 0)  model.operationsId = 1;
+            //if(model.operationsId == 0)  model.operationsId = 1;
 
            var data = new TBL_JOB_REQUEST
             {
                 JOBREQUESTCODE = model.jobRequestCode,
                 JOBTYPEID = model.jobTypeId,
                 SENDERSTAFFID = model.createdBy,
-                RECEIVERSTAFFID = model.receiverStaffId,
+                RECEIVERSTAFFID = model.receiverStaffId == 0 ? null : model.receiverStaffId,
                 DEPARTMENTID = model.departmentId,
                 DEPARTMENTUNITID = model.departmentUnitId,
                 REASSIGNEDTO = model.reassignedTo,
@@ -123,6 +123,20 @@ namespace FintrakBanking.Repositories.WorkFlow
             // End of Audit Section ---------------------
             context.SaveChanges();
             return job.JOBREQUESTCODE;
+        }
+
+        public bool AddJobComment(JobRequestMessageViewModel model)
+        {
+            var data = new TBL_JOB_REQUEST_MESSAGE
+            {
+                JOBREQUESTID = model.jobRequestId,
+                MESSAGE = model.message,
+                DATE_TIME_SENT = DateTime.Now,
+                STAFFID = model.createdBy
+            };
+
+            var job = context.TBL_JOB_REQUEST_MESSAGE.Add(data);
+            return context.SaveChanges() > 0;
         }
 
         private string RequestCode()
@@ -254,6 +268,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                      new JobRequestViewModel
                      {
                     jobRequestId = x.JOBREQUESTID,
+                    requestTitle = "", // x.REQUESTTITLE,
                     jobRequestCode = x.JOBREQUESTCODE,
                     jobTypeId = x.JOBTYPEID,
                     senderStaffId = x.SENDERSTAFFID,
@@ -273,6 +288,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     systemResponseDate = x.SYSTEMRESPONSEDATE,
                     acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
                     systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+                    loggedInStaffId = staffId,
                     from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
                     fromBranchName = context.TBL_BRANCH.Where(c=>c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
                     to = allstaff.FirstOrDefault(s => s.id == x.RECEIVERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.RECEIVERSTAFFID).name,
@@ -303,7 +319,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobRequestCode = data.JOBREQUESTCODE,
                 jobTypeId = data.JOBTYPEID,
                 senderStaffId = data.SENDERSTAFFID,
-                receiverStaffId =(int) data.RECEIVERSTAFFID,
+                receiverStaffId = (int)data.RECEIVERSTAFFID,
                 reassignedTo = data.REASSIGNEDTO,
                 isReassigned = data.ISREASSIGNED,
                 isAcknowledged = data.ISACKNOWLEDGED,
@@ -321,6 +337,20 @@ namespace FintrakBanking.Repositories.WorkFlow
                 systemAcknowledgementDate = data.SYSTEMACKNOWLEDGEMENTDATE,
             };
         }
+
+        public IEnumerable<JobRequestMessageViewModel> GetJobComments(int jobRequestId)
+        {
+            return context.TBL_JOB_REQUEST_MESSAGE
+             .Where(t => t.JOBREQUESTID == jobRequestId).Select(x =>
+                   new JobRequestMessageViewModel
+                   {
+                       jobRequestId = x.JOBREQUESTID,
+                       message = x.MESSAGE,
+                       staffId = x.STAFFID,
+                       staffName = x.TBL_STAFF.FIRSTNAME
+                     }).OrderByDescending(x => x.datetimeSent).Take(500);
+        }
+
 
         public IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId)
         {
@@ -378,7 +408,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobRequestCode = x.b.JOBREQUESTCODE,
                     jobTypeId = x.b.JOBTYPEID,
                     senderStaffId = x.b.SENDERSTAFFID,
-                    receiverStaffId =(int) x.b.RECEIVERSTAFFID,
+                    receiverStaffId = (int)x.b.RECEIVERSTAFFID,
                     reassignedTo = x.b.REASSIGNEDTO,
                     isReassigned = x.b.ISREASSIGNED,
                     isAcknowledged = x.b.ISACKNOWLEDGED,
@@ -466,6 +496,16 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeId = x.JOBTYPEID,
                 jobTypeName = x.JOBTYPENAME,
             });
+        }
+
+        public IEnumerable<JobTypeViewModel> GetJobSubType(short jobId)
+        {
+            return this.context.TBL_JOB_TYPE_SUB.Select(x => new JobSubTypeViewModel
+            {
+                jobTypeId = x.JOBTYPEID,
+                jobSubTypeName = x.JOB_SUB_TYPE_NAME,
+                jobSubTypeId = x.JOB_SUB_TYPEID
+            }).Where(x=>x.jobTypeId == jobId);
         }
 
         #endregion job-type

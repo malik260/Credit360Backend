@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_LOAN_REVIEW_OPERATION()
         {
-            TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE = new HashSet<TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE>();
+            TBL_LOAN_REVIEW_OPRATN_IREG_SCH = new HashSet<TBL_LOAN_REVIEW_OPRATN_IREG_SCH>();
         }
 
         [Key]
@@ -70,6 +70,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATECREATED { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE> TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE { get; set; }
+        public virtual ICollection<TBL_LOAN_REVIEW_OPRATN_IREG_SCH> TBL_LOAN_REVIEW_OPRATN_IREG_SCH { get; set; }
     }
 }

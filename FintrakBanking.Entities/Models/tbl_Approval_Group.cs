@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
 
         public int COMPANYID { get; set; }
 
-        public bool ISCOMMITTEE { get; set; }
+        public int ROLEID { get; set; }
 
         public int CREATEDBY { get; set; }
 

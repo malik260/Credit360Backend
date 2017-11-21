@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE")]
-    public partial class TBL_LOAN_REVIEW_OPERATION_IRREGULAR_SCHEDULE
+    [Table("credit.TBL_LOAN_REVIEW_OPRATN_IREG_SCH")]
+    public partial class TBL_LOAN_REVIEW_OPRATN_IREG_SCH
     {
         [Key]
         public int IRREGULARSCHEDULEINPUTID { get; set; }

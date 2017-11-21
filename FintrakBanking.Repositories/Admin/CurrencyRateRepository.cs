@@ -27,6 +27,7 @@ namespace FintrakBanking.Repositories.Admin
         public IEnumerable<CurrencyViewModel> GetCurrency()
         {
             var data = (from a in context.TBL_CURRENCY
+                        where a.INUSE == true
                         select new CurrencyViewModel
                         {
                             currencyId = a.CURRENCYID,
@@ -56,7 +57,7 @@ namespace FintrakBanking.Repositories.Admin
         public IEnumerable<CurrencyRateViewModel> GetCurrencyRate()
         {
             var data = (from a in context.TBL_CURRENCY_RATE
-                        where a.DELETED == false
+                        where a.DELETED == false 
                         select new CurrencyRateViewModel
                         {
 

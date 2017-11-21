@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_SCHEDULE_PERIODIC_ARCHIVE")]
-    public partial class TBL_LOAN_SCHEDULE_PERIODIC_ARCHIVE
+    [Table("credit.TBL_LOAN_SCHEDULE_PERIODIC_ARCH")]
+    public partial class TBL_LOAN_SCHEDULE_PERIODIC_ARCH
     {
         [Key]
         public int PERIODICSCHEDULEID { get; set; }

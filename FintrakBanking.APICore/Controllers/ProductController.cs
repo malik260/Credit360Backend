@@ -85,8 +85,8 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data });  //Ok(accounts);
-         
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
             }
             catch (System.Exception ex)
             {
@@ -1103,5 +1103,77 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion Product Price Index
+
+        #region Product Class Process
+
+        [HttpGet]
+        [Route("product-class-process")]
+        public HttpResponseMessage GetAllProductClassProcess()
+        {
+            try
+            {
+                var data = repo.GetAllProductClassProcesses();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("product-class-process")]
+        public HttpResponseMessage AddProductClassProcess([FromBody] ProductClassProcessViewModel model)
+        {
+            try
+            {
+                var data = repo.AddProductClassProcess(model);
+                if (!data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Product process added successfully!" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = true, message = "Product process not added successfully!" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("product-class-process/{productClassProcessId}")]
+        public HttpResponseMessage UpdateProductClassProcess(int productClassProcessId, [FromBody] ProductClassProcessViewModel model)
+        {
+            try
+            {
+                var data = repo.UpdateProductClassProcess(productClassProcessId, model);
+                if (!data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Product process updated successfully!" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = true, message = "Product process not updated successfully!" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        #endregion Product Class Process
+
     }
 }

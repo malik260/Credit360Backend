@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_COLLATERAL_MARKETABLE_SECURITY")]
-    public partial class TBL_COLLATERAL_MARKETABLE_SECURITY
+    [Table("credit.TBL_COLLATERAL_MKT_SECURITY")]
+    public partial class TBL_COLLATERAL_MKT_SECURITY
     {
         [Key]
         public int COLLATERALMARKETABLESECURITYID { get; set; }

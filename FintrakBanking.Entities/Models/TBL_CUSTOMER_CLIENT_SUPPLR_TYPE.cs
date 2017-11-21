@@ -6,23 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_COMPANY_DIRECTORTYPE")]
-    public partial class TBL_CUSTOMER_COMPANY_DIRECTORTYPE
+    [Table("core.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE")]
+    public partial class TBL_CUSTOMER_CLIENT_SUPPLR_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_CUSTOMER_COMPANY_DIRECTORTYPE()
+        public TBL_CUSTOMER_CLIENT_SUPPLR_TYPE()
         {
-            TBL_CUSTOMER_COMPANY_DIRECTOR = new HashSet<TBL_CUSTOMER_COMPANY_DIRECTOR>();
+            TBL_CUSTOMER_CLIENT_SUPPLIER = new HashSet<TBL_CUSTOMER_CLIENT_SUPPLIER>();
         }
 
         [Key]
-        public short COMPANYDIRECTORYTYPEID { get; set; }
+        public short CLIENT_SUPPLIERTYPEID { get; set; }
 
         [Required]
-        [StringLength(100)]
-        public string COMPANYDIRECTORYTYPENAME { get; set; }
+        [StringLength(50)]
+        public string CLIENT_SUPPLIERTYPENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CUSTOMER_COMPANY_DIRECTOR> TBL_CUSTOMER_COMPANY_DIRECTOR { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_CLIENT_SUPPLIER> TBL_CUSTOMER_CLIENT_SUPPLIER { get; set; }
     }
 }

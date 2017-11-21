@@ -181,7 +181,7 @@ namespace FintrakBanking.Repositories.Customer
                 context.TBL_CUSTOMER_FS_RATIO_DETAIL.Add(data);
 
                 // Audit Section ---------------------------
-                var auditDivisor = context.TBL_CUSTOMER_FS_RATIO_DIVISORTYPE.FirstOrDefault(x => x.DIVISORTYPEID == data.DIVISORTYPEID)?.DIVISORTYPENAME;
+                var auditDivisor = context.TBL_CUSTOMER_FS_RATIO_DIVI_TYPE.FirstOrDefault(x => x.DIVISORTYPEID == data.DIVISORTYPEID)?.DIVISORTYPENAME;
                 var auditValue = context.TBL_CUSTOMER_FS_RATIO_VALUETYPE.FirstOrDefault(x => x.VALUETYPEID == data.VALUETYPEID)?.VALUETYPENAME;
 
                 var audit = new TBL_AUDIT
@@ -232,7 +232,7 @@ namespace FintrakBanking.Repositories.Customer
                             ratioCaptionName = a.TBL_CUSTOMER_FS_RATIO_CAPTION.RATIOCAPTION,
                             fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
                             valueTypeName = a.TBL_CUSTOMER_FS_RATIO_VALUETYPE.VALUETYPENAME,
-                            divisorTypeName = a.TBL_CUSTOMER_FS_RATIO_DIVISORTYPE.DIVISORTYPENAME,
+                            divisorTypeName = a.TBL_CUSTOMER_FS_RATIO_DIVI_TYPE.DIVISORTYPENAME,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).ToList();
@@ -254,7 +254,7 @@ namespace FintrakBanking.Repositories.Customer
                            ratioCaptionName = a.TBL_CUSTOMER_FS_RATIO_CAPTION.RATIOCAPTION,
                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
                            valueTypeName = a.TBL_CUSTOMER_FS_RATIO_VALUETYPE.VALUETYPENAME,
-                           divisorTypeName = a.TBL_CUSTOMER_FS_RATIO_DIVISORTYPE.DIVISORTYPENAME,
+                           divisorTypeName = a.TBL_CUSTOMER_FS_RATIO_DIVI_TYPE.DIVISORTYPENAME,
                            dateTimeCreated = a.DATETIMECREATED,
                            createdBy = a.CREATEDBY
                        };
@@ -352,7 +352,7 @@ namespace FintrakBanking.Repositories.Customer
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
-            var audit_divisor = (context.TBL_CUSTOMER_FS_RATIO_DIVISORTYPE.FirstOrDefault(x => x.DIVISORTYPEID == data.DIVISORTYPEID)).DIVISORTYPENAME;
+            var audit_divisor = (context.TBL_CUSTOMER_FS_RATIO_DIVI_TYPE.FirstOrDefault(x => x.DIVISORTYPEID == data.DIVISORTYPEID)).DIVISORTYPENAME;
             var audit_value = (context.TBL_CUSTOMER_FS_RATIO_VALUETYPE.FirstOrDefault(x => x.VALUETYPEID == data.VALUETYPEID)).VALUETYPENAME;
 
             var audit = new TBL_AUDIT
@@ -383,7 +383,7 @@ namespace FintrakBanking.Repositories.Customer
 
 
             // Audit Section ---------------------------
-            var audit_divisor = (context.TBL_CUSTOMER_FS_RATIO_DIVISORTYPE.FirstOrDefault(x => x.DIVISORTYPEID == data.DIVISORTYPEID)).DIVISORTYPENAME;
+            var audit_divisor = (context.TBL_CUSTOMER_FS_RATIO_DIVI_TYPE.FirstOrDefault(x => x.DIVISORTYPEID == data.DIVISORTYPEID)).DIVISORTYPENAME;
             var audit_value = (context.TBL_CUSTOMER_FS_RATIO_VALUETYPE.FirstOrDefault(x => x.VALUETYPEID == data.VALUETYPEID)).VALUETYPENAME;
 
             var audit = new TBL_AUDIT
@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.Customer
         #region tbl_Customer FS Ratio Divisor Type
         public IEnumerable<CustomerFSRatioDivisorTypeViewModel> GetAllDivisorType()
         {
-            var data = (from a in context.TBL_CUSTOMER_FS_RATIO_DIVISORTYPE
+            var data = (from a in context.TBL_CUSTOMER_FS_RATIO_DIVI_TYPE
                         where a.DELETED == false
                         select new CustomerFSRatioDivisorTypeViewModel
                         {

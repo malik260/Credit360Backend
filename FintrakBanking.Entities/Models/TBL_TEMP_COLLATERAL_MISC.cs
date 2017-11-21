@@ -6,13 +6,13 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_COLLATERAL_MISCELLANEOUS")]
-    public partial class TBL_TEMP_COLLATERAL_MISCELLANEOUS
+    [Table("temp.TBL_TEMP_COLLATERAL_MISC")]
+    public partial class TBL_TEMP_COLLATERAL_MISC
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_TEMP_COLLATERAL_MISCELLANEOUS()
+        public TBL_TEMP_COLLATERAL_MISC()
         {
-            TBL_TEMP_COLLATERAL_MISCELLANEOUS_NOTES = new HashSet<TBL_TEMP_COLLATERAL_MISCELLANEOUS_NOTES>();
+            TBL_TEMP_COLLATERAL_MISC_NOTES = new HashSet<TBL_TEMP_COLLATERAL_MISC_NOTES>();
         }
 
         [Key]
@@ -35,6 +35,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_MISCELLANEOUS_NOTES> TBL_TEMP_COLLATERAL_MISCELLANEOUS_NOTES { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_MISC_NOTES> TBL_TEMP_COLLATERAL_MISC_NOTES { get; set; }
     }
 }

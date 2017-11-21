@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_COLLATERAL_PRECIOUSMETAL")]
-    public partial class TBL_TEMP_COLLATERAL_PRECIOUSMETAL
+    [Table("temp.TBL_TEMP_COLLATERAL_PREC_METAL")]
+    public partial class TBL_TEMP_COLLATERAL_PREC_METAL
     {
         [Key]
         public int COLLATERALPRECIOUSMETALID { get; set; }

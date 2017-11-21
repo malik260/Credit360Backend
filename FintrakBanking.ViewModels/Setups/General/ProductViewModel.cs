@@ -93,4 +93,12 @@ namespace FintrakBanking.ViewModels.Setups.General
         public double priceIndexRate { get; set; }
         public string priceIndexDescription { get; set; }
     }
+
+    public class ProductClassProcessViewModel
+    {
+        public short productClassProcessId { get; set; }
+        public string productClassProcessName { get; set; }
+        public decimal? maximumAmount { get; set; }
+        public bool useAmountLimit { get { return false; } set { useAmountLimit = false; } }
+    }
 }

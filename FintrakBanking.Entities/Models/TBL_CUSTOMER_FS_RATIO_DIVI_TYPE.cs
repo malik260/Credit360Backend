@@ -6,11 +6,11 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_FS_RATIO_DIVISORTYPE")]
-    public partial class TBL_CUSTOMER_FS_RATIO_DIVISORTYPE
+    [Table("core.TBL_CUSTOMER_FS_RATIO_DIVI_TYPE")]
+    public partial class TBL_CUSTOMER_FS_RATIO_DIVI_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_CUSTOMER_FS_RATIO_DIVISORTYPE()
+        public TBL_CUSTOMER_FS_RATIO_DIVI_TYPE()
         {
             TBL_CUSTOMER_FS_RATIO_DETAIL = new HashSet<TBL_CUSTOMER_FS_RATIO_DETAIL>();
         }

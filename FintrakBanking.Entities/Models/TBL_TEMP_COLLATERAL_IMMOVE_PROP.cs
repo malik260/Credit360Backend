@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("temp.TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY")]
-    public partial class TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY
+    [Table("temp.TBL_TEMP_COLLATERAL_IMMOVE_PROP")]
+    public partial class TBL_TEMP_COLLATERAL_IMMOVE_PROP
     {
         [Key]
         public int COLLATERALPROPERTYID { get; set; }
@@ -87,8 +87,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_TEMP_COLLATERAL_CUSTOMER TBL_TEMP_COLLATERAL_CUSTOMER { get; set; }
 
-        public virtual TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY1 { get; set; }
+        public virtual TBL_TEMP_COLLATERAL_IMMOVE_PROP TBL_TEMP_COLLATERAL_IMMOVE_PROP1 { get; set; }
 
-        public virtual TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY TBL_TEMP_COLLATERAL_IMMOVABLE_PROPERTY2 { get; set; }
+        public virtual TBL_TEMP_COLLATERAL_IMMOVE_PROP TBL_TEMP_COLLATERAL_IMMOVE_PROP2 { get; set; }
     }
 }

@@ -10,7 +10,6 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_MONITORING_SETUP
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int MONITORING_ITEMID { get; set; }
 
         [Required]
@@ -25,6 +24,10 @@ namespace FintrakBanking.Entities.Models
 
         public int NOTIFICATION_PERIOD { get; set; }
 
+        public short PRODUCTID { get; set; }
+
         public virtual TBL_MESSAGE_LOG_TYPE TBL_MESSAGE_LOG_TYPE { get; set; }
+
+        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
     }
 }

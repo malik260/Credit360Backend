@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL")]
-    public partial class TBL_CREDIT_APPRAISAL_MEMORANDUM_LOAN_DETAIL
+    [Table("credit.TBL_CREDIT_APPRAISAL_MEMO_DETL")]
+    public partial class TBL_CREDIT_APPRAISAL_MEMO_DETL
     {
         [Key]
         public int APPRAISALMEMORANDUMLOANDETAILID { get; set; }

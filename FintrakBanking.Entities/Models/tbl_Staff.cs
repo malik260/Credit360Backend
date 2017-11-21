@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
             TBL_APPROVAL_LEVEL_STAFF = new HashSet<TBL_APPROVAL_LEVEL_STAFF>();
             TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
             TBL_APPROVAL_TRAIL1 = new HashSet<TBL_APPROVAL_TRAIL>();
+            TBL_APPROVAL_TRAIL2 = new HashSet<TBL_APPROVAL_TRAIL>();
             TBL_AUDIT = new HashSet<TBL_AUDIT>();
             TBL_CASA = new HashSet<TBL_CASA>();
             TBL_CASA1 = new HashSet<TBL_CASA>();
@@ -24,6 +25,7 @@ namespace FintrakBanking.Entities.Models
             TBL_JOB_REQUEST = new HashSet<TBL_JOB_REQUEST>();
             TBL_JOB_REQUEST1 = new HashSet<TBL_JOB_REQUEST>();
             TBL_JOB_REQUEST2 = new HashSet<TBL_JOB_REQUEST>();
+            TBL_JOB_REQUEST_MESSAGE = new HashSet<TBL_JOB_REQUEST_MESSAGE>();
             TBL_NOTIFICATION_LOG = new HashSet<TBL_NOTIFICATION_LOG>();
             TBL_PROFILE_USER = new HashSet<TBL_PROFILE_USER>();
             TBL_CALL_MEMO = new HashSet<TBL_CALL_MEMO>();
@@ -37,7 +39,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN1 = new HashSet<TBL_LOAN>();
             TBL_LOAN_PRELIMINARY_EVALUATION = new HashSet<TBL_LOAN_PRELIMINARY_EVALUATION>();
             TBL_LOAN_PRELIMINARY_EVALUATION1 = new HashSet<TBL_LOAN_PRELIMINARY_EVALUATION>();
-            TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY = new HashSet<TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY>();
+            TBL_LOAN_RELATIONSHIP_OFF_HIST = new HashSet<TBL_LOAN_RELATIONSHIP_OFF_HIST>();
             TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN_REVOLVING1 = new HashSet<TBL_LOAN_REVOLVING>();
         }
@@ -144,6 +146,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL2 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_AUDIT> TBL_AUDIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -175,6 +180,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST2 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_JOB_REQUEST_MESSAGE> TBL_JOB_REQUEST_MESSAGE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_NOTIFICATION_LOG> TBL_NOTIFICATION_LOG { get; set; }
@@ -216,7 +224,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_PRELIMINARY_EVALUATION> TBL_LOAN_PRELIMINARY_EVALUATION1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY> TBL_LOAN_RELATIONSHIP_OFFICER_HISTORY { get; set; }
+        public virtual ICollection<TBL_LOAN_RELATIONSHIP_OFF_HIST> TBL_LOAN_RELATIONSHIP_OFF_HIST { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; }

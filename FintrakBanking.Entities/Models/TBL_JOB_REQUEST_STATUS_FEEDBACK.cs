@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("core.TBL_JOB_REQUEST_STATUS_FEEDBACK")]
     public partial class TBL_JOB_REQUEST_STATUS_FEEDBACK
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_JOB_REQUEST_STATUS_FEEDBACK()
+        {
+            TBL_JOB_REQUEST = new HashSet<TBL_JOB_REQUEST>();
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short JOB_STATUS_FEEDBACKID { get; set; }
@@ -20,6 +26,9 @@ namespace FintrakBanking.Entities.Models
         public short REQUESTSTATUSID { get; set; }
 
         public short JOBTYPEID { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }
 
         public virtual TBL_JOB_REQUEST_STATUS TBL_JOB_REQUEST_STATUS { get; set; }
 
