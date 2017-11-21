@@ -34,7 +34,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationsDetails(int loanApplicationId, int companyId);
 
-        TBL_LOAN_APPLICATION AddLoanApplication(LoanApplicationViewModel loan);
+        int AddLoanApplication(LoanApplicationViewModel loan);
 
         //IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
 

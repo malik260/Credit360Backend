@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -324,7 +325,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public TBL_LOAN_APPLICATION AddLoanApplication(LoanApplicationViewModel loan)
+        public int AddLoanApplication(LoanApplicationViewModel loan)
         {
             try
             {
@@ -365,6 +366,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
                     CUSTOMERGROUPID = loan.customerGroupId,
+                     CASAACCOUNTID = loan.casaAccountId,
                     APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending ,
                     APPLICATIONAMOUNT = loan.proposedAmount,
@@ -416,11 +418,20 @@ namespace FintrakBanking.Repositories.Credit
 
                 //end of Audit section -------------------------------
 
-                response = context.SaveChanges();
+               // response = context.SaveChanges();
+                try
+                {
+                    response = context.SaveChanges();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                    throw new DbEntityValidationException(errorMessages);
+                }
                 TBL_LOAN_APPLICATION result;
                 if (response > 0) result = data;
 
-                return data;
+                return data.LOANAPPLICATIONID;
             }
             catch (Exception ex)
             {
