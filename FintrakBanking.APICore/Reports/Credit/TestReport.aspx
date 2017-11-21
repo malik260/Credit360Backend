@@ -18,14 +18,14 @@
             <rsweb:ReportViewer ID="rvBranchReport" runat="server" Font-Names="Verdana" Font-Size="8pt" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="651px">
                 <LocalReport ReportPath="Reports\Credit\TestReport.rdlc">
                     <DataSources>
-                        <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="Branch" />
+                        <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="OfferLetter" />
                     </DataSources>
                 </LocalReport>
             </rsweb:ReportViewer>
         </div>
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetBranch" TypeName="FintrakBanking.ReportObjects.BranchInfo">
+        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="PrepareOfferLetterTemplate" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfo">
             <SelectParameters>
-                <asp:QueryStringParameter DefaultValue="0" Name="id" QueryStringField="id" Type="Int16" />
+                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
             </SelectParameters>
         </asp:ObjectDataSource>
     </form>

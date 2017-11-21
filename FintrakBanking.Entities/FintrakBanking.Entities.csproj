@@ -84,6 +84,7 @@
     <Compile Include="Models\TBL_APPROVAL_STATE.cs" />
     <Compile Include="Models\TBL_APPROVAL_STATUS.cs" />
     <Compile Include="Models\TBL_APPROVAL_TRAIL.cs" />
+    <Compile Include="Models\TBL_APPROVAL_VOTE_OPTION.cs" />
     <Compile Include="Models\TBL_AUDIT.cs" />
     <Compile Include="Models\TBL_AUDIT_TYPE.cs" />
     <Compile Include="Models\TBL_BRANCH.cs" />
@@ -340,6 +341,7 @@
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_TEMP_CUSTOMER_GROUP_MAPPING.cs" />
     <Compile Include="Models\TBL_TEMP_FEE.cs" />
+    <Compile Include="Models\TBL_TEMP_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_CHARGE_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_PRODUCT_COLLATERALTYPE.cs" />

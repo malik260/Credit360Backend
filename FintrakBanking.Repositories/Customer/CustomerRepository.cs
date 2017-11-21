@@ -1702,6 +1702,18 @@ namespace FintrakBanking.Repositories.Customer
                             }).ToList();
             return children;
         }
+
+        public dynamic GetCustomerAndType(int custormerId)
+        {
+            var data = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == custormerId).Select(c => new
+            {
+                custormerId = c.CUSTOMERID,
+                customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                customerTypeId = c.CUSTOMERTYPEID,
+                customerType = c.TBL_CUSTOMER_TYPE.NAME
+            });
+            return data;
+        }
         #endregion
     }
 }

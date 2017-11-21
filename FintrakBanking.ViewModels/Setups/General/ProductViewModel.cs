@@ -20,7 +20,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string productName { get; set; }
         public string productDescription { get; set; }
         public short currencyId { get; set; }
-
+        public short customerId { get; set; }
         public int ? principalBalanceGl { get; set; }
         public string principalBalanceGlCode { get; set; }
         public int? interestIncomeExpenseGl { get; set; }
@@ -92,5 +92,13 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string priceIndexName { get; set; }
         public double priceIndexRate { get; set; }
         public string priceIndexDescription { get; set; }
+    }
+
+    public class ProductClassProcessViewModel
+    {
+        public short productClassProcessId { get; set; }
+        public string productClassProcessName { get; set; }
+        public decimal? maximumAmount { get; set; }
+        public bool useAmountLimit { get { return false; } set { useAmountLimit = false; } }
     }
 }

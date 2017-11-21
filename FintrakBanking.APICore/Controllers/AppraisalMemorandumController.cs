@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -186,6 +187,26 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("loan-application-approval-process")]
+        public HttpResponseMessage GetPendingLoanApplications([FromUri] int page, [FromUri] int itemsPerPage)
+        {
+            try
+            {
+                var items = repo.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId);
+
+                var data = items.OrderByDescending(x => x.applicationDate)
+                    .ThenByDescending(x => x.loanApplicationId)
+                    .Skip(page).Take(itemsPerPage)
+                    .ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
 
