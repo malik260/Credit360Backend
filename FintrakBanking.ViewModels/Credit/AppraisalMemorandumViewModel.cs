@@ -109,5 +109,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int tenor { get; set; }
         public string productName { get; set; }
         public int convertedAmount { get; set; }
+        public int loanApplicationDetailId { get; set; }
     }
 }
