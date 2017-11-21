@@ -15,5 +15,6 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         MonitoringSetupViewModel GetMonitoringSetup(int MonitoringSetupId);
         IEnumerable<MonitoringSetupViewModel> GetAllMessageType();
+        IEnumerable<MonitoringSetupViewModel> GetAllProduct();
     }
 }

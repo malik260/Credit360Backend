@@ -852,7 +852,7 @@ namespace FintrakBanking.Repositories.Credit
                 try
                 {
 
-                    var exisitingDocument = context.TBL_TEMP_OFFERLETTER.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+                    var exisitingDocument = context.TBL_TEMP_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
 
                     if (exisitingDocument != null)
                     {

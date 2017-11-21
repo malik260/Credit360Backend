@@ -1935,13 +1935,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
         #region Product Class Process 
 
-        public IEnumerable<ProductClassProcessViewModel> GetAllProductClassProcess()
+        public IEnumerable<ProductClassProcessViewModel> GetAllProductClassProcesses()
         {
             var data = (from p in context.TBL_PRODUCT_CLASS_PROCESS
                         select new ProductClassProcessViewModel
                         {
                             productClassProcessId = p.PRODUCT_CLASS_PROCESSID,
-                            productClassProcessName = p.PRODUCT_CLASS_PROCESS_NAME
+                            productClassProcessName = p.PRODUCT_CLASS_PROCESS_NAME,
+                            maximumAmount = p.MAXIMUM_AMOUNT,
+                            useAmountLimit = p.USE_AMOUNT_LIMIT
                         }).ToList();
 
             return data;
@@ -1953,7 +1955,9 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 var data = new TBL_PRODUCT_CLASS_PROCESS()
                 {
-                    PRODUCT_CLASS_PROCESS_NAME = model.productClassProcessName
+                    PRODUCT_CLASS_PROCESS_NAME = model.productClassProcessName,
+                    MAXIMUM_AMOUNT = model.maximumAmount,
+                    USE_AMOUNT_LIMIT = model.useAmountLimit
                 };
 
                 try
@@ -1978,6 +1982,8 @@ namespace FintrakBanking.Repositories.Setups.General
             if (data != null)
             {
                 data.PRODUCT_CLASS_PROCESS_NAME = model.productClassProcessName;
+                data.MAXIMUM_AMOUNT = model.maximumAmount;
+                data.USE_AMOUNT_LIMIT = model.useAmountLimit;
 
                 try
                 {

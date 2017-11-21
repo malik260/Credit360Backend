@@ -8,6 +8,8 @@
         public short messageTypeId { get; set; }
         public int notificationPeriod  { get; set; }
         public string messageTypeName  { get; set; }
+        public short productId  { get; set; }
+        public string productName  { get; set; }
     }
 
    

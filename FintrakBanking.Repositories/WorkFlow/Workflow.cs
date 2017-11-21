@@ -157,7 +157,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 APPROVALSTATUSID = (short)this.statusId,
                 SYSTEMARRIVALDATETIME = this.systemDate,
                 SYSTEMRESPONSEDATETIME = this.systemDate,
-                VOTE = this.vote,
+                VOTE = (short)this.vote,
                 TOSTAFFID = this.toStaffId,
             };
 
