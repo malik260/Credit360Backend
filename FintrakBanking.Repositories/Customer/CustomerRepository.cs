@@ -333,6 +333,7 @@ namespace FintrakBanking.Repositories.Customer
                 try
                 {
                     TBL_CUSTOMER_CHILDREN child;
+                    List<TBL_CUSTOMER_CHILDREN> custChildren = new List<TBL_CUSTOMER_CHILDREN>();
                     foreach (CustomerChildrenViewModel entity in models)
                     {
                         if (entity.customerChildrenId != 0 || entity.customerChildrenId < 0)
@@ -352,8 +353,9 @@ namespace FintrakBanking.Repositories.Customer
                                 CHILDNAME = entity.childName,
                                 CHILDDATEOFBIRTH = entity.childDateOfBirth
                             };
-                            context.TBL_CUSTOMER_CHILDREN.Add(child);
+                            custChildren.Add(child);
                         }
+
                         // Audit Section ----------------------------
                         var audit = new TBL_AUDIT
                         {
@@ -368,10 +370,10 @@ namespace FintrakBanking.Repositories.Customer
                         };
 
                         this.auditTrail.AddAuditTrail(audit);
-
-                        var response = context.SaveChanges() != 0;
-                        return response;
                     }
+                    context.TBL_CUSTOMER_CHILDREN.AddRange(custChildren);
+                    var response = context.SaveChanges() != 0;
+                    return response;
                 }
                 catch (Exception ex)
                 {
@@ -594,9 +596,35 @@ namespace FintrakBanking.Repositories.Customer
             {
                 try
                 {
-                    if (entity.companyDirectorTypeId != (int)CompanyDirectorTypeEnum.Shareholder)
+                    List<TBL_CUSTOMER_COMPANY_BENEFICIA> beneficialList = new List<TBL_CUSTOMER_COMPANY_BENEFICIA>();
+                    if (entity.companyDirectorTypeId == (int)CompanyDirectorTypeEnum.Shareholder)
                     {
-                        entity.customerTypeId = 1;
+                       
+                        if (entity.customerCompanyBeneficial != null)
+                        {
+                            foreach (var item in entity.customerCompanyBeneficial)
+                            {
+                                var beneficial = new TBL_CUSTOMER_COMPANY_BENEFICIA()
+                                {
+                                    SURNAME = item.surname,
+                                    FIRSTNAME = item.firstname,
+                                    CUSTOMERBVN = item.bankVerificationNumber,
+                                    NUMBEROFSHARES = item.numberOfShares,
+                                    ISPOLITICALLYEXPOSED = item.isPoliticallyExposed,
+                                    ADDRESS = item.address,
+                                    PHONENUMBER = item.phoneNumber,
+                                    EMAILADDRESS = item.email,
+                                    CREATEDBY = entity.createdBy,
+                                    DATECREATED = DateTime.Now
+                                };
+                                beneficialList.Add(beneficial);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        entity.customerTypeId = (int)CustomerTypeEnum.Individual;
                     }
                     TBL_CUSTOMER_COMPANY_DIRECTOR directors;
                     if (entity.companyDirectorId != 0 || entity.companyDirectorId < 0)
@@ -616,6 +644,7 @@ namespace FintrakBanking.Repositories.Customer
                             directors.ADDRESS = entity.address;
                             directors.PHONENUMBER = entity.phoneNumber;
                             directors.EMAILADDRESS = entity.email;
+                            directors.TBL_CUSTOMER_COMPANY_BENEFICIA = beneficialList;
                         }
                     }
                     else
@@ -637,7 +666,7 @@ namespace FintrakBanking.Repositories.Customer
                         directors.EMAILADDRESS = entity.email;
                         directors.CREATEDBY = entity.createdBy;
                         directors.DATECREATED = DateTime.Now;
-
+                        directors.TBL_CUSTOMER_COMPANY_BENEFICIA = beneficialList;
                         context.TBL_CUSTOMER_COMPANY_DIRECTOR.Add(directors);
                     }
 
@@ -656,8 +685,17 @@ namespace FintrakBanking.Repositories.Customer
 
                     this.auditTrail.AddAuditTrail(audit);
 
-                    var response = context.SaveChanges() != 0;
-                    return response;
+                  //  var response = context.SaveChanges() != 0;
+                    try
+                    {
+                        return context.SaveChanges() != 0;
+                    }
+                    catch (DbEntityValidationException ex)
+                    {
+                        string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                        throw new DbEntityValidationException(errorMessages);
+                    }
+                   // return response;
                 }
                 catch (Exception ex)
                 {
@@ -1193,6 +1231,7 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerAddressTypeViewModels> GetCustomerAddressType()
         {
             var type = from a in context.TBL_CUSTOMER_ADDRESS_TYPE
+                       where a.ADDRESSTYPEID != (int)CustomerAddressTypeEnum.Corporate
                        select new CustomerAddressTypeViewModels
                        {
                            addressTypeName = a.ADDRESS_TYPE_NAME,
@@ -1608,7 +1647,19 @@ namespace FintrakBanking.Repositories.Customer
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
                                         address = s.ADDRESS,
                                         phoneNumber = s.PHONENUMBER,
-                                        email = s.EMAILADDRESS
+                                        email = s.EMAILADDRESS,
+                                        customerCompanyBeneficial = context.TBL_CUSTOMER_COMPANY_BENEFICIA.Where(a => a.COMPANYDIRECTORID == s.COMPANYDIRECTORID).Select(x => new CustomerCompanyBeneficiaryViewModels() {
+                                            companyBeneficiaryId = x.COMPANY_BENEFICIARYID,
+                                            companyDirectorId = x.COMPANYDIRECTORID,
+                                            surname = x.SURNAME,
+                                            firstname = x.FIRSTNAME,
+                                            numberOfShares = x.NUMBEROFSHARES,
+                                            bankVerificationNumber = x.CUSTOMERBVN,
+                                            isPoliticallyExposed = x.ISPOLITICALLYEXPOSED,
+                                            address = x.ADDRESS,
+                                            phoneNumber = x.PHONENUMBER,
+                                            email = x.EMAILADDRESS,
+                                        }).ToList()
                                     }).ToList();
             return companyDirectors;
         }

@@ -609,6 +609,10 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     createUpdate = "created";
                 }
+                if (entity.addressTypeId == 0)
+                {
+                    entity.addressTypeId = (int)CustomerAddressTypeEnum.Corporate;
+                }
                     entity.userBranchId = (short)token.GetBranchId;
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
