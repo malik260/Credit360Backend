@@ -516,11 +516,11 @@ namespace FintrakBanking.Repositories.Credit
                     break;
                 case 5:
                     application.NOTINXDS = (application.NOTINXDS == false) ? true : false;
-                    result = application.NOTINXDS;
+                    result = application.NOTINXDS.Value;
                     break;
                 case 6:
                     application.NOTINCRC = (application.NOTINCRC == false) ? true : false;
-                    result = application.NOTINCRC;
+                    result = application.NOTINCRC.Value;
                     break;
                 default:
                     break;
@@ -590,8 +590,8 @@ namespace FintrakBanking.Repositories.Credit
                             notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
                             notInBlackbook = x.a.NOTINBLACKBOOK,
                             notInCamsol = x.a.NOTINCAMSOL,
-                            notInXds = x.a.NOTINXDS,
-                            notInCrc = x.a.NOTINCRC,
+                            notInXds = x.a.NOTINXDS.Value,
+                            notInCrc = x.a.NOTINCRC.Value,
                             isRelatedParty = x.a.ISRELATEDPARTY,
                             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                             approvalStatusId = x.a.APPROVALSTATUSID,
@@ -674,8 +674,8 @@ namespace FintrakBanking.Repositories.Credit
                 notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
                 notInBlackbook = x.a.NOTINBLACKBOOK,
                 notInCamsol = x.a.NOTINCAMSOL,
-                notInXds = x.a.NOTINXDS,
-                notInCrc = x.a.NOTINCRC,
+                notInXds = x.a.NOTINXDS.Value,
+                notInCrc = x.a.NOTINCRC.Value,
                 isRelatedParty = x.a.ISRELATEDPARTY,
                 isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                 approvalStatusId = x.a.APPROVALSTATUSID,

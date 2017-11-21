@@ -39,7 +39,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             groupId = a.GROUPID,
                             groupName = a.GROUPNAME,
                             roleId = a.ROLEID,
-                            branchFilter = a.BRANCHFILTER,
+                            //branchFilter = a.BRANCHFILTER,
                             companyId = a.COMPANYID,
                             companyName = a.TBL_COMPANY.NAME,
                             dateTimeCreated = a.DATETIMECREATED,
@@ -64,7 +64,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             {                
                 GROUPNAME = model.groupName,
                 ROLEID = model.roleId,
-                BRANCHFILTER = model.branchFilter,
+                //BRANCHFILTER = model.branchFilter,
                 COMPANYID = model.companyId,
                 DATETIMECREATED = _genSetup.GetApplicationDate(),
                 CREATEDBY = (int)model.createdBy
@@ -97,7 +97,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if (data == null) return false;
             data.GROUPNAME = model.groupName;
             data.ROLEID = model.roleId;
-            data.BRANCHFILTER = model.branchFilter;
+            //data.BRANCHFILTER = model.branchFilter;
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.LASTUPDATEDBY = (int)model.createdBy;
 

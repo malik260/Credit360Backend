@@ -656,13 +656,18 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("loan-application/prepared-offer-letter-template")]
-        public HttpResponseMessage GetPreparedOfferLetter(string applicationRefNumber)
+        public HttpResponseMessage GenerateOfferLetterTemplate(string applicationRefNumber)
         {
             try
             {
                 var response = repoApply.GenerateOfferLetterTemplate(applicationRefNumber);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
             }
             catch (Exception e)
             {
@@ -720,14 +725,14 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.GetAllPreparedOfferLetters();
+                var response = repoApply.GetAllPreparedOfferLetters().ToList();
 
                 if (response != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message ="No record found!" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
 
             }
             catch (Exception e)
