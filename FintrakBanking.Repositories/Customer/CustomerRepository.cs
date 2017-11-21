@@ -638,8 +638,8 @@ namespace FintrakBanking.Repositories.Customer
                             directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                             directors.CUSTOMERBVN = entity.bankVerificationNumber;
                             directors.NUMBEROFSHARES = entity.numberOfShares;
-                            directors.REGISTRATION_NUMBER = entity.rcNumber;
-                            directors.TAX_NUMBER = entity.taxNumber;
+                            //directors.REGISTRATION_NUMBER = entity.rcNumber;
+                            //directors.TAX_NUMBER = entity.taxNumber;
                             directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
                             directors.ADDRESS = entity.address;
                             directors.PHONENUMBER = entity.phoneNumber;
@@ -657,8 +657,8 @@ namespace FintrakBanking.Repositories.Customer
                         directors.CUSTOMERTYPEID = entity.customerTypeId;
                         directors.COMPANYDIRECTORTYPEID = entity.companyDirectorTypeId;
                         directors.CUSTOMERBVN = entity.bankVerificationNumber;
-                        directors.REGISTRATION_NUMBER = entity.rcNumber;
-                        directors.TAX_NUMBER = entity.taxNumber;
+                        //directors.REGISTRATION_NUMBER = entity.rcNumber;
+                        //directors.TAX_NUMBER = entity.taxNumber;
                         directors.NUMBEROFSHARES = entity.numberOfShares;
                         directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
                         directors.ADDRESS = entity.address;
@@ -1640,8 +1640,8 @@ namespace FintrakBanking.Repositories.Customer
                                         isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                                         bankVerificationNumber = s.CUSTOMERBVN,
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                        rcNumber = s.REGISTRATION_NUMBER,
-                                        taxNumber = s.TAX_NUMBER,
+                                        //rcNumber = s.REGISTRATION_NUMBER,
+                                        //taxNumber = s.TAX_NUMBER,
                                         companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
                                         customerId = s.CUSTOMERID,
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
