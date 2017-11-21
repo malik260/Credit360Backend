@@ -31,15 +31,17 @@ namespace FintrakBanking.ViewModels.Credit
         public int? productClassId { get; set; }
         public int? productId { get; set; }
         public int receiverLevelId { get; set; }
+        public int? receiverStaffId { get; set; }
         public decimal amount { get; set; }
         public bool politicallyExposed { get; set; }
-        public bool vote { get; set; }
+        public short? vote { get; set; }
         public string comment { get; set; }
         public decimal principal { get; set; }
         public double rate { get; set; }
         //public int tenor { get; set; }
         public bool investmentGrade { get; set; }
         public List<ApprovedLoanDetailViewModel> lineItems { get; set; }
+        public List<RecommendedChangesViewModel> recommendedChanges { get; set; }
         public int applicationTenor { get; set; }
     }
 
@@ -83,6 +85,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal investmentGradeApprovalLimit { get; set; }
         public List<int> userApprovalLevelIds { get; set; }
         public int maximumTenor { get; set; }
+        public int roleId { get; set; }
+        public int approvalLevelId { get; set; }
+        public int groupRoleId { get; set; }
     }
 
     public class DocumentationViewModel : GeneralEntity
@@ -91,5 +96,18 @@ namespace FintrakBanking.ViewModels.Credit
         public string documentation { get; set; }
         public int appraisalMemorandumId { get; set; }
         public int approvalLevelId { get; set; }
+    }
+
+    public class RecommendedChangesViewModel : GeneralEntity
+    {
+        public int detailId { get; set; }
+        public int productId { get; set; }
+        public int statusId { get; set; }
+        public decimal amount { get; set; }
+        public double exchangeRate { get; set; }
+        public double interestRate { get; set; }
+        public int tenor { get; set; }
+        public string productName { get; set; }
+        public int convertedAmount { get; set; }
     }
 }

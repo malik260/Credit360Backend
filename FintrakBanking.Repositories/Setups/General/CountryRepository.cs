@@ -167,7 +167,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        CountryId = a.COUNTRYID,
                                        StateName = a.STATENAME,
                                        StateId = a.STATEID,
-                                       CountryName = context.TBL_COUNTRY.FirstOrDefault(j => j.COUNTRYID == a.COUNTRYID).NAME ?? string.Empty,
+                                       CountryName = a.TBL_COUNTRY.NAME, //context.TBL_COUNTRY.FirstOrDefault(j => j.COUNTRYID == a.COUNTRYID).NAME ?? string.Empty,
                                        CollateralSearchChargeAmount = a.COLLATERALSEARCHCHARGEAMOUNT,
                                        ChartingAmount = a.CHARTINGAMOUNT ?? 0,
                                        VerificationAmount = a.VERIFICATIONAMOUNT ?? 0

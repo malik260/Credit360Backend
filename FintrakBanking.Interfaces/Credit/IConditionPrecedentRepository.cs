@@ -12,12 +12,14 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool AddConditionPrecedent(ConditionPrecedentViewModel model);
 
-        bool UpdateConditionPrecedent(ConditionPrecedentViewModel model, int conditionPrecedentId);
-
         IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentTemplate();
 
         bool AddConditionPrecedentTemplate(ConditionPrecedentViewModel model);
 
         bool UpdateConditionPrecedentTemplate(ConditionPrecedentViewModel model, int conditionPrecedentId);
+
+        bool RemoveLoanConditionPrecedent(int id, UserInfo user);
+
+        bool EditLoanConditionPrecedent(int id, ConditionPrecedentViewModel entity);
     }
 }

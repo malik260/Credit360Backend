@@ -88,6 +88,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("product")]
+        public HttpResponseMessage GetAllProduct()
+        {
+            var Message = string.Empty;
+            try
+            {
+                var MonitoringSetup = repo.GetAllProduct().ToList();
+                if (MonitoringSetup.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = MonitoringSetup, count = MonitoringSetup.Count });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No Message Type found" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, Message = e.Message });
+            }
+        }
+
+
+
+
         [HttpPut]
         [Route("updatemonitoringSetup/{monitoringSetupId}")]
         public HttpResponseMessage UpdateMonitoringSetup(int MonitoringSetupId, MonitoringSetupViewModel entity)

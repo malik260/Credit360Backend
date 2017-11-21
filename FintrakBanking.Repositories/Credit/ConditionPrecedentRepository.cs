@@ -55,38 +55,9 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateConditionPrecedent(ConditionPrecedentViewModel model, int conditionPrecedentId)
-        {
-            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(conditionPrecedentId);
-            if (data == null)
-            {
-                return false;
-            }
-
-            data.CONDITION = model.condition;
-            data.ISEXTERNAL = (bool)model.isExternal;
-            data.LASTUPDATEDBY = model.lastUpdatedBy;
-            data.DATETIMEUPDATED = DateTime.Now;
-            data.LASTUPDATEDBY = model.lastUpdatedBy;
-            data.DATETIMEUPDATED = general.GetApplicationDate();
-
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
-                STAFFID = model.lastUpdatedBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Updated Condition Precedent '{ model.conditionId }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.audit.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-
-            return context.SaveChanges() != 0;
-        }
+        //public bool UpdateConditionPrecedent(ConditionPrecedentViewModel model, int conditionPrecedentId)
+        //{
+        //}
 
         public IEnumerable<ConditionPrecedentViewModel> GetAllConditionPrecedent()
         {
@@ -188,6 +159,67 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated Condition Precedent template '{ model.conditionId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool RemoveLoanConditionPrecedent(int id, UserInfo model)
+        {
+            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(id);
+            if (data == null)
+            {
+                return false;
+            }
+            context.TBL_LOAN_CONDITION_PRECEDENT.Remove(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
+                STAFFID = model.staffId,
+                BRANCHID = (short)model.BranchId,
+                DETAIL = $"Remove Condition Precedent '{ data.CONDITION }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool EditLoanConditionPrecedent(int id, ConditionPrecedentViewModel model)
+        {
+            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(id);
+            if (data == null)
+            {
+                return false;
+            }
+
+            data.CONDITION = model.condition;
+            data.ISEXTERNAL = (bool)model.isExternal;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+
+            context.Entry(data).State = System.Data.Entity.EntityState.Modified;
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Condition Precedent '{ model.conditionId }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),

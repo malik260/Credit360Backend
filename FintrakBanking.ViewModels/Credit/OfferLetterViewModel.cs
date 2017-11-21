@@ -14,6 +14,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public DateTime applicationDate { get; set; }
         public string customerGroupName { get; set; }
+        public string customerEmailAddress { get; set; }
+        public string customerPhoneNumber { get; set; }
     }
 
     public class OfferLetterDetailViewModel : GeneralEntity
@@ -33,12 +35,23 @@ namespace FintrakBanking.ViewModels.Credit
         public int tenor { get; set; }
         public double interestRate { get; set; }
         public string customerGroupName { get; set; }
+        public string loanTypeName { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity
     {
         public int loanApplicationId { get; set; }
         public string conditionPrecident { get; set; }
+    }
+
+    public class OfferLetterTemplateViewModel
+    {
+        public string documentTemplate { get; set; }
+        public int documentId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public short? productId { get; set; }
+        public string comments { get; set; }
+        public bool isAccepted { get; set; }
     }
 
 }

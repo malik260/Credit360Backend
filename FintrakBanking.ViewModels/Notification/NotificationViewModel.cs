@@ -11,5 +11,9 @@ namespace FintrakBanking.ViewModels.Notification
         public int messageCount { get; set; }
         public string message { get; set; }
         public string operationURL { get; set; }
+        public long notificationId { get; set; }
+        public int staffId { get; set; }
+        public string actionUrl { get; set; }
+        public bool isActive { get; set; }
     }
 }

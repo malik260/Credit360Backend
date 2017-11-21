@@ -324,7 +324,6 @@
     <Compile Include="Controllers\CallMemoController.cs" />
     <Compile Include="Controllers\ConditionPrecedentController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
-    <Compile Include="Controllers\MonitoringSetupController.cs" />
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\EndOfDayController.cs" />
     <Compile Include="Controllers\FinanceTransactionController.cs" />
@@ -356,6 +355,7 @@
     <Compile Include="Controllers\LoanDocumentController.cs" />
     <Compile Include="Controllers\LoanOperationController.cs" />
     <Compile Include="Controllers\MisInfoController.cs" />
+    <Compile Include="Controllers\MonitoringSetupController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\ProductCollateralTypeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
@@ -466,13 +466,6 @@
     <Compile Include="Reports\ReportViews\GrantedFacilities.aspx.designer.cs">
       <DependentUpon>GrantedFacilities.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportViews\LoanAnniversery.aspx.cs">
-      <DependentUpon>LoanAnniversery.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\ReportViews\LoanAnniversery.aspx.designer.cs">
-      <DependentUpon>LoanAnniversery.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportViews\LoanRepaymentSchedule.aspx.cs">
       <DependentUpon>LoanRepaymentSchedule.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -539,7 +532,6 @@
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
-    <Content Include="Reports\ReportViews\LoanAnniversery.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
@@ -694,7 +686,6 @@
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
-    <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
