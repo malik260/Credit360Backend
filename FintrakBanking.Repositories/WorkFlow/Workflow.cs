@@ -57,6 +57,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool deferredExecution = false;
         private short? vote = null;
         private int? toStaffId = null;
+        private bool endProcess = false;
 
         public int StaffId { set { staffId = value; } }
         public int? ToStaffId { set { toStaffId = value; } }
@@ -81,6 +82,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int NewState { get { return newStateId; } }
         public bool KeepPending { set { keepPending = value; } }
         public bool DeferredExecution { set { deferredExecution = value; } }
+        public bool ForcefullyEndProcess { set { endProcess = value; keepPending = false; } }
 
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
@@ -467,6 +469,12 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 this.statusId = (int)ApprovalStatusEnum.Pending;
                 this.newStateId = (int)ApprovalState.Processing;
+            }
+
+            if (this.endProcess == true) // PENDING UPDATE (To forcefully end the process at a particular level)
+            {
+                this.statusId = (int)ApprovalStatusEnum.Approved;
+                this.EndProcess(this.statusId);
             }
         }
 

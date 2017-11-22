@@ -43,6 +43,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<ApprovedLoanDetailViewModel> lineItems { get; set; }
         public List<RecommendedChangesViewModel> recommendedChanges { get; set; }
         public int applicationTenor { get; set; }
+        public int operationId { get; set; }
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity

@@ -32,5 +32,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool Saved { get; }
 
         bool LogForApproval(ApprovalViewModel model);
+
+        bool ForcefullyEndProcess { set; }
     }
 }

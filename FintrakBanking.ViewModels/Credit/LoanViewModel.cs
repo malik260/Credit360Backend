@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.Finance;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -508,4 +509,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int fromLoanId  { get; set; }
         public decimal fromAmount  { get; set; }
     }
+
+    public class LoanAvailmentApprovalViewModel: ApprovalViewModel
+    {
+        public string applicationReferenceNumber { get; set; }
+        public short applicationStatusId { get; set; }
+    }
+
 }
