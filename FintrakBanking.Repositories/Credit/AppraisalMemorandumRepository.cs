@@ -298,7 +298,7 @@ namespace FintrakBanking.Repositories.Credit
                     var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == memo.LOANAPPLICATIONID);
                     foreach (var item in items)
                     {
-                        var changed = model.recommendedChanges.First(x => x.detailId == item.LOANAPPLICATIONDETAILID);
+                        var changed = model.recommendedChanges.FirstOrDefault(x => x.detailId == item.LOANAPPLICATIONDETAILID);
                         if (changed != null)
                         {
                             item.APPROVEDPRODUCTID = (short)changed.productId;
@@ -346,7 +346,12 @@ namespace FintrakBanking.Repositories.Credit
 
         private string LineItemChanges(List<RecommendedChangesViewModel> recommendedChanges)
         {
-            return "N/A";
+            string changes = string.Empty;
+            foreach (var x in recommendedChanges)
+            {
+                changes += "DetailId: " + x.detailId + ", ProductId: " + x.productId + ", ApprovalStatusId: " + x.statusId + ", Amount: " + x.amount + ", Ex Rate: " + x.exchangeRate + ", Int Rate: " + x.interestRate + ", Tenor: " + x.tenor + ", Product Name: " + x.productName + ", Converted: " + x.convertedAmount;
+            }
+            return changes;
         }
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId)

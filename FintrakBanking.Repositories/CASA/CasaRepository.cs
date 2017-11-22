@@ -183,7 +183,7 @@ namespace FintrakBanking.Repositories.CASA
         public IEnumerable<dynamic> GetAllCustomerAccount(int customerId,int applicationTypeId , int companyId)
         {
             IEnumerable<dynamic> data = null;
-            if (applicationTypeId == 1 || applicationTypeId == 2)
+            if (applicationTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
                 data = (from a in  context.TBL_CUSTOMER_GROUP_MAPPING join b in context.TBL_CASA on a.CUSTOMERID equals b.CUSTOMERID 
                             where a.CUSTOMERID == customerId && a.TBL_CUSTOMER.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
@@ -196,7 +196,7 @@ namespace FintrakBanking.Repositories.CASA
                             }).Distinct();
             }
          
-            if (applicationTypeId == 3) {
+            if (applicationTypeId == (int)LoanTypeEnum.Single) {
                   data = (from a in context.TBL_CASA
                             where a.CUSTOMERID == customerId && a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
                             select new

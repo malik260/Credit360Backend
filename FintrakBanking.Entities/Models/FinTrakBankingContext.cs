@@ -126,6 +126,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_MONITORING_SETUP> TBL_MONITORING_SETUP { get; set; }
         public virtual DbSet<TBL_NATURE_OF_BUSINESS> TBL_NATURE_OF_BUSINESS { get; set; }
         public virtual DbSet<TBL_NOTIFICATION_LOG> TBL_NOTIFICATION_LOG { get; set; }
+        public virtual DbSet<TBL_OFFERLETTER> TBL_OFFERLETTER { get; set; }
         public virtual DbSet<TBL_OPERATIONS> TBL_OPERATIONS { get; set; }
         public virtual DbSet<TBL_OPERATIONS_TYPE> TBL_OPERATIONS_TYPE { get; set; }
         public virtual DbSet<TBL_PRODUCT> TBL_PRODUCT { get; set; }
