@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -324,7 +325,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public TBL_LOAN_APPLICATION AddLoanApplication(LoanApplicationViewModel loan)
+        public int AddLoanApplication(LoanApplicationViewModel loan)
         {
             try
             {
@@ -347,6 +348,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var data = new TBL_LOAN_APPLICATION
                 {
+
                     APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                     LOANTYPEID = loan.loanTypeId,
                     COMPANYID = loan.companyId,
@@ -364,8 +366,9 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
                     CUSTOMERGROUPID = loan.customerGroupId,
+                    CASAACCOUNTID = loan.casaAccountId,
                     APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
-                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending ,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                     APPLICATIONAMOUNT = loan.proposedAmount,
                     APPLICATIONTENOR = Convert.ToInt32(Math.Round(((decimal)(loan.proposedTenor / 12) * (decimal)365))),
                     ISINVESTMENTGRADE = loan.isInvestmentGrade,
@@ -415,11 +418,20 @@ namespace FintrakBanking.Repositories.Credit
 
                 //end of Audit section -------------------------------
 
-                response = context.SaveChanges();
+                // response = context.SaveChanges();
+                try
+                {
+                    response = context.SaveChanges();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                    throw new DbEntityValidationException(errorMessages);
+                }
                 TBL_LOAN_APPLICATION result;
                 if (response > 0) result = data;
 
-                return data;
+                return data.LOANAPPLICATIONID;
             }
             catch (Exception ex)
             {
@@ -545,73 +557,25 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in context.TBL_CREDIT_APPRAISAL_MEMORANDUM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         join d in context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
-                        join cust in context.TBL_CUSTOMER on a.CUSTOMERID equals cust.CUSTOMERID into cc
-                        from cust in cc.DefaultIfEmpty()
-
-                        join cGrp in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals cGrp.CUSTOMERGROUPID into grp
-                        from cGrp in grp.DefaultIfEmpty()
-                        join ss in context.TBL_SUB_SECTOR on b.SUBSECTORID equals ss.SUBSECTORID into sec
-                        from ss in sec.DefaultIfEmpty()
-                        join cColl in context.TBL_COLLATERAL_CUSTOMER on a.CUSTOMERID equals cColl.CUSTOMERID into coll
-                        from cColl in coll.DefaultIfEmpty()
-                        where a.COMPANYID == companyId && a.DELETED == false
-                              && b.STATUSID == (int)ApprovalStatusEnum.Approved
-                        group a by new
-                        {
-                            a.LOANAPPLICATIONID,
-                            a.APPLICATIONREFERENCENUMBER,
-                            b.APPROVEDAMOUNT,
-                            a.LOANTYPEID,
-                            a.APPLICATIONSTATUSID,
-                            c.CAMREF,
-                            d.CAMDOCUMENTATION,
-                            a.APPLICATIONDATE,
-                            a.RELATIONSHIPMANAGERID,
-                            a.RELATIONSHIPOFFICERID,
-                            cust.FIRSTNAME,
-                            cust.LASTNAME,
-                            cust.MIDDLENAME,
-                            cust.CUSTOMERCODE,
-                            cust.CUSTOMERID,
-                            cGrp.CUSTOMERGROUPID,
-                            cGrp.GROUPCODE,
-                            cGrp.GROUPNAME,
-                            ss.SUBSECTORID
-                        } into g
+                        where a.COMPANYID == companyId && a.DELETED == false  && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
                         {
-                            loanApplicationId = g.Key.LOANAPPLICATIONID,
-                            applicationReferenceNumber = g.Key.APPLICATIONREFERENCENUMBER,
-                            customerCode = g.Key.CUSTOMERCODE,
-                            customerName = g.Key.CUSTOMERID.Equals(0) ? g.Key.GROUPNAME : g.Key.FIRSTNAME + " " + g.Key.MIDDLENAME + " " + g.Key.LASTNAME,
-                            //customerGroupId = g.Key.CustomerGroupId,
-                            customerGroupName = g.Key.GROUPNAME,
-                            customerGroupCode = g.Key.GROUPCODE,
-                            relationshipOfficerId = g.Key.RELATIONSHIPOFFICERID,
-                            //relationshipOfficerName =
-                            //    a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-                            relationshipManagerId = g.Key.RELATIONSHIPMANAGERID,
-                            //relationshipManagerName =
-                            //    a.tbl_Staff.FirstName + " " + a.tbl_Staff.MiddleName + " " + a.tbl_Staff.LastName,
-
-                            //currencyId = a.CurrencyId,
-                            //currencyCode = a.tbl_Currency.CurrencyCode,
-                            loanTypeId = g.Key.LOANTYPEID,
-                            loanTypeName = context.TBL_LOAN_TYPE.FirstOrDefault(x => x.LOANTYPEID == g.Key.LOANTYPEID).LOANTYPENAME,
-                            camReference = g.Key.CAMREF,
-                            camDocumentation = g.Key.CAMDOCUMENTATION,
-                            approvedAmount = g.Sum(x => x.APPROVEDAMOUNT),
-                            applicationDate = g.Key.APPLICATIONDATE,
-                            applicationStatusId = g.Key.APPLICATIONSTATUSID,
-                            subSectorId = g.Key.SUBSECTORID,
-                            LoanApplicationCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.CUSTOMERID == g.Key.CUSTOMERID).Select(c => new LoanApplicationCollateralViewModel
-                            {
-                                customerCollateralId = c.COLLATERALCUSTOMERID,
-                                collateralReferenceNumber = c.CAMREFNUMBER,
-                                collateralType = c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                                collateralValue = c.COLLATERALVALUE,
-                                collateralCode = c.COLLATERALCODE
-                            }).ToList()
+                            loanApplicationId = a.LOANAPPLICATIONID,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                            customerName = a.TBL_CUSTOMER.CUSTOMERID.Equals(0) ? a.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerGroupName = a.TBL_CUSTOMER_GROUP.GROUPNAME,
+                            customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                            loanTypeId = a.LOANTYPEID,
+                            loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                            camReference = c.CAMREF,
+                            camDocumentation = d.CAMDOCUMENTATION,
+                            approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.Sum(x => x.APPROVEDAMOUNT),
+                            applicationDate = a.APPLICATIONDATE,
+                            applicationStatusId = a.APPLICATIONSTATUSID,
+                            subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
                         });
 
             return data;

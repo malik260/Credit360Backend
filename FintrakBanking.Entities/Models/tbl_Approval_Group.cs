@@ -27,6 +27,8 @@ namespace FintrakBanking.Entities.Models
 
         public int ROLEID { get; set; }
 
+        public bool ISCOMMITTEE { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

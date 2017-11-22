@@ -123,6 +123,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("customerbyid/{id}")]
+        public HttpResponseMessage GetCustomerById(int id)
+        {
+
+            try
+            {
+                var data = repo.GetCustomerAndType(id);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
 
         [HttpGet]
         [Route("customerRating/{id}")]
@@ -608,6 +633,10 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
+                }
+                if (entity.addressTypeId == 0)
+                {
+                    entity.addressTypeId = (int)CustomerAddressTypeEnum.Corporate;
                 }
                     entity.userBranchId = (short)token.GetBranchId;
 

@@ -58,12 +58,37 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("customer-accounts/{customerId}")]
-        public HttpResponseMessage GetAllCustomerAccountByCustomerId(int customerId)
+        [Route("customer-accounts/{customerId}/loantype/{loantypeid}")]
+        public HttpResponseMessage GetAllCustomerAccount(int customerId, int loanTypeId)
         {
             try
             {
-                var data = repo.GetAllCustomerAccountByCustomerId(customerId, token.GetCompanyId);
+                var data = repo.GetAllCustomerAccount(customerId,loanTypeId , token.GetCompanyId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+        }
+        
+
+             [HttpGet]
+        [Route("customer-accounts/customer/{id}")]
+        public HttpResponseMessage GetAllCustomerAccountByCustomerId(int id )
+        {
+            try
+            {
+                var data = repo.GetAllCustomerAccountByCustomerId(id, token.GetCompanyId);
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });

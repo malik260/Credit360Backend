@@ -23,6 +23,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         string AddLoanBooking(LoanViewModel entity);
 
+        bool AddLoanGuarantor(LoanGuarantorViewModel guarantorModel, short productTypeId, int loanApplicationId);
+
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
 
         LoanViewModel GetLoan(int loanId);

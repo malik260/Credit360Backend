@@ -34,7 +34,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? receiverStaffId { get; set; }
         public decimal amount { get; set; }
         public bool politicallyExposed { get; set; }
-        public int? vote { get; set; }
+        public short? vote { get; set; }
         public string comment { get; set; }
         public decimal principal { get; set; }
         public double rate { get; set; }
@@ -109,5 +109,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int tenor { get; set; }
         public string productName { get; set; }
         public int convertedAmount { get; set; }
+        public int loanApplicationDetailId { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string productName { get; set; }
         public string productDescription { get; set; }
         public short currencyId { get; set; }
-
+        public short customerId { get; set; }
         public int ? principalBalanceGl { get; set; }
         public string principalBalanceGlCode { get; set; }
         public int? interestIncomeExpenseGl { get; set; }
