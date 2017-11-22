@@ -298,7 +298,7 @@ namespace FintrakBanking.Repositories.Credit
                     var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == memo.LOANAPPLICATIONID);
                     foreach (var item in items)
                     {
-                        var changed = model.recommendedChanges.First(x => x.detailId == item.LOANAPPLICATIONDETAILID);
+                        var changed = model.recommendedChanges.FirstOrDefault(x => x.detailId == item.LOANAPPLICATIONDETAILID);
                         if (changed != null)
                         {
                             item.APPROVEDPRODUCTID = (short)changed.productId;
@@ -346,7 +346,12 @@ namespace FintrakBanking.Repositories.Credit
 
         private string LineItemChanges(List<RecommendedChangesViewModel> recommendedChanges)
         {
-            return "N/A";
+            string changes = string.Empty;
+            foreach (var x in recommendedChanges)
+            {
+                changes += "DetailId: " + x.detailId + ", ProductId: " + x.productId + ", ApprovalStatusId: " + x.statusId + ", Amount: " + x.amount + ", Ex Rate: " + x.exchangeRate + ", Int Rate: " + x.interestRate + ", Tenor: " + x.tenor + ", Product Name: " + x.productName + ", Converted: " + x.convertedAmount;
+            }
+            return changes;
         }
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId)
@@ -516,11 +521,11 @@ namespace FintrakBanking.Repositories.Credit
                     break;
                 case 5:
                     application.NOTINXDS = (application.NOTINXDS == false) ? true : false;
-                    result = application.NOTINXDS.Value;
+                    result = application.NOTINXDS;
                     break;
                 case 6:
                     application.NOTINCRC = (application.NOTINCRC == false) ? true : false;
-                    result = application.NOTINCRC.Value;
+                    result = application.NOTINCRC;
                     break;
                 default:
                     break;
@@ -590,8 +595,8 @@ namespace FintrakBanking.Repositories.Credit
                             notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
                             notInBlackbook = x.a.NOTINBLACKBOOK,
                             notInCamsol = x.a.NOTINCAMSOL,
-                            notInXds = x.a.NOTINXDS.Value,
-                            notInCrc = x.a.NOTINCRC.Value,
+                            notInXds = x.a.NOTINXDS,
+                            notInCrc = x.a.NOTINCRC,
                             isRelatedParty = x.a.ISRELATEDPARTY,
                             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                             approvalStatusId = x.a.APPROVALSTATUSID,
@@ -674,8 +679,8 @@ namespace FintrakBanking.Repositories.Credit
                 notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
                 notInBlackbook = x.a.NOTINBLACKBOOK,
                 notInCamsol = x.a.NOTINCAMSOL,
-                notInXds = x.a.NOTINXDS.Value,
-                notInCrc = x.a.NOTINCRC.Value,
+                notInXds = x.a.NOTINXDS,
+                notInCrc = x.a.NOTINCRC,
                 isRelatedParty = x.a.ISRELATEDPARTY,
                 isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                 approvalStatusId = x.a.APPROVALSTATUSID,

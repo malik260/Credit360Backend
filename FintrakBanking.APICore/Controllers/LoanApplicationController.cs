@@ -320,14 +320,15 @@ namespace FintrakBanking.APICore.Controllers
                 entity.teamMisCode = "004";
 
                 var response = repoApply.AddLoanApplication(entity);
-                //if (response != null)
-                //{
+                if (response > 0)
+                {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
-                //}
+                }
 
-                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception e)
+
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error Occured =>  {e.Message}" });
             }

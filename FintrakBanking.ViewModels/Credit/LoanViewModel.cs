@@ -404,9 +404,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanCollateralMappingId { get; set; }
         public int loanId { get; set; }
         public int loanApplicationId { get; set; }
+
+        
     }
 
-    public class LoanGuarantorViewModel
+    public class LoanGuarantorViewModel : GeneralEntity
     {
         public short loanGuarantorId { get; set; }
         public int loanApplicationId { get; set; }
@@ -421,6 +423,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int? relationshipDuration { get; set; }
         public string emailAddress { get; set; }
         public string bvn { get; set; }
+        public string rcNumber { get; set; }
+        public string taxNumber  { get; set; }
+        public string customerTypeName { get; set; }
+        public short customerTypeId { get; set; }
     }
 
     public class LoanSearchViewModel

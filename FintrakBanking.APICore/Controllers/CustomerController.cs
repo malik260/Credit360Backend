@@ -123,6 +123,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("customerbyid/{id}")]
+        public HttpResponseMessage GetCustomerById(int id)
+        {
+
+            try
+            {
+                var data = repo.GetCustomerAndType(id);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
 
         [HttpGet]
         [Route("customerRating/{id}")]
@@ -609,7 +634,11 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     createUpdate = "created";
                 }
-                    entity.userBranchId = (short)token.GetBranchId;
+                if (entity.addressTypeId == 0)
+                {
+                    entity.addressTypeId = (int)CustomerAddressTypeEnum.Corporate;
+                }
+                entity.userBranchId = (short)token.GetBranchId;
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
@@ -733,7 +762,34 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
+                    if (repo.ValidateCustomerBVN(entity.customerId, entity.bankVerificationNumber))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "The BVN you entered already exist" });
+                    }
+                    if (entity.rcNumber != null)
+                    {
+                        if (repo.ValidateCustomerRCnumber(entity.customerId, entity.rcNumber))
+                        {
+                            return Request.CreateResponse(HttpStatusCode.OK,
+                               new { success = false, message = "The Registration Number you entered already exist" });
+                        }
+                    }
+                    if (repo.ValidateCustomerEmail(entity.customerId, entity.email))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "The Email Address you entered already exist" });
+                    }
+                    if (entity.taxNumber != null)
+                    {
+                        if (repo.ValidateCustomerTIN(entity.customerId, entity.taxNumber))
+                        {
+                            return Request.CreateResponse(HttpStatusCode.OK,
+                               new { success = false, message = "The Tax Identification Number you entered already exist" });
+                        }
+                    }
                 }
+
                 entity.userBranchId = (short)token.GetBranchId;
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -768,7 +824,29 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
+                    if (repo.ValidateClientSupplierEmail(entity.customerId, entity.client_SupplierEmail))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "The Email Address you entered already exist" });
+                    }
+                    if (entity.taxNumber != null)
+                    {
+                        if (repo.ValidateClientSupplierTIN(entity.customerId, entity.taxNumber))
+                        {
+                            return Request.CreateResponse(HttpStatusCode.OK,
+                               new { success = false, message = "The Tax Identification Number you entered already exist" });
+                        }
+                    }
+                    if (entity.rcNumber != null)
+                    {
+                        if (repo.ValidateClientSupplierRCnumber(entity.customerId, entity.rcNumber))
+                        {
+                            return Request.CreateResponse(HttpStatusCode.OK,
+                               new { success = false, message = "The Registration Number you entered already exist" });
+                        }
+                    }
                 }
+
                 entity.userBranchId = (short)token.GetBranchId;
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -824,8 +902,8 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
-       
-        
+
+
         #region Single Customer Information By CustomerID
         [HttpGet]
         [Route("single-customer-general-info/")]
@@ -856,7 +934,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data});
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception e)
             {
@@ -973,13 +1051,50 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
-        [Route("single-customer-shareholder-info/")]
-        public HttpResponseMessage GetSingleCustomerShareholderInfo(int customerId)
+        [Route("single-customer-shareholder-individual/")]
+        public HttpResponseMessage GetSingleCustomerShareholderIndividual(int customerId)
         {
             try
             {
-                var directorTypeId = (short)CompanyDirectorTypeEnum.Shareholder;
-                var data = repo.GetSingleCustomerDirectorInfo(customerId, directorTypeId);
+                var customerTypeId = (short)CustomerTypeEnum.Individual;
+                var data = repo.GetSingleCustomerShareholderInfo(customerId, customerTypeId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-shareholder-corporate/")]
+        public HttpResponseMessage GetSingleCustomerShareholderCorporate(int customerId)
+        {
+            try
+            {
+                var customerTypeId = (short)CustomerTypeEnum.Corporate;
+                var data = repo.GetSingleCustomerShareholderInfo(customerId, customerTypeId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("customer-shareholder-beneficial/")]
+        public HttpResponseMessage GetCustomerShareholderUltimateBeneficial(int companyDirectorId)
+        {
+            try
+            {
+                var data = repo.GetShareholderUltimateBeneficial(companyDirectorId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -1066,7 +1181,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-        
+
         #endregion
 
     }

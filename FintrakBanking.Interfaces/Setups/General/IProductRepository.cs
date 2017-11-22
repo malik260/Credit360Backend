@@ -10,9 +10,11 @@ namespace FintrakBanking.Interfaces.Setups.General
     public interface IProductRepository
     {
         IEnumerable<ProductCategoryViewModel> GetAllProductCategory();
-
+        IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId);
         IEnumerable<LookupViewModel> GetAllProductClass();
+        IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId);
 
+        IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId);
         #region Product
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
         ProductViewModel GetProductDetail(string productCode, int companyId);
@@ -30,6 +32,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         Task<bool> UpdateProduct(int productId, ProductViewModel product);
         IEnumerable<LookupViewModel> GetAllProductBehaviourTypes();
         //bool DeleteProduct(int productId);
+        IEnumerable<ProductViewModel> GetAllLoanProduct();
+        IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId);
 
         #endregion Product
 
@@ -71,6 +75,11 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool DeleteProductType(int productTypeId, UserInfo user);
 
+        #endregion
+
+        #region Product Process
+        IEnumerable<productClassProcess> GetAllProductClassProcess();
+        productClassProcess GetProductProcessByProcessId(int proccessId);
         #endregion
 
         #region Product Class Process 
