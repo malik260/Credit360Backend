@@ -42,7 +42,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int companyId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId);
 
         IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int companyId);
 
@@ -52,12 +52,22 @@ namespace FintrakBanking.Interfaces.Credit
 
         OfferLetterTemplateViewModel GenerateOfferLetterTemplate(string applicationRefNumber);
 
-        OfferLetterTemplateViewModel GetPreparedOfferLetterByApplRefNumber(string applicationRefNumber);
+        OfferLetterTemplateViewModel GetDraftOfferLetterByApplRefNumber(string applicationRefNumber);
 
-        IEnumerable<OfferLetterTemplateViewModel> GetAllPreparedOfferLetters();
+        IEnumerable<OfferLetterTemplateViewModel> GetAllDraftOfferLetters();
 
         bool SaveDraftOfferLetter(OfferLetterTemplateViewModel model);
 
         bool UpdateDraftOfferLetter(int documentId, OfferLetterTemplateViewModel model);
+
+        bool SaveFinalOfferLetter(OfferLetterTemplateViewModel model);
+
+        bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity);
+
+        IEnumerable<OfferLetterTemplateViewModel> GetAllFinalOfferLetters();
+
+        OfferLetterTemplateViewModel GetFinalOfferLetterByApplRefNumber(string applicationRefNumber);
+
+        bool LogApplicationForApproval(LoanAvailmentApprovalViewModel model);
     }
 }

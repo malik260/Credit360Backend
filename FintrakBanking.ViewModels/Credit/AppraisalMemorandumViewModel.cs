@@ -34,7 +34,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? receiverStaffId { get; set; }
         public decimal amount { get; set; }
         public bool politicallyExposed { get; set; }
-        public int? vote { get; set; }
+        public short? vote { get; set; }
         public string comment { get; set; }
         public decimal principal { get; set; }
         public double rate { get; set; }
@@ -43,6 +43,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<ApprovedLoanDetailViewModel> lineItems { get; set; }
         public List<RecommendedChangesViewModel> recommendedChanges { get; set; }
         public int applicationTenor { get; set; }
+        public int operationId { get; set; }
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity

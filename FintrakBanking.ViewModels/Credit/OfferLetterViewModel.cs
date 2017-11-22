@@ -44,14 +44,15 @@ namespace FintrakBanking.ViewModels.Credit
         public string conditionPrecident { get; set; }
     }
 
-    public class OfferLetterTemplateViewModel
+    public class OfferLetterTemplateViewModel: GeneralEntity
     {
         public string documentTemplate { get; set; }
         public int documentId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public short? productId { get; set; }
         public string comments { get; set; }
-        public bool isAccepted { get; set; }
+        public bool? isAccepted { get; set; }
+        public decimal approvedAmount { get; set; }
     }
 
 }

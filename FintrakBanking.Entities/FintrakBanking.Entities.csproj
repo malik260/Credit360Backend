@@ -276,6 +276,7 @@
     <Compile Include="Models\TBL_MONITORING_SETUP.cs" />
     <Compile Include="Models\TBL_NATURE_OF_BUSINESS.cs" />
     <Compile Include="Models\TBL_NOTIFICATION_LOG.cs" />
+    <Compile Include="Models\TBL_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_OPERATIONS.cs" />
     <Compile Include="Models\TBL_OPERATIONS_TYPE.cs" />
     <Compile Include="Models\TBL_PRODUCT.cs" />

@@ -55,8 +55,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool keepPending = false;
         private bool politicallyExposed = false;
         private bool deferredExecution = false;
-        private int? vote = null;
+        private short? vote = null;
         private int? toStaffId = null;
+        private bool endProcess = false;
 
         public int StaffId { set { staffId = value; } }
         public int? ToStaffId { set { toStaffId = value; } }
@@ -68,7 +69,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int Tenor { set { tenor = value; } }
         public bool InvestmentGrade { set { investmentGrade = value; } }
         public bool PoliticallyExposed { set { politicallyExposed = value; } }
-        public int? Vote { set { vote = value; } }
+        public short? Vote { set { vote = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
         public int? ProductId { set { productId = value; } }
@@ -81,6 +82,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int NewState { get { return newStateId; } }
         public bool KeepPending { set { keepPending = value; } }
         public bool DeferredExecution { set { deferredExecution = value; } }
+        public bool ForcefullyEndProcess { set { endProcess = value; keepPending = false; } }
 
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
@@ -157,7 +159,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 APPROVALSTATUSID = (short)this.statusId,
                 SYSTEMARRIVALDATETIME = this.systemDate,
                 SYSTEMRESPONSEDATETIME = this.systemDate,
-                VOTE = (short)this.vote,
+                VOTE = this.vote,
                 TOSTAFFID = this.toStaffId,
             };
 
@@ -467,6 +469,12 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 this.statusId = (int)ApprovalStatusEnum.Pending;
                 this.newStateId = (int)ApprovalState.Processing;
+            }
+
+            if (this.endProcess == true) // PENDING UPDATE (To forcefully end the process at a particular level)
+            {
+                this.statusId = (int)ApprovalStatusEnum.Approved;
+                this.EndProcess(this.statusId);
             }
         }
 
