@@ -780,7 +780,7 @@ namespace FintrakBanking.APICore.Controllers
                         return Request.CreateResponse(HttpStatusCode.OK,
                            new { success = false, message = "The Email Address you entered already exist" });
                     }
-                    if (entity.taxNumber != null)
+                    if (entity.taxNumber != null && entity.taxNumber != "")
                     {
                         if (repo.ValidateCustomerTIN(entity.customerId, entity.taxNumber))
                         {
@@ -829,7 +829,7 @@ namespace FintrakBanking.APICore.Controllers
                         return Request.CreateResponse(HttpStatusCode.OK,
                            new { success = false, message = "The Email Address you entered already exist" });
                     }
-                    if (entity.taxNumber != null)
+                    if (entity.taxNumber != null && entity.taxNumber != "")
                     {
                         if (repo.ValidateClientSupplierTIN(entity.customerId, entity.taxNumber))
                         {
@@ -837,7 +837,7 @@ namespace FintrakBanking.APICore.Controllers
                                new { success = false, message = "The Tax Identification Number you entered already exist" });
                         }
                     }
-                    if (entity.rcNumber != null)
+                    if (entity.rcNumber != "" && entity.rcNumber != null)
                     {
                         if (repo.ValidateClientSupplierRCnumber(entity.customerId, entity.rcNumber))
                         {
