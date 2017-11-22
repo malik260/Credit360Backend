@@ -238,7 +238,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPut, Route("job-request/reply/{jobRequestId}")]
+        [HttpPut]
+        [Route("job-request/reply/{jobRequestId}")]
         public HttpResponseMessage ReplyJobRequest([FromBody] JobRequestViewModel entity, int jobRequestId)
         {
             try

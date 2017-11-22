@@ -557,6 +557,7 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in context.TBL_CREDIT_APPRAISAL_MEMORANDUM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         join d in context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
+                        join e in context.TBL_PRODUCT_TYPE on b.TBL_PRODUCT.PRODUCTTYPEID equals e.PRODUCTTYPEID
                         join cust in context.TBL_CUSTOMER on a.CUSTOMERID equals cust.CUSTOMERID into cc
                         from cust in cc.DefaultIfEmpty()
 
@@ -588,7 +589,8 @@ namespace FintrakBanking.Repositories.Credit
                             cGrp.CUSTOMERGROUPID,
                             cGrp.GROUPCODE,
                             cGrp.GROUPNAME,
-                            ss.SUBSECTORID
+                            ss.SUBSECTORID,
+                            e.PRODUCTTYPEID
                         } into g
                         select new CamProcessedLoanViewModel
                         {
@@ -616,6 +618,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationDate = g.Key.APPLICATIONDATE,
                             applicationStatusId = g.Key.APPLICATIONSTATUSID,
                             subSectorId = g.Key.SUBSECTORID,
+                            productTypeId = g.Key.PRODUCTTYPEID,
                             LoanApplicationCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.CUSTOMERID == g.Key.CUSTOMERID).Select(c => new LoanApplicationCollateralViewModel
                             {
                                 customerCollateralId = c.COLLATERALCUSTOMERID,
