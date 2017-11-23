@@ -1057,6 +1057,11 @@ namespace FintrakBanking.Repositories.Credit
 
                     ForwardViewModel forward;
 
+                    //if (staffApprovalLevelId == approvalLvlStaff[0].approvalLevelId)
+                    //{
+                    //    return LogApplicationForApproval(entity);
+                    //}
+
                     if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelTwo && entity.amount <= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
                     {
 
