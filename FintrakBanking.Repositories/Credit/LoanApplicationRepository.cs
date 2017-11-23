@@ -1016,6 +1016,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                var exisitingDocument = context.TBL_OFFERLETTER.Any(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+
+                if (exisitingDocument)
+                {
+                    return true;
+                }
+
                 var document = new TBL_OFFERLETTER
                 {
                     HTML_DOCUMENT = model.documentTemplate,
@@ -1189,6 +1196,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvalStatusId = (int)ApprovalStatusEnum.Pending,
                     targetId = target.LOANAPPLICATIONID,
                     operationId = (int)OperationsEnum.LoanAvailment,
+                    comment = model.comment,
                     amount = model.amount,
                     BranchId = model.BranchId,
                     externalInitialization = false
