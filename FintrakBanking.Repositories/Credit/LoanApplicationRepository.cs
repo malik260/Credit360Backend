@@ -1086,7 +1086,7 @@ namespace FintrakBanking.Repositories.Credit
                                 forwardAction = entity.approvalStatusId
                             };
 
-                            ForwardApplicationToNextLevel(forward);
+                            return ForwardApplicationToNextLevel(forward);
                         }
 
                         // indicate an end to the process before logging on the trail
@@ -1112,7 +1112,7 @@ namespace FintrakBanking.Repositories.Credit
                                 forwardAction = entity.approvalStatusId
                             };
 
-                            ForwardApplicationToNextLevel(forward);
+                            return ForwardApplicationToNextLevel(forward);
 
                         }
 
