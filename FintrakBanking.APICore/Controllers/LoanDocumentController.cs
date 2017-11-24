@@ -103,8 +103,8 @@ namespace FintrakBanking.APICore.Controllers
 
                 var entity = new LoanDocumentViewModel
                 {
-                    loanApplicationNumber = provider.FormData["moduleReferenceNumber"],
-                    loanReferenceNumber = provider.FormData["moduleReferenceNumber"],
+                    loanApplicationNumber = provider.FormData["loanApplicationNumber"],
+                    loanReferenceNumber = provider.FormData["loanReferenceNumber"],
                     documentTitle = provider.FormData["documentTitle"],
                     documentTypeId = (short)uploadType,
                     fileName = provider.FormData["fileName"],
