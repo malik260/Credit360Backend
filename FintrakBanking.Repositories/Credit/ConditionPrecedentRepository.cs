@@ -30,6 +30,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 CONDITION = model.condition,
                 ISEXTERNAL = (bool)model.isExternal,
+                ISSUBSEQUENT = model.isSubsequent,
                 CREATEDBY = model.createdBy,
                 LOANAPPLICATIONID = model.loanApplicationId,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -71,6 +72,7 @@ namespace FintrakBanking.Repositories.Credit
                         conditionId = c.CONDITIONID,
                         condition = c.CONDITION,
                         isExternal = c.ISEXTERNAL,
+                        isSubsequent = c.ISSUBSEQUENT,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
                         loanApplicationId = c.LOANAPPLICATIONID,
                         dateTimeCreated = c.DATETIMECREATED,
@@ -93,6 +95,7 @@ namespace FintrakBanking.Repositories.Credit
                 conditionId = c.CONDITIONID,
                 condition = c.CONDITION,
                 isExternal = c.ISEXTERNAL,
+                isSubsequent = c.ISSUBSEQUENT,
                 corporate = c.CORPORATE,
                 retail = c.RETAIL,
                 productId = c.PRODUCTID,
@@ -107,6 +110,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 CONDITION = model.condition,
                 ISEXTERNAL = model.isExternal,
+                ISSUBSEQUENT = model.isSubsequent,
                 PRODUCTID = model.productId,
                 CORPORATE = model.corporate,
                 RETAIL = model.retail,
@@ -144,6 +148,7 @@ namespace FintrakBanking.Repositories.Credit
 
             data.CONDITION = model.condition;
             data.ISEXTERNAL = model.isExternal;
+            data.ISSUBSEQUENT = model.isSubsequent;
             data.PRODUCTID = model.productId;
             data.CORPORATE = model.corporate;
             data.RETAIL = model.retail;
@@ -207,6 +212,7 @@ namespace FintrakBanking.Repositories.Credit
 
             data.CONDITION = model.condition;
             data.ISEXTERNAL = (bool)model.isExternal;
+            data.ISSUBSEQUENT = (bool)model.isSubsequent;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;

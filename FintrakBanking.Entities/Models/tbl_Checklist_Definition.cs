@@ -24,6 +24,10 @@ namespace FintrakBanking.Entities.Models
 
         public int CHECKLISTITEMID { get; set; }
 
+        public int OPERATIONID { get; set; }
+
+        public short CHECKLIST_TYPEID { get; set; }
+
         [StringLength(2000)]
         public string ITEMDESCRIPTION { get; set; }
 
@@ -53,6 +57,10 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CHECKLIST_DETAIL> TBL_CHECKLIST_DETAIL { get; set; }
+
+        public virtual TBL_CHECKLIST_TYPE TBL_CHECKLIST_TYPE { get; set; }
+
+        public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 

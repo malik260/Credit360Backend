@@ -1,0 +1,33 @@
+namespace FintrakBanking.Entities.Models
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("credit.TBL_OFFERLETTER")]
+    public partial class TBL_OFFERLETTER
+    {
+        [Key]
+        public int DOCUMENTID { get; set; }
+
+        public string HTML_DOCUMENT { get; set; }
+
+        [StringLength(50)]
+        public string APPLICATIONREFERENCENUMBER { get; set; }
+
+        public short? PRODUCTID { get; set; }
+
+        [StringLength(500)]
+        public string COMMENTS { get; set; }
+
+        public bool? ISACCEPTED { get; set; }
+
+        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
+
+        public virtual TBL_OFFERLETTER TBL_OFFERLETTER1 { get; set; }
+
+        public virtual TBL_OFFERLETTER TBL_OFFERLETTER2 { get; set; }
+    }
+}

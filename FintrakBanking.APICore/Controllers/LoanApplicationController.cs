@@ -2,6 +2,7 @@ using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -22,18 +23,21 @@ namespace FintrakBanking.APICore.Controllers
         private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
+        private IErrorLogRepository errorLogger;
 
         public LoanApplicationController(
             ILoanApplicationRepository _repoApply,
             ILoanRepository _loanRepository,
             ICreditLimitValidationsRepository _creditLimitValidationsRepository,
-            ILoanPreliminaryEvaluationRepository _repoLoanPEN
+            ILoanPreliminaryEvaluationRepository _repoLoanPEN,
+            IErrorLogRepository _errorLogger
             )
         {
             this.repoApply = _repoApply;
             this.loanRepository = _loanRepository;
             this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
+            errorLogger = _errorLogger;
         }
 
         #region Loan Application
@@ -94,12 +98,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-application/{id}")]
-        public HttpResponseMessage GetLoanApplicationById(int id)
+        [Route("loan-application/{loanApplicationId}")]
+        public HttpResponseMessage GetLoanApplicationById([FromUri] int loanApplicationId)
         {
             try
             {
-                var response = repoApply.GetLoanApplicationById(id, token.GetCompanyId);
+                var response = repoApply.GetLoanApplicationById(loanApplicationId, token.GetCompanyId);
                 if (response != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -419,13 +423,14 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.GetApplicationsDueForAvailment(token.GetCompanyId);
+                var response = repoApply.GetApplicationsDueForAvailment(token.GetStaffId, token.GetCompanyId).ToList();
+
                 if (!response.Any())
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList(), count = response.Count() });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (Exception e)
             {
@@ -655,6 +660,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        #region Offer Letter & Availment 
+
         [HttpGet]
         [Route("loan-application/prepared-offer-letter-template")]
         public HttpResponseMessage GenerateOfferLetterTemplate(string applicationRefNumber)
@@ -662,6 +669,27 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repoApply.GenerateOfferLetterTemplate(applicationRefNumber);
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/prepared-form3800b-template/")]
+        public HttpResponseMessage GenerateForm3800Template(string applicationRefNumber)
+        {
+            try
+            {
+                var response = repoApply.GenerateForm3800Template(applicationRefNumber);
 
                 if (response != null)
                 {
@@ -704,6 +732,12 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = (short)token.GetCompanyId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+
                 var response = repoApply.UpdateDraftOfferLetter(documentId, model);
 
                 if (response)
@@ -721,11 +755,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("loan-application/prepared-offer-letter/all")]
-        public HttpResponseMessage GetAllPreparedOfferLetters()
+        public HttpResponseMessage GetAllDraftOfferLetters()
         {
             try
             {
-                var response = repoApply.GetAllPreparedOfferLetters().ToList();
+                var response = repoApply.GetAllDraftOfferLetters().ToList();
 
                 if (response != null)
                 {
@@ -742,12 +776,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-application/prepared-offer-letter")]
-        public HttpResponseMessage GetPreparedOfferLetterByApplRefNumber(string applicationRefNumber)
+        [Route("loan-application/prepared-offer-letter/")]
+        public HttpResponseMessage GetDraftOfferLetterByApplRefNumber(string applicationRefNumber)
         {
             try
             {
-                var response = repoApply.GetPreparedOfferLetterByApplRefNumber(applicationRefNumber);
+                var response = repoApply.GetDraftOfferLetterByApplRefNumber(applicationRefNumber);
 
                 if (response != null)
                 {
@@ -762,7 +796,134 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("loan-application/prepared-offer-letter/final/all")]
+        public HttpResponseMessage GetAllFinalOfferLetters()
+        {
+            try
+            {
+                var response = repoApply.GetAllFinalOfferLetters().ToList();
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
+
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/prepared-offer-letter/final/")]
+        public HttpResponseMessage GetFinalOfferLetterByApplRefNumber(string applicationRefNumber)
+        {
+            try
+            {
+                var response = repoApply.GetFinalOfferLetterByApplRefNumber(applicationRefNumber);
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-application/prepared-offer-letter/final")]
+        public HttpResponseMessage SaveFinalOfferLetter([FromBody] OfferLetterTemplateViewModel model)
+        {
+            try
+            {
+                var response = repoApply.SaveFinalOfferLetter(model);
+
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Document updated successfully" });
+
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Document not updated successfully" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-application/availment/approval-decision")]
+        public HttpResponseMessage ApproveLoanAvailmentDecision([FromBody] LoanAvailmentApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repoApply.ApproveLoanAvailmentDecision(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Availment completed, now proceeding to booking" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-application/availment/approval")]
+        public HttpResponseMessage LogApplicationForApproval([FromBody] LoanAvailmentApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repoApply.LogApplicationForApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation not successfull" });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion Offer Letter & Availment 
+
     }
-
-
 }

@@ -39,6 +39,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? AUTHORISEDCAPITAL { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal? SHAREHOLDER_FUND { get; set; }
+
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
 }
