@@ -56,7 +56,63 @@ namespace FintrakBanking.Repositories.Credit
             return data;
 
         }
+        public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int operationId, int checkListTypeId)
+        {
 
+            var data = (from a in context.TBL_CHECKLIST_DEFINITION
+                        join b in context.TBL_APPROVAL_LEVEL_STAFF on 
+                        a.APPROVALLEVELID equals b.APPROVALLEVELID
+                        where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId 
+                       && a.OPERATIONID == operationId && a.DELETED == false
+                        select new ChecklistDefinitionViewModel
+                        {
+                            checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                            approvalLevelId = a.APPROVALLEVELID,
+                            approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                            isActive = a.ISACTIVE,
+                            isRequired = a.ISREQUIRED,
+                            productId = a.PRODUCTID,
+                            checkListTypeId = a.CHECKLIST_TYPEID,
+                            checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+                            productName = a.TBL_PRODUCT.PRODUCTNAME,
+                            checkListItemId = a.CHECKLISTITEMID,
+                            checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                            itemDescription = a.ITEMDESCRIPTION,
+                            companyId = a.COMPANYID,
+                            companyName = a.TBL_COMPANY.NAME,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
+                        }).ToList();
+
+            return data;
+
+        }
+        public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId)
+        {
+            List<CheckListTargetTypeViewModel> check = new List<CheckListTargetTypeViewModel>();
+            var approvalLevel = (from a in context.TBL_CHECKLIST_DEFINITION
+                        join b in context.TBL_APPROVAL_LEVEL_STAFF on
+                        a.APPROVALLEVELID equals b.APPROVALLEVELID
+                        where b.STAFFID == staffId select a.CHECKLIST_TYPEID).Distinct();
+
+            var checkListTypeList = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
+
+            CheckListTargetTypeViewModel checkListTeList;
+            if (approvalLevel != null)
+            {
+               foreach (var id in approvalLevel)
+                {
+                     checkListTeList = (from a in context.TBL_CHECKLIST_TYPE
+                                             where a.CHECKLIST_TYPEID == id
+                                             select new CheckListTargetTypeViewModel {
+                                                 targetTypeId = a.CHECKLIST_TYPEID,
+                                                 targetTypeName = a.CHECKLIST_TYPE_NAME
+                                             }).FirstOrDefault();
+                    check.Add(checkListTeList);
+                }
+            }
+            return check;
+        }
         public IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId)
         {
             var data = (from a in context.TBL_CHECKLIST_DEFINITION
@@ -463,6 +519,28 @@ namespace FintrakBanking.Repositories.Credit
                              }).ToList();
             return checkList;
         }
+        public IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId)
+        {
+            var checkList = (from cl in context.TBL_CHECKLIST_DETAIL join def in context.TBL_CHECKLIST_DEFINITION
+                             on cl.CHECKLISTDEFINITIONID equals def.CHECKLISTDEFINITIONID
+                             where cl.TARGETID == targetId && def.CHECKLIST_TYPEID == checkListtypeId
+                             && cl.DELETED == false
+                             select new ChecklistDetailViewModel()
+                             {
+                                 checklistId = cl.CHECKLISTID,
+                                 checkListDefinitionId = cl.CHECKLISTDEFINITIONID,
+                                 remark = cl.REMARK,
+                                 checkedBy = cl.CHECKEDBY,
+                                 targetTypeId = cl.TARGETTYPEID,
+                                 targetId = cl.TARGETID,
+                                 checkListStatusId = cl.CHECKLISTSTATUSID,
+                                 deferedDate = cl.DEFEREDDATE,
+                                 checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                 checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
+
+                             }).ToList();
+            return checkList;
+        }
         public bool AddMultipleChecklistDetails(List<ChecklistDetailViewModel> models, int staffId, short BranchId)
         {
             if (models.Count <= 0)
@@ -792,7 +870,18 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             checklistStatusId = a.CHECKLISTSTATUSID,
                             checklistStatusName = a.CHECKLISTSTATUSNAME,
-                        }).ToList();
+                        }).ToList().Take(3);
+            return data;
+        }
+        public IEnumerable<CheckListStatusViewModel> GetChecklistStatusYesorNo()
+        {
+            var data = (from a in context.TBL_CHECKLIST_STATUS
+                        where a.DELETED == false
+                        select new CheckListStatusViewModel
+                        {
+                            checklistStatusId = a.CHECKLISTSTATUSID,
+                            checklistStatusName = a.CHECKLISTSTATUSNAME,
+                        }).ToList().Skip(3);
             return data;
         }
 

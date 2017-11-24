@@ -332,7 +332,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 reassignedDate = data.REASSIGNEDDATE,
                 systemReassignedDate = data.SYSTEMREASSIGNEDDATE,
                 responseDate = data.RESPONSEDATE,
-                systemResponseDate = data.SYSTEMRESPONSEDATE,
+                systemResponseDate = data.SYSTEMRESPONSEDATE, 
                 acknowledgementDate = data.ACKNOWLEDGEMENTDATE,
                 systemAcknowledgementDate = data.SYSTEMACKNOWLEDGEMENTDATE,
             };

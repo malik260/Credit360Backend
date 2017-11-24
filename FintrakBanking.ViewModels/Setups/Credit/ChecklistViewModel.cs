@@ -27,7 +27,10 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public short? productId { get; set; }
         public int? approvalLevelId { get; set; }
         public int checkListItemId { get; set; }
+        public int checkListTypeId { get; set; }
+        public string checkListTypeName{ get; set; }
         public string itemDescription { get; set; }
+        public int opreationId { get; set; }
         public bool isRequired { get; set; }
         public bool isActive { get; set; }
         public String productName { get; set; }
@@ -53,7 +56,6 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public short targetTypeId { get; set; }
         public string targetTypeName { get; set; }
     }
-
     public class MultipleChecklistItemsViewModel: ChecklistDefinitionViewModel
     {
         

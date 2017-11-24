@@ -40,6 +40,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CHECKLIST_ITEM> TBL_CHECKLIST_ITEM { get; set; }
         public virtual DbSet<TBL_CHECKLIST_STATUS> TBL_CHECKLIST_STATUS { get; set; }
         public virtual DbSet<TBL_CHECKLIST_TARGETTYPE> TBL_CHECKLIST_TARGETTYPE { get; set; }
+        public virtual DbSet<TBL_CHECKLIST_TYPE> TBL_CHECKLIST_TYPE { get; set; }
         public virtual DbSet<TBL_CITY> TBL_CITY { get; set; }
         public virtual DbSet<TBL_CITY_CLASS> TBL_CITY_CLASS { get; set; }
         public virtual DbSet<TBL_COMPANY> TBL_COMPANY { get; set; }
@@ -126,7 +127,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_MONITORING_SETUP> TBL_MONITORING_SETUP { get; set; }
         public virtual DbSet<TBL_NATURE_OF_BUSINESS> TBL_NATURE_OF_BUSINESS { get; set; }
         public virtual DbSet<TBL_NOTIFICATION_LOG> TBL_NOTIFICATION_LOG { get; set; }
-        public virtual DbSet<TBL_OFFERLETTER> TBL_OFFERLETTER { get; set; }
         public virtual DbSet<TBL_OPERATIONS> TBL_OPERATIONS { get; set; }
         public virtual DbSet<TBL_OPERATIONS_TYPE> TBL_OPERATIONS_TYPE { get; set; }
         public virtual DbSet<TBL_PRODUCT> TBL_PRODUCT { get; set; }
@@ -241,6 +241,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_TYPE> TBL_LOAN_TYPE { get; set; }
         public virtual DbSet<TBL_LOANAPPLICATION_COLATRL_MAP> TBL_LOANAPPLICATION_COLATRL_MAP { get; set; }
         public virtual DbSet<TBL_MACHINEVALUE_BASE> TBL_MACHINEVALUE_BASE { get; set; }
+        public virtual DbSet<TBL_OFFERLETTER> TBL_OFFERLETTER { get; set; }
         public virtual DbSet<TBL_PRODUCT_COLLATERALTYPE> TBL_PRODUCT_COLLATERALTYPE { get; set; }
         public virtual DbSet<TBL_RISK_ASSESSMENT> TBL_RISK_ASSESSMENT { get; set; }
         public virtual DbSet<TBL_RISK_ASSESSMENT_INDEX> TBL_RISK_ASSESSMENT_INDEX { get; set; }
@@ -250,7 +251,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RISK_RATING> TBL_RISK_RATING { get; set; }
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -294,7 +295,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
-        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -654,6 +654,11 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CHECKLIST_TARGETTYPE>()
                 .HasMany(e => e.TBL_CHECKLIST_DETAIL)
                 .WithRequired(e => e.TBL_CHECKLIST_TARGETTYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CHECKLIST_TYPE>()
+                .HasMany(e => e.TBL_CHECKLIST_DEFINITION)
+                .WithRequired(e => e.TBL_CHECKLIST_TYPE)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CITY>()
@@ -1221,6 +1226,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER_COMPANY_DIRECTOR)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_CUSTOMER_COMPANYINFOMATION>()
+                .Property(e => e.SHAREHOLDER_FUND)
+                .HasPrecision(19, 4);
+
             modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION>()
                 .HasMany(e => e.TBL_CUSTOMER_FS_CAPTION_DETAIL)
                 .WithRequired(e => e.TBL_CUSTOMER_FS_CAPTION)
@@ -1622,6 +1631,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_OPERATIONS>()
                 .HasMany(e => e.TBL_APPROVAL_TRAIL)
+                .WithRequired(e => e.TBL_OPERATIONS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_OPERATIONS>()
+                .HasMany(e => e.TBL_CHECKLIST_DEFINITION)
                 .WithRequired(e => e.TBL_OPERATIONS)
                 .WillCascadeOnDelete(false);
 
@@ -3413,6 +3427,10 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.REMARK)
                 .IsUnicode(false);
 
+            modelBuilder.Entity<TBL_OFFERLETTER>()
+                .HasOptional(e => e.TBL_OFFERLETTER1)
+                .WithRequired(e => e.TBL_OFFERLETTER2);
+
             modelBuilder.Entity<TBL_RISK_ASSESSMENT_INDEX>()
                 .Property(e => e.WEIGHT)
                 .HasPrecision(18, 4);
@@ -3976,18 +3994,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
                 .Property(e => e.SHAREVALUEAMOUNTTOUSE)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LEVELMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.INVESTMENTGRADEAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.STAFFMAXIMUMAMOUNT)
                 .HasPrecision(19, 4);
         }
     }
