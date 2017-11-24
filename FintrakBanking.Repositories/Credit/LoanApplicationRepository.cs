@@ -8,6 +8,7 @@ using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -548,11 +549,12 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in context.TBL_CREDIT_APPRAISAL_MEMORANDUM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         join d in context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
-                        where a.COMPANYID == companyId && a.DELETED == false  && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                        where a.COMPANYID == companyId && a.DELETED == false && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
                         {
                             loanApplicationId = a.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            appraisalMemorandumId = c.APPRAISALMEMORANDUMID,
                             customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
                             customerName = a.CUSTOMERID == 3 ? a.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             customerGroupName = a.TBL_CUSTOMER_GROUP.GROUPNAME,
@@ -566,7 +568,16 @@ namespace FintrakBanking.Repositories.Credit
                             approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.Sum(x => x.APPROVEDAMOUNT),
                             applicationDate = a.APPLICATIONDATE,
                             applicationStatusId = a.APPLICATIONSTATUSID,
-                            subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID
+                            subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
+                            camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCUM.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
+                                .Select(camDoc => new CamDocumentViewModel
+                                {
+                                    appraisalMemorandumId = camDoc.APPRAISALMEMORANDUMID,
+                                    approvalLevelId = camDoc.APPROVALLEVELID,
+                                    approvalLevelName = camDoc.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                    camDocumentation = camDoc.CAMDOCUMENTATION
+                                }
+                            ).ToList()
                         });
 
             return data;
@@ -650,7 +661,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
             return data;
         }
 
@@ -734,7 +745,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var loanAvailmentData = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
 
             return loanAvailmentData;
         }
@@ -743,134 +754,224 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = GetCamProcessedLoanApplications(companyId).Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.CAMCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
             return data;
         }
 
-        public OfferLetterTemplateViewModel GenerateOfferLetterTemplate(string applicationRefNumber)
+        public Form3800ViewModel GenerateForm3800Template(string applicationRefNumber)
         {
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
 
-            var obligorDetails = (from a in context.TBL_LOAN_APPLICATION
-                                  join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                  join b in context.TBL_CUSTOMER on d.CUSTOMERID equals b.CUSTOMERID into cc
-                                  from b in cc.DefaultIfEmpty()
-                                  join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
-                                  from c in cg.DefaultIfEmpty()
-                                  where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
-                                  a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                  select new OfferLetterViewModel
-                                  {
-                                      companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
-                                      //customerId = b.CustomerId,
-                                      customerName = a.LOANTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
-                                      customerGroupName = c.GROUPNAME + " - " + c.GROUPCODE,
-                                      customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
-                                      customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
-                                      customerPhoneNumber = a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
-                                      applicationDate = a.APPLICATIONDATE
-                                  }).FirstOrDefault();
+            var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
+                                       join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                       join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false
+                                       select new OfferLetterConditionPrecidentViewModel()
+                                       {
+                                           conditionPrecident = b.CONDITION,
+                                           loanApplicationId = b.LOANAPPLICATIONID,
+                                           isExternal = b.ISEXTERNAL,
+                                           productName = c.TBL_PRODUCT.PRODUCTNAME
+                                       }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
-            var applicant = obligorDetails.customerName;
-            var applicantDetails = $"{obligorDetails.customerEmailAddress}. {obligorDetails.customerEmailAddress}. {obligorDetails.customerPhoneNumber}";
-            var applicantBeneficiaryDetails = string.Empty;
+            var conditionSubsequents = (from a in context.TBL_LOAN_APPLICATION
+                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                        join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                        where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == true
+                                        select new OfferLetterConditionPrecidentViewModel()
+                                        {
+                                            conditionPrecident = b.CONDITION,
+                                            loanApplicationId = b.LOANAPPLICATIONID,
+                                            isExternal = b.ISEXTERNAL,
+                                            productName = c.TBL_PRODUCT.PRODUCTNAME
+                                        }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
-            var loanDetails = (from a in context.TBL_LOAN_APPLICATION
-                               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                               join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
-                               from c in cc.DefaultIfEmpty()
-                               join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
-                               from d in cg.DefaultIfEmpty()
-                               where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower() &&
-                                     b.STATUSID == (int)ApprovalStatusEnum.Approved
-                               select new OfferLetterDetailViewModel()
-                               {
-                                   productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTNAME,
-                                   customerName = c.FIRSTNAME + " " + c.LASTNAME,
-                                   customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
-                                   currencyName = b.TBL_CURRENCY.CURRENCYNAME,
-                                   tenor = b.APPROVEDTENOR,
-                                   interestRate = b.APPROVEDINTERESTRATE,
-                                   loanAmount = b.APPROVEDAMOUNT,
-                                   exchangeRate = b.EXCHANGERATE,
-                                   loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
-                               }).ToList();
-
-            var facilityType = loanDetails.FirstOrDefault().loanTypeName;
-
-            var totalLoanAmount = $"{loanDetails.Sum(x => x.baseCurrencyLoanAmount):f}";
-
-            var currency = loanDetails.FirstOrDefault().currencyName;
-
-            var interestRate = loanDetails.Sum(x => x.interestRate);
-
-            var facilityPurpose = "To obtain the loan for the purpose of business expansion";
-
-            var facilityTenor = $"{loanDetails.Sum(x => x.tenor)} days";
-
-            var loanDetailsTable = string.Empty;
-
-            loanDetailsTable = "<table><tr><th>Product</th><th>Loan Amount</th><th>Tenor</th><th>Interest Rate</th></tr>";
-
-            foreach (var item in loanDetails)
-            {
-                loanDetailsTable = loanDetailsTable +
-                    $"<tr><td>{item.productName}</td><td>{item.loanAmount:f}</td><td>{item.tenor:f} days</td><td>{item.interestRate:f}</td></tr>";
-            }
-
-            var finalLoanDetails = loanDetailsTable + "</table>";
-
-            var conditionPrecedent = (from a in context.TBL_LOAN_APPLICATION
-                                      join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISEXTERNAL == true
-                                      select new OfferLetterConditionPrecidentViewModel()
-                                      {
-                                          conditionPrecident = b.CONDITION,
-                                          loanApplicationId = b.LOANAPPLICATIONID
-                                      }).ToList();
+            var products = (from a in context.TBL_LOAN_APPLICATION
+                            join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                            where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                            select new ProductViewModel()
+                            {
+                                productId = c.TBL_PRODUCT.PRODUCTID,
+                                productName = c.TBL_PRODUCT.PRODUCTNAME
+                            }).ToList();
 
             var conditions = string.Empty;
 
-            conditions = "<table><tr>Conditions</tr>";
+            var internalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == false).ToList();
 
-            foreach (var item in conditionPrecedent)
+            var externalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == true).ToList();
+
+            var internalConditionsSubsequents = conditionSubsequents.Where(x => x.isExternal == false).ToList();
+
+            var externalConditionsSubsequents = conditionSubsequents.Where(x => x.isExternal == true).ToList();
+
+            int noOfInternalConditions = 0;
+
+            int noOfExternalConditions = 0;
+
+            var finalConditionPrecedents = string.Empty;
+
+            var finalConditionSubsequents = string.Empty;
+
+            foreach (var prod in products)
             {
+                var productExternalConditions = externalConditionsPrecedents.Where(x => x.productName == prod.productName);
+
+                conditions = $"<p><strong> Conditions Precedent(to be satisfied before drawdown) {prod.productName}</strong></p>";
+
                 conditions = conditions +
-                    $"<tr><td>{item.conditionPrecident}</td></tr>";
+                        $"<table border='1' cellspacing='0' style='width: 100 %; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                        $"<tr>" +
+                        $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                        $"<p> &nbsp;</p><p><strong> S/No </strong></p></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:225.05pt'><p> &nbsp;</p>" +
+
+                        $"<strong> Conditions Precedent </strong></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:100.05pt'><p> &nbsp;</p>" +
+
+                        $"<strong> Applicable Facility </strong ></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:1.0in'>" +
+
+                        $"<strong> *Credit Verification Officer&rsquo; s initial for compliance only</strong></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:67.5pt'>" +
+
+                        $"<strong> Location of document </strong><strong><em> (Corporate workflow)</em ></strong></td></tr>";
+
+                foreach (var item in productExternalConditions)
+                {
+
+                    conditions = conditions +
+                        $"<tr>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'><p> &nbsp;</p></td>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'><p>&nbsp;</p></td>" +
+                        $"</tr>";
+                }
+
+                noOfExternalConditions = 0;
+
+                conditions = conditions +
+                    "<tr id='removeConditions'><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
+                    "<p><strong> Other Conditions Precedent for Internal usage which does not have to be included in the offer " +
+                    "letter.The RM must ensure compliance with these conditions before drawdown.</strong></p></td></tr> ";
+
+                var productInternalConditions = internalConditionsPrecedents.Where(x => x.productName == prod.productName);
+
+                foreach (var item in productInternalConditions)
+                {
+                    conditions = conditions +
+                        $"<tr id='removeConditions'>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfInternalConditions}</li></ol></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'><p> &nbsp;</p></td>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'><p>&nbsp;</p></td>" +
+                        $"</tr>";
+                }
+
+                noOfInternalConditions = 0;
+
+                conditions = conditions + "</tbody></table><p> &nbsp;</p>";
+
+                finalConditionPrecedents += conditions;
             }
 
-            var finalConditions = conditions + "</table>";
+            foreach (var prod in products)
+            {
+                var productExternalConditions = externalConditionsSubsequents.Where(x => x.productName == prod.productName);
 
-            var preparedTemplate = PopulateOfferLetterPlaceholders(applicant, applicantDetails,
-                applicantBeneficiaryDetails, facilityType, totalLoanAmount, facilityPurpose, facilityTenor);
+                conditions = $"<p><strong>Conditions Subsequent (to be satisfied after drawdown) {prod.productName}</strong></p>";
+
+                conditions = conditions +
+                        $"<table border='1' cellspacing='0' style='width: 100 %; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                        $"<tr>" +
+                        $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
+                        $"<strong> S/No </strong></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:225.05pt'><p> &nbsp;</p>" +
+
+                        $"<strong> Conditions Subsequent </strong></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:100.05pt'><p> &nbsp;</p>" +
+
+                        $"<strong> Timeline for compliance </strong ></td>" +
+
+                        $"<td style='height:31.0pt; vertical-align:top; width:1.0in'><p> &nbsp;</p>" +
+
+                        $"<strong> Credit Monitoring Officer’s initial for compliance only</strong></td>" +
+
+                        $"</tr>";
+
+                foreach (var item in productExternalConditions)
+                {
+
+                    conditions = conditions +
+                        $"<tr>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'>{item.conditionPrecident}</td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'>&nbsp</td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'> &nbsp;</td>" +
+                        $"</tr>";
+                }
+
+                noOfExternalConditions = 0;
+
+                conditions = conditions +
+                    "<tr id='removeConditions'><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
+                    "<strong> Other Conditions Subsequent for Internal usage which does not have to be included in the offer " +
+                    "letter.The RM must ensure compliance with these conditions after drawdown.</strong></td></tr> ";
+
+                var productInternalConditions = internalConditionsSubsequents.Where(x => x.productName == prod.productName);
+
+                foreach (var item in productInternalConditions)
+                {
+                    conditions = conditions +
+                        $"<tr id='removeConditions'>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfInternalConditions}</li></ol></td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'>{item.conditionPrecident}</td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'>{prod.productName}</td>" +
+                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'> &nbsp;</td>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'>&nbsp;</td>" +
+                        $"</tr>";
+                }
+
+                noOfInternalConditions = 0;
+
+                conditions = conditions + "</tbody></table><p> &nbsp;</p>";
+
+                finalConditionSubsequents += conditions;
+            }
+
+            var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
+
+            var preparedTemplate = PopulateOfferLetterPlaceholders(conditionPrecedentData);
 
             if (preparedTemplate != null)
             {
-                return new OfferLetterTemplateViewModel { documentTemplate = preparedTemplate };
+                return new Form3800ViewModel { documentTemplate = preparedTemplate };
             }
 
-            return new OfferLetterTemplateViewModel { };
+            return new Form3800ViewModel { };
         }
 
-        private static string PopulateOfferLetterPlaceholders(string obligorName, string obligorDetails, string obligorBeneficiaryDetails,
-            string facilityType, string facilityAmount, string facilityPurpose, string facilityTenor)
+        private static string PopulateOfferLetterPlaceholders(string conditionPrecedent)
         {
             string body;
 
-            string templateLink = "~/EmailTemplates/OfferLetter.html";
+            string templateLink = "~/EmailTemplates/FORM-3800B-Template.html";
 
             using (var reader = new StreamReader(HostingEnvironment.MapPath(templateLink) ?? throw new InvalidOperationException()))
             {
                 body = reader.ReadToEnd();
             }
 
-            body = body.Replace("{@LoanApplicant}", obligorName);
-            body = body.Replace("{@ApplicantDetails}", obligorDetails);
-            body = body.Replace("{@ApplicantBeneficiaryDetails}", obligorBeneficiaryDetails);
-            body = body.Replace("{@FacilityType}", facilityType);
-            body = body.Replace("{@FacilityAmount}", facilityAmount);
-            body = body.Replace("{@FacilityPurpose}", facilityPurpose);
-            body = body.Replace("{@FacilityTenor}", facilityTenor);
+            body = body.Replace("{@ConditionPrecedents}", conditionPrecedent);
 
             return body;
         }
@@ -1064,15 +1165,39 @@ namespace FintrakBanking.Repositories.Credit
 
                     ForwardViewModel forward;
 
-                    //if (staffApprovalLevelId == approvalLvlStaff[0].approvalLevelId)
-                    //{
-                    //    return LogApplicationForApproval(entity);
-                    //}
-
                     if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelTwo && entity.amount <= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
                     {
 
-                        if (staffApprovalLevelId != approvalLvlStaff[3].approvalLevelId) // forward only if the approval level Id is not the third level
+                        if (staffApprovalLevelId != approvalLvlStaff[2].approvalLevelId) // forward only if the approval level Id is not the third level
+                        {
+                            forward = new ForwardViewModel
+                            {
+                                createdBy = entity.createdBy,
+                                amount = entity.amount,
+                                companyId = entity.companyId,
+                                receiverLevelId = approvalLvlStaff[2].approvalLevelId,
+                                receiverStaffId = approvalLvlStaff[2].staffId,
+                                comment = entity.comment,
+                                operationId = entity.operationId,
+                                applicationId = targetLoanAppl.LOANAPPLICATIONID,
+                                forwardAction = entity.approvalStatusId
+                            };
+
+                            ForwardApplicationToNextLevel(forward);
+                        }
+                        else
+                        {
+                            // indicate an end to the process before logging on the trail
+                            workFlow.KeepPending = false;
+                            workFlow.ForcefullyEndProcess = true;
+
+                            workFlow.LogForApproval(entity);
+                        }
+                    }
+                    else if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
+                    {
+
+                        if (staffApprovalLevelId != approvalLvlStaff[3].approvalLevelId)
                         {
                             forward = new ForwardViewModel
                             {
@@ -1081,46 +1206,23 @@ namespace FintrakBanking.Repositories.Credit
                                 companyId = entity.companyId,
                                 receiverLevelId = approvalLvlStaff[3].approvalLevelId,
                                 receiverStaffId = approvalLvlStaff[3].staffId,
+                                comment = entity.comment,
                                 operationId = entity.operationId,
                                 applicationId = targetLoanAppl.LOANAPPLICATIONID,
                                 forwardAction = entity.approvalStatusId
                             };
 
-                            return ForwardApplicationToNextLevel(forward);
+                            ForwardApplicationToNextLevel(forward);
+
                         }
-
-                        // indicate an end to the process before logging on the trail
-                        workFlow.KeepPending = false;
-                        workFlow.ForcefullyEndProcess = true;
-
-                        workFlow.LogForApproval(entity);
-                    }
-                    else if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
-                    {
-
-                        if (staffApprovalLevelId != approvalLvlStaff[4].approvalLevelId)
+                        else
                         {
-                            forward = new ForwardViewModel
-                            {
-                                createdBy = entity.createdBy,
-                                amount = entity.amount,
-                                companyId = entity.companyId,
-                                receiverLevelId = approvalLvlStaff[4].approvalLevelId,
-                                receiverStaffId = approvalLvlStaff[4].staffId,
-                                operationId = entity.operationId,
-                                applicationId = targetLoanAppl.LOANAPPLICATIONID,
-                                forwardAction = entity.approvalStatusId
-                            };
+                            // indicate an end to the process before logging on the trail
+                            workFlow.KeepPending = false;
+                            workFlow.ForcefullyEndProcess = true;
 
-                            return ForwardApplicationToNextLevel(forward);
-
+                            workFlow.LogForApproval(entity);
                         }
-
-                        // indicate an end to the process before logging on the trail
-                        workFlow.KeepPending = false;
-                        workFlow.ForcefullyEndProcess = true;
-
-                        workFlow.LogForApproval(entity);
 
                     }
                     else
@@ -1331,6 +1433,11 @@ namespace FintrakBanking.Repositories.Credit
                     ;
 
             return applications.ToList();
+        }
+
+        public OfferLetterTemplateViewModel GenerateOfferLetterTemplate(string applicationRefNumber)
+        {
+            throw new NotImplementedException();
         }
     }
 }

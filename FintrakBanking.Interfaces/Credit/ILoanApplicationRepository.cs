@@ -69,5 +69,7 @@ namespace FintrakBanking.Interfaces.Credit
         OfferLetterTemplateViewModel GetFinalOfferLetterByApplRefNumber(string applicationRefNumber);
 
         bool LogApplicationForApproval(LoanAvailmentApprovalViewModel model);
+
+        Form3800ViewModel GenerateForm3800Template(string applicationRefNumber);
     }
 }

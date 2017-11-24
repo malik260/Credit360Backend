@@ -149,7 +149,75 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("checklist-definition-checklisttype/")]
+        public HttpResponseMessage GetChecklistDefinitionByApprovalLevelCheckListType(int operationId,int checklistTypeId)
+        {
+            try
+            {
+                var data = repo.GetChecklistDefinitionByApprovalLevelCheckListType(token.GetStaffId, operationId, checklistTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
+        [HttpGet]
+        [Route("checklist-type-byapprovallevel")]
+        public HttpResponseMessage GetChecklistTypeByApprovalLevel()
+        {
+            try
+            {
+                var data = repo.GetChecklistTypeByApprovalLevel(token.GetStaffId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
+        [HttpGet]
+        [Route("checklist-detail-valitation")]
+        public HttpResponseMessage GetChecklistByCheckListTypeAndTargetId(int targetId, int checklistTypeId)
+        {
+            try
+            {
+                var data = repo.GetChecklistByCheckListTypeAndTargetId(targetId, checklistTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
         [HttpGet]
         [Route("checklist-definition/{CheckListDefinitionId}")]
         public HttpResponseMessage GetAllChecklistDefinitionById(short CheckListDefinitionId)
@@ -742,7 +810,28 @@ namespace FintrakBanking.APICore.Controllers
                 new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [Route("checklist-status-yesorno")]
+        public HttpResponseMessage GetChecklistStatusYesorNo()
+        {
+            try
+            {
+                var data = repo.GetChecklistStatusYesorNo();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         [HttpGet]
         [Route("checklist-target-type")]
         public HttpResponseMessage GetAllChecklistTargetType()
