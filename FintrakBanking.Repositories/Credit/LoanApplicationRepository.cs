@@ -1016,6 +1016,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                var exisitingDocument = context.TBL_OFFERLETTER.Any(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+
+                if (exisitingDocument)
+                {
+                    return true;
+                }
+
                 var document = new TBL_OFFERLETTER
                 {
                     HTML_DOCUMENT = model.documentTemplate,
@@ -1041,6 +1048,11 @@ namespace FintrakBanking.Repositories.Credit
 
             entity.externalInitialization = false;
 
+            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, (int)OperationsEnum.LoanAvailment);
+            int staffApprovalLevelId = 0;
+
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
             var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == (int)OperationsEnum.LoanAvailment).ToList();
 
             using (var trans = context.Database.BeginTransaction())
@@ -1052,45 +1064,64 @@ namespace FintrakBanking.Repositories.Credit
 
                     ForwardViewModel forward;
 
+                    //if (staffApprovalLevelId == approvalLvlStaff[0].approvalLevelId)
+                    //{
+                    //    return LogApplicationForApproval(entity);
+                    //}
+
                     if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelTwo && entity.amount <= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
                     {
-                        forward = new ForwardViewModel
+
+                        if (staffApprovalLevelId != approvalLvlStaff[3].approvalLevelId) // forward only if the approval level Id is not the third level
                         {
-                            createdBy = entity.createdBy,
-                            amount = entity.amount,
-                            companyId = entity.companyId,
-                            receiverLevelId = approvalLvlStaff[3].approvalLevelId,
-                            receiverStaffId = approvalLvlStaff[3].staffId,
-                            operationId = entity.operationId,
-                            applicationId = targetLoanAppl.LOANAPPLICATIONID,
-                            forwardAction = entity.approvalStatusId
-                        };
+                            forward = new ForwardViewModel
+                            {
+                                createdBy = entity.createdBy,
+                                amount = entity.amount,
+                                companyId = entity.companyId,
+                                receiverLevelId = approvalLvlStaff[3].approvalLevelId,
+                                receiverStaffId = approvalLvlStaff[3].staffId,
+                                operationId = entity.operationId,
+                                applicationId = targetLoanAppl.LOANAPPLICATIONID,
+                                forwardAction = entity.approvalStatusId
+                            };
+
+                            return ForwardApplicationToNextLevel(forward);
+                        }
 
                         // indicate an end to the process before logging on the trail
                         workFlow.KeepPending = false;
                         workFlow.ForcefullyEndProcess = true;
 
-                        ForwardApplicationToNextLevel(forward);
+                        workFlow.LogForApproval(entity);
                     }
                     else if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
                     {
-                        forward = new ForwardViewModel
+
+                        if (staffApprovalLevelId != approvalLvlStaff[4].approvalLevelId)
                         {
-                            createdBy = entity.createdBy,
-                            amount = entity.amount,
-                            companyId = entity.companyId,
-                            receiverLevelId = approvalLvlStaff[4].approvalLevelId,
-                            receiverStaffId = approvalLvlStaff[4].staffId,
-                            operationId = entity.operationId,
-                            applicationId = targetLoanAppl.LOANAPPLICATIONID,
-                            forwardAction = entity.approvalStatusId
-                        };
+                            forward = new ForwardViewModel
+                            {
+                                createdBy = entity.createdBy,
+                                amount = entity.amount,
+                                companyId = entity.companyId,
+                                receiverLevelId = approvalLvlStaff[4].approvalLevelId,
+                                receiverStaffId = approvalLvlStaff[4].staffId,
+                                operationId = entity.operationId,
+                                applicationId = targetLoanAppl.LOANAPPLICATIONID,
+                                forwardAction = entity.approvalStatusId
+                            };
+
+                            return ForwardApplicationToNextLevel(forward);
+
+                        }
 
                         // indicate an end to the process before logging on the trail
                         workFlow.KeepPending = false;
                         workFlow.ForcefullyEndProcess = true;
 
-                        ForwardApplicationToNextLevel(forward);
+                        workFlow.LogForApproval(entity);
+
                     }
                     else
                     {
@@ -1170,6 +1201,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvalStatusId = (int)ApprovalStatusEnum.Pending,
                     targetId = target.LOANAPPLICATIONID,
                     operationId = (int)OperationsEnum.LoanAvailment,
+                    comment = model.comment,
                     amount = model.amount,
                     BranchId = model.BranchId,
                     externalInitialization = false
