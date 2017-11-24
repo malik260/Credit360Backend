@@ -332,7 +332,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 reassignedDate = data.REASSIGNEDDATE,
                 systemReassignedDate = data.SYSTEMREASSIGNEDDATE,
                 responseDate = data.RESPONSEDATE,
-                systemResponseDate = data.SYSTEMRESPONSEDATE,
+                systemResponseDate = data.SYSTEMRESPONSEDATE, 
                 acknowledgementDate = data.ACKNOWLEDGEMENTDATE,
                 systemAcknowledgementDate = data.SYSTEMACKNOWLEDGEMENTDATE,
             };
@@ -340,15 +340,18 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<JobRequestMessageViewModel> GetJobComments(int jobRequestId)
         {
-            return context.TBL_JOB_REQUEST_MESSAGE
-             .Where(t => t.JOBREQUESTID == jobRequestId).Select(x =>
-                   new JobRequestMessageViewModel
+            var data =  (from x in context.TBL_JOB_REQUEST_MESSAGE
+             where  x.JOBREQUESTID == jobRequestId
+             orderby x.DATE_TIME_SENT descending
+             select new JobRequestMessageViewModel
                    {
                        jobRequestId = x.JOBREQUESTID,
                        message = x.MESSAGE,
                        staffId = x.STAFFID,
                        staffName = x.TBL_STAFF.FIRSTNAME
-                     }).OrderByDescending(x => x.datetimeSent).Take(500);
+                     }).Take(200);
+
+            return data;
         }
 
 
