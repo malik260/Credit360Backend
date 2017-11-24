@@ -112,4 +112,16 @@ namespace FintrakBanking.ViewModels.Credit
         public int convertedAmount { get; set; }
         public int loanApplicationDetailId { get; set; }
     }
+
+    public class CurrentCommitteeViewModel
+    {
+        public int approvalLevelId { get; set; }
+        public string approvalLevelName { get; set; }
+        public int groupRoleId  { get; set; }
+        public string approvalGroupName { get; set; }
+        public int staffId { get; set; }
+        public string staffName { get; set; }
+        public int? vote { get; set; }
+        public string comment { get; set; }
+    }
 }

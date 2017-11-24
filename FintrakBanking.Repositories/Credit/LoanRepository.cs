@@ -576,12 +576,6 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Contingent Loan Record.........................
                     var loan = context.TBL_LOAN.Add(data);
 
-                    //...................Saving Loan Collaterals Mapping.......................
-                    //AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId);
-
-                    //...................Saving Loan Gaurantors................................
-                    //AddLoanGuarantor(entity.loanGuarantor, (short)entity.productTypeId, entity.loanApplicationId);
-
                     //...................Adding Audit...............................
                     var dataCount = context.SaveChanges();
 
@@ -2880,25 +2874,153 @@ namespace FintrakBanking.Repositories.Credit
                     }).FirstOrDefault();
         }
 
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplications(int companyId)
+        {
+            var data = AppraisalMemorandumProcessedLoanApplications(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted);
 
-     
+            data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+
+            return data;
+        }
+
+        public IEnumerable<CamProcessedLoanViewModel> GetInitiatedLoanBooking(int companyId)
+        {
+            var data = AppraisalMemorandumProcessedLoanApplications(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.BookingRequestCompleted);
+
+            data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
+
+            foreach (var item in data)
+            {
+                if (item.customerAvailableAmount != 0)
+                {
+                    if (!item.customerAvailableAmount.HasValue)
+                        item.customerAvailableAmount = item.approvedAmount;
+                }
+
+            }
+
+            return data;
+        }
+
+        public bool InitiateLoanBooking(int applicationStatusId, LoanBookingRequestViewModel entity)
+        {
+            var request = new TBL_LOAN_BOOKING_REQUEST
+            {
+                 AMOUNT_REQUESTED = entity.amount_Requested,
+                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                 LOANAPPLICATIONDETAILID = entity.loanApplicationId,
+                 DATETIMECREATED = generalSetup.GetApplicationDate(),
+                 CREATEDBY = entity.createdBy,
+
+            };
+
+            context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+
+            if (context.SaveChanges() > 0)
+            {
+                var approvalModel = new ForwardViewModel
+                {
+                    createdBy = entity.createdBy,
+                    companyId = entity.companyId,
+                    applicationId = request.LOAN_BOOKING_REQUESTID,
+                    comment = entity.comment ?? "Please This Loan Booking Request",
+                    amount = entity.amount_Requested,
+                };
+
+                return LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending);
+            }
+
+            else return false;
+        }
+
+        public bool GoForBookingInitiationApproval(ApprovalViewModel entity)
+        {
+            entity.externalInitialization = false;
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    workflow.LogForApproval(entity);
+
+                    var b = workflow.NextLevelId ?? 0;
+
+                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended)
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
+
+                    try
+                    {
+                        var lastApprover = workflow.NewState == (int)ApprovalState.Ended ? true : false;
+
+                        var data = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.targetId);
+                        if (data != null)
+                        {
+                            data.APPROVALSTATUSID = !lastApprover ? (short)ApprovalStatusEnum.Processing : (short)ApprovalStatusEnum.Approved;
+                        }
+
+                        context.SaveChanges();
+
+                        trans.Commit();
+                        if (workflow.NewState != (int)ApprovalState.Ended) return false;
+                        else return true;
+                    }
+                    catch (Exception e)
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval failed. " + e.Message);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+            
+        }
+
+        private bool MoveLoanApplicationToBooking(int applicationStatusId)
+        {
+            var data = context.TBL_LOAN_APPLICATION.Find(applicationStatusId);
+
+            if (data != null)
+            {
+                data.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+
+                try
+                {
+                    return context.SaveChanges() > 0;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Gets the appraisal memorandum processed loan applications.
         /// </summary>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        public IEnumerable<CamProcessedLoanViewModel> GetAppraisalMemorandumProcessedLoanApplications(int companyId)
+        private IEnumerable<CamProcessedLoanViewModel> AppraisalMemorandumProcessedLoanApplications(int companyId)
         {
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                        where m.COMPANYID == companyId && d.DELETED == false && m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted
+                        where m.COMPANYID == companyId && d.DELETED == false //&& m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted
                         select new CamProcessedLoanViewModel
                         {
                             approvalStatusId = m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
+                            applicationStatusId = m.APPLICATIONSTATUSID,
                             //// casaAccountId = m.CasaAccountId,
                             customerId = m.CUSTOMERID ?? 0,
                             customerCode = cust.CUSTOMERCODE,
@@ -3062,19 +3184,6 @@ namespace FintrakBanking.Repositories.Credit
                                                            currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
                                                        })).ToList(),
                         }).ToList();
-
-             data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
-           
-            foreach (var item in data)
-            {
-                if(item.customerAvailableAmount != 0)
-                {
-                    if (!item.customerAvailableAmount.HasValue)
-                        item.customerAvailableAmount = item.approvedAmount;
-                }
-                
-            }
-
 
             return data.ToList();
         }

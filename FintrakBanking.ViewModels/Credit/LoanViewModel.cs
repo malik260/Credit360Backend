@@ -316,6 +316,20 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         //......End f Loan Relational Table View Mapping Models......//
     }
+
+    public class LoanBookingRequestViewModel : GeneralEntity
+    {
+        public int loanBookingRequestId { get; set; }
+
+        public int loanApplicationId { get; set; }
+
+        public decimal amount_Requested { get; set; }
+
+        public short approvalStatusId { get; set; }
+        public string comment { get; set; }
+
+    }
+
     public class CustomerExposure
     {
         public int customerId { get; set; }

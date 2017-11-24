@@ -33,7 +33,11 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
 
-        IEnumerable<CamProcessedLoanViewModel> GetAppraisalMemorandumProcessedLoanApplications(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplications(int companyId);
+
+        IEnumerable<CamProcessedLoanViewModel> GetInitiatedLoanBooking(int companyId);
+
+        bool InitiateLoanBooking(int applicationStatusId, LoanBookingRequestViewModel entity);
 
         //IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId);
 
@@ -60,6 +64,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool GoForApproval(ApprovalViewModel entity);
         bool GoForFeeOverrideApproval(ApprovalViewModel entity);
+
+        bool GoForBookingInitiationApproval(ApprovalViewModel entity);
 
         void PostLoanFees(LoanViewModel entity);
 

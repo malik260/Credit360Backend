@@ -719,5 +719,28 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion CAM Pending Applications
 
+        public IEnumerable<CurrentCommitteeViewModel> GetCurrentCommittee(int loanApplicationId)
+        {
+            //int operationId = (int)OperationsEnum.CAM;
+
+            var result = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId && x.SUBMITTEDFORAPPRAISAL == true && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved)
+                .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.RESPONSESTAFFID == null), a => a.LOANAPPLICATIONID, t => t.TARGETID, (a, t) => new { a, t })
+                .Join(context.TBL_APPROVAL_LEVEL, at => at.t.TOAPPROVALLEVELID, l => l.APPROVALLEVELID, (at, l) => new { at, l })
+                .Join(context.TBL_APPROVAL_LEVEL_STAFF, atl => atl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (atl, s) => new { atl, s })
+                .Join(context.TBL_APPROVAL_GROUP, atls => atls.atl.l.GROUPID, g => g.GROUPID, (atls, g) => new { atls, g })
+                 .Select(x => new CurrentCommitteeViewModel
+                 {
+                     approvalLevelId = x.atls.atl.l.APPROVALLEVELID,
+                     approvalLevelName = x.atls.atl.l.LEVELNAME,
+                     approvalGroupName = x.g.GROUPNAME,
+                     groupRoleId = x.g.ROLEID,
+                     staffId = x.atls.s.STAFFID,
+                     staffName = x.atls.s.TBL_STAFF.FIRSTNAME + " " + x.atls.s.TBL_STAFF.MIDDLENAME + " " + x.atls.s.TBL_STAFF.LASTNAME,
+                     vote = 0,
+                     comment = string.Empty,
+                 });
+
+            return result;
+        }
     }
 }

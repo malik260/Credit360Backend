@@ -46,6 +46,7 @@ namespace FintrakBanking.Common.Enum
         CollateralRelease = 35,
         LoanBookingFeeDeferral = 36,
         OfferLetterApproval = 37, // MIGHT NOT BE USED
-        LoanAvailment = 38
+        LoanAvailment = 38,
+        LoanBookingRequest = 39
     }
 }
