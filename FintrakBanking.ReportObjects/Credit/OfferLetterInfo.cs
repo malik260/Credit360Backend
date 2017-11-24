@@ -110,25 +110,29 @@ namespace FintrakBanking.ReportObjects.Credit
 
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
 
-            var offerLetterDetails = (from a in context.TBL_LOAN_APPLICATION
-                                      join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                      join b in context.TBL_CUSTOMER on d.CUSTOMERID equals b.CUSTOMERID into cc
-                                      from b in cc.DefaultIfEmpty()
-                                      join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
-                                      from c in cg.DefaultIfEmpty()
-                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
-                                      a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                      select new OfferLetterViewModel
-                                      {
-                                          companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
-                                          //customerId = b.CustomerId,
-                                          customerName = a.LOANTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
-                                          customerGroupName = c.GROUPNAME + " - " + c.GROUPCODE,
-                                          customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
-                                          applicationDate = a.APPLICATIONDATE
-                                      }).FirstOrDefault();
+            var obligorDetails = (from a in context.TBL_LOAN_APPLICATION
+                                  join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                  join b in context.TBL_CUSTOMER on d.CUSTOMERID equals b.CUSTOMERID into cc
+                                  from b in cc.DefaultIfEmpty()
+                                  join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
+                                  from c in cg.DefaultIfEmpty()
+                                  where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
+                                  a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                  select new OfferLetterViewModel
+                                  {
+                                      companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
+                                      //customerId = b.CustomerId,
+                                      customerName = a.LOANTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
+                                      customerGroupName = c.GROUPNAME + " - " + c.GROUPCODE,
+                                      customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
+                                      customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+                                      customerPhoneNumber = a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
+                                      applicationDate = a.APPLICATIONDATE
+                                  }).FirstOrDefault();
 
-            var customerName = offerLetterDetails.customerName;
+            var applicant = obligorDetails.customerName;
+            var applicantDetails = $"{obligorDetails.customerEmailAddress}. {obligorDetails.customerEmailAddress}. {obligorDetails.customerPhoneNumber}";
+            var applicantBeneficiaryDetails = string.Empty;
 
             var loanDetails = (from a in context.TBL_LOAN_APPLICATION
                                join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -147,14 +151,21 @@ namespace FintrakBanking.ReportObjects.Credit
                                    tenor = b.APPROVEDTENOR,
                                    interestRate = b.APPROVEDINTERESTRATE,
                                    loanAmount = b.APPROVEDAMOUNT,
-                                   exchangeRate = b.EXCHANGERATE
+                                   exchangeRate = b.EXCHANGERATE,
+                                   loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
                                }).ToList();
 
-            var totalLoanAmount = loanDetails.FirstOrDefault().baseCurrencyLoanAmount;
+            var facilityType = loanDetails.FirstOrDefault().loanTypeName;
+
+            var totalLoanAmount = $"{loanDetails.Sum(x => x.baseCurrencyLoanAmount):f}";
 
             var currency = loanDetails.FirstOrDefault().currencyName;
 
             var interestRate = loanDetails.Sum(x => x.interestRate);
+
+            var facilityPurpose = "To obtain the loan for the purpose of business expansion";
+
+            var facilityTenor = $"{loanDetails.Sum(x => x.tenor)} days";
 
             var loanDetailsTable = string.Empty;
 
@@ -162,7 +173,6 @@ namespace FintrakBanking.ReportObjects.Credit
 
             foreach (var item in loanDetails)
             {
-
                 loanDetailsTable = loanDetailsTable +
                     $"<tr><td>{item.productName}</td><td>{item.loanAmount:f}</td><td>{item.tenor:f} days</td><td>{item.interestRate:f}</td></tr>";
             }
@@ -190,13 +200,12 @@ namespace FintrakBanking.ReportObjects.Credit
 
             var finalConditions = conditions + "</table>";
 
-            var preparedTemplate = PopulateOfferLetterPlaceholders(applDate.ToShortDateString(), customerName,
-                totalLoanAmount.ToString(), currency, finalLoanDetails, finalConditions, interestRate.ToString());
+            var preparedTemplate = PopulateOfferLetterPlaceholders(applicant, applicantDetails,
+                applicantBeneficiaryDetails, facilityType, totalLoanAmount, facilityPurpose, facilityTenor);
 
             if (preparedTemplate != null)
             {
                 return new OfferLetterTemplateViewModel { documentTemplate = preparedTemplate };
-
             }
 
             return new OfferLetterTemplateViewModel { };

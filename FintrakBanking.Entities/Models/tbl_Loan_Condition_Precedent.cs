@@ -18,6 +18,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISEXTERNAL { get; set; }
 
+        public bool ISSUBSEQUENT { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public int LOANAPPLICATIONID { get; set; }
