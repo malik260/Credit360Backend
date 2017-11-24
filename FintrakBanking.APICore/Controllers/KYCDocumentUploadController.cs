@@ -101,6 +101,27 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
             }
         }
+
+        [HttpGet]
+        [Route("checklist-upload/definitionId/{definitionId}/statusId/{statusId}/detailId/{detailId}")]
+        public HttpResponseMessage GetLoanDocument(int definitionId, int statusId, int detailId)
+        {
+            try
+            {
+                var data = repo.CheckListDocumentUploadViewModel(definitionId , statusId, detailId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [Route("checklist-document-upload")]
         public async Task<HttpResponseMessage> CheckListDocumentUpload()
