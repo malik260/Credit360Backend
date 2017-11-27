@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
 using System;
@@ -287,6 +288,42 @@ namespace FintrakBanking.ReportObjects
 
         }
 
+        public IList<LoanDocumentWaivedViewModel> LoanDocumentWaived(DateTime startDate, DateTime endDate, int companyId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = from a in context.TBL_CHECKLIST_DETAIL
+                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.TARGETID equals b.LOANAPPLICATIONDETAILID
+
+                           where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Waived
+                           //&& b.TBL_CUSTOMER.COMPANYID == companyId
+                             && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
+                            && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                            && b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted 
+                            && b.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+
+
+                           select new LoanDocumentWaivedViewModel()
+                           {
+                               firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                               lastName = b.TBL_CUSTOMER.LASTNAME,
+                               middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                               applicationRefrenceNumber = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               waivedDocument = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                               facilityAmount = b.APPROVEDAMOUNT,
+                               facilityExpirationDate = b.TBL_LOAN.Select(c => c.MATURITYDATE).FirstOrDefault(),
+                               facilityGrantedDate = b.TBL_LOAN.Select(m => m.EFFECTIVEDATE).FirstOrDefault(),
+                               companyName = b.TBL_CUSTOMER.TBL_COMPANY.NAME, //b.TBL_LOAN.Select(p => p.TBL_COMPANY.NAME).FirstOrDefault(),
+                               waveredDate = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED,
+                               branchName = b.TBL_CUSTOMER.TBL_BRANCH.BRANCHNAME,
+                               facilityType = b.TBL_PRODUCT.PRODUCTNAME,
+                               loanApplicationId = b.LOANAPPLICATIONDETAILID,
+                               proposedAmount = b.PROPOSEDAMOUNT
+
+                           };
+                return data.ToList();
+            }
+        }
         public List<dynamic> LoanUtilization()
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())

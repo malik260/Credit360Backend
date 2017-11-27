@@ -164,4 +164,24 @@ namespace FintrakBanking.ViewModels.Reports
         public decimal recoveredAmount { get { return grantedAmount - outstandingPrincipal; } } 
     }
 
+    public class LoanDocumentWaivedViewModel
+    {
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string middleName { get; set; }
+        public int customerId { get; set; }
+        public string waivedDocument { get; set; }
+        public decimal? facilityAmount { get; set; }
+        public DateTime? facilityExpirationDate { get; set; }
+        public DateTime? facilityGrantedDate { get; set; }
+        public DateTime waveredDate { get; set; }
+        public string facilityType { get; set; }
+        public string applicationRefrenceNumber { get; set; }
+        public string customerName { get { return lastName + " " + middleName + " " + firstName; } }
+        public string branchName { get; set; }
+        public int loanApplicationId { get; set; }
+        public decimal proposedAmount { get; set; }
+        public string companyName { get; set; }
+    }
+
 }
