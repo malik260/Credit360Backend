@@ -161,18 +161,23 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Any() == false)
             {
-                var conditions = context.TBL_CONDITION_PRECEDENT.ToList(); // -------- REFACTOR TO FILTER
-                foreach (var c in conditions)
+                var conditions = context.TBL_CONDITION_PRECEDENT.ToList(); // TEMPLATE
+                var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+                foreach (var f in facilities)
                 {
-                    var cond = new TBL_LOAN_CONDITION_PRECEDENT
+                    foreach (var c in conditions)
                     {
-                        CONDITION = c.CONDITION,
-                        ISEXTERNAL = c.ISEXTERNAL,
-                        CREATEDBY = c.CREATEDBY,
-                        LOANAPPLICATIONID = loanApplicationId,
-                        DATETIMECREATED = DateTime.Now
-                    };
-                    context.TBL_LOAN_CONDITION_PRECEDENT.Add(cond);
+                        var condition = new TBL_LOAN_CONDITION_PRECEDENT
+                        {
+                            CONDITION = c.CONDITION,
+                            ISEXTERNAL = c.ISEXTERNAL,
+                            CREATEDBY = c.CREATEDBY,
+                            LOANAPPLICATIONID = loanApplicationId,
+                            LOANAPPLICATIONDETAILID = f.LOANAPPLICATIONDETAILID,
+                            DATETIMECREATED = DateTime.Now
+                        };
+                        context.TBL_LOAN_CONDITION_PRECEDENT.Add(condition);
+                    }
                 }
                 context.SaveChanges();
             }
@@ -733,6 +738,7 @@ namespace FintrakBanking.Repositories.Credit
                      approvalLevelId = x.atls.atl.l.APPROVALLEVELID,
                      approvalLevelName = x.atls.atl.l.LEVELNAME,
                      approvalGroupName = x.g.GROUPNAME,
+                     numberOfApprovals = x.atls.atl.l.NUMBEROFAPPROVALS,
                      groupRoleId = x.g.ROLEID,
                      staffId = x.atls.s.STAFFID,
                      staffName = x.atls.s.TBL_STAFF.FIRSTNAME + " " + x.atls.s.TBL_STAFF.MIDDLENAME + " " + x.atls.s.TBL_STAFF.LASTNAME,
@@ -741,6 +747,74 @@ namespace FintrakBanking.Repositories.Credit
                  });
 
             return result;
+        }
+
+        public bool SecretariatForwardAppraisalMemorandum(ForwardCommitteeCamViewModel model)
+        {
+            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+            var operationId = (int)OperationsEnum.CAM;
+
+            // init
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = 1;//appl.companyId;
+
+            //workflow.ProductClassId = model.productClassId;
+            //workflow.ProductId = model.productId;
+
+            workflow.Amount = appl.APPROVEDAMOUNT;
+            workflow.InvestmentGrade = appl.ISINVESTMENTGRADE;
+            workflow.Tenor = appl.APPLICATIONTENOR;
+            workflow.PoliticallyExposed = appl.ISPOLITICALLYEXPOSED;
+
+            bool result = true;
+            foreach (var member in model.votes)
+            {
+                workflow.StaffId = member.staffId;
+                workflow.Vote = (short)member.vote;
+                workflow.Comment = member.comment;
+                workflow.StatusId = ((int)member.vote > 1) ? (int)ApprovalStatusEnum.Approved : (int)ApprovalStatusEnum.Disapproved;
+
+                workflow.NextLevelId = null;
+                result = workflow.LogActivity();
+            }
+
+            // LIFTED FROM ABOVE
+
+            appl.APPROVALSTATUSID = workflow.StatusId;
+
+            if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) // redundant block
+            {
+                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            }
+
+            var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDUM.FirstOrDefault(x=>x.LOANAPPLICATIONID == model.applicationId);
+
+            if (memo != null)
+            {
+                if (workflow.NewState == (int)ApprovalState.Ended) // cam status
+                {
+                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                    memo.ISCOMPLETED = true;
+                }
+            }
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ForwardAppraisalMemorandum,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Committee Vote on Loan Application Reference Number: '{ appl.APPLICATIONREFERENCENUMBER }', ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return (context.SaveChanges() > 0) == result;
         }
     }
 }

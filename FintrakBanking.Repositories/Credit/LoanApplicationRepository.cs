@@ -1639,8 +1639,8 @@ namespace FintrakBanking.Repositories.Credit
                         || x.middleName.ToLower().Contains(searchString.ToLower())
                         || x.customerCode == searchString)
                     ;
-
-            return applications.ToList();
+                    
+            return applications.Distinct().ToList();
         }
     }
 }
