@@ -73,6 +73,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string GetLoanDocumentWaived(int companyId, DateRange dateRange)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoanDocumentWaived.aspx?companyId=" + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
+            return path;
+        }
 
         #region Offer Letter Generation
 
