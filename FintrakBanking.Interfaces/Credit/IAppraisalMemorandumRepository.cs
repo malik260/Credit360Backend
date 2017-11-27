@@ -31,5 +31,7 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId);
 
         IEnumerable<CurrentCommitteeViewModel> GetCurrentCommittee(int loanApplicationId);
+
+        bool SecretariatForwardAppraisalMemorandum(ForwardCommitteeCamViewModel entity);
     }
 }

@@ -466,6 +466,20 @@
     <Compile Include="Reports\ReportViews\GrantedFacilities.aspx.designer.cs">
       <DependentUpon>GrantedFacilities.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\LoanAnniversery.aspx.cs">
+      <DependentUpon>LoanAnniversery.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanAnniversery.aspx.designer.cs">
+      <DependentUpon>LoanAnniversery.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentWaived.aspx.cs">
+      <DependentUpon>LoanDocumentWaived.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentWaived.aspx.designer.cs">
+      <DependentUpon>LoanDocumentWaived.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\LoanRepaymentSchedule.aspx.cs">
       <DependentUpon>LoanRepaymentSchedule.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -534,6 +548,8 @@
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
+    <Content Include="Reports\ReportViews\LoanAnniversery.aspx" />
+    <Content Include="Reports\ReportViews\LoanDocumentWaived.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
@@ -688,6 +704,8 @@
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
