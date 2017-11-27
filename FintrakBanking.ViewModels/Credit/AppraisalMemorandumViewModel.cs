@@ -117,11 +117,22 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int approvalLevelId { get; set; }
         public string approvalLevelName { get; set; }
+        public int numberOfApprovals { get; set; }
         public int groupRoleId  { get; set; }
         public string approvalGroupName { get; set; }
         public int staffId { get; set; }
         public string staffName { get; set; }
         public int? vote { get; set; }
         public string comment { get; set; }
+    }
+
+    public class ForwardCommitteeCamViewModel : GeneralEntity
+    {
+        public int applicationId { get; set; }
+        public decimal amount { get; set; }
+        public int tenor { get; set; }
+        public bool investmentGrade { get; set; }
+        public bool politicallyExposed { get; set; }
+        public List<CurrentCommitteeViewModel> votes { get; set; }
     }
 }
