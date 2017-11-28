@@ -363,10 +363,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.GetApplicationsDueForOfferLetterGeneration(token.GetCompanyId);
+                var response = repoApply.GetApplicationsDueForOfferLetterGeneration(token.GetStaffId, token.GetCompanyId).ToList();
                 if (!response.Any())
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
@@ -404,10 +404,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.GetApplicationsForReviewFromCreditUnit(token.GetCompanyId);
+                var response = repoApply.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToList();
                 if (!response.Any())
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList(), count = response.Count() });
