@@ -59,5 +59,10 @@ namespace FintrakBanking.Interfaces.Credit
         bool SaveDraftOfferLetter(OfferLetterTemplateViewModel model);
 
         bool UpdateDraftOfferLetter(int documentId, OfferLetterTemplateViewModel model);
+
+        bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity);
+
+        IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId);
+
     }
 }

@@ -5,6 +5,7 @@ using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -698,6 +699,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+     
+
         [HttpPut]
         [Route("loan-application/prepared-offer-letter/{documentId}")]
         public HttpResponseMessage UpdateDraftOfferLetter(int documentId, [FromBody] OfferLetterTemplateViewModel model)
@@ -761,6 +764,51 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+
+        [HttpPost]
+        [Route("loan-application/collateral")]
+        public HttpResponseMessage SaveLoanApplicationCollateral([FromBody] List<LoanApplicationCollateralViewModel> entity)
+        {
+            try
+            {
+                var response = repoApply.AddLoanApplicationCollateral(entity);
+
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Collateral saved successfully" });
+
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Collateral not saved successfully" });
+
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application-collateral/loan-application/{Id}")]
+        public HttpResponseMessage GetLoanApplicationCollateral(int id)
+        {
+            try
+            {
+                var response = repoApply.GetLoanApplicationCollateral(id);
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
 
     }
 

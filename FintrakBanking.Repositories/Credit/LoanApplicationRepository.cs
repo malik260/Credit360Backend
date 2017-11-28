@@ -378,10 +378,10 @@ namespace FintrakBanking.Repositories.Credit
                     OPERATIONID = (int)OperationsEnum.CAM
                 };
 
-                if (loan.LoanApplicationCollateral.Count > 0)
-                {
-                    LoanApplicationCollateral(loan.LoanApplicationCollateral);
-                }
+                //if (loan.LoanApplicationCollateral.Count > 0)
+                //{
+                //    LoanApplicationCollateral(loan.LoanApplicationCollateral);
+                //}
                 if (loan.LoanApplicationDetail.Count > 0)
                 {
                     LoanApplicationDetail(loan.LoanApplicationDetail);
@@ -470,34 +470,52 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private void LoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity)
+        public IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId)
         {
-            foreach (var item in entity)
+            var data = context.TBL_LOAN_APPLICATION_COLLATERAL.Where(c => c.LOANAPPCOLLATERALID == loanApplicatioinCollateralId).Select(c => new LoanApplicationCollateralViewModel
             {
-                var loanCollateral = new TBL_LOAN_APPLICATION_COLLATERAL()
-                {
-                    //COLLATERALREFERENCENUMBER = item.collateralReferenceNumber,
-                    //CITYID = item.cityId,
-                    //COLLATERALVALUE = item.collateralValue,
-                    //ISBANKACCOUNT = item.isBankAccount,
-                    //COLLATERALTYPEID = item.collateralTypeId,
-                    CREATEDBY = item.createdBy,
-                    DATETIMECREATED = genSetup.GetApplicationDate(),
-                    //OTHERINFORMATIONS = item.otherInformations,
-                    //LATITUDE = item.latitude,
-                    //LONGITUDE = item.longitude,
+                applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                collateralCustomerId = c.COLLATERALCUSTOMERID,
+                collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                loanAppCollateralId = c.LOANAPPCOLLATERALID,
+                customerCollateralId = c.COLLATERALCUSTOMERID
+            });
+            return data;
+        }
 
-                    //LOCATIONADDRESS = item.locationAddress,
-                    //NEARESTBUSSTOP = item.nearestBusStop,
-                    //NEARESTLANDMARK = item.nearestLandmark,
-                    //DOCUMENTTITLE = item.documentTitle,
-                    //LoanApplicationId = item.loanApplicationId,
-                    SYSTEMDATETIME = DateTime.Now,
-                    //CASAACCOUNTID = item.casaAccountId
+        public bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity)
+        {
+            var data = entity.Select(item => new TBL_LOAN_APPLICATION_COLLATERAL
+            {
+                LOANAPPLICATIONDETAILID = item.loanapplicationDetailId,
+                LOANAPPCOLLATERALID = item.loanAppCollateralId,
+                CREATEDBY = item.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+            });
+            context.TBL_LOAN_APPLICATION_COLLATERAL.AddRange(data);
+         
 
-                };
-                context.TBL_LOAN_APPLICATION_COLLATERAL.Add(loanCollateral);
-            }
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplication,
+                STAFFID = entity.FirstOrDefault().createdBy,
+                BRANCHID = (short)entity.FirstOrDefault().userBranchId,
+                DETAIL = $"Added collateral loan application with reference Number: {entity.FirstOrDefault().applicationReferenceNumber}",
+                IPADDRESS = entity.FirstOrDefault().userIPAddress,
+                URL = entity.FirstOrDefault().applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.FirstOrDefault().loanAppCollateralId
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            return context.SaveChanges() > 0;
         }
 
         //private void ApplicationCollateralRef(List<LoanApplicationCollateralRefNoViewModel> entity)
