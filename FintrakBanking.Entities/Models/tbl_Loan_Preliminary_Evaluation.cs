@@ -110,7 +110,7 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal LOANAMOUNT { get; set; }
 
-        public short PRODUCTCLASSID { get; set; }
+        public short? PRODUCTCLASSID { get; set; }
 
         public short? SUBSECTORID { get; set; }
 

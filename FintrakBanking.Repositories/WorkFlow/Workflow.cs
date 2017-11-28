@@ -305,7 +305,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             bool allVoted = false;
             if ((votes.Count() + 1) == this.neededNumberOfApproval)
             {
-                this.skipLimitsCheck = true; // COMMENT OUT IF COMMITTEE IS AFFECTED BY LIMITS!!!!
+                // this.skipLimitsCheck = true; // COMMENT OUT IF COMMITTEE IS AFFECTED BY LIMITS!!!!
                 allVoted = true;
             } else
             {
@@ -347,7 +347,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void ContinueProcess(int status)
         {
-            this.statusId = status;// == (int)ApprovalStatusEnum.Disapproved ? (int)ApprovalStatusEnum.Processing : status;
+            this.statusId = status == (int)ApprovalStatusEnum.Disapproved ? (int)ApprovalStatusEnum.Processing : (int)ApprovalStatusEnum.Authorised;
             this.newStateId = (int)ApprovalState.Processing;
         }
 
@@ -482,7 +482,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool ActionIsApprovalDecision()
         {
-            return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved);
+            return (this.statusId == (int)ApprovalStatusEnum.Approved 
+                || this.statusId == (int)ApprovalStatusEnum.Disapproved
+                || this.statusId == (int)ApprovalStatusEnum.Authorised
+                );
         }
 
         private IEnumerable<WorkflowSetup> GetWorkflowSetup(int operationId, int? productClassId, int? productId)
