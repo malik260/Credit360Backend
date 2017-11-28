@@ -316,6 +316,24 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         //......End f Loan Relational Table View Mapping Models......//
     }
+
+    public class LoanBookingRequestViewModel : GeneralEntity
+    {
+        public int loanBookingRequestId { get; set; }
+
+        public int loanApplicationId { get; set; }
+
+        public decimal amount_Requested { get; set; }
+
+        public short approvalStatusId { get; set; }
+        public string comment { get; set; }
+        public string customerName { get; set; }
+        public string approvedProductTypeName { get; set; }
+        public int approvedProductTypeId { get; set; }
+        public decimal approvedAmount { get; set; }
+
+    }
+
     public class CustomerExposure
     {
         public int customerId { get; set; }
@@ -341,7 +359,11 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal ? customerAvailableAmount { get; set; }
         public string customerOccupation { get; set; }
         public string customerType { get; set; }
-
+        public int? bookingRequestStatusId { get; set; }
+        public decimal? bookRequestAmount { get; set; }
+        public DateTime requestDate { get; set; }
+        public string requestedBy { get; set; }
+        public short requestOperationId { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
 
@@ -349,6 +371,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         public CustomerCompanyInfomationViewModels companyInformation { get; set; }
+        public List<CamDocumentViewModel> camDocuments { get; set; }
 
         //......End f Loan Relational Table View Mapping Models......//
     }
@@ -514,6 +537,11 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string applicationReferenceNumber { get; set; }
         public short applicationStatusId { get; set; }
+    }
+
+    public class CamDocumentViewModel: CamProcessedLoanViewModel
+    {
+        public string approvalLevelName { get; set; }
     }
 
 }

@@ -11,7 +11,7 @@ namespace FintrakBanking.Common.Enum
     {
        Waived = 2,
        Provided = 3,
-       Deferred = 4, 
+       Deferred = 4,
        Yes = 5,
        No = 6
     }

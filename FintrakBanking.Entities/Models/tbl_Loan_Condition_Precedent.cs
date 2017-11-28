@@ -24,6 +24,8 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONID { get; set; }
 
+        public int LOANAPPLICATIONDETAILID { get; set; }
+
         public int? LASTUPDATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

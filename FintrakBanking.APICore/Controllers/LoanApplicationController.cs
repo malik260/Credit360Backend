@@ -683,6 +683,27 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan-application/prepared-form3800b-template/")]
+        public HttpResponseMessage GenerateForm3800Template(string applicationRefNumber)
+        {
+            try
+            {
+                var response = repoApply.GenerateForm3800Template(applicationRefNumber);
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [Route("loan-application/prepared-offer-letter")]
         public HttpResponseMessage SaveDraftOfferLetter([FromBody] OfferLetterTemplateViewModel model)

@@ -16,6 +16,8 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONID { get; set; }
 
+        public int? LOANAPPLICATIONDETAILID { get; set; }
+
         public bool ISRELEASED { get; set; }
 
         public short? RELEASEAPPROVALSTATUSID { get; set; }
@@ -25,5 +27,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
 
         public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
     }
 }

@@ -448,6 +448,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("loan/document-waived")]
+        public HttpResponseMessage GetLoanDocumentWaived(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+
+                var data = repo.GetLoanDocumentWaived(token.GetCompanyId, dateRange);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }
 
