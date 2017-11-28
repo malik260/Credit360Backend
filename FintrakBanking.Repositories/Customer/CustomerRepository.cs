@@ -471,6 +471,7 @@ namespace FintrakBanking.Repositories.Customer
                             company.REGISTRATIONNUMBER = entity.registrationNumber;
                             company.PAIDUPCAPITAL = entity.paidUpCapital;
                             company.AUTHORISEDCAPITAL = entity.authorizedCapital;
+                            company.SHAREHOLDER_FUND = entity.shareholderFund;
                         }
                     }
                     else
@@ -487,6 +488,7 @@ namespace FintrakBanking.Repositories.Customer
                         company.PAIDUPCAPITAL = entity.paidUpCapital;
                         company.AUTHORISEDCAPITAL = entity.authorizedCapital;
                         context.TBL_CUSTOMER_COMPANYINFOMATION.Add(company);
+                        company.SHAREHOLDER_FUND = entity.shareholderFund;
                     }
 
                     // Audit Section ---------------------------
@@ -1041,17 +1043,8 @@ namespace FintrakBanking.Repositories.Customer
                            registeredOffice = d.REGISTEREDOFFICE,
                            registrationNumber = d.REGISTRATIONNUMBER,
                            paidUpCapital = d.PAIDUPCAPITAL,
-                           authorizedCapital = d.AUTHORISEDCAPITAL
-
-                       }).ToList(),
-                       CustomerIdentification = context.TBL_CUSTOMER_IDENTIFICATION.Where(e => e.CUSTOMERID == a.CUSTOMERID).Select(e => new CustomerIdentificationViewModels()
-                       {
-                           identificationId = e.IDENTIFICATIONID,
-                           identificationModeId = e.IDENTIFICATIONMODEID.Value,
-                           identificationMode = context.TBL_CUSTOMER_IDENTI_MODE_TYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
-                           identificationNo = e.IDENTIFICATIONNO,
-                           issueAuthority = e.ISSUEAUTHORITY,
-                           issuePlace = e.ISSUEPLACE
+                           authorizedCapital = d.AUTHORISEDCAPITAL,
+                           shareholderFund = d.SHAREHOLDER_FUND
                        }).ToList(),
                        CustomerEmploymentHistory = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(s => s.CUSTOMERID == a.CUSTOMERID).Select(s => new CustomerEmploymentHistoryViewModels()
                        {
@@ -1144,6 +1137,11 @@ namespace FintrakBanking.Repositories.Customer
                            firstName = cs.FIRSTNAME,
                            middleName = cs.MIDDLENAME,
                            lastName = cs.LASTNAME,
+                           taxNumber = cs.TAX_NUMBER,
+                           rcNumber = cs.REGISTRATION_NUMBER,
+                           hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
+                           casaAccountNumber = cs.CASA_ACCOUNTNO,
+                           contactPerson = cs.CONTACT_PERSON,
                            client_SupplierAddress = cs.ADDRESS,
                            client_SupplierPhoneNumber = cs.PHONENUMBER,
                            client_SupplierEmail = cs.EMAILADDRESS,
@@ -1481,6 +1479,16 @@ namespace FintrakBanking.Repositories.Customer
         }
 
         #region Single Customer Information By CustomerID
+        public IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLoanId(int loanApplicationId)
+        {
+            var loanCust = (from a in context.TBL_LOAN_APPLICATION_DETAIL where a.LOANAPPLICATIONID == loanApplicationId select a.CUSTOMERID).ToList();
+                var customers = GetCustomers();
+                if (loanCust.Any())
+                {
+                    customers = customers.Where(x => loanCust.Contains(x.customerId));
+                }  
+            return customers;
+        }
         public CustomerViewModels GetSingleCustomerGeneralInfo(string customerCode)
         {
             var data = (from a in context.TBL_CUSTOMER
@@ -1540,8 +1548,8 @@ namespace FintrakBanking.Repositories.Customer
                               registeredOffice = d.REGISTEREDOFFICE,
                               registrationNumber = d.REGISTRATIONNUMBER,
                               paidUpCapital = d.PAIDUPCAPITAL,
-                              authorizedCapital = d.AUTHORISEDCAPITAL
-
+                              authorizedCapital = d.AUTHORISEDCAPITAL,
+                              shareholderFund = d.SHAREHOLDER_FUND
                           }).FirstOrDefault();
             return comany;
         }

@@ -9,7 +9,8 @@ namespace FintrakBanking.Common.Enum
   
     public enum CheckListTargetTypeEnum
     {
-       Loan = 1,
-       CASA = 2
+        LoanApplicationProductChecklist = 1,
+       CASA = 2,
+            LoanApplicationCustomerChecklist = 3
     }
 }
