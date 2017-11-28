@@ -6,6 +6,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class ApprovalViewModel : UserInfo
     {
+        private bool _keepPending = true;
+
         public int operationId { get; set; }
         public int targetId { get; set; }
         public short approvalStatusId { get; set; }
@@ -16,7 +18,13 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public decimal amount { get; set; }
         public bool isPoliticalyExposed { get; set; }
         public bool externalInitialization { get; set; }
-        public bool keepPending { get { return true; } }
+        public bool keepPending {
+            get { return keepPending; }
+            set {
+                if (value == keepPending) return;
+                keepPending = value;
+            }
+        }
         public bool deferredExecution { get; set; }
     }
 }

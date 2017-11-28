@@ -529,6 +529,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string applicationReferenceNumber { get; set; }
         public short applicationStatusId { get; set; }
+        public int? toStaffId { get; set; }
+
     }
 
     public class CamDocumentViewModel: CamProcessedLoanViewModel

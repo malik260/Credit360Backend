@@ -136,7 +136,7 @@ namespace FintrakBanking.Repositories.Credit
                             targetId = penRecord.LOANPRELIMINARYEVALUATIONID,
                             operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
                             BranchId = model.userBranchId,
-                            externalInitialization = true
+                            externalInitialization = false
                         };
                         var response = workFlow.LogForApproval(entity);
 

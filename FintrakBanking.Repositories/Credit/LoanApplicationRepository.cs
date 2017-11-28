@@ -956,7 +956,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
 
-            var preparedTemplate = PopulateOfferLetterPlaceholders(conditionPrecedentData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData);
 
             if (preparedTemplate != null)
             {
@@ -1158,7 +1158,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
 
-            var preparedTemplate = PopulateOfferLetterPlaceholders(conditionPrecedentData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData);
 
             if (preparedTemplate != null)
             {
@@ -1168,7 +1168,7 @@ namespace FintrakBanking.Repositories.Credit
             return new OfferLetterTemplateViewModel { };
         }
 
-        private static string PopulateOfferLetterPlaceholders(string conditionPrecedent)
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent)
         {
             string body;
 
@@ -1179,6 +1179,7 @@ namespace FintrakBanking.Repositories.Credit
                 body = reader.ReadToEnd();
             }
 
+            body = body.Replace("{@ApplicationDate}", applicationDate.ToLongDateString());
             body = body.Replace("{@ConditionPrecedents}", conditionPrecedent);
 
             return body;
@@ -1325,23 +1326,29 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var exisitingDocument = context.TBL_OFFERLETTER.Any(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+                var exisitingDocument = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
 
-                if (exisitingDocument)
+                if (exisitingDocument != null)
                 {
-                    return true;
+                    exisitingDocument.HTML_DOCUMENT = model.documentTemplate;
+                    exisitingDocument.APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber;
+                    exisitingDocument.COMMENTS = model.comments;
+                    exisitingDocument.PRODUCTID = model.productId;
+                    exisitingDocument.ISACCEPTED = model.isAccepted;
                 }
-
-                var document = new TBL_OFFERLETTER
+                else
                 {
-                    HTML_DOCUMENT = model.documentTemplate,
-                    APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
-                    COMMENTS = model.comments,
-                    PRODUCTID = model.productId,
-                    ISACCEPTED = model.isAccepted
-                };
+                    var document = new TBL_OFFERLETTER
+                    {
+                        HTML_DOCUMENT = model.documentTemplate,
+                        APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
+                        COMMENTS = model.comments,
+                        PRODUCTID = model.productId,
+                        ISACCEPTED = model.isAccepted
+                    };
 
-                context.TBL_OFFERLETTER.Add(document);
+                    context.TBL_OFFERLETTER.Add(document);
+                }
 
                 return context.SaveChanges() > 0;
             }
@@ -1475,7 +1482,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public bool ForwardApplicationToNextLevel(ForwardViewModel model)
+        private bool ForwardApplicationToNextLevel(ForwardViewModel model)
         {
             workFlow.StaffId = model.createdBy;
             workFlow.OperationId = model.operationId;
@@ -1497,7 +1504,128 @@ namespace FintrakBanking.Repositories.Credit
             return workFlow.LogActivity();
         }
 
-        public bool LogApplicationForApproval(LoanAvailmentApprovalViewModel model)
+        private bool ReferApplicationToSpecificLevel(LoanAvailmentApprovalViewModel model)
+        {
+            workFlow.StaffId = model.createdBy;
+            workFlow.OperationId = model.operationId;
+            workFlow.TargetId = model.targetId;
+            workFlow.CompanyId = model.companyId;
+            workFlow.NextLevelId = model.nextLevelId;
+            workFlow.ToStaffId = model.toStaffId;
+            workFlow.StatusId = model.approvalStatusId;
+            workFlow.Comment = model.comment;
+
+            workFlow.Amount = model.amount;
+
+            return workFlow.LogActivity();
+        }
+
+        public bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity)
+        {
+            entity.operationId = (int)OperationsEnum.OfferLetterApproval;
+
+            entity.externalInitialization = false;
+
+            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, (int)OperationsEnum.OfferLetterApproval);
+            int staffApprovalLevelId = 0;
+
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == (int)OperationsEnum.OfferLetterApproval).ToList();
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var targetLoanAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x =>
+                        x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
+
+                    var operationDetails = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval);
+
+                    LoanAvailmentApprovalViewModel referBack;
+
+                    if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
+                    {
+                        // As far RM hasn't initiated 'Send For Availment'
+                        if (entity.applicationStatusId != (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted)
+                        {
+                            referBack = new LoanAvailmentApprovalViewModel()
+                            {
+                                nextLevelId = approvalLvlStaff[0].approvalLevelId,
+                                toStaffId = approvalLvlStaff[0].staffId,
+                                createdBy = entity.createdBy,
+                                targetId = targetLoanAppl.LOANAPPLICATIONID,
+                                amount = entity.amount,
+                                companyId = entity.companyId,
+                                comment = entity.comment,
+                                operationId = entity.operationId,
+                                approvalStatusId = entity.approvalStatusId
+                            };
+
+                            operationDetails.OPERATIONURL = "/credit/loan/offer-letter";
+
+                            UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+
+                            ReferApplicationToSpecificLevel(referBack);
+                        }
+                        else // If he has then end the workflow process
+                        {
+                            // UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+
+                            entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
+
+                            entity.keepPending = false;
+
+                            workFlow.ForcefullyEndProcess = true;
+
+                            workFlow.LogForApproval(entity);
+                        }
+                    }
+                    else
+                    {
+                        operationDetails.OPERATIONURL = "/credit/loan/offer-letter-review";
+
+                        UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+
+                        entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
+
+                        workFlow.LogForApproval(entity);
+                    }
+
+                    var b = workFlow.NextLevelId ?? 0;
+
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
+
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+
+        public bool LogApplicationForApprovalDuringAvailment(LoanAvailmentApprovalViewModel model)
         {
             try
             {
@@ -1510,7 +1638,7 @@ namespace FintrakBanking.Repositories.Credit
                     companyId = model.companyId,
                     approvalStatusId = (int)ApprovalStatusEnum.Pending,
                     targetId = target.LOANAPPLICATIONID,
-                    operationId = (int)OperationsEnum.LoanAvailment,
+                    operationId = model.operationId,
                     comment = model.comment,
                     amount = model.amount,
                     BranchId = model.BranchId,

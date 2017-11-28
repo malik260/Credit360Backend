@@ -3437,10 +3437,6 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.REMARK)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_OFFERLETTER>()
-                .HasOptional(e => e.TBL_OFFERLETTER1)
-                .WithRequired(e => e.TBL_OFFERLETTER2);
-
             modelBuilder.Entity<TBL_RISK_ASSESSMENT_INDEX>()
                 .Property(e => e.WEIGHT)
                 .HasPrecision(18, 4);
