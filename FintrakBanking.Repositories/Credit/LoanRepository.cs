@@ -2979,7 +2979,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                  AMOUNT_REQUESTED = entity.amount_Requested,
                  APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                 LOANAPPLICATIONDETAILID = entity.loanApplicationId,
+                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
                  DATETIMECREATED = generalSetup.GetApplicationDate(),
                  CREATEDBY = entity.createdBy,
 

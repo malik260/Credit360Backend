@@ -322,6 +322,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanBookingRequestId { get; set; }
 
         public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
 
         public decimal amount_Requested { get; set; }
 
