@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Customer;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +81,7 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerClientOrSupplierViewModels> GetSingleCustomerClientOrSupplierInfo(int customerId, short clientTypeId);
         IEnumerable<CustomerChildrenViewModel> GetSingleCustomerChildrenInfo(int customerId);
         IEnumerable<CustomerCompanyBeneficiaryViewModels> GetShareholderUltimateBeneficial(int companyDirectorId);
+        IEnumerable<CasaViewModel> GetCustomerCASAInformation(int customerId);
         #endregion
 
         #region  Customer Information Validation
