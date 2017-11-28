@@ -327,6 +327,10 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short approvalStatusId { get; set; }
         public string comment { get; set; }
+        public string customerName { get; set; }
+        public string approvedProductTypeName { get; set; }
+        public int approvedProductTypeId { get; set; }
+        public decimal approvedAmount { get; set; }
 
     }
 
@@ -355,7 +359,11 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal ? customerAvailableAmount { get; set; }
         public string customerOccupation { get; set; }
         public string customerType { get; set; }
-
+        public int? bookingRequestStatusId { get; set; }
+        public decimal? bookRequestAmount { get; set; }
+        public DateTime requestDate { get; set; }
+        public string requestedBy { get; set; }
+        public short requestOperationId { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
 

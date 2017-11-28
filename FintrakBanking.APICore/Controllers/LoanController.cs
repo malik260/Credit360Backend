@@ -920,14 +920,13 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("loan-application/initiated-booking")]
-        public HttpResponseMessage GetInitiatedLoanBooking()
-
+        [Route("loan-application-details/{applicationDetailId}")]
+        public HttpResponseMessage GetLoanApplicationDetails(int applicationDetailId)
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repo.GetInitiatedLoanBooking(token.GetCompanyId);
+                var response = repo.GetLoanApplicationDetails(applicationDetailId, token.GetCompanyId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -941,34 +940,78 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        [HttpPut]
-        [Route("loan-application/initiated-booking/{applicationId}")]
-        public HttpResponseMessage InitiateLoanBooking(int applicationId, [FromBody] LoanBookingRequestViewModel entity)
+        [HttpGet]
+        [Route("loan-application/initiated-booking")]
+        public HttpResponseMessage GetInitiatedLoanBooking()
+
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetRequestedLoanBooking(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-booking-request/awaiting-approval")]
+        public HttpResponseMessage GetRequestedLoanBookingAwaitingApproval()
+
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetRequestedLoanBookingAwaitingApproval(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-application/request-booking/{applicationId}")]
+        public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] LoanBookingRequestViewModel entity)
         {
             try
             {
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.InitiateLoanBooking(applicationId, entity);
-                if (!data)
+                var data = repo.AddLoanBookingRequest(applicationId, entity);
+                if (data > 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Booking successfully initiated!" });
+                        new { success = true, data = data, message = "Booking successfully initiated!" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
 
-                    new { success = true, message = "Initiating Booking was unsuccessful!" });
+                    new { success = false, message = "Initiating Booking was unsuccessful!" });
             }
             catch (System.Exception ex)
              {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false,  message = ex.Message });
             }
         }
 
         [HttpPost]
-        [Route("booking-initiation/approval")]
-        public HttpResponseMessage ApproveLoanBookingInitition(ApprovalViewModel model)
+        [Route("booking-request/approval")]
+        public HttpResponseMessage ApproveLoanBookingRequest(ApprovalViewModel model)
         {
             try
             {
@@ -979,7 +1022,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var data = repo.GoForBookingInitiationApproval(model);
+                var data = repo.GoForBookingRequestApproval(model);
 
                 if (data)
                 {
