@@ -1208,3 +1208,5 @@ namespace FintrakBanking.APICore.Controllers
 
     }
 }
+//Models
+//FinTrakBankingContext

@@ -31,6 +31,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string email { get; set; }
         public List<CustomerCompanyBeneficiaryViewModels> customerCompanyBeneficial { get; set; }
     }
+
     public class CustomerCompanyBeneficiaryViewModels
     {
        public int companyBeneficiaryId { get; set; }
