@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Common.Enum
 {
-  
-    public enum CheckListTargetTypeEnum
+    public enum LoanAvailmentApprovalFlowEnum
     {
-        LoanApplicationProductChecklist = 1,
-       CASA = 2,
-            LoanApplicationCustomerChecklist = 3
+        LevelOne = 0,
+        LevelTwo = 100000000,
+        LevelThree = 999999999,
+        LevelFour = 1000000000
     }
 }

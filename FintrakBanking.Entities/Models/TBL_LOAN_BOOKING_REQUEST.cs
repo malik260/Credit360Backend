@@ -6,17 +6,18 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_APPLICATION_COLLATERAL")]
-    public partial class TBL_LOAN_APPLICATION_COLLATERAL
+    [Table("credit.TBL_LOAN_BOOKING_REQUEST")]
+    public partial class TBL_LOAN_BOOKING_REQUEST
     {
         [Key]
-        public int LOANAPPCOLLATERALID { get; set; }
+        public int LOAN_BOOKING_REQUESTID { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
+        public int LOANAPPLICATIONDETAILID { get; set; }
 
-        public int LOANAPPLICATIONID { get; set; }
+        [Column(TypeName = "money")]
+        public decimal AMOUNT_REQUESTED { get; set; }
 
-        public int? LOANAPPLICATIONDETAILID { get; set; }
+        public short APPROVALSTATUSID { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -32,11 +33,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public DateTime SYSTEMDATETIME { get; set; }
+        public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
-        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
-
-        public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
+        public virtual TBL_STAFF TBL_STAFF { get; set; }
 
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
     }

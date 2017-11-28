@@ -9,7 +9,10 @@ namespace FintrakBanking.Interfaces.Setups
     public interface IChecklistRepository
     {
         #region Loan Checklist Definition
+        IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistType();
+        IEnumerable<CheckListStatusViewModel> GetChecklistStatusYesorNo();
         IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition();
+        IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId);
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId);
         List<ChecklistDefinitionViewModel> GetAllChecklistDefinitionById(int CheckListDefinitionId);
         bool AddChecklistDefinition(ChecklistDefinitionViewModel model);
@@ -17,14 +20,17 @@ namespace FintrakBanking.Interfaces.Setups
         bool AddMultipleChecklistDefinitionWithMultipleItems(ChecklistDefinitionViewModel model);
         bool UpdateChecklistDefinition(int CheckListDefinitionId, ChecklistDefinitionViewModel model);
         bool DeleteChecklistDefinition(int CheckListDefinitionId, UserInfo user);
+        bool ValidateChecklistDetail(ValidateChecklistDetailViewModel entity);
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByApprovalLevelAndProduct(int approvalLevelId, int productId);
         IEnumerable<ChecklistItemViewModel> GetAllUnmappedChecklistItemsToApprovalLevelAndProduct(int approvalLevelId, int productId);
         IEnumerable<ChecklistDefinitionViewModel> GetUnmappedChecklistDefintionToApprovalLevel(int approvalLevelId);
+        IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId);
         #endregion
 
         #region Loan Checklist Detail
         IEnumerable<ChecklistDetailViewModel> GetAllChecklistDetail();
         IEnumerable<ChecklistDetailViewModel> GetChecklistByTargetId(int targetId);
+        IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailById(int ChecklistId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailByProductAndTargetId(int targetTypeId, int productId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailByProductId(int targetId);

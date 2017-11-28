@@ -100,6 +100,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public string lastName { get; set; }
         public int groupRoleId { get; set; }
+        public string accountNumber { get; set; }
         //{
         //    get {  return (LoanApplicationDetail.Max(c => c.proposedTenor) / 12) * 365;
         //         }

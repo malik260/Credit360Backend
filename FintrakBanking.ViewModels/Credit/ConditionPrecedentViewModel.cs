@@ -16,6 +16,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? productId { get; set; }
         public int loanApplicationId { get; set; }
         public string staffName { get; set; }
+        public bool isSubsequent { get; set; }
+        public int loanApplicationDetailId { get; set; }
     }
 }
 

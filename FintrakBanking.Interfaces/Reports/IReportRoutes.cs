@@ -17,6 +17,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetDisburstLoans(DateRange dateRange, int companyId);
         string GetLoanStatement(int companyId, int loanId);
         string GetLoanAnniversery(DateRange dateRange, int companyId);
+        string GetLoanDocumentWaived(int companyId, DateRange dateRange);
 
         #region Offer Letter Generation & Loan Monitoring Reports
 

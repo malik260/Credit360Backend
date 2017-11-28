@@ -42,16 +42,24 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int loanApplicationId { get; set; }
         public string conditionPrecident { get; set; }
+        public bool isExternal { get; set; }
+        public string productName { get; set; }
     }
 
-    public class OfferLetterTemplateViewModel
+    public class OfferLetterTemplateViewModel: GeneralEntity
     {
         public string documentTemplate { get; set; }
         public int documentId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public short? productId { get; set; }
         public string comments { get; set; }
-        public bool isAccepted { get; set; }
+        public bool? isAccepted { get; set; }
+        public decimal approvedAmount { get; set; }
+    }
+
+    public class Form3800ViewModel: GeneralEntity
+    {
+        public string documentTemplate { get; set; }
     }
 
 }
