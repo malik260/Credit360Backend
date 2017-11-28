@@ -18,6 +18,8 @@ namespace FintrakBanking.Entities.DocumentModels
         [StringLength(50)]
         public string LOANREFERENCENUMBER { get; set; }
 
+        public int? LOAN_BOOKING_REQUESTID { get; set; }
+
         [Required]
         [StringLength(250)]
         public string DOCUMENTTITLE { get; set; }

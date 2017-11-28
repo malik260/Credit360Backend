@@ -9,6 +9,7 @@ namespace FintrakBanking.Interfaces.Setups
     public interface IChecklistRepository
     {
         #region Loan Checklist Definition
+        IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistType();
         IEnumerable<CheckListStatusViewModel> GetChecklistStatusYesorNo();
         IEnumerable<ChecklistDefinitionViewModel> GetAllChecklistDefinition();
         IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId);
@@ -19,10 +20,11 @@ namespace FintrakBanking.Interfaces.Setups
         bool AddMultipleChecklistDefinitionWithMultipleItems(ChecklistDefinitionViewModel model);
         bool UpdateChecklistDefinition(int CheckListDefinitionId, ChecklistDefinitionViewModel model);
         bool DeleteChecklistDefinition(int CheckListDefinitionId, UserInfo user);
+        bool ValidateChecklistDetail(ValidateChecklistDetailViewModel entity);
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByApprovalLevelAndProduct(int approvalLevelId, int productId);
         IEnumerable<ChecklistItemViewModel> GetAllUnmappedChecklistItemsToApprovalLevelAndProduct(int approvalLevelId, int productId);
         IEnumerable<ChecklistDefinitionViewModel> GetUnmappedChecklistDefintionToApprovalLevel(int approvalLevelId);
-        IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int operationId, int checkListTypeId);
+        IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId);
         #endregion
 
         #region Loan Checklist Detail

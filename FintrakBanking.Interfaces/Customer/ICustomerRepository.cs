@@ -10,6 +10,7 @@ namespace FintrakBanking.Interfaces.Customer
     {
         CustomerViewModels GetCustomer(int custormerId);
         IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId);
+        IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLoanId(int loanApplicationId);
 
         IEnumerable<CustomerViewModels> GetCustomerByBranchId(int branchId);
 
