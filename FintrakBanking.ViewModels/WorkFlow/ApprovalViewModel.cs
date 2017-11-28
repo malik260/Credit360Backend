@@ -19,10 +19,10 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public bool isPoliticalyExposed { get; set; }
         public bool externalInitialization { get; set; }
         public bool keepPending {
-            get { return keepPending; }
+            get { return _keepPending; }
             set {
-                if (value == keepPending) return;
-                keepPending = value;
+                if (value == _keepPending) return;
+                _keepPending = value;
             }
         }
         public bool deferredExecution { get; set; }
