@@ -305,7 +305,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             bool allVoted = false;
             if ((votes.Count() + 1) == this.neededNumberOfApproval)
             {
-                this.skipLimitsCheck = true; // COMMENT OUT IF COMMITTEE IS AFFECTED BY LIMITS!!!!
+                // this.skipLimitsCheck = true; // COMMENT OUT IF COMMITTEE IS AFFECTED BY LIMITS!!!!
                 allVoted = true;
             } else
             {
