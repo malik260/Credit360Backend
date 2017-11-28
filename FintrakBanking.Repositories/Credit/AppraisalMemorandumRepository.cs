@@ -301,23 +301,28 @@ namespace FintrakBanking.Repositories.Credit
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Authorised) // approving authority
                 {
                     var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == memo.LOANAPPLICATIONID);
-                    foreach (var item in items)
+                    if (items.Any())
                     {
-                        var changed = model.recommendedChanges.FirstOrDefault(x => x.detailId == item.LOANAPPLICATIONDETAILID);
-                        if (changed != null)
+                        foreach (var item in items)
                         {
-                            item.APPROVEDPRODUCTID = (short)changed.productId;
-                            item.APPROVEDAMOUNT = changed.amount;
-                            item.APPROVEDINTERESTRATE = changed.interestRate;
-                            item.APPROVEDTENOR = changed.tenor;
-                            item.STATUSID = (short)changed.statusId;
-                            item.EXCHANGERATE = changed.exchangeRate;
-                            item.LASTUPDATEDBY = model.createdBy;
-                            item.DATETIMEUPDATED = DateTime.Now;
+                            var changed = model.recommendedChanges.FirstOrDefault(x => x.detailId == item.LOANAPPLICATIONDETAILID);
+                            if (changed != null)
+                            {
+                                item.APPROVEDPRODUCTID = (short)changed.productId;
+                                item.APPROVEDAMOUNT = changed.amount;
+                                item.APPROVEDINTERESTRATE = changed.interestRate;
+                                item.APPROVEDTENOR = changed.tenor;
+                                item.STATUSID = (short)changed.statusId;
+                                item.EXCHANGERATE = changed.exchangeRate;
+                                item.LASTUPDATEDBY = model.createdBy;
+                                item.DATETIMEUPDATED = DateTime.Now;
+                            }
                         }
+                        var approvedAmount = items
+                            .Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved)
+                            .Sum(x => x.APPROVEDAMOUNT);
+                        appl.APPROVEDAMOUNT = approvedAmount;
                     }
-                    var approvedAmount = items.Where(x => x.STATUSID != (int)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
-                    appl.APPROVEDAMOUNT = approvedAmount;
                 }
             }
 

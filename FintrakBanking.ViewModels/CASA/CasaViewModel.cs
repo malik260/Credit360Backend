@@ -30,12 +30,15 @@ namespace FintrakBanking.ViewModels.CASA
         public int actionBy { get; set; }
         public DateTime actionDate { get; set; }
         public short accountStatusId { get; set; }
+        public string accountStatusName { get; set; }
         public int operationId { get; set; }
         public string currency { get; set; }
         public decimal availableBalance { get; set; }
         public decimal ledgerBalance { get; set; }
         public int relationshipManagerId { get; set; }
+        public string relationshipManagerName { get; set; }
         public int relationshipOfficerId { get; set; }
+        public string relationshipOfficerName { get; set; }
         public string misCode { get; set; }
         public string teamMiscode { get; set; }
         public decimal overdraftAmount { get; set; }
