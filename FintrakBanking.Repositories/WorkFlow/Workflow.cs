@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (ActionIsApprovalDecision())
                 {
-                    throw new Exception("Unable to resolve initiating level!");
+                    throw new Exception("Unable to resolve initiating level or the process is closed!");
                 }
                 this.currentStateId = (int)ApprovalState.Initiation;
             }
@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             context.TBL_APPROVAL_TRAIL.Add(trail);
-            
+
             if (this.deferredExecution) { return true; }
 
             this.saved = context.SaveChanges() > 0;
@@ -307,7 +307,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 // this.skipLimitsCheck = true; // COMMENT OUT IF COMMITTEE IS AFFECTED BY LIMITS!!!!
                 allVoted = true;
-            } else
+            }
+            else
             {
                 this.skipLimitsCheck = true; // avoid approval stat changed to 4.processing
                 this.smsNotification = false;
@@ -322,7 +323,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 approvals = (this.statusId == (int)ApprovalStatusEnum.Approved) ? approvals + 1 : approvals;
                 disapprovals = (this.statusId == (int)ApprovalStatusEnum.Disapproved) ? disapprovals + 1 : disapprovals;
 
-                if (approvals != disapprovals) {
+                if (approvals != disapprovals)
+                {
                     int vetoVote = 0;
                     int voteResult = 0;
 
@@ -337,7 +339,15 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                     if (vetoers.Contains(this.staffId) && voteResult != this.statusId) { vetoVote = vetoVote + 1; } // for current process not yet saved in trail
 
-                    if (vetoVote == 0) { EndProcess(voteResult); return true; }
+                    if (vetoVote == 0)
+                    {
+                        if (this.skipLimitsCheck == true)
+                            EndProcess(voteResult);
+                        else
+                            this.statusId = voteResult;
+
+                        return true;
+                    }
                 }
             }
 
@@ -429,6 +439,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool WithinMaximumLimit(TBL_APPROVAL_LEVEL level)
         {
             if (amount == 0) { return true; }
+            if (investmentGrade == true) { return true; }
             if (level.MAXIMUMAMOUNT >= amount) { return true; }
             return false;
         }
@@ -482,10 +493,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool ActionIsApprovalDecision()
         {
-            return (this.statusId == (int)ApprovalStatusEnum.Approved 
-                || this.statusId == (int)ApprovalStatusEnum.Disapproved
-                || this.statusId == (int)ApprovalStatusEnum.Authorised
-                );
+            return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved);
         }
 
         private IEnumerable<WorkflowSetup> GetWorkflowSetup(int operationId, int? productClassId, int? productId)
