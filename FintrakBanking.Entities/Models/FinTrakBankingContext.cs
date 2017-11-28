@@ -12,6 +12,19 @@ namespace FintrakBanking.Entities.Models
         {
         }
 
+        public override int SaveChanges()
+        {
+            try
+            {
+                return base.SaveChanges();
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new System.Data.Entity.Validation.DbEntityValidationException(errorMessages);
+            }
+        }
+
         public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
@@ -203,6 +216,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_APPLICATION_COLLATERAL> TBL_LOAN_APPLICATION_COLLATERAL { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETAIL> TBL_LOAN_APPLICATION_DETAIL { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETAIL_STA> TBL_LOAN_APPLICATION_DETAIL_STA { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_DETL_LOG> TBL_LOAN_APPLICATION_DETL_LOG { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_STATUS> TBL_LOAN_APPLICATION_STATUS { get; set; }
         public virtual DbSet<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_BOOKING_REQUEST> TBL_LOAN_BOOKING_REQUEST { get; set; }
@@ -4005,6 +4019,22 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
                 .Property(e => e.SHAREVALUEAMOUNTTOUSE)
                 .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_CUSTOMER>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_LOG)
+                .WithRequired(e => e.TBL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_PRODUCT>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_LOG)
+                .WithRequired(e => e.TBL_PRODUCT)
+                .HasForeignKey(e => e.APPROVEDPRODUCTID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_DETL_LOG>()
+                .Property(e => e.APPROVEDAMOUNT)
+                .HasPrecision(19, 4);
+
         }
     }
 }

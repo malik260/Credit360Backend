@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (ActionIsApprovalDecision())
                 {
-                    throw new Exception("Unable to resolve initiating level!");
+                    throw new Exception("Unable to resolve initiating level or the process is closed!");
                 }
                 this.currentStateId = (int)ApprovalState.Initiation;
             }
@@ -305,7 +305,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             bool allVoted = false;
             if ((votes.Count() + 1) == this.neededNumberOfApproval)
             {
-                this.skipLimitsCheck = true; // COMMENT OUT IF COMMITTEE IS AFFECTED BY LIMITS!!!!
+                // this.skipLimitsCheck = true; // COMMENT OUT IF COMMITTEE IS AFFECTED BY LIMITS!!!!
                 allVoted = true;
             } else
             {
@@ -337,7 +337,15 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                     if (vetoers.Contains(this.staffId) && voteResult != this.statusId) { vetoVote = vetoVote + 1; } // for current process not yet saved in trail
 
-                    if (vetoVote == 0) { EndProcess(voteResult); return true; }
+                    if (vetoVote == 0)
+                    {
+                        if (this.skipLimitsCheck == true)
+                            EndProcess(voteResult);
+                        else
+                            this.statusId = voteResult;
+
+                        return true;
+                    }
                 }
             }
 
@@ -347,7 +355,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void ContinueProcess(int status)
         {
-            this.statusId = status;// == (int)ApprovalStatusEnum.Disapproved ? (int)ApprovalStatusEnum.Processing : status;
+            this.statusId = status == (int)ApprovalStatusEnum.Disapproved ? (int)ApprovalStatusEnum.Processing : (int)ApprovalStatusEnum.Authorised;
             this.newStateId = (int)ApprovalState.Processing;
         }
 
@@ -429,6 +437,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool WithinMaximumLimit(TBL_APPROVAL_LEVEL level)
         {
             if (amount == 0) { return true; }
+            if (investmentGrade == true) { return true; }
             if (level.MAXIMUMAMOUNT >= amount) { return true; }
             return false;
         }
