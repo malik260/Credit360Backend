@@ -364,6 +364,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime requestDate { get; set; }
         public string requestedBy { get; set; }
         public short requestOperationId { get; set; }
+        public int loanBookingRequestId { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
 
