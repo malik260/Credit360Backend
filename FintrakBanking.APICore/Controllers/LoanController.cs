@@ -1010,8 +1010,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpPost]
-        [Route("booking-initiation/approval")]
-        public HttpResponseMessage ApproveLoanBookingInitition(ApprovalViewModel model)
+        [Route("booking-request/approval")]
+        public HttpResponseMessage ApproveLoanBookingRequest(ApprovalViewModel model)
         {
             try
             {
