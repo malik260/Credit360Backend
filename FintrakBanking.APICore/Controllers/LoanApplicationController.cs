@@ -924,10 +924,41 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        
-    
 
+        [HttpPost]
+        [Route("loan-application/offer-letter/approval")]
+        public HttpResponseMessage LogApplicationForApprovalDuringOfferLetterGeneration([FromBody] LoanAvailmentApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.createdBy = token.GetStaffId;
 
+                var data = repoApply.ApproveOfferLetterGeneration(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, 
+                        new { success = true, message = "Now proceeding to availment" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion Offer Letter & Availment 
+
+        #region Loan Collateral
         [HttpPost]
         [Route("loan-application/collateral")]
         public HttpResponseMessage SaveLoanApplicationCollateral([FromBody] List<LoanApplicationCollateralViewModel> entity)
@@ -971,39 +1002,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-        [HttpPost]
-        [Route("loan-application/offer-letter/approval")]
-        public HttpResponseMessage LogApplicationForApprovalDuringOfferLetterGeneration([FromBody] LoanAvailmentApprovalViewModel entity)
-        {
-            try
-            {
-                entity.BranchId = token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.userIPAddress = Request.RequestUri.Host;
-                entity.createdBy = token.GetStaffId;
-
-                var data = repoApply.ApproveOfferLetterGeneration(entity);
-
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, 
-                        new { success = true, message = "Now proceeding to availment" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-            }
-            catch (System.Exception ex)
-            {
-                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        #endregion Offer Letter & Availment 
-
+        #endregion Loan Collateral
     }
 }
