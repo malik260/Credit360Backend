@@ -258,6 +258,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool ForwardAppraisalMemorandum(ForwardViewModel model)
         {
             var operationId = (int)OperationsEnum.CAM;
+            var applicationDate = general.GetApplicationDate();
 
             // init
             workflow.StaffId = model.createdBy;
@@ -301,28 +302,40 @@ namespace FintrakBanking.Repositories.Credit
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Authorised) // approving authority
                 {
                     var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == memo.LOANAPPLICATIONID);
-                    if (items.Any())
+                    foreach (var item in items)
                     {
-                        foreach (var item in items)
+                        var changed = model.recommendedChanges.FirstOrDefault(x => x.detailId == item.LOANAPPLICATIONDETAILID);
+                        if (changed != null)
                         {
-                            var changed = model.recommendedChanges.FirstOrDefault(x => x.detailId == item.LOANAPPLICATIONDETAILID);
-                            if (changed != null)
+                            item.APPROVEDPRODUCTID = (short)changed.productId;
+                            item.APPROVEDAMOUNT = changed.amount;
+                            item.APPROVEDINTERESTRATE = changed.interestRate;
+                            item.APPROVEDTENOR = changed.tenor;
+                            item.STATUSID = (short)changed.statusId;
+                            item.EXCHANGERATE = changed.exchangeRate;
+                            item.LASTUPDATEDBY = model.createdBy;
+                            item.DATETIMEUPDATED = DateTime.Now;
+
+                            // log changes
+                            context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG
                             {
-                                item.APPROVEDPRODUCTID = (short)changed.productId;
-                                item.APPROVEDAMOUNT = changed.amount;
-                                item.APPROVEDINTERESTRATE = changed.interestRate;
-                                item.APPROVEDTENOR = changed.tenor;
-                                item.STATUSID = (short)changed.statusId;
-                                item.EXCHANGERATE = changed.exchangeRate;
-                                item.LASTUPDATEDBY = model.createdBy;
-                                item.DATETIMEUPDATED = DateTime.Now;
-                            }
+                                LOANAPPLICATIONID = item.LOANAPPLICATIONID,
+                                LOANAPPLICATIONDETAILID = changed.detailId,
+                                APPROVEDPRODUCTID = (short)changed.productId,
+                                APPROVEDTENOR = changed.tenor,
+                                APPROVEDINTERESTRATE = changed.interestRate,
+                                APPROVEDAMOUNT = changed.amount,
+                                EXCHANGERATE = changed.exchangeRate,
+                                STATUSID = (short)changed.statusId,
+                                CREATEDBY = model.createdBy,
+                                DATETIMECREATED = applicationDate,
+                                SYSTEMDATETIME = DateTime.Now,
+                                CUSTOMERID = item.CUSTOMERID,
+                            });
                         }
-                        var approvedAmount = items
-                            .Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved)
-                            .Sum(x => x.APPROVEDAMOUNT);
-                        appl.APPROVEDAMOUNT = approvedAmount;
                     }
+                    var approvedAmount = items.Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
+                    appl.APPROVEDAMOUNT = approvedAmount;
                 }
             }
 
@@ -345,7 +358,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
+                APPLICATIONDATE = applicationDate,
                 SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
@@ -485,6 +498,29 @@ namespace FintrakBanking.Repositories.Credit
 
                     statusId = x.STATUSID,
                     exchangeRate = x.EXCHANGERATE,
+                });
+
+            return details;
+        }
+
+        public IEnumerable<LoanApplicationDetailLogViewModel> GetLoanDetailChangeLog(int applicationId)
+        {
+            var details = context.TBL_LOAN_APPLICATION_DETL_LOG.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a,b })
+                .Select(x => new LoanApplicationDetailLogViewModel
+                {
+                    loanApplicationDetailId = x.a.LOANAPPLICATIONDETAILID,
+                    applicationId = x.a.LOANAPPLICATIONID,
+                    customerId = x.a.CUSTOMERID,
+                    approvedTenor = x.a.APPROVEDTENOR,
+                    approvedRate = x.a.APPROVEDINTERESTRATE,
+                    approvedAmount = x.a.APPROVEDAMOUNT,
+                    approvedProductId = x.a.APPROVEDPRODUCTID,
+                    statusId = x.a.STATUSID,
+                    exchangeRate = x.a.EXCHANGERATE,
+                    customerName = x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME,
+                    approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
+                    staffName = x.b.FIRSTNAME + " " + x.b.MIDDLENAME + " " + x.b.LASTNAME,
                 });
 
             return details;

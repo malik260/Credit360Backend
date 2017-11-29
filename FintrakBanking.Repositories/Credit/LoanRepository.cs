@@ -509,7 +509,9 @@ namespace FintrakBanking.Repositories.Credit
                 COMPANYID = entity.companyId,
                 CASAACCOUNTID = entity.casaAccountId,
                 BRANCHID = entity.branchId,
-                
+                SHOULD_DISBURSE = entity.loanScheduleInput.shouldDisburse,
+
+
                 PRINCIPALFREQUENCYTYPEID = entity.loanScheduleInput.principalFrequency,
                 INTERESTFREQUENCYTYPEID = entity.loanScheduleInput.interestFrequency,
 
@@ -1613,8 +1615,10 @@ namespace FintrakBanking.Repositories.Credit
                 maturityDate = maturityDate,
                 accurialBasis = loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID,
                 integralFeeAmount = integraFeeAmount,
+                shouldDisburse = loanScheduleData.SHOULD_DISBURSE,
                 firstDayType = loanScheduleData.SCHEDULEDAYINTERESTTYPEID,
-                irregularPaymentSchedule = irregularPaymentScheduleList
+                irregularPaymentSchedule = irregularPaymentScheduleList,
+                
             };
 
             return scheduleModel;
@@ -2973,36 +2977,41 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public int AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity)
+        public bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity)
         {
             var request = new TBL_LOAN_BOOKING_REQUEST
             {
                  AMOUNT_REQUESTED = entity.amount_Requested,
                  APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                 LOANAPPLICATIONDETAILID = entity.loanApplicationId,
+                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
                  DATETIMECREATED = generalSetup.GetApplicationDate(),
                  CREATEDBY = entity.createdBy,
 
             };
 
+            
+
             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
 
             if (context.SaveChanges() > 0)
             {
-                var approvalModel = new ForwardViewModel
-                {
-                    createdBy = entity.createdBy,
-                    companyId = entity.companyId,
-                    applicationId = request.LOAN_BOOKING_REQUESTID,
-                    comment = entity.comment ?? "Please This Loan Booking Request",
-                    amount = entity.amount_Requested,
-                };
+                //var approvalModel = new ForwardViewModel
+                //{
+                //    createdBy = entity.createdBy,
+                //    companyId = entity.companyId,
+                //    applicationId = request.LOAN_BOOKING_REQUESTID,
+                //    comment = entity.comment ?? "Please This Loan Booking Request",
+                //    amount = entity.amount_Requested,
+                //};
 
-                 LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending);
-                return request.LOAN_BOOKING_REQUESTID;
+                // LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending);
+
+                var book = context.TBL_LOAN_BOOKING_REQUEST.Find(request.LOAN_BOOKING_REQUESTID);
+                book.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                return context.SaveChanges() > 0;
             }
 
-            else return 0;
+            else return false;
         }
 
         public bool GoForBookingRequestApproval(ApprovalViewModel entity)
@@ -3013,9 +3022,16 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
+                    
                     workflow.LogForApproval(entity);
 
+                    if (workflow.NextLevelId == null) {
+                        entity.externalInitialization = true;
+                        workflow.LogForApproval(entity);
+                    }
+
                     var b = workflow.NextLevelId ?? 0;
+
 
                     if (b == 0 && workflow.NewState != (int)ApprovalState.Ended)
                     {

@@ -25,6 +25,5 @@ namespace FintrakBanking.Entities.Models
         public bool? ISACCEPTED { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
-
     }
 }

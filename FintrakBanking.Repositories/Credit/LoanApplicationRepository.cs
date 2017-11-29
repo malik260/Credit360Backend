@@ -806,6 +806,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
                             loanTypeId = a.LOANTYPEID,
+                            productTypeId = b.TBL_PRODUCT.PRODUCTTYPEID,
                             loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
                             camReference = c.CAMREF,
                             camDocumentation = d.CAMDOCUMENTATION,
