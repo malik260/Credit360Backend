@@ -509,7 +509,9 @@ namespace FintrakBanking.Repositories.Credit
                 COMPANYID = entity.companyId,
                 CASAACCOUNTID = entity.casaAccountId,
                 BRANCHID = entity.branchId,
-                
+                SHOULD_DISBURSE = entity.loanScheduleInput.shouldDisburse,
+
+
                 PRINCIPALFREQUENCYTYPEID = entity.loanScheduleInput.principalFrequency,
                 INTERESTFREQUENCYTYPEID = entity.loanScheduleInput.interestFrequency,
 
@@ -1613,8 +1615,10 @@ namespace FintrakBanking.Repositories.Credit
                 maturityDate = maturityDate,
                 accurialBasis = loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID,
                 integralFeeAmount = integraFeeAmount,
+                shouldDisburse = loanScheduleData.SHOULD_DISBURSE,
                 firstDayType = loanScheduleData.SCHEDULEDAYINTERESTTYPEID,
-                irregularPaymentSchedule = irregularPaymentScheduleList
+                irregularPaymentSchedule = irregularPaymentScheduleList,
+                
             };
 
             return scheduleModel;
