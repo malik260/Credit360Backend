@@ -490,7 +490,7 @@ namespace FintrakBanking.Repositories.Credit
                 SYSTEMDATETIME = DateTime.Now,
             });
             context.TBL_LOAN_APPLICATION_COLLATERAL.AddRange(data);
-         
+
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -607,7 +607,10 @@ namespace FintrakBanking.Repositories.Credit
                             ).ToList(),
                             operationId = e.OPERATIONID,
                             currentApprovalStateId = e.APPROVALSTATEID,
+                            approvalStatusId = e.APPROVALSTATUSID,
                         });
+
+            var forDebugging = data.ToList();
 
             return data;
         }
@@ -696,12 +699,12 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId)
         {
-            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanAvailment);
+            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.OfferLetterApproval);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(companyId).Where(x => x.operationId == (int)OperationsEnum.LoanAvailment).ToList();
+            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(companyId).Where(x => x.operationId == (int)OperationsEnum.OfferLetterApproval).ToList();
 
             IQueryable<CamProcessedLoanViewModel> data;
 
@@ -737,6 +740,15 @@ namespace FintrakBanking.Repositories.Credit
                         approvalLevelId = staffApprovalLevelId,
                         operationId = e.OPERATIONID,
                         currentApprovalStateId = e.APPROVALSTATEID,
+                        camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCUM.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
+                                .Select(camDoc => new CamDocumentViewModel
+                                {
+                                    appraisalMemorandumId = camDoc.APPRAISALMEMORANDUMID,
+                                    approvalLevelId = camDoc.APPROVALLEVELID,
+                                    approvalLevelName = camDoc.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                    camDocumentation = camDoc.CAMDOCUMENTATION
+                                }
+                            ).ToList(),
                     });
 
             var applicationDueForReview = data.Where(x =>
@@ -744,7 +756,7 @@ namespace FintrakBanking.Repositories.Credit
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
             return applicationDueForReview;
         }
-       
+
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId)
         {
             var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanAvailment);
@@ -756,11 +768,19 @@ namespace FintrakBanking.Repositories.Credit
 
             IQueryable<CamProcessedLoanViewModel> data;
 
+            IEnumerable<CamProcessedLoanViewModel> loanAvailmentData;
+
+            var existOnApprovalTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.LoanAvailment).Select(x => x.TARGETID).ToList();
+
             // Check if the current staff is the first level
             if (staffApprovalLevelId == approvalLvlStaff[0].approvalLevelId)
             {
                 // meaning it does not exist on the approval trail yet
-                data = GetCamProcessedLoanApplications(companyId).Where(x => x.currentApprovalStateId == null);
+                data = GetCamProcessedLoanApplications(companyId).Where(x =>
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+
+                loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId)).ToList();
             }
             else
             {
@@ -797,11 +817,11 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = e.OPERATIONID,
                             currentApprovalStateId = e.APPROVALSTATEID
                         });
-            }
 
-            var loanAvailmentData = data.Where(x =>
+                loanAvailmentData = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
+            }
 
             return loanAvailmentData;
         }
@@ -1809,7 +1829,7 @@ namespace FintrakBanking.Repositories.Credit
                         || x.middleName.ToLower().Contains(searchString.ToLower())
                         || x.customerCode == searchString)
                     ;
-                    
+
             return applications.Distinct().ToList();
         }
     }
