@@ -40,11 +40,11 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateLoanApplicationStatus(string applicationRefNumber, short applicationStatusId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId);
 
         IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int staffId, int companyId);
 
         IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId);
 
@@ -60,6 +60,11 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateDraftOfferLetter(int documentId, OfferLetterTemplateViewModel model);
 
+        bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity);
+
+        IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId);
+
+
         bool SaveFinalOfferLetter(OfferLetterTemplateViewModel model);
 
         bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity);
@@ -68,8 +73,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         OfferLetterTemplateViewModel GetFinalOfferLetterByApplRefNumber(string applicationRefNumber);
 
-        bool LogApplicationForApproval(LoanAvailmentApprovalViewModel model);
+        bool LogApplicationForApprovalDuringAvailment(LoanAvailmentApprovalViewModel model);
 
         Form3800ViewModel GenerateForm3800Template(string applicationRefNumber);
+
+        bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity);
     }
 }

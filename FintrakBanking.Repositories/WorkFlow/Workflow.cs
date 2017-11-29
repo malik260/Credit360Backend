@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             context.TBL_APPROVAL_TRAIL.Add(trail);
-            
+
             if (this.deferredExecution) { return true; }
 
             this.saved = context.SaveChanges() > 0;
@@ -307,7 +307,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 // this.skipLimitsCheck = true; // COMMENT OUT IF COMMITTEE IS AFFECTED BY LIMITS!!!!
                 allVoted = true;
-            } else
+            }
+            else
             {
                 this.skipLimitsCheck = true; // avoid approval stat changed to 4.processing
                 this.smsNotification = false;
@@ -322,7 +323,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 approvals = (this.statusId == (int)ApprovalStatusEnum.Approved) ? approvals + 1 : approvals;
                 disapprovals = (this.statusId == (int)ApprovalStatusEnum.Disapproved) ? disapprovals + 1 : disapprovals;
 
-                if (approvals != disapprovals) {
+                if (approvals != disapprovals)
+                {
                     int vetoVote = 0;
                     int voteResult = 0;
 

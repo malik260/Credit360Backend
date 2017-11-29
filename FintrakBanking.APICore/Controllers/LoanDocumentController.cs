@@ -107,6 +107,7 @@ namespace FintrakBanking.APICore.Controllers
                     loanReferenceNumber = provider.FormData["loanReferenceNumber"],
                     documentTitle = provider.FormData["documentTitle"],
                     documentTypeId = (short)uploadType,
+                    SourceId = Convert.ToInt32( provider.FormData["sourceId"]),
                     fileName = provider.FormData["fileName"],
                     fileExtension = provider.FormData["fileExtension"],
                     physicalFileNumber = provider.FormData["physicalFileNumber"],

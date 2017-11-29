@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class LoanAnniversery {
+    public partial class LoanDocumentWaived {
         
         /// <summary>
         /// form1 control.
@@ -74,23 +74,5 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label companyId;
-        
-        /// <summary>
-        /// branchId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label branchId;
-        
-        /// <summary>
-        /// staffId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label staffId;
     }
 }
