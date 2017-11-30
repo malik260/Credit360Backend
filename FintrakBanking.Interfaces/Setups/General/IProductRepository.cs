@@ -77,15 +77,11 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         #endregion
 
-        #region Product Process
-        IEnumerable<productClassProcess> GetAllProductClassProcess();
-        productClassProcess GetProductProcessByProcessId(int proccessId);
-        #endregion
-
         #region Product Class Process 
         IEnumerable<ProductClassProcessViewModel> GetAllProductClassProcesses();
         bool AddProductClassProcess(ProductClassProcessViewModel model);
         bool UpdateProductClassProcess(int productClassProcessId, ProductClassProcessViewModel model);
+        ProductClassProcessViewModel GetProductProcessByProcessId(int proccessId);
         #endregion Product Class Process
     }
 }
