@@ -926,7 +926,7 @@ namespace FintrakBanking.Repositories.Credit
                 noOfExternalConditions = 0;
 
                 conditions = conditions +
-                    "<tr><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
+                    "<tr class='removeConditions_OL'><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
                     "<p><strong> Other Conditions Precedent for Internal usage which does not have to be included in the offer " +
                     "letter.The RM must ensure compliance with these conditions before drawdown.</strong></p></td></tr> ";
 
@@ -935,7 +935,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var item in productInternalConditions)
                 {
                     conditions = conditions +
-                        $"<tr>" +
+                        $"<tr class='removeConditions_OL'>" +
                         $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfInternalConditions}</li></ol></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
@@ -992,7 +992,7 @@ namespace FintrakBanking.Repositories.Credit
                 noOfExternalConditions = 0;
 
                 conditions = conditions +
-                    "<tr><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
+                    "<tr class='removeConditions_OL'><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
                     "<strong> Other Conditions Subsequent for Internal usage which does not have to be included in the offer " +
                     "letter.The RM must ensure compliance with these conditions after drawdown.</strong></td></tr> ";
 
@@ -1001,7 +1001,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var item in productInternalConditions)
                 {
                     conditions = conditions +
-                        $"<tr>" +
+                        $"<tr class='removeConditions_OL'>" +
                         $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfInternalConditions}</li></ol></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'>{item.conditionPrecident}</td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'>{prod.productName}</td>" +
