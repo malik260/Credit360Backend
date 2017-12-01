@@ -527,7 +527,6 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-
         public IEnumerable<LoanClassificationViewModel> CalLoanClassification(DateTime applicationDate)
 
         {
