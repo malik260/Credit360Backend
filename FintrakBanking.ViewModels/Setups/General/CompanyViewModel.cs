@@ -40,5 +40,6 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? lastUpdatedBy { get; set; }
         public DateTime? dateTimeCreated { get; set; }
         public DateTime? dateTimeUpdated { get; set; }
+        public string natureOfBusiness { get; set; }
     }
 }

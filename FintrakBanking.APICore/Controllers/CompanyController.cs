@@ -31,7 +31,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (companys == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
+                       new { success = false, result = companys, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -49,78 +49,70 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("{companyId}")]
-        public HttpResponseMessage Get(  int companyId)
-        { try
-                {
-                    //var companys = repo.GetcompanyViewModel(companyId);
-                    //return Request.CreateResponse(HttpStatusCode.OK, Ok(companys);
-
-                    var company = repo.GetCompanyViewModel(companyId);
-                    if (company == null)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "No record found" });
-                    }
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = true, result = company });
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
-                } 
-        }
-
-        // POST api/values
-        [HttpPost]
-        [Route("")]
-        public HttpResponseMessage AddCompany(   [FromBody] CompanyViewModel model)
-        { 
-                try
-                {
-                    var data = repo.AddCompany(model);
-                    if (data)
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                   new { success = true, message = "company has been created successfully" });
-                    }
-                    else
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                                   new { success = false, message = "company not created" });
-                }
-                catch (System.Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
-                } 
-        }
-
-        [HttpPut]
-        [Route("{companyId}")]
-        public HttpResponseMessage UpdateCompany(   int companyId, [FromBody] CompanyViewModel model)
-        { 
-                if (model == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
+        public HttpResponseMessage Get(int companyId)
+        {
+            try
+            {
 
                 var company = repo.GetCompanyViewModel(companyId);
                 if (company == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
+                           new { success = false, message = "No record found" });
                 }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = company });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
-                try
+        // POST api/values
+        [HttpPost]
+        [Route("")]
+        public HttpResponseMessage AddCompany([FromBody] CompanyViewModel model)
+        {
+            try
+            {
+                var data = repo.AddCompany(model);
+                if (data)
                 {
-                    repo.UpdateCompany(model);
-
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = model.companyId, message = "company has been updated successfully" });
+                               new { success = true, message = "company has been created successfully" });
                 }
-                catch (System.Exception ex)
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                               new { success = false, message = "company not created" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [Route("{companyId}")]
+        public HttpResponseMessage UpdateCompany(int companyId, [FromBody] CompanyViewModel model)
+        {
+            try
+            {
+                var data = repo.UpdateCompany(companyId, model);
+
+                if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
-                } 
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, message = "company has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "company has not been updated successfully" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
     }
 }
