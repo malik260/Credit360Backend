@@ -28,49 +28,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("product-category")]
-        public HttpResponseMessage GetAllProductCategory()
-        {
-            try
-            {
-                var data = repo.GetAllProductCategory();
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-
-                    new { success = true, result = data });  //Ok(accounts);
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpGet]
-        [Route("product-class")]
-        public HttpResponseMessage GetAllProductClass()
-        {
-            try
-            {
-                var data = repo.GetAllProductClass().ToList();
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
-
-            }
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpGet]
         [Route("product/group")]
         public HttpResponseMessage GetProductByProductGroup()
         {
@@ -260,6 +217,115 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("product-category")]
+        public HttpResponseMessage GetAllProductCategory()
+        {
+            try
+            {
+                var data = repo.GetAllProductCategory();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("product-class-by-cusstomertype/{id}")]
+        public HttpResponseMessage GetAllProductClassByCustomerTypeId(int id)
+        {
+            try
+            {
+                var data = repo.GetAllProductClassByCustomerTypeId(id).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("product-class/customertype/{customertypeid}/process/{processId}")]
+        public HttpResponseMessage GetAllProductClass(int customertypeid, int processId)
+        {
+            try
+            {
+                var data = repo.GetAllProductClass(customertypeid, processId).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        //1137
+        //@B@cus7#12
+        [HttpGet]
+        [Route("product-class")]
+        public HttpResponseMessage GetAllProductClass()
+        {
+            try
+            {
+                var data = repo.GetAllProductClass().ToList(); 
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("product-class/product-processid/{id}")]
+        public HttpResponseMessage GetProductClassByProcessId(int id)
+        {
+            try
+            {
+                var data = repo.GetProductClassByProcessId(id) ;
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
         #endregion Product Group
 
         #region Product Type
@@ -439,12 +505,57 @@ namespace FintrakBanking.APICore.Controllers
         #region Product Region
 
         [HttpGet]
+        [Route("product-by-productclass/{id}")]
+        public HttpResponseMessage GetAllProduct(int id)
+        {
+            try
+            {
+                 
+                var data = repo.GetAllProductByProductClass(id).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("product")]
         public HttpResponseMessage GetAllProduct()
         {
             try
             {
                 var data = repo.GetAllProduct().ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-product")]
+        public HttpResponseMessage GetAllLoanProduct()
+        {
+            try
+            {
+                var data = repo.GetAllLoanProduct().ToList();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -950,7 +1061,7 @@ namespace FintrakBanking.APICore.Controllers
         #region Product Class Process
 
         [HttpGet]
-        [Route("product-class-process")]
+        [Route("product-process")]
         public HttpResponseMessage GetAllProductClassProcess()
         {
             try
@@ -961,10 +1072,10 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK,
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
 
-                    new { success = true, result = data });
             }
+
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -972,7 +1083,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("product-class-process")]
+        [Route("product-process")]
         public HttpResponseMessage AddProductClassProcess([FromBody] ProductClassProcessViewModel model)
         {
             try
@@ -994,12 +1105,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("product-class-process/{productClassProcessId}")]
-        public HttpResponseMessage UpdateProductClassProcess(int productClassProcessId, [FromBody] ProductClassProcessViewModel model)
+        [Route("product-process/{productProcessId}")]
+        public HttpResponseMessage UpdateProductClassProcess(int productProcessId, [FromBody] ProductClassProcessViewModel model)
         {
             try
             {
-                var data = repo.UpdateProductClassProcess(productClassProcessId, model);
+                var data = repo.UpdateProductClassProcess(productProcessId, model);
                 if (!data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1015,6 +1126,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpGet]
+        //[Route("product-process/{id}")]
+        //public HttpResponseMessage GetProductProductProcessById(int id)
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetProductClassProcess(id);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
         #endregion Product Class Process
 

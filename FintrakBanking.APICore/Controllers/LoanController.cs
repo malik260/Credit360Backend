@@ -197,6 +197,26 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+        [HttpGet]
+        [Route("gaurantor/application/{applicationReferenceNumber}")]
+        public HttpResponseMessage GetLoanGuarantors(int applicationReferenceNumber)
+        {
+            try
+            {
+                var data = repo.GetLoanGuarantors(applicationReferenceNumber);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpPost]
         [Route("loan-booking")]
         public  HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
@@ -224,6 +244,35 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
+        [HttpPost]
+        [Route("gaurantor/product-type/{productTypeId}/application/{applicationReferenceNumber}")]
+        public HttpResponseMessage AddLoanGuarantor( [FromBody] LoanGuarantorViewModel entity, short productTypeId, int applicationReferenceNumber)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.AddLoanGuarantor(entity, productTypeId, applicationReferenceNumber);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The Loan Gaurantor successful added " });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error saving gaurantor" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving gaurantor {e.Message}" });
+            }
+        }
+
 
         [HttpGet]
         [Route("appraisal-loan-details-updates/{appraisalMemorandumId}")]
@@ -850,13 +899,13 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         #region (Loan Application Date) Pre - Loan booking
 
         [HttpGet]
-        [Route("loan-application/credit-assessment-memorandum")]
-        public HttpResponseMessage GetAppraisalMemorandumProcessedLoanApplications()
+        [Route("loan-application/availment-completed")]
+        public HttpResponseMessage GetAvailedLoanApplications()
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repo.GetAppraisalMemorandumProcessedLoanApplications(token.GetCompanyId);
+                var response = repo.GetAvailedLoanApplications(token.GetCompanyId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -867,6 +916,129 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application-details/{applicationDetailId}")]
+        public HttpResponseMessage GetLoanApplicationDetails(int applicationDetailId)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetLoanApplicationDetails(applicationDetailId, token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/initiated-booking")]
+        public HttpResponseMessage GetInitiatedLoanBooking()
+
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetRequestedLoanBooking(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-booking-request/awaiting-approval")]
+        public HttpResponseMessage GetRequestedLoanBookingAwaitingApproval()
+
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetRequestedLoanBookingAwaitingApproval(token.GetCompanyId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-application/request-booking/{applicationId}")]
+        public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] LoanBookingRequestViewModel entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.AddLoanBookingRequest(applicationId, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, data = data, message = "Booking successfully initiated!" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = false, message = "Initiating Booking was unsuccessful!" });
+            }
+            catch (System.Exception ex)
+             {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false,  message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("booking-request/approval")]
+        public HttpResponseMessage ApproveLoanBookingRequest(ApprovalViewModel model)
+        {
+            try
+            {
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.BranchId = (short)token.GetBranchId;
+                model.staffId = token.GetStaffId;
+
+                var data = repo.GoForBookingRequestApproval(model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, message = "Loan Booking Request has been approved successfully" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
             }
         }
 

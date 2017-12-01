@@ -16,32 +16,14 @@ namespace FintrakBanking.ViewModels.Customer
         public string previousCreditRating { get; set; }
         public int? paidUpCapital { get; set; }
         public int? authorizedCapital { get; set; }
+        public decimal? shareholderFund { get; set; }
         public List<CustomerCompanyDirectorsViewModels> companyDiretcors { get; set; }
         public List<CustomerCompanyShareholdersViewModels> companyShareholders { get; set; }
         public List<CustomerCompanyAccountSignatoryViewModels> companyAccountSignatories { get; set; }
 
     }
 
-    public class CustomerCompanyDirectorsViewModels : GeneralEntity
-    {
-        public int companyDirectorId { get; set; }
-        public int customerId { get; set; }
-        public short customerTypeId { get; set; }
-        public string customerName { get; set; }
-        public string surname { get; set; }
-        public string firstname { get; set; }
-        public string fullname { get; set; }
-        public string bankVerificationNumber { get; set; }
-        public short companyDirectorTypeId { get; set; }
-        public string companyDirectorTypeName { get; set; }
-        public string rcNumber { get; set; }
-        public string taxNumber { get; set; }
-        public int numberOfShares { get; set; }
-        public bool isPoliticallyExposed { get; set; }
-        public string address { get; set; }
-        public string phoneNumber { get; set; }
-        public string email { get; set; }
-    }
+  
     public class CustomerCompanyShareholderViewModels
     {
         public int companyDirectorId { get; set; }
@@ -106,6 +88,11 @@ namespace FintrakBanking.ViewModels.Customer
         public string firstName { get; set; }
         public string middleName { get; set; }
         public string lastName { get; set; }
+        public string rcNumber { get; set; }
+        public string taxNumber { get; set; }
+        public string contactPerson { get; set; }
+        public bool? hasCASAAccount { get; set; }
+        public string casaAccountNumber { get; set; }
         public string client_SupplierAddress { get; set; }
         public string client_SupplierPhoneNumber { get; set; }
         public string client_SupplierEmail { get; set; }

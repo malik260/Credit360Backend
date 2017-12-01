@@ -9,8 +9,10 @@ namespace FintrakBanking.Common.Enum
   
     public enum CheckListStatusEnum 
     {
-       Waived = 1,
-       Provided = 2,
-       Deferred = 3
+       Waived = 2,
+       Provided = 3,
+       Deferred = 4,
+       Yes = 5,
+       No = 6
     }
 }

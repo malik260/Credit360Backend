@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Customer
 {
-   public class KYCDocumentUploadRepository : IKYCDocumentUploadRepository
+    public class KYCDocumentUploadRepository : IKYCDocumentUploadRepository
     {
         private FinTrakBankingDocumentsContext context;
         private IGeneralSetupRepository general;
@@ -32,8 +32,8 @@ namespace FintrakBanking.Repositories.Customer
                 var data = new TBL_MEDIA_KYC_DOCUMENTS
                 {
                     FILEDATA = file,
-                   CUSTOMERID = model.customerId,
-                   CUSTOMERCODE = model.customerCode,
+                    CUSTOMERID = model.customerId,
+                    CUSTOMERCODE = model.customerCode,
                     DOCUMENTTITLE = model.documentTitle,
                     DOCUMENTTYPEID = model.documentTypeId,
                     FILENAME = model.fileName,
@@ -72,7 +72,7 @@ namespace FintrakBanking.Repositories.Customer
         }
         public IEnumerable<CustomerDocumentUploadViewModel> GetKYCDocumentUploadByCustomerId(int customerId)
         {
-            return this.context.TBL_MEDIA_KYC_DOCUMENTS.Where(x=> x.CUSTOMERID == customerId).Select(x => new CustomerDocumentUploadViewModel
+            return this.context.TBL_MEDIA_KYC_DOCUMENTS.Where(x => x.CUSTOMERID == customerId).Select(x => new CustomerDocumentUploadViewModel
             {
                 documentId = x.DOCUMENTID,
                 customerId = x.CUSTOMERID,
@@ -87,15 +87,15 @@ namespace FintrakBanking.Repositories.Customer
                 physicalLocation = x.PHYSICALLOCATION,
             });
         }
-        
-       public bool CheckListDocumentUpload(CheckListDocumentUploadViewModel model, byte[] file)
+
+        public bool CheckListDocumentUpload(CheckListDocumentUploadViewModel model, byte[] file)
         {
             try
             {
                 var data = new TBL_MEDIA_CHECKLIST_DOCUMENTS
                 {
                     FILEDATA = file,
-                   CHECKLISTDEFINITIONID = model.checkListDefinitionId,
+                    CHECKLISTDEFINITIONID = model.checkListDefinitionId,
                     CHECKLISTSTATUSID = model.checkListStatusId,
                     LOANAPPLICATIONID = model.loanApplicationId,
                     LOANDETAILSID = model.loanDetailsId,
@@ -132,6 +132,20 @@ namespace FintrakBanking.Repositories.Customer
 
                 throw ex;
             }
+        }
+        public CheckListDocumentUploadViewModel CheckListDocumentUploadViewModel(int definitionId, int statusId, int detailId)
+        {
+            var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
+                               where ck.CHECKLISTDEFINITIONID == definitionId
+                                && ck.CHECKLISTSTATUSID == statusId
+                                && ck.LOANDETAILSID == detailId
+                               select new CheckListDocumentUploadViewModel()
+                               {
+                                   fileData = ck.FILEDATA,
+                                   fileName = ck.FILENAME,
+                                   fileExtension = ck.FILEEXTENSION
+                               }).FirstOrDefault();
+            return checklistDoc;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? receiverStaffId { get; set; }
         public decimal amount { get; set; }
         public bool politicallyExposed { get; set; }
-        public int? vote { get; set; }
+        public short? vote { get; set; }
         public string comment { get; set; }
         public decimal principal { get; set; }
         public double rate { get; set; }
@@ -43,6 +43,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<ApprovedLoanDetailViewModel> lineItems { get; set; }
         public List<RecommendedChangesViewModel> recommendedChanges { get; set; }
         public int applicationTenor { get; set; }
+        public int operationId { get; set; }
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity
@@ -109,5 +110,60 @@ namespace FintrakBanking.ViewModels.Credit
         public int tenor { get; set; }
         public string productName { get; set; }
         public int convertedAmount { get; set; }
+        public int loanApplicationDetailId { get; set; }
     }
+
+    public class CurrentCommitteeViewModel
+    {
+        public int approvalLevelId { get; set; }
+        public string approvalLevelName { get; set; }
+        public int numberOfApprovals { get; set; }
+        public int groupRoleId  { get; set; }
+        public string approvalGroupName { get; set; }
+        public int staffId { get; set; }
+        public string staffName { get; set; }
+        public int? vote { get; set; }
+        public string comment { get; set; }
+    }
+
+    public class ForwardCommitteeCamViewModel : GeneralEntity
+    {
+        public int applicationId { get; set; }
+        public decimal amount { get; set; }
+        public int tenor { get; set; }
+        public bool investmentGrade { get; set; }
+        public bool politicallyExposed { get; set; }
+        public List<CurrentCommitteeViewModel> votes { get; set; }
+    }
+
+    public class LoanApplicationDetailLogViewModel : GeneralEntity
+    {
+        public int loanApplicationDetailId { get; set; }
+
+        public string customerName { get; set; }
+
+        public string approvedProductName { get; set; }
+
+        public short approvedProductId { get; set; }
+
+        public int approvedTenor { get; set; }
+
+        public double approvedRate { get; set; }
+
+        public decimal approvedAmount { get; set; }
+
+        public string currencyName { get; set; }
+
+        public double exchangeRate { get; set; }
+
+        public short statusId { get; set; }
+
+        public decimal exchangeAmount { get { return (decimal)exchangeRate * approvedAmount; } }
+
+        public int customerId { get; set; }
+
+        public int applicationId { get; set; }
+        public string staffName { get; set; }
+    }
+
 }

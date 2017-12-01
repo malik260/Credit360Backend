@@ -70,6 +70,7 @@
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
+    <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Models\TBL_CHECKLIST_ITEM.cs" />
     <Compile Include="Models\TBL_CHECKLIST_STATUS.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TARGETTYPE.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_TYPE.cs" />
     <Compile Include="Models\TBL_CITY.cs" />
     <Compile Include="Models\TBL_CITY_CLASS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_CASA.cs" />
@@ -229,8 +231,10 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATERAL.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_STA.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_LOG.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
     <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_LOAN_BOOKING_REQUEST.cs" />
     <Compile Include="Models\TBL_LOAN_BULK_INTEREST_REVIEW.cs" />
     <Compile Include="Models\TBL_LOAN_CAMSOL.cs" />
     <Compile Include="Models\TBL_LOAN_COLLATERAL_MAPPING.cs" />
@@ -276,6 +280,7 @@
     <Compile Include="Models\TBL_MONITORING_SETUP.cs" />
     <Compile Include="Models\TBL_NATURE_OF_BUSINESS.cs" />
     <Compile Include="Models\TBL_NOTIFICATION_LOG.cs" />
+    <Compile Include="Models\TBL_OFFERLETTER.cs" />
     <Compile Include="Models\TBL_OPERATIONS.cs" />
     <Compile Include="Models\TBL_OPERATIONS_TYPE.cs" />
     <Compile Include="Models\TBL_PRODUCT.cs" />
@@ -349,6 +354,7 @@
     <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
+    <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

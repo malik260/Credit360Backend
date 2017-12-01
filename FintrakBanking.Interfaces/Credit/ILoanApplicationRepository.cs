@@ -34,17 +34,17 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationsDetails(int loanApplicationId, int companyId);
 
-        TBL_LOAN_APPLICATION AddLoanApplication(LoanApplicationViewModel loan);
+        int AddLoanApplication(LoanApplicationViewModel loan);
 
         //IEnumerable<CamProcessedLoanViewModel> GetCamProcessedLoanApplications(int companyId);
 
         bool UpdateLoanApplicationStatus(string applicationRefNumber, short applicationStatusId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int staffId, int companyId);
 
         IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId);
 
@@ -52,12 +52,31 @@ namespace FintrakBanking.Interfaces.Credit
 
         OfferLetterTemplateViewModel GenerateOfferLetterTemplate(string applicationRefNumber);
 
-        OfferLetterTemplateViewModel GetPreparedOfferLetterByApplRefNumber(string applicationRefNumber);
+        OfferLetterTemplateViewModel GetDraftOfferLetterByApplRefNumber(string applicationRefNumber);
 
-        IEnumerable<OfferLetterTemplateViewModel> GetAllPreparedOfferLetters();
+        IEnumerable<OfferLetterTemplateViewModel> GetAllDraftOfferLetters();
 
         bool SaveDraftOfferLetter(OfferLetterTemplateViewModel model);
 
         bool UpdateDraftOfferLetter(int documentId, OfferLetterTemplateViewModel model);
+
+        bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity);
+
+        IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId);
+
+
+        bool SaveFinalOfferLetter(OfferLetterTemplateViewModel model);
+
+        bool ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity);
+
+        IEnumerable<OfferLetterTemplateViewModel> GetAllFinalOfferLetters();
+
+        OfferLetterTemplateViewModel GetFinalOfferLetterByApplRefNumber(string applicationRefNumber);
+
+        bool LogApplicationForApprovalDuringAvailment(LoanAvailmentApprovalViewModel model);
+
+        Form3800ViewModel GenerateForm3800Template(string applicationRefNumber);
+
+        bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity);
     }
 }

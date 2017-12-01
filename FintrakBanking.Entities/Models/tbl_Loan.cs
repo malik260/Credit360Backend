@@ -103,6 +103,8 @@ namespace FintrakBanking.Entities.Models
 
         public short SCHEDULEDAYINTERESTTYPEID { get; set; }
 
+        public bool SHOULD_DISBURSE { get; set; }
+
         public bool ISDISBURSED { get; set; }
 
         public int? DISBURSEDBY { get; set; }

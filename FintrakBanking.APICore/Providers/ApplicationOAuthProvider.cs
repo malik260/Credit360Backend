@@ -74,7 +74,6 @@ namespace FintrakBanking.APICore.Providers
             ClaimsIdentity identity;
             var _authRepo = new AuthenticationRepository(repo);
 
-
             if (AuthenticationType == AuthenticationTypeEnum.activeDirectory.ToString())
             {
                 if (!Task.FromResult(ValidateCredentials(context.UserName, context.Password, out identity)).Result)
@@ -88,12 +87,7 @@ namespace FintrakBanking.APICore.Providers
                 }
             }
 
-
-         
-
-
             bool isUserAccountValid;
-
 
             if (Task.FromResult(_authRepo.IsUserAccountValid(userVM.username)).Result)
             {
@@ -103,7 +97,6 @@ namespace FintrakBanking.APICore.Providers
             {
                 isUserAccountValid = false;
             }
-
 
             if (AuthenticationType == AuthenticationTypeEnum.defaultAuth.ToString())
             {
@@ -119,9 +112,6 @@ namespace FintrakBanking.APICore.Providers
 
             if (isUserAccountValid)
             {
-              
-
-
                 var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
                 var currUser = user;
 

@@ -1,5 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LoanAnniversery.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.LoanAnniversery" %>
- <%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
+<%@ Register assembly="Microsoft.ReportViewer.WebForms, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
  <%@ Register assembly="Microsoft.ReportViewer.WebForms" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb" %>
 
@@ -12,6 +12,7 @@
 <body>
     <form id="form1" runat="server">
         <div>
+
              <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
 
@@ -25,12 +26,7 @@
             </LocalReport>
         </rsweb:ReportViewer>
      
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="LoanAnniversery" TypeName="FintrakBanking.ReportObjects.LoanReportObjects" InsertMethod="LoanAnniversery">
-            <InsertParameters>
-                <asp:Parameter Name="startDate" Type="DateTime" />
-                <asp:Parameter Name="endDate" Type="DateTime" />
-                <asp:Parameter Name="companyId" Type="Int32" />
-            </InsertParameters>
+        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="LoanAnniversery" TypeName="FintrakBanking.ReportObjects.LoanReportObjects">
             <SelectParameters> 
                 <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />
                 <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
@@ -39,9 +35,14 @@
             </SelectParameters>
         </asp:ObjectDataSource>
         </div>
-        <asp:Label ID="endDate" runat="server" Visible="false" ></asp:Label>
+
+         <asp:Label ID="endDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="startDate" runat="server" Visible="false" ></asp:Label>
         <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label>
+        
+        <asp:Label ID="branchId" runat="server"  Visible="false" ></asp:Label>
+        
+        <asp:Label ID="staffId" runat="server"  Visible="false" ></asp:Label>
     </form>
 </body>
 </html>

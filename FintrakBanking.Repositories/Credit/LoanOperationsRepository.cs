@@ -6131,7 +6131,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from a in context.TBL_LOAN
                         join b in context.TBL_CHECKLIST_DETAIL on a.LOANAPPLICATIONDETAILID equals b.TARGETID
-                        where b.TARGETTYPEID == (short)CheckListTargetTypeEnum.Loan && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                        where b.TARGETTYPEID == (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                         && b.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred && DbFunctions.TruncateTime(b.DEFEREDDATE) >= DbFunctions.TruncateTime(systemDate)
                         select new LoanRepaymentViewModel()
                         {

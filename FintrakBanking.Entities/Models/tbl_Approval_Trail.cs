@@ -33,8 +33,6 @@ namespace FintrakBanking.Entities.Models
         public int? FROMAPPROVALLEVELID { get; set; }
 
         public int? TOAPPROVALLEVELID { get; set; }
-        public int? TOSTAFFID { get; set; }
-        public int? TOBRANCHID { get; set; }
 
         public short APPROVALSTATEID { get; set; }
 
@@ -45,7 +43,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(700)]
         public string COMMENT { get; set; }
 
-        public int? VOTE { get; set; }
+        public short? VOTE { get; set; }
+
+        public int? TOSTAFFID { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
@@ -55,6 +55,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
+        public virtual TBL_APPROVAL_VOTE_OPTION TBL_APPROVAL_VOTE_OPTION { get; set; }
+
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
@@ -62,5 +64,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_STAFF TBL_STAFF { get; set; }
 
         public virtual TBL_STAFF TBL_STAFF1 { get; set; }
+
+        public virtual TBL_STAFF TBL_STAFF2 { get; set; }
     }
 }

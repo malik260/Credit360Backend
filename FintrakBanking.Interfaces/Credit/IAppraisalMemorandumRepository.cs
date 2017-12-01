@@ -16,18 +16,22 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool ForwardAppraisalMemorandum(ForwardViewModel model);
 
-        //IEnumerable<AppraisalMemorandumViewModel> GetAllAppraisalMemorandum();
-
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 
         IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId);
 
         IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId);
 
+        IEnumerable<LoanApplicationDetailLogViewModel> GetLoanDetailChangeLog(int applicationId);
+
         PrivilegeViewModel GetUserPrivilege(int staffId, int applicationId, int operationId);
 
         bool Confirmation(int type, int applicationId);
 
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int countryId, int branchId, int staffId);
+
+        IEnumerable<CurrentCommitteeViewModel> GetCurrentCommittee(int loanApplicationId);
+
+        bool SecretariatForwardAppraisalMemorandum(ForwardCommitteeCamViewModel entity);
     }
 }

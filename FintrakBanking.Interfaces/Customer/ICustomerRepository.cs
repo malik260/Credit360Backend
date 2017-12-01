@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Customer;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,9 @@ namespace FintrakBanking.Interfaces.Customer
 {
     public interface ICustomerRepository
     {
-         CustomerViewModels GetCustomer(int custormerId);
+        CustomerViewModels GetCustomer(int custormerId);
         IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId);
+        IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLoanId(int loanApplicationId);
 
         IEnumerable<CustomerViewModels> GetCustomerByBranchId(int branchId);
 
@@ -30,6 +32,8 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerViewModels> GetCustomerByTypeId(int customerTypeId);
 
 
+        dynamic GetCustomerAndType(int custormerId);
+
         dynamic GetCustomerRating(int custormerId);
 
         bool AddCustomer(CustomerViewModels entity);
@@ -37,7 +41,7 @@ namespace FintrakBanking.Interfaces.Customer
         //Task<bool> UpdateCustomer(int customerId, CustomerViewModels entity);
         bool UpdateCustomer(int customerId, CustomerViewModels entity);
 
-        Task<bool> DeleteCustomer(int customerId,  UserInfo user);
+        Task<bool> DeleteCustomer(int customerId, UserInfo user);
 
         bool AddCustomerIdentification(CustomerIdentificationViewModels entity);
 
@@ -57,7 +61,7 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool AddCustomerChildren(List<CustomerChildrenViewModel> models, int staffId, short BranchId);
 
-        IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search) ;
+        IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search);
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
         IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery);
@@ -73,9 +77,23 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerIdentificationViewModels> GetSingleCustomerIdentificationInfo(int customerId);
         IEnumerable<CustomerEmploymentHistoryViewModels> GetSingleCustomerEmploymentHistoryInfo(int customerId);
         IEnumerable<CustomerCompanyDirectorsViewModels> GetSingleCustomerDirectorInfo(int customerId, short directorTypeId);
+        IEnumerable<CustomerCompanyDirectorsViewModels> GetSingleCustomerShareholderInfo(int customerId, short customerTypeId);
         IEnumerable<CustomerClientOrSupplierViewModels> GetSingleCustomerClientOrSupplierInfo(int customerId, short clientTypeId);
         IEnumerable<CustomerChildrenViewModel> GetSingleCustomerChildrenInfo(int customerId);
+        IEnumerable<CustomerCompanyBeneficiaryViewModels> GetShareholderUltimateBeneficial(int companyDirectorId);
+        IEnumerable<CasaViewModel> GetCustomerCASAInformation(int customerId);
         #endregion
 
+        #region  Customer Information Validation
+        bool ValidateCustomerBVN(int customerId, string customerBvn);
+        bool ValidateCustomerRCnumber(int customerId, string rcNumber);
+        bool ValidateCustomerTIN(int customerId, string tin);
+        bool ValidateCustomerEmail(int customerId, string email);
+
+        //TBL_CUSTOMER_CLIENT_SUPPLIER
+        bool ValidateClientSupplierEmail(int customerId, string email);
+        bool ValidateClientSupplierRCnumber(int customerId, string rcNumber);
+        bool ValidateClientSupplierTIN(int customerId, string taxNumber);
+        #endregion
     }
 }

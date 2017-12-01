@@ -17,7 +17,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 startDate.Text = Request.QueryString["startDate"];
                 endDate.Text = Request.QueryString["endDate"];
                 companyId.Text = Request.QueryString["companyId"];
-
+                branchId.Text = Request.QueryString["branchId"];
+                staffId.Text = Request.QueryString["staffId"];
 
                 ReportParameter sDate = new ReportParameter("startDate", startDate.Text);
                 ReportParameter eDate = new ReportParameter("endDate", endDate.Text);
@@ -25,6 +26,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                 ReportViewer.LocalReport.Refresh();
             }
+
         }
     }
 }

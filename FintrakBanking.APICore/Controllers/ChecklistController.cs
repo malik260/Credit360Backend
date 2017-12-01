@@ -149,7 +149,98 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        [HttpGet]
+        [Route("checklist-definition-checklisttype/")]
+        public HttpResponseMessage GetChecklistDefinitionByApprovalLevelCheckListType(int operationId,int checklistTypeId ,int? productId, int loanTargetId)
+        {
+            try
+            {
+                var data = repo.GetChecklistDefinitionByApprovalLevelCheckListType(token.GetStaffId, productId, loanTargetId, operationId, checklistTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
+        [HttpGet]
+        [Route("checklist-type")]
+        public HttpResponseMessage GetAllChecklistType()
+        {
+            try
+            {
+                var data = repo.GetAllChecklistType();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
+        [HttpGet]
+        [Route("checklist-type-byapprovallevel")]
+        public HttpResponseMessage GetChecklistTypeByApprovalLevel()
+        {
+            try
+            {
+                var data = repo.GetChecklistTypeByApprovalLevel(token.GetStaffId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
+        [HttpGet]
+        [Route("checklist-detail-valitation")]
+        public HttpResponseMessage GetChecklistByCheckListTypeAndTargetId(int targetId, int checklistTypeId)
+        {
+            try
+            {
+                var data = repo.GetChecklistByCheckListTypeAndTargetId(targetId, checklistTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
         [HttpGet]
         [Route("checklist-definition/{CheckListDefinitionId}")]
         public HttpResponseMessage GetAllChecklistDefinitionById(short CheckListDefinitionId)
@@ -742,7 +833,28 @@ namespace FintrakBanking.APICore.Controllers
                 new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [Route("checklist-status-yesorno")]
+        public HttpResponseMessage GetChecklistStatusYesorNo()
+        {
+            try
+            {
+                var data = repo.GetChecklistStatusYesorNo();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = "No record found" });
+                }
 
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         [HttpGet]
         [Route("checklist-target-type")]
         public HttpResponseMessage GetAllChecklistTargetType()
@@ -788,7 +900,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       
+        [HttpPut]
+        [Route("validate-checklist-details")]
+        public HttpResponseMessage ValidateChecklistDetail([FromBody] ValidateChecklistDetailViewModel model)
+        {
+            try
+            {  
+                var data = repo.ValidateChecklistDetail(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+
+        }
         #endregion
     }
 }

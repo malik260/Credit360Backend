@@ -28,7 +28,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerGroupId { get; set; }
         public string customerGroupCode { get; set; }
         public short loanTypeId { get; set; }
-
+        public int casaAccountId { get; set; }
         public short currencyId { get; set; }
         public string currencyCode { get; set; }
         public short loanStatusId { get; set; }
@@ -100,6 +100,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public string lastName { get; set; }
         public int groupRoleId { get; set; }
+        public string accountNumber { get; set; }
         //{
         //    get {  return (LoanApplicationDetail.Max(c => c.proposedTenor) / 12) * 365;
         //         }

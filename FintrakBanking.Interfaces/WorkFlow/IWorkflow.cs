@@ -21,7 +21,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         int NewState { get; }
         int? NextLevelId { get; set; }
         bool EmailNotification { set; }
-        int? Vote { set; }
+        short? Vote { set; }
         bool InvestmentGrade { set; }
         bool PoliticallyExposed { set; }
         bool SmsNotification { set; }
@@ -32,5 +32,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool Saved { get; }
 
         bool LogForApproval(ApprovalViewModel model);
+
+        bool ForcefullyEndProcess { set; }
     }
 }
