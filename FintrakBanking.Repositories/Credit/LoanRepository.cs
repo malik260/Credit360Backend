@@ -1635,7 +1635,20 @@ namespace FintrakBanking.Repositories.Credit
 
                     //...................Build Disbursement Model & Invoke Loan Disbursement....................
                     var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-                    DisburseLoan(loanDisbursementModel);
+                    var systemDate = generalSetup.GetApplicationDate();
+                    if (loanScheduleModel.effectiveDate < systemDate && loanScheduleModel.deleted == false)
+                    {
+                        //DisburseLoan(loanDisbursementModel);
+                    }
+                    else if(loanScheduleModel.effectiveDate < systemDate && loanScheduleModel.deleted == true)// change to delete to IsDisbursed
+                    {
+                       // DisburseLoan(loanDisbursementModel);
+                    }
+                    else
+                    {
+                        DisburseLoan(loanDisbursementModel);
+                    }
+
 
                     loanRecord.LOANSTATUSID = 1;
                     loanRecord.ISDISBURSED = true;
@@ -1692,8 +1705,8 @@ namespace FintrakBanking.Repositories.Credit
             var loanFeeData = context.TBL_LOAN_FEE.Where(x => x.LOANID == targetId && x.ISINTEGRALFEE == true);
             double integraFeeAmount = 0;
 
-            var applicationDate = generalSetup.GetApplicationDate();
-            var maturityDate = applicationDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+            var effectiveDate = loanScheduleData.EFFECTIVEDATE; // generalSetup.GetApplicationDate();
+            var maturityDate = effectiveDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
             foreach (var record in loanFeeData)
             {
@@ -1710,7 +1723,7 @@ namespace FintrakBanking.Repositories.Credit
                 scheduleMethodId = loanScheduleData.SCHEDULETYPEID,
 
                 principalAmount = (double)loanScheduleData.PRINCIPALAMOUNT,
-                effectiveDate = applicationDate,
+                effectiveDate = effectiveDate,
                 interestRate = loanScheduleData.INTERESTRATE,
                 principalFrequency = loanScheduleData.PRINCIPALFREQUENCYTYPEID,
                 interestFrequency = loanScheduleData.INTERESTFREQUENCYTYPEID,

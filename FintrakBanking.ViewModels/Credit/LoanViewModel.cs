@@ -491,15 +491,19 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int daysInAYear { get; set; }
 
-
-
-
     }
-
 
     public class SubAllocationViewModel 
     {
         public int fromLoanId  { get; set; }
         public decimal fromAmount  { get; set; }
+    }
+
+    public class LoanClassificationViewModel 
+    {
+        public int loanId { get; set; }
+        public decimal amount { get; set; }
+        public string refNo  { get; set; }
+
     }
 }
