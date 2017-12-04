@@ -17,6 +17,7 @@ using FintrakBanking.Interfaces.Setups.Credit;
 using System.Data.SqlClient;
 using System.IO;
 using FintrakBanking.ViewModels.WorkFlow;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -104,6 +105,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+        //[HttpGet, Route("customer-collateral/customer/{customerId}")]
+        //public HttpResponseMessage GetCustomerCollateralFiltered(int customerId)
+        //{
+        //    try
+        //    {
+        //        var response = repo.GetCustomerCollateral(customerId, token.GetCompanyId);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+        //    }
+        //}
 
         [HttpGet, Route("customer-collateral/customer/{customerId}/collateral-type/{collateralTypeId}/thirdparty/{thirdpartyCustomerId}")]
         public HttpResponseMessage GetCollateralByCollateralTypeIdByCustomerId(int customerId, short collateralTypeId, short thirdpartyCustomerId = 0)
@@ -637,6 +652,48 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+        [HttpGet, Route("unmapped-collateral-application/customer/{customerId}/loanapplication/{loanapplicationid}")]
+        public HttpResponseMessage GetAllUnmappedCustomerCollateral(int customerId, int loanApplicationId)
+        {
+            try
+            {
+                var response = repo.GetAllUnmappedCustomerCollateral(customerId, loanApplicationId , token.GetCompanyId );
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("mapped-collateral-application/customer/{customerId}/loanapplication/{loanapplicationid}")]
+        public HttpResponseMessage GetAllMappedCustomerCollateral(int customerId, int loanApplicationId)
+        {
+            try
+            {
+                var response = repo.GetAllMappedCustomerCollateral(customerId, loanApplicationId, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpPost, Route("remove-mapped-collateral-application")]
+        public HttpResponseMessage DeleteCollateralApplicationMapped([FromBody] IEnumerable<CollateralLoanApplication> entity)
+        {
+            try
+            {
+                var response = repo.DeleteCollateralApplicationMapped(entity, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
     }

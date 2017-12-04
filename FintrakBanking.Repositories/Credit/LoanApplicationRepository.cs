@@ -466,26 +466,47 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId)
         {
-            var data = context.TBL_LOAN_APPLICATION_COLLATERAL.Where(c => c.LOANAPPCOLLATERALID == loanApplicatioinCollateralId).Select(c => new LoanApplicationCollateralViewModel
+            var data = context.TBL_LOAN_APPLICATION_COLLATERAL.Where(c => c.LOANAPPLICATIONID == loanApplicatioinCollateralId).Select(c => new LoanApplicationCollateralViewModel
             {
                 applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                 collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                 collateralCustomerId = c.COLLATERALCUSTOMERID,
                 collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                 collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                loanAppCollateralId = c.LOANAPPCOLLATERALID,
-                customerCollateralId = c.COLLATERALCUSTOMERID
+                loanApplicationId = c.LOANAPPLICATIONID,
+                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT
             });
-            return data;
+            return data.ToList();
         }
 
         public bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity)
         {
-            var data = entity.Select(item => new TBL_LOAN_APPLICATION_COLLATERAL
+            var unmapped = new List<TBL_LOAN_APPLICATION_COLLATERAL>();
+            foreach (var ent in entity)
             {
-                LOANAPPLICATIONDETAILID = item.loanapplicationDetailId,
-                LOANAPPCOLLATERALID = item.loanAppCollateralId,
-                CREATEDBY = item.createdBy,
+                var dat = context.TBL_LOAN_APPLICATION_COLLATERAL.Where(c =>
+                c.COLLATERALCUSTOMERID == ent.collateralCustomerId && c.LOANAPPLICATIONID == ent.loanApplicationId)
+                .FirstOrDefault();
+                if (dat == null)
+                {
+                    unmapped.Add(new TBL_LOAN_APPLICATION_COLLATERAL
+                    {
+                        COLLATERALCUSTOMERID = ent.collateralCustomerId,
+                        CREATEDBY = ent.createdBy,
+                        LOANAPPLICATIONDETAILID = ent.loanApplicationDetailId,
+                        LOANAPPLICATIONID = ent.loanApplicationId
+                    });
+                }
+            }
+
+
+            var data = unmapped.Select(item => new TBL_LOAN_APPLICATION_COLLATERAL
+            {
+                LOANAPPLICATIONDETAILID = item.LOANAPPLICATIONDETAILID,
+                COLLATERALCUSTOMERID = item.COLLATERALCUSTOMERID,
+                 LOANAPPLICATIONID = item.LOANAPPLICATIONID,
+                CREATEDBY = item.CREATEDBY,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
             });

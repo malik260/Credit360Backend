@@ -934,15 +934,27 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.AddLoanApplicationCollateral(entity);
-
-                if (response)
+                foreach (var item in entity)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Collateral saved successfully" });
-
+                    item.userBranchId =(short) token.GetBranchId;
+                    item.companyId = token.GetCompanyId;
+                    item.createdBy = token.GetStaffId;
+                    item.applicationUrl = HttpContext.Current.Request.Path;
+                    item.userIPAddress = Request.RequestUri.Host;
+                    item.createdBy = token.GetStaffId;
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Collateral not saved successfully" });
+              
 
+                if (entity != null) {
+                    var response = repoApply.AddLoanApplicationCollateral(entity);
+
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Collateral saved successfully" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Collateral not successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Collateral not successfully" });
             }
             catch (Exception e)
             {
