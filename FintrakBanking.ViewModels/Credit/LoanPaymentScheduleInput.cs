@@ -15,7 +15,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short? interestFrequency { get; set; }
         public int principalFrequencyTypeId { get; set; }
         public int interestFrequencyTypeId { get; set; }
- 
+        public Boolean shouldDisburse { get; set; }
+
         //public int tenor { get { return  }  }
         private int _tenor;
 

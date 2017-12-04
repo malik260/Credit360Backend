@@ -37,7 +37,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int casaAccountId { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
-        
+       
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
@@ -322,11 +322,16 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanBookingRequestId { get; set; }
 
         public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
 
         public decimal amount_Requested { get; set; }
 
         public short approvalStatusId { get; set; }
         public string comment { get; set; }
+        public string customerName { get; set; }
+        public string approvedProductTypeName { get; set; }
+        public int approvedProductTypeId { get; set; }
+        public decimal approvedAmount { get; set; }
 
     }
 
@@ -355,7 +360,12 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal ? customerAvailableAmount { get; set; }
         public string customerOccupation { get; set; }
         public string customerType { get; set; }
-
+        public int? bookingRequestStatusId { get; set; }
+        public decimal? bookRequestAmount { get; set; }
+        public DateTime requestDate { get; set; }
+        public string requestedBy { get; set; }
+        public short requestOperationId { get; set; }
+        public int loanBookingRequestId { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }
 
@@ -513,11 +523,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int daysInAYear { get; set; }
 
-
-
-
     }
-
 
     public class SubAllocationViewModel 
     {
@@ -529,6 +535,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string applicationReferenceNumber { get; set; }
         public short applicationStatusId { get; set; }
+        public int? toStaffId { get; set; }
+
     }
 
     public class CamDocumentViewModel: CamProcessedLoanViewModel
@@ -536,4 +544,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalLevelName { get; set; }
     }
 
+
+    public class LoanClassificationViewModel 
+    {
+        public int loanId { get; set; }
+        public decimal amount { get; set; }
+        public string refNo  { get; set; }
+
+    }
 }

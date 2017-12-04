@@ -31,7 +31,6 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-           
             var data = new TBL_MEDIA_LOAN_DOCUMENTS
             {
                 FILEDATA = file,
@@ -39,6 +38,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANREFERENCENUMBER = model.loanReferenceNumber,
                 DOCUMENTTITLE = model.documentTitle,
                 DOCUMENTTYPEID = model.documentTypeId,
+                LOAN_BOOKING_REQUESTID = model.SourceId,
                 FILENAME = model.fileName,
                 FILEEXTENSION = model.fileExtension,
                 SYSTEMDATETIME = DateTime.Now,
@@ -73,6 +73,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        
         public bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId)
         {
             var data = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
@@ -85,6 +86,7 @@ namespace FintrakBanking.Repositories.Credit
             data.LOANREFERENCENUMBER = model.loanReferenceNumber;
             data.DOCUMENTTITLE = model.documentTitle;
             data.DOCUMENTTYPEID = model.documentTypeId;
+            //data
             data.FILENAME = model.fileName;
             data.FILEEXTENSION = model.fileExtension;
             data.SYSTEMDATETIME = DateTime.Now;

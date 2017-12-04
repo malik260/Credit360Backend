@@ -49,6 +49,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string occupation { get; set; }
         public short customerTypeId { get; set; }
         public int relationshipOfficerId { get; set; }
+        public string relationshipOfficerName { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public string misCode { get; set; }
         public string misStaff { get; set; }
@@ -67,6 +68,7 @@ namespace FintrakBanking.ViewModels.Customer
         public bool isRealatedParty { get; set; }
         public string customerBVN { get; set; }
         public short? riskRatingId { get; set; }
+        public string riskRatingName { get; set; }
         public List<CustomerAddressViewModels> CustomerAddresses { get; set; }
         //public List<CustomerBvnViewModels> CustomerBvn { get; set; }
         public List<CustomerCompanyInfomationViewModels> CustomerCompanyInfomation { get; set; }

@@ -8,6 +8,7 @@ using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -375,10 +376,10 @@ namespace FintrakBanking.Repositories.Credit
                     OPERATIONID = (int)OperationsEnum.CAM
                 };
 
-                if (loan.LoanApplicationCollateral.Count > 0)
-                {
-                    LoanApplicationCollateral(loan.LoanApplicationCollateral);
-                }
+                //if (loan.LoanApplicationCollateral.Count > 0)
+                //{
+                //    LoanApplicationCollateral(loan.LoanApplicationCollateral);
+                //}
                 if (loan.LoanApplicationDetail.Count > 0)
                 {
                     LoanApplicationDetail(loan.LoanApplicationDetail);
@@ -463,33 +464,52 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETAIL.AddRange(ApplicationDetail);
         }
 
-        private void LoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity)
+        public IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId)
         {
-            foreach (var item in entity)
+            var data = context.TBL_LOAN_APPLICATION_COLLATERAL.Where(c => c.LOANAPPCOLLATERALID == loanApplicatioinCollateralId).Select(c => new LoanApplicationCollateralViewModel
             {
-                var loanCollateral = new TBL_LOAN_APPLICATION_COLLATERAL()
-                {
-                    //COLLATERALREFERENCENUMBER = item.collateralReferenceNumber,
-                    //CITYID = item.cityId,
-                    //COLLATERALVALUE = item.collateralValue,
-                    //ISBANKACCOUNT = item.isBankAccount,
-                    //COLLATERALTYPEID = item.collateralTypeId,
-                    CREATEDBY = item.createdBy,
-                    DATETIMECREATED = genSetup.GetApplicationDate(),
-                    //OTHERINFORMATIONS = item.otherInformations,
-                    //LATITUDE = item.latitude,
-                    //LONGITUDE = item.longitude,
+                applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                collateralCustomerId = c.COLLATERALCUSTOMERID,
+                collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                loanAppCollateralId = c.LOANAPPCOLLATERALID,
+                customerCollateralId = c.COLLATERALCUSTOMERID
+            });
+            return data;
+        }
 
-                    //LOCATIONADDRESS = item.locationAddress,
-                    //NEARESTBUSSTOP = item.nearestBusStop,
-                    //NEARESTLANDMARK = item.nearestLandmark,
-                    //DOCUMENTTITLE = item.documentTitle,
-                    //LoanApplicationId = item.loanApplicationId,
-                    SYSTEMDATETIME = DateTime.Now,
-                    //CASAACCOUNTID = item.casaAccountId
-                };
-                context.TBL_LOAN_APPLICATION_COLLATERAL.Add(loanCollateral);
-            }
+        public bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity)
+        {
+            var data = entity.Select(item => new TBL_LOAN_APPLICATION_COLLATERAL
+            {
+                LOANAPPLICATIONDETAILID = item.loanapplicationDetailId,
+                LOANAPPCOLLATERALID = item.loanAppCollateralId,
+                CREATEDBY = item.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+            });
+            context.TBL_LOAN_APPLICATION_COLLATERAL.AddRange(data);
+
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplication,
+                STAFFID = entity.FirstOrDefault().createdBy,
+                BRANCHID = (short)entity.FirstOrDefault().userBranchId,
+                DETAIL = $"Added collateral loan application with reference Number: {entity.FirstOrDefault().applicationReferenceNumber}",
+                IPADDRESS = entity.FirstOrDefault().userIPAddress,
+                URL = entity.FirstOrDefault().applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.FirstOrDefault().loanAppCollateralId
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            return context.SaveChanges() > 0;
         }
 
         //private void ApplicationCollateralRef(List<LoanApplicationCollateralRefNoViewModel> entity)
@@ -549,6 +569,8 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in context.TBL_CREDIT_APPRAISAL_MEMORANDUM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                         join d in context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
+                        join e in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals e.TARGETID into apprTrail
+                        from e in apprTrail.DefaultIfEmpty()
                         where a.COMPANYID == companyId && a.DELETED == false && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
                         {
@@ -583,8 +605,12 @@ namespace FintrakBanking.Repositories.Credit
                                     camDocumentation = camDoc.CAMDOCUMENTATION
                                 }
                             ).ToList(),
-                            operationId = a.OPERATIONID,
+                            operationId = e.OPERATIONID,
+                            currentApprovalStateId = e.APPROVALSTATEID,
+                            approvalStatusId = e.APPROVALSTATUSID,
                         });
+
+            var forDebugging = data.ToList();
 
             return data;
         }
@@ -663,12 +689,72 @@ namespace FintrakBanking.Repositories.Credit
             //public IEnumerable
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int companyId)
+        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int staffId, int companyId)
         {
-            var data = GetCamProcessedLoanApplications(companyId).Where(x =>
+            var camProcessedData = GetCamProcessedLoanApplications(companyId).Where(x =>
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.CAMCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress)
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
+            return camProcessedData;
+        }
+
+        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId)
+        {
+            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.OfferLetterApproval);
+            int staffApprovalLevelId = 0;
+
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(companyId).Where(x => x.operationId == (int)OperationsEnum.OfferLetterApproval).ToList();
+
+            IQueryable<CamProcessedLoanViewModel> data;
+
+            data = (from a in context.TBL_LOAN_APPLICATION
+                    join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                    join c in context.TBL_CREDIT_APPRAISAL_MEMORANDUM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                    join d in context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
+                    join e in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals e.TARGETID into apprTrail
+                    from e in apprTrail.DefaultIfEmpty()
+                    where a.COMPANYID == companyId && a.DELETED == false
+                          && b.STATUSID == (int)ApprovalStatusEnum.Approved &&
+                          e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                            && e.RESPONSESTAFFID == null
+                      && e.OPERATIONID == (int)OperationsEnum.OfferLetterApproval && e.TOAPPROVALLEVELID == staffApprovalLevelId
+                    select new CamProcessedLoanViewModel
+                    {
+                        loanApplicationId = a.LOANAPPLICATIONID,
+                        applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                        customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                        customerName = a.CUSTOMERID == 3 ? a.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                        customerGroupName = a.TBL_CUSTOMER_GROUP.GROUPNAME,
+                        customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
+                        relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                        relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                        loanTypeId = a.LOANTYPEID,
+                        loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                        camReference = c.CAMREF,
+                        camDocumentation = d.CAMDOCUMENTATION,
+                        approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.Sum(x => x.APPROVEDAMOUNT),
+                        applicationDate = a.APPLICATIONDATE,
+                        applicationStatusId = a.APPLICATIONSTATUSID,
+                        subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
+                        approvalLevelId = staffApprovalLevelId,
+                        operationId = e.OPERATIONID,
+                        currentApprovalStateId = e.APPROVALSTATEID,
+                        camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCUM.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
+                                .Select(camDoc => new CamDocumentViewModel
+                                {
+                                    appraisalMemorandumId = camDoc.APPRAISALMEMORANDUMID,
+                                    approvalLevelId = camDoc.APPROVALLEVELID,
+                                    approvalLevelName = camDoc.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                    camDocumentation = camDoc.CAMDOCUMENTATION
+                                }
+                            ).ToList(),
+                    });
+
+            var applicationDueForReview = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
-            return data;
+            return applicationDueForReview;
         }
 
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId)
@@ -682,35 +768,19 @@ namespace FintrakBanking.Repositories.Credit
 
             IQueryable<CamProcessedLoanViewModel> data;
 
+            IEnumerable<CamProcessedLoanViewModel> loanAvailmentData;
+
+            var existOnApprovalTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.LoanAvailment).Select(x => x.TARGETID).ToList();
+
             // Check if the current staff is the first level
             if (staffApprovalLevelId == approvalLvlStaff[0].approvalLevelId)
             {
-                data = (from a in context.TBL_LOAN_APPLICATION
-                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                        join c in context.TBL_CREDIT_APPRAISAL_MEMORANDUM on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                        join d in context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM on c.APPRAISALMEMORANDUMID equals d.APPRAISALMEMORANDUMID
-                        where a.COMPANYID == companyId && a.DELETED == false
-                              && b.STATUSID == (int)ApprovalStatusEnum.Approved
-                        select new CamProcessedLoanViewModel
-                        {
-                            loanApplicationId = a.LOANAPPLICATIONID,
-                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                            customerName = a.CUSTOMERID == 3 ? a.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
-                            customerGroupName = a.TBL_CUSTOMER_GROUP.GROUPNAME,
-                            customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
-                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                            loanTypeId = a.LOANTYPEID,
-                            loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
-                            camReference = c.CAMREF,
-                            camDocumentation = d.CAMDOCUMENTATION,
-                            approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.Sum(x => x.APPROVEDAMOUNT),
-                            applicationDate = a.APPLICATIONDATE,
-                            applicationStatusId = a.APPLICATIONSTATUSID,
-                            subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
-                            approvalLevelId = staffApprovalLevelId
-                        });
+                // meaning it does not exist on the approval trail yet
+                data = GetCamProcessedLoanApplications(companyId).Where(x =>
+                x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+
+                loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId)).ToList();
             }
             else
             {
@@ -736,6 +806,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
                             loanTypeId = a.LOANTYPEID,
+                            productTypeId = b.TBL_PRODUCT.PRODUCTTYPEID,
                             loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
                             camReference = c.CAMREF,
                             camDocumentation = d.CAMDOCUMENTATION,
@@ -747,21 +818,13 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = e.OPERATIONID,
                             currentApprovalStateId = e.APPROVALSTATEID
                         });
-            }
 
-            var loanAvailmentData = data.Where(x =>
+                loanAvailmentData = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
+            }
 
             return loanAvailmentData;
-        }
-
-        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int companyId)
-        {
-            var data = GetCamProcessedLoanApplications(companyId).Where(x =>
-                x.applicationStatusId == (short)LoanApplicationStatusEnum.CAMCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
-            return data;
         }
 
         public Form3800ViewModel GenerateForm3800Template(string applicationRefNumber)
@@ -863,7 +926,7 @@ namespace FintrakBanking.Repositories.Credit
                 noOfExternalConditions = 0;
 
                 conditions = conditions +
-                    "<tr><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
+                    "<tr class='removeConditions_OL'><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
                     "<p><strong> Other Conditions Precedent for Internal usage which does not have to be included in the offer " +
                     "letter.The RM must ensure compliance with these conditions before drawdown.</strong></p></td></tr> ";
 
@@ -872,7 +935,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var item in productInternalConditions)
                 {
                     conditions = conditions +
-                        $"<tr>" +
+                        $"<tr class='removeConditions_OL'>" +
                         $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfInternalConditions}</li></ol></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
@@ -929,7 +992,7 @@ namespace FintrakBanking.Repositories.Credit
                 noOfExternalConditions = 0;
 
                 conditions = conditions +
-                    "<tr><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
+                    "<tr class='removeConditions_OL'><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
                     "<strong> Other Conditions Subsequent for Internal usage which does not have to be included in the offer " +
                     "letter.The RM must ensure compliance with these conditions after drawdown.</strong></td></tr> ";
 
@@ -938,7 +1001,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var item in productInternalConditions)
                 {
                     conditions = conditions +
-                        $"<tr>" +
+                        $"<tr class='removeConditions_OL'>" +
                         $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfInternalConditions}</li></ol></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'>{item.conditionPrecident}</td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'>{prod.productName}</td>" +
@@ -956,7 +1019,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
 
-            var preparedTemplate = PopulateOfferLetterPlaceholders(conditionPrecedentData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData);
 
             if (preparedTemplate != null)
             {
@@ -1158,7 +1221,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
 
-            var preparedTemplate = PopulateOfferLetterPlaceholders(conditionPrecedentData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData);
 
             if (preparedTemplate != null)
             {
@@ -1168,7 +1231,7 @@ namespace FintrakBanking.Repositories.Credit
             return new OfferLetterTemplateViewModel { };
         }
 
-        private static string PopulateOfferLetterPlaceholders(string conditionPrecedent)
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent)
         {
             string body;
 
@@ -1179,6 +1242,7 @@ namespace FintrakBanking.Repositories.Credit
                 body = reader.ReadToEnd();
             }
 
+            body = body.Replace("{@ApplicationDate}", applicationDate.ToLongDateString());
             body = body.Replace("{@ConditionPrecedents}", conditionPrecedent);
 
             return body;
@@ -1325,23 +1389,29 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var exisitingDocument = context.TBL_OFFERLETTER.Any(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+                var exisitingDocument = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
 
-                if (exisitingDocument)
+                if (exisitingDocument != null)
                 {
-                    return true;
+                    exisitingDocument.HTML_DOCUMENT = model.documentTemplate;
+                    exisitingDocument.APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber;
+                    exisitingDocument.COMMENTS = model.comments;
+                    exisitingDocument.PRODUCTID = model.productId;
+                    exisitingDocument.ISACCEPTED = model.isAccepted;
                 }
-
-                var document = new TBL_OFFERLETTER
+                else
                 {
-                    HTML_DOCUMENT = model.documentTemplate,
-                    APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
-                    COMMENTS = model.comments,
-                    PRODUCTID = model.productId,
-                    ISACCEPTED = model.isAccepted
-                };
+                    var document = new TBL_OFFERLETTER
+                    {
+                        HTML_DOCUMENT = model.documentTemplate,
+                        APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
+                        COMMENTS = model.comments,
+                        PRODUCTID = model.productId,
+                        ISACCEPTED = model.isAccepted
+                    };
 
-                context.TBL_OFFERLETTER.Add(document);
+                    context.TBL_OFFERLETTER.Add(document);
+                }
 
                 return context.SaveChanges() > 0;
             }
@@ -1475,7 +1545,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public bool ForwardApplicationToNextLevel(ForwardViewModel model)
+        private bool ForwardApplicationToNextLevel(ForwardViewModel model)
         {
             workFlow.StaffId = model.createdBy;
             workFlow.OperationId = model.operationId;
@@ -1497,7 +1567,128 @@ namespace FintrakBanking.Repositories.Credit
             return workFlow.LogActivity();
         }
 
-        public bool LogApplicationForApproval(LoanAvailmentApprovalViewModel model)
+        private bool ReferApplicationToSpecificLevel(LoanAvailmentApprovalViewModel model)
+        {
+            workFlow.StaffId = model.createdBy;
+            workFlow.OperationId = model.operationId;
+            workFlow.TargetId = model.targetId;
+            workFlow.CompanyId = model.companyId;
+            workFlow.NextLevelId = model.nextLevelId;
+            workFlow.ToStaffId = model.toStaffId;
+            workFlow.StatusId = model.approvalStatusId;
+            workFlow.Comment = model.comment;
+
+            workFlow.Amount = model.amount;
+
+            return workFlow.LogActivity();
+        }
+
+        public bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity)
+        {
+            entity.operationId = (int)OperationsEnum.OfferLetterApproval;
+
+            entity.externalInitialization = false;
+
+            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, (int)OperationsEnum.OfferLetterApproval);
+            int staffApprovalLevelId = 0;
+
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == (int)OperationsEnum.OfferLetterApproval).ToList();
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var targetLoanAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x =>
+                        x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
+
+                    var operationDetails = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval);
+
+                    LoanAvailmentApprovalViewModel referBack;
+
+                    if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
+                    {
+                        // As far RM hasn't initiated 'Send For Availment'
+                        if (entity.applicationStatusId != (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted)
+                        {
+                            referBack = new LoanAvailmentApprovalViewModel()
+                            {
+                                nextLevelId = approvalLvlStaff[0].approvalLevelId,
+                                toStaffId = approvalLvlStaff[0].staffId,
+                                createdBy = entity.createdBy,
+                                targetId = targetLoanAppl.LOANAPPLICATIONID,
+                                amount = entity.amount,
+                                companyId = entity.companyId,
+                                comment = entity.comment,
+                                operationId = entity.operationId,
+                                approvalStatusId = entity.approvalStatusId
+                            };
+
+                            operationDetails.OPERATIONURL = "/credit/loan/offer-letter";
+
+                            UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+
+                            ReferApplicationToSpecificLevel(referBack);
+                        }
+                        else // If he has then end the workflow process
+                        {
+                            // UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+
+                            entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
+
+                            entity.keepPending = false;
+
+                            workFlow.ForcefullyEndProcess = true;
+
+                            workFlow.LogForApproval(entity);
+                        }
+                    }
+                    else
+                    {
+                        operationDetails.OPERATIONURL = "/credit/loan/offer-letter-review";
+
+                        UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+
+                        entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
+
+                        workFlow.LogForApproval(entity);
+                    }
+
+                    var b = workFlow.NextLevelId ?? 0;
+
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new Exception("Approval Failed");
+                    }
+
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
+                }
+            }
+        }
+
+        public bool LogApplicationForApprovalDuringAvailment(LoanAvailmentApprovalViewModel model)
         {
             try
             {
@@ -1510,7 +1701,7 @@ namespace FintrakBanking.Repositories.Credit
                     companyId = model.companyId,
                     approvalStatusId = (int)ApprovalStatusEnum.Pending,
                     targetId = target.LOANAPPLICATIONID,
-                    operationId = (int)OperationsEnum.LoanAvailment,
+                    operationId = model.operationId,
                     comment = model.comment,
                     amount = model.amount,
                     BranchId = model.BranchId,
@@ -1639,7 +1830,7 @@ namespace FintrakBanking.Repositories.Credit
                         || x.middleName.ToLower().Contains(searchString.ToLower())
                         || x.customerCode == searchString)
                     ;
-                    
+
             return applications.Distinct().ToList();
         }
     }

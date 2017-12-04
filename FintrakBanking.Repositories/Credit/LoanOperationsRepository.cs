@@ -527,6 +527,58 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public IEnumerable<LoanClassificationViewModel> CalLoanClassification(DateTime applicationDate)
+
+        {
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+            var systemDate = generalSetup.GetApplicationDate();
+
+            var data = (from a in context.TBL_LOAN
+                        join b in context.TBL_LOAN_PAST_DUE on a.TERMLOANID equals b.LOANID
+                        join c in context.TBL_DAY_COUNT_CONVENTION on a.SCHEDULEDAYCOUNTCONVENTIONID equals c.DAYCOUNTCONVENTIONID
+                        join d in context.TBL_SETUP_GLOBAL on a.COMPANYID equals d.COMPANYID
+                        where b.DATE <= DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                       && (b.CREDITAMOUNT - b.DEBITAMOUNT) <= 0 && a.ALLOWFORCEDEBITREPAYMENT == false
+                        group b by new { b.LOANID,b.PARENT_PASTDUECODE } into groupedQ
+                        select new LoanClassificationViewModel()
+                        {
+                            loanId = groupedQ.Key.LOANID,
+                            refNo = groupedQ.Key.PARENT_PASTDUECODE,
+                            amount = groupedQ.Sum(i => i.CREDITAMOUNT -i.DEBITAMOUNT),
+                        }).ToList();
+
+            foreach (var item in data)
+            {
+
+                var pastDueDate = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == item.loanId).NPLDATE;
+
+                if (pastDueDate == null && item.amount < 0)
+                {
+                    TBL_LOAN result = (from p in context.TBL_LOAN
+                                       where p.TERMLOANID == item.loanId
+                                       select p).SingleOrDefault();
+
+                    result.NPLDATE = systemDate;
+
+                    //context.SaveChanges();
+                }
+                else if(pastDueDate != null && item.amount > 0)
+                {
+                    TBL_LOAN result = (from p in context.TBL_LOAN
+                                       where p.TERMLOANID == item.loanId
+                                       select p).SingleOrDefault();
+
+                    result.NPLDATE = null;
+
+                    //context.SaveChanges();
+                }
+
+            }
+            context.SaveChanges();
+
+            return data;
+        }
+
         #endregion
 
         #region Anniversary  Operation
@@ -6078,7 +6130,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from a in context.TBL_LOAN
                         join b in context.TBL_CHECKLIST_DETAIL on a.LOANAPPLICATIONDETAILID equals b.TARGETID
-                        where b.TARGETTYPEID == (short)CheckListTargetTypeEnum.Loan && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                        where b.TARGETTYPEID == (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                         && b.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred && DbFunctions.TruncateTime(b.DEFEREDDATE) >= DbFunctions.TruncateTime(systemDate)
                         select new LoanRepaymentViewModel()
                         {
@@ -6136,53 +6188,55 @@ namespace FintrakBanking.Repositories.Credit
                                  select b.COVENANTAMOUNT;
 
 
-                                 //select sumPrincipalAmount;
-                                 //var data = (from a in context.TBL_LOAN
-                                 //            join b in context.TBL_CHECKLIST_DETAIL on a.LOANAPPLICATIONDETAILID equals b.TARGETID
-                                 //            where b.TARGETTYPEID == (short)CheckListTargetTypeEnum.Loan && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                 //            && b.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred && DbFunctions.TruncateTime(b.DEFEREDDATE) >= DbFunctions.TruncateTime(systemDate)
-                                 //            select new LoanRepaymentViewModel()
-                                 //            {
-                                 //                loanId = a.TERMLOANID,
-                                 //                checklistId = (int)b.CHECKLISTID,
-                                 //                loanRefNo = a.LOANREFERENCENUMBER,
-                                 //                loanApplicationNumberId = a.LOANAPPLICATIONDETAILID,
-                                 //                periodPrincipalAmount = a.OUTSTANDINGPRINCIPAL,
-                                 //                periodInterestAmount = a.OUTSTANDINGINTEREST,
-                                 //                productId = a.PRODUCTID,
-                                 //                casaAccountId = a.CASAACCOUNTID,
-                                 //                branchId = a.BRANCHID,
-                                 //                companyId = a.COMPANYID,
-                                 //                currencyId = a.CURRENCYID,
-                                 //                exchangeRate = a.EXCHANGERATE,
-                                 //                createdBy = a.CREATEDBY,
-                                 //                dateTimeCreated = a.DATETIMECREATED,
+            //select sumPrincipalAmount;
+            //var data = (from a in context.TBL_LOAN
+            //            join b in context.TBL_CHECKLIST_DETAIL on a.LOANAPPLICATIONDETAILID equals b.TARGETID
+            //            where b.TARGETTYPEID == (short)CheckListTargetTypeEnum.Loan && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+            //            && b.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred && DbFunctions.TruncateTime(b.DEFEREDDATE) >= DbFunctions.TruncateTime(systemDate)
+            //            select new LoanRepaymentViewModel()
+            //            {
+            //                loanId = a.TERMLOANID,
+            //                checklistId = (int)b.CHECKLISTID,
+            //                loanRefNo = a.LOANREFERENCENUMBER,
+            //                loanApplicationNumberId = a.LOANAPPLICATIONDETAILID,
+            //                periodPrincipalAmount = a.OUTSTANDINGPRINCIPAL,
+            //                periodInterestAmount = a.OUTSTANDINGINTEREST,
+            //                productId = a.PRODUCTID,
+            //                casaAccountId = a.CASAACCOUNTID,
+            //                branchId = a.BRANCHID,
+            //                companyId = a.COMPANYID,
+            //                currencyId = a.CURRENCYID,
+            //                exchangeRate = a.EXCHANGERATE,
+            //                createdBy = a.CREATEDBY,
+            //                dateTimeCreated = a.DATETIMECREATED,
 
-                                 //            }).ToList();
+            //            }).ToList();
 
-                                 //foreach (var item in data)
-                                 //{
-                                 //    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
-                                 //    var forceDebitCode = CommonHelpers.GenerateRandomDigitCode(10);
+            //foreach (var item in data)
+            //{
+            //    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+            //    var forceDebitCode = CommonHelpers.GenerateRandomDigitCode(10);
 
-                                 //    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            //    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                                 //    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment Debt as a result of Defer Document"));
+            //    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodInterestAmount, product.INTERESTRECEIVABLEPAYABLEGL.Value, "interest repayment Debt as a result of Defer Document"));
 
-                                 //    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment Debt as a result of Defer Document"));
+            //    inputTransactions.Add(financeTransaction.PostBuildLoanRepaymentPosting(item, item.periodPrincipalAmount, product.PRINCIPALBALANCEGL.Value, "principal repayment Debt as a result of Defer Document"));
 
-                                 //    financeTransaction.PostTransaction(inputTransactions);
+            //    financeTransaction.PostTransaction(inputTransactions);
 
-                                 //}
+            //}
+
+        
 
             context.SaveChanges();
 
             output = true;
 
             return output;
+
+
         }
-
-
 
 
     }

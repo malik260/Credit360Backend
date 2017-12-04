@@ -16,6 +16,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string previousCreditRating { get; set; }
         public int? paidUpCapital { get; set; }
         public int? authorizedCapital { get; set; }
+        public decimal? shareholderFund { get; set; }
         public List<CustomerCompanyDirectorsViewModels> companyDiretcors { get; set; }
         public List<CustomerCompanyShareholdersViewModels> companyShareholders { get; set; }
         public List<CustomerCompanyAccountSignatoryViewModels> companyAccountSignatories { get; set; }
@@ -87,6 +88,11 @@ namespace FintrakBanking.ViewModels.Customer
         public string firstName { get; set; }
         public string middleName { get; set; }
         public string lastName { get; set; }
+        public string rcNumber { get; set; }
+        public string taxNumber { get; set; }
+        public string contactPerson { get; set; }
+        public bool? hasCASAAccount { get; set; }
+        public string casaAccountNumber { get; set; }
         public string client_SupplierAddress { get; set; }
         public string client_SupplierPhoneNumber { get; set; }
         public string client_SupplierEmail { get; set; }

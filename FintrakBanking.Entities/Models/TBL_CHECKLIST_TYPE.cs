@@ -23,6 +23,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string CHECKLIST_TYPE_NAME { get; set; }
 
+        public bool ISPRODUCT_BASED { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CHECKLIST_DEFINITION> TBL_CHECKLIST_DEFINITION { get; set; }
     }

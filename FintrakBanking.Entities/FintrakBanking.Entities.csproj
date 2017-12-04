@@ -70,6 +70,7 @@
     <Compile Include="Models\DEV_CHECKLIST.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\SYSDIAGRAM.cs" />
+    <Compile Include="Models\SYSDIAGRAMS.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />
     <Compile Include="Models\TBL_ACCOUNT_CATEGORY.cs" />
     <Compile Include="Models\TBL_ACCOUNT_TYPE.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATERAL.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_STA.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_LOG.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
     <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_BOOKING_REQUEST.cs" />
@@ -352,6 +354,7 @@
     <Compile Include="Models\TBL_TEMP_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
+    <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using System;
@@ -471,6 +472,7 @@ namespace FintrakBanking.Repositories.Customer
                             company.REGISTRATIONNUMBER = entity.registrationNumber;
                             company.PAIDUPCAPITAL = entity.paidUpCapital;
                             company.AUTHORISEDCAPITAL = entity.authorizedCapital;
+                            company.SHAREHOLDER_FUND = entity.shareholderFund;
                         }
                     }
                     else
@@ -487,6 +489,7 @@ namespace FintrakBanking.Repositories.Customer
                         company.PAIDUPCAPITAL = entity.paidUpCapital;
                         company.AUTHORISEDCAPITAL = entity.authorizedCapital;
                         context.TBL_CUSTOMER_COMPANYINFOMATION.Add(company);
+                        company.SHAREHOLDER_FUND = entity.shareholderFund;
                     }
 
                     // Audit Section ---------------------------
@@ -999,6 +1002,8 @@ namespace FintrakBanking.Repositories.Customer
                        placeOfBirth = a.PLACEOFBIRTH,
                        isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                        relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                       relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f=> f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
+                      + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
                        spouse = a.SPOUSE,
                        sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
@@ -1006,6 +1011,7 @@ namespace FintrakBanking.Repositories.Customer
                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                        taxNumber = a.TAXNUMBER,
                        riskRatingId = a.RISKRATINGID,
+                       riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                        customerBVN = a.CUSTOMERBVN,
                        CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
                        {
@@ -1041,17 +1047,8 @@ namespace FintrakBanking.Repositories.Customer
                            registeredOffice = d.REGISTEREDOFFICE,
                            registrationNumber = d.REGISTRATIONNUMBER,
                            paidUpCapital = d.PAIDUPCAPITAL,
-                           authorizedCapital = d.AUTHORISEDCAPITAL
-
-                       }).ToList(),
-                       CustomerIdentification = context.TBL_CUSTOMER_IDENTIFICATION.Where(e => e.CUSTOMERID == a.CUSTOMERID).Select(e => new CustomerIdentificationViewModels()
-                       {
-                           identificationId = e.IDENTIFICATIONID,
-                           identificationModeId = e.IDENTIFICATIONMODEID.Value,
-                           identificationMode = context.TBL_CUSTOMER_IDENTI_MODE_TYPE.FirstOrDefault(r => r.IDENTIFICATIONMODEID == e.IDENTIFICATIONMODEID).IDENTIFICATIONMODE,
-                           identificationNo = e.IDENTIFICATIONNO,
-                           issueAuthority = e.ISSUEAUTHORITY,
-                           issuePlace = e.ISSUEPLACE
+                           authorizedCapital = d.AUTHORISEDCAPITAL,
+                           shareholderFund = d.SHAREHOLDER_FUND
                        }).ToList(),
                        CustomerEmploymentHistory = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(s => s.CUSTOMERID == a.CUSTOMERID).Select(s => new CustomerEmploymentHistoryViewModels()
                        {
@@ -1144,6 +1141,11 @@ namespace FintrakBanking.Repositories.Customer
                            firstName = cs.FIRSTNAME,
                            middleName = cs.MIDDLENAME,
                            lastName = cs.LASTNAME,
+                           taxNumber = cs.TAX_NUMBER,
+                           rcNumber = cs.REGISTRATION_NUMBER,
+                           hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
+                           casaAccountNumber = cs.CASA_ACCOUNTNO,
+                           contactPerson = cs.CONTACT_PERSON,
                            client_SupplierAddress = cs.ADDRESS,
                            client_SupplierPhoneNumber = cs.PHONENUMBER,
                            client_SupplierEmail = cs.EMAILADDRESS,
@@ -1481,6 +1483,16 @@ namespace FintrakBanking.Repositories.Customer
         }
 
         #region Single Customer Information By CustomerID
+        public IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLoanId(int loanApplicationId)
+        {
+            var loanCust = (from a in context.TBL_LOAN_APPLICATION_DETAIL where a.LOANAPPLICATIONID == loanApplicationId select a.CUSTOMERID).ToList();
+            var customers = GetCustomers();
+            if (loanCust.Any())
+            {
+                customers = customers.Where(x => loanCust.Contains(x.customerId));
+            }
+            return customers;
+        }
         public CustomerViewModels GetSingleCustomerGeneralInfo(string customerCode)
         {
             var data = (from a in context.TBL_CUSTOMER
@@ -1540,8 +1552,8 @@ namespace FintrakBanking.Repositories.Customer
                               registeredOffice = d.REGISTEREDOFFICE,
                               registrationNumber = d.REGISTRATIONNUMBER,
                               paidUpCapital = d.PAIDUPCAPITAL,
-                              authorizedCapital = d.AUTHORISEDCAPITAL
-
+                              authorizedCapital = d.AUTHORISEDCAPITAL,
+                              shareholderFund = d.SHAREHOLDER_FUND
                           }).FirstOrDefault();
             return comany;
         }
@@ -1744,6 +1756,33 @@ namespace FintrakBanking.Repositories.Customer
                 email = x.EMAILADDRESS,
             }).ToList();
             return customerCompanyBeneficial;
+        }
+        public IEnumerable<CasaViewModel> GetCustomerCASAInformation(int customerId)
+        {
+            var casaInformation = context.TBL_CASA.Where(a => a.CUSTOMERID == customerId).Select(x => new CasaViewModel()
+            {
+                casaAccountId = x.CASAACCOUNTID,
+                productAccountNumber = x.PRODUCTACCOUNTNUMBER,
+                productAccountName = x.PRODUCTACCOUNTNAME,
+                isCurrentAccount = x.ISCURRENTACCOUNT,
+                customerId = x.CUSTOMERID,
+                productId = x.PRODUCTID,
+                productCode = x.TBL_PRODUCT.PRODUCTCODE,
+                productName = x.TBL_PRODUCT.PRODUCTNAME,
+                branchId = x.BRANCHID,
+                branchCode = x.TBL_BRANCH.BRANCHCODE,
+                branchName = x.TBL_BRANCH.BRANCHNAME,
+                currencyId = x.CURRENCYID,
+                currency = x.TBL_CURRENCY.CURRENCYNAME,
+                availableBalance = x.AVAILABLEBALANCE,
+                ledgerBalance = x.LEDGERBALANCE,
+                accountStatusName = x.TBL_CASA_ACCOUNTSTATUS.ACCOUNTSTATUSNAME,
+                relationshipManagerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                relationshipOfficerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+                hasOverdraft = x.HASOVERDRAFT,
+                hasLien = x.HASLIEN
+            }).ToList();
+            return casaInformation;
         }
         public dynamic GetCustomerAndType(int custormerId)
         {

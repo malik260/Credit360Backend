@@ -151,11 +151,34 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [Route("checklist-definition-checklisttype/")]
-        public HttpResponseMessage GetChecklistDefinitionByApprovalLevelCheckListType(int operationId,int checklistTypeId)
+        public HttpResponseMessage GetChecklistDefinitionByApprovalLevelCheckListType(int operationId,int checklistTypeId ,int? productId, int loanTargetId)
         {
             try
             {
-                var data = repo.GetChecklistDefinitionByApprovalLevelCheckListType(token.GetStaffId, operationId, checklistTypeId);
+                var data = repo.GetChecklistDefinitionByApprovalLevelCheckListType(token.GetStaffId, productId, loanTargetId, operationId, checklistTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
+        [HttpGet]
+        [Route("checklist-type")]
+        public HttpResponseMessage GetAllChecklistType()
+        {
+            try
+            {
+                var data = repo.GetAllChecklistType();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -877,7 +900,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       
+        [HttpPut]
+        [Route("validate-checklist-details")]
+        public HttpResponseMessage ValidateChecklistDetail([FromBody] ValidateChecklistDetailViewModel model)
+        {
+            try
+            {  
+                var data = repo.ValidateChecklistDetail(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "There was an error updating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+
+        }
         #endregion
     }
 }
