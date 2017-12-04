@@ -452,12 +452,26 @@
     <Compile Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx.designer.cs">
       <DependentUpon>ApprovalTrailWithSLA1.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CollateralEstimated.aspx.cs">
+      <DependentUpon>CollateralEstimated.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralEstimated.aspx.designer.cs">
+      <DependentUpon>CollateralEstimated.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\DisbursedLoans.aspx.cs">
       <DependentUpon>DisbursedLoans.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\DisbursedLoans.aspx.designer.cs">
       <DependentUpon>DisbursedLoans.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\FCYScheuledLoan.aspx.cs">
+      <DependentUpon>FCYScheuledLoan.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\FCYScheuledLoan.aspx.designer.cs">
+      <DependentUpon>FCYScheuledLoan.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\GrantedFacilities.aspx.cs">
       <DependentUpon>GrantedFacilities.aspx</DependentUpon>
@@ -546,7 +560,9 @@
     <Content Include="Reports\Credit\TestReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWithSLA1.aspx" />
+    <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
+    <Content Include="Reports\ReportViews\FCYScheuledLoan.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanAnniversery.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentWaived.aspx" />
@@ -703,6 +719,8 @@
     <EmbeddedResource Include="Reports\Credit\Monitoring\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CollateralEstimated.rdlc" />
+    <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
