@@ -323,7 +323,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response = repoApply.AddLoanApplication(entity);
                 if (response > 0)
                 {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
@@ -363,10 +363,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.GetApplicationsDueForOfferLetterGeneration(token.GetCompanyId);
+                var response = repoApply.GetApplicationsDueForOfferLetterGeneration(token.GetStaffId, token.GetCompanyId).ToList();
                 if (!response.Any())
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
@@ -404,10 +404,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repoApply.GetApplicationsForReviewFromCreditUnit(token.GetCompanyId);
+                var response = repoApply.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToList();
                 if (!response.Any())
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList(), count = response.Count() });
@@ -853,10 +853,10 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (response)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Document updated successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Document saved successfully" });
 
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Document not updated successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Document not saved successfully" });
             }
             catch (Exception e)
             {
@@ -897,7 +897,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [Route("loan-application/availment/approval")]
-        public HttpResponseMessage LogApplicationForApproval([FromBody] LoanAvailmentApprovalViewModel entity)
+        public HttpResponseMessage LogApplicationForApprovalDuringAvailment([FromBody] LoanAvailmentApprovalViewModel entity)
         {
             try
             {
@@ -908,7 +908,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.createdBy = token.GetStaffId;
 
-                var data = repoApply.LogApplicationForApproval(entity);
+                var data = repoApply.LogApplicationForApprovalDuringAvailment(entity);
 
                 if (data)
                 {
@@ -924,10 +924,41 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        
-    
 
+        [HttpPost]
+        [Route("loan-application/offer-letter/approval")]
+        public HttpResponseMessage LogApplicationForApprovalDuringOfferLetterGeneration([FromBody] LoanAvailmentApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.createdBy = token.GetStaffId;
 
+                var data = repoApply.ApproveOfferLetterGeneration(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, 
+                        new { success = true, message = "Now proceeding to availment" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (System.Exception ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion Offer Letter & Availment 
+
+        #region Loan Collateral
         [HttpPost]
         [Route("loan-application/collateral")]
         public HttpResponseMessage SaveLoanApplicationCollateral([FromBody] List<LoanApplicationCollateralViewModel> entity)
@@ -983,8 +1014,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-        #endregion Offer Letter & Availment 
-
+        #endregion Loan Collateral
     }
 }

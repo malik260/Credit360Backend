@@ -20,6 +20,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
 //using XLeratorDLL_financial;
 
@@ -188,7 +189,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANSTATUSID = (int)LoanStatusEnum.Inactive,
                 ISDISBURSED = false,
                 OPERATIONID = (int)OperationsEnum.RevolvingLoanBooking,
-                CUSTOMERGROUPID = model.customerGroupId,
+                CUSTOMERGROUPID = model.customerGroupId == 0 ? null : model.customerGroupId,
                 LOANTYPEID = model.loanTypeId,
                 DISCHARGELETTER = false,
                 SUSPENDINTEREST = false,
@@ -338,7 +339,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANSTATUSID = (int)LoanStatusEnum.Inactive,
                 ISDISBURSED = false,
                 OPERATIONID = (int)OperationsEnum.ContigentLoanBooking,
-                CUSTOMERGROUPID = entity.customerGroupId,
+                CUSTOMERGROUPID = entity.customerGroupId == 0 ? null : entity.customerGroupId,
                 LOANTYPEID = entity.loanTypeId,
                 DISCHARGELETTER = false,
                 CUSTOMERSENSITIVITYLEVELID = entity.customerSensitivityLevelId,
@@ -509,7 +510,9 @@ namespace FintrakBanking.Repositories.Credit
                 COMPANYID = entity.companyId,
                 CASAACCOUNTID = entity.casaAccountId,
                 BRANCHID = entity.branchId,
-                
+                SHOULD_DISBURSE = entity.loanScheduleInput.shouldDisburse,
+
+
                 PRINCIPALFREQUENCYTYPEID = entity.loanScheduleInput.principalFrequency,
                 INTERESTFREQUENCYTYPEID = entity.loanScheduleInput.interestFrequency,
 
@@ -1528,7 +1531,21 @@ namespace FintrakBanking.Repositories.Credit
 
                     //...................Build Disbursement Model & Invoke Loan Disbursement....................
                     var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-                    DisburseLoan(loanDisbursementModel);
+                    var systemDate = generalSetup.GetApplicationDate();
+                    if (loanScheduleModel.effectiveDate < systemDate && loanScheduleModel.shouldDisburse== false)
+                    {
+                        //DisburseLoan(loanDisbursementModel);
+                        ProcessAccrualTeamLoansInterestAccrual(systemDate, loanId);
+                    }
+                    else if(loanScheduleModel.effectiveDate < systemDate && loanScheduleModel.shouldDisburse == true)// change to delete to IsDisbursed
+                    {
+                       // DisburseLoan(loanDisbursementModel);
+                    }
+                    else
+                    {
+                        DisburseLoan(loanDisbursementModel);
+                    }
+
 
                     loanRecord.LOANSTATUSID = 1;
                     loanRecord.ISDISBURSED = true;
@@ -1567,6 +1584,95 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="targetId">The target identifier.</param>
         /// <param name="createdBy">The created by.</param>
         /// <returns></returns>
+        /// 
+
+        public IEnumerable<DailyInterestAccrualViewModel> ProcessAccrualTeamLoansInterestAccrual (DateTime applicationDate, int loanId)
+
+
+        {
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+            var schedule  = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanId && x.DATE <= DbFunctions.TruncateTime(applicationDate));
+            int count = schedule.Count();
+
+            var data = (from a in context.TBL_LOAN_SCHEDULE_DAILY
+                        join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                        join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
+                        join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
+                        where a.DATE <= DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId
+
+                        select new DailyInterestAccrualViewModel()
+                        {
+                            referenceNumber = b.LOANREFERENCENUMBER,
+                            productId = b.PRODUCTID,
+                            branchId = b.BRANCHID,
+                            companyId = b.COMPANYID,
+                            currencyId = b.CURRENCYID,
+                            exchangeRate = b.EXCHANGERATE,
+                            interestRate = a.INTERESTRATE,
+                            date = applicationDate,
+                            dailyAccuralAmount = (double)a.DAILYINTERESTAMOUNT,
+                            mainAmount = c.PERIODINTERESTAMOUNT,
+                            categoryId = (short)DailyAccrualCategory.TermLoan,
+                            transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
+                            baseReferenceNumber = null,
+                            dayCountConventionId = d.DAYCOUNTCONVENTIONID,
+
+                        }).ToList();
+
+            List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
+
+
+            foreach (var item in data)
+            {
+                TBL_DAILY_ACCRUAL dailyAccrual = new TBL_DAILY_ACCRUAL();
+
+                dailyAccrual.REFERENCENUMBER = item.referenceNumber;
+                dailyAccrual.PRODUCTID = item.productId;
+                dailyAccrual.BRANCHID = item.branchId;
+                dailyAccrual.EXCHANGERATE = item.exchangeRate;
+                dailyAccrual.CURRENCYID = item.currencyId;
+                dailyAccrual.INTERESTRATE = item.interestRate;
+                dailyAccrual.DATE = item.date;
+                dailyAccrual.DAILYACCURALAMOUNT = (decimal)Math.Abs(item.dailyAccuralAmount);
+                dailyAccrual.MAINAMOUNT = item.mainAmount;
+                dailyAccrual.CATEGORYID = item.categoryId;
+                dailyAccrual.COMPANYID = item.companyId;
+                dailyAccrual.DAYCOUNTCONVENTIONID = item.dayCountConventionId;
+                dailyAccrual.BASEREFERENCENUMBER = item.baseReferenceNumber;
+                dailyAccrual.TRANSACTIONTYPEID = item.transactionTypeId;
+
+
+                transAccrual.Add(dailyAccrual);
+
+            }
+            this.context.TBL_DAILY_ACCRUAL.AddRange(transAccrual);
+            context.SaveChanges();
+
+
+            //var model = (from a in context.TBL_DAILY_ACCRUAL
+            //             where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
+            //             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, a.EXCHANGERATE } into groupedQ
+            //             select new DailyInterestAccrualViewModel()
+            //             {
+            //                 productId = groupedQ.Key.PRODUCTID,
+            //                 branchId = groupedQ.Key.BRANCHID,
+            //                 companyId = groupedQ.Key.COMPANYID,
+            //                 currencyId = groupedQ.Key.CURRENCYID,
+            //                 exchangeRate = groupedQ.Key.EXCHANGERATE,
+            //                 dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
+            //             }).ToList();
+
+
+
+            //foreach (var item in model)
+            //{
+            //    financeTransaction.PostDailyLoansInterestAccrual(item);
+            //}
+            //context.SaveChanges();
+            return data;
+        }
+
+
         private LoanPaymentScheduleInputViewModel BuildScheduleModel(int targetId, int createdBy)
         {
             List<IrregularLoanScheduleInputViewModel> irregularPaymentScheduleList = new List<IrregularLoanScheduleInputViewModel>();
@@ -1585,8 +1691,8 @@ namespace FintrakBanking.Repositories.Credit
             var loanFeeData = context.TBL_LOAN_FEE.Where(x => x.LOANID == targetId && x.ISINTEGRALFEE == true);
             double integraFeeAmount = 0;
 
-            var applicationDate = generalSetup.GetApplicationDate();
-            var maturityDate = applicationDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+            var effectiveDate = loanScheduleData.EFFECTIVEDATE; // generalSetup.GetApplicationDate();
+            var maturityDate = effectiveDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
             foreach (var record in loanFeeData)
             {
@@ -1603,7 +1709,7 @@ namespace FintrakBanking.Repositories.Credit
                 scheduleMethodId = loanScheduleData.SCHEDULETYPEID,
 
                 principalAmount = (double)loanScheduleData.PRINCIPALAMOUNT,
-                effectiveDate = applicationDate,
+                effectiveDate = effectiveDate,
                 interestRate = loanScheduleData.INTERESTRATE,
                 principalFrequency = loanScheduleData.PRINCIPALFREQUENCYTYPEID,
                 interestFrequency = loanScheduleData.INTERESTFREQUENCYTYPEID,
@@ -1613,8 +1719,10 @@ namespace FintrakBanking.Repositories.Credit
                 maturityDate = maturityDate,
                 accurialBasis = loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID,
                 integralFeeAmount = integraFeeAmount,
+                shouldDisburse = loanScheduleData.SHOULD_DISBURSE,
                 firstDayType = loanScheduleData.SCHEDULEDAYINTERESTTYPEID,
-                irregularPaymentSchedule = irregularPaymentScheduleList
+                irregularPaymentSchedule = irregularPaymentScheduleList,
+                
             };
 
             return scheduleModel;
@@ -1922,9 +2030,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 PRODUCTTYPEID = productTypeId,
                 LOANAPPLICATIONID = loanApplicationId,
-                FIRSTNAME = entity.firstname,
-                LASTNAME = entity.lastname,
-                MIDDLENAME = entity.middlename,
+                FIRSTNAME = entity.firstname != null ? entity.firstname : " ",
+                LASTNAME = entity.lastname != null ? entity.lastname : " ",
+                MIDDLENAME = entity.middlename != null ? entity.middlename : " ",
                 ADDRESS = entity.address,
                 PHONENUMBER1 = entity.phoneNumber1,
                 PHONENUMBER2 = entity.phoneNumber2,
@@ -1939,8 +2047,8 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = generalSetup.GetApplicationDate()
             };
             context.TBL_LOAN_GUARANTOR.Add(guarantor);
-            //return context.SaveChanges() > 0
-            return true;
+            return context.SaveChanges() > 0;
+            //return true;
         }
      
         /// <summary>
@@ -2928,7 +3036,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplications(int companyId)
         {
-            var data = AppraisalMemorandumProcessedLoanApplications(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted);
+            var data = AvailedLoanApplicationsDetails(companyId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted);
 
             data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
@@ -2973,36 +3081,41 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public int AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity)
+        public bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity)
         {
             var request = new TBL_LOAN_BOOKING_REQUEST
             {
                  AMOUNT_REQUESTED = entity.amount_Requested,
                  APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                 LOANAPPLICATIONDETAILID = entity.loanApplicationId,
+                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
                  DATETIMECREATED = generalSetup.GetApplicationDate(),
                  CREATEDBY = entity.createdBy,
 
             };
 
+            
+
             context.TBL_LOAN_BOOKING_REQUEST.Add(request);
 
             if (context.SaveChanges() > 0)
             {
-                var approvalModel = new ForwardViewModel
-                {
-                    createdBy = entity.createdBy,
-                    companyId = entity.companyId,
-                    applicationId = request.LOAN_BOOKING_REQUESTID,
-                    comment = entity.comment ?? "Please This Loan Booking Request",
-                    amount = entity.amount_Requested,
-                };
+                //var approvalModel = new ForwardViewModel
+                //{
+                //    createdBy = entity.createdBy,
+                //    companyId = entity.companyId,
+                //    applicationId = request.LOAN_BOOKING_REQUESTID,
+                //    comment = entity.comment ?? "Please This Loan Booking Request",
+                //    amount = entity.amount_Requested,
+                //};
 
-                 LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending);
-                return request.LOAN_BOOKING_REQUESTID;
+                // LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending);
+
+                var book = context.TBL_LOAN_BOOKING_REQUEST.Find(request.LOAN_BOOKING_REQUESTID);
+                book.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                return context.SaveChanges() > 0;
             }
 
-            else return 0;
+            else return false;
         }
 
         public bool GoForBookingRequestApproval(ApprovalViewModel entity)
@@ -3013,9 +3126,16 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
+                    
                     workflow.LogForApproval(entity);
 
+                    if (workflow.NextLevelId == null) {
+                        entity.externalInitialization = true;
+                        workflow.LogForApproval(entity);
+                    }
+
                     var b = workflow.NextLevelId ?? 0;
+
 
                     if (b == 0 && workflow.NewState != (int)ApprovalState.Ended)
                     {
@@ -3075,6 +3195,192 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
 
+        private IEnumerable<CamProcessedLoanViewModel> AvailedLoanApplicationsDetails(int companyId)
+        {
+
+            var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL 
+                        join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                        join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                        where m.COMPANYID == companyId && d.DELETED == false && m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted
+                        select new CamProcessedLoanViewModel
+                        {
+                            approvalStatusId = m.APPROVALSTATUSID,
+                            loanApplicationId = m.LOANAPPLICATIONID,
+                            loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                            applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
+                            applicationStatusId = m.APPLICATIONSTATUSID,
+                            //// casaAccountId = m.CasaAccountId,
+                            customerId = m.CUSTOMERID ?? 0,
+                            customerCode = cust.CUSTOMERCODE,
+                            customerName = m.CUSTOMERID.HasValue ? m.TBL_CUSTOMER.FIRSTNAME + " " + m.TBL_CUSTOMER.MIDDLENAME + " " + m.TBL_CUSTOMER.LASTNAME : "",
+                            isRelatedParty = m.ISRELATEDPARTY,
+                            customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
+                            customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
+                            customerSensitivityLevelId = d.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID,
+
+                            customerOccupation = d.TBL_CUSTOMER.OCCUPATION,
+                            customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+
+                            isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
+                            isInvestmentGrade = m.ISINVESTMENTGRADE,
+
+                            customerAccounts = (from k in context.TBL_CASA
+                                                where k.DELETED == false
+                                                && k.CUSTOMERID == d.CUSTOMERID
+                                                select (
+                                 new CasaViewModel
+                                 {
+                                     productAccountNumber = k.PRODUCTACCOUNTNUMBER,
+                                     productAccountName = k.PRODUCTACCOUNTNAME,
+                                     casaAccountId = k.CASAACCOUNTID,
+                                     currencyId = k.CURRENCYID,
+                                     productId = k.PRODUCTID,
+                                     customerId = k.CUSTOMERID,
+                                     isCurrentAccount = k.ISCURRENTACCOUNT,
+                                     tenor = (int)k.TENOR,
+                                 })).ToList(),
+                            loanInformation = m.LOANINFORMATION,
+                            companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION
+                                                  where a.CUSTOMERID == d.CUSTOMERID
+                                                  select new CustomerCompanyInfomationViewModels
+                                                  {
+                                                      annualTurnOver = a.ANNUALTURNOVER,
+                                                      authorizedCapital = a.AUTHORISEDCAPITAL,
+                                                      companyName = a.COMPANYNAME,
+                                                      companyEmail = a.COMPANYEMAIL,
+                                                      companyWebsite = a.COMPANYWEBSITE,
+                                                      corporateBusinessCategory = a.CORPORATEBUSINESSCATEGORY,
+                                                      paidUpCapital = a.PAIDUPCAPITAL,
+                                                      creditRating = a.TBL_CUSTOMER.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                                                      previousCreditRating = "",
+                                                      companyDiretcors = (from b in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                                                          where b.CUSTOMERID == a.CUSTOMERID
+                          && ((b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
+                                    || (b.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember_Shareholder))
+                                                                          select new CustomerCompanyDirectorsViewModels
+                                                                          {
+                                                                              numberOfShares = b.NUMBEROFSHARES,
+                                                                              companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                              fullname = b.FIRSTNAME + " " + b.SURNAME,
+                                                                              isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
+                                                                          }).ToList(),
+                                                      companyShareholders = (from e in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                                                             where e.CUSTOMERID == a.CUSTOMERID
+                                                                             && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder
+                                                                             select new CustomerCompanyShareholdersViewModels
+                                                                             {
+                                                                                 numberOfShares = e.NUMBEROFSHARES,
+                                                                                 companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                                 fullname = e.FIRSTNAME + " " + e.SURNAME,
+                                                                                 isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
+                                                                             }).ToList(),
+                                                      companyAccountSignatories = (from e in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                                                                   where e.CUSTOMERID == a.CUSTOMERID
+                                                                                   && e.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory
+                                                                                   select new CustomerCompanyAccountSignatoryViewModels
+                                                                                   {
+                                                                                       numberOfShares = e.NUMBEROFSHARES,
+                                                                                       companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                                       fullname = e.FIRSTNAME + " " + e.SURNAME,
+                                                                                       isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
+                                                                                   }).ToList(),
+                                                  }).FirstOrDefault(),
+                            companyId = m.COMPANYID,
+                            branchId = m.BRANCHID,
+                            branchName = m.TBL_BRANCH.BRANCHNAME,
+                            subSectorId = d.SUBSECTORID,
+                            subSectorName = d.TBL_SUB_SECTOR.NAME,
+                            sectorName = d.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                            applicationTenor = m.APPLICATIONTENOR,
+                            effectiveDate = (DateTime)m.EFFECTIVEDATE,
+                            expiryDate = (DateTime)m.EXPIRYDATE,
+                            relationshipOfficerId = m.RELATIONSHIPOFFICERID,
+                            relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
+                            relationshipManagerId = m.RELATIONSHIPMANAGERID,
+                            relationshipManagerName = m.TBL_STAFF1.FIRSTNAME + " " + m.TBL_STAFF1.MIDDLENAME + " " + m.TBL_STAFF1.LASTNAME,
+
+                            currencyId = d.CURRENCYID,
+                            currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                            exchangeRate = d.EXCHANGERATE,
+                            loanTypeId = m.LOANTYPEID,
+                            loanTypeName = m.TBL_LOAN_TYPE.LOANTYPENAME,
+                            camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDUM.FirstOrDefault().CAMREF,
+                            productId = d.APPROVEDPRODUCTID,
+                            productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
+                            productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            productName = d.TBL_PRODUCT.PRODUCTNAME,
+
+                            misCode = m.MISCODE,
+                            teamMisCode = m.TEAMMISCODE,
+
+                            interestRate = d.APPROVEDINTERESTRATE,
+                            submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
+                            approvedAmount = d.APPROVEDAMOUNT,
+                            groupApprovedAmount = m.APPROVEDAMOUNT,
+
+                            customerAvailableAmount = (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan
+                                                      || d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
+                             ? (d.APPROVEDAMOUNT - d.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.PRINCIPALAMOUNT)) :
+                            (
+                                (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
+                                        ? (d.APPROVEDAMOUNT - d.TBL_LOAN_REVOLVING
+                                            .Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.OVERDRAFTLIMIT)) :
+                                (d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
+                                        ? (d.APPROVEDAMOUNT - d.TBL_LOAN_CONTINGENT
+                                            .Where(tl => tl.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID).Sum(s => s.CONTINGENTAMOUNT)) :
+                                            0)
+                            ),
+                            approvedTenor = d.APPROVEDTENOR,
+                            createdBy = m.CREATEDBY,
+                            applicationDate = m.APPLICATIONDATE,
+                            dateTimeCreated = d.DATETIMECREATED,
+
+                            loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
+                            loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID)
+                                             select (
+                                                      new LoanGuarantorViewModel
+                                                      {
+                                                          loanGuarantorId = g.LOANGUARANTORID,
+                                                          firstname = g.FIRSTNAME,
+                                                          lastname = g.LASTNAME,
+                                                          middlename = g.MIDDLENAME,
+                                                          fullName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
+                                                          emailAddress = g.EMAILADDRESS,
+                                                          phoneNumber1 = g.PHONENUMBER1,
+                                                          phoneNumber2 = g.PHONENUMBER2,
+                                                          address = g.ADDRESS,
+                                                          bvn = g.BVN,
+                                                          relationship = g.RELATIONSHIP,
+                                                          rcNumber = g.REGISTRATION_NUMBER,
+                                                          taxNumber = g.TAX_NUMBER,
+                                                          customerTypeId = g.CUSTOMERTYPEID,
+                                                          customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
+                                                          relationshipDuration = g.RELATIONSHIPDURATION
+                                                      })).ToList(),
+
+                            loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID)
+                                              select (
+                                                       new LoanCollateralMappingViewModel
+                                                       {
+                                                           loanCollateralMappingId = cm.LOANCOLLATERALMAPPINGID,
+                                                           collateralTypeName = cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
+                                                           + "(" + cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.FirstOrDefault().COLLATERALSUBTYPENAME + ")",
+                                                           collateralCustomerId = cm.COLLATERALCUSTOMERID,
+                                                           loanApplicationId = cm.LOANAPPLICATIONID,
+                                                           collateralValue = cm.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                           hairCut = cm.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                           valuationCycle = cm.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                           currencyId = cm.TBL_COLLATERAL_CUSTOMER.CURRENCYID,
+                                                           currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                                                           currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
+                                                       })).ToList(),
+                        }).ToList();
+
+            return data.ToList();
+        }
+
+
         /// <summary>
         /// Gets the appraisal memorandum processed loan applications.
         /// </summary>
@@ -3088,9 +3394,11 @@ namespace FintrakBanking.Repositories.Credit
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         where m.COMPANYID == companyId && d.DELETED == false //&& m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted
+                        orderby s.LOAN_BOOKING_REQUESTID descending
                         select new CamProcessedLoanViewModel
                         {
                             bookRequestAmount = s.AMOUNT_REQUESTED,
+                            loanBookingRequestId =s.LOAN_BOOKING_REQUESTID,
                             bookingRequestStatusId = s.APPROVALSTATUSID,
                             requestDate = s.DATETIMECREATED,
                             requestedBy = "",
@@ -3101,7 +3409,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                             applicationStatusId = m.APPLICATIONSTATUSID,
                             //// casaAccountId = m.CasaAccountId,
-                            customerId = m.CUSTOMERID ?? 0,
+                            customerId = d.CUSTOMERID,
                             customerCode = cust.CUSTOMERCODE,
                             customerName = m.CUSTOMERID.HasValue ? m.TBL_CUSTOMER.FIRSTNAME + " " + m.TBL_CUSTOMER.MIDDLENAME + " " + m.TBL_CUSTOMER.LASTNAME : "",
                             isRelatedParty = m.ISRELATEDPARTY,

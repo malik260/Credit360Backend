@@ -471,6 +471,72 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpPost]
+        //[Route("loan/collateral-estimated")]
+        //public HttpResponseMessage GetCollateralEstimated(string acctNumber, string collateralCode)
+        //{
+        //    var token = new TokenDecryptionHelper();
+        //    try
+        //    {
+
+        //        var data = repo.GetCollateralEstimated(token.GetCompanyId, acctNumber, collateralCode);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = data });  //Ok(accounts);
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        [HttpGet]
+        [Route("collateralestimated/loan/{collateralCode}")]
+        public HttpResponseMessage GetCollateralEstimated(string collateralCode)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetCollateralEstimated(token.GetCompanyId, collateralCode);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("fcyscheuledloan/loan/{id}")]
+        public HttpResponseMessage GetFCYScheuledLoan(int id)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetFCYScheuledLoan(token.GetCompanyId, id);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
 

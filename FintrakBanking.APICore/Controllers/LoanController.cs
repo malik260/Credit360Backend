@@ -994,7 +994,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 entity.companyId = token.GetCompanyId;
 
                 var data = repo.AddLoanBookingRequest(applicationId, entity);
-                if (data > 0)
+                if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, data = data, message = "Booking successfully initiated!" });

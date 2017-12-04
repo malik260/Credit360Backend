@@ -100,8 +100,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                   messageTemplate = d.MESSAGE_TEMPLATE,
                                   messageTypeName = d.TBL_MESSAGE_LOG_TYPE.MESSAGETYPENAME,
                                   productId = d.TBL_PRODUCT.PRODUCTID,
+                                  productName = d.TBL_PRODUCT.PRODUCTDESCRIPTION,
 
-                              }).ToList();
+                                   }).ToList();
             return MonitoringSetup;
         }
 

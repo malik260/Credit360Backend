@@ -41,7 +41,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetRequestedLoanBookingAwaitingApproval(int companyId);
 
-        int AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity);
+        bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity);
 
         //IEnumerable<ProductFeeViewModel> GetLoanProductChargeFeesByProductId(int productId);
 

@@ -51,6 +51,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool addBulkRateLoanExcemptions(LoanViewModel model);
         bool addInterestRateChange(LoanBulkInterestReviewViewModel model);
         IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId);
+        IEnumerable<LoanClassificationViewModel> CalLoanClassification(DateTime applicationDate);
 
 
 

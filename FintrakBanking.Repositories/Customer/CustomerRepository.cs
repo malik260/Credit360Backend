@@ -4,6 +4,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using System;
@@ -1001,6 +1002,8 @@ namespace FintrakBanking.Repositories.Customer
                        placeOfBirth = a.PLACEOFBIRTH,
                        isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                        relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                       relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f=> f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
+                      + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
                        spouse = a.SPOUSE,
                        sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
@@ -1008,6 +1011,7 @@ namespace FintrakBanking.Repositories.Customer
                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                        taxNumber = a.TAXNUMBER,
                        riskRatingId = a.RISKRATINGID,
+                       riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                        customerBVN = a.CUSTOMERBVN,
                        CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
                        {
@@ -1482,11 +1486,11 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLoanId(int loanApplicationId)
         {
             var loanCust = (from a in context.TBL_LOAN_APPLICATION_DETAIL where a.LOANAPPLICATIONID == loanApplicationId select a.CUSTOMERID).ToList();
-                var customers = GetCustomers();
-                if (loanCust.Any())
-                {
-                    customers = customers.Where(x => loanCust.Contains(x.customerId));
-                }  
+            var customers = GetCustomers();
+            if (loanCust.Any())
+            {
+                customers = customers.Where(x => loanCust.Contains(x.customerId));
+            }
             return customers;
         }
         public CustomerViewModels GetSingleCustomerGeneralInfo(string customerCode)
@@ -1752,6 +1756,33 @@ namespace FintrakBanking.Repositories.Customer
                 email = x.EMAILADDRESS,
             }).ToList();
             return customerCompanyBeneficial;
+        }
+        public IEnumerable<CasaViewModel> GetCustomerCASAInformation(int customerId)
+        {
+            var casaInformation = context.TBL_CASA.Where(a => a.CUSTOMERID == customerId).Select(x => new CasaViewModel()
+            {
+                casaAccountId = x.CASAACCOUNTID,
+                productAccountNumber = x.PRODUCTACCOUNTNUMBER,
+                productAccountName = x.PRODUCTACCOUNTNAME,
+                isCurrentAccount = x.ISCURRENTACCOUNT,
+                customerId = x.CUSTOMERID,
+                productId = x.PRODUCTID,
+                productCode = x.TBL_PRODUCT.PRODUCTCODE,
+                productName = x.TBL_PRODUCT.PRODUCTNAME,
+                branchId = x.BRANCHID,
+                branchCode = x.TBL_BRANCH.BRANCHCODE,
+                branchName = x.TBL_BRANCH.BRANCHNAME,
+                currencyId = x.CURRENCYID,
+                currency = x.TBL_CURRENCY.CURRENCYNAME,
+                availableBalance = x.AVAILABLEBALANCE,
+                ledgerBalance = x.LEDGERBALANCE,
+                accountStatusName = x.TBL_CASA_ACCOUNTSTATUS.ACCOUNTSTATUSNAME,
+                relationshipManagerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                relationshipOfficerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+                hasOverdraft = x.HASOVERDRAFT,
+                hasLien = x.HASLIEN
+            }).ToList();
+            return casaInformation;
         }
         public dynamic GetCustomerAndType(int custormerId)
         {
