@@ -86,6 +86,16 @@ namespace FintrakBanking.APICore.Providers
                     user = Task.FromResult(_authRepo.FindUserByUserName(userVM.username)).Result;
                 }
             }
+            else if (AuthenticationType == AuthenticationTypeEnum.defaultAuth.ToString())
+            {
+                user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
+                   .Result;
+                if (user == null)
+                {
+                    context.SetError("invalid_grant", "The user name or password is incorrect.");
+                    return;
+                }
+            }
 
             bool isUserAccountValid;
 
@@ -97,18 +107,6 @@ namespace FintrakBanking.APICore.Providers
             {
                 isUserAccountValid = false;
             }
-
-            if (AuthenticationType == AuthenticationTypeEnum.defaultAuth.ToString())
-            {
-                user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
-                   .Result;
-                if (user == null)
-                {
-                    context.SetError("invalid_grant", "The user name or password is incorrect.");
-                    return;
-                }
-            }
-
 
             if (isUserAccountValid)
             {
@@ -197,7 +195,7 @@ namespace FintrakBanking.APICore.Providers
 
         public bool ValidateCredentials(string userName, string password, out ClaimsIdentity identity)
         {
-           
+
             using (var pc = new PrincipalContext(ContextType.Domain, this.DomanProvider, this.DomainUserName, this.DomainUserPassword))
             {
                 bool isValid = pc.ValidateCredentials(userName, password);
@@ -205,6 +203,8 @@ namespace FintrakBanking.APICore.Providers
                 {
                     identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
                     identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+
+
                 }
                 else
                 {
