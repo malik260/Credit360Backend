@@ -1073,7 +1073,6 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
-
             }
 
             catch (System.Exception ex)
@@ -1092,11 +1091,11 @@ namespace FintrakBanking.APICore.Controllers
                 if (!data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Product process added successfully!" });
+                        new { success = false, message = "Product process not added successfully!" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
 
-                    new { success = true, message = "Product process not added successfully!" });
+                    new { success = true, message = "Product process added successfully!" });
             }
             catch (System.Exception ex)
             {
@@ -1114,11 +1113,11 @@ namespace FintrakBanking.APICore.Controllers
                 if (!data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Product process updated successfully!" });
+                        new { success = false, message = "Product process not updated successfully!" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
 
-                    new { success = true, message = "Product process not updated successfully!" });
+                    new { success = true, message = "Product process updated successfully!" });
             }
             catch (System.Exception ex)
             {

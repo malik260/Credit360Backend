@@ -1,10 +1,7 @@
 namespace FintrakBanking.Entities.Models
 {
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("credit.TBL_OFFERLETTER")]
     public partial class TBL_OFFERLETTER
@@ -12,7 +9,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int DOCUMENTID { get; set; }
 
-        public string HTML_DOCUMENT { get; set; }
+        public string LOANAPPLICATIONDOCUMENT { get; set; }
 
         [StringLength(50)]
         public string APPLICATIONREFERENCENUMBER { get; set; }
