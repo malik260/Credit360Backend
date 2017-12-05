@@ -296,7 +296,7 @@ namespace FintrakBanking.ReportObjects
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.TARGETID equals b.LOANAPPLICATIONDETAILID
 
                            where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Waived
-                           //&& b.TBL_CUSTOMER.COMPANYID == companyId
+                             && b.TBL_CUSTOMER.COMPANYID == companyId
                              && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                             && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                             && b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted 
@@ -324,6 +324,82 @@ namespace FintrakBanking.ReportObjects
                 return data.ToList();
             }
         }
+
+        public static IList<CollateralEstimatedViewModel> CollateralEstimated(int companyId, string collateralCode) //(string collateralCode, string acctNumber, int companyId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = from a in context.TBL_LOAN_COLLATERAL_MAPPING
+                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                           join c in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                           where c.COLLATERALCODE == collateralCode
+
+                           select new CollateralEstimatedViewModel()
+                           {
+                               firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                               lastName = b.TBL_CUSTOMER.LASTNAME,
+                               middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                               facilityAmount = b.APPROVEDAMOUNT,
+                               companyName = b.TBL_CUSTOMER.TBL_COMPANY.NAME,
+                               customerId = b.CUSTOMERID,
+                               facilityName = b.TBL_PRODUCT.PRODUCTNAME,
+                               collateralType = c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                               collateralDetail = c.TBL_COLLATERAL_TYPE.DETAILS,
+                               collateralCode = c.COLLATERALCODE,
+                               collateralValue = c.COLLATERALVALUE,
+                               hairCut = c.HAIRCUT,
+
+
+                           };
+
+                return data.ToList();
+            }
+        }
+
+        public IList<FCYScheuledLoanViewModel> FCYScheuledLoan(int companyId, int loanId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var currdata = from a in context.TBL_LOAN
+                               where a.COMPANYID == companyId && a.LOANSTATUSID == 1
+                               && a.TERMLOANID == loanId
+                               //&& a.CURRENCYID != 1
+                               select new FCYScheuledLoanViewModel()
+                               {
+                                   loanRefrenceNumber = a.LOANREFERENCENUMBER,
+                                   accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                   loanTypeName = a.TBL_LOAN_TYPE.LOANTYPENAME,
+                                   firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                                   lastName = a.TBL_CUSTOMER.LASTNAME,
+                                   middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                                   loanCurrency = a.TBL_CURRENCY.CURRENCYCODE,
+                                   //scheduleTypeId = a.SCHEDULETYPEID,
+                                   //scheduleTypeName = a.TBL_LOAN_SCHEDULE_type.SCHEDULETYPENAME,
+                                   interestRate = a.INTERESTRATE,
+                                   valueDate = a.EFFECTIVEDATE,
+                                   maturityDate = a.MATURITYDATE,
+                                   facilityLimit = a.PRINCIPALAMOUNT,
+                                   facilityRate = a.INTERESTRATE,
+                                   exchangeRate = a.EXCHANGERATE,
+                                   //tenorDays = a.MATURITYDATE.Subtract(a.EFFECTIVEDATE)
+                                   tenorDays = (a.MATURITYDATE.Day - a.EFFECTIVEDATE.Day),
+                                   //tenorToDate =(DateTime.Now - a.EFFECTIVEDATE.Day),
+                                   logoPath = a.TBL_COMPANY.LOGOPATH,
+                                   companyName = a.TBL_COMPANY.NAME,
+                                   applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                   loanFigure = a.PRINCIPALAMOUNT,
+                                   
+                //tenorToDate = DbFunctions.DiffDays(DateTime.Now,(a.EFFECTIVEDATE.Day))
+
+                // tenorToDate = DbFunctions.DiffDays(DateTime.Now, a.EFFECTIVEDATE.Day)
+
+
+
+            };
+                return currdata.ToList();
+            }
+        }
+
         public List<dynamic> LoanUtilization()
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
