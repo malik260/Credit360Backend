@@ -38,6 +38,9 @@ namespace FintrakBanking.Entities.Models
         public string CASA_ACCOUNTNO { get; set; }
 
         [StringLength(500)]
+        public string NATURE_OF_BUSINESS { get; set; }
+        
+        [StringLength(500)]
         public string ADDRESS { get; set; }
 
         [StringLength(50)]
