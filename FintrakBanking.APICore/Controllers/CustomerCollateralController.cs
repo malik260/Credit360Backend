@@ -655,46 +655,46 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet, Route("unmapped-collateral-application/customer/{customerId}/loanapplication/{loanapplicationid}")]
-        public HttpResponseMessage GetAllUnmappedCustomerCollateral(int customerId, int loanApplicationId)
-        {
-            try
-            {
-                var response = repo.GetAllUnmappedCustomerCollateral(customerId, loanApplicationId , token.GetCompanyId );
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
-            }
-        }
+        //[HttpGet, Route("unmapped-collateral-application/customer/{customerId}/loanapplication/{loanapplicationid}")]
+        //public HttpResponseMessage GetAllUnmappedCustomerCollateral(int customerId, int loanApplicationId)
+        //{
+        //    try
+        //    {
+        //        var response = repo.GetAllUnmappedCustomerCollateral(customerId, loanApplicationId , token.GetCompanyId );
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+        //    }
+        //}
 
-        [HttpGet, Route("mapped-collateral-application/customer/{customerId}/loanapplication/{loanapplicationid}")]
-        public HttpResponseMessage GetAllMappedCustomerCollateral(int customerId, int loanApplicationId)
-        {
-            try
-            {
-                var response = repo.GetAllMappedCustomerCollateral(customerId, loanApplicationId, token.GetCompanyId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
-            }
-        }
+        //[HttpGet, Route("mapped-collateral-application/customer/{customerId}/loanapplication/{loanapplicationid}")]
+        //public HttpResponseMessage GetAllMappedCustomerCollateral(int customerId, int loanApplicationId)
+        //{
+        //    try
+        //    {
+        //        var response = repo.GetAllMappedCustomerCollateral(customerId, loanApplicationId, token.GetCompanyId);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+        //    }
+        //}
 
-        [HttpPost, Route("remove-mapped-collateral-application")]
-        public HttpResponseMessage DeleteCollateralApplicationMapped([FromBody] IEnumerable<CollateralLoanApplication> entity)
-        {
-            try
-            {
-                var response = repo.DeleteCollateralApplicationMapped(entity, token.GetCompanyId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
-            }
-        }
+        //[HttpPost, Route("remove-mapped-collateral-application")]
+        //public HttpResponseMessage DeleteCollateralApplicationMapped([FromBody] IEnumerable<CollateralLoanApplication> entity)
+        //{
+        //    try
+        //    {
+        //        var response = repo.DeleteCollateralApplicationMapped(entity, token.GetCompanyId);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+        //    }
+        //}
     }
 }

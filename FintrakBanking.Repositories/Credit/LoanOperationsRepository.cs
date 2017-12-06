@@ -526,7 +526,6 @@ namespace FintrakBanking.Repositories.Credit
             }
             return data;
         }
-
         public IEnumerable<LoanClassificationViewModel> CalLoanClassification(DateTime applicationDate)
 
         {
@@ -539,12 +538,12 @@ namespace FintrakBanking.Repositories.Credit
                         join d in context.TBL_SETUP_GLOBAL on a.COMPANYID equals d.COMPANYID
                         where b.DATE <= DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                        && (b.CREDITAMOUNT - b.DEBITAMOUNT) <= 0 && a.ALLOWFORCEDEBITREPAYMENT == false
-                        group b by new { b.LOANID,b.PARENT_PASTDUECODE } into groupedQ
+                        group b by new { b.LOANID, b.PARENT_PASTDUECODE } into groupedQ
                         select new LoanClassificationViewModel()
                         {
                             loanId = groupedQ.Key.LOANID,
                             refNo = groupedQ.Key.PARENT_PASTDUECODE,
-                            amount = groupedQ.Sum(i => i.CREDITAMOUNT -i.DEBITAMOUNT),
+                            amount = groupedQ.Sum(i => i.CREDITAMOUNT - i.DEBITAMOUNT),
                         }).ToList();
 
             foreach (var item in data)
@@ -560,9 +559,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     result.NPLDATE = systemDate;
 
-                    //context.SaveChanges();
+                    context.SaveChanges();
                 }
-                else if(pastDueDate != null && item.amount > 0)
+                else if (pastDueDate != null && item.amount > 0)
                 {
                     TBL_LOAN result = (from p in context.TBL_LOAN
                                        where p.TERMLOANID == item.loanId
@@ -570,14 +569,15 @@ namespace FintrakBanking.Repositories.Credit
 
                     result.NPLDATE = null;
 
-                    //context.SaveChanges();
+                    context.SaveChanges();
                 }
 
             }
-            context.SaveChanges();
+           // context.SaveChanges();
 
             return data;
         }
+
 
         #endregion
 
