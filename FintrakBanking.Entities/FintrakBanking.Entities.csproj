@@ -356,6 +356,8 @@
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
+    <Compile Include="StagingModels\STG_CUSTOMER.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

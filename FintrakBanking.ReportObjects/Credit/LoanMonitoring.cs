@@ -12,7 +12,7 @@ namespace FintrakBanking.ReportObjects.Credit
     {
         public static IEnumerable<CollateralViewModel> CollateralPropertyRevaluation(int companyId)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
+            var context = new FinTrakBankingContext();
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
 
             var data = (from a in context.TBL_COLLATERAL_CUSTOMER
@@ -48,7 +48,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
         public static IEnumerable<LoanCovenantDetailViewModel> CovenantsApproachingDueDate(int companyId)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
+            var context = new FinTrakBankingContext();
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
             var data = (from a in context.TBL_LOAN_COVENANT_DETAIL
                         join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
@@ -88,7 +88,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
         public static IEnumerable<LoanViewModel> NplLoanMonitoring(int companyId)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
+            var context = new FinTrakBankingContext();
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                         join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
@@ -126,7 +126,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
         public IEnumerable<LoanViewModel> SelfLiquidatingLoanExpiry(int companyId)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
+            var context = new FinTrakBankingContext();
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
 
             var data = (from a in context.TBL_LOAN
@@ -172,7 +172,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
         public static IEnumerable<LoanViewModel> ExpiredOverDraftLoans(int companyId)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
+            var context = new FinTrakBankingContext();
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
 
             var data = (from a in context.TBL_LOAN_REVOLVING

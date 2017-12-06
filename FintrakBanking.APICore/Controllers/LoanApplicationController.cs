@@ -243,10 +243,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = $"{responseMessage}" });
+                        new { success = true, message = $"Checklist Completed. Loan application has being sent to CAM" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Updated successful" });
+                    new { success = false, message = "Checklist not completed. Please complete checklist to proceed." });
             }
             catch (Exception ex)
             {
