@@ -1,4 +1,4 @@
-﻿namespace FintrakBanking.Entities.Models
+namespace FintrakBanking.Entities.Models
 {
     using System;
     using System.Collections.Generic;
@@ -34,10 +34,9 @@
         public DateTime DATETIMECREATED { get; set; }
 
         public DateTime SYSTEMDATETIME { get; set; }
+
         public int CUSTOMERID { get; set; }
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
-
-        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
     }
 }
