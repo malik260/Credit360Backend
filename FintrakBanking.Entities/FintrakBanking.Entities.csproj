@@ -89,6 +89,7 @@
     <Compile Include="Models\TBL_AUDIT.cs" />
     <Compile Include="Models\TBL_AUDIT_TYPE.cs" />
     <Compile Include="Models\TBL_BRANCH.cs" />
+    <Compile Include="Models\TBL_BRANCH_REGION.cs" />
     <Compile Include="Models\TBL_CALL_MEMO.cs" />
     <Compile Include="Models\TBL_CALL_MEMO_LIMIT.cs" />
     <Compile Include="Models\TBL_CALL_MEMO_TYPE.cs" />
@@ -230,7 +231,10 @@
     <Compile Include="Models\TBL_LOAN_APPLICATION.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATERAL.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_EDU.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_INV.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_STA.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_TRA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_LOG.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
     <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />
@@ -248,10 +252,14 @@
     <Compile Include="Models\TBL_LOAN_FEE_SCHEDULE.cs" />
     <Compile Include="Models\TBL_LOAN_FORCE_DEBIT.cs" />
     <Compile Include="Models\TBL_LOAN_GUARANTOR.cs" />
+    <Compile Include="Models\TBL_LOAN_MARKET.cs" />
+    <Compile Include="Models\TBL_LOAN_MONITORING_TRIGGER.cs" />
+    <Compile Include="Models\TBL_LOAN_MONITORING_TRIG_SETUP.cs" />
     <Compile Include="Models\TBL_LOAN_OPERATION.cs" />
     <Compile Include="Models\TBL_LOAN_PAST_DUE.cs" />
     <Compile Include="Models\TBL_LOAN_PRELIMINARY_EVALUATION.cs" />
     <Compile Include="Models\TBL_LOAN_PRICEINDEX_EXCEPTION.cs" />
+    <Compile Include="Models\TBL_LOAN_PRINCIPAL.cs" />
     <Compile Include="Models\TBL_LOAN_PRUDENTIALGUIDELINE.cs" />
     <Compile Include="Models\TBL_LOAN_RELATIONSHIP_OFF_HIST.cs" />
     <Compile Include="Models\TBL_LOAN_REVIEW_OPERATION.cs" />
@@ -356,6 +364,8 @@
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\view_Approval_Setup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StagingModels\FinTrakBankingStagingContext.cs" />
+    <Compile Include="StagingModels\STG_CUSTOMER.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">

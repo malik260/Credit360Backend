@@ -73,6 +73,7 @@
     <Compile Include="Credit\ILoanDocumentRepository.cs" />
     <Compile Include="Credit\ILoanRepository.cs" />
     <Compile Include="Credit\ILoanScheduleRepository.cs" />
+    <Compile Include="Credit\IOfferLetterAndAvailmentRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionGroupRepository.cs" />
     <Compile Include="Customer\ICustomerFSCaptionRepository.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Customer\ICustomerGroupRepository.cs" />
     <Compile Include="Customer\ICustomerRepository.cs" />
     <Compile Include="Credit\ILoanCovenantRepository.cs" />
+    <Compile Include="Customer\ICustomerStagingRepository.cs" />
     <Compile Include="Customer\IKYCDocumentUploadRepository.cs" />
     <Compile Include="ErrorLogger\IErrorLogRepository.cs" />
     <Compile Include="Finance\IEndOfDayRepository.cs" />

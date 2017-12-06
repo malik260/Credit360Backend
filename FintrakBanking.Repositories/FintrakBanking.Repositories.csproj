@@ -66,7 +66,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial">
-      <HintPath>C:\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -92,12 +92,14 @@
     <Compile Include="Credit\LoanRepository.cs" />
     <Compile Include="Credit\LoanScheduleRepository.cs" />
     <Compile Include="Credit\CustomException.cs" />
+    <Compile Include="Credit\OfferLetterAndAvailmentRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionDetailRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionGroupRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionRepository.cs" />
     <Compile Include="Customer\CustomerFSRatioRepository.cs" />
     <Compile Include="Customer\CustomerGroupRepository.cs" />
     <Compile Include="Customer\CustomerRepository.cs" />
+    <Compile Include="Customer\CustomerStagingRepository.cs" />
     <Compile Include="Customer\KYCDocumentUploadRepository.cs" />
     <Compile Include="Finance\EndOfDayRepository.cs" />
     <Compile Include="Helper\ErrorLogger\ErrorLogRepository.cs" />

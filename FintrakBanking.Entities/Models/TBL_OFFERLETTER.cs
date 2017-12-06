@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int DOCUMENTID { get; set; }
 
-        public string HTML_DOCUMENT { get; set; }
+        public string LOANAPPLICATIONDOCUMENT { get; set; }
 
         [StringLength(50)]
         public string APPLICATIONREFERENCENUMBER { get; set; }

@@ -2,9 +2,9 @@
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public partial class LoanApplicationCollateralViewModel : GeneralEntity
+    public   class LoanApplicationCollateralViewModel : GeneralEntity
     {
-        public int customerCollateralId { get; set; }
+       
 
         public string collateralReferenceNumber { get; set; }         
 
@@ -16,14 +16,15 @@ namespace FintrakBanking.ViewModels.Credit
 
         public decimal collateralValue { get; set; }
 
-        public int collateralCustomerId    {get;set;}
+        public int loanApplicationId { get;set;}
 
-        public int loanapplicationDetailId {get;set;}
+        public int collateralCustomerId { get; set; }
+
+        public int? loanApplicationDetailId {get;set;}
 
         public int loanAppCollateralId { get; set; }
-         
 
-
+        public double haircut { get; set; }
     }
 
 

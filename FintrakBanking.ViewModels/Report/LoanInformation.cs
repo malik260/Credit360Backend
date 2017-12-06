@@ -184,4 +184,36 @@ namespace FintrakBanking.ViewModels.Reports
         public string companyName { get; set; }
     }
 
+    public class FCYScheuledLoanViewModel
+    {
+        public string loanRefrenceNumber { set; get; }
+        public string accountNumber { set; get; }
+        public string loanTypeName { set; get; }
+        public string loanCurrency { set; get; }
+        public double interestRate { set; get; }
+        public DateTime valueDate { set; get; }
+        public DateTime maturityDate { set; get; }
+        public decimal facilityLimit { set; get; }
+        public double facilityRate { set; get; }
+        public double exchangeRate { set; get; }
+        public string firstName { set; get; }
+        public string lastName { set; get; }
+        public string middleName { set; get; }
+        public string customerName { get { return firstName + " " + middleName + " " + lastName; } }
+        public int tenorDays { get; set; }
+        public string companyName { get; set; }
+        public string logoPath { get; set; }
+        public string applicationRefrenceNumber { get; set; }
+        public decimal loanFigure { get; set; }
+     
+
+
+
+
+
+
+
+
+
+    }
 }

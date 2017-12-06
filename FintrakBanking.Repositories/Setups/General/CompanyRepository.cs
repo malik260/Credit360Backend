@@ -26,95 +26,153 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddCompany(CompanyViewModel company)
         {
-            var _company = new TBL_COMPANY()
+            try
             {
-                NAME = company.companyName,
-                ADDRESS = company.address,
-                TELEPHONE = company.telephone,
-                EMAIL = company.email,
-                DATEOFINCORPORATION = company.dateOfIncorporation.Value,
-                COUNTRYID = company.countryId,
-                CURRENCYID = company.currencyId,
-                NATUREOFBUSINESSID = company.natureOfBusinessId,
-                NAMEOFSCHEME = company.nameOfScheme,
-                FUNCTIONSREGISTERED = company.functionsRegistered,
-                AUTHORISEDSHARECAPITAL = company.authorisedShareCapital,
-                NAMEOFREGISTRAR = company.nameOfRegistrar,
-                NAMEOFTRUSTEES = company.nameOfTrustees,
-                FORMERMANAGERSTRUSTEES = company.formerManagersTrustees,
-                DATEOFRENEWALOFREGISTRATION = company.dateOfRenewalOfRegistration,
-                DATEOFCOMMENCEMENT = company.dateOfCommencement,
-                INITIALFLOATATION = company.initialFloatation,
-                INITIALSUBSCRIPTION = company.initialSubscription,
-                REGISTEREDBY = company.registeredBy,
-                PARENTID = company.parentId,
-                TRUSTEESADDRESS = company.trusteesAddress,
-                INVESTMENTOBJECTIVE = company.investmentObjective,
+                var _company = new TBL_COMPANY()
+                {
+                    NAME = company.companyName,
+                    ADDRESS = company.address,
+                    TELEPHONE = company.telephone,
+                    EMAIL = company.email,
+                    DATEOFINCORPORATION = company.dateOfIncorporation.Value,
+                    COUNTRYID = company.countryId,
+                    CURRENCYID = company.currencyId,
+                    NATUREOFBUSINESSID = company.natureOfBusinessId,
+                    NAMEOFSCHEME = company.nameOfScheme,
+                    FUNCTIONSREGISTERED = company.functionsRegistered,
+                    AUTHORISEDSHARECAPITAL = company.authorisedShareCapital,
+                    NAMEOFREGISTRAR = company.nameOfRegistrar,
+                    NAMEOFTRUSTEES = company.nameOfTrustees,
+                    FORMERMANAGERSTRUSTEES = company.formerManagersTrustees,
+                    DATEOFRENEWALOFREGISTRATION = company.dateOfRenewalOfRegistration,
+                    DATEOFCOMMENCEMENT = company.dateOfCommencement,
+                    INITIALFLOATATION = company.initialFloatation,
+                    INITIALSUBSCRIPTION = company.initialSubscription,
+                    REGISTEREDBY = company.registeredBy,
+                    PARENTID = company.parentId,
+                    TRUSTEESADDRESS = company.trusteesAddress,
+                    INVESTMENTOBJECTIVE = company.investmentObjective,
 
-            };
+                };
 
-            return true;
+                context.TBL_COMPANY.Add(_company);
+
+                return context.SaveChanges() > 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-
-        //join c in context.TblCountry
-        //             on data.CountryId equals c.CountryId
-        private IEnumerable<CompanyViewModel> tbl_Customer()
+        private IQueryable<CompanyViewModel> GetAllCompanies()
         {
-            return from data in context.TBL_COMPANY
-                   join c in context.TBL_COUNTRY
-                     on data.COUNTRYID equals c.COUNTRYID
-                   select new CompanyViewModel()
-                   {
-                       companyId = data.COMPANYID,
-                       companyName = data.NAME,
-                       address = data.ADDRESS,
-                       telephone = data.TELEPHONE,
-                       email = data.EMAIL,
-                       dateOfIncorporation = data.DATEOFINCORPORATION ?? DateTime.Now,
-                       //natureOfBusinessId = data.NatureOfBusinessId ?? 0,
-                       nameOfScheme = data.NAMEOFSCHEME,
-                       functionsRegistered = data.FUNCTIONSREGISTERED,
-                       authorisedShareCapital = data.AUTHORISEDSHARECAPITAL ?? 0,
-                       nameOfRegistrar = data.NAMEOFREGISTRAR,
-                       nameOfTrustees = data.NAMEOFTRUSTEES,
-                       formerManagersTrustees = data.FORMERMANAGERSTRUSTEES,
-                       dateOfRenewalOfRegistration = data.DATEOFRENEWALOFREGISTRATION ?? DateTime.Now,
-                       dateOfCommencement = data.DATEOFCOMMENCEMENT ?? DateTime.Now,
-                       //initialFloatation = data.InitialFloatation ?? 0,
-                       //initialSubscription = data.InitialSubscription ?? 0,
-                       registeredBy = data.REGISTEREDBY,
-                       trusteesAddress = data.TRUSTEESADDRESS,
-                       investmentObjective = data.INVESTMENTOBJECTIVE,
-                       website = data.WEBSITE,
-                       countryId = data.COUNTRYID,
-                       country = c.NAME,
-                       //companyClassId = data.CompanyClassId ?? (short)1,
-                       //companyTypeId = data.CompanyTypeId ?? (short)1,
-                       //accountingStandardId = data.AccountingStandardId ?? (short)1,
-                       //managementTypeId = data.ManagementTypeId ?? (short)1,
-                       createdBy = data.CREATEDBY ?? 0,
-                       lastUpdatedBy = data.LASTUPDATEDBY ?? 0,
-                       CompanyLogo = data.COMPANYLOGO,
-                       dateTimeCreated = data.DATETIMECREATED ?? DateTime.Now,
-                       dateTimeUpdated = data.DATETIMEUPDATED ?? DateTime.Now
-                   };
+            var companies = (from data in context.TBL_COMPANY
+                             join c in context.TBL_COUNTRY
+                               on data.COUNTRYID equals c.COUNTRYID
+                             select new CompanyViewModel()
+                             {
+                                 companyId = data.COMPANYID,
+                                 companyName = data.NAME,
+                                 address = data.ADDRESS,
+                                 telephone = data.TELEPHONE,
+                                 email = data.EMAIL,
+                                 dateOfIncorporation = data.DATEOFINCORPORATION ?? DateTime.Now,
+                                 natureOfBusinessId = data.NATUREOFBUSINESSID ?? 0,
+                                 natureOfBusiness = data.TBL_NATURE_OF_BUSINESS.NAME,
+                                 nameOfScheme = data.NAMEOFSCHEME,
+                                 functionsRegistered = data.FUNCTIONSREGISTERED,
+                                 authorisedShareCapital = data.AUTHORISEDSHARECAPITAL ?? 0,
+                                 nameOfRegistrar = data.NAMEOFREGISTRAR,
+                                 nameOfTrustees = data.NAMEOFTRUSTEES,
+                                 formerManagersTrustees = data.FORMERMANAGERSTRUSTEES,
+                                 dateOfRenewalOfRegistration = data.DATEOFRENEWALOFREGISTRATION ?? DateTime.Now,
+                                 dateOfCommencement = data.DATEOFCOMMENCEMENT ?? DateTime.Now,
+                                 initialFloatation = data.INITIALFLOATATION ?? 0,
+                                 initialSubscription = data.INITIALSUBSCRIPTION ?? 0,
+                                 registeredBy = data.REGISTEREDBY,
+                                 trusteesAddress = data.TRUSTEESADDRESS,
+                                 investmentObjective = data.INVESTMENTOBJECTIVE,
+                                 website = data.WEBSITE,
+                                 countryId = data.COUNTRYID,
+                                 country = c.NAME,
+                                 companyClassId = data.COMPANYCLASSID ?? 1,
+                                 companyTypeId = data.COMPANYTYPEID ?? 1,
+                                 accountingStandardId = data.ACCOUNTINGSTANDARDID ?? 1,
+                                 managementTypeId = data.MANAGEMENTTYPEID ?? 1,
+                                 createdBy = data.CREATEDBY ?? 0,
+                                 lastUpdatedBy = data.LASTUPDATEDBY ?? 0,
+                                 CompanyLogo = data.COMPANYLOGO,
+                                 dateTimeCreated = data.DATETIMECREATED ?? DateTime.Now,
+                                 dateTimeUpdated = data.DATETIMEUPDATED ?? DateTime.Now
+                             });
+
+            return companies;
         }
 
 
         public IEnumerable<CompanyViewModel> GetAllCompany()
         {
-            return tbl_Customer();
+            return GetAllCompanies().ToList();
         }
 
         public CompanyViewModel GetCompanyViewModel(int companyId)
         {
-            return tbl_Customer().Where(c => c.companyId == companyId).SingleOrDefault();
+            return GetAllCompanies().Where(c => c.companyId == companyId).FirstOrDefault();
         }
 
-        public bool UpdateCompany(CompanyViewModel company)
+        public bool UpdateCompany(int companyId, CompanyViewModel model)
         {
-            throw new NotImplementedException();
+            var data = context.TBL_COMPANY.Find(companyId);
+
+            try
+            {
+                if (data != null)
+                {
+                    data.COMPANYID = model.companyId;
+                    data.NAME = model.companyName;
+                    data.ADDRESS = model.address;
+                    data.TELEPHONE = model.telephone;
+                    data.EMAIL = model.email;
+                    data.DATEOFINCORPORATION = model.dateOfIncorporation;
+                    data.NATUREOFBUSINESSID = model.natureOfBusinessId;
+                    data.NAMEOFSCHEME = model.nameOfScheme;
+                    data.FUNCTIONSREGISTERED = model.functionsRegistered;
+                    data.AUTHORISEDSHARECAPITAL = model.authorisedShareCapital;
+                    data.NAMEOFREGISTRAR = model.nameOfRegistrar;
+                    data.NAMEOFTRUSTEES = model.nameOfTrustees;
+                    data.FORMERMANAGERSTRUSTEES = model.formerManagersTrustees;
+                    data.DATEOFRENEWALOFREGISTRATION = model.dateOfRenewalOfRegistration;
+                    data.DATEOFCOMMENCEMENT = model.dateOfCommencement;
+                    data.INITIALFLOATATION = model.initialFloatation;
+                    data.INITIALSUBSCRIPTION = model.initialSubscription;
+                    data.REGISTEREDBY = model.registeredBy;
+                    data.TRUSTEESADDRESS = model.trusteesAddress;
+                    data.INVESTMENTOBJECTIVE = model.investmentObjective;
+                    data.WEBSITE = model.website;
+                    data.COUNTRYID = model.countryId;
+                    data.COMPANYCLASSID = data.COMPANYCLASSID;
+                    data.COMPANYTYPEID = data.COMPANYTYPEID;
+                    data.ACCOUNTINGSTANDARDID = data.ACCOUNTINGSTANDARDID;
+                    data.MANAGEMENTTYPEID = data.MANAGEMENTTYPEID;
+                    data.CREATEDBY = model.createdBy;
+                    data.LASTUPDATEDBY = model.lastUpdatedBy;
+                    data.COMPANYLOGO = model.CompanyLogo;
+                    data.DATETIMECREATED = model.dateTimeCreated;
+                    data.DATETIMEUPDATED = model.dateTimeUpdated;
+
+                    return context.SaveChanges() > 0;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
     }
 }

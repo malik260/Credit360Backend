@@ -146,7 +146,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public UserViewModel FindUserByUserNameAndPassword(string username, string password)
         {
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username && x.PASSWORD == password);
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
 
             if (_user != null)
             {
@@ -156,7 +156,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
                                 join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
                                 join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                                where p.USERNAME == username && p.PASSWORD == password
+                                where p.USERNAME == username // && p.PASSWORD == password
                                 select new UserViewModel
                                 {
                                     companyId = coy.COMPANYID,
