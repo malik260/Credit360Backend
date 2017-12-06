@@ -523,11 +523,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int daysInAYear { get; set; }
 
-
-
-
     }
-
 
     public class SubAllocationViewModel 
     {
@@ -548,4 +544,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalLevelName { get; set; }
     }
 
+
+    public class LoanClassificationViewModel 
+    {
+        public int loanId { get; set; }
+        public decimal amount { get; set; }
+        public string refNo  { get; set; }
+
+    }
 }

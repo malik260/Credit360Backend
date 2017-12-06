@@ -74,7 +74,6 @@ namespace FintrakBanking.APICore.Providers
             ClaimsIdentity identity;
             var _authRepo = new AuthenticationRepository(repo);
 
-
             if (AuthenticationType == AuthenticationTypeEnum.activeDirectory.ToString())
             {
                 if (!Task.FromResult(ValidateCredentials(context.UserName, context.Password, out identity)).Result)
@@ -87,25 +86,7 @@ namespace FintrakBanking.APICore.Providers
                     user = Task.FromResult(_authRepo.FindUserByUserName(userVM.username)).Result;
                 }
             }
-
-
-         
-
-
-            bool isUserAccountValid;
-
-
-            if (Task.FromResult(_authRepo.IsUserAccountValid(userVM.username)).Result)
-            {
-                isUserAccountValid = true;
-            }
-            else
-            {
-                isUserAccountValid = false;
-            }
-
-
-            if (AuthenticationType == AuthenticationTypeEnum.defaultAuth.ToString())
+            else if (AuthenticationType == AuthenticationTypeEnum.defaultAuth.ToString())
             {
                 user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
                    .Result;
@@ -116,12 +97,19 @@ namespace FintrakBanking.APICore.Providers
                 }
             }
 
+            bool isUserAccountValid;
+
+            if (Task.FromResult(_authRepo.IsUserAccountValid(userVM.username)).Result)
+            {
+                isUserAccountValid = true;
+            }
+            else
+            {
+                isUserAccountValid = false;
+            }
 
             if (isUserAccountValid)
             {
-              
-
-
                 var currIdentity = new ClaimsIdentity(context.Options.AuthenticationType);
                 var currUser = user;
 
@@ -207,7 +195,7 @@ namespace FintrakBanking.APICore.Providers
 
         public bool ValidateCredentials(string userName, string password, out ClaimsIdentity identity)
         {
-           
+
             using (var pc = new PrincipalContext(ContextType.Domain, this.DomanProvider, this.DomainUserName, this.DomainUserPassword))
             {
                 bool isValid = pc.ValidateCredentials(userName, password);
@@ -215,6 +203,8 @@ namespace FintrakBanking.APICore.Providers
                 {
                     identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
                     identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+
+
                 }
                 else
                 {

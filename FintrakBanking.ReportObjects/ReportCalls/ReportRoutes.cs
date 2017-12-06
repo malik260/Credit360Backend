@@ -79,6 +79,20 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/LoanDocumentWaived.aspx?companyId=" + "&startDate=" + dateRange.startDate.ToShortDateString() + "&endDate=" + dateRange.endDate.ToShortDateString();
             return path;
         }
+        public string GetCollateralEstimated(int companyId, string collateralCode)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/CollateralEstimated.aspx?companyId=" + companyId.ToString() + "&collateralCode=" + collateralCode.ToString();
+            return path;
+        }
+
+        public string GetFCYScheuledLoan(int companyId, int loanId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/FCYScheuledLoan.aspx?companyId=" + companyId.ToString() + "&loanId=" + loanId.ToString();
+            return path;
+        }
+
 
         #region Offer Letter Generation
 
@@ -200,6 +214,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        
     }
 
 }

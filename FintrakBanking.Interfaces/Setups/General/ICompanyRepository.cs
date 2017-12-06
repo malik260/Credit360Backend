@@ -11,7 +11,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool AddCompany(CompanyViewModel company);
 
-        bool UpdateCompany(CompanyViewModel company);
+        bool UpdateCompany(int companyId, CompanyViewModel company);
 
         //bool DeleteAccount(short accountId);
     }
