@@ -1,4 +1,4 @@
-﻿namespace FintrakBanking.Entities.Models
+namespace FintrakBanking.Entities.Models
 {
     using System;
     using System.Collections.Generic;
@@ -11,8 +11,6 @@
     {
         [Key]
         public int LOAN_APPLICATION_DETAIL_LOGID { get; set; }
-
-        public int LOANAPPLICATIONID { get; set; }
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
@@ -34,10 +32,9 @@
         public DateTime DATETIMECREATED { get; set; }
 
         public DateTime SYSTEMDATETIME { get; set; }
-        public int CUSTOMERID { get; set; }
-
-        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
     }
 }

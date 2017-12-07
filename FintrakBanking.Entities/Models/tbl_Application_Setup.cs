@@ -16,9 +16,17 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string REPORTPATH { get; set; }
 
-        public bool USEACTIVEDIRECTORY { get; set; }
+        public bool USE_ACTIVE_DIRECTORY { get; set; }
 
         [StringLength(100)]
-        public string ACTIVEDIRECTORYDOMAIN { get; set; }
+        public string ACTIVE_DIRECTORY_DOMAIN_NAME { get; set; }
+
+        [StringLength(50)]
+        public string ACTIVE_DIRECTORY_USERNAME { get; set; }
+
+        [StringLength(50)]
+        public string ACTIVE_DIRECTORY_PASSWORD { get; set; }
+
+        public bool REQUIRE_ADUSER { get; set; }
     }
 }
