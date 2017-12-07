@@ -18,44 +18,13 @@ namespace FintrakBanking.APICore.Providers
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
-        private FinTrakBankingContext repo;
-
-        public string DomanProvider
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["DomainName"];
-            }
-        }
-
-        public string AuthenticationType
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["AuthenticationType"];
-            }
-        }
-
-        public string DomainUserName
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["DomainUserName"];
-            }
-        }
-
-        public string DomainUserPassword
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["DomainUserPassword"];
-            }
-        }
+        private FinTrakBankingContext _bankingContext;
+        private TBL_APPLICATION_SETUP appSetup;
 
         public ApplicationOAuthProvider(string publicClientId)
         {
             if (publicClientId == null) throw new ArgumentNullException("publicClientId");
-            this.repo = new FinTrakBankingContext();
+            this._bankingContext = new FinTrakBankingContext();
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
@@ -72,9 +41,11 @@ namespace FintrakBanking.APICore.Providers
             };
 
             ClaimsIdentity identity;
-            var _authRepo = new AuthenticationRepository(repo);
+            var _authRepo = new AuthenticationRepository(_bankingContext);
 
-            if (AuthenticationType == AuthenticationTypeEnum.activeDirectory.ToString())
+            appSetup = _bankingContext.TBL_APPLICATION_SETUP.Single();
+
+            if (appSetup.USE_ACTIVE_DIRECTORY)
             {
                 if (!Task.FromResult(ValidateCredentials(context.UserName, context.Password, out identity)).Result)
                 {
@@ -86,7 +57,7 @@ namespace FintrakBanking.APICore.Providers
                     user = Task.FromResult(_authRepo.FindUserByUserName(userVM.username)).Result;
                 }
             }
-            else if (AuthenticationType == AuthenticationTypeEnum.defaultAuth.ToString())
+            else
             {
                 user = Task.FromResult(_authRepo.FindUserByUserNameAndPassword(userVM.username, userVM.password))
                    .Result;
@@ -195,15 +166,15 @@ namespace FintrakBanking.APICore.Providers
 
         public bool ValidateCredentials(string userName, string password, out ClaimsIdentity identity)
         {
+            appSetup = _bankingContext.TBL_APPLICATION_SETUP.FirstOrDefault();
 
-            using (var pc = new PrincipalContext(ContextType.Domain, this.DomanProvider, this.DomainUserName, this.DomainUserPassword))
+            using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, appSetup.ACTIVE_DIRECTORY_USERNAME, appSetup.ACTIVE_DIRECTORY_PASSWORD))
             {
                 bool isValid = pc.ValidateCredentials(userName, password);
                 if (isValid)
                 {
                     identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
                     identity.AddClaim(new Claim(ClaimTypes.Name, userName));
-
 
                 }
                 else
