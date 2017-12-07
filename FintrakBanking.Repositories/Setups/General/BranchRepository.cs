@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return regions;
         }
-
+       
         public bool AddUpdateBranchRegion(BranchRegionViewModel entity)
         {
             if (entity != null)
@@ -107,6 +107,10 @@ namespace FintrakBanking.Repositories.Setups.General
             return false;
         }
 
+        public bool ValidateRegionName(string regionName)
+        {
+            return context.TBL_BRANCH_REGION.Where(x => x.REGION_NAME == regionName).Any();
+        }
         #endregion
         #region tbl_Branch Setup
 
