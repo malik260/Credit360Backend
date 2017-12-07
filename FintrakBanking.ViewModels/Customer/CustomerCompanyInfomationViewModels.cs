@@ -73,6 +73,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string contactPerson { get; set; }
         public bool? hasCASAAccount { get; set; }
         public string casaAccountNumber { get; set; }
+        public string natureOfBusiness { get; set; }
         public string client_SupplierAddress { get; set; } 
         public string client_SupplierPhoneNumber { get; set; }
         public string client_SupplierEmail { get; set; }
@@ -91,6 +92,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string rcNumber { get; set; }
         public string taxNumber { get; set; }
         public string contactPerson { get; set; }
+        public string natureOfBusiness { get; set; }
         public bool? hasCASAAccount { get; set; }
         public string casaAccountNumber { get; set; }
         public string client_SupplierAddress { get; set; }

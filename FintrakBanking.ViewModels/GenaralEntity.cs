@@ -15,10 +15,12 @@ namespace FintrakBanking.ViewModels
         public bool deleted { get; set; }
         public int? deletedBy { get; set; }
         public DateTime? dateTimeDeleted { get; set; }
-
+       
         public short userBranchId { get; set; }
         public string userIPAddress { get; set; }
         public string applicationUrl { get; set; }
+
+        public int staffId { get; set; }
     }
 
 }

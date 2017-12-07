@@ -182,6 +182,8 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IKYCDocumentUploadRepository>().To<KYCDocumentUploadRepository>();
             kernel.Bind<IMonitoringSetupRepository>().To<MonitoringSetupRepository>();
             kernel.Bind<IOfferLetterAndAvailmentRepository>().To<OfferLetterAndAvailmentRepository>();
+            kernel.Bind<ICustomerStagingRepository>().To<CustomerStagingRepository>();
+            kernel.Bind<ILoanPrincipalRepository>().To<LoanPrincipalRepository>();
         }
     }
 }

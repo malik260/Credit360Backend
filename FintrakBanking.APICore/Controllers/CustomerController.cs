@@ -21,12 +21,14 @@ namespace FintrakBanking.APICore.Controllers
     public class CustomerController : ApiControllerBase
     {
         private ICustomerRepository repo;
+        private ICustomerStagingRepository stagingRepo;
 
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public CustomerController(ICustomerRepository _repo)
+        public CustomerController(ICustomerRepository _repo, ICustomerStagingRepository _stagingRepo)
         {
             this.repo = _repo;
+            this.stagingRepo = _stagingRepo;
         }
 
         [HttpPost]
@@ -43,6 +45,11 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
+                }
+                if (repo.ValidateCustomerCode(entity.customerCode))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                      new { success = false, message = $"Customer with code {entity.customerCode} already exist" });
                 }
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
@@ -122,7 +129,29 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [Route("customer-staging/")]
+        public HttpResponseMessage GetStagedCustomer(string searchTerm)
+        {
 
+            try
+            {
+                var data = stagingRepo.GetIntegratedCustomerInformation(searchTerm);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         [HttpGet]
         [Route("customerbyid/{id}")]
         public HttpResponseMessage GetCustomerById(int id)

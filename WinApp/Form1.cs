@@ -95,7 +95,7 @@ namespace WinApp
             //loanOperation.ProcessLoanRepaymentPostingForceDebit(vDate);
             //loanOperation.ProcessAuthorisedOverdraftRepaymentPostingForceDebit(vDate);
             //loanOperation.BulkRateReview(priceIndex,newRate,vDate,vStaff,vReview);
-            loanOperation.CalLoanClassification(vDate);
+            //loanOperation.CalLoanClassification(vDate);
 
             MessageBox.Show("Successful", "Fintrak");
 

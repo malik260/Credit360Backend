@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              Phone = c.PHONE,
                              PhoneOfNok = c.PHONEOFNOK,
                              StateId = c.STATEID,
-                             StaffSignature = c.STAFFSIGNATURE,
+                           //  StaffSignature = c.STAFFSIGNATURE,
                              FirstName = c.FIRSTNAME,
                              MiddleName = c.MIDDLENAME,
                              LastName = c.LASTNAME,
@@ -170,7 +170,6 @@ namespace FintrakBanking.Repositories.Setups.General
                              Phone = c.PHONE,
                              PhoneOfNok = c.PHONEOFNOK,
                              StateId = c.STATEID,
-                             StaffSignature = c.STAFFSIGNATURE,
                              FirstName = c.FIRSTNAME,
                              MiddleName = c.MIDDLENAME,
                              LastName = c.LASTNAME,
@@ -467,7 +466,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingStaff.PHONEOFNOK = staffModel.PHONEOFNOK;
                     existingStaff.STATEID = staffModel.STATEID;
                     existingStaff.CITYID = staffModel.CITYID;
-                    existingStaff.STAFFSIGNATURE = staffModel.STAFFSIGNATURE;
+                    //existingStaff.STAFFSIGNATURE = staffModel.STAFFSIGNATURE;
                     existingStaff.DELETED = false;
                 }
             }
@@ -504,7 +503,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         PHONEOFNOK = staffModel.PHONEOFNOK,
                         STATEID = staffModel.STATEID,
                         CITYID = staffModel.CITYID,
-                        STAFFSIGNATURE = staffModel.STAFFSIGNATURE,
                     };
                     context.TBL_STAFF.Add(staff);
                 }
@@ -840,7 +838,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             company = coy.NAME,
                             JobTitle = c.TBL_STAFF_JOBTITLE.JOBTITLENAME,
                             MisInfo = context.TBL_MIS_INFO.Find(c.MISINFOID).MISNAME,
-                            StaffSignature = c.STAFFSIGNATURE,
+                            //StaffSignature = c.STAFFSIGNATURE,
                             Email = c.EMAIL,
                             EmailOfNok = c.EMAILOFNOK,
                             Gender = c.GENDER,

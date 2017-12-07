@@ -55,5 +55,8 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<CheckListStatusViewModel> GetAllChecklistStatus();
         IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistTargetType();
         #endregion
+        #region Checklist Validation
+        bool ValidateChecklistDetailEntry(int checklistDefinitionId, int targetId);
+        #endregion
     }
 }

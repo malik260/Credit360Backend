@@ -19,6 +19,9 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         Task<bool> DeleteBranch(short id, UserInfo user);
 
+
+        IEnumerable<BranchRegionViewModel> GetAllRegion();
+        bool AddUpdateBranchRegion(BranchRegionViewModel entity);
         // tbl_Branch Limit
         //BranchLimitViewModel GetBranchLimit(short id);
 
