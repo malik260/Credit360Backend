@@ -266,5 +266,25 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("regional-loan-application")]
+        public HttpResponseMessage GetRegionalLoanApplications([FromUri] int page, [FromUri] int itemsPerPage)
+        {
+            try
+            {
+                var items = repo.GetRegionalLoanApplications(token.GetStaffId);
+
+                var data = items.OrderByDescending(x => x.applicationDate)
+                    .ThenByDescending(x => x.loanApplicationId)
+                    .Skip(page).Take(itemsPerPage)
+                    .ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
     }
 }

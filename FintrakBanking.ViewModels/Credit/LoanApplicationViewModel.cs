@@ -8,7 +8,6 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationViewModel : GeneralEntity
     {
-
         public LoanApplicationViewModel()
         {
             LoanApplicationCollateral = new List<LoanApplicationCollateralViewModel>();
@@ -101,13 +100,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string lastName { get; set; }
         public int groupRoleId { get; set; }
         public string accountNumber { get; set; }
-        //{
-        //    get {  return (LoanApplicationDetail.Max(c => c.proposedTenor) / 12) * 365;
-        //         }
-        //    set { _tenor = value * (12 / 365); }
-        //}
-
-
     }
 
     public class CollateralLenPlacementViewModel : GeneralEntity
@@ -118,7 +110,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralTypeId { get; set; }
         public string certificateOfOccupancy { get; set; }
         public string loanApplicationRefrence { get; set; }
-        //public string loanApplicationRefrence { get; set; }
         public string customerName { get; set; }
     }
 
@@ -185,4 +176,32 @@ namespace FintrakBanking.ViewModels.Credit
         public string searchString { get; set; }
     }
 
+    public class RegionLoanApplicationViewModel : GeneralEntity
+    {
+        public RegionLoanApplicationViewModel()
+        {
+            LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
+        }
+
+        public int loanApplicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int? customerId { get; set; }
+        public int? operationId { get; set; }
+        public short? branchId { get; set; }
+        public short? productClassId { get; set; }
+        public string productClassName { get; set; }
+        public short productId { get; set; }
+        public int? customerGroupId { get; set; }
+        public string customerGroupCode { get; set; }
+        public short loanTypeId { get; set; }
+        public int casaAccountId { get; set; }
+        public DateTime applicationDate { get; set; }
+        public decimal applicationAmount { get; set; }
+        public decimal approvedAmount { get; set; }
+        public int applicationTenor { get; set; }
+        public double interestRate { get; set; }
+
+        public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }
+    }
 }

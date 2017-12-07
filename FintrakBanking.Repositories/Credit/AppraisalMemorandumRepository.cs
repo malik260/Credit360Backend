@@ -857,5 +857,23 @@ namespace FintrakBanking.Repositories.Credit
 
             return (context.SaveChanges() > 0) == result;
         }
+
+        public IQueryable<RegionLoanApplicationViewModel> GetRegionalLoanApplications(int staffId)
+        {
+            var region = context.TBL_BRANCH_REGION.FirstOrDefault(x => x.CAM_HOU_STAFFID == staffId);
+
+            if (region == null) { throw new Exception("This user does not have a region mapped to him."); }
+
+            var branches = context.TBL_BRANCH.Where(x => x.REGIONID == region.REGIONID).Select(x => x.BRANCHID);
+
+            var applications = context.TBL_LOAN_APPLICATION.Where(x => branches.Contains(x.BRANCHID))
+                .Select(x => new RegionLoanApplicationViewModel
+                {
+
+                })
+                ;
+
+            return applications;
+        }
     }
 }
