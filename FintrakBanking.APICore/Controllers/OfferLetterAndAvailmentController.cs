@@ -134,8 +134,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-application/prepared-form3800b-template/")]
-        public HttpResponseMessage GenerateForm3800Template(string applicationRefNumber)
+        [Route("loan-application/prepared-form38b-template/{applicationRefNumber}")]
+        public HttpResponseMessage GenerateForm3800Template([FromUri] string applicationRefNumber)
         {
             try
             {
