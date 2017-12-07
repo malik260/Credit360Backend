@@ -510,16 +510,16 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => new LoanApplicationDetailLogViewModel
                 {
                     loanApplicationDetailId = x.a.LOANAPPLICATIONDETAILID,
-                    applicationId = x.a.LOANAPPLICATIONID,
-                    customerId = x.a.CUSTOMERID,
+                    applicationId = x.a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                    customerId = x.a.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,
                     approvedTenor = x.a.APPROVEDTENOR,
                     approvedRate = x.a.APPROVEDINTERESTRATE,
                     approvedAmount = x.a.APPROVEDAMOUNT,
                     approvedProductId = x.a.APPROVEDPRODUCTID,
                     statusId = x.a.STATUSID,
                     exchangeRate = x.a.EXCHANGERATE,
-                    customerName = x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME,
-                    //approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
+                    customerName = x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
+                    approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
                     staffName = x.b.FIRSTNAME + " " + x.b.MIDDLENAME + " " + x.b.LASTNAME,
                 });
 
