@@ -25,6 +25,58 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
+        #region Region Setup
+        [HttpGet]
+        [Route("region")]
+        public HttpResponseMessage GetRegion()
+        {
+            try
+            {
+                var data = repo.GetAllRegion();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("region")]
+        public HttpResponseMessage AddBranchRegion([FromBody]BranchRegionViewModel entity)
+        {
+            try
+            {
+                string createUpdate = "";
+                if (entity.regionId != 0 || entity.regionId < 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                }
+                entity.companyId = token.GetCompanyId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = repo.AddUpdateBranchRegion(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error {createUpdate} this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        #endregion
+
         #region Branch Setup
 
         [HttpGet]
