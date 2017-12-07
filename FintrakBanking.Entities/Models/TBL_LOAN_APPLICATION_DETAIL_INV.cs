@@ -26,6 +26,14 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "money")]
         public decimal INVOICE_AMOUNT { get; set; }
 
+        public short INVOICE_CURRENCYID { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime CONTRACT_STARTDATE { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime CONTRACT_ENDDATE { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
@@ -39,6 +47,8 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
 
