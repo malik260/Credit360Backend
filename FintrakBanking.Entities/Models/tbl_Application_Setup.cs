@@ -26,5 +26,7 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(50)]
         public string ACTIVE_DIRECTORY_PASSWORD { get; set; }
+
+        public bool REQUIRE_ADUSER { get; set; }
     }
 }

@@ -168,21 +168,43 @@ namespace FintrakBanking.APICore.Providers
         {
             appSetup = _bankingContext.TBL_APPLICATION_SETUP.FirstOrDefault();
 
-            using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, appSetup.ACTIVE_DIRECTORY_USERNAME, appSetup.ACTIVE_DIRECTORY_PASSWORD))
+            if (appSetup.REQUIRE_ADUSER == true)
             {
-                bool isValid = pc.ValidateCredentials(userName, password);
-                if (isValid)
+                using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, appSetup.ACTIVE_DIRECTORY_USERNAME, appSetup.ACTIVE_DIRECTORY_PASSWORD))
                 {
-                    identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
-                    identity.AddClaim(new Claim(ClaimTypes.Name, userName));
+                    bool isValid = pc.ValidateCredentials(userName, password);
+                    if (isValid)
+                    {
+                        identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
+                        identity.AddClaim(new Claim(ClaimTypes.Name, userName));
 
+                    }
+                    else
+                    {
+                        identity = null;
+                    }
+
+                    return isValid;
                 }
-                else
+            }
+            else
+            {
+                using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME))
                 {
-                    identity = null;
-                }
+                    bool isValid = pc.ValidateCredentials(userName, password);
+                    if (isValid)
+                    {
+                        identity = new ClaimsIdentity(Startup.OAuthOptions.AuthenticationType);
+                        identity.AddClaim(new Claim(ClaimTypes.Name, userName));
 
-                return isValid;
+                    }
+                    else
+                    {
+                        identity = null;
+                    }
+
+                    return isValid;
+                }
             }
         }
 
