@@ -560,7 +560,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     result.NPLDATE = systemDate;
 
-                    //context.SaveChanges();
+                   context.SaveChanges();
                 }
                 else if(pastDueDate != null && item.amount > 0)
                 {
@@ -570,11 +570,11 @@ namespace FintrakBanking.Repositories.Credit
 
                     result.NPLDATE = null;
 
-                    //context.SaveChanges();
+                   context.SaveChanges();
                 }
 
             }
-            context.SaveChanges();
+            //context.SaveChanges();
 
             return data;
         }
