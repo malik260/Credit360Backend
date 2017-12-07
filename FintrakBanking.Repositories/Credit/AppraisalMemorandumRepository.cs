@@ -319,7 +319,7 @@ namespace FintrakBanking.Repositories.Credit
                             // log changes
                             context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG
                             {
-                                LOANAPPLICATIONID = item.LOANAPPLICATIONID,
+                                //LOANAPPLICATIONID = item.LOANAPPLICATIONID,
                                 LOANAPPLICATIONDETAILID = changed.detailId,
                                 APPROVEDPRODUCTID = (short)changed.productId,
                                 APPROVEDTENOR = changed.tenor,
@@ -330,7 +330,7 @@ namespace FintrakBanking.Repositories.Credit
                                 CREATEDBY = model.createdBy,
                                 DATETIMECREATED = applicationDate,
                                 SYSTEMDATETIME = DateTime.Now,
-                                CUSTOMERID = item.CUSTOMERID,
+                                //CUSTOMERID = item.CUSTOMERID,
                             });
                         }
                     }
@@ -505,7 +505,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationDetailLogViewModel> GetLoanDetailChangeLog(int applicationId)
         {
-            var details = context.TBL_LOAN_APPLICATION_DETL_LOG.Where(x => x.LOANAPPLICATIONID == applicationId)
+            var details = context.TBL_LOAN_APPLICATION_DETL_LOG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
                 .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a,b })
                 .Select(x => new LoanApplicationDetailLogViewModel
                 {

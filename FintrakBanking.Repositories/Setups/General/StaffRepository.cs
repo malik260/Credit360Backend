@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              Phone = c.PHONE,
                              PhoneOfNok = c.PHONEOFNOK,
                              StateId = c.STATEID,
-                             //StaffSignature = c.STAFFSIGNATURE,
+                           //  StaffSignature = c.STAFFSIGNATURE,
                              FirstName = c.FIRSTNAME,
                              MiddleName = c.MIDDLENAME,
                              LastName = c.LASTNAME,
@@ -503,7 +503,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         PHONEOFNOK = staffModel.PHONEOFNOK,
                         STATEID = staffModel.STATEID,
                         CITYID = staffModel.CITYID,
-                        //STAFFSIGNATURE = staffModel.STAFFSIGNATURE,
                     };
                     context.TBL_STAFF.Add(staff);
                 }
