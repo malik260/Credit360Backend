@@ -519,7 +519,7 @@ namespace FintrakBanking.Repositories.Credit
                     statusId = x.a.STATUSID,
                     exchangeRate = x.a.EXCHANGERATE,
                     customerName = x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME,
-                    approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
+                   // approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
                     staffName = x.b.FIRSTNAME + " " + x.b.MIDDLENAME + " " + x.b.LASTNAME,
                 });
 

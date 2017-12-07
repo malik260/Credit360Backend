@@ -33,7 +33,81 @@ namespace FintrakBanking.Repositories.Setups.General
         //{
         //    return this.context.SaveChanges() > 0;
         //}
+        #region Region Setup
+        public IEnumerable<BranchRegionViewModel> GetAllRegion()
+        {
+            var regions = context.TBL_BRANCH_REGION.Where(x => x.DELETED == false).Select(x => new BranchRegionViewModel
+            {
+                regionId = x.REGIONID,
+                regionName = x.REGION_NAME,
+                companyId = x.COMPANYID,
+                companyName = x.TBL_COMPANY.NAME,
+                houStaffId = x.CAM_HOU_STAFFID,
+                houStaffName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME
+            }).ToList();
 
+            return regions;
+        }
+
+        public bool AddUpdateBranchRegion(BranchRegionViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_BRANCH_REGION region;
+                    if (entity.regionId != 0 || entity.regionId < 0)
+                    {
+                        region = context.TBL_BRANCH_REGION.Find(entity.regionId);
+                        if (region != null)
+                        {
+                            region.REGION_NAME = entity.regionName;
+                            region.CAM_HOU_STAFFID = entity.houStaffId;
+                            region.LASTUPDATEDBY = entity.createdBy;
+                            region.DATETIMEUPDATED = DateTime.Now;
+                        }
+                    }
+                    else
+                    {
+                        region = new TBL_BRANCH_REGION();
+
+                        region.REGION_NAME = entity.regionName;
+                        region.CAM_HOU_STAFFID = entity.houStaffId;
+                        region.COMPANYID = entity.companyId;
+                        region.DELETED = false;
+                        region.CREATEDBY = entity.createdBy;
+                        region.DATETIMECREATED = DateTime.Now;
+
+                        context.TBL_BRANCH_REGION.Add(region);
+                    }
+
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.BranchAdded,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = (short)entity.userBranchId,
+                        DETAIL = "Added Branch Region with Name : " + entity.regionName,
+                        IPADDRESS = entity.userIPAddress,
+                        URL = entity.applicationUrl,
+                        APPLICATIONDATE = DateTime.Now,
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.auditTrail.AddAuditTrail(audit);
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+
+            }
+            return false;
+        }
+
+        #endregion
         #region tbl_Branch Setup
 
         public BranchViewModel GetBranch(short id)
@@ -48,6 +122,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     stateId = branch.STATEID,
                     companyId = branch.COMPANYID,
                     branchName = branch.BRANCHNAME,
+                    regionId = branch.REGIONID,
+                    regionName = branch.TBL_BRANCH_REGION.REGION_NAME,
                     branchCode = branch.BRANCHCODE,
                     addressLine1 = branch.ADDRESSLINE1,
                     addressLine2 = branch.ADDRESSLINE2,
@@ -67,6 +143,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 cityId = (int)x.CITYID,
                 companyId = x.COMPANYID,
                 stateName = x.TBL_STATE.STATENAME,
+                regionId = x.REGIONID,
+                regionName = x.TBL_BRANCH_REGION.REGION_NAME,
                 cityName = context.TBL_CITY.FirstOrDefault(c => c.CITYID == x.CITYID).CITYNAME ?? string.Empty,
                 branchName = x.BRANCHNAME,
                 branchCode = x.BRANCHCODE,
@@ -88,8 +166,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 companyId = x.COMPANYID,
                 branchName = x.BRANCHNAME,
                 stateName = x.TBL_STATE.STATENAME,
+                regionId = x.REGIONID,
+                regionName = x.TBL_BRANCH_REGION.REGION_NAME,
                 cityId = (int)x.CITYID,
-                cityName = context.TBL_CITY.FirstOrDefault(c=>c.CITYID==x.CITYID).CITYNAME,
+                cityName = context.TBL_CITY.FirstOrDefault(c => c.CITYID == x.CITYID).CITYNAME,
                 branchCode = x.BRANCHCODE,
                 addressLine1 = x.ADDRESSLINE1,
                 addressLine2 = x.ADDRESSLINE2,
@@ -107,6 +187,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 STATEID = model.stateId,
                 CITYID = model.cityId,
+                REGIONID = model.regionId,
                 COMPANYID = model.companyId,
                 BRANCHNAME = model.branchName,
                 BRANCHCODE = model.branchCode,
@@ -147,6 +228,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 branch.STATEID = model.stateId;
                 branch.CITYID = model.cityId;
                 branch.COMPANYID = model.companyId;
+                branch.REGIONID = model.regionId;
                 branch.BRANCHNAME = model.branchName;
                 branch.BRANCHCODE = model.branchCode;
                 branch.ADDRESSLINE1 = model.addressLine1;

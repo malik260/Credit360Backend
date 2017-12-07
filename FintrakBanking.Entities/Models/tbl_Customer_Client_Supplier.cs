@@ -39,7 +39,7 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(500)]
         public string NATURE_OF_BUSINESS { get; set; }
-        
+
         [StringLength(500)]
         public string ADDRESS { get; set; }
 

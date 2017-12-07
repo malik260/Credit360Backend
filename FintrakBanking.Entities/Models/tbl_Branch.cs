@@ -44,6 +44,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string BRANCHCODE { get; set; }
 
+        public int REGIONID { get; set; }
+
         [StringLength(255)]
         public string ADDRESSLINE1 { get; set; }
 
@@ -87,6 +89,8 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }
+
+        public virtual TBL_BRANCH_REGION TBL_BRANCH_REGION { get; set; }
 
         public virtual TBL_CITY TBL_CITY { get; set; }
 
