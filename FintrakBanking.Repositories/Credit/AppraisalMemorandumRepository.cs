@@ -519,7 +519,7 @@ namespace FintrakBanking.Repositories.Credit
                     statusId = x.a.STATUSID,
                     exchangeRate = x.a.EXCHANGERATE,
                     customerName = x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
-                   approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
+                    approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
                     staffName = x.b.FIRSTNAME + " " + x.b.MIDDLENAME + " " + x.b.LASTNAME,
                 });
 
@@ -856,6 +856,24 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             return (context.SaveChanges() > 0) == result;
+        }
+
+        public IQueryable<RegionLoanApplicationViewModel> GetRegionalLoanApplications(int staffId)
+        {
+            var region = context.TBL_BRANCH_REGION.FirstOrDefault(x => x.CAM_HOU_STAFFID == staffId);
+
+            if (region == null) { throw new Exception("This user does not have a region mapped to him."); }
+
+            var branches = context.TBL_BRANCH.Where(x => x.REGIONID == region.REGIONID).Select(x => x.BRANCHID);
+
+            var applications = context.TBL_LOAN_APPLICATION.Where(x => branches.Contains(x.BRANCHID))
+                .Select(x => new RegionLoanApplicationViewModel
+                {
+
+                })
+                ;
+
+            return applications;
         }
     }
 }

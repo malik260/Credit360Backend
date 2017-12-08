@@ -170,7 +170,6 @@ namespace FintrakBanking.Repositories.Setups.General
                              Phone = c.PHONE,
                              PhoneOfNok = c.PHONEOFNOK,
                              StateId = c.STATEID,
-                           //  StaffSignature = c.STAFFSIGNATURE,
                              FirstName = c.FIRSTNAME,
                              MiddleName = c.MIDDLENAME,
                              LastName = c.LASTNAME,
@@ -973,8 +972,8 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 var document = new TBL_MEDIA_STAFF_SIGNATURE()
                 {
-                    DOCUMENT_TITLE = model.documentTitle,
-                    FILENAME = model.fileName,
+                    //DOCUMENT_TITLE = model.documentTitle,
+                    FILENAME = $"{model.StaffCode}-{model.fileName}",
                     FILEEXTENSION = model.fileExtension,
                     FILEDATA = file,
                     SYSTEMDATETIME = DateTime.Now,
@@ -1021,8 +1020,8 @@ namespace FintrakBanking.Repositories.Setups.General
             }
 
             data.STAFFCODE = model.StaffCode;
-            data.DOCUMENT_TITLE = model.documentTitle;
-            data.FILENAME = model.fileName;
+            //data.DOCUMENT_TITLE = model.documentTitle;
+            //data.FILENAME = model.fileName;
             data.FILEEXTENSION = model.fileExtension;
             data.SYSTEMDATETIME = DateTime.Now;
             data.DATETIMEUPDATED = genSetup.GetApplicationDate();
@@ -1057,7 +1056,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                  documentId = doc.DOCUMENTID,
                                  companyId = doc.COMPANYID,
                                  StaffCode = doc.STAFFCODE,
-                                 documentTitle = doc.DOCUMENT_TITLE,
+                                 //documentTitle = doc.DOCUMENT_TITLE,
                                  fileData = doc.FILEDATA,
                                  fileName = doc.FILENAME,
                                  fileExtension = doc.FILEEXTENSION,
