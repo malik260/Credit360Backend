@@ -342,7 +342,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var data =  (from x in context.TBL_JOB_REQUEST_MESSAGE
              where  x.JOBREQUESTID == jobRequestId
-             orderby x.DATE_TIME_SENT descending
+             orderby x.DATE_TIME_SENT ascending
              select new JobRequestMessageViewModel
                    {
                        jobRequestId = x.JOBREQUESTID,

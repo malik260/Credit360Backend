@@ -47,14 +47,14 @@ namespace FintrakBanking.APICore.Providers
 
             if (appSetup.USE_ACTIVE_DIRECTORY)
             {
-                if (!Task.FromResult(ValidateCredentials(context.UserName, context.Password, out identity)).Result)
+                if (Task.FromResult(ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
                 {
-                    context.SetError("invalid_grant", "The user name or password is incorrect.");
-                    return;
+                    user = Task.FromResult(_authRepo.FindUserByUserName(userVM.username)).Result;                   
                 }
                 else
                 {
-                    user = Task.FromResult(_authRepo.FindUserByUserName(userVM.username)).Result;
+                    context.SetError("invalid_grant", "The user name is not registered in the application. Contact the system administrator.");
+                    return;
                 }
             }
             else
@@ -98,7 +98,7 @@ namespace FintrakBanking.APICore.Providers
                 var props = new AuthenticationProperties(new Dictionary<string, string>
                 {
                     {
-                        "expiry_date", today.Add(duration).ToString()
+                        "expiry_date", today.Add(duration).ToString("ddd MMM dd yyyy HH':'mm':'ss 'GMT'K")
                     }
                 });
 
@@ -164,7 +164,7 @@ namespace FintrakBanking.APICore.Providers
         }
 
 
-        public bool ValidateCredentials(string userName, string password, out ClaimsIdentity identity)
+        public bool ValidateActiveDirectoryCredentials(string userName, string password, out ClaimsIdentity identity)
         {
             appSetup = _bankingContext.TBL_APPLICATION_SETUP.FirstOrDefault();
 

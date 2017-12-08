@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("credit.TBL_LOAN_APPLICATION_DETAIL_STA")]
     public partial class TBL_LOAN_APPLICATION_DETAIL_STA
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_LOAN_APPLICATION_DETAIL_STA()
+        {
+            TBL_LOAN_APPLICATION_DETAIL_INV = new HashSet<TBL_LOAN_APPLICATION_DETAIL_INV>();
+        }
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public short STATUSID { get; set; }
@@ -16,5 +22,8 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(50)]
         public string STATUSNAME { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_APPLICATION_DETAIL_INV> TBL_LOAN_APPLICATION_DETAIL_INV { get; set; }
     }
 }

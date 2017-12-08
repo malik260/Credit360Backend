@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
@@ -22,6 +23,7 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
         IEnumerable<CamProcessedLoanViewModel> GetLoanApplicationDetails(int loanApplicationDetailId, int companyId);
+        List<ApprovalLevelStaffViewModel> GetLoanOperationApprovers(int operation, int companyId);
 
         string AddLoanBooking(LoanViewModel entity);
 
@@ -30,6 +32,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanByCustomer(int customerId);
 
         LoanViewModel GetLoan(int loanId);
+        List<LoanMonitoringTrigger> GetLoanMonitoringTrigger();
 
         IEnumerable<LoanViewModel> FindLoan(string referenceNumberOrName, int companyId);
 
@@ -68,7 +71,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanChargeFeeViewModel> GetDeferredRevolvingLoanFeeAwaitingApproval(int staffId, int companyId);
         IEnumerable<LoanChargeFeeViewModel> GetDeferredContingentLoanFeeAwaitingApproval(int staffId, int companyId);
 
-        bool GoForApproval(ApprovalViewModel entity);
+        bool GoForApproval(ApprovalViewModel entity, int loanBookingRequestId);
         bool GoForFeeOverrideApproval(ApprovalViewModel entity);
 
         bool GoForBookingRequestApproval(ApprovalViewModel entity);

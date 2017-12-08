@@ -12,27 +12,43 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int NEXTOFKINID { get; set; }
 
-        [Required]
-        [StringLength(200)]
-        public string NEXTOFKINNAME { get; set; }
-
-        [Required]
-        [StringLength(200)]
-        public string NEXTOFKINFIRSTNAME { get; set; }
-
-        [StringLength(200)]
-        public string NEXTOFKINPHONENUMBER { get; set; }
-
-        [StringLength(200)]
-        public string NESTOFKINEMAIL { get; set; }
-
-        [Required]
-        [StringLength(200)]
-        public string NESTOFKINADDRESS { get; set; }
-
         public int CUSTOMERID { get; set; }
 
+        [Required]
+        [StringLength(200)]
+        public string FIRSTNAME { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string LASTNAME { get; set; }
+
+        [StringLength(200)]
+        public string PHONENUMBER { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime? DATEOFBIRTH { get; set; }
+
+        [StringLength(10)]
+        public string GENDER { get; set; }
+
+        [StringLength(50)]
+        public string RELATIONSHIP { get; set; }
+
+        [StringLength(200)]
+        public string EMAIL { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string ADDRESS { get; set; }
+
+        [StringLength(100)]
+        public string NEAREST_LANDMARK { get; set; }
+
+        public int? CITYID { get; set; }
+
         public bool? ACTIVE { get; set; }
+
+        public virtual TBL_CITY TBL_CITY { get; set; }
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
     }
