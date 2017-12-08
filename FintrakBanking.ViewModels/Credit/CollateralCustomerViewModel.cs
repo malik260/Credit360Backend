@@ -588,4 +588,15 @@ namespace FintrakBanking.ViewModels.Credit
         public short releaseApprovalStatusId { get; set; }
         public decimal collateralValue { get; set; }
     }
+
+    public class CollateralLoanApplication
+    {
+        public int loanApplicationCollateralId { get; set; }
+        public double haircut { get; set; }
+        public string collateralCode { get; set; }  
+        public double collateralValue { get; set; }
+        public int collateralId { get; set; }
+        public string collateralType { get; set; }
+        public double securityValue { get { return collateralValue - (haircut * 0.01 * collateralValue); } }
+    }
 }

@@ -176,6 +176,21 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("appraisal-memorandum/loan-detail-change-log/{loanApplicationId}")]
+        public HttpResponseMessage GetLoanDetailChangeLog(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetLoanDetailChangeLog(loanApplicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("appraisal-memorandum/confirmation/{type}/application/{loanApplicationId}")]
         public HttpResponseMessage Confirmation(int type, int loanApplicationId)
         {
@@ -246,6 +261,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+        [HttpGet, Route("regional-loan-application")]
+        public HttpResponseMessage GetRegionalLoanApplications([FromUri] int page, [FromUri] int itemsPerPage)
+        {
+            try
+            {
+                var items = repo.GetRegionalLoanApplications(token.GetStaffId);
+
+                var data = items.OrderByDescending(x => x.applicationDate)
+                    .ThenByDescending(x => x.loanApplicationId)
+                    .Skip(page).Take(itemsPerPage)
+                    .ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            }
+            catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }

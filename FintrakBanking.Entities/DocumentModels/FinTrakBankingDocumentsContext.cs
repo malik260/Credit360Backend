@@ -21,9 +21,7 @@ namespace FintrakBanking.Entities.DocumentModels
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TBL_MEDIA_STAFF_SIGNATURE>()
-                .Property(e => e.DOCUMENT_TITLE)
-                .IsUnicode(false);
+               
         }
     }
 }

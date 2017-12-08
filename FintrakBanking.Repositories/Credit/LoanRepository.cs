@@ -20,6 +20,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Linq;
 //using XLeratorDLL_financial;
 
@@ -1510,7 +1511,21 @@ namespace FintrakBanking.Repositories.Credit
 
                     //...................Build Disbursement Model & Invoke Loan Disbursement....................
                     var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-                    DisburseLoan(loanDisbursementModel);
+                    var systemDate = generalSetup.GetApplicationDate();
+                    if (loanScheduleModel.effectiveDate < systemDate && loanScheduleModel.shouldDisburse== false)
+                    {
+                        //DisburseLoan(loanDisbursementModel);
+                        ProcessAccrualTeamLoansInterestAccrual(systemDate, loanId);
+                    }
+                    else if(loanScheduleModel.effectiveDate < systemDate && loanScheduleModel.shouldDisburse == true)// change to delete to IsDisbursed
+                    {
+                       // DisburseLoan(loanDisbursementModel);
+                    }
+                    else
+                    {
+                        DisburseLoan(loanDisbursementModel);
+                    }
+
 
                     loanRecord.LOANSTATUSID = 1;
                     loanRecord.ISDISBURSED = true;
@@ -1554,6 +1569,95 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="targetId">The target identifier.</param>
         /// <param name="createdBy">The created by.</param>
         /// <returns></returns>
+        /// 
+
+        public IEnumerable<DailyInterestAccrualViewModel> ProcessAccrualTeamLoansInterestAccrual (DateTime applicationDate, int loanId)
+
+
+        {
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+            var schedule  = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanId && x.DATE <= DbFunctions.TruncateTime(applicationDate));
+            int count = schedule.Count();
+
+            var data = (from a in context.TBL_LOAN_SCHEDULE_DAILY
+                        join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                        join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
+                        join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
+                        where a.DATE <= DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId
+
+                        select new DailyInterestAccrualViewModel()
+                        {
+                            referenceNumber = b.LOANREFERENCENUMBER,
+                            productId = b.PRODUCTID,
+                            branchId = b.BRANCHID,
+                            companyId = b.COMPANYID,
+                            currencyId = b.CURRENCYID,
+                            exchangeRate = b.EXCHANGERATE,
+                            interestRate = a.INTERESTRATE,
+                            date = applicationDate,
+                            dailyAccuralAmount = (double)a.DAILYINTERESTAMOUNT,
+                            mainAmount = c.PERIODINTERESTAMOUNT,
+                            categoryId = (short)DailyAccrualCategory.TermLoan,
+                            transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
+                            baseReferenceNumber = null,
+                            dayCountConventionId = d.DAYCOUNTCONVENTIONID,
+
+                        }).ToList();
+
+            List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
+
+
+            foreach (var item in data)
+            {
+                TBL_DAILY_ACCRUAL dailyAccrual = new TBL_DAILY_ACCRUAL();
+
+                dailyAccrual.REFERENCENUMBER = item.referenceNumber;
+                dailyAccrual.PRODUCTID = item.productId;
+                dailyAccrual.BRANCHID = item.branchId;
+                dailyAccrual.EXCHANGERATE = item.exchangeRate;
+                dailyAccrual.CURRENCYID = item.currencyId;
+                dailyAccrual.INTERESTRATE = item.interestRate;
+                dailyAccrual.DATE = item.date;
+                dailyAccrual.DAILYACCURALAMOUNT = (decimal)Math.Abs(item.dailyAccuralAmount);
+                dailyAccrual.MAINAMOUNT = item.mainAmount;
+                dailyAccrual.CATEGORYID = item.categoryId;
+                dailyAccrual.COMPANYID = item.companyId;
+                dailyAccrual.DAYCOUNTCONVENTIONID = item.dayCountConventionId;
+                dailyAccrual.BASEREFERENCENUMBER = item.baseReferenceNumber;
+                dailyAccrual.TRANSACTIONTYPEID = item.transactionTypeId;
+
+
+                transAccrual.Add(dailyAccrual);
+
+            }
+            this.context.TBL_DAILY_ACCRUAL.AddRange(transAccrual);
+            context.SaveChanges();
+
+
+            //var model = (from a in context.TBL_DAILY_ACCRUAL
+            //             where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
+            //             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, a.EXCHANGERATE } into groupedQ
+            //             select new DailyInterestAccrualViewModel()
+            //             {
+            //                 productId = groupedQ.Key.PRODUCTID,
+            //                 branchId = groupedQ.Key.BRANCHID,
+            //                 companyId = groupedQ.Key.COMPANYID,
+            //                 currencyId = groupedQ.Key.CURRENCYID,
+            //                 exchangeRate = groupedQ.Key.EXCHANGERATE,
+            //                 dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
+            //             }).ToList();
+
+
+
+            //foreach (var item in model)
+            //{
+            //    financeTransaction.PostDailyLoansInterestAccrual(item);
+            //}
+            //context.SaveChanges();
+            return data;
+        }
+
+
         private LoanPaymentScheduleInputViewModel BuildScheduleModel(int targetId, int createdBy)
         {
             List<IrregularLoanScheduleInputViewModel> irregularPaymentScheduleList = new List<IrregularLoanScheduleInputViewModel>();
@@ -1572,8 +1676,8 @@ namespace FintrakBanking.Repositories.Credit
             var loanFeeData = context.TBL_LOAN_FEE.Where(x => x.LOANID == targetId && x.ISINTEGRALFEE == true);
             double integraFeeAmount = 0;
 
-            var applicationDate = generalSetup.GetApplicationDate();
-            var maturityDate = applicationDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+            var effectiveDate = loanScheduleData.EFFECTIVEDATE; // generalSetup.GetApplicationDate();
+            var maturityDate = effectiveDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
             foreach (var record in loanFeeData)
             {
@@ -1590,7 +1694,7 @@ namespace FintrakBanking.Repositories.Credit
                 scheduleMethodId = loanScheduleData.SCHEDULETYPEID,
 
                 principalAmount = (double)loanScheduleData.PRINCIPALAMOUNT,
-                effectiveDate = applicationDate,
+                effectiveDate = effectiveDate,
                 interestRate = loanScheduleData.INTERESTRATE,
                 principalFrequency = loanScheduleData.PRINCIPALFREQUENCYTYPEID,
                 interestFrequency = loanScheduleData.INTERESTFREQUENCYTYPEID,

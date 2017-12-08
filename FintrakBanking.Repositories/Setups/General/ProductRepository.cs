@@ -2055,42 +2055,23 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return false;
         }
-        #endregion Product Class Process
 
-
-        #region Product Process
-
-        public IEnumerable< productClassProcess> GetAllProductClassProcess()
-        {
-            var data = context.TBL_PRODUCT_CLASS_PROCESS.Select
-            (c => new productClassProcess
-            {
-                maximumAmount = c.MAXIMUM_AMOUNT,
-                productClassProcessId = c.PRODUCT_CLASS_PROCESSID,
-                productClassProscessName = c.PRODUCT_CLASS_PROCESS_NAME,
-                UserAmountLimit = c.USE_AMOUNT_LIMIT
-
-            });
-
-            return data.ToList();
-        }
-
-        public productClassProcess GetProductProcessByProcessId(int proccessId)
+        public ProductClassProcessViewModel GetProductProcessByProcessId(int proccessId)
         {
             var data = context.TBL_PRODUCT_CLASS_PROCESS.Where(c => c.PRODUCT_CLASS_PROCESSID == proccessId).Select
-            (c => new productClassProcess
+            (c => new ProductClassProcessViewModel
             {
                 maximumAmount = c.MAXIMUM_AMOUNT,
                 productClassProcessId = c.PRODUCT_CLASS_PROCESSID,
-                productClassProscessName = c.PRODUCT_CLASS_PROCESS_NAME,
-                UserAmountLimit = c.USE_AMOUNT_LIMIT
+                productClassProcessName = c.PRODUCT_CLASS_PROCESS_NAME,
+                useAmountLimit = c.USE_AMOUNT_LIMIT
 
             });
 
             return data.FirstOrDefault();
         }
 
-        #endregion
+        #endregion Product Class Process
 
     }
 }

@@ -806,6 +806,7 @@ namespace FintrakBanking.Repositories.Customer
                             clientSupplier.REGISTRATION_NUMBER = entity.rcNumber;
                             clientSupplier.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
                             clientSupplier.CASA_ACCOUNTNO = entity.casaAccountNumber;
+                            clientSupplier.NATURE_OF_BUSINESS = entity.natureOfBusiness;
                             clientSupplier.CONTACT_PERSON = entity.contactPerson;
                             clientSupplier.ADDRESS = entity.client_SupplierAddress;
                             clientSupplier.PHONENUMBER = entity.client_SupplierPhoneNumber;
@@ -830,6 +831,7 @@ namespace FintrakBanking.Repositories.Customer
                         clientSupplier.REGISTRATION_NUMBER = entity.rcNumber;
                         clientSupplier.HAS_CASA_ACCOUNT = entity.hasCASAAccount;
                         clientSupplier.CASA_ACCOUNTNO = entity.casaAccountNumber;
+                        clientSupplier.NATURE_OF_BUSINESS = entity.natureOfBusiness;
                         clientSupplier.CONTACT_PERSON = entity.contactPerson;
                         clientSupplier.CLIENT_SUPPLIERTYPEID = entity.client_SupplierTypeId;
                         clientSupplier.CREATEDBY = entity.createdBy;
@@ -1002,7 +1004,7 @@ namespace FintrakBanking.Repositories.Customer
                        placeOfBirth = a.PLACEOFBIRTH,
                        isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                        relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
-                       relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f=> f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
+                       relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
                       + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
                        spouse = a.SPOUSE,
                        sectorId = a.TBL_SUB_SECTOR.TBL_SECTOR.SECTORID,
@@ -1126,6 +1128,7 @@ namespace FintrakBanking.Repositories.Customer
                            rcNumber = cs.REGISTRATION_NUMBER,
                            hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
                            casaAccountNumber = cs.CASA_ACCOUNTNO,
+                           natureOfBusiness = cs.NATURE_OF_BUSINESS,
                            contactPerson = cs.CONTACT_PERSON,
                            client_SupplierAddress = cs.ADDRESS,
                            client_SupplierPhoneNumber = cs.PHONENUMBER,
@@ -1146,6 +1149,7 @@ namespace FintrakBanking.Repositories.Customer
                            hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
                            casaAccountNumber = cs.CASA_ACCOUNTNO,
                            contactPerson = cs.CONTACT_PERSON,
+                           natureOfBusiness = cs.NATURE_OF_BUSINESS,
                            client_SupplierAddress = cs.ADDRESS,
                            client_SupplierPhoneNumber = cs.PHONENUMBER,
                            client_SupplierEmail = cs.EMAILADDRESS,
@@ -1719,6 +1723,7 @@ namespace FintrakBanking.Repositories.Customer
                                         hasCASAAccount = cs.HAS_CASA_ACCOUNT,
                                         casaAccountNumber = cs.CASA_ACCOUNTNO,
                                         contactPerson = cs.CONTACT_PERSON,
+                                        natureOfBusiness = cs.NATURE_OF_BUSINESS,
                                         client_SupplierAddress = cs.ADDRESS,
                                         client_SupplierPhoneNumber = cs.PHONENUMBER,
                                         client_SupplierEmail = cs.EMAILADDRESS,
@@ -1798,6 +1803,16 @@ namespace FintrakBanking.Repositories.Customer
         #endregion
 
         #region Customer Information Validation
+        public bool ValidateCustomerCode(string customerCode)
+        {
+            bool itemExist = false;
+            var data = (from a in context.TBL_CUSTOMER where  a.CUSTOMERCODE == customerCode select a).ToList();
+            if (data.Count > 0)
+            {
+                itemExist = true;
+            }
+            return itemExist;
+        }
         public bool ValidateCustomerBVN(int customerId, string customerBvn)
         {
             bool itemExist = false;

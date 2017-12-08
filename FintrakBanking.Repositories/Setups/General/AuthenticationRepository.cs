@@ -146,13 +146,23 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public UserViewModel FindUserByUserNameAndPassword(string username, string password)
         {
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username && x.PASSWORD == password);
+            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME == username); // && x.PASSWORD == password);
+
+            var appSetup = context.TBL_APPLICATION_SETUP.Single();
+
+            UserViewModel data;
 
             if (_user != null)
             {
                 try
                 {
-                    var data = (from p in context.TBL_PROFILE_USER
+                    if (appSetup.USE_ACTIVE_DIRECTORY)
+                    {
+                        data = FindUserByUserName(username);
+                    }
+                    else
+                    {
+                        data = (from p in context.TBL_PROFILE_USER
                                 join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
                                 join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
                                 join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
@@ -170,6 +180,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                     companyName = coy.NAME,
 
                                 }).First();
+                    }
 
                     if (data == null)
                     {

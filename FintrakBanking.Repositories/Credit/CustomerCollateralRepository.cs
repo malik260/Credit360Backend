@@ -378,8 +378,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)
         {
-            return GetCustomerCollateral(companyId).Where(x=>x.collateralTypeId == collateralTypeId && (x.customerId==customerId || x.customerId == thirdpartyCustomerId));
-            
+            return GetCustomerCollateral(companyId).Where(x => x.collateralTypeId == collateralTypeId && (x.customerId == customerId || x.customerId == thirdpartyCustomerId));
+
         }
 
         public IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId)
@@ -409,11 +409,11 @@ namespace FintrakBanking.Repositories.Credit
 
             })
             .OrderByDescending(x => x.collateralId)
-            
+
             .ToList();
 
-            
-            
+
+
             return collateral;
         }
 
@@ -1115,7 +1115,7 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
-        public IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId) 
+        public IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId)
         {
             var collaterals = context.TBL_CUSTOMER
                 .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
@@ -1172,7 +1172,7 @@ namespace FintrakBanking.Repositories.Credit
             };
             this.auditTrail.AddAuditTrail(audit);
             // End of Audit Section ---------------------
-            
+
             workflow.StaffId = model.createdBy;
             workflow.CompanyId = model.companyId;
             workflow.StatusId = (int)ApprovalStatusEnum.Processing;
@@ -1255,16 +1255,16 @@ namespace FintrakBanking.Repositories.Credit
                 .Distinct();
         }
 
-        public IQueryable<CollateralSearchViewModel> SearchCollateral(string searchQuery, int companyId)
+        public IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId)
         {
             IQueryable<CollateralSearchViewModel> result = null;
 
-            if (!string.IsNullOrWhiteSpace(searchQuery))
+            if (!string.IsNullOrWhiteSpace(searchString))
             {
-                searchQuery = searchQuery.ToLower();
+                searchString = searchString.ToLower();
             }
 
-            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            if (!string.IsNullOrWhiteSpace(searchString.Trim()))
             {
                 result =
                     context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.COMPANYID == companyId)
@@ -1285,11 +1285,11 @@ namespace FintrakBanking.Repositories.Credit
                         haircut = o.HAIRCUT,
                     })
                     .Where(x =>
-                       x.collateralCode.ToLower().Contains(searchQuery)
-                    || x.collateralTypeName.ToLower().Contains(searchQuery)
-                    || x.customerCode.ToLower().Contains(searchQuery)
-                    || x.currencyCode.Contains(searchQuery)
-                    || x.customerName.Contains(searchQuery)
+                       x.collateralCode.ToLower().Contains(searchString)
+                    || x.collateralTypeName.ToLower().Contains(searchString)
+                    || x.customerCode.ToLower().Contains(searchString)
+                    || x.currencyCode.Contains(searchString)
+                    || x.customerName.Contains(searchString)
                     )
                     .Take(12);
             }
@@ -1298,12 +1298,12 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public bool AssignCollateral(ActiveCustomerCollateralViewModel model)
+        public bool AssignCollateral(ActiveCustomerCollateralViewModel entity)
         {
             var assignment = new TBL_LOAN_COLLATERAL_MAPPING
             {
-                LOANAPPLICATIONID = model.loanApplicationId,
-                COLLATERALCUSTOMERID = model.collateralCustomerId,
+                LOANAPPLICATIONID = entity.loanApplicationId,
+                COLLATERALCUSTOMERID = entity.collateralCustomerId,
                 RELEASEAPPROVALSTATUSID = 0
             };
 
@@ -1313,11 +1313,11 @@ namespace FintrakBanking.Repositories.Credit
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.CollateralAssignmentAction,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Collateral Assignment :: LoanApplicationId:'{ assignment.LOANAPPLICATIONID }' CollateralCustomerId:'{ assignment.COLLATERALCUSTOMERID }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -2235,12 +2235,12 @@ namespace FintrakBanking.Repositories.Credit
 
         public Task<bool> DeleteCollateralMiscellaneousNotes(int miscNoteId, UserInfo user)
         {
-            return null;
+            return Task.Run(() => false);
         }
 
         public Task<bool> UpdateCollateralMiscellaneousNotes(int miscNoteId, CollateralMiscellaneousNotesViewModel entity)
         {
-            return null;
+            return Task.Run(() => false);
         }
 
         private List<CollateralMiscellaneousNotesViewModel> MiscellaneousNotes(int miscellaneousId)
@@ -2434,17 +2434,17 @@ namespace FintrakBanking.Repositories.Credit
         //This CRUD function should be moved to setup in the collateralType repository and the get function will depend on the its setup Get function 
         public Task<bool> AddCollateralSeniorityOfClaims(CollateralSeniorityOfClaimsViewModel entity)
         {
-            return null;
+            return Task.Run(() => false);
         }
 
         public Task<bool> DeleteCollateralSeniorityOfClaims(int seniorityOfClaimId, UserInfo user)
         {
-            return null;
+            return Task.Run(() => false);
         }
 
         public Task<bool> UpdateCollateralSeniorityOfClaims(int seniorityOfClaimId, CollateralSeniorityOfClaimsViewModel entity)
         {
-            return null;
+            return Task.Run(() => false);
         }
 
         public IEnumerable<CollateralSeniorityOfClaimsViewModel> GetCollateralSeniorityOfClaims()
@@ -2509,5 +2509,62 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion End of Listing Functions
+
+
+
+
+
+
+
+
+
+        public IEnumerable<CollateralLoanApplication> GetAllUnmappedCustomerCollateral(int customerId, int loanApplicationId, int companyId)
+        {
+
+            var data = (from a in context.TBL_COLLATERAL_CUSTOMER
+                        where a.CUSTOMERID == customerId && a.COMPANYID == companyId &&
+                         !context.TBL_LOAN_APPLICATION_COLLATERAL.Any(c => c.COLLATERALCUSTOMERID == a.COLLATERALCUSTOMERID && c.LOANAPPLICATIONID == loanApplicationId)
+                        select new CollateralLoanApplication()
+                        {
+                           
+                            haircut = a.HAIRCUT,
+                            collateralId = a.COLLATERALCUSTOMERID,
+                            collateralCode = a.COLLATERALCODE,
+                            collateralValue = (double)a.COLLATERALVALUE,
+                            collateralType = a.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                        });
+            return data.ToList();
+        }
+
+        public IEnumerable<CollateralLoanApplication> GetAllMappedCustomerCollateral(int customerId, int loanApplicationId, int companyId)
+        {
+            var data = (from a in context.TBL_COLLATERAL_CUSTOMER
+                        join b in context.TBL_LOAN_APPLICATION_COLLATERAL on a.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                        where b.LOANAPPLICATIONID == loanApplicationId && a.CUSTOMERID == customerId && a.COMPANYID == companyId
+                        select new CollateralLoanApplication()
+                        {
+                            loanApplicationCollateralId = b.LOANAPPCOLLATERALID,
+                            haircut = a.HAIRCUT,
+                            collateralId = a.COLLATERALCUSTOMERID,
+                            collateralCode = a.COLLATERALCODE,
+                            collateralValue = (double)a.COLLATERALVALUE,
+                            collateralType = a.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+
+                        });
+            return data.ToList();
+        }
+
+
+        public bool DeleteCollateralApplicationMapped(IEnumerable<CollateralLoanApplication> mappings, int companyId)
+        {
+            var data = (from a in mappings
+                        join b in context.TBL_LOAN_APPLICATION_COLLATERAL on a.loanApplicationCollateralId equals b.LOANAPPCOLLATERALID
+                        where b.TBL_COLLATERAL_CUSTOMER.COMPANYID == companyId
+                        select b);
+            context.TBL_LOAN_APPLICATION_COLLATERAL.RemoveRange(data);
+            return context.SaveChanges() > 0;
+
+        }
     }
+
 }

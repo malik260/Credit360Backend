@@ -135,4 +135,35 @@ namespace FintrakBanking.ViewModels.Credit
         public bool politicallyExposed { get; set; }
         public List<CurrentCommitteeViewModel> votes { get; set; }
     }
+
+    public class LoanApplicationDetailLogViewModel : GeneralEntity
+    {
+        public int loanApplicationDetailId { get; set; }
+
+        public string customerName { get; set; }
+
+        public string approvedProductName { get; set; }
+
+        public short approvedProductId { get; set; }
+
+        public int approvedTenor { get; set; }
+
+        public double approvedRate { get; set; }
+
+        public decimal approvedAmount { get; set; }
+
+        public string currencyName { get; set; }
+
+        public double exchangeRate { get; set; }
+
+        public short statusId { get; set; }
+
+        public decimal exchangeAmount { get { return (decimal)exchangeRate * approvedAmount; } }
+
+        public int customerId { get; set; }
+
+        public int applicationId { get; set; }
+        public string staffName { get; set; }
+    }
+
 }

@@ -85,6 +85,7 @@ namespace FintrakBanking.Interfaces.Customer
         #endregion
 
         #region  Customer Information Validation
+        bool ValidateCustomerCode(string customerCode);
         bool ValidateCustomerBVN(int customerId, string customerBvn);
         bool ValidateCustomerRCnumber(int customerId, string rcNumber);
         bool ValidateCustomerTIN(int customerId, string tin);

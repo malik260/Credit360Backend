@@ -15,7 +15,7 @@ namespace FintrakBanking.ViewModels.Setups.General
  
         public string productClassProscessName { get; set; }    
 
-        public bool UserAmountLimit { get; set; }
+        public bool userAmountLimit { get; set; }
 
         public Decimal? maximumAmount { get; set; }
     }

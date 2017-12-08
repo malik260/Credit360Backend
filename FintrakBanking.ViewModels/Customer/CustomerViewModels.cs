@@ -85,6 +85,16 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerChildrenViewModel> CustomerChildren { get; set; }
        
     }
+    public class CustomerInformationStagingViewModels
+    {
+        public string customerCode { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerName { get { return this.firstName + " " + this.middleName + " " + this.lastName; } }
+        public int customerTypeId { get; set; }
+        public DateTime dateOfBirth { get; set; }
+    }
 
     public class CustomerSearchItemViewModels
     {

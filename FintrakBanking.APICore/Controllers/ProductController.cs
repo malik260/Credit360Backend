@@ -28,52 +28,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("product-process")]
-        public HttpResponseMessage GetAllProductClassProcess()
-        {
-            try
-            {
-                var data = repo.GetAllProductClassProcess();
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
-
-            }
-
-            catch (System.Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        //[HttpGet]
-        //[Route("product-process/{id}")]
-        //public HttpResponseMessage GetProductProductProcessById(int id)
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetProductClassProcess(id);
-        //        if (data == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK,
-        //                new { success = false, message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
-
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-        //    }
-        //}
-
-
-
-
-        [HttpGet]
         [Route("product/group")]
         public HttpResponseMessage GetProductByProductGroup()
         {
@@ -1107,8 +1061,8 @@ namespace FintrakBanking.APICore.Controllers
         #region Product Class Process
 
         [HttpGet]
-        [Route("product-class-process")]
-        public HttpResponseMessage GetAllProductClassProcesses()
+        [Route("product-process")]
+        public HttpResponseMessage GetAllProductClassProcess()
         {
             try
             {
@@ -1118,10 +1072,9 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK,
-
-                    new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
             }
+
             catch (System.Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -1129,7 +1082,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("product-class-process")]
+        [Route("product-process")]
         public HttpResponseMessage AddProductClassProcess([FromBody] ProductClassProcessViewModel model)
         {
             try
@@ -1138,11 +1091,11 @@ namespace FintrakBanking.APICore.Controllers
                 if (!data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Product process added successfully!" });
+                        new { success = false, message = "Product process not added successfully!" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
 
-                    new { success = true, message = "Product process not added successfully!" });
+                    new { success = true, message = "Product process added successfully!" });
             }
             catch (System.Exception ex)
             {
@@ -1151,20 +1104,20 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("product-class-process/{productClassProcessId}")]
-        public HttpResponseMessage UpdateProductClassProcess(int productClassProcessId, [FromBody] ProductClassProcessViewModel model)
+        [Route("product-process/{productProcessId}")]
+        public HttpResponseMessage UpdateProductClassProcess(int productProcessId, [FromBody] ProductClassProcessViewModel model)
         {
             try
             {
-                var data = repo.UpdateProductClassProcess(productClassProcessId, model);
+                var data = repo.UpdateProductClassProcess(productProcessId, model);
                 if (!data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Product process updated successfully!" });
+                        new { success = false, message = "Product process not updated successfully!" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
 
-                    new { success = true, message = "Product process not updated successfully!" });
+                    new { success = true, message = "Product process updated successfully!" });
             }
             catch (System.Exception ex)
             {
@@ -1172,6 +1125,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpGet]
+        //[Route("product-process/{id}")]
+        //public HttpResponseMessage GetProductProductProcessById(int id)
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetProductClassProcess(id);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
         #endregion Product Class Process
 

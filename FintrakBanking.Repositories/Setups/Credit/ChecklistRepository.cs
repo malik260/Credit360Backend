@@ -56,7 +56,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
 
         }
-        public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId,int loanTargetId, int operationId, int checkListTypeId)
+        public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId)
         {
             var detailItem = (from s in context.TBL_CHECKLIST_DETAIL
                               join k in context.TBL_CHECKLIST_DEFINITION
@@ -713,48 +713,48 @@ namespace FintrakBanking.Repositories.Credit
                                              select dd).Count();
 
                 var loanCheckListProductCount = (from dd in context.TBL_CHECKLIST_DETAIL
-                                          where dd.TARGETID == loanDetailsData.LOANAPPLICATIONDETAILID
-                                          && dd.TARGETTYPEID == (int)CheckListTargetTypeEnum.LoanApplicationProductChecklist
-                                          select dd).Count();
+                                                 where dd.TARGETID == loanDetailsData.LOANAPPLICATIONDETAILID
+                                                 && dd.TARGETTYPEID == (int)CheckListTargetTypeEnum.LoanApplicationProductChecklist
+                                                 select dd).Count();
                 var loanCheckListCustomer = (from dd in context.TBL_CHECKLIST_DETAIL
-                                                 where dd.TARGETID == model.targetId
-                                                 && dd.TARGETTYPEID == (int)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist
-                                                 select dd).ToList();
+                                             where dd.TARGETID == model.targetId
+                                             && dd.TARGETTYPEID == (int)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist
+                                             select dd).ToList();
 
                 if (productCheckListCount == (loanCheckListProductCount + 1))
                 {
-                   if( loanCheckListCustomer.Count > 0)
+                    if (loanCheckListCustomer.Count > 0)
                     {
                         foreach (var item in loanCheckListCustomer)
                         {
-                            
+
                         }
                     }
                     loanDetailsData.HASDONECHECKLIST = true;
                 }
             }
-            var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == model.checklistId select l).ToList();
-            if (loanData != null)
-            {
-                var custNo = loanData.Count();
-                var checkedNo = 0;
-                foreach (var item in loanData)
-                {
-                    if (item.HASDONECHECKLIST == true)
-                    {
-                        ++checkedNo;
-                    }
-                }
-                if (custNo == checkedNo)
-                {
-                    var loanApplication = context.TBL_LOAN_APPLICATION.Find(model.checklistId);
-                    if (loanApplication != null)
-                    {
-                        loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
-                    }
-                }
+            //var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == model.checklistId select l).ToList();
+            //if (loanData != null)
+            //{
+            //    var custNo = loanData.Count();
+            //    var checkedNo = 0;
+            //    foreach (var item in loanData)
+            //    {
+            //        if (item.HASDONECHECKLIST == true)
+            //        {
+            //            ++checkedNo;
+            //        }
+            //    }
+            //    if (custNo == checkedNo)
+            //    {
+            //        var loanApplication = context.TBL_LOAN_APPLICATION.Find(model.checklistId);
+            //        if (loanApplication != null)
+            //        {
+            //            loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
+            //        }
+            //    }
 
-            }
+            //}
 
             return context.SaveChanges() != 0;
         }
@@ -1005,5 +1005,20 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion
 
+
+        #region Checklist entry validation
+        public bool ValidateChecklistDetailEntry(int checklistDefinitionId, int targetId)
+        {
+            var data = (from c in context.TBL_CHECKLIST_DETAIL
+                        where c.CHECKLISTDEFINITIONID == checklistDefinitionId
+                        && c.TARGETID == targetId
+                        select c).ToList();
+            if (data.Any())
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
     }
 }
