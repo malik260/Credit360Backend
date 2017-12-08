@@ -1238,7 +1238,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (exisitingDocument != null)
                     {
-                        exisitingDocument.HTML_DOCUMENT = model.documentTemplate;
+                        //exisitingDocument.HTML_DOCUMENT = model.documentTemplate;
                         exisitingDocument.APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber;
                         exisitingDocument.COMMENTS = model.comments;
                         exisitingDocument.PRODUCTID = model.productId;
@@ -1248,7 +1248,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         var document = new TBL_TEMP_OFFERLETTER
                         {
-                            HTML_DOCUMENT = model.documentTemplate,
+                            //HTML_DOCUMENT = model.documentTemplate,
                             APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
                             COMMENTS = model.comments,
                             PRODUCTID = model.productId,
@@ -1277,7 +1277,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var exisitingDocument = context.TBL_TEMP_OFFERLETTER.Find(documentId);
 
-                    exisitingDocument.HTML_DOCUMENT = model.documentTemplate;
+                    //exisitingDocument.HTML_DOCUMENT = model.documentTemplate;
                     exisitingDocument.APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber;
                     exisitingDocument.COMMENTS = model.comments;
                     exisitingDocument.PRODUCTID = model.productId;
@@ -1306,7 +1306,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             documentId = a.DOCUMENTID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                            documentTemplate = a.HTML_DOCUMENT,
+                            //documentTemplate = a.HTML_DOCUMENT,
                             comments = a.COMMENTS,
                             productId = a.PRODUCTID,
                             isAccepted = a.ISACCEPTED
@@ -1339,7 +1339,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             documentId = a.DOCUMENTID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                            documentTemplate = a.HTML_DOCUMENT,
+                           // documentTemplate = a.HTML_DOCUMENT,
                             comments = a.COMMENTS,
                             productId = a.PRODUCTID,
                             isAccepted = a.ISACCEPTED
@@ -1373,7 +1373,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (exisitingDocument != null)
                 {
-                    exisitingDocument.HTML_DOCUMENT = model.documentTemplate;
+                    //exisitingDocument.HTML_DOCUMENT = model.documentTemplate;
                     exisitingDocument.APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber;
                     exisitingDocument.COMMENTS = model.comments;
                     exisitingDocument.PRODUCTID = model.productId;
@@ -1383,7 +1383,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var document = new TBL_OFFERLETTER
                     {
-                        HTML_DOCUMENT = model.documentTemplate,
+                       // HTML_DOCUMENT = model.documentTemplate,
                         APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
                         COMMENTS = model.comments,
                         PRODUCTID = model.productId,

@@ -33,6 +33,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime SYSTEMDATETIME { get; set; }
 
+        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
+
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
     }
 }

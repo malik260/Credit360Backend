@@ -128,8 +128,6 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_DAY_COUNT_CONVENTION TBL_DAY_COUNT_CONVENTION { get; set; }
 
-        public virtual TBL_PRODUCT_BEHAVIOUR TBL_PRODUCT_BEHAVIOUR { get; set; }
-
         public virtual TBL_PRODUCT_CATEGORY TBL_PRODUCT_CATEGORY { get; set; }
 
         public virtual TBL_PRODUCT_CLASS TBL_PRODUCT_CLASS { get; set; }

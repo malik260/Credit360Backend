@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
             TBL_APPROVAL_GROUP = new HashSet<TBL_APPROVAL_GROUP>();
             TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
             TBL_BRANCH = new HashSet<TBL_BRANCH>();
+            TBL_BRANCH_REGION = new HashSet<TBL_BRANCH_REGION>();
             TBL_CASA = new HashSet<TBL_CASA>();
             TBL_CASA_LIEN = new HashSet<TBL_CASA_LIEN>();
             TBL_CHARGE_FEE = new HashSet<TBL_CHARGE_FEE>();
@@ -45,7 +46,9 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_BULK_INTEREST_REVIEW = new HashSet<TBL_LOAN_BULK_INTEREST_REVIEW>();
             TBL_LOAN_CAMSOL = new HashSet<TBL_LOAN_CAMSOL>();
             TBL_LOAN_CONTINGENT = new HashSet<TBL_LOAN_CONTINGENT>();
+            TBL_LOAN_MARKET = new HashSet<TBL_LOAN_MARKET>();
             TBL_LOAN_PRELIMINARY_EVALUATION = new HashSet<TBL_LOAN_PRELIMINARY_EVALUATION>();
+            TBL_LOAN_PRINCIPAL = new HashSet<TBL_LOAN_PRINCIPAL>();
             TBL_LOAN_REVOLVING = new HashSet<TBL_LOAN_REVOLVING>();
             TBL_LOAN = new HashSet<TBL_LOAN>();
             TBL_PRODUCT_COLLATERALTYPE = new HashSet<TBL_PRODUCT_COLLATERALTYPE>();
@@ -181,6 +184,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_BRANCH> TBL_BRANCH { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_BRANCH_REGION> TBL_BRANCH_REGION { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CASA> TBL_CASA { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -285,7 +291,13 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_CONTINGENT> TBL_LOAN_CONTINGENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_MARKET> TBL_LOAN_MARKET { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_PRELIMINARY_EVALUATION> TBL_LOAN_PRELIMINARY_EVALUATION { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_PRINCIPAL> TBL_LOAN_PRINCIPAL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_REVOLVING> TBL_LOAN_REVOLVING { get; set; }

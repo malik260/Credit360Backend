@@ -25,6 +25,7 @@ namespace FintrakBanking.Entities.Models
             TBL_PRODUCT_COLLATERALTYPE = new HashSet<TBL_PRODUCT_COLLATERALTYPE>();
             TBL_LOAN_APPLICATION_DETAIL = new HashSet<TBL_LOAN_APPLICATION_DETAIL>();
             TBL_LOAN_APPLICATION_DETAIL1 = new HashSet<TBL_LOAN_APPLICATION_DETAIL>();
+            TBL_LOAN_APPLICATION_DETL_LOG = new HashSet<TBL_LOAN_APPLICATION_DETL_LOG>();
             TBL_OFFERLETTER = new HashSet<TBL_OFFERLETTER>();
             TBL_PRODUCT_CURRENCY = new HashSet<TBL_PRODUCT_CURRENCY>();
             TBL_PRODUCT_CHARGE_FEE = new HashSet<TBL_PRODUCT_CHARGE_FEE>();
@@ -89,8 +90,6 @@ namespace FintrakBanking.Entities.Models
         public short? PRODUCTPRICEINDEXID { get; set; }
 
         public double? PRODUCTPRICEINDEXSPREAD { get; set; }
-
-        public short? PRODUCT_BEHAVIOURID { get; set; }
 
         public bool? ALLOWOVERDRAWN { get; set; }
 
@@ -184,7 +183,12 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_LOAN_APPLICATION_DETAIL> TBL_LOAN_APPLICATION_DETAIL1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_APPLICATION_DETL_LOG> TBL_LOAN_APPLICATION_DETL_LOG { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_OFFERLETTER> TBL_OFFERLETTER { get; set; }
+
+        public virtual TBL_PRODUCT_BEHAVIOUR TBL_PRODUCT_BEHAVIOUR { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PRODUCT_CURRENCY> TBL_PRODUCT_CURRENCY { get; set; }
@@ -207,8 +211,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_DEAL_TYPE TBL_DEAL_TYPE { get; set; }
 
         public virtual TBL_LOAN_SCHEDULE_TYPE TBL_LOAN_SCHEDULE_TYPE { get; set; }
-
-        public virtual TBL_PRODUCT_BEHAVIOUR TBL_PRODUCT_BEHAVIOUR { get; set; }
 
         public virtual TBL_PRODUCT_CLASS TBL_PRODUCT_CLASS { get; set; }
 

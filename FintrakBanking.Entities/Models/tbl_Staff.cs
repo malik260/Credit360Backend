@@ -17,6 +17,7 @@ namespace FintrakBanking.Entities.Models
             TBL_APPROVAL_TRAIL1 = new HashSet<TBL_APPROVAL_TRAIL>();
             TBL_APPROVAL_TRAIL2 = new HashSet<TBL_APPROVAL_TRAIL>();
             TBL_AUDIT = new HashSet<TBL_AUDIT>();
+            TBL_BRANCH_REGION = new HashSet<TBL_BRANCH_REGION>();
             TBL_CASA = new HashSet<TBL_CASA>();
             TBL_CASA1 = new HashSet<TBL_CASA>();
             TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
@@ -105,8 +106,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string COMMENT { get; set; }
 
-        public byte[] STAFFSIGNATURE { get; set; }
-
         public short? BRANCHID { get; set; }
 
         public int? MISINFOID { get; set; }
@@ -151,6 +150,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_AUDIT> TBL_AUDIT { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_BRANCH_REGION> TBL_BRANCH_REGION { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CASA> TBL_CASA { get; set; }

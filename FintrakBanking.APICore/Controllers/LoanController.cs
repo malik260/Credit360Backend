@@ -314,6 +314,23 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //    }
         //}
 
+
+        [HttpGet]
+        [Route("monitoring-trigger")]
+        public HttpResponseMessage GetLoan()
+        {
+            try
+            {
+                var data = repo.GetLoanMonitoringTrigger();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpGet]
         [Route("number-of-installments/tenor-mode/{tenorModeId}/frequency-type/{frequencyTypeId}/tenor/{tenor}")]
         public HttpResponseMessage GetNumberOfInstallments(short tenorModeId, short frequencyTypeId, int tenor)
@@ -354,6 +371,27 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
                 var data = repo.GetTermLoanBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (data.Any() == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-booking/approvers/{operationId}")]
+        public HttpResponseMessage GetLoanOperationApprovers(int operationId)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                var data = repo.GetLoanOperationApprovers(operationId, token.GetCompanyId);
 
                 if (data.Any() == false)
                 {
@@ -475,8 +513,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
 
         [HttpPost]
-        [Route("loan-booking/approval")]
-        public HttpResponseMessage ApproveLoanBooking(ApprovalViewModel model)
+        [Route("loan-booking/approval/{loanBookingRequestId}")]
+        public HttpResponseMessage ApproveLoanBooking(ApprovalViewModel model, int loanBookingRequestId)
         {
             try
             {
@@ -487,7 +525,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var data = repo.GoForApproval(model);
+                var data = repo.GoForApproval(model, loanBookingRequestId);
 
                 if (data)
                 {
