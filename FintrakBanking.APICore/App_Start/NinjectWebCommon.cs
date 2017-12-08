@@ -183,6 +183,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IOfferLetterAndAvailmentRepository>().To<OfferLetterAndAvailmentRepository>();
             kernel.Bind<ICustomerStagingRepository>().To<CustomerStagingRepository>();
             kernel.Bind<ILoanPrincipalRepository>().To<LoanPrincipalRepository>();
+            kernel.Bind<ILoanMarketRepository>().To<LoanMarketRepository>();
         }
     }
 }

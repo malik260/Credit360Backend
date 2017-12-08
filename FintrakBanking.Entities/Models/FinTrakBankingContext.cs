@@ -1756,11 +1756,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.APPROVEDPRODUCTID)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_PRODUCT>()
-                .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_LOG)
-                .WithRequired(e => e.TBL_PRODUCT)
-                .HasForeignKey(e => e.APPROVEDPRODUCTID)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_PRODUCT>()
+            //    .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_LOG)
+            //    .WithRequired(e => e.TBL_PRODUCT)
+            //    .HasForeignKey(e => e.APPROVEDPRODUCTID)
+            //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT>()
                 .HasMany(e => e.TBL_PRODUCT_CURRENCY)

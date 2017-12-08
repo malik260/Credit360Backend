@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Credit
                 _context.TBL_LOAN_PRINCIPAL.Add(value);
                 _context.SaveChanges();
 
-                return $"Principal with {loanP.principalsRegNumber} registration number was added successful";
+                return $"Principal with {loanP.principalsRegNumber} registration number has been added successful";
 
             }
             return $"Could not add Principal with {loanP.principalsRegNumber}  registration number";
@@ -63,7 +63,7 @@ namespace FintrakBanking.Repositories.Credit
                 data.DELETED = true;
                 data.DELETEDBY =loanPrincipal.staffId;
                 _context.SaveChanges();
-                return $"Principal with {loanPrincipal.principalId} id was deleted successful";
+                return $"Principal with {loanPrincipal.principalId} id has been deleted successful";
             }
             return $"Record not found, could not delete Principal with {loanPrincipal.principalId} id";
             // Audit Section ---------------------------
@@ -138,13 +138,12 @@ namespace FintrakBanking.Repositories.Credit
                 val.PHONENUMBER = model.phoneNumber;
                 val.PRINCIPALSREGNUMBER = model.principalsRegNumber;
 
-                val.DATETIMEUPDATED = DateTime.Now;
-                val.LASTUPDATEDBY = 0;
-                val.DATETIMEDELETED = DateTime.Now;
+                val.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+                val.LASTUPDATEDBY = model.createdBy;
 
 
                 _context.SaveChanges();
-                return $"Principal with {model.principalId} id was updated successful";
+                return $"Principal with {model.principalId} id has been updated successful";
             }
             return $"Record not found, could not update Principal with {model.principalId} id";
         }

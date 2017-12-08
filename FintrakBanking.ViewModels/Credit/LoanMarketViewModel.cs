@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    class LoanMarketViewModel
+    public class LoanMarketViewModel : GeneralEntity
     {
-        public int markeetId { get; set; }
-        public int marketName { get; set; }
-        public int accountNumber { get; set; }
-        public int emailAddress { get; set; }
-        public int phoneNumebr { get; set; }
+        public int marketId { get; set; }
+        public string marketName { get; set; }
+        public string accountNumber { get; set; }
+        public string emailAddress { get; set; }
+        public string phoneNumber { get; set; }
         public int cityId { get; set; }
-        public int Address { get; set; }
+        public string address { get; set; }
+        public int companyId { get; set; }
     }
 }
