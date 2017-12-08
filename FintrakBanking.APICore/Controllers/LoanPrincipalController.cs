@@ -37,13 +37,13 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        [Route("getprincipal")]
+        [Route("getprincipal/principal/{id}")]
         [HttpGet]
-        public HttpResponseMessage GetAllLoanPrincipal(int principalId)
+        public HttpResponseMessage GetAllLoanPrincipal(int id)
         {
             try
             {
-                var data = repo.GetLoanPrincipal(principalId, token.GetCompanyId);
+                var data = repo.GetLoanPrincipal(id, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
