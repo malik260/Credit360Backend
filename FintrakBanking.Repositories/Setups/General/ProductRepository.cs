@@ -138,7 +138,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var data = (from p in context.TBL_PRODUCT_BEHAVIOUR
                         select new LookupViewModel()
                         {
-                            //lookupId = p.PRODUCT_BEHAVIOURID,
+                            lookupId = p.PRODUCT_BEHAVIOURID,
                             lookupName = p.PRODUCT_BEHAVIOUR_NAME
                         });
 

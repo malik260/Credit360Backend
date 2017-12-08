@@ -1,7 +1,6 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
@@ -13,23 +12,23 @@ using System.Web.Http;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/credit")]
-    public class LoanPrincipalController : ApiControllerBase
+    public class LoanMarketController : ApiControllerBase
     {
-        private ILoanPrincipalRepository repo;
+        private ILoanMarketRepository repo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public LoanPrincipalController(ILoanPrincipalRepository _repo)
+        public LoanMarketController(ILoanMarketRepository _repo)
         {
             repo = _repo;
         }
 
-        [Route("loan-principals")]
+        [Route("markets")]
         [HttpGet]
-        public HttpResponseMessage GetAllLoanPrincipal()
+        public HttpResponseMessage GetAllLoanMarket()
         {
             try
             {
-                var data = repo.GetLoanPrincipal(token.GetCompanyId);
+                var data = repo.GetLoanMarket(token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
             catch (Exception ex)
@@ -37,13 +36,13 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        [Route("loan-principal")]
+        [Route("market")]
         [HttpGet]
-        public HttpResponseMessage GetAllLoanPrincipal(int principalId)
+        public HttpResponseMessage GetAllLoanMarket(int marketId)
         {
             try
             {
-                var data = repo.GetLoanPrincipal(principalId, token.GetCompanyId);
+                var data = repo.GetLoanMarket(marketId, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
@@ -52,13 +51,13 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [Route("update-principal")]
+        [Route("update-market")]
         [HttpPut]
-        public HttpResponseMessage UpdateLoanPrincipal(int principalId, LoanPrincipalViewModel loanPrincipal)
+        public HttpResponseMessage UpdateLoanMarket(int principalId, LoanMarketViewModel loanMarket)
         {
             try
             {
-                string response  = repo.UpdateLoanPrincipal( loanPrincipal);
+                string response = repo.UpdateLoanMarket(loanMarket);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
@@ -66,13 +65,13 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        [Route("delete-principal")]
+        [Route("delete-market")]
         [HttpPut]
-        public HttpResponseMessage DeleteLoanPrincipal(LoanPrincipalViewModel loanPrincipal)
+        public HttpResponseMessage DeleteLoanMarket(LoanMarketViewModel loanMarket)
         {
             try
             {
-                string response = repo.DeleteLoanPrincipal(loanPrincipal);
+                string response = repo.DeleteLoanMarket(loanMarket);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
@@ -80,15 +79,15 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        [Route("add-principal")]
+        [Route("add-market")]
         [HttpPost]
-        public HttpResponseMessage AddLoanPrincipal(LoanPrincipalViewModel loanPrincipal)
+        public HttpResponseMessage AddLoanMarket(LoanMarketViewModel loanMarket)
         {
             try
             {
-                loanPrincipal.companyId = token.GetCompanyId;
+                loanMarket.companyId = token.GetCompanyId;
 
-                var data = repo.AddLoanPrincipal(loanPrincipal);
+                var data = repo.AddLoanMarket(loanMarket);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (Exception ex)
