@@ -10,7 +10,8 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_PRODUCT_BEHAVIOUR
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public int PRODUCT_BEHAVIOURID { get; set; }
+
         public short PRODUCTID { get; set; }
 
         public double? LCY_LIMIT { get; set; }
