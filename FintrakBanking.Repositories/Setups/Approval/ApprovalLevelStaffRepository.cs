@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         select new ApprovalLevelStaffViewModel
                         {
                             groupId = (int)a.TBL_APPROVAL_LEVEL.GROUPID,
-                            //operationId = c.OperationId,
+                           // operationId = b.OperationId,
                             maximumAmount = a.MAXIMUMAMOUNT,
                             processViewScope = a.PROCESSVIEWSCOPEID,
                             canViewDocument = a.CANVIEWCAMDOCUMENT,
