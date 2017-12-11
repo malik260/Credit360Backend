@@ -319,7 +319,7 @@ namespace FintrakBanking.Repositories.Credit
                             // log changes
                             context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG
                             {
-                                LOANAPPLICATIONID = item.LOANAPPLICATIONID,
+                                //LOANAPPLICATIONID = item.LOANAPPLICATIONID,
                                 LOANAPPLICATIONDETAILID = changed.detailId,
                                 APPROVEDPRODUCTID = (short)changed.productId,
                                 APPROVEDTENOR = changed.tenor,
@@ -330,7 +330,7 @@ namespace FintrakBanking.Repositories.Credit
                                 CREATEDBY = model.createdBy,
                                 DATETIMECREATED = applicationDate,
                                 SYSTEMDATETIME = DateTime.Now,
-                                CUSTOMERID = item.CUSTOMERID,
+                                //CUSTOMERID = item.CUSTOMERID,
                             });
                         }
                     }
@@ -505,21 +505,21 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationDetailLogViewModel> GetLoanDetailChangeLog(int applicationId)
         {
-            var details = context.TBL_LOAN_APPLICATION_DETL_LOG.Where(x => x.LOANAPPLICATIONID == applicationId)
+            var details = context.TBL_LOAN_APPLICATION_DETL_LOG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
                 .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a,b })
                 .Select(x => new LoanApplicationDetailLogViewModel
                 {
                     loanApplicationDetailId = x.a.LOANAPPLICATIONDETAILID,
-                    applicationId = x.a.LOANAPPLICATIONID,
-                    customerId = x.a.CUSTOMERID,
+                    applicationId = x.a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                    customerId = x.a.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,
                     approvedTenor = x.a.APPROVEDTENOR,
                     approvedRate = x.a.APPROVEDINTERESTRATE,
                     approvedAmount = x.a.APPROVEDAMOUNT,
                     approvedProductId = x.a.APPROVEDPRODUCTID,
                     statusId = x.a.STATUSID,
                     exchangeRate = x.a.EXCHANGERATE,
-                    customerName = x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME,
-                    //approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
+                    customerName = x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
+                    approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
                     staffName = x.b.FIRSTNAME + " " + x.b.MIDDLENAME + " " + x.b.LASTNAME,
                 });
 
@@ -856,6 +856,24 @@ namespace FintrakBanking.Repositories.Credit
             // End of Audit Section ---------------------
 
             return (context.SaveChanges() > 0) == result;
+        }
+
+        public IQueryable<RegionLoanApplicationViewModel> GetRegionalLoanApplications(int staffId)
+        {
+            var region = context.TBL_BRANCH_REGION.FirstOrDefault(x => x.CAM_HOU_STAFFID == staffId);
+
+            if (region == null) { throw new Exception("This user does not have a region mapped to him."); }
+
+            var branches = context.TBL_BRANCH.Where(x => x.REGIONID == region.REGIONID).Select(x => x.BRANCHID);
+
+            var applications = context.TBL_LOAN_APPLICATION.Where(x => branches.Contains(x.BRANCHID))
+                .Select(x => new RegionLoanApplicationViewModel
+                {
+
+                })
+                ;
+
+            return applications;
         }
     }
 }

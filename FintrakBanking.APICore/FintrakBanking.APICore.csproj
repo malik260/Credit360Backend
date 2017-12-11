@@ -353,7 +353,9 @@
     <Compile Include="Controllers\LoanController.cs" />
     <Compile Include="Controllers\LoanCovenantController.cs" />
     <Compile Include="Controllers\LoanDocumentController.cs" />
+    <Compile Include="Controllers\LoanMarketController.cs" />
     <Compile Include="Controllers\LoanOperationController.cs" />
+    <Compile Include="Controllers\LoanPrincipalController.cs" />
     <Compile Include="Controllers\MisInfoController.cs" />
     <Compile Include="Controllers\MonitoringSetupController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
