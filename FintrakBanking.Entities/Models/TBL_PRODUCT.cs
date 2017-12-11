@@ -113,12 +113,6 @@ namespace FintrakBanking.Entities.Models
 
         public int? MAXIMUMDRAWDOWNDURATION { get; set; }
 
-        public double? LCY_LIMIT { get; set; }
-
-        public double? FCY_LIMIT { get; set; }
-
-        public double? CUSTOMER_LIMIT { get; set; }
-
         public int? APPROVEDBY { get; set; }
 
         public bool? COMPLETED { get; set; }
