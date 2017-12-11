@@ -27,6 +27,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_APPLICATION_DETAIL1 = new HashSet<TBL_LOAN_APPLICATION_DETAIL>();
             TBL_LOAN_APPLICATION_DETL_LOG = new HashSet<TBL_LOAN_APPLICATION_DETL_LOG>();
             TBL_OFFERLETTER = new HashSet<TBL_OFFERLETTER>();
+            TBL_PRODUCT_BEHAVIOUR = new HashSet<TBL_PRODUCT_BEHAVIOUR>();
             TBL_PRODUCT_CURRENCY = new HashSet<TBL_PRODUCT_CURRENCY>();
             TBL_PRODUCT_CHARGE_FEE = new HashSet<TBL_PRODUCT_CHARGE_FEE>();
             TBL_RISK_RATING = new HashSet<TBL_RISK_RATING>();
@@ -188,7 +189,8 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_OFFERLETTER> TBL_OFFERLETTER { get; set; }
 
-        public virtual TBL_PRODUCT_BEHAVIOUR TBL_PRODUCT_BEHAVIOUR { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_PRODUCT_BEHAVIOUR> TBL_PRODUCT_BEHAVIOUR { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_PRODUCT_CURRENCY> TBL_PRODUCT_CURRENCY { get; set; }

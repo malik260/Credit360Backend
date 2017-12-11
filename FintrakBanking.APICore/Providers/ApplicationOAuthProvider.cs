@@ -98,7 +98,7 @@ namespace FintrakBanking.APICore.Providers
                 var props = new AuthenticationProperties(new Dictionary<string, string>
                 {
                     {
-                        "expiry_date", today.Add(duration).ToLongDateString()
+                        "expiry_date", today.Add(duration).ToString("ddd MMM dd yyyy HH':'mm':'ss 'GMT'K")
                     }
                 });
 
