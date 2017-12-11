@@ -55,7 +55,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     createUpdate = "created";
                 }
-                if (repo.ValidateRegionName(entity.regionName))
+                if (repo.ValidateRegionName(entity.regionName.Trim()))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = $"Region with name {entity.regionName} already exist." });
