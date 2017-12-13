@@ -155,6 +155,15 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         return true;
 
+                    case (short)LoanApplicationStatusEnum.ApplicationUnderReview:
+                        if (target.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.ApplicationUnderReview)
+                        {
+                            target.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationUnderReview;
+
+                            return context.SaveChanges() > 0;
+                        }
+                        return true;
+
                     default:
                         return false;
                 }
@@ -801,7 +810,7 @@ namespace FintrakBanking.Repositories.Credit
                             documentTemplate = a.LOANAPPLICATIONDOCUMENT,
                             comments = a.COMMENTS,
                             productId = a.PRODUCTID,
-                            isAccepted = a.ISACCEPTED
+                            isAccepted = (bool)a.ISACCEPTED
                         }).ToList();
 
             if (data != null)
@@ -834,7 +843,7 @@ namespace FintrakBanking.Repositories.Credit
                             documentTemplate = a.LOANAPPLICATIONDOCUMENT,
                             comments = a.COMMENTS,
                             productId = a.PRODUCTID,
-                            isAccepted = a.ISACCEPTED
+                            isAccepted = (bool)a.ISACCEPTED
                         }).ToList();
 
             if (data != null)
@@ -870,6 +879,11 @@ namespace FintrakBanking.Repositories.Credit
                     exisitingDocument.COMMENTS = model.comments;
                     exisitingDocument.PRODUCTID = model.productId;
                     exisitingDocument.ISACCEPTED = model.isAccepted;
+
+                    //if (!model.isAccepted)
+                    //{
+                    //    UpdateLoanApplicationStatus(model.applicationReferenceNumber, (short)LoanApplicationStatusEnum.ApplicationUnderReview);
+                    //}
                 }
                 else
                 {
@@ -1182,6 +1196,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw ex;
             }
+        }
+
+        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId)
+        {
+            var data = GetCamProcessedLoanApplications(companyId).Where(x => x.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationUnderReview).ToList();
+
+            return data;
         }
 
         #endregion OfferLetter & Availment Process

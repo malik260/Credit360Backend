@@ -722,7 +722,7 @@ namespace FintrakBanking.Repositories.Admin
             return context.SaveChanges() > 0;
         }
 
-        public List<string> GetUserActivities(int userId)
+        public List<string> GetUserActivitiesByUser(int userId)
         {
             var userGroupIds = context.TBL_PROFILE_USERGROUP.Where(x => x.USERID == userId)
                                 .Select(x => x.GROUPID).ToList();
