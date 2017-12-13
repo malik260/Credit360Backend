@@ -176,6 +176,70 @@ namespace FintrakBanking.ViewModels.Credit
         public string searchString { get; set; }
     }
 
+    public class jobLoanApplicationDetailViewModel : LoanApplicationViewModel
+    {
+        public string applicationRefNo { get; set; }
+
+        public short proposedProductId { get; set; }
+
+        public string proposedProductName { get; set; }
+
+        public double proposedInterestRate { get; set; }
+
+        public short approvedProductId { get; set; }
+
+        public int approvedTenor { get; set; }
+
+        public double approvedInterestRate { get; set; }
+
+        public string currencyName { get; set; }
+
+        public decimal exchangeAmount { get { return (decimal)exchangeRate * proposedAmount; } }
+
+        public short statusId { get; set; }
+
+        public List<LoanApplicationDetailInvoiceViewModel> invoiceDiscountDetail { get; set; }
+
+    }
+
+    public partial class LoanApplicationDetailInvoiceViewModel
+    {
+        public int invoiceId { get; set; }
+
+        public int loanApplicationDetailId { get; set; }
+
+        public int principalId { get; set; }
+
+        public string invoiceNo { get; set; }
+
+        public DateTime invoiceDate { get; set; }
+
+        public decimal invoiceAmount { get; set; }
+
+        public string principalName { get; set; }
+
+        public string principalAccount { get; set; }
+
+        public string principalRegNo { get; set; }
+
+        public short invoiceCurrencyId { get; set; }
+
+        public string invoiceCurrencyCode{ get; set; }
+
+        public DateTime contractStartDate { get; set; }
+
+        public DateTime contractEndDate { get; set; }
+
+        public short? approvaStatusId { get; set; }
+
+        public string approvalComment { get; set; }
+
+        public int? approvedBy { get; set; }
+
+        public DateTime? approvedDateTime { get; set; }
+       
+    }
+
     public class RegionLoanApplicationViewModel : GeneralEntity
     {
         public RegionLoanApplicationViewModel()
