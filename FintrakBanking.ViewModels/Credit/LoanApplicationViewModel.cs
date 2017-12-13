@@ -248,24 +248,17 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public int loanApplicationId { get; set; }
-        public int loanApplicationDetailId { get; set; }
-        public string applicationReferenceNumber { get; set; }
-        public int? customerId { get; set; }
-        public int? operationId { get; set; }
-        public short? branchId { get; set; }
-        public short? productClassId { get; set; }
-        public string productClassName { get; set; }
-        public short productId { get; set; }
-        public int? customerGroupId { get; set; }
-        public string customerGroupCode { get; set; }
-        public short loanTypeId { get; set; }
-        public int casaAccountId { get; set; }
         public DateTime applicationDate { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public short? branchId { get; set; }
         public decimal applicationAmount { get; set; }
-        public decimal approvedAmount { get; set; }
-        public int applicationTenor { get; set; }
         public double interestRate { get; set; }
+        public int applicationTenor { get; set; }
+        public bool submittedForAppraisal { get; set; }
+        public int approvalStatusId { get; set; }
 
         public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }
+        public int? customerId { get; set; }
+        public int operationId { get; set; }
     }
 }
