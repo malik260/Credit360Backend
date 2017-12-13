@@ -118,25 +118,25 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("loan-application-detail/{loanApplicationId}")]
-        public HttpResponseMessage GetLoanApplicationDetailById([FromUri] int loanApplicationId)
-        {
-            try
-            {
-                var response = repoApply.GetLoanApplicationDetailById(loanApplicationId, token.GetCompanyId);
-                if (response == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
+        ////[HttpGet]
+        ////[Route("loan-application-detail/{loanApplicationId}")]
+        ////public HttpResponseMessage GetLoanApplicationDetailById([FromUri] int loanApplicationId)
+        ////{
+        ////    try
+        ////    {
+        ////        var response = repoApply.GetLoanApplicationDetailById(loanApplicationId, token.GetCompanyId);
+        ////        if (response == null)
+        ////        {
+        ////            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        ////        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+        ////        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        ////    }
+        ////    catch (Exception e)
+        ////    {
+        ////        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        ////    }
+        ////}
 
         [HttpGet]
         [Route("loan-application-list")]
