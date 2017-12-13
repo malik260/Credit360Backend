@@ -339,35 +339,35 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateApprovalStatusForApplication(int applocationId)//, object entity)
         {
-            var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == applocationId select l).ToList();
-            if (loanData != null)
-            {
-                var custNo = loanData.Count();
-                var checkedNo = 0;
-                foreach (var item in loanData)
-                {
-                    if (item.HASDONECHECKLIST == true)
-                    {
-                        ++checkedNo;
-                    }
-                }
-                if (custNo == checkedNo)
-                {
-                    var loanApplication = context.TBL_LOAN_APPLICATION.Find(applocationId);
-                    if (loanApplication != null)
-                    {
-                        loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
-                    }
-                }
-            }
-            //    var data = this.context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.LOANAPPLICATIONID == applocationId);
-            //{
-            //    //data.LoanStatusId = (short)entity.approvalStatusId;
-            //    //data.ActedOnaBy = entity.staffId;
-            //    //data.DateActedOn = genSetup.GetApplicaionDate();
+            ////var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == applocationId select l).ToList();
+            ////if (loanData != null)
+            ////{
+            ////    var custNo = loanData.Count();
+            ////    var checkedNo = 0;
+            ////    foreach (var item in loanData)
+            ////    {
+            ////        if (item.HASDONECHECKLIST == true)
+            ////        {
+            ////            ++checkedNo;
+            ////        }
+            ////    }
+            ////    if (custNo == checkedNo)
+            ////    {
+            ////        var loanApplication = context.TBL_LOAN_APPLICATION.Find(applocationId);
+            ////        if (loanApplication != null)
+            ////        {
+            ////            loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
+            ////        }
+            ////    }
+            ////}
+               var data = this.context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.LOANAPPLICATIONID == applocationId);
+           {
+                //data.LoanStatusId = (short)entity.approvalStatusId;
+                //data.ActedOnaBy = entity.staffId;
+                //data.DateActedOn = genSetup.GetApplicaionDate();
 
-            //    data.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
-            //}
+                data.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+            }
 
             //Audit Section ---------------------------
             //var audit = new TBL_AUDIT
