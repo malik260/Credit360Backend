@@ -15,6 +15,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string phoneNumber { get; set; }
         public int cityId { get; set; }
         public string address { get; set; }
-        public int companyId { get; set; }
+        public int stateId { get; set; }
+        public string cityName { get; set; }
     }
 }
