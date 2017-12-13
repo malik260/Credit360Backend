@@ -17,7 +17,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly FinTrakBankingContext _context;
         private readonly IGeneralSetupRepository _genSetup;
         private readonly IAuditTrailRepository _auditTrail;
-     //   private TokenDecryptionHelper token = new TokenDecryptionHelper();
+        //   private TokenDecryptionHelper token = new TokenDecryptionHelper();
 
 
 
@@ -29,7 +29,7 @@ namespace FintrakBanking.Repositories.Credit
             _auditTrail = auditTrail;
         }
 
-        public string AddLoanPrincipal( LoanPrincipalViewModel loanP)
+        public string AddLoanPrincipal(LoanPrincipalViewModel loanP)
         {
             if (loanP != null)
             {
@@ -48,10 +48,23 @@ namespace FintrakBanking.Repositories.Credit
                 _context.TBL_LOAN_PRINCIPAL.Add(value);
                 _context.SaveChanges();
 
-                return $"Principal with {loanP.principalsRegNumber} registration number has been added successful";
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalInserted,
+                    STAFFID = loanP.staffId,
+                    BRANCHID = (short)loanP.userBranchId,
+                    DETAIL = $"Loan principal with {loanP.companyId} company id is added",
+                    IPADDRESS = loanP.userIPAddress,
+                    URL = loanP.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this._auditTrail.AddAuditTrail(audit);
+
+                return "The record has been added successful";
 
             }
-            return $"Could not add Principal with {loanP.principalsRegNumber}  registration number";
+            return "The record has not been added";
         }
 
         public string DeleteLoanPrincipal(LoanPrincipalViewModel loanPrincipal)
@@ -61,15 +74,15 @@ namespace FintrakBanking.Repositories.Credit
             {
                 data.DATETIMEDELETED = loanPrincipal.dateTimeDeleted;
                 data.DELETED = true;
-                data.DELETEDBY =loanPrincipal.staffId;
+                data.DELETEDBY = loanPrincipal.staffId;
                 _context.SaveChanges();
-                return $"Principal with {loanPrincipal.principalId} id has been deleted successful";
+                return "The record has been deleted successful";
             }
-            return $"Record not found, could not delete Principal with {loanPrincipal.principalId} id";
+            return "The record has not been deleted";
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.StaffDeleted,
+                AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalDeleted,
                 STAFFID = loanPrincipal.staffId,
                 BRANCHID = (short)loanPrincipal.userBranchId,
                 DETAIL = $"Deleted loan principal with {data.PRINCIPALID} id",
@@ -84,34 +97,35 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanPrincipalViewModel> GetLoanPrincipal(int conpanyId)
         {
-            List<LoanPrincipalViewModel> list = new List<LoanPrincipalViewModel>();
 
             var data = (from o in _context.TBL_LOAN_PRINCIPAL
-                       where o.COMPANYID == conpanyId
-                       select o).ToList();
-            foreach (var o in data)
-            {
-                LoanPrincipalViewModel val = new LoanPrincipalViewModel();
-                val.accountNumber = o.ACCOUNTNUMBER;
-                val.address = o.ADDRESS;
-                val.emailAddress = o.EMAILADDRESS;
-                val.name = o.NAME;
-                val.phoneNumber = o.PHONENUMBER;
-                val.principalsRegNumber = o.PRINCIPALSREGNUMBER;
+                        where o.COMPANYID == conpanyId
+                        select new LoanPrincipalViewModel
+                        {
 
-                list.Add(val);
-            }
-            return list;
+                            accountNumber = o.ACCOUNTNUMBER,
+                            address = o.ADDRESS,
+                            emailAddress = o.EMAILADDRESS,
+                            name = o.NAME,
+                            phoneNumber = o.PHONENUMBER,
+                            principalsRegNumber = o.PRINCIPALSREGNUMBER,
+                            principalId = o.PRINCIPALID,
+
+                        }).ToList();
+
+            return data;
+
+
         }
 
-        public LoanPrincipalViewModel GetLoanPrincipal(int principalId,int companyId)
+        public LoanPrincipalViewModel GetLoanPrincipal(int principalId, int companyId)
         {
             LoanPrincipalViewModel val = new LoanPrincipalViewModel();
 
-            if (principalId!=0)
+            if (principalId != 0)
             {
                 var data = (from a in _context.TBL_LOAN_PRINCIPAL
-                            where a.PRINCIPALID == principalId & a.COMPANYID==companyId
+                            where a.PRINCIPALID == principalId & a.COMPANYID == companyId
                             select a).FirstOrDefault();
 
                 val.accountNumber = data.ACCOUNTNUMBER;
@@ -128,9 +142,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public string UpdateLoanPrincipal(LoanPrincipalViewModel model)
         {
-            TBL_LOAN_PRINCIPAL val = _context.TBL_LOAN_PRINCIPAL.Find(model.principalId);
+            TBL_LOAN_PRINCIPAL val = _context.TBL_LOAN_PRINCIPAL.FirstOrDefault(x => x.PRINCIPALID == model.principalId);
             if (val != null)
             {
+
                 val.ACCOUNTNUMBER = model.accountNumber;
                 val.ADDRESS = model.address;
                 val.EMAILADDRESS = model.emailAddress;
@@ -141,11 +156,27 @@ namespace FintrakBanking.Repositories.Credit
                 val.DATETIMEUPDATED = _genSetup.GetApplicationDate();
                 val.LASTUPDATEDBY = model.createdBy;
 
-
                 _context.SaveChanges();
-                return $"Principal with {model.principalId} id has been updated successful";
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalUpdated,
+                    STAFFID = model.staffId,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Update loan principal with {model.principalId} id",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                this._auditTrail.AddAuditTrail(audit);
+
+                return "The record has been updated successful";
             }
-            return $"Record not found, could not update Principal with {model.principalId} id";
+
+            return "The record has not been updated";
         }
     }
 }

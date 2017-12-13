@@ -175,7 +175,15 @@ namespace FintrakBanking.Common.Enum
         MonitoringSetupAdded = 167,
         MonitoringSetupUpdated = 168,
         MonitoringSetupDeleted = 169,
-        ForwardAppraisalMemorandum = 170
+        ForwardAppraisalMemorandum = 170,
+        LoanPrincipalInserted =171,
+        LoanPrincipalUpdated =172,
+        LoanPrincipalDeleted =173,
+        LoanPrincipalEdited = 174,
+        ApprovedMarketInserted =175,
+        ApprovedMarketUpdated =176,
+        ApprovedMarketDeleted = 177,
+        ApprovedMarketEdited =178
     };
 
 

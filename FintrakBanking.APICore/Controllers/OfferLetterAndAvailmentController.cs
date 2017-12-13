@@ -44,7 +44,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -65,7 +65,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -85,7 +85,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -106,15 +106,36 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/under-review")]
+        public HttpResponseMessage GetCamProcessedApplicationsUnderReview()
+        {
+            try
+            {
+                var response = olAvlmentRepo.GetApplicationsUnderForReview(token.GetCompanyId).ToList();
+
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
         #region Offer Letter & Availment
 
         [HttpGet]
-        [Route("loan-application/prepared-offer-letter-template")]
-        public HttpResponseMessage GenerateOfferLetterTemplate(string applicationRefNumber)
+        [Route("loan-application/prepared-offer-letter-template/{applicationRefNumber}")]
+        public HttpResponseMessage GenerateOfferLetterTemplate([FromUri] string applicationRefNumber)
         {
             try
             {
@@ -129,7 +150,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -150,7 +171,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -170,7 +191,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -196,7 +217,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -217,13 +238,13 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
         [HttpGet]
-        [Route("loan-application/prepared-offer-letter/")]
-        public HttpResponseMessage GetDraftOfferLetterByApplRefNumber(string applicationRefNumber)
+        [Route("loan-application/prepared-offer-letter/{applicationRefNumber}")]
+        public HttpResponseMessage GetDraftOfferLetterByApplRefNumber([FromUri] string applicationRefNumber)
         {
             try
             {
@@ -238,7 +259,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -259,13 +280,13 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
         [HttpGet]
-        [Route("loan-application/prepared-offer-letter/final/")]
-        public HttpResponseMessage GetFinalOfferLetterByApplRefNumber(string applicationRefNumber)
+        [Route("loan-application/prepared-offer-letter/final/{applicationRefNumber}")]
+        public HttpResponseMessage GetFinalOfferLetterByApplRefNumber([FromUri] string applicationRefNumber)
         {
             try
             {
@@ -280,7 +301,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -300,7 +321,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -331,7 +352,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
             }
         }
 
@@ -361,7 +382,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
             }
         }
 
@@ -392,7 +413,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
             }
         }
 

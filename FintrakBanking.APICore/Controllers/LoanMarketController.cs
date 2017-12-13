@@ -21,6 +21,17 @@ namespace FintrakBanking.APICore.Controllers
         {
             repo = _repo;
         }
+        public  IEnumerable<string> GetAllExceptionMessages(Exception ex)
+        {
+            Exception currentEx = ex;
+            yield return currentEx.Message;
+            while (currentEx.InnerException != null)
+            {
+                currentEx = currentEx.InnerException;
+                yield return currentEx.Message;
+            }
+        }
+
 
         [Route("markets")]
         [HttpGet]
@@ -51,28 +62,32 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-        [Route("update-market")]
+        [Route("update-market/{marketId}")]
         [HttpPut]
-        public HttpResponseMessage UpdateLoanMarket(int principalId, LoanMarketViewModel loanMarket)
+        public HttpResponseMessage UpdateLoanMarket(int marketId,LoanMarketViewModel loanMarket)
         {
             try
             {
-                string response = repo.UpdateLoanMarket(loanMarket);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                loanMarket.companyId = token.GetCompanyId;
+
+                string response = repo.UpdateLoanMarket(marketId,loanMarket);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
             }
             catch (Exception ex)
             {
+                IEnumerable<String> error = ex.Messages();
+
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
-        [Route("delete-market")]
+        [Route("delete-market/{marketId}")]
         [HttpPut]
-        public HttpResponseMessage DeleteLoanMarket(LoanMarketViewModel loanMarket)
+        public HttpResponseMessage DeleteLoanMarket(int marketId,LoanMarketViewModel loanMarket)
         {
             try
             {
-                string response = repo.DeleteLoanMarket(loanMarket);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                string response = repo.DeleteLoanMarket(marketId,loanMarket);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
             }
             catch (Exception ex)
             {
@@ -88,7 +103,7 @@ namespace FintrakBanking.APICore.Controllers
                 loanMarket.companyId = token.GetCompanyId;
 
                 var data = repo.AddLoanMarket(loanMarket);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
             }
             catch (Exception ex)
             {
