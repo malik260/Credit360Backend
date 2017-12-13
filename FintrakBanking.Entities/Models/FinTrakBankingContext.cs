@@ -1829,6 +1829,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT_CLASS>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION)
+                .WithRequired(e => e.TBL_PRODUCT_CLASS)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_PRODUCT_CLASS>()
                 .HasMany(e => e.TBL_TEMP_PRODUCT)
                 .WithRequired(e => e.TBL_PRODUCT_CLASS)
                 .WillCascadeOnDelete(false);
@@ -1839,11 +1844,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_PRODUCT_CLASS_PROCESS>()
                 .HasMany(e => e.TBL_PRODUCT_CLASS)
-                .WithRequired(e => e.TBL_PRODUCT_CLASS_PROCESS)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_CLASS_PROCESS>()
-                .HasMany(e => e.TBL_LOAN_APPLICATION)
                 .WithRequired(e => e.TBL_PRODUCT_CLASS_PROCESS)
                 .WillCascadeOnDelete(false);
 
@@ -2843,6 +2843,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL_INV)
+                .WithRequired(e => e.TBL_LOAN_APPLICATION_DETAIL)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL_TRA)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WillCascadeOnDelete(false);
 

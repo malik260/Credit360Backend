@@ -61,6 +61,8 @@ namespace FintrakBanking.Interfaces.Customer
 
         bool AddCustomerChildren(List<CustomerChildrenViewModel> models, int staffId, short BranchId);
 
+        bool AddCustomerNextOfKin(CustomerNextOfKinViewModels entity);
+
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, string search);
         IEnumerable<CustomerViewModels> CustomerSearch(int companyId, CustomerSearchItemViewModels search);
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
