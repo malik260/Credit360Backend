@@ -163,7 +163,23 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
 
         public int applicationId { get; set; }
+
         public string staffName { get; set; }
+    }
+
+    public class ApprovalLevelStaffViewModel
+    {
+        public int approvalLevelId { get; set; }
+        public string approvalLevelName { get; set; }
+        public int staffId { get; set; }
+        public string staffName { get; set; }
+    }
+
+    public class PendingProductProgramViewModel
+    {
+        public int productClassId { get; set; }
+        public string productClassName { get; set; }
+        public int pendingNumber { get; set; }
     }
 
 }

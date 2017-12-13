@@ -3,6 +3,7 @@ using FintrakBanking.ViewModels.Credit;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -36,5 +37,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<RegionLoanApplicationViewModel> GetRegionalLoanApplications(int staffId);
 
+        List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user);
+
+        IQueryable<LoanApplicationViewModel> GetPendingLoanApplicationsClass(int countryId, int branchId, int staffId, int? classId);
+
+        //IEnumerable<ApprovalLevelStaffViewModel> GetNextLevelStaff(int getStaffId, int loanApplicationId, int operationId);
     }
 }

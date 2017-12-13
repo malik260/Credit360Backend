@@ -34,6 +34,15 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime CONTRACT_ENDDATE { get; set; }
 
+        public short? APPROVALSTATUSID { get; set; }
+
+        [StringLength(800)]
+        public string APPROVAL_COMMENT { get; set; }
+
+        public int? APPROVEDBY { get; set; }
+
+        public DateTime? APPROVEDDATETIME { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
@@ -51,6 +60,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
         public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION_DETAIL_STA TBL_LOAN_APPLICATION_DETAIL_STA { get; set; }
 
         public virtual TBL_LOAN_PRINCIPAL TBL_LOAN_PRINCIPAL { get; set; }
     }
