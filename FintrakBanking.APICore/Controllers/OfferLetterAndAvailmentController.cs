@@ -113,8 +113,8 @@ namespace FintrakBanking.APICore.Controllers
         #region Offer Letter & Availment
 
         [HttpGet]
-        [Route("loan-application/prepared-offer-letter-template")]
-        public HttpResponseMessage GenerateOfferLetterTemplate(string applicationRefNumber)
+        [Route("loan-application/prepared-offer-letter-template/{applicationRefNumber}")]
+        public HttpResponseMessage GenerateOfferLetterTemplate([FromUri] string applicationRefNumber)
         {
             try
             {
@@ -222,8 +222,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-application/prepared-offer-letter/")]
-        public HttpResponseMessage GetDraftOfferLetterByApplRefNumber(string applicationRefNumber)
+        [Route("loan-application/prepared-offer-letter/{applicationRefNumber}")]
+        public HttpResponseMessage GetDraftOfferLetterByApplRefNumber([FromUri] string applicationRefNumber)
         {
             try
             {
@@ -264,8 +264,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-application/prepared-offer-letter/final/")]
-        public HttpResponseMessage GetFinalOfferLetterByApplRefNumber(string applicationRefNumber)
+        [Route("loan-application/prepared-offer-letter/final/{applicationRefNumber}")]
+        public HttpResponseMessage GetFinalOfferLetterByApplRefNumber([FromUri] string applicationRefNumber)
         {
             try
             {
