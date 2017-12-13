@@ -7,7 +7,7 @@ namespace FintrakBanking.ViewModels.Setups.General
     public class ProductViewModel : GeneralEntity
     {
         public int productId { get; set; }
-        
+
         public short productTypeId { get; set; }
         public string productTypeName { get; set; }
         public string productGroupName { get; set; }
@@ -21,7 +21,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string productDescription { get; set; }
         public short currencyId { get; set; }
         public short customerId { get; set; }
-        public int ? principalBalanceGl { get; set; }
+        public int? principalBalanceGl { get; set; }
         public string principalBalanceGlCode { get; set; }
         public int? interestIncomeExpenseGl { get; set; }
         public string interestIncomeExpenseGlCode { get; set; }
@@ -74,8 +74,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public List<ProductCollateralTypeViewModel> collaterals { get; set; }
         public short? scheduleTypeId { get; set; }
         public short? dayCountConventionId { get; set; }
-        public short? productBehaviourId { get; set; }
-        public string productBehaviourName { get; set; }
+        //public short? productBehaviourId { get; set; }
+        //public string productBehaviourName { get; set; }
+
+        public ProductBehaviourViewModel ProductBehaviour { get;set;}
     }
 
     public class ProductCurrencyViewModel : GeneralEntity
@@ -92,6 +94,13 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string priceIndexName { get; set; }
         public double priceIndexRate { get; set; }
         public string priceIndexDescription { get; set; }
+    }
+    public class ProductBehaviourViewModel
+    {  
+        public double? lcyLimit { get; set; }
+        public double? fcyLimit { get; set; }
+        public decimal? customerLimit { get; set; }
+        public double? productLimit { get; set; }
     }
 
     public class ProductClassProcessViewModel
