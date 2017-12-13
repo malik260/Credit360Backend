@@ -206,11 +206,16 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet, Route("loan-application-approval-process")]
-        public HttpResponseMessage GetPendingLoanApplications([FromUri] int page, [FromUri] int itemsPerPage)
+        public HttpResponseMessage GetPendingLoanApplications([FromUri] int page, [FromUri] int itemsPerPage, [FromUri] int? classId)
         {
             try
             {
-                var items = repo.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId);
+                IQueryable<LoanApplicationViewModel> items;
+
+                if (classId == null)
+                    items = repo.GetPendingLoanApplications(token.GetCountryId, token.GetBranchId, token.GetStaffId);
+                else
+                    items = repo.GetPendingLoanApplicationsClass(token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
 
                 var data = items.OrderByDescending(x => x.applicationDate)
                     .ThenByDescending(x => x.loanApplicationId)
@@ -286,5 +291,55 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpGet]
+        //[Route("appraisal-workflow/next-level-staff/{loanApplicationId}/operation/{operationId}`")]
+        //public HttpResponseMessage GetNextLevelStaff(int loanApplicationId, int operationId)
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetNextLevelStaff(token.GetStaffId, loanApplicationId, operationId);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //    }
+        //    catch (System.Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+        //credit/loan-application/product-programs
+
+        /*UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };*/
+
+
+        [HttpGet]
+        [Route("appraisal-memorandum/pending-product-program")]
+        public HttpResponseMessage GetPendingProductProgram()
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+
+                var data = repo.GetPendingProductProgram(user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }

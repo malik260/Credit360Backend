@@ -193,7 +193,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var currUser = foundUser;
 
-                var userActivities = _adminRepo.GetUserActivities(currUser.user_id);
+                var userActivities = _adminRepo.GetUserActivitiesByUser(currUser.user_id);
 
                 var audit = new TBL_AUDIT()
                 {
@@ -224,7 +224,8 @@ namespace FintrakBanking.APICore.Controllers
                         companyName = currUser.companyName,
                         UserName = currUser.username,
                         activities = userActivities,
-                        staffId = currUser.staffId
+                        staffId = currUser.staffId,
+                        staffName = currUser.staffName
                     }
                 });
 

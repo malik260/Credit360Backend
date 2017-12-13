@@ -40,5 +40,7 @@ namespace FintrakBanking.Interfaces.Credit
         Form3800ViewModel GenerateForm3800Template(string applicationRefNumber);
 
         bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity);
+
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId);
     }
 }
