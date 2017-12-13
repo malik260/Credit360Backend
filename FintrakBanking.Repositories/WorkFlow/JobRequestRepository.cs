@@ -270,6 +270,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobRequestId = x.JOBREQUESTID,
                     requestTitle = "", // x.REQUESTTITLE,
                     jobRequestCode = x.JOBREQUESTCODE,
+                    targetId = x.TARGETID,
                     jobTypeId = x.JOBTYPEID,
                     senderStaffId = x.SENDERSTAFFID,
                     receiverStaffId = (int)x.RECEIVERSTAFFID,
@@ -277,6 +278,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     isReassigned = x.ISREASSIGNED,
                     isAcknowledged = x.ISACKNOWLEDGED,
                     operationsId = x.OPERATIONSID,
+                    operationName = x.TBL_OPERATIONS.OPERATIONNAME,
                     requestStatusId = x.REQUESTSTATUSID,
                     senderComment = x.SENDERCOMMENT,
                     responseComment = x.RESPONSECOMMENT,
@@ -342,7 +344,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var data =  (from x in context.TBL_JOB_REQUEST_MESSAGE
              where  x.JOBREQUESTID == jobRequestId
-             orderby x.DATE_TIME_SENT descending
+             orderby x.DATE_TIME_SENT ascending
              select new JobRequestMessageViewModel
                    {
                        jobRequestId = x.JOBREQUESTID,

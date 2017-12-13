@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         select new ApprovalLevelStaffViewModel
                         {
                             groupId = (int)a.TBL_APPROVAL_LEVEL.GROUPID,
-                            //operationId = c.OperationId,
+                           // operationId = b.OperationId,
                             maximumAmount = a.MAXIMUMAMOUNT,
                             processViewScope = a.PROCESSVIEWSCOPEID,
                             canViewDocument = a.CANVIEWCAMDOCUMENT,
@@ -304,7 +304,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                           join g in context.TBL_APPROVAL_GROUP on f.GROUPID equals g.GROUPID
                           join h in context.TBL_APPROVAL_GROUP_MAPPING on g.GROUPID equals h.GROUPID
                           join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
-                          join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID
+                          join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
+                          from j in apprStaff.DefaultIfEmpty()
                           join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
                           where a.COMPANYID == companyId
                           select new WorkflowTrackerViewModel

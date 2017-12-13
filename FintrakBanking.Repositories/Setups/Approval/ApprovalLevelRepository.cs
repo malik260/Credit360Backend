@@ -109,8 +109,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             deletedBy = a.DELETEDBY,
                             dateTimeDeleted = a.DATETIMEDELETED,
                             groupId = (int)a.GROUPID,
-                            operationId = d.OPERATIONID
-                        }).GroupBy(x => x.approvalLevelId).Select(g => g.FirstOrDefault()).ToList();
+                            operationId = d.OPERATIONID //c.TBL_APPROVAL_GROUP_MAPPING.Select(x=> x.OPERATIONID).FirstOrDefault()
+                        }).ToList();
+                        //GroupBy(x => x.approvalLevelId).Select(g => g.FirstOrDefault()).ToList();
 
             return data;
         }
@@ -138,7 +139,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         public IEnumerable<ApprovalLevelViewModel> GetApprovalLevelByOperationId(int operationId, int companyId)
         {
             var data = GetAllDetailedApprovalLevel(companyId).Where(c => c.operationId == operationId);
-            return data;
+            return data.GroupBy(x => x.approvalLevelId).Select(g => g.FirstOrDefault()).ToList();
         }
 
         public bool AddApprovalLevel(ApprovalLevelViewModel model)

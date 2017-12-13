@@ -12,6 +12,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int TRADDERID { get; set; }
 
+        public int LOANAPPLICATIONDETAILID { get; set; }
+
         public int MARKETID { get; set; }
 
         [Column(TypeName = "money")]
@@ -30,6 +32,8 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
 
         public virtual TBL_LOAN_MARKET TBL_LOAN_MARKET { get; set; }
     }

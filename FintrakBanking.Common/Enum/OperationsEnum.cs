@@ -47,6 +47,8 @@ namespace FintrakBanking.Common.Enum
         LoanBookingFeeDeferral = 36,
         OfferLetterApproval = 37, // MIGHT NOT BE USED
         LoanAvailment = 38,
-        LoanBookingRequest = 39
+        LoanBookingRequest = 39,
+        LoanBookingFeeOveride = 40
+
     }
 }
