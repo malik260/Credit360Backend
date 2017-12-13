@@ -206,7 +206,7 @@ namespace FintrakBanking.Repositories.Credit
                                                          invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
                                                          principalName = i.TBL_LOAN_PRINCIPAL.NAME,
                                                          principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
-                                                         principalRegNo =i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
+                                                         principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
                                                          principalId = i.PRINCIPALID
                                                      }).ToList()
                         }).ToList();

@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
-        IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationId, int companyId);
+        IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationId, int companyId);
         bool CheckExistingCertificateOfOwnership(string certificateOfOwnership, int companyId);
 
         IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId);
