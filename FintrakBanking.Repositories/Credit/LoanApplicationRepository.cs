@@ -116,7 +116,7 @@ namespace FintrakBanking.Repositories.Credit
                                  proposedAmount = c.PROPOSEDAMOUNT,
                                  proposedInterestRate = c.PROPOSEDINTERESTRATE,
                                  proposedProductId = c.PROPOSEDPRODUCTID,
-                                 proposedTenor = Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
+                                 //proposedTenor = Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
                                  statusId = c.STATUSID
                              }).ToList()
                         });
@@ -164,6 +164,53 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationViewModel> GetLoanApplicationById(int loanApplicationId, int companyId)
         {
             return GetLoanApplications(companyId).Where(c => c.loanApplicationId == loanApplicationId).ToList();
+        }
+
+        public IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationId, int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                        where a.TBL_LOAN_APPLICATION.COMPANYID == companyId && a.DELETED == false
+                        && a.LOANAPPLICATIONID == loanApplicationId
+                        select new jobLoanApplicationDetailViewModel
+                        {
+                            approvedAmount = a.APPROVEDAMOUNT,
+                            approvedInterestRate = a.APPROVEDINTERESTRATE,
+                            approvedProductId = a.APPROVEDPRODUCTID,
+                            approvedTenor = a.APPROVEDTENOR,
+                            currencyId = a.CURRENCYID,
+                            currencyName = a.TBL_CURRENCY.CURRENCYNAME,
+                            customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerId = a.CUSTOMERID,
+                            exchangeRate = a.EXCHANGERATE,
+                            loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                            subSectorId = a.SUBSECTORID,
+                            loanApplicationId = a.LOANAPPLICATIONID,
+                            proposedAmount = a.PROPOSEDAMOUNT,
+                            proposedInterestRate = a.PROPOSEDINTERESTRATE,
+                            proposedProductId = a.PROPOSEDPRODUCTID,
+                            proposedTenor = a.PROPOSEDTENOR, //Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
+                            statusId = a.STATUSID,
+                            productName = a.TBL_PRODUCT.PRODUCTNAME,
+                            productClassId = a.TBL_PRODUCT.PRODUCTCLASSID,
+                            productClassName = a.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                            invoiceDiscountDetail = (from i in context.TBL_LOAN_APPLICATION_DETAIL_INV.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                                     select new LoanApplicationDetailInvoiceViewModel
+                                                     {
+                                                         approvalComment = i.APPROVAL_COMMENT,
+                                                         invoiceAmount = i.INVOICE_AMOUNT,
+                                                         invoiceNo = i.INVOICENO,
+                                                         approvaStatusId = i.APPROVALSTATUSID,
+                                                         contractEndDate = i.CONTRACT_ENDDATE,
+                                                         contractStartDate = i.CONTRACT_STARTDATE,
+                                                         invoiceDate = i.INVOICE_DATE,
+                                                         invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
+                                                         principalName = i.TBL_LOAN_PRINCIPAL.NAME,
+                                                         principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
+                                                         principalRegNo =i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
+                                                         principalId = i.PRINCIPALID
+                                                     }).ToList()
+                        }).ToList();
+            return data;
         }
 
         public IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId)
