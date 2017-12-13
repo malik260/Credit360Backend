@@ -271,7 +271,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalStatusId { get; set; }
 
         public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }
-       
+        public int? customerId { get; set; }
+        public int operationId { get; set; }
     }
     public class InvoiceDetailViewModel  
     {
@@ -292,8 +293,16 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime contractStartDate { get; set; }
 
         public DateTime contractEndDate { get; set; }
-         
- 
+
+        public string principalName { get; set; }
+
+        public string invoiceCurrencyName { get; set; }
+
+        public short? approvalStatusId { get; set; }
+
+        public int productClassId { get; set; }
+
+
 
     }
 
@@ -308,17 +317,29 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal averageSchoolFees { get; set; }
 
         public decimal schoolFeesCollected { get; set; }
-         
-    }
+
+        public decimal totalPreviousTermSchoolFees { get; set; }
+
+        public decimal productClassId { get; set; }
+
+}
 
     public class TraderLoanViewModel
     {
-
         public int tradderId { get; set; }
 
         public int marketId { get; set; }
 
         public decimal averageMonthlyTurnover { get; set; }
+
+        public int loanApplicationDetailId { get; set; }
+
+        public int traderId { get; set; }
+
+        public string marketName { get; set; }
+
+        public int productClassId { get; set; }
+        
 
     }
 

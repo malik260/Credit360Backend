@@ -847,7 +847,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var inv = (from a in context.TBL_LOAN_APPLICATION_DETAIL_INV
                            where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                           select new InvoiceDiscountingViewModel()
+                           select new InvoiceDetailViewModel()
                            {
                                invoiceId = a.INVOICEID,
                                loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
@@ -888,7 +888,7 @@ namespace FintrakBanking.Repositories.Credit
                            {
                                educationId = e.EDUCATIONID,
                                loanApplicationDetailId = e.LOANAPPLICATIONDETAILID,
-                               numberOfStudents = e.NUMBER_OF_STUDENTS,
+                               numberOfStudent = e.NUMBER_OF_STUDENTS,
                                averageSchoolFees = e.AVERAGE_SCHOOL_FEES,
                                totalPreviousTermSchoolFees = e.TOTAL_PREVIOUS_TERM_SCHOOL_FEES,
                                productClassId = (int)ProductClassEnum.FirstEdu
