@@ -23,6 +23,7 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
         IEnumerable<CamProcessedLoanViewModel> GetLoanApplicationDetails(int loanApplicationDetailId, int companyId);
+
         List<ApprovalLevelStaffViewModel> GetLoanOperationApprovers(int operation, int companyId);
 
         string AddLoanBooking(LoanViewModel entity);

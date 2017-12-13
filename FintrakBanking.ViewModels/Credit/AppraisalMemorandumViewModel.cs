@@ -167,7 +167,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string staffName { get; set; }
     }
 
-    public class ApprovalLevelStaffViewModel
+    public class CAMApprovalLevelStaffViewModel
     {
         public int approvalLevelId { get; set; }
         public string approvalLevelName { get; set; }

@@ -139,11 +139,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         select new LookupViewModel()
                         {
                             lookupId = (short)p.PRODUCT_BEHAVIOURID,
-<<<<<<< HEAD
                             lookupName = "n/a" // p.PRODUCT_BEHAVIOURNAME
-=======
-                            //lookupName = p.PRODUCT_BEHAVIOUR_NAME
->>>>>>> e5ba160023359be6adcfdd8c7176dd785fc2d686
                         });
 
             return data;
@@ -1342,11 +1338,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 CLEANUPPERIOD = productModel.cleanupPeriod,
                 EQUITYCONTRIBUTION = productModel.equityContribution,
                 EXPIRYPERIOD = productModel.expiryPeriod,
-<<<<<<< HEAD
-                ////PRODUCT_BEHAVIOURID = productModel.productBehaviourId,
-=======
-                //PRODUCT_BEHAVIOURID = productModel.productBehaviourId,
->>>>>>> e5ba160023359be6adcfdd8c7176dd785fc2d686
 
                 TBL_TEMP_PRODUCT_CHARGE_FEE = chargeFees,
                 TBL_TEMP_PRODUCT_COLLATERALTYPE = collaterals
