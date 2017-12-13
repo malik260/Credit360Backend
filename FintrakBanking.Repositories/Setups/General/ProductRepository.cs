@@ -559,7 +559,14 @@ namespace FintrakBanking.Repositories.Setups.General
                         equityContribution = data.EQUITYCONTRIBUTION,
                         expiryPeriod = data.EXPIRYPERIOD,
                         scheduleTypeId = data.SCHEDULETYPEID,
-                        //productBehaviourId = data.PRODUCT_BEHAVIOURID
+                        ProductBehaviour = data.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == data.PRODUCTID).Select (d => new ProductBehaviourViewModel()
+                        {
+                            customerLimit = d.CUSTOMER_LIMIT,
+                            fcyLimit = d.FCY_LIMIT,
+                            lcyLimit = d.LCY_LIMIT,
+                            productLimit = d.PRODUCT_LIMIT
+
+                        }).FirstOrDefault()
                     });
         }
 
@@ -570,12 +577,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ProductViewModel> GetAllLoanProduct()
         {
-            return AllProduct().Where(c => c.productTypeId == 1 || c.productTypeId == 7);
+            return AllProduct().Where(c => c.productTypeId == 1 || c.productTypeId == 7 || c.productTypeId == 2);
         }
 
         public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId)
         {
-            return AllProduct().Where(c => c.productClassId == productClassId && (c.productTypeId == 1 || c.productTypeId == 7));
+            return AllProduct().Where(c => c.productClassId == productClassId && (c.productTypeId == 1 || c.productTypeId == 7 || c.productTypeId == 2));
         }
 
         public ProductViewModel GetProductById(int productId)

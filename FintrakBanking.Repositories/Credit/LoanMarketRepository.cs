@@ -87,7 +87,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from o in _context.TBL_LOAN_MARKET
                         where o.COMPANYID == companyId & o.MARKETID==markeetId
                         select o).FirstOrDefault();
-           
+            val.marketId = data.MARKETID;
                 val.accountNumber = data.ACCOUNTNUMBER;
                 val.address = data.ADDRESS;
                 val.emailAddress = data.EMAILADDRESS;
@@ -112,6 +112,7 @@ namespace FintrakBanking.Repositories.Credit
                 val.address = o.ADDRESS;
                 val.emailAddress = o.EMAILADDRESS;
                 val.marketName = o.MARKETNAME;
+                val.marketId = o.MARKETID;
                 val.phoneNumber = o.PHONENUMBER;
 
                 list.Add(val);
