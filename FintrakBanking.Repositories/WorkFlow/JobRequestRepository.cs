@@ -437,6 +437,18 @@ namespace FintrakBanking.Repositories.WorkFlow
                 .Take(100);
         }
 
+        public IEnumerable<JobRequestStatusFeedbackViewModel> GetJobRequestStatusFeedback(short statusId, short jobTypeId)
+        {
+            return this.context.TBL_JOB_REQUEST_STATUS_FEEDBACK.Select(x => new JobRequestStatusFeedbackViewModel
+            {
+                jobTypeId = x.JOBTYPEID,
+                jobStatusFeedbackId = x.JOB_STATUS_FEEDBACKID,
+                requestStatusId = x.REQUESTSTATUSID,
+                jobStatusFeedbackName = x.JOB_STATUS_FEEDBACK_NAME
+            });
+        }
+
+
         #region job-type
 
         public bool AddJobType(JobTypeViewModel model)
