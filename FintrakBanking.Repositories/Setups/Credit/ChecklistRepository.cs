@@ -875,7 +875,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 CHECKLISTITEMNAME = model.checkListItemName,
                 DATETIMECREATED = _genSetup.GetApplicationDate(),
-                CREATEDBY = (int)model.createdBy
+                CREATEDBY = (int)model.createdBy,
+                DELETED = false
             };
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
