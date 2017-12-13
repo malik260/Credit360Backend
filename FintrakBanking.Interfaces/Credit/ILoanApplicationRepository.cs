@@ -46,6 +46,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity);
 
         IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId);
-
+        dynamic GetLoanApplicationDetailsProductProgram(int loanApplicationDetailId);
     }
 }

@@ -76,6 +76,7 @@
     <Compile Include="Credit\CreditBereauViewModel.cs" />
     <Compile Include="Credit\CurrentCustomerExposure.cs" />
     <Compile Include="Credit\ExistingLoanApplicationViewModel.cs" />
+    <Compile Include="Credit\InvoiceDiscountingViewModel.cs" />
     <Compile Include="Credit\LimitViewModel.cs" />
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
     <Compile Include="Credit\LoanApplicationViewModel.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Customer\CustomerGroupMappingViewModel.cs" />
     <Compile Include="Customer\CustomerGroupViewModel.cs" />
     <Compile Include="Customer\CustomerIdentificationViewModels.cs" />
+    <Compile Include="Customer\CustomerNextOfKinViewModels.cs" />
     <Compile Include="Customer\CustomerPhoneContactViewModels.cs" />
     <Compile Include="Customer\CustomerTypeViewModels.cs" />
     <Compile Include="Customer\CustomerViewModels.cs" />
@@ -185,7 +187,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

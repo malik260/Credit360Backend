@@ -451,6 +451,74 @@ namespace FintrakBanking.Repositories.Customer
 
             return false;
         }
+        public bool AddCustomerNextOfKin(CustomerNextOfKinViewModels entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_CUSTOMER_NEXTOFKIN next;
+                    if (entity.nextOfKinId != 0 || entity.nextOfKinId < 0)
+                    {
+                        next = context.TBL_CUSTOMER_NEXTOFKIN.Find(entity.nextOfKinId);
+                        if (next != null)
+                        {
+                            next.CUSTOMERID = entity.customerId;
+                            next.FIRSTNAME = entity.firstName;
+                            next.LASTNAME = entity.lastName;
+                            next.PHONENUMBER = entity.phoneNumber;
+                            next.RELATIONSHIP = entity.relationship;
+                            next.DATEOFBIRTH = entity.dateOfBirth;
+                            next.EMAIL = entity.email;
+                            next.NEAREST_LANDMARK = entity.nearestLandmark;
+                            next.GENDER = entity.gender;
+                            next.ADDRESS = entity.address;
+                            next.CITYID = entity.cityId;
+                            next.ACTIVE = entity.active;
+                        }
+                        else
+                        {
+                            next = new TBL_CUSTOMER_NEXTOFKIN();
+                            next.CUSTOMERID = entity.customerId;
+                            next.FIRSTNAME = entity.firstName;
+                            next.LASTNAME = entity.lastName;
+                            next.PHONENUMBER = entity.phoneNumber;
+                            next.RELATIONSHIP = entity.relationship;
+                            next.DATEOFBIRTH = entity.dateOfBirth;
+                            next.EMAIL = entity.email;
+                            next.NEAREST_LANDMARK = entity.nearestLandmark;
+                            next.GENDER = entity.gender;
+                            next.ADDRESS = entity.address;
+                            next.CITYID = entity.cityId;
+                            next.ACTIVE = entity.active;
+                            context.TBL_CUSTOMER_NEXTOFKIN.Add(next);
+                        }
+                    }
+                        // Audit Section ----------------------------
+                        var audit = new TBL_AUDIT
+                        {
+                            AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                            STAFFID = entity.createdBy,
+                            BRANCHID = (short)entity.userBranchId,
+                            DETAIL = "Added new TBL_CUSTOMER_NEXTOFKIN for customer ID: + (" + entity.customerId + ") ",
+                            IPADDRESS = entity.userIPAddress,
+                            URL = entity.applicationUrl,
+                            APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                            SYSTEMDATETIME = DateTime.Now
+                        };
+                        this.auditTrail.AddAuditTrail(audit);
+
+                        var response = context.SaveChanges() != 0;
+                        return response;
+                    }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+
+            return false;
+        }
         public bool AddCustomerCompanyInfomation(CustomerCompanyInfomationViewModels entity)
         {
             if (entity != null)
@@ -1806,7 +1874,7 @@ namespace FintrakBanking.Repositories.Customer
         public bool ValidateCustomerCode(string customerCode)
         {
             bool itemExist = false;
-            var data = (from a in context.TBL_CUSTOMER where  a.CUSTOMERCODE == customerCode select a).ToList();
+            var data = (from a in context.TBL_CUSTOMER where a.CUSTOMERCODE == customerCode select a).ToList();
             if (data.Count > 0)
             {
                 itemExist = true;
