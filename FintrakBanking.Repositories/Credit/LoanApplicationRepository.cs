@@ -170,7 +170,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                         where a.TBL_LOAN_APPLICATION.COMPANYID == companyId && a.DELETED == false
-                        && a.LOANAPPLICATIONID == loanApplicationId
+                        && a.LOANAPPLICATIONDETAILID == loanApplicationId
                         select new jobLoanApplicationDetailViewModel
                         {
                             approvedAmount = a.APPROVEDAMOUNT,
