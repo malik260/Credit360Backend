@@ -76,6 +76,7 @@
     <Compile Include="Credit\CreditBereauViewModel.cs" />
     <Compile Include="Credit\CurrentCustomerExposure.cs" />
     <Compile Include="Credit\ExistingLoanApplicationViewModel.cs" />
+    <Compile Include="Credit\InvoiceDiscountingViewModel.cs" />
     <Compile Include="Credit\LimitViewModel.cs" />
     <Compile Include="Credit\LoanApplicationCollateralViewModel.cs" />
     <Compile Include="Credit\LoanApplicationViewModel.cs" />
@@ -186,7 +187,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
