@@ -54,10 +54,14 @@ namespace FintrakBanking.APICore.Controllers
         }
         [Route("update-principal")]
         [HttpPut]
-        public HttpResponseMessage UpdateLoanPrincipal(int principalId, LoanPrincipalViewModel loanPrincipal)
+        public HttpResponseMessage UpdateLoanPrincipal(LoanPrincipalViewModel loanPrincipal)
         {
             try
             {
+                //if (ModelState.IsValid)
+                //{
+
+                //}
                 string response  = repo.UpdateLoanPrincipal( loanPrincipal);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }

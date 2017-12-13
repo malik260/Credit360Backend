@@ -97,12 +97,15 @@
     <Compile Include="Enum\PenEvaluationStatusEnum.cs" />
     <Compile Include="Enum\LoanProductTypeEnum.cs" />
     <Compile Include="Enum\ProductBehaviourEnum.cs" />
+    <Compile Include="Enum\ProductClassProcessEnum.cs" />
+    <Compile Include="Enum\ProductClassEnum.cs" />
     <Compile Include="Enum\SourceApplicationEnum.cs" />
     <Compile Include="Enum\ProcessViewScopeEnum.cs" />
     <Compile Include="Enum\GLClassEnum.cs" />
     <Compile Include="Enum\SystemStaff.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />
     <Compile Include="Extensions\DataExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\MefExtensions.cs" />
     <Compile Include="GeneralInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
