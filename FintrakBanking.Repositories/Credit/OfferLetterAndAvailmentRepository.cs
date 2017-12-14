@@ -16,7 +16,7 @@ using System.Web.Hosting;
 
 namespace FintrakBanking.Repositories.Credit
 {
-    public class OfferLetterAndAvailmentRepository: IOfferLetterAndAvailmentRepository
+    public class OfferLetterAndAvailmentRepository : IOfferLetterAndAvailmentRepository
     {
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
@@ -1091,8 +1091,35 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
                     {
-                        // As far RM hasn't initiated 'Send For Availment'
-                        if (entity.applicationStatusId != (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted)
+                        // For when offer letter has been rejected
+                        if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationUnderReview)
+                        {
+                            UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+
+                            entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
+
+                            entity.approvalStatusId = (short)ApprovalStatusEnum.Referred;
+
+                            entity.keepPending = false;
+
+                            workFlow.ForcefullyEndProcess = true;
+
+                            workFlow.LogForApproval(entity);
+                        }
+                        // else If RM initiated 'Send For Availment then end the workflow process
+                        else if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted)
+                        {
+                            // UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+
+                            entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
+
+                            entity.keepPending = false;
+
+                            workFlow.ForcefullyEndProcess = true;
+
+                            workFlow.LogForApproval(entity);
+                        }
+                        else 
                         {
                             referBack = new LoanAvailmentApprovalViewModel()
                             {
@@ -1112,18 +1139,6 @@ namespace FintrakBanking.Repositories.Credit
                             UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
                             ReferApplicationToSpecificLevel(referBack);
-                        }
-                        else // If he has then end the workflow process
-                        {
-                            // UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
-
-                            entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
-
-                            entity.keepPending = false;
-
-                            workFlow.ForcefullyEndProcess = true;
-
-                            workFlow.LogForApproval(entity);
                         }
                     }
                     else
