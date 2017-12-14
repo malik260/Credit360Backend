@@ -170,7 +170,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                         where a.TBL_LOAN_APPLICATION.COMPANYID == companyId && a.DELETED == false
-                        && a.LOANAPPLICATIONID == loanApplicationId
+                        && a.LOANAPPLICATIONDETAILID == loanApplicationId
                         select new jobLoanApplicationDetailViewModel
                         {
                             approvedAmount = a.APPROVEDAMOUNT,
@@ -339,35 +339,35 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateApprovalStatusForApplication(int applocationId)//, object entity)
         {
-            var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == applocationId select l).ToList();
-            if (loanData != null)
-            {
-                var custNo = loanData.Count();
-                var checkedNo = 0;
-                foreach (var item in loanData)
-                {
-                    if (item.HASDONECHECKLIST == true)
-                    {
-                        ++checkedNo;
-                    }
-                }
-                if (custNo == checkedNo)
-                {
-                    var loanApplication = context.TBL_LOAN_APPLICATION.Find(applocationId);
-                    if (loanApplication != null)
-                    {
-                        loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
-                    }
-                }
-            }
-            //    var data = this.context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.LOANAPPLICATIONID == applocationId);
-            //{
-            //    //data.LoanStatusId = (short)entity.approvalStatusId;
-            //    //data.ActedOnaBy = entity.staffId;
-            //    //data.DateActedOn = genSetup.GetApplicaionDate();
+            ////var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == applocationId select l).ToList();
+            ////if (loanData != null)
+            ////{
+            ////    var custNo = loanData.Count();
+            ////    var checkedNo = 0;
+            ////    foreach (var item in loanData)
+            ////    {
+            ////        if (item.HASDONECHECKLIST == true)
+            ////        {
+            ////            ++checkedNo;
+            ////        }
+            ////    }
+            ////    if (custNo == checkedNo)
+            ////    {
+            ////        var loanApplication = context.TBL_LOAN_APPLICATION.Find(applocationId);
+            ////        if (loanApplication != null)
+            ////        {
+            ////            loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
+            ////        }
+            ////    }
+            ////}
+               var data = this.context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.LOANAPPLICATIONID == applocationId);
+           {
+                //data.LoanStatusId = (short)entity.approvalStatusId;
+                //data.ActedOnaBy = entity.staffId;
+                //data.DateActedOn = genSetup.GetApplicaionDate();
 
-            //    data.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
-            //}
+                data.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+            }
 
             //Audit Section ---------------------------
             //var audit = new TBL_AUDIT
@@ -411,6 +411,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 var data = new TBL_LOAN_APPLICATION
                 {
+                     
+                    PRODUCTCLASSID = loan.productClassId,
                     APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                     LOANTYPEID = loan.loanTypeId,
                     COMPANYID = loan.companyId,
@@ -437,7 +439,8 @@ namespace FintrakBanking.Repositories.Credit
                     LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
                     CUSTOMERID = loan.customerId,
                     SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
-                    OPERATIONID = (int)OperationsEnum.CAM
+                    OPERATIONID = (int)OperationsEnum.CAM,
+                     
                 };
 
                 //if (loan.LoanApplicationCollateral.Count > 0)
@@ -501,31 +504,102 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
+        {
+            var data = new TBL_LOAN_APPLICATION_DETAIL_TRA()
+            {
+                AVERAGE_MONTHLY_TURNOVER = entity.averageMonthlyTurnover,
+                MARKETID = entity.marketId,
+                CREATEDBY = createdBy,
+                LOANAPPLICATIONDETAILID = loanApplicationId,
+                DATETIMECREATED = DateTime.Now
+
+            };
+            context.TBL_LOAN_APPLICATION_DETAIL_TRA.Add(data);
+        }
+
+        private void EducationLoan(EducationLoanViewModel entity, int loanApplicationDetailsId, int createdBy)
+        {
+            var data =  new TBL_LOAN_APPLICATION_DETAIL_EDU()
+            {
+                AVERAGE_SCHOOL_FEES = entity.averageSchoolFees,
+                LOANAPPLICATIONDETAILID = loanApplicationDetailsId,
+                NUMBER_OF_STUDENTS = entity.numberOfStudent,
+                 TOTAL_PREVIOUS_TERM_SCHOOL_FEES = entity.schoolFeesCollected,
+                CREATEDBY = createdBy,
+                DATETIMECREATED = DateTime.Now
+            };
+            context.TBL_LOAN_APPLICATION_DETAIL_EDU.Add(data);
+
+        }
+
+        private void InvoiceDetails(List<InvoiceDetailViewModel> entity, int createdBy)
+        {
+         var data = entity.Select(c => new TBL_LOAN_APPLICATION_DETAIL_INV()
+            {
+                CONTRACT_ENDDATE = c.contractEndDate,
+                CONTRACT_STARTDATE = c.contractStartDate,
+                INVOICENO = c.invoiceNo,
+                INVOICE_AMOUNT = c.invoiceAmount,
+                INVOICE_CURRENCYID = c.invoiceCurrencyId,
+                INVOICE_DATE = c.invoiceDate,
+                LOANAPPLICATIONDETAILID = c.loanApplicationDetailId,
+                PRINCIPALID = c.principalId,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = createdBy
+            });
+            context.TBL_LOAN_APPLICATION_DETAIL_INV.AddRange(data);
+        }
+
         private void LoanApplicationDetail(List<LoanApplicationDetailViewModel> entity)
         {
-            var ApplicationDetail = entity.Select(a => new TBL_LOAN_APPLICATION_DETAIL()
+            foreach(var a in entity)
             {
-                APPROVEDAMOUNT = a.proposedAmount,
-                APPROVEDINTERESTRATE = a.proposedInterestRate,
-                APPROVEDPRODUCTID = a.proposedProductId,
-                APPROVEDTENOR = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                var data = new TBL_LOAN_APPLICATION_DETAIL
+                {
+                    APPROVEDAMOUNT = a.proposedAmount,
+                    APPROVEDINTERESTRATE = a.proposedInterestRate,
+                    APPROVEDPRODUCTID = a.proposedProductId,
+                    APPROVEDTENOR = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
-                EXCHANGERATE = a.exchangeRate,
-                CURRENCYID = a.currencyId,
-                CUSTOMERID = a.customerId,
-                LOANAPPLICATIONID = a.loanApplicationId,
-                STATUSID = (short)LoanApplicationDetailsStatusEnum.Pending,
+                    EXCHANGERATE = a.exchangeRate,
+                    CURRENCYID = a.currencyId,
+                    CUSTOMERID = a.customerId,
+                    LOANAPPLICATIONID = a.loanApplicationId,
+                    STATUSID = (short)LoanApplicationDetailsStatusEnum.Pending,
 
-                PROPOSEDAMOUNT = a.proposedAmount,
-                PROPOSEDINTERESTRATE = a.proposedInterestRate,
-                PROPOSEDPRODUCTID = a.proposedProductId,
-                PROPOSEDTENOR = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                    PROPOSEDAMOUNT = a.proposedAmount,
+                    PROPOSEDINTERESTRATE = a.proposedInterestRate,
+                    PROPOSEDPRODUCTID = a.proposedProductId,
+                    PROPOSEDTENOR = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
-                SUBSECTORID = a.subSectorId,
-                CREATEDBY = a.createdBy,
-                DATETIMECREATED = DateTime.Now,
-            });
-            context.TBL_LOAN_APPLICATION_DETAIL.AddRange(ApplicationDetail);
+                    SUBSECTORID = a.subSectorId,
+                    CREATEDBY = a.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                    LOANPURPOSE = a.loanPurpose
+                };
+
+                context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
+
+                if (a.invoiceDetails.Any() && a.productClassId == 6)
+                {
+                    
+                    InvoiceDetails(a.invoiceDetails,   a.createdBy);
+                }
+                if (a.educationLoan != null && a.productClassId == 7)
+                {
+                    EducationLoan(a.educationLoan, a.loanApplicationDetailId, a.createdBy);
+                }
+
+                if (a.traderLoan != null && a.productClassId == 8)
+                {
+                    TradderLoan(a.traderLoan, a.loanApplicationDetailId,   a.createdBy);
+                }
+
+
+            }
+
+
         }
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId)
@@ -773,7 +847,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var inv = (from a in context.TBL_LOAN_APPLICATION_DETAIL_INV
                            where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                           select new InvoiceDiscountingViewModel()
+                           select new InvoiceDetailViewModel()
                            {
                                invoiceId = a.INVOICEID,
                                loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
@@ -814,7 +888,7 @@ namespace FintrakBanking.Repositories.Credit
                            {
                                educationId = e.EDUCATIONID,
                                loanApplicationDetailId = e.LOANAPPLICATIONDETAILID,
-                               numberOfStudents = e.NUMBER_OF_STUDENTS,
+                               numberOfStudent = e.NUMBER_OF_STUDENTS,
                                averageSchoolFees = e.AVERAGE_SCHOOL_FEES,
                                totalPreviousTermSchoolFees = e.TOTAL_PREVIOUS_TERM_SCHOOL_FEES,
                                productClassId = (int)ProductClassEnum.FirstEdu
