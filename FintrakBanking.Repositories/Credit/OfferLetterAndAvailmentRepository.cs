@@ -272,6 +272,23 @@ namespace FintrakBanking.Repositories.Credit
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
 
                 loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId)).ToList();
+                foreach (var i in loanAvailmentData)
+                {
+                    i.loanApplicationCollateral = (from e in context.TBL_LOAN_APPLICATION_COLLATERAL.Where(s => s.LOANAPPLICATIONID == i.loanApplicationId)
+                                                   select new LoanApplicationCollateralViewModel
+                                                   {
+                                                       collateralValue = e.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                       collateralType = e.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                                       collateralCustomerId = e.COLLATERALCUSTOMERID,
+                                                       collateralSubtype = e.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB
+                                                       .Where(p => p.COLLATERALSUBTYPEID == e.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                       collateralReferenceNumber = e.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                                                       haircut = e.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                       valuationCycle = e.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                       allowSharing = e.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                                                       currencyCode = e.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE
+                                                   }).ToList();
+                };
             }
             else
             {
@@ -320,6 +337,20 @@ namespace FintrakBanking.Repositories.Credit
                                     camDocumentation = camDoc.CAMDOCUMENTATION
                                 }
                             ).ToList(),
+                            loanApplicationCollateral = (from r in context.TBL_LOAN_APPLICATION_COLLATERAL.Where(s => s.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
+                                                         select new LoanApplicationCollateralViewModel
+                                                         {
+                                                             collateralValue = r.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                             collateralType = r.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                                             collateralCustomerId = r.COLLATERALCUSTOMERID,
+                                                             collateralSubtype = r.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB
+                                                             .Where(p => p.COLLATERALSUBTYPEID == r.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                             collateralReferenceNumber = r.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                                                             haircut = r.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                             valuationCycle = r.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                             allowSharing = r.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                                                             currencyCode = r.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE
+                                                         }).ToList()
                         });
 
                 loanAvailmentData = data.Where(x =>
