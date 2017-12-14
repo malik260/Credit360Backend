@@ -74,6 +74,7 @@ namespace FintrakBanking.Repositories.Credit
                             subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
                             branchId = a.BRANCHID,
                             productClassId = b.TBL_PRODUCT.PRODUCTCLASSID,
+                            productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCUM.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
                                 .Select(camDoc => new CamDocumentViewModel
                                 {
@@ -229,6 +230,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvalLevelId = staffApprovalLevelId,
                         operationId = e.OPERATIONID,
                         currentApprovalStateId = e.APPROVALSTATEID,
+                        productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                         camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCUM.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
                                 .Select(camDoc => new CamDocumentViewModel
                                 {
@@ -307,7 +309,17 @@ namespace FintrakBanking.Repositories.Credit
                             subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
                             approvalLevelId = staffApprovalLevelId,
                             operationId = e.OPERATIONID,
-                            currentApprovalStateId = e.APPROVALSTATEID
+                            currentApprovalStateId = e.APPROVALSTATEID,
+                            productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
+                            camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCUM.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
+                                .Select(camDoc => new CamDocumentViewModel
+                                {
+                                    appraisalMemorandumId = camDoc.APPRAISALMEMORANDUMID,
+                                    approvalLevelId = camDoc.APPROVALLEVELID,
+                                    approvalLevelName = camDoc.TBL_APPROVAL_LEVEL.LEVELNAME,
+                                    camDocumentation = camDoc.CAMDOCUMENTATION
+                                }
+                            ).ToList(),
                         });
 
                 loanAvailmentData = data.Where(x =>
@@ -993,11 +1005,18 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        // indicate an end to the process before logging on the trail
-                        workFlow.KeepPending = false;
-                        workFlow.ForcefullyEndProcess = true;
+                        if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId) 
+                        {
+                            // indicate an end to the process before logging on the trail
+                            workFlow.KeepPending = false;
+                            workFlow.ForcefullyEndProcess = true;
 
-                        workFlow.LogForApproval(entity);
+                            workFlow.LogForApproval(entity);
+                        }
+                        else
+                        {
+                            workFlow.LogForApproval(entity);
+                        }
                     }
 
                     var b = workFlow.NextLevelId ?? 0;
@@ -1125,7 +1144,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             workFlow.LogForApproval(entity);
                         }
-                        else 
+                        else
                         {
                             referBack = new LoanAvailmentApprovalViewModel()
                             {
