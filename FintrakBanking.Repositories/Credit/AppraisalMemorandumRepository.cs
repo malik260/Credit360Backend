@@ -290,7 +290,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
             }
-
+            
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
@@ -924,7 +924,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return result;
         }
-
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplicationsClass(int countryId, int branchId, int staffId, int? classId)
         {
             int operationId = (int)OperationsEnum.CAM;
@@ -938,22 +937,22 @@ namespace FintrakBanking.Repositories.Credit
                 (int)LoanApplicationStatusEnum.ChecklistCompleted
             };
 
-            return context.TBL_LOAN_APPLICATION.Where(x =>
-                (x.BRANCHID == branchId || isHeadOffice) // branch filter
-                && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
-                && x.PRODUCTCLASSID == (short)classId
-            //&& camStages.Contains(x.APPLICATIONSTATUSID)
-            )
-                .GroupJoin(
-                    context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
-                    a => a.LOANAPPLICATIONID,
-                    b => b.TARGETID,
-                    (x, y) => new { a = x, bs = y })
-                .SelectMany(
-                    xy => xy.bs.DefaultIfEmpty(),
-                    (x, y) => new LoanApplicationViewModel
-                    {
+                return context.TBL_LOAN_APPLICATION.Where(x =>
+                    (x.BRANCHID == branchId || isHeadOffice) // branch filter
+                    && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                    && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                    && x.PRODUCTCLASSID == (short)classId
+                    //&& camStages.Contains(x.APPLICATIONSTATUSID)
+                )
+                    .GroupJoin(
+                        context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
+                        a => a.LOANAPPLICATIONID,
+                        b => b.TARGETID,
+                        (x, y) => new { a = x, bs = y })
+                    .SelectMany(
+                        xy => xy.bs.DefaultIfEmpty(),
+                        (x, y) => new LoanApplicationViewModel
+                        {
                             //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
                             loanApplicationId = x.a.LOANAPPLICATIONID,
                         applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,

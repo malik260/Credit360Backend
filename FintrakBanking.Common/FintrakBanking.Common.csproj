@@ -105,6 +105,7 @@
     <Compile Include="Enum\SystemStaff.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />
     <Compile Include="Extensions\DataExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\MefExtensions.cs" />
     <Compile Include="GeneralInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -53,7 +53,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
         public short? productId { get; set; }
         public string comments { get; set; }
-        public bool? isAccepted { get; set; }
+        public bool isAccepted { get; set; }
         public decimal approvedAmount { get; set; }
     }
 

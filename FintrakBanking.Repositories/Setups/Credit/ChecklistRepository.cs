@@ -869,16 +869,15 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
-
         public bool AddChecklistItem(ChecklistItemViewModel model)
         {
             var data = new TBL_CHECKLIST_ITEM
             {
                 CHECKLISTITEMNAME = model.checkListItemName,
                 DATETIMECREATED = _genSetup.GetApplicationDate(),
-                CREATEDBY = (int)model.createdBy
+                CREATEDBY = (int)model.createdBy,
+                DELETED = false
             };
-
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {

@@ -23,6 +23,7 @@ namespace FintrakBanking.Common.Enum
         ChecklistInProgress = 13,
         ChecklistCompleted = 14,
         BookingRequestInitiated = 15,
-        BookingRequestCompleted = 16
+        BookingRequestCompleted = 16,
+        ApplicationUnderReview = 17
     }
 }
