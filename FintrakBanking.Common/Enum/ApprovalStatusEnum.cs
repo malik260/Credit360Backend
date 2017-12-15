@@ -12,5 +12,6 @@ namespace FintrakBanking.Common.Enum
         Disapproved = 3,
         Authorised = 4,
         Referred = 5,
+        Reroute = 6,
     }
 }
