@@ -10,8 +10,10 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Hosting;
 
 namespace FintrakBanking.Repositories.Credit
@@ -49,7 +51,7 @@ namespace FintrakBanking.Repositories.Credit
                         from d in camDoc.DefaultIfEmpty()
                         join e in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals e.TARGETID into apprTrail
                         from e in apprTrail.DefaultIfEmpty()
-                        where a.COMPANYID == companyId && a.DELETED == false && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                        where a.COMPANYID == companyId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
                         {
                             loanApplicationId = a.LOANAPPLICATIONID,
@@ -177,15 +179,16 @@ namespace FintrakBanking.Repositories.Credit
             //public IEnumerable
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int staffId, int companyId)
+        public IQueryable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int staffId, int companyId)
         {
             var camProcessedData = GetCamProcessedLoanApplications(companyId).Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.CAMCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+
             return camProcessedData;
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId)
+        public IQueryable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId)
         {
             var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.OfferLetterApproval);
             int staffApprovalLevelId = 0;
@@ -244,11 +247,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var applicationDueForReview = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
+
             return applicationDueForReview;
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId)
+        public IQueryable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId)
         {
             var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.LoanAvailment);
             int staffApprovalLevelId = 0;
@@ -259,7 +263,7 @@ namespace FintrakBanking.Repositories.Credit
 
             IQueryable<CamProcessedLoanViewModel> data;
 
-            IEnumerable<CamProcessedLoanViewModel> loanAvailmentData;
+            IQueryable<CamProcessedLoanViewModel> loanAvailmentData;
 
             var existOnApprovalTrail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.LoanAvailment).Select(x => x.TARGETID).ToList();
 
@@ -271,8 +275,7 @@ namespace FintrakBanking.Repositories.Credit
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
 
-                loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId)).ToList();
-                foreach (var i in loanAvailmentData)
+                foreach (var i in data)
                 {
                     i.loanApplicationCollateral = (from e in context.TBL_LOAN_APPLICATION_COLLATERAL.Where(s => s.LOANAPPLICATIONID == i.loanApplicationId)
                                                    select new LoanApplicationCollateralViewModel
@@ -289,6 +292,9 @@ namespace FintrakBanking.Repositories.Credit
                                                        currencyCode = e.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE
                                                    }).ToList();
                 };
+
+                loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId));
+                
             }
             else
             {
@@ -355,7 +361,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 loanAvailmentData = data.Where(x =>
                 x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.AvailmentInProgress)
-                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault()).ToList();
+                .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
             }
 
             return loanAvailmentData;
@@ -364,6 +370,10 @@ namespace FintrakBanking.Repositories.Credit
         public Form3800ViewModel GenerateForm3800Template(string applicationRefNumber)
         {
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+
+            var targetAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber);
+
+            var templateLink = GetProductSpecificTemplate(targetAppl.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID, targetAppl.PRODUCTCLASSID);
 
             var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -395,7 +405,9 @@ namespace FintrakBanking.Repositories.Credit
                             select new ProductViewModel()
                             {
                                 productId = c.TBL_PRODUCT.PRODUCTID,
-                                productName = c.TBL_PRODUCT.PRODUCTNAME
+                                productName = c.TBL_PRODUCT.PRODUCTNAME,
+                                productClassId = (short)a.PRODUCTCLASSID,
+                                productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID
                             }).ToList();
 
             var conditions = string.Empty;
@@ -551,7 +563,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
 
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink);
 
             if (preparedTemplate != null)
             {
@@ -563,209 +575,75 @@ namespace FintrakBanking.Repositories.Credit
 
         public OfferLetterTemplateViewModel GenerateOfferLetterTemplate(string applicationRefNumber)
         {
-            var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
-
-            var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
-                                       join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                                       join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false
-                                       select new OfferLetterConditionPrecidentViewModel()
-                                       {
-                                           conditionPrecident = b.CONDITION,
-                                           loanApplicationId = b.LOANAPPLICATIONID,
-                                           isExternal = b.ISEXTERNAL,
-                                           productName = c.TBL_PRODUCT.PRODUCTNAME
-                                       }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
-
-            var conditionSubsequents = (from a in context.TBL_LOAN_APPLICATION
-                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                                        join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                        where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == true
-                                        select new OfferLetterConditionPrecidentViewModel()
-                                        {
-                                            conditionPrecident = b.CONDITION,
-                                            loanApplicationId = b.LOANAPPLICATIONID,
-                                            isExternal = b.ISEXTERNAL,
-                                            productName = c.TBL_PRODUCT.PRODUCTNAME
-                                        }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
-
-            var products = (from a in context.TBL_LOAN_APPLICATION
-                            join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                            where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                            select new ProductViewModel()
-                            {
-                                productId = c.TBL_PRODUCT.PRODUCTID,
-                                productName = c.TBL_PRODUCT.PRODUCTNAME
-                            }).ToList();
-
-            var conditions = string.Empty;
-
-            var internalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == false).ToList();
-
-            var externalConditionsPrecedents = conditionPrecedents.Where(x => x.isExternal == true).ToList();
-
-            var internalConditionsSubsequents = conditionSubsequents.Where(x => x.isExternal == false).ToList();
-
-            var externalConditionsSubsequents = conditionSubsequents.Where(x => x.isExternal == true).ToList();
-
-            int noOfInternalConditions = 0;
-
-            int noOfExternalConditions = 0;
-
-            var finalConditionPrecedents = string.Empty;
-
-            var finalConditionSubsequents = string.Empty;
-
-            foreach (var prod in products)
-            {
-                var productExternalConditions = externalConditionsPrecedents.Where(x => x.productName == prod.productName);
-
-                conditions = $"<p><strong> Conditions Precedent(to be satisfied before drawdown) {prod.productName}</strong></p>";
-
-                conditions = conditions +
-                        $"<table border='1' cellspacing='0' class='conditionsTable_OL' style='width: 100 %; overflow-x:auto; margin-bottom:5px'><tbody>" +
-                        $"<tr>" +
-                        $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                        $"<p> &nbsp;</p><p><strong> S/No </strong></p></td>" +
-
-                        $"<td style='height:31.0pt; vertical-align:top; width:225.05pt'><p> &nbsp;</p>" +
-
-                        $"<strong> Conditions Precedent </strong></td>" +
-
-                        $"<td style='height:31.0pt; vertical-align:top; width:100.05pt'><p> &nbsp;</p>" +
-
-                        $"<strong> Applicable Facility </strong ></td>" +
-
-                        $"<td style='height:31.0pt; vertical-align:top; width:1.0in'>" +
-
-                        $"<strong> *Credit Verification Officer&rsquo; s initial for compliance only</strong></td>" +
-
-                        $"<td style='height:31.0pt; vertical-align:top; width:67.5pt'>" +
-
-                        $"<strong> Location of document </strong><strong><em> (Corporate workflow)</em ></strong></td></tr>";
-
-                foreach (var item in productExternalConditions)
-                {
-                    conditions = conditions +
-                        $"<tr>" +
-                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'><p> &nbsp;</p></td>" +
-                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'><p>&nbsp;</p></td>" +
-                        $"</tr>";
-                }
-
-                noOfExternalConditions = 0;
-
-                conditions = conditions +
-                    "<tr class='removeConditions_OL'><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
-                    "<p><strong> Other Conditions Precedent for Internal usage which does not have to be included in the offer " +
-                    "letter.The RM must ensure compliance with these conditions before drawdown.</strong></p></td></tr> ";
-
-                var productInternalConditions = internalConditionsPrecedents.Where(x => x.productName == prod.productName);
-
-                foreach (var item in productInternalConditions)
-                {
-                    conditions = conditions +
-                        $"<tr class='removeConditions_OL'>" +
-                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfInternalConditions}</li></ol></td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'><p> &nbsp;</p></td>" +
-                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'><p>&nbsp;</p></td>" +
-                        $"</tr>";
-                }
-
-                noOfInternalConditions = 0;
-
-                conditions = conditions + "</tbody></table><p> &nbsp;</p>";
-
-                finalConditionPrecedents += conditions;
-            }
-
-            foreach (var prod in products)
-            {
-                var productExternalConditions = externalConditionsSubsequents.Where(x => x.productName == prod.productName);
-
-                conditions = $"<p><strong>Conditions Subsequent (to be satisfied after drawdown) {prod.productName}</strong></p>";
-
-                conditions = conditions +
-                        $"<table border='1' cellspacing='0' class='conditionsTable_OL' style='width: 100 %; overflow-x:auto; margin-bottom:5px'><tbody>" +
-                        $"<tr>" +
-                        $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
-                        $"<strong> S/No </strong></td>" +
-
-                        $"<td style='height:31.0pt; vertical-align:top; width:225.05pt'><p> &nbsp;</p>" +
-
-                        $"<strong> Conditions Subsequent </strong></td>" +
-
-                        $"<td style='height:31.0pt; vertical-align:top; width:100.05pt'><p> &nbsp;</p>" +
-
-                        $"<strong> Timeline for compliance </strong ></td>" +
-
-                        $"<td style='height:31.0pt; vertical-align:top; width:1.0in'><p> &nbsp;</p>" +
-
-                        $"<strong> Credit Monitoring Officer’s initial for compliance only</strong></td>" +
-
-                        $"</tr>";
-
-                foreach (var item in productExternalConditions)
-                {
-                    conditions = conditions +
-                        $"<tr>" +
-                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'>{item.conditionPrecident}</td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'>&nbsp</td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'> &nbsp;</td>" +
-                        $"</tr>";
-                }
-
-                noOfExternalConditions = 0;
-
-                conditions = conditions +
-                    "<tr class='removeConditions_OL'><td colspan='5' style='height:18.4pt; vertical-align:top; width:490.5pt'>" +
-                    "<strong> Other Conditions Subsequent for Internal usage which does not have to be included in the offer " +
-                    "letter.The RM must ensure compliance with these conditions after drawdown.</strong></td></tr> ";
-
-                var productInternalConditions = internalConditionsSubsequents.Where(x => x.productName == prod.productName);
-
-                foreach (var item in productInternalConditions)
-                {
-                    conditions = conditions +
-                        $"<tr class='removeConditions_OL'>" +
-                        $"<td style='height:18.4pt; vertical-align:top; width:40.45pt'>" + $"<ol><li>{++noOfInternalConditions}</li></ol></td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'>{item.conditionPrecident}</td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'>{prod.productName}</td>" +
-                        $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'> &nbsp;</td>" +
-                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'>&nbsp;</td>" +
-                        $"</tr>";
-                }
-
-                noOfInternalConditions = 0;
-
-                conditions = conditions + "</tbody></table><p> &nbsp;</p>";
-
-                finalConditionSubsequents += conditions;
-            }
-
-            var conditionPrecedentData = $"{finalConditionPrecedents} {finalConditionSubsequents}";
-
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData);
-
-            if (preparedTemplate != null)
-            {
-                return new OfferLetterTemplateViewModel { documentTemplate = preparedTemplate };
-            }
-
-            return new OfferLetterTemplateViewModel { };
+            throw new NotImplementedException();
         }
 
-        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent)
+        private static string GetProductSpecificTemplate(short? productClassProcessId, short? productClassId)
+        {
+            var templateLink = string.Empty;
+
+            var links = new
+            {
+                General = "~/EmailTemplates/FORM-3800B-Template.html",
+                IDF = "~/EmailTemplates/FORM-3800B-IDF.html",
+                FirstEdu = "~/EmailTemplates/FORM-3800B-FirstEdu.html",
+                FirstTrader = "~/EmailTemplates/FORM-3800B-FirstTrader.html",
+                BondsAndGuarantees = "~/EmailTemplates/FORM-3800B-BG.html",
+                ImportFinance = "~/EmailTemplates/FORM-3800B-ImportFinance.html",
+                CashBackedOnly = "~/EmailTemplates/FORM-3800B-CashBackedOnly.html"
+            };
+
+            if (productClassProcessId == (short)ProductClassProcessEnum.CAMBased)
+            {
+                templateLink = links.General;
+
+                return templateLink;
+            }
+            else //if (productClassProcessId == (short)ProductClassProcessEnum.ProductBased)
+            {
+                switch (productClassId)
+                {
+                    case (short)ProductClassEnum.BondAndGuarantees:
+                        templateLink = links.BondsAndGuarantees;
+                        break;
+                    case (short)ProductClassEnum.CashBackedOnly:
+                        templateLink = links.CashBackedOnly;
+                        break;
+
+                    case (short)ProductClassEnum.FirstEdu:
+                        templateLink = links.FirstEdu;
+                        break;
+
+                    case (short)ProductClassEnum.FirstTrader:
+                        templateLink = links.BondsAndGuarantees;
+                        break;
+
+                    case (short)ProductClassEnum.ImportFinance:
+                        templateLink = links.CashBackedOnly;
+                        break;
+
+                    case (short)ProductClassEnum.InvoiceDiscountingFacility:
+                        templateLink = links.FirstEdu;
+                        break;
+
+                    default:
+                        templateLink = links.General;
+                        break;
+                }
+
+                return templateLink;
+            }
+
+            //templateLink = links.General;
+
+            //return templateLink;
+        }
+
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template)
         {
             string body;
 
-            string templateLink = "~/EmailTemplates/FORM-3800B-Template.html";
+            string templateLink = template;
 
             using (var reader = new StreamReader(HostingEnvironment.MapPath(templateLink) ?? throw new InvalidOperationException()))
             {
@@ -1036,7 +914,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId) 
+                        if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
                         {
                             // indicate an end to the process before logging on the trail
                             workFlow.KeepPending = false;
@@ -1269,9 +1147,9 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId)
+        public IQueryable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId)
         {
-            var data = GetCamProcessedLoanApplications(companyId).Where(x => x.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationUnderReview).ToList();
+            var data = GetCamProcessedLoanApplications(companyId).Where(x => x.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationUnderReview);
 
             return data;
         }
