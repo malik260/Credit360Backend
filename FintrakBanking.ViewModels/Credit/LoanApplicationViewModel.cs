@@ -21,7 +21,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
 
         public short? branchId { get; set; }
-        public short productClassId { get; set; }
+        public short? productClassId { get; set; }
         public string productClassName { get; set; }
         public short productId { get; set; }
         public int? customerGroupId { get; set; }
