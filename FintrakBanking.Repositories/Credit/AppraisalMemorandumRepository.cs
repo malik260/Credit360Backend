@@ -36,15 +36,15 @@ namespace FintrakBanking.Repositories.Credit
 
             var groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
                 x.OPERATIONID == (int)OperationsEnum.CAM
-            //&& x.ProductClassId == appl.tbl_Product.ProductClassId // ---- REFACTOR!!!
-            //&& x.ProductId == appl.ProductId // ---- REFACTOR!!!
+                && x.PRODUCTCLASSID == appl.PRODUCTCLASSID
+                // && x.ProductId == appl.ProductId // ---- REFACTOR when we have appl.PRODUCTID!!!
             );
 
-            if (groupMappings.Any() == false)
+            if (groupMappings.Any() == false) // -----  MAY BECOME REDUNDANT!
             {
                 groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
                     x.OPERATIONID == (int)OperationsEnum.CAM
-                //&& x.ProductClassId == appl.tbl_Product.ProductClassId // ---- REFACTOR!!!
+                    && x.PRODUCTCLASSID == appl.PRODUCTCLASSID
                 );
             }
 
@@ -90,10 +90,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
 
-            int approvalLevelId = GetFirstApprovalLevelId(
-                //appl.ProductId, 
-                //appl.tbl_Product.ProductClassId, 
-                model.createdBy);
+            int approvalLevelId = GetFirstApprovalLevelId(/*appl.ProductId,*/ appl.PRODUCTCLASSID, model.createdBy);
 
             var memo = context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).SingleOrDefault();
 
@@ -184,19 +181,19 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private int GetFirstApprovalLevelId(/*short productId, int productClassId, */int staffId = 0) // ---- REFACTOR!!!
+        private int GetFirstApprovalLevelId(/*short productId,*/ short? productClassId, int staffId = 0) // ---- REFACTOR when we have productId!!!
         {
             var groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
-                x.OPERATIONID == (int)OperationsEnum.CAM // GIVEN ---- REFACTOR!!!
-                                                         //&& x.ProductClassId == productClassId
-                                                         //&& x.ProductId == productId
+                x.OPERATIONID == (int)OperationsEnum.CAM 
+                && x.PRODUCTCLASSID == productClassId
+                //&& x.ProductId == productId
             );
 
-            if (groupMappings.Any() == false)
+            if (groupMappings.Any() == false) // MAY BECOME REDUNDANT!
             {
                 groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
-                    x.OPERATIONID == (int)OperationsEnum.CAM// GIVEN ---- REFACTOR!!!
-                                                            //&& x.ProductClassId == productClassId
+                    x.OPERATIONID == (int)OperationsEnum.CAM
+                    && x.PRODUCTCLASSID == productClassId
                 );
             }
 
@@ -441,12 +438,6 @@ namespace FintrakBanking.Repositories.Credit
 
             if (grant != null)
             {
-                //return new PrivilegeViewModel
-                //{
-                //userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList()
-                //userApprovalLevelIds = grants.Select(x => x.APPROVALLEVELID).ToList()
-                //};
-
                 grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
                 return grant;
             }
@@ -617,7 +608,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
                             customerId = x.a.CUSTOMERID,
                             branchId = x.a.BRANCHID,
-                            //productClassId = x.a.tbl_Product.ProductClassId,
+                            productClassId = x.a.PRODUCTCLASSID,
                             //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                             customerGroupId = x.a.CUSTOMERGROUPID,
                             loanTypeId = x.a.LOANTYPEID,
@@ -655,7 +646,6 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                             //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
                             operationId = x.a.OPERATIONID,
-                            productClassId = x.a.PRODUCTCLASSID,
                         })
                         .GroupBy(d => d.loanApplicationId)
                         .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
@@ -706,7 +696,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
                 customerId = x.a.CUSTOMERID,
                 branchId = x.a.BRANCHID,
-                //productClassId = x.a.tbl_Product.ProductClassId,
+                productClassId = x.a.PRODUCTCLASSID,
                 //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                 customerGroupId = x.a.CUSTOMERGROUPID,
                 loanTypeId = x.a.LOANTYPEID,
@@ -743,7 +733,6 @@ namespace FintrakBanking.Repositories.Credit
                 loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                 //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
                 operationId = x.a.OPERATIONID,
-                productClassId = x.a.PRODUCTCLASSID,
             })
             .OrderByDescending(x => x.applicationDate)
             .ThenByDescending(x => x.loanApplicationId)
@@ -801,10 +790,10 @@ namespace FintrakBanking.Repositories.Credit
             // init
             workflow.OperationId = operationId;
             workflow.TargetId = model.applicationId;
-            workflow.CompanyId = 1;//appl.companyId;
+            workflow.CompanyId = appl.COMPANYID;
 
-            //workflow.ProductClassId = model.productClassId;
-            //workflow.ProductId = model.productId;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            //workflow.ProductId = appl.PRODUCTID; 
 
             workflow.Amount = appl.APPROVEDAMOUNT;
             workflow.InvestmentGrade = appl.ISINVESTMENTGRADE;
@@ -955,48 +944,47 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
                             loanApplicationId = x.a.LOANAPPLICATIONID,
-                        applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
-                        customerId = x.a.CUSTOMERID,
-                        branchId = x.a.BRANCHID,
-                            //productClassId = x.a.tbl_Product.ProductClassId,
+                            applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                            customerId = x.a.CUSTOMERID,
+                            branchId = x.a.BRANCHID,
+                            productClassId = x.a.PRODUCTCLASSID,
                             //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                             customerGroupId = x.a.CUSTOMERGROUPID,
-                        loanTypeId = x.a.LOANTYPEID,
-                        relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
-                        relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
-                        applicationDate = x.a.APPLICATIONDATE,
-                        applicationAmount = x.a.APPLICATIONAMOUNT,
-                        approvedAmount = x.a.APPROVEDAMOUNT,
-                        interestRate = x.a.INTERESTRATE,
-                        applicationTenor = x.a.APPLICATIONTENOR,
-                        lastComment = y.COMMENT,
-                        currentApprovalStateId = y.APPROVALSTATEID,
-                        currentApprovalLevelId = y.TOAPPROVALLEVELID,
-                        currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                            loanTypeId = x.a.LOANTYPEID,
+                            relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
+                            applicationDate = x.a.APPLICATIONDATE,
+                            applicationAmount = x.a.APPLICATIONAMOUNT,
+                            approvedAmount = x.a.APPROVEDAMOUNT,
+                            interestRate = x.a.INTERESTRATE,
+                            applicationTenor = x.a.APPLICATIONTENOR,
+                            lastComment = y.COMMENT,
+                            currentApprovalStateId = y.APPROVALSTATEID,
+                            currentApprovalLevelId = y.TOAPPROVALLEVELID,
+                            currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                             approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
                             loanInformation = x.a.LOANINFORMATION,
-                        submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
-                        customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
-                        notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
-                        notInBlackbook = x.a.NOTINBLACKBOOK,
-                        notInCamsol = x.a.NOTINCAMSOL,
-                        notInXds = x.a.NOTINXDS,
-                        notInCrc = x.a.NOTINCRC,
-                        isRelatedParty = x.a.ISRELATEDPARTY,
-                        isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
-                        approvalStatusId = x.a.APPROVALSTATUSID,
-                        applicationStatusId = x.a.APPLICATIONSTATUSID,
-                        branchName = x.a.TBL_BRANCH.BRANCHNAME,
-                        relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
-                        relationshipManagerName = x.a.TBL_STAFF1.FIRSTNAME + " " + x.a.TBL_STAFF1.MIDDLENAME + " " + x.a.TBL_STAFF1.LASTNAME,
-                        misCode = x.a.MISCODE,
-                        customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                        loanTypeName = x.a.TBL_LOAN_TYPE.LOANTYPENAME,
-                        createdBy = x.a.CREATEDBY,
-                        loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
+                            submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
+                            customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
+                            notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
+                            notInBlackbook = x.a.NOTINBLACKBOOK,
+                            notInCamsol = x.a.NOTINCAMSOL,
+                            notInXds = x.a.NOTINXDS,
+                            notInCrc = x.a.NOTINCRC,
+                            isRelatedParty = x.a.ISRELATEDPARTY,
+                            isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
+                            approvalStatusId = x.a.APPROVALSTATUSID,
+                            applicationStatusId = x.a.APPLICATIONSTATUSID,
+                            branchName = x.a.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = x.a.TBL_STAFF1.FIRSTNAME + " " + x.a.TBL_STAFF1.MIDDLENAME + " " + x.a.TBL_STAFF1.LASTNAME,
+                            misCode = x.a.MISCODE,
+                            customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            loanTypeName = x.a.TBL_LOAN_TYPE.LOANTYPENAME,
+                            createdBy = x.a.CREATEDBY,
+                            loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                             //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
                             operationId = x.a.OPERATIONID,
-                        productClassId = x.a.PRODUCTCLASSID,
                     })
                     .GroupBy(d => d.loanApplicationId)
                     .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
