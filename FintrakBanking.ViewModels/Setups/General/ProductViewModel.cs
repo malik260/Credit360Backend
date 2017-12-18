@@ -78,6 +78,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         //public string productBehaviourName { get; set; }
 
         public ProductBehaviourViewModel ProductBehaviour { get;set;}
+        public short productClassProcessId { get; set; }
     }
 
     public class ProductCurrencyViewModel : GeneralEntity

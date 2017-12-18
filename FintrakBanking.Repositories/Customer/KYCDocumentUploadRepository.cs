@@ -29,7 +29,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             try
             {
-                var data = new TBL_MEDIA_KYC_DOCUMENTS
+                var data = new Entities.DocumentModels.TBL_MEDIA_KYC_DOCUMENTS
                 {
                     FILEDATA = file,
                     CUSTOMERID = model.customerId,
@@ -92,7 +92,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             try
             {
-                var data = new TBL_MEDIA_CHECKLIST_DOCUMENTS
+                var data = new Entities.DocumentModels.TBL_MEDIA_CHECKLIST_DOCUMENTS
                 {
                     FILEDATA = file,
                     CHECKLISTDEFINITIONID = model.checkListDefinitionId,

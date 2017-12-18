@@ -61,7 +61,7 @@ namespace FintrakBanking.Entities.Models
 
         public int OPERATIONID { get; set; }
 
-        public short PRODUCTCLASSID { get; set; }
+        public short? PRODUCTCLASSID { get; set; }
 
         [Column(TypeName = "money")]
         public decimal APPLICATIONAMOUNT { get; set; }

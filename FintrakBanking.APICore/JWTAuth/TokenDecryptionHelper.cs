@@ -20,6 +20,8 @@ namespace FintrakBanking.APICore.JWTAuth
             var tokenIdentity = new ClaimsIdentity(HttpContext.Current.User.Identity);
             var decryptedToken = tokenIdentity.Claims;
 
+            if (tokenIdentity.Name == null) { return String.Empty; }
+            
             switch (tokenType)
             {
                 case 1:
@@ -28,13 +30,13 @@ namespace FintrakBanking.APICore.JWTAuth
                     return decryptedToken.First(st => st.Type == "companyId").Value.ToString();
                 case 3:
                     return decryptedToken.First(st => st.Type == "branchId").Value.ToString();
-                case 4:                   
+                case 4:
                     return decryptedToken.First(st => st.Type == "username").Value.ToString();
-                case 5:                  
+                case 5:
                     return decryptedToken.First(st => st.Type == "countryId").Value.ToString();
-                case 6:                   
+                case 6:
                     return decryptedToken.First(st => st.Type == "userId").Value.ToString();
-                default:                 
+                default:
                     return decryptedToken.First(st => st.Type == "staffId").Value.ToString();
             }
         }

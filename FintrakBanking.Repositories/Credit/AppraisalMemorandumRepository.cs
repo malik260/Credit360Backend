@@ -36,15 +36,15 @@ namespace FintrakBanking.Repositories.Credit
 
             var groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
                 x.OPERATIONID == (int)OperationsEnum.CAM
-            //&& x.ProductClassId == appl.tbl_Product.ProductClassId // ---- REFACTOR!!!
-            //&& x.ProductId == appl.ProductId // ---- REFACTOR!!!
+                && x.PRODUCTCLASSID == appl.PRODUCTCLASSID
+                // && x.ProductId == appl.ProductId // ---- REFACTOR when we have appl.PRODUCTID!!!
             );
 
-            if (groupMappings.Any() == false)
+            if (groupMappings.Any() == false) // -----  MAY BECOME REDUNDANT!
             {
                 groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
                     x.OPERATIONID == (int)OperationsEnum.CAM
-                //&& x.ProductClassId == appl.tbl_Product.ProductClassId // ---- REFACTOR!!!
+                    && x.PRODUCTCLASSID == appl.PRODUCTCLASSID
                 );
             }
 
@@ -90,10 +90,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
 
-            int approvalLevelId = GetFirstApprovalLevelId(
-                //appl.ProductId, 
-                //appl.tbl_Product.ProductClassId, 
-                model.createdBy);
+            int approvalLevelId = GetFirstApprovalLevelId(/*appl.ProductId,*/ appl.PRODUCTCLASSID, model.createdBy);
 
             var memo = context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).SingleOrDefault();
 
@@ -184,19 +181,19 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private int GetFirstApprovalLevelId(/*short productId, int productClassId, */int staffId = 0) // ---- REFACTOR!!!
+        private int GetFirstApprovalLevelId(/*short productId,*/ short? productClassId, int staffId = 0) // ---- REFACTOR when we have productId!!!
         {
             var groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
-                x.OPERATIONID == (int)OperationsEnum.CAM // GIVEN ---- REFACTOR!!!
-                                                         //&& x.ProductClassId == productClassId
-                                                         //&& x.ProductId == productId
+                x.OPERATIONID == (int)OperationsEnum.CAM 
+                && x.PRODUCTCLASSID == productClassId
+                //&& x.ProductId == productId
             );
 
-            if (groupMappings.Any() == false)
+            if (groupMappings.Any() == false) // MAY BECOME REDUNDANT!
             {
                 groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
-                    x.OPERATIONID == (int)OperationsEnum.CAM// GIVEN ---- REFACTOR!!!
-                                                            //&& x.ProductClassId == productClassId
+                    x.OPERATIONID == (int)OperationsEnum.CAM
+                    && x.PRODUCTCLASSID == productClassId
                 );
             }
 
@@ -284,60 +281,57 @@ namespace FintrakBanking.Repositories.Credit
 
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
             appl.APPROVALSTATUSID = workflow.StatusId;
+            if (appl.SUBMITTEDFORAPPRAISAL == false) { appl.SUBMITTEDFORAPPRAISAL = true; } // for product programs
 
             if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) // redundant block
             {
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
             }
-
-            var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Find(model.appraisalMemorandumId);
-
-            if (memo != null)
+            
+            if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
-                if (workflow.NewState == (int)ApprovalState.Ended) // cam status
-                {
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
-                    memo.ISCOMPLETED = true;
-                }
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Find(model.appraisalMemorandumId);
+                if (memo != null) { memo.ISCOMPLETED = true; }
+            }
 
-                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Authorised) // approving authority
+            if (workflow.StatusId == (int)ApprovalStatusEnum.Approved || workflow.StatusId == (int)ApprovalStatusEnum.Authorised) // approving authority
+            {
+                var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                foreach (var item in items)
                 {
-                    var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == memo.LOANAPPLICATIONID);
-                    foreach (var item in items)
+                    var changed = model.recommendedChanges.FirstOrDefault(x => x.detailId == item.LOANAPPLICATIONDETAILID);
+                    if (changed != null)
                     {
-                        var changed = model.recommendedChanges.FirstOrDefault(x => x.detailId == item.LOANAPPLICATIONDETAILID);
-                        if (changed != null)
-                        {
-                            item.APPROVEDPRODUCTID = (short)changed.productId;
-                            item.APPROVEDAMOUNT = changed.amount;
-                            item.APPROVEDINTERESTRATE = changed.interestRate;
-                            item.APPROVEDTENOR = changed.tenor;
-                            item.STATUSID = (short)changed.statusId;
-                            item.EXCHANGERATE = changed.exchangeRate;
-                            item.LASTUPDATEDBY = model.createdBy;
-                            item.DATETIMEUPDATED = DateTime.Now;
+                        item.APPROVEDPRODUCTID = (short)changed.productId;
+                        item.APPROVEDAMOUNT = changed.amount;
+                        item.APPROVEDINTERESTRATE = changed.interestRate;
+                        item.APPROVEDTENOR = changed.tenor;
+                        item.STATUSID = (short)changed.statusId;
+                        item.EXCHANGERATE = changed.exchangeRate;
+                        item.LASTUPDATEDBY = model.createdBy;
+                        item.DATETIMEUPDATED = DateTime.Now;
 
-                            // log changes
-                            context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG
-                            {
-                                //LOANAPPLICATIONID = item.LOANAPPLICATIONID,
-                                LOANAPPLICATIONDETAILID = changed.detailId,
-                                APPROVEDPRODUCTID = (short)changed.productId,
-                                APPROVEDTENOR = changed.tenor,
-                                APPROVEDINTERESTRATE = changed.interestRate,
-                                APPROVEDAMOUNT = changed.amount,
-                                EXCHANGERATE = changed.exchangeRate,
-                                STATUSID = (short)changed.statusId,
-                                CREATEDBY = model.createdBy,
-                                DATETIMECREATED = applicationDate,
-                                SYSTEMDATETIME = DateTime.Now,
-                                //CUSTOMERID = item.CUSTOMERID,
-                            });
-                        }
+                        // log changes
+                        context.TBL_LOAN_APPLICATION_DETL_LOG.Add(new TBL_LOAN_APPLICATION_DETL_LOG
+                        {
+                            //LOANAPPLICATIONID = item.LOANAPPLICATIONID,
+                            LOANAPPLICATIONDETAILID = changed.detailId,
+                            APPROVEDPRODUCTID = (short)changed.productId,
+                            APPROVEDTENOR = changed.tenor,
+                            APPROVEDINTERESTRATE = changed.interestRate,
+                            APPROVEDAMOUNT = changed.amount,
+                            EXCHANGERATE = changed.exchangeRate,
+                            STATUSID = (short)changed.statusId,
+                            CREATEDBY = model.createdBy,
+                            DATETIMECREATED = applicationDate,
+                            SYSTEMDATETIME = DateTime.Now,
+                            //CUSTOMERID = item.CUSTOMERID,
+                        });
                     }
-                    var approvedAmount = items.Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
-                    appl.APPROVEDAMOUNT = approvedAmount;
                 }
+                var approvedAmount = items.Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
+                appl.APPROVEDAMOUNT = approvedAmount;
             }
 
             // Audit Section ---------------------------
@@ -444,12 +438,6 @@ namespace FintrakBanking.Repositories.Credit
 
             if (grant != null)
             {
-                //return new PrivilegeViewModel
-                //{
-                //userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList()
-                //userApprovalLevelIds = grants.Select(x => x.APPROVALLEVELID).ToList()
-                //};
-
                 grant.userApprovalLevelIds = grants.Select(x => x.approvalLevelId).ToList();
                 return grant;
             }
@@ -507,7 +495,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationDetailLogViewModel> GetLoanDetailChangeLog(int applicationId)
         {
             var details = context.TBL_LOAN_APPLICATION_DETL_LOG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
-                .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a,b })
+                .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a, b })
                 .Select(x => new LoanApplicationDetailLogViewModel
                 {
                     loanApplicationDetailId = x.a.LOANAPPLICATIONDETAILID,
@@ -620,7 +608,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
                             customerId = x.a.CUSTOMERID,
                             branchId = x.a.BRANCHID,
-                            //productClassId = x.a.tbl_Product.ProductClassId,
+                            productClassId = x.a.PRODUCTCLASSID,
                             //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                             customerGroupId = x.a.CUSTOMERGROUPID,
                             loanTypeId = x.a.LOANTYPEID,
@@ -658,7 +646,6 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                             //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
                             operationId = x.a.OPERATIONID,
-                            productClassId = x.a.PRODUCTCLASSID,
                         })
                         .GroupBy(d => d.loanApplicationId)
                         .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
@@ -670,9 +657,9 @@ namespace FintrakBanking.Repositories.Credit
             var staffApprovalLevelIds = context.TBL_APPROVAL_LEVEL_STAFF
                 .Where(x => x.DELETED == false && x.STAFFID == staffId).Select(x => x.APPROVALLEVELID);
 
-                   
-            var pendingApplications = context.TBL_LOAN_APPLICATION.Where(x => 
-                                                                        camStages.Contains(x.APPLICATIONSTATUSID) 
+
+            var pendingApplications = context.TBL_LOAN_APPLICATION.Where(x =>
+                                                                        camStages.Contains(x.APPLICATIONSTATUSID)
                                                                         && (x.BRANCHID == branchId || isHeadOffice)
                                                                       ) // --- branch filter
                 .Join(context.TBL_APPROVAL_TRAIL,
@@ -709,7 +696,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
                 customerId = x.a.CUSTOMERID,
                 branchId = x.a.BRANCHID,
-                //productClassId = x.a.tbl_Product.ProductClassId,
+                productClassId = x.a.PRODUCTCLASSID,
                 //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                 customerGroupId = x.a.CUSTOMERGROUPID,
                 loanTypeId = x.a.LOANTYPEID,
@@ -746,7 +733,6 @@ namespace FintrakBanking.Repositories.Credit
                 loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                 //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
                 operationId = x.a.OPERATIONID,
-                productClassId = x.a.PRODUCTCLASSID,
             })
             .OrderByDescending(x => x.applicationDate)
             .ThenByDescending(x => x.loanApplicationId)
@@ -804,10 +790,10 @@ namespace FintrakBanking.Repositories.Credit
             // init
             workflow.OperationId = operationId;
             workflow.TargetId = model.applicationId;
-            workflow.CompanyId = 1;//appl.companyId;
+            workflow.CompanyId = appl.COMPANYID;
 
-            //workflow.ProductClassId = model.productClassId;
-            //workflow.ProductId = model.productId;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            //workflow.ProductId = appl.PRODUCTID; 
 
             workflow.Amount = appl.APPROVEDAMOUNT;
             workflow.InvestmentGrade = appl.ISINVESTMENTGRADE;
@@ -835,7 +821,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
             }
 
-            var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDUM.FirstOrDefault(x=>x.LOANAPPLICATIONID == model.applicationId);
+            var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDUM.FirstOrDefault(x => x.LOANAPPLICATIONID == model.applicationId);
 
             if (memo != null)
             {
@@ -872,7 +858,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var branches = context.TBL_BRANCH.Where(x => x.REGIONID == region.REGIONID).Select(x => x.BRANCHID);
 
-            var applications = context.TBL_LOAN_APPLICATION.Where(x => branches.Contains(x.BRANCHID) 
+            var applications = context.TBL_LOAN_APPLICATION.Where(x => branches.Contains(x.BRANCHID)
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                     && x.SUBMITTEDFORAPPRAISAL == true
@@ -900,12 +886,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user)
         {
+            bool isHeadOffice = (user.BranchId == 1) ? true : false;
+
             var applications = context.TBL_LOAN_APPLICATION.Where(x =>
                 x.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased
+                && (x.BRANCHID == user.BranchId || isHeadOffice) // branch filter
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                 && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
-                && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CAMInProgress
-            ).SelectMany(x => x.TBL_LOAN_APPLICATION_DETAIL);
+            );
 
             var productClasses = context.TBL_PRODUCT_CLASS
                     .Where(x => x.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased)
@@ -919,13 +907,12 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     productClassId = item.PRODUCTCLASSID,
                     productClassName = item.PRODUCTCLASSNAME,
-                    pendingNumber = applications.Count(x => x.TBL_LOAN_APPLICATION.PRODUCTCLASSID == item.PRODUCTCLASSID),
+                    pendingNumber = applications.Where(x => x.PRODUCTCLASSID == item.PRODUCTCLASSID).Count(),
                 });
             }
 
             return result;
         }
-
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplicationsClass(int countryId, int branchId, int staffId, int? classId)
         {
             int operationId = (int)OperationsEnum.CAM;
@@ -941,9 +928,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 return context.TBL_LOAN_APPLICATION.Where(x =>
                     (x.BRANCHID == branchId || isHeadOffice) // branch filter
-                    && x.DELETED == false
+                    && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                    && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                     && x.PRODUCTCLASSID == (short)classId
-                    && camStages.Contains(x.APPLICATIONSTATUSID)
+                    //&& camStages.Contains(x.APPLICATIONSTATUSID)
                 )
                     .GroupJoin(
                         context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),
@@ -959,7 +947,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
                             customerId = x.a.CUSTOMERID,
                             branchId = x.a.BRANCHID,
-                            //productClassId = x.a.tbl_Product.ProductClassId,
+                            productClassId = x.a.PRODUCTCLASSID,
                             //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
                             customerGroupId = x.a.CUSTOMERGROUPID,
                             loanTypeId = x.a.LOANTYPEID,
@@ -997,28 +985,14 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                             //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
                             operationId = x.a.OPERATIONID,
-                            productClassId = x.a.PRODUCTCLASSID,
-                        })
-                        .GroupBy(d => d.loanApplicationId)
-                        .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                        .OrderByDescending(x => x.applicationDate)
-                        .ThenByDescending(x => x.loanApplicationId)
-                        ;
+                    })
+                    .GroupBy(d => d.loanApplicationId)
+                    .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
+                    .OrderByDescending(x => x.applicationDate)
+                    .ThenByDescending(x => x.loanApplicationId)
+                    ;
 
         }
-
-        //public IEnumerable<ApprovalLevelStaffViewModel> GetNextLevelStaff(int staffId, int operationId)//, int? productClassId)
-        //{
-        //    //var staff = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId)
-        //    //    .Join(context.TBL_APPROVAL_LEVEL, s => s.APPROVALLEVELID, l => l.APPROVALLEVELID, (s, l) => new { s, l })
-        //    //    .Join(context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId /*&& x.PRODUCTCLASSID == productClassId*/), sl => sl.l.GROUPID, m => m.GROUPID, (sl, m) => new { sl, m })
-        //    //    ;
-
-        //    //var staffLevelId = staff.Select(x => x.sl.l.APPROVALLEVELID).FirstOrDefault();
-
-        //    var ids = context.TBL_STAFF_.Where(x=>x.TBL_DEPARTMENT_UNIT)
-        //}
-
 
     }
 }

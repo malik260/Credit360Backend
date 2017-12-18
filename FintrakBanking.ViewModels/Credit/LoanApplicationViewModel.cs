@@ -21,7 +21,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
 
         public short? branchId { get; set; }
-        public short productClassId { get; set; }
+        public short? productClassId { get; set; }
         public string productClassName { get; set; }
         public short productId { get; set; }
         public int? customerGroupId { get; set; }
@@ -57,6 +57,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short subSectorId { get; set; }
         public int sectorId { get; set; }
+        public string sectorName { get; set; }
         public bool isInvestmentGrade { set; get; }
         public string customerName { get; set; }
         public string branchName { get; set; }
@@ -212,9 +213,13 @@ namespace FintrakBanking.ViewModels.Credit
 
         public List<LoanApplicationDetailInvoiceViewModel> invoiceDiscountDetail { get; set; }
 
+        public List<EducationLoanViewModel> firstEducationtDetail { get; set; }
+
+        public List<TraderLoanViewModel> firstTradderDetail { get; set; }
+
     }
 
-    public partial class LoanApplicationDetailInvoiceViewModel
+    public class LoanApplicationDetailInvoiceViewModel
     {
         public int invoiceId { get; set; }
 
@@ -321,6 +326,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalPreviousTermSchoolFees { get; set; }
 
         public decimal productClassId { get; set; }
+        public string productClassName { get; set; }
 
 }
 
