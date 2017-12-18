@@ -498,7 +498,8 @@ namespace FintrakBanking.Repositories.Credit
                 //}
                 if (loan.LoanApplicationDetail.Count > 0)
                 {
-                    LoanApplicationDetail(loan.LoanApplicationDetail);
+                   
+                    LoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
                 }
 
                 if (isGroupLoan)
@@ -600,10 +601,11 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETAIL_INV.AddRange(data);
         }
 
-        private void LoanApplicationDetail(List<LoanApplicationDetailViewModel> entity)
+        private void LoanApplicationDetail(List<LoanApplicationDetailViewModel> entity, int createdBy)
         {
             foreach(var a in entity)
             {
+
                 var data = new TBL_LOAN_APPLICATION_DETAIL
                 {
                     APPROVEDAMOUNT = a.proposedAmount,
@@ -623,7 +625,7 @@ namespace FintrakBanking.Repositories.Credit
                     PROPOSEDTENOR = (a.proposedTenor * 365) / 12, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
                     SUBSECTORID = a.subSectorId,
-                    CREATEDBY = a.createdBy,
+                    CREATEDBY = createdBy,
                     DATETIMECREATED = DateTime.Now,
                     LOANPURPOSE = a.loanPurpose
                 };
@@ -633,16 +635,16 @@ namespace FintrakBanking.Repositories.Credit
                 if (a.invoiceDetails.Any() && a.productClassId == 6)
                 {
                     
-                    InvoiceDetails(a.invoiceDetails,   a.createdBy);
+                    InvoiceDetails(a.invoiceDetails,   createdBy);
                 }
                 if (a.educationLoan != null && a.productClassId == 7)
                 {
-                    EducationLoan(a.educationLoan, a.loanApplicationDetailId, a.createdBy);
+                    EducationLoan(a.educationLoan, a.loanApplicationDetailId,createdBy);
                 }
 
                 if (a.traderLoan != null && a.productClassId == 8)
                 {
-                    TradderLoan(a.traderLoan, a.loanApplicationDetailId,   a.createdBy);
+                    TradderLoan(a.traderLoan, a.loanApplicationDetailId,  createdBy);
                 }
 
 

@@ -69,6 +69,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("currency-by-product/{id}")]
+        public HttpResponseMessage GetProductCurrency(int id)
+        {
+            try
+            {
+                var data = repo.GetProductCurrency(id).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         #region Product Group
 
         [HttpGet]
