@@ -434,7 +434,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                     APPLICATIONAMOUNT = loan.proposedAmount,
-                    APPLICATIONTENOR = Convert.ToInt32(Math.Round(((decimal)(loan.proposedTenor / 12) * (decimal)365))),
+                    APPLICATIONTENOR =  (loan.proposedTenor * 365) / 12, //Convert.ToInt32(Math.Round(((decimal)(loan.proposedTenor / 12) * (decimal)365))),
                     ISINVESTMENTGRADE = loan.isInvestmentGrade,
                     LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
                     CUSTOMERID = loan.customerId,
@@ -449,7 +449,8 @@ namespace FintrakBanking.Repositories.Credit
                 //}
                 if (loan.LoanApplicationDetail.Count > 0)
                 {
-                    LoanApplicationDetail(loan.LoanApplicationDetail);
+                   
+                    LoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
                 }
 
                 if (isGroupLoan)
@@ -551,16 +552,17 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETAIL_INV.AddRange(data);
         }
 
-        private void LoanApplicationDetail(List<LoanApplicationDetailViewModel> entity)
+        private void LoanApplicationDetail(List<LoanApplicationDetailViewModel> entity, int createdBy)
         {
             foreach(var a in entity)
             {
+
                 var data = new TBL_LOAN_APPLICATION_DETAIL
                 {
                     APPROVEDAMOUNT = a.proposedAmount,
                     APPROVEDINTERESTRATE = a.proposedInterestRate,
                     APPROVEDPRODUCTID = a.proposedProductId,
-                    APPROVEDTENOR = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                    APPROVEDTENOR = (a.proposedTenor * 365) / 12, //  DateTime.Now.AddMonths(a.proposedTenor),//Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
                     EXCHANGERATE = a.exchangeRate,
                     CURRENCYID = a.currencyId,
@@ -571,10 +573,10 @@ namespace FintrakBanking.Repositories.Credit
                     PROPOSEDAMOUNT = a.proposedAmount,
                     PROPOSEDINTERESTRATE = a.proposedInterestRate,
                     PROPOSEDPRODUCTID = a.proposedProductId,
-                    PROPOSEDTENOR = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                    PROPOSEDTENOR = (a.proposedTenor * 365) / 12,//Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
                     SUBSECTORID = a.subSectorId,
-                    CREATEDBY = a.createdBy,
+                    CREATEDBY = createdBy,
                     DATETIMECREATED = DateTime.Now,
                     LOANPURPOSE = a.loanPurpose
                 };
@@ -584,16 +586,16 @@ namespace FintrakBanking.Repositories.Credit
                 if (a.invoiceDetails.Any() && a.productClassId == 6)
                 {
                     
-                    InvoiceDetails(a.invoiceDetails,   a.createdBy);
+                    InvoiceDetails(a.invoiceDetails,   createdBy);
                 }
                 if (a.educationLoan != null && a.productClassId == 7)
                 {
-                    EducationLoan(a.educationLoan, a.loanApplicationDetailId, a.createdBy);
+                    EducationLoan(a.educationLoan, a.loanApplicationDetailId,createdBy);
                 }
 
                 if (a.traderLoan != null && a.productClassId == 8)
                 {
-                    TradderLoan(a.traderLoan, a.loanApplicationDetailId,   a.createdBy);
+                    TradderLoan(a.traderLoan, a.loanApplicationDetailId,  createdBy);
                 }
 
 
