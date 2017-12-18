@@ -655,7 +655,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                             //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
                             operationId = x.a.OPERATIONID,
-                            productClassId = x.a.PRODUCTCLASSID,
+                            productClassId = (short)x.a.PRODUCTCLASSID,
                         })
                         .GroupBy(d => d.loanApplicationId)
                         .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
@@ -743,7 +743,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                 //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
                 operationId = x.a.OPERATIONID,
-                productClassId = x.a.PRODUCTCLASSID,
+                productClassId = (short)x.a.PRODUCTCLASSID,
             })
             .OrderByDescending(x => x.applicationDate)
             .ThenByDescending(x => x.loanApplicationId)
@@ -996,7 +996,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
                             //customerName = x.a.CustomerId.HasValue ? x.a.tbl_Customer.FirstName + " " + x.a.tbl_Customer.MiddleName + " " + x.a.tbl_Customer.LastName : "",
                             operationId = x.a.OPERATIONID,
-                            productClassId = x.a.PRODUCTCLASSID,
+                            productClassId = (short)x.a.PRODUCTCLASSID,
                         })
                         .GroupBy(d => d.loanApplicationId)
                         .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())

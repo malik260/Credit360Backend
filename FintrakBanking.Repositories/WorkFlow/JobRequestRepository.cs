@@ -11,6 +11,7 @@ using System.Linq;
 using FintrakBanking.ViewModels.Setups.Approval;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Entities.DocumentModels;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -39,6 +40,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 JOBREQUESTCODE = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
                 JOBTYPEID = model.jobTypeId,
+                JOB_TITLE = model.requestTitle,
                 SENDERSTAFFID = model.createdBy,
                 RECEIVERSTAFFID = model.receiverStaffId,
                 DEPARTMENTID = model.departmentId,
@@ -89,6 +91,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 JOBREQUESTCODE = model.jobRequestCode,
                 JOBTYPEID = model.jobTypeId,
+                JOB_TITLE = model.requestTitle,
                 SENDERSTAFFID = model.createdBy,
                 RECEIVERSTAFFID = model.receiverStaffId == 0 ? null : model.receiverStaffId,
                 DEPARTMENTID = model.departmentId,
@@ -268,7 +271,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                      new JobRequestViewModel
                      {
                     jobRequestId = x.JOBREQUESTID,
-                    requestTitle = "", // x.REQUESTTITLE,
+                    requestTitle = x.JOB_TITLE,
                     jobRequestCode = x.JOBREQUESTCODE,
                     targetId = x.TARGETID,
                     jobTypeId = x.JOBTYPEID,
@@ -320,6 +323,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobRequestId = data.JOBREQUESTID,
                 jobRequestCode = data.JOBREQUESTCODE,
                 jobTypeId = data.JOBTYPEID,
+                requestTitle = data.JOB_TITLE,
                 senderStaffId = data.SENDERSTAFFID,
                 receiverStaffId = (int)data.RECEIVERSTAFFID,
                 reassignedTo = data.REASSIGNEDTO,
@@ -531,7 +535,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool AddJobDocument(RequestDocumentViewModel model, byte[] file)
         {
-            var data = new TBL_MEDIA_JOB_REQUEST_DOCUMENTS
+            var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENTS
             {
                 FILEDATA = file,
                 //LoanApplicationNumber = model.targetId,
