@@ -843,7 +843,7 @@ namespace FintrakBanking.Repositories.Credit
                            where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                            select b.PRODUCTCLASSID).FirstOrDefault();
 
-            if (details == (short)ProductClassEnum.InvoiceDiscounting)
+            if (details == (short)ProductClassEnum.InvoiceDiscountingFacility)
             {
                 var inv = (from a in context.TBL_LOAN_APPLICATION_DETAIL_INV
                            where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
@@ -861,11 +861,11 @@ namespace FintrakBanking.Repositories.Credit
                                contractStartDate = a.CONTRACT_STARTDATE,
                                contractEndDate = a.CONTRACT_ENDDATE,
                                approvalStatusId = a.APPROVALSTATUSID,
-                               productClassId = (int)ProductClassEnum.InvoiceDiscounting
+                               productClassId = (int)ProductClassEnum.InvoiceDiscountingFacility
                            }).ToList();
                 return inv;
             }
-            else if (details == (short)ProductClassEnum.FirstTradder)
+            else if (details == (short)ProductClassEnum.FirstTrader)
             {
                 var trader = (from tra in context.TBL_LOAN_APPLICATION_DETAIL_TRA
                               where tra.LOANAPPLICATIONDETAILID == loanApplicationDetailId
@@ -876,7 +876,7 @@ namespace FintrakBanking.Repositories.Credit
                                   marketId = tra.MARKETID,
                                   marketName = tra.TBL_LOAN_MARKET.MARKETNAME,
                                   averageMonthlyTurnover = tra.AVERAGE_MONTHLY_TURNOVER,
-                                  productClassId = (int)ProductClassEnum.FirstTradder
+                                  productClassId = (int)ProductClassEnum.FirstTrader
                               }).ToList();
                 return trader;
             }
