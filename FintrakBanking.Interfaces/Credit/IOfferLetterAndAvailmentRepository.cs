@@ -11,11 +11,11 @@ namespace FintrakBanking.Interfaces.Credit
     {
         bool UpdateLoanApplicationStatus(string applicationRefNumber, short applicationStatusId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId);
+        IQueryable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId);
+        IQueryable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId);
 
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int staffId, int companyId);
+        IQueryable<CamProcessedLoanViewModel> GetApplicationsDueForOfferLetterGeneration(int staffId, int companyId);
 
         OfferLetterTemplateViewModel GenerateOfferLetterTemplate(string applicationRefNumber);
 
@@ -41,6 +41,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity);
 
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId);
+        IQueryable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId);
     }
 }

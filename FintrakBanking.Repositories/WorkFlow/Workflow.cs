@@ -136,6 +136,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             SetState();
 
+            SetReroute();
+
             this.applicationDate = GetApplicationDate();
 
             if (request != null)
@@ -489,6 +491,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.statusId = (int)ApprovalStatusEnum.Approved;
                 this.EndProcess(this.statusId);
             }
+        }
+
+        private void SetReroute()
+        {
+            if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.nextLevelId = this.fromLevelId; }
         }
 
         private bool ActionIsApprovalDecision()
