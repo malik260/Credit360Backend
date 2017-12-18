@@ -434,7 +434,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                     APPLICATIONAMOUNT = loan.proposedAmount,
-                    APPLICATIONTENOR = Convert.ToInt32(Math.Round(((decimal)(loan.proposedTenor / 12) * (decimal)365))),
+                    APPLICATIONTENOR = (loan.proposedTenor * 365) / 12,
                     ISINVESTMENTGRADE = loan.isInvestmentGrade,
                     LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
                     CUSTOMERID = loan.customerId,
@@ -560,7 +560,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = a.proposedAmount,
                     APPROVEDINTERESTRATE = a.proposedInterestRate,
                     APPROVEDPRODUCTID = a.proposedProductId,
-                    APPROVEDTENOR = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                    APPROVEDTENOR = (a.proposedTenor * 365) / 12, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
                     EXCHANGERATE = a.exchangeRate,
                     CURRENCYID = a.currencyId,
@@ -571,7 +571,7 @@ namespace FintrakBanking.Repositories.Credit
                     PROPOSEDAMOUNT = a.proposedAmount,
                     PROPOSEDINTERESTRATE = a.proposedInterestRate,
                     PROPOSEDPRODUCTID = a.proposedProductId,
-                    PROPOSEDTENOR = Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                    PROPOSEDTENOR = (a.proposedTenor * 365) / 12, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
                     SUBSECTORID = a.subSectorId,
                     CREATEDBY = a.createdBy,
