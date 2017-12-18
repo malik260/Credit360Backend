@@ -6,16 +6,15 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("credit.TBL_LOAN_REVOLVING")]
-    public partial class TBL_LOAN_REVOLVING
+    [Table("credit.TBL_LOAN_REVOLVING_ARCHIVE")]
+    public partial class TBL_LOAN_REVOLVING_ARCHIVE
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_LOAN_REVOLVING()
-        {
-            TBL_LOAN_REVOLVING_ARCHIVE = new HashSet<TBL_LOAN_REVOLVING_ARCHIVE>();
-        }
-
         [Key]
+        public int REVOLVINGLOAN_ARCHIVE_ID { get; set; }
+
+        [Column(TypeName = "date")]
+        public DateTime ARCHIVEDATE { get; set; }
+
         public int REVOLVINGLOANID { get; set; }
 
         public int CUSTOMERID { get; set; }
@@ -158,8 +157,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE1 { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_REVOLVING_ARCHIVE> TBL_LOAN_REVOLVING_ARCHIVE { get; set; }
+        public virtual TBL_LOAN_REVOLVING TBL_LOAN_REVOLVING { get; set; }
 
         public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
 

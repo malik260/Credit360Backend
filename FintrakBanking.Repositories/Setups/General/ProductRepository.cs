@@ -151,7 +151,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         select new LookupViewModel()
                         {
                             lookupId = (short)p.CURRENCYID,
-                            lookupName =   p.TBL_PRODUCT.PRODUCTNAME
+                            lookupName = $"{ p.TBL_CURRENCY.CURRENCYNAME} -- { p.TBL_CURRENCY.CURRENCYCODE}"  
                         });
 
             return data;
