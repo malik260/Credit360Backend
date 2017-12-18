@@ -4,9 +4,11 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels.Credit;
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
@@ -30,11 +32,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum/approved-loans")]
-        public HttpResponseMessage GetCamProcessedLoanApplications()
+        public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForOfferLetter()
         {
             try
             {
-                var response = olAvlmentRepo.GetApplicationsDueForOfferLetterGeneration(token.GetStaffId, token.GetCompanyId).ToList();
+                var response = await olAvlmentRepo.GetApplicationsDueForOfferLetterGeneration(token.GetStaffId, token.GetCompanyId).ToListAsync();
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
@@ -48,34 +50,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("loan-application/send-for-availment/{applicationRefNumber}/statusId/{applicationStatusId}")]
-        public HttpResponseMessage UpdateApplicationStatus(int applicationRefNumber, short applicationStatusId)
-        {
-            try
-            {
-                var response = olAvlmentRepo.UpdateLoanApplicationStatus(applicationRefNumber.ToString(), applicationStatusId);
-
-                if (!response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "record not updated successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "record updated successfully" });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
-            }
-        }
-
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum/due-for-review")]
-        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForReview()
+        public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForReview()
         {
             try
             {
-                var response = olAvlmentRepo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToList();
+                var response = await olAvlmentRepo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToListAsync();
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
@@ -91,11 +72,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum/due-for-availment")]
-        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForAvailment()
+        public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForAvailment()
         {
             try
             {
-                var response = olAvlmentRepo.GetApplicationsDueForAvailment(token.GetStaffId, token.GetCompanyId).ToList();
+                var response = await olAvlmentRepo.GetApplicationsDueForAvailment(token.GetStaffId, token.GetCompanyId).ToListAsync();
 
                 if (!response.Any())
                 {
@@ -112,11 +93,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum/under-review")]
-        public HttpResponseMessage GetCamProcessedApplicationsUnderReview()
+        public async Task<HttpResponseMessage> GetCamProcessedApplicationsUnderReview()
         {
             try
             {
-                var response = olAvlmentRepo.GetApplicationsUnderForReview(token.GetCompanyId).ToList();
+                var response = await olAvlmentRepo.GetApplicationsUnderForReview(token.GetCompanyId).ToListAsync();
 
                 if (!response.Any())
                 {
@@ -124,6 +105,27 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [Route("loan-application/applicationRef/{applicationRefNumber}/statusId/{applicationStatusId}")]
+        public HttpResponseMessage UpdateApplicationStatus([FromUri] string applicationRefNumber, [FromUri] short applicationStatusId)
+        {
+            try
+            {
+                var response = olAvlmentRepo.UpdateLoanApplicationStatus(applicationRefNumber.Trim(), applicationStatusId);
+
+                if (!response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "record not updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "record updated successfully" });
             }
             catch (Exception e)
             {

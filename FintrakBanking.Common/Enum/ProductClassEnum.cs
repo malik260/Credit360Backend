@@ -13,9 +13,9 @@ namespace FintrakBanking.Common.Enum
         Retail = 3,
         Individual = 4,
         CashBackedOnly = 5,
-        InvoiceDiscounting = 6,
+        InvoiceDiscountingFacility = 6,
         FirstEdu = 7,
-        FirstTradder = 8,
+        FirstTrader = 8,
         ImportFinance = 9,
         BondAndGuarantees = 10
     }
