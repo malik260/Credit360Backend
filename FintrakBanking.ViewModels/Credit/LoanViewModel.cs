@@ -179,12 +179,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public short productId { get; set; }
         public int casaAccountId { get; set; }
+        public int? casaAccountId2  { get; set; }
         public short branchId { get; set; }
         public short currencyId { get; set; }
         public double exchangeRate { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         public string loanReferenceNumber { get; set; }
+        public string relatedLoanReferenceNumber  { get; set; }
         public short subSectorId { get; set; }
         public int relationshipOfficerId { get; set; }
         public int relationshipManagerId { get; set; }
@@ -196,6 +198,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime bookingDate { get; set; }
         public decimal overdraftLimit { get; set; }
         public decimal approvedAmount { get; set; }
+        public decimal? disbursedAmount { get; set; }
+        public decimal? interestAmount { get; set; }
         public int approvalStatusId { get; set; }
         public string approvedBy { get; set; }
         public string approverComment { get; set; }
