@@ -223,6 +223,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public List<TraderLoanViewModel> firstTradderDetail { get; set; }
 
+        public List<CollateralViewModel> loanCollateral { get; set; }
     }
 
     public class LoanApplicationDetailInvoiceViewModel
