@@ -120,7 +120,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string productClassName { get; set; }
         public short productClassTypeId { get; set; }
     }
-
+    public class ValidateDataViewModel
+    {
+        public int productId { get; set; }
+        public DateTime date { get; set; }
+        public int? dayInterval { get; set;}
+        public bool InvoiceStatus { get; set; }
+    }
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
         public LoanApplicationDetailViewModel()

@@ -932,5 +932,22 @@ namespace FintrakBanking.Repositories.Credit
            }
             return null;
         }
+
+
+        public ValidateDataViewModel ValidateDocumentDate(ValidateDataViewModel data)
+        {
+
+            var dat = context.TBL_PRODUCT.Where(c => c.PRODUCTID == data.productId).FirstOrDefault();
+            int days = DateTime.Now.Subtract(data.date).Days;
+            return new ValidateDataViewModel
+            {
+                dayInterval = dat.EXPIRYPERIOD,
+                InvoiceStatus = (days >= 0 && dat.EXPIRYPERIOD >= days) ? true : false,
+            };
+
+        }
+
+      
+
     }
 }

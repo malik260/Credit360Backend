@@ -674,5 +674,21 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+ 
+          [HttpPost]
+        [Route("loan-validate-document-date")]
+        public HttpResponseMessage ValidateDocumentDate([FromBody] ValidateDataViewModel data)
+        {
+            try
+            {
+                var response = repoApply.ValidateDocumentDate( data);                
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
 }
