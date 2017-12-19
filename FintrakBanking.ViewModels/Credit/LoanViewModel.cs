@@ -357,7 +357,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanDetails { get; set; }
         public string camReference { get; set; }
         public List<CasaViewModel> customerAccounts { get; set; }
-        public int appraisalMemorandumId { get; set; }
+        public int? appraisalMemorandumId { get; set; }
         public int? casaAccountId { get; set; }
         public string loanStatusName { get; set; }
         public string sectorName { get; set; }
@@ -383,9 +383,11 @@ namespace FintrakBanking.ViewModels.Credit
 
         public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
         public List<LoanGuarantorViewModel> loanGuarantor { get; set; }
+        public List<LoanApplicationCollateralViewModel> loanApplicationCollateral { get; set; }
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         public CustomerCompanyInfomationViewModels companyInformation { get; set; }
         public List<CamDocumentViewModel> camDocuments { get; set; }
+        public short productClassProcessId { get; set; }
 
         //......End f Loan Relational Table View Mapping Models......//
     }

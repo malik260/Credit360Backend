@@ -145,6 +145,21 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
+        public IEnumerable<LookupViewModel> GetProductCurrency(int productId)
+        {
+            var data = (from p in context.TBL_PRODUCT_CURRENCY where p.PRODUCTID ==  productId
+                        select new LookupViewModel()
+                        {
+                            lookupId = (short)p.CURRENCYID,
+                            lookupName = p.TBL_CURRENCY.CURRENCYNAME + " " + p.TBL_CURRENCY.CURRENCYCODE,
+                        });
+
+            return data;
+        }
+
+
+
+
         #region Product Group
         public IEnumerable<ProductGroupViewModel> GetAllProductGroup()
         {

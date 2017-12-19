@@ -31,7 +31,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-            var data = new TBL_MEDIA_LOAN_DOCUMENTS
+            var data = new Entities.DocumentModels.TBL_MEDIA_LOAN_DOCUMENTS
             {
                 FILEDATA = file,
                 LOANAPPLICATIONNUMBER = model.loanApplicationNumber,

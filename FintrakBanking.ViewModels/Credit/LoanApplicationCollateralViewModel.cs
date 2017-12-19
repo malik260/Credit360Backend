@@ -4,7 +4,6 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public   class LoanApplicationCollateralViewModel : GeneralEntity
     {
-       
 
         public string collateralReferenceNumber { get; set; }         
 
@@ -25,6 +24,12 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanAppCollateralId { get; set; }
 
         public double haircut { get; set; }
+
+        public bool allowSharing { get; set; }
+
+        public int? valuationCycle { get; set; }
+
+        public string currencyCode { get; set; }
     }
 
 
