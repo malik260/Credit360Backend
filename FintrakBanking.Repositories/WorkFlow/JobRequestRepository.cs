@@ -242,7 +242,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             productClassName = a.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             relationshipOfficerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPOFFICERID,
                             relationshipManagerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPMANAGERID,
-                            invoiceDiscountDetail = (from i in context.TBL_LOAN_APPLICATION_DETAIL_INV.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                            invoiceDiscountDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                      select new LoanApplicationDetailInvoiceViewModel
                                                      {
                                                          approvalComment = i.APPROVAL_COMMENT,
@@ -258,18 +258,18 @@ namespace FintrakBanking.Repositories.WorkFlow
                                                          principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
                                                          principalId = i.PRINCIPALID,
                                                      }).ToList(),
-                            firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETAIL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                            firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                      select new EducationLoanViewModel
                                                      {
                                                          educationId = i.EDUCATIONID,
                                                          loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
                                                          numberOfStudent = i.NUMBER_OF_STUDENTS,
                                                          averageSchoolFees = i.AVERAGE_SCHOOL_FEES,
-                                                         totalPreviousTermSchoolFees = i.TOTAL_PREVIOUS_TERM_SCHOOL_FEES,
+                                                         totalPreviousTermSchoolFees = i.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
                                                          productClassId = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == i.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSID,
                                                          productClassName = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == i.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSNAME,
                                                      }).ToList(),
-                            firstTradderDetail = (from i in context.TBL_LOAN_APPLICATION_DETAIL_TRA.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                            firstTradderDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_TRA.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                                   select new TraderLoanViewModel
                                                   {
                                                       tradderId = i.TRADDERID,
@@ -279,7 +279,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                                       loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
                                                       //productClassId = i.
                                                   }).ToList(),
-                            loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATERAL.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                            loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                               select new CollateralViewModel
                                               {
                                                   allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
@@ -611,7 +611,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<JobRequestStatusFeedbackViewModel> GetJobRequestStatusFeedback(short statusId, short jobTypeId)
         {
-            return this.context.TBL_JOB_REQUEST_STATUS_FEEDBACK.Select(x => new JobRequestStatusFeedbackViewModel
+            return this.context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Select(x => new JobRequestStatusFeedbackViewModel
             {
                 jobTypeId = x.JOBTYPEID,
                 jobStatusFeedbackId = x.JOB_STATUS_FEEDBACKID,

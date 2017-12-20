@@ -54,7 +54,7 @@ namespace FintrakBanking.Repositories.Credit
 
             bool output = false;
 
-            var penRecord = new TBL_LOAN_PRELIMINARY_EVALUATION()
+            var penRecord = new TBL_LOAN_PRELIMINARY_EVALUATN()
             {
                 PRELIMINARYEVALUATIONCODE = GeneratePENCode(),
                 BANKROLE = model.bankRole,
@@ -78,7 +78,7 @@ namespace FintrakBanking.Repositories.Credit
                 PROJECTFINANCINGPLAN = model.projectFinancingPlan,
                 PROPOSEDTERMSANDCONDITIONS = model.proposedTermsAndConditions,
                 RISKSANDCONCERNS = model.risksAndConcerns,
-                PRUDENT_EXPOSUR_LIMIT_IMPLICATN = model.prudentialExposureLimitImplications,
+                PRUDENT_EXPOSUR_LIMIT_IMPLCATN = model.prudentialExposureLimitImplications,
                 RELATIONSHIPMANAGERID = model.relationshipManagerId,
                 RELATIONSHIPOFFICERID = model.relationshipOfficerId,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-                    context.TBL_LOAN_PRELIMINARY_EVALUATION.Add(penRecord);
+                    context.TBL_LOAN_PRELIMINARY_EVALUATN.Add(penRecord);
                     context.TBL_AUDIT.Add(auditRecord);
 
                     output = await SaveAllAsync();
@@ -179,11 +179,11 @@ namespace FintrakBanking.Repositories.Credit
 
             List<string> groupPenCodes = new List<string>();
 
-            TBL_LOAN_PRELIMINARY_EVALUATION penRecord = new TBL_LOAN_PRELIMINARY_EVALUATION();
+            TBL_LOAN_PRELIMINARY_EVALUATN penRecord = new TBL_LOAN_PRELIMINARY_EVALUATN();
 
             foreach (var item in model)
             {
-                penRecord = new TBL_LOAN_PRELIMINARY_EVALUATION()
+                penRecord = new TBL_LOAN_PRELIMINARY_EVALUATN()
                 {
                     PRELIMINARYEVALUATIONCODE = GeneratePENCode(),
                     BANKROLE = item.bankRole,
@@ -206,7 +206,7 @@ namespace FintrakBanking.Repositories.Credit
                     PROJECTFINANCINGPLAN = item.projectFinancingPlan,
                     PROPOSEDTERMSANDCONDITIONS = item.proposedTermsAndConditions,
                     RISKSANDCONCERNS = item.risksAndConcerns,
-                    PRUDENT_EXPOSUR_LIMIT_IMPLICATN = item.prudentialExposureLimitImplications,
+                    PRUDENT_EXPOSUR_LIMIT_IMPLCATN = item.prudentialExposureLimitImplications,
                     RELATIONSHIPMANAGERID = item.relationshipManagerId,
                     RELATIONSHIPOFFICERID = item.relationshipOfficerId,
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -219,7 +219,7 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTCLASSID = item.productClassId
                 };
 
-                context.TBL_LOAN_PRELIMINARY_EVALUATION.Add(penRecord);
+                context.TBL_LOAN_PRELIMINARY_EVALUATN.Add(penRecord);
 
                 groupPenCodes.Add(penRecord.PRELIMINARYEVALUATIONCODE);
 
@@ -295,7 +295,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GeneratePENCode()
         {
-            var data = this.context.TBL_LOAN_PRELIMINARY_EVALUATION.Count();
+            var data = this.context.TBL_LOAN_PRELIMINARY_EVALUATN.Count();
             int counter = data + 1;
             var penCode = string.Empty;
 
@@ -326,7 +326,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var data = (from pen in context.TBL_LOAN_PRELIMINARY_EVALUATION
+            var data = (from pen in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on pen.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on pen.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Credit
                             projectFinancingPlan = pen.PROJECTFINANCINGPLAN,
                             proposedTermsAndConditions = pen.PROPOSEDTERMSANDCONDITIONS,
                             risksAndConcerns = pen.RISKSANDCONCERNS,
-                            prudentialExposureLimitImplications = pen.PRUDENT_EXPOSUR_LIMIT_IMPLICATN,
+                            prudentialExposureLimitImplications = pen.PRUDENT_EXPOSUR_LIMIT_IMPLCATN,
                             relationshipManagerId = pen.RELATIONSHIPMANAGERID,
                             relationshipOfficerId = pen.RELATIONSHIPOFFICERID,
                             taxIdentificationNumber = pen.TAXIDENTIFICATIONNUMBER,
@@ -384,7 +384,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -395,7 +395,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -413,7 +413,7 @@ namespace FintrakBanking.Repositories.Credit
                                 client_SupplierPhoneNumber = cs.PHONENUMBER,
                                 client_SupplierEmail = cs.EMAILADDRESS,
                                 client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                             }).ToList(),
                             customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == pen.CUSTOMERID &&
                             cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
@@ -428,7 +428,7 @@ namespace FintrakBanking.Repositories.Credit
                                  client_SupplierPhoneNumber = cs.PHONENUMBER,
                                  client_SupplierEmail = cs.EMAILADDRESS,
                                  client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                              }).ToList(),
                             loanAmount = pen.LOANAMOUNT,
                             loanTypeId = pen.LOANTYPEID,
@@ -449,7 +449,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var data = (from pen in context.TBL_LOAN_PRELIMINARY_EVALUATION
+            var data = (from pen in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on pen.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on pen.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
@@ -485,7 +485,7 @@ namespace FintrakBanking.Repositories.Credit
                             projectFinancingPlan = pen.PROJECTFINANCINGPLAN,
                             proposedTermsAndConditions = pen.PROPOSEDTERMSANDCONDITIONS,
                             risksAndConcerns = pen.RISKSANDCONCERNS,
-                            prudentialExposureLimitImplications = pen.PRUDENT_EXPOSUR_LIMIT_IMPLICATN,
+                            prudentialExposureLimitImplications = pen.PRUDENT_EXPOSUR_LIMIT_IMPLCATN,
                             relationshipManagerId = pen.RELATIONSHIPMANAGERID,
                             relationshipOfficerId = pen.RELATIONSHIPOFFICERID,
                             taxIdentificationNumber = pen.TAXIDENTIFICATIONNUMBER,
@@ -520,7 +520,7 @@ namespace FintrakBanking.Repositories.Credit
                                {
                                    bankVerificationNumber = x.CUSTOMERBVN,
                                    companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
-                                   companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                   companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                    customerId = x.CUSTOMERID,
                                    firstname = x.FIRSTNAME,
                                    surname = x.SURNAME
@@ -531,7 +531,7 @@ namespace FintrakBanking.Repositories.Credit
                                {
                                    bankVerificationNumber = cs.CUSTOMERBVN,
                                    companyDirectorTypeId = cs.COMPANYDIRECTORTYPEID,
-                                   companyDirectorTypeName = cs.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                   companyDirectorTypeName = cs.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                    customerId = cs.CUSTOMERID,
                                    firstname = cs.FIRSTNAME,
                                    surname = cs.SURNAME
@@ -549,7 +549,7 @@ namespace FintrakBanking.Repositories.Credit
                                    client_SupplierPhoneNumber = cs.PHONENUMBER,
                                    client_SupplierEmail = cs.EMAILADDRESS,
                                    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                   client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                   client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                                }).ToList(),
                                 customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER
                                    .Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
@@ -564,7 +564,7 @@ namespace FintrakBanking.Repositories.Credit
                                    client_SupplierPhoneNumber = cs.PHONENUMBER,
                                    client_SupplierEmail = cs.EMAILADDRESS,
                                    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                   client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                   client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                                }).ToList(),
                             }).ToList(),
                             approvalStatusId = pen.APPROVALSTATUSID,
@@ -624,7 +624,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool ApprovePreliminaryEvaluation(int loanPenId, short approvalStatusId, UserInfo user)
         {
-            var penRecord = context.TBL_LOAN_PRELIMINARY_EVALUATION.Find(loanPenId);
+            var penRecord = context.TBL_LOAN_PRELIMINARY_EVALUATN.Find(loanPenId);
 
             penRecord.ISCURRENT = false;
             penRecord.APPROVALSTATUSID = approvalStatusId;
@@ -668,7 +668,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllSingleCustomerLoanPreliminaryEvaluations()
         {
-            var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATION
+            var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on p.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
                         where p.ISCURRENT == false && p.LOANTYPEID == (short)LoanTypeEnum.Single && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
@@ -704,7 +704,7 @@ namespace FintrakBanking.Repositories.Credit
                             projectFinancingPlan = p.PROJECTFINANCINGPLAN,
                             proposedTermsAndConditions = p.PROPOSEDTERMSANDCONDITIONS,
                             risksAndConcerns = p.RISKSANDCONCERNS,
-                            prudentialExposureLimitImplications = p.PRUDENT_EXPOSUR_LIMIT_IMPLICATN,
+                            prudentialExposureLimitImplications = p.PRUDENT_EXPOSUR_LIMIT_IMPLCATN,
                             relationshipManagerId = p.RELATIONSHIPMANAGERID,
                             relationshipOfficerId = p.RELATIONSHIPOFFICERID,
                             taxIdentificationNumber = p.TAXIDENTIFICATIONNUMBER,
@@ -724,7 +724,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -735,7 +735,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -753,7 +753,7 @@ namespace FintrakBanking.Repositories.Credit
                                 client_SupplierPhoneNumber = cs.PHONENUMBER,
                                 client_SupplierEmail = cs.EMAILADDRESS,
                                 client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                             }).ToList(),
                             customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == p.CUSTOMERID &&
                             cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
@@ -768,7 +768,7 @@ namespace FintrakBanking.Repositories.Credit
                                  client_SupplierPhoneNumber = cs.PHONENUMBER,
                                  client_SupplierEmail = cs.EMAILADDRESS,
                                  client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                              }).ToList(),
                             approvalStatusId = p.APPROVALSTATUSID,
                             dateTimeCreated = p.DATETIMECREATED,
@@ -791,7 +791,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllGroupCustomerLoanPreliminaryEvaluations()
         {
-            var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATION
+            var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on p.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
                         where p.ISCURRENT == false && p.LOANTYPEID == (short)LoanTypeEnum.CustomerGroup && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
@@ -822,7 +822,7 @@ namespace FintrakBanking.Repositories.Credit
                             projectFinancingPlan = p.PROJECTFINANCINGPLAN,
                             proposedTermsAndConditions = p.PROPOSEDTERMSANDCONDITIONS,
                             risksAndConcerns = p.RISKSANDCONCERNS,
-                            prudentialExposureLimitImplications = p.PRUDENT_EXPOSUR_LIMIT_IMPLICATN,
+                            prudentialExposureLimitImplications = p.PRUDENT_EXPOSUR_LIMIT_IMPLCATN,
                             relationshipManagerId = p.RELATIONSHIPMANAGERID,
                             relationshipOfficerId = p.RELATIONSHIPOFFICERID,
                             customerGroupMappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == p.CUSTOMERGROUPID).Select(s => new CustomerGroupMappingViewModel()
@@ -853,7 +853,7 @@ namespace FintrakBanking.Repositories.Credit
                                 {
                                     bankVerificationNumber = x.CUSTOMERBVN,
                                     companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
-                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                     customerId = x.CUSTOMERID,
                                     firstname = x.FIRSTNAME,
                                     surname = x.SURNAME
@@ -864,7 +864,7 @@ namespace FintrakBanking.Repositories.Credit
                                 {
                                     bankVerificationNumber = cs.CUSTOMERBVN,
                                     companyDirectorTypeId = cs.COMPANYDIRECTORTYPEID,
-                                    companyDirectorTypeName = cs.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                    companyDirectorTypeName = cs.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                     customerId = cs.CUSTOMERID,
                                     firstname = cs.FIRSTNAME,
                                     surname = cs.SURNAME
@@ -882,7 +882,7 @@ namespace FintrakBanking.Repositories.Credit
                                     client_SupplierPhoneNumber = cs.PHONENUMBER,
                                     client_SupplierEmail = cs.EMAILADDRESS,
                                     client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                                 }).ToList(),
                                 customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER
                                     .Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
@@ -897,7 +897,7 @@ namespace FintrakBanking.Repositories.Credit
                                     client_SupplierPhoneNumber = cs.PHONENUMBER,
                                     client_SupplierEmail = cs.EMAILADDRESS,
                                     client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                                 }).ToList(),
                             }).ToList(),
                             approvalStatusId = p.APPROVALSTATUSID,
@@ -926,7 +926,7 @@ namespace FintrakBanking.Repositories.Credit
 
             bool output = false;
 
-            var penRecord = context.TBL_LOAN_PRELIMINARY_EVALUATION.Find(loanPenId);
+            var penRecord = context.TBL_LOAN_PRELIMINARY_EVALUATN.Find(loanPenId);
 
             if (penRecord != null)
             {
@@ -952,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
                 penRecord.PROJECTFINANCINGPLAN = model.projectFinancingPlan;
                 penRecord.PROPOSEDTERMSANDCONDITIONS = model.proposedTermsAndConditions;
                 penRecord.RISKSANDCONCERNS = model.risksAndConcerns;
-                penRecord.PRUDENT_EXPOSUR_LIMIT_IMPLICATN = model.prudentialExposureLimitImplications;
+                penRecord.PRUDENT_EXPOSUR_LIMIT_IMPLCATN = model.prudentialExposureLimitImplications;
                 penRecord.RELATIONSHIPMANAGERID = model.relationshipManagerId;
                 penRecord.RELATIONSHIPOFFICERID = model.relationshipOfficerId;
                 penRecord.APPROVALSTATUSID = model.sentForEvaluation ? (short)ApprovalStatusEnum.Processing
@@ -1034,7 +1034,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SendPreliminaryEvaluationForLoanApplication(int loanPenId, LoanPreliminaryEvaluationViewModel model)
         {
-            var penRecord = context.TBL_LOAN_PRELIMINARY_EVALUATION.Find(loanPenId);
+            var penRecord = context.TBL_LOAN_PRELIMINARY_EVALUATN.Find(loanPenId);
 
             bool output = false;
 

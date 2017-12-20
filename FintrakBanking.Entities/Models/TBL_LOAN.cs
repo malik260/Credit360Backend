@@ -156,7 +156,7 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? SCHEDULEDPREPAYMENTDATE { get; set; }
 
-        public short? SCH_PREPAYMENT_FREQUENCY_TYPEID { get; set; }
+        public short? SCH_PREPAYMENT_FREQUENCY_TYPID { get; set; }
 
         public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
