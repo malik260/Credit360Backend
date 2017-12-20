@@ -41,6 +41,21 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("job-request/loan-application-details/{applicationId}")]
+        public HttpResponseMessage GetLoanApplicationJobsById(int applicationId)
+        {
+            try
+            {
+                var data = repo.GetLoanApplicationJobsById(applicationId, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("job-request-status-feedback/{statusId}/{jobTypeId}")]
         public HttpResponseMessage GetJobRequestStatusFeedback(short statusId, short jobTypeId)
         {
@@ -201,6 +216,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
             }
         }
+
+
 
         [HttpPost]
         [Route("global-job-request")]

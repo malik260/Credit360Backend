@@ -14,10 +14,11 @@ namespace FintrakBanking.Entities.Models
         {
             TBL_BRANCH = new HashSet<TBL_BRANCH>();
             TBL_COLLATERAL_IMMOVE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVE_PROPERTY>();
+            TBL_CUSTOMER_EMPLOYER = new HashSet<TBL_CUSTOMER_EMPLOYER>();
             TBL_CUSTOMER_NEXTOFKIN = new HashSet<TBL_CUSTOMER_NEXTOFKIN>();
             TBL_LOAN_MARKET = new HashSet<TBL_LOAN_MARKET>();
             TBL_STAFF = new HashSet<TBL_STAFF>();
-            TBL_TEMP_COLLATERAL_IMMOVE_PROP = new HashSet<TBL_TEMP_COLLATERAL_IMMOVE_PROP>();
+            TBL_TEMP_COLLATERAL_IMMOVE_PRP = new HashSet<TBL_TEMP_COLLATERAL_IMMOVE_PRP>();
             TBL_TEMP_STAFF = new HashSet<TBL_TEMP_STAFF>();
         }
 
@@ -45,6 +46,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_COLLATERAL_IMMOVE_PROPERTY> TBL_COLLATERAL_IMMOVE_PROPERTY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CUSTOMER_EMPLOYER> TBL_CUSTOMER_EMPLOYER { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER_NEXTOFKIN> TBL_CUSTOMER_NEXTOFKIN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -54,7 +58,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_STAFF> TBL_STAFF { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVE_PROP> TBL_TEMP_COLLATERAL_IMMOVE_PROP { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVE_PRP> TBL_TEMP_COLLATERAL_IMMOVE_PRP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_STAFF> TBL_TEMP_STAFF { get; set; }

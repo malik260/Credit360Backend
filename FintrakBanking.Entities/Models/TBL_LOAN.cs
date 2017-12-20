@@ -33,8 +33,6 @@ namespace FintrakBanking.Entities.Models
 
         public int CASAACCOUNTID { get; set; }
 
-        public int? CASAACCOUNTID2 { get; set; }
-
         public short BRANCHID { get; set; }
 
         public short SUBSECTORID { get; set; }
@@ -158,7 +156,7 @@ namespace FintrakBanking.Entities.Models
         [Column(TypeName = "date")]
         public DateTime? SCHEDULEDPREPAYMENTDATE { get; set; }
 
-        public short? SCH_PREPAYMENT_FREQUENCY_TYPEID { get; set; }
+        public short? SCH_PREPAYMENT_FREQUENCY_TYPID { get; set; }
 
         public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
@@ -178,8 +176,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CASA TBL_CASA { get; set; }
 
         public virtual TBL_CASA TBL_CASA1 { get; set; }
-
-        public virtual TBL_CASA TBL_CASA2 { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 

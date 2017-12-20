@@ -145,6 +145,21 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
+        public IEnumerable<LookupViewModel> GetProductCurrency(int productId)
+        {
+            var data = (from p in context.TBL_PRODUCT_CURRENCY where p.PRODUCTID ==  productId
+                        select new LookupViewModel()
+                        {
+                            lookupId = (short)p.CURRENCYID,
+                            lookupName = p.TBL_CURRENCY.CURRENCYNAME + " " + p.TBL_CURRENCY.CURRENCYCODE,
+                        });
+
+            return data;
+        }
+
+
+
+
         #region Product Group
         public IEnumerable<ProductGroupViewModel> GetAllProductGroup()
         {
@@ -298,7 +313,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productGroupName = p.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME,
                         requirePrincipalGl = p.REQUIREPRINCIPALGL,
                         requireInterestIncomeExpenseGl = p.REQUIREINTERESTINCOMEEXPENSEGL,
-                        requireInterestReceivablePayableGl = p.REQUIRE_INT_RECEIVABLE_PAYABLGL,
+                        requireInterestReceivablePayableGl = p.REQUIRE_INT_RECEIVABL_PAYABLGL,
                         requirePremiumDiscountGl = p.REQUIREPREMIUMDISCOUNTGL,
                         requireDormantGl = p.REQUIREDORMANTGL,
                         requireOverdrawnGL = p.REQUIREOVERDRAWNGL,
@@ -351,7 +366,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 PRODUCTGROUPID = productType.productGroupId,
                 REQUIREPRINCIPALGL = productType.requirePrincipalGl,
                 REQUIREINTERESTINCOMEEXPENSEGL = productType.requireInterestIncomeExpenseGl,
-                REQUIRE_INT_RECEIVABLE_PAYABLGL = productType.requireInterestReceivablePayableGl,
+                REQUIRE_INT_RECEIVABL_PAYABLGL = productType.requireInterestReceivablePayableGl,
                 REQUIREPREMIUMDISCOUNTGL = productType.requirePremiumDiscountGl,
                 REQUIREDORMANTGL = productType.requireDormantGl,
                 REQUIREOVERDRAWNGL = productType.requireOverdrawnGL,
@@ -410,7 +425,7 @@ namespace FintrakBanking.Repositories.Setups.General
             data.REQUIREDORMANTGL = productType.requireDormantGl;
             data.REQUIREOVERDRAWNGL = productType.requireOverdrawnGL;
             data.REQUIREINTERESTINCOMEEXPENSEGL = productType.requireInterestIncomeExpenseGl;
-            data.REQUIRE_INT_RECEIVABLE_PAYABLGL = productType.requireInterestReceivablePayableGl;
+            data.REQUIRE_INT_RECEIVABL_PAYABLGL = productType.requireInterestReceivablePayableGl;
             data.DEALCLASSIFICATIONID = productType.dealClassificationId;
             data.REQUIRERATE = productType.requireRate;
             data.REQUIRETENOR = productType.requireTenor;
@@ -699,7 +714,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             dateTimeCreated = pf.DATETIMECREATED,
 
                         }).ToList(),
-                        collaterals = context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Where(coll => coll.PRODUCTID == c.PRODUCTID && coll.DELETED == false).Select(prodColl => new ProductCollateralTypeViewModel()
+                        collaterals = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(coll => coll.PRODUCTID == c.PRODUCTID && coll.DELETED == false).Select(prodColl => new ProductCollateralTypeViewModel()
                         {
                             productId = prodColl.PRODUCTID,
                             productCollateralId = prodColl.PRODUCTCOLLATERALTYPEID,
@@ -805,7 +820,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         //    glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
 
                         //}).ToList(),
-                        collaterals = context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Where(curr => curr.PRODUCTID == tp.PRODUCTID && curr.DELETED != false).Select(pcc => new ProductCollateralTypeViewModel()
+                        collaterals = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(curr => curr.PRODUCTID == tp.PRODUCTID && curr.DELETED != false).Select(pcc => new ProductCollateralTypeViewModel()
                         {
                             productId = pcc.PRODUCTID,
                             productCollateralId = pcc.PRODUCTCOLLATERALTYPEID,
@@ -881,7 +896,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var feeListToUpdate = new List<TBL_PRODUCT_CHARGE_FEE>();
 
             var collateralModel =
-                context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Where(c =>
+                context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(c =>
                     c.PRODUCTID == productModel.PRODUCTID && c.DELETED == false);
             var collateralListToUpdate = new List<TBL_PRODUCT_COLLATERALTYPE>();
 
@@ -1238,7 +1253,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             List<TBL_TEMP_PRODUCT_CURRENCY> currencies = new List<TBL_TEMP_PRODUCT_CURRENCY>();
             List<TBL_TEMP_PRODUCT_CHARGE_FEE> chargeFees = new List<TBL_TEMP_PRODUCT_CHARGE_FEE>();
-            List<TBL_TEMP_PRODUCT_COLLATERALTYPE> collaterals = new List<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
+            List<TBL_TEMP_PRODUCT_COLLATERALTYP> collaterals = new List<TBL_TEMP_PRODUCT_COLLATERALTYP>();
 
             //Storing the product currencies
             if (productModel.currencies != null)
@@ -1281,7 +1296,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 foreach (var item in productModel.collaterals)
                 {
-                    var productCollaterals = new TBL_TEMP_PRODUCT_COLLATERALTYPE()
+                    var productCollaterals = new TBL_TEMP_PRODUCT_COLLATERALTYP()
                     {
                         //ProductId = item.productId,
                         COLLATERALTYPEID = item.collateralTypeId,
@@ -1347,7 +1362,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 EXPIRYPERIOD = productModel.expiryPeriod,
 
                 TBL_TEMP_PRODUCT_CHARGE_FEE = chargeFees,
-                TBL_TEMP_PRODUCT_COLLATERALTYPE = collaterals
+                TBL_TEMP_PRODUCT_COLLATERALTYP = collaterals
             };
 
             // Audit Section ---------------------------
@@ -1499,10 +1514,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var existingProductCurrencies = new List<TBL_TEMP_PRODUCT_CURRENCY>();
             var existingProductFees = new List<TBL_TEMP_PRODUCT_CHARGE_FEE>();
-            var existingProductCollateral = new List<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
+            var existingProductCollateral = new List<TBL_TEMP_PRODUCT_COLLATERALTYP>();
 
             List<TBL_TEMP_PRODUCT_CHARGE_FEE> productFees = new List<TBL_TEMP_PRODUCT_CHARGE_FEE>();
-            List<TBL_TEMP_PRODUCT_COLLATERALTYPE> productCollaterals = new List<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
+            List<TBL_TEMP_PRODUCT_COLLATERALTYP> productCollaterals = new List<TBL_TEMP_PRODUCT_COLLATERALTYP>();
             List<TBL_TEMP_PRODUCT_CURRENCY> productCurrencies = new List<TBL_TEMP_PRODUCT_CURRENCY>();
 
             var unApprovedProductEdit = context.TBL_TEMP_PRODUCT
@@ -1520,7 +1535,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 existingProductCurrencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(x => x.PRODUCTID == existingTempProduct.PRODUCTID).ToList();
                 existingProductFees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(x => x.PRODUCTID == existingTempProduct.PRODUCTID).ToList();
-                existingProductCollateral = context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Where(x => x.PRODUCTID == existingTempProduct.PRODUCTID).ToList();
+                existingProductCollateral = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(x => x.PRODUCTID == existingTempProduct.PRODUCTID).ToList();
 
                 // Remove exisiting product fees, currency and collaterals
                 if (existingProductCurrencies.Count > 0)
@@ -1543,7 +1558,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     foreach (var coll in existingProductCollateral)
                     {
-                        context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Remove(coll);
+                        context.TBL_TEMP_PRODUCT_COLLATERALTYP.Remove(coll);
                     }
                 }
 
@@ -1577,7 +1592,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var item in productModel.collaterals)
                 {
-                    var collateral = new TBL_TEMP_PRODUCT_COLLATERALTYPE()
+                    var collateral = new TBL_TEMP_PRODUCT_COLLATERALTYP()
                     {
                         //ProductId = item.productId,
                         COLLATERALTYPEID = item.collateralTypeId,
@@ -1636,7 +1651,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 tempProductToUpdate.TBL_TEMP_PRODUCT_CURRENCY = productCurrencies;
                 tempProductToUpdate.TBL_TEMP_PRODUCT_CHARGE_FEE = productFees;
-                tempProductToUpdate.TBL_TEMP_PRODUCT_COLLATERALTYPE = productCollaterals;
+                tempProductToUpdate.TBL_TEMP_PRODUCT_COLLATERALTYP = productCollaterals;
 
             }
             else
@@ -1676,7 +1691,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var item in productModel.collaterals)
                 {
-                    var collateral = new TBL_TEMP_PRODUCT_COLLATERALTYPE()
+                    var collateral = new TBL_TEMP_PRODUCT_COLLATERALTYP()
                     {
                         //ProductId = item.productId,
                         COLLATERALTYPEID = item.collateralTypeId,
@@ -1738,7 +1753,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     //PRODUCT_BEHAVIOURID = productModel.productBehaviourId,
 
                     TBL_TEMP_PRODUCT_CURRENCY = productCurrencies,
-                    TBL_TEMP_PRODUCT_COLLATERALTYPE = productCollaterals,
+                    TBL_TEMP_PRODUCT_COLLATERALTYP = productCollaterals,
                     TBL_TEMP_PRODUCT_CHARGE_FEE = productFees
                 };
 

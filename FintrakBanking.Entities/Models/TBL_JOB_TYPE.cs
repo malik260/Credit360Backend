@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_JOB_TYPE()
         {
             TBL_JOB_REQUEST = new HashSet<TBL_JOB_REQUEST>();
-            TBL_JOB_REQUEST_STATUS_FEEDBACK = new HashSet<TBL_JOB_REQUEST_STATUS_FEEDBACK>();
+            TBL_JOB_REQUEST_STATUS_FEEDBAK = new HashSet<TBL_JOB_REQUEST_STATUS_FEEDBAK>();
             TBL_JOB_TYPE_SUB = new HashSet<TBL_JOB_TYPE_SUB>();
         }
 
@@ -30,7 +30,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_JOB_REQUEST_STATUS_FEEDBACK> TBL_JOB_REQUEST_STATUS_FEEDBACK { get; set; }
+        public virtual ICollection<TBL_JOB_REQUEST_STATUS_FEEDBAK> TBL_JOB_REQUEST_STATUS_FEEDBAK { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_JOB_TYPE_SUB> TBL_JOB_TYPE_SUB { get; set; }

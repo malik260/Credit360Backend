@@ -40,7 +40,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool REQUIREINTERESTINCOMEEXPENSEGL { get; set; }
 
-        public bool REQUIRE_INT_RECEIVABLE_PAYABLGL { get; set; }
+        public bool REQUIRE_INT_RECEIVABL_PAYABLGL { get; set; }
 
         public bool REQUIREDORMANTGL { get; set; }
 

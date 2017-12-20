@@ -27,7 +27,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCollateralDocument(CollateralDocumentViewModel model, byte[] file)
         {
-            var data = new TBL_MEDIA_COLLATERAL_DOCUMENTS
+            var data = new Entities.DocumentModels.TBL_MEDIA_COLLATERAL_DOCUMENTS
             {
                 FILEDATA = file,
                 DOCUMENTCODE = model.documentTitle,

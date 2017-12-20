@@ -11,6 +11,7 @@ using System.Linq;
 using FintrakBanking.ViewModels.Setups.Approval;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Entities.DocumentModels;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -39,6 +40,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 JOBREQUESTCODE = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
                 JOBTYPEID = model.jobTypeId,
+                JOB_TITLE = model.requestTitle,
                 SENDERSTAFFID = model.createdBy,
                 RECEIVERSTAFFID = model.receiverStaffId,
                 DEPARTMENTID = model.departmentId,
@@ -74,12 +76,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             return context.SaveChanges() != 0;
         }
 
+
         public string AddGlobalJobRequest(JobRequestViewModel model)
         {
             if (model.receiverStaffId == model.createdBy)
                 throw new Exception("You cannot assign a job to yourself");
 
-            var date = DateTime.Now;
+            var date = DateTime.Now;    
             var applicationDate = general.GetApplicationDate();
             model.jobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode();
             model.requestStatusId = 1;
@@ -89,6 +92,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 JOBREQUESTCODE = model.jobRequestCode,
                 JOBTYPEID = model.jobTypeId,
+                JOB_TITLE = model.requestTitle,
                 SENDERSTAFFID = model.createdBy,
                 RECEIVERSTAFFID = model.receiverStaffId == 0 ? null : model.receiverStaffId,
                 DEPARTMENTID = model.departmentId,
@@ -214,6 +218,125 @@ namespace FintrakBanking.Repositories.WorkFlow
             return context.SaveChanges() != 0;
         }
 
+        public IEnumerable<ApplicationJobRequest> GetLoanApplicationJobsById(int loanApplicationId, int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                        where a.TBL_LOAN_APPLICATION.COMPANYID == companyId && a.DELETED == false
+                        && a.LOANAPPLICATIONID == loanApplicationId
+                        select new ApplicationJobRequest
+                        {
+                            approvedAmount = a.APPROVEDAMOUNT,
+                            currencyId = a.CURRENCYID,
+                            customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerId = a.CUSTOMERID,
+                            exchangeRate = a.EXCHANGERATE,
+                            loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                            subSectorId = a.SUBSECTORID,
+                            sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "/" + a.TBL_SUB_SECTOR.NAME,
+                            branchName = a.TBL_LOAN_APPLICATION.TBL_BRANCH.BRANCHNAME,
+                            loanApplicationId = a.LOANAPPLICATIONID,
+                            proposedAmount = a.PROPOSEDAMOUNT,
+                            proposedTenor = a.PROPOSEDTENOR,
+                            productName = a.TBL_PRODUCT.PRODUCTNAME,
+                            productClassId = a.TBL_PRODUCT.PRODUCTCLASSID,
+                            productClassName = a.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                            relationshipOfficerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = a.TBL_LOAN_APPLICATION.RELATIONSHIPMANAGERID,
+                            invoiceDiscountDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                                     select new LoanApplicationDetailInvoiceViewModel
+                                                     {
+                                                         approvalComment = i.APPROVAL_COMMENT,
+                                                         invoiceAmount = i.INVOICE_AMOUNT,
+                                                         invoiceNo = i.INVOICENO,
+                                                         approvaStatusId = i.APPROVALSTATUSID,
+                                                         contractEndDate = i.CONTRACT_ENDDATE,
+                                                         contractStartDate = i.CONTRACT_STARTDATE,
+                                                         invoiceDate = i.INVOICE_DATE,
+                                                         invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
+                                                         principalName = i.TBL_LOAN_PRINCIPAL.NAME,
+                                                         principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
+                                                         principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
+                                                         principalId = i.PRINCIPALID,
+                                                     }).ToList(),
+                            firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                                     select new EducationLoanViewModel
+                                                     {
+                                                         educationId = i.EDUCATIONID,
+                                                         loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
+                                                         numberOfStudent = i.NUMBER_OF_STUDENTS,
+                                                         averageSchoolFees = i.AVERAGE_SCHOOL_FEES,
+                                                         totalPreviousTermSchoolFees = i.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
+                                                         productClassId = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == i.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSID,
+                                                         productClassName = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSID == i.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTCLASSID).FirstOrDefault().PRODUCTCLASSNAME,
+                                                     }).ToList(),
+                            firstTradderDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_TRA.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                                  select new TraderLoanViewModel
+                                                  {
+                                                      tradderId = i.TRADDERID,
+                                                      marketId = i.MARKETID,
+                                                      marketName = i.TBL_LOAN_MARKET.MARKETNAME,
+                                                      averageMonthlyTurnover = i.AVERAGE_MONTHLY_TURNOVER,
+                                                      loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
+                                                      //productClassId = i.
+                                                  }).ToList(),
+                            loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                              select new CollateralViewModel
+                                              {
+                                                  allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                                                  collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                                                  collateralValue = i.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                  collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                                  collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
+                                                  //collateralSubTypeId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.
+                                                  currencyCode = i.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                                                  valuationCycle = i.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                  haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                  customerName = i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " " + i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
+                                                 + " " + i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
+
+                                              }).ToList(),
+                            allJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID 
+                                            && (x.OPERATIONSID == (short)OperationsEnum.LoanApplication ||  x.OPERATIONSID == (short)OperationsEnum.CAM 
+                                                                                                        || x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval)
+                                            && x.JOBTYPEID == (short)JobTypeEnum.legal).Count(),
+
+                            allPendingJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID
+                                           && (x.OPERATIONSID == (short)OperationsEnum.LoanApplication || x.OPERATIONSID == (short)OperationsEnum.CAM
+                                                                                                       || x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval)
+                                           && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Count(),
+
+                            allApprovedJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID
+                                           && (x.OPERATIONSID == (short)OperationsEnum.LoanApplication || x.OPERATIONSID == (short)OperationsEnum.CAM
+                                                                                                       || x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval)
+                                           && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved).Count(),
+
+                            allDisapproveJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID
+                                            && (x.OPERATIONSID == (short)OperationsEnum.LoanApplication || x.OPERATIONSID == (short)OperationsEnum.CAM
+                                                                                                        || x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval)
+                                            && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Count(),
+
+                            allProcessingJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID
+                                           && (x.OPERATIONSID == (short)OperationsEnum.LoanApplication || x.OPERATIONSID == (short)OperationsEnum.CAM
+                                                                                                       || x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval)
+                                           && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.processing).Count(),
+
+                            allCancelledJobsCount = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == a.LOANAPPLICATIONDETAILID
+                                           && (x.OPERATIONSID == (short)OperationsEnum.LoanApplication || x.OPERATIONSID == (short)OperationsEnum.CAM
+                                                                                                       || x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval)
+                                           && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.cancel).Count(),
+
+
+                        }).ToList();
+            foreach (var i in data)
+            {
+                var relationshipOfficer = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipOfficerId).FirstOrDefault();
+                var relationshipManager = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipManagerId).FirstOrDefault();
+                i.relationshipOfficerName = relationshipOfficer.FIRSTNAME + " " + relationshipOfficer.MIDDLENAME + " " + relationshipOfficer.LASTNAME;
+                i.relationshipManagerName = relationshipManager.FIRSTNAME + " " + relationshipManager.MIDDLENAME + " " + relationshipManager.LASTNAME;
+            }
+            return data;
+        }
+
         public IEnumerable<JobRequestViewModel> GetAllJobRequest()
         {
             var allstaff = this.context.TBL_STAFF.Select(s => new //OperationStaffViewModel
@@ -253,6 +376,54 @@ namespace FintrakBanking.Repositories.WorkFlow
             });
         }
 
+        private IEnumerable<JobRequestViewModel> GetApplicationJobRequest(int staffId)
+        {
+            var allstaff = this.context.TBL_STAFF.Select(s => new //OperationStaffViewModel
+            {
+                id = s.STAFFID,
+                name = s.LASTNAME + " " + s.FIRSTNAME
+            });
+
+            return context.TBL_JOB_REQUEST
+             .Where(t => ((t.DEPARTMENTUNITID == context.TBL_STAFF.Where(l => l.STAFFID == staffId).FirstOrDefault().DEPARTMENT_UNITID) || (t.SENDERSTAFFID == staffId) || (t.REASSIGNEDTO == staffId)))
+             .Select(
+                x =>
+                   new JobRequestViewModel
+                   {
+                       jobRequestId = x.JOBREQUESTID,
+                       requestTitle = x.JOB_TITLE,
+                       jobRequestCode = x.JOBREQUESTCODE,
+                       targetId = x.TARGETID,
+                       jobTypeId = x.JOBTYPEID,
+                       senderStaffId = x.SENDERSTAFFID,
+                       receiverStaffId = (int)x.RECEIVERSTAFFID,
+                       reassignedTo = x.REASSIGNEDTO,
+                       isReassigned = x.ISREASSIGNED,
+                       isAcknowledged = x.ISACKNOWLEDGED,
+                       operationsId = x.OPERATIONSID,
+                       operationName = x.TBL_OPERATIONS.OPERATIONNAME,
+                       requestStatusId = x.REQUESTSTATUSID,
+                       senderComment = x.SENDERCOMMENT,
+                       responseComment = x.RESPONSECOMMENT,
+                       arrivalDate = x.ARRIVALDATE,
+                       systemArrivalDate = x.SYSTEMARRIVALDATE,
+                       reassignedDate = x.REASSIGNEDDATE,
+                       systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
+                       responseDate = x.RESPONSEDATE,
+                       systemResponseDate = x.SYSTEMRESPONSEDATE,
+                       acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
+                       systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+                       loggedInStaffId = staffId,
+                       from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
+                       fromBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
+                       to = allstaff.FirstOrDefault(s => s.id == x.RECEIVERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.RECEIVERSTAFFID).name,
+                       assignee = allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO).name,
+                         //from = allstaff.GetStaffName(s => s.id == x.SenderStaffId),
+                         //to = allstaff.GetStaffName(s => s.id == x.ReceiverStaffId),
+                         //assignee = allstaff.GetStaffName(s => s.id == x.ReassignedTo),
+                     }).OrderByDescending(x => x.arrivalDate).Take(500);
+        }
+
         private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId)
         {
             var allstaff = this.context.TBL_STAFF.Select(s => new //OperationStaffViewModel
@@ -268,7 +439,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                      new JobRequestViewModel
                      {
                     jobRequestId = x.JOBREQUESTID,
-                    requestTitle = "", // x.REQUESTTITLE,
+                    requestTitle = x.JOB_TITLE,
                     jobRequestCode = x.JOBREQUESTCODE,
                     targetId = x.TARGETID,
                     jobTypeId = x.JOBTYPEID,
@@ -320,6 +491,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobRequestId = data.JOBREQUESTID,
                 jobRequestCode = data.JOBREQUESTCODE,
                 jobTypeId = data.JOBTYPEID,
+                requestTitle = data.JOB_TITLE,
                 senderStaffId = data.SENDERSTAFFID,
                 receiverStaffId = (int)data.RECEIVERSTAFFID,
                 reassignedTo = data.REASSIGNEDTO,
@@ -439,7 +611,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<JobRequestStatusFeedbackViewModel> GetJobRequestStatusFeedback(short statusId, short jobTypeId)
         {
-            return this.context.TBL_JOB_REQUEST_STATUS_FEEDBACK.Select(x => new JobRequestStatusFeedbackViewModel
+            return this.context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Select(x => new JobRequestStatusFeedbackViewModel
             {
                 jobTypeId = x.JOBTYPEID,
                 jobStatusFeedbackId = x.JOB_STATUS_FEEDBACKID,
@@ -531,7 +703,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool AddJobDocument(RequestDocumentViewModel model, byte[] file)
         {
-            var data = new TBL_MEDIA_JOB_REQUEST_DOCUMENTS
+            var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENTS
             {
                 FILEDATA = file,
                 //LoanApplicationNumber = model.targetId,

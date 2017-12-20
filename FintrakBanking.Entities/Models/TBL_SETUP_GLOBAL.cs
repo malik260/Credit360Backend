@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
 
         public int COMPANYID { get; set; }
 
-        public double UNAUTHORISED_OVERDRAFT_INT_RATE { get; set; }
+        public double UNAUTHORISD_OVERDRAFT_INT_RATE { get; set; }
 
         public double PASTDUEINDEFAULT_INTERESTRATE { get; set; }
 
