@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_LOAN_MARKET()
         {
-            TBL_LOAN_APPLICATION_DETAIL_TRA = new HashSet<TBL_LOAN_APPLICATION_DETAIL_TRA>();
+            TBL_LOAN_APPLICATION_DETL_TRA = new HashSet<TBL_LOAN_APPLICATION_DETL_TRA>();
         }
 
         [Key]
@@ -59,6 +59,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_APPLICATION_DETAIL_TRA> TBL_LOAN_APPLICATION_DETAIL_TRA { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION_DETL_TRA> TBL_LOAN_APPLICATION_DETL_TRA { get; set; }
     }
 }

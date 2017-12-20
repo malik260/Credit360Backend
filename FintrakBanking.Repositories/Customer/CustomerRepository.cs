@@ -45,10 +45,10 @@ namespace FintrakBanking.Repositories.Customer
                         select new
                         {
 
-                            shFund = c.TBL_CUSTOMER_RISK_RATING.MAX_SHAREHOLDER_FUND_PERCENTAGE,
+                            shFund = c.TBL_CUSTOMER_RISK_RATING.MAX_SHAREHOLDER_FUND_PERCENTAG,
                             isInvestment = c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
                             rating = c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                            limit = ((double)c.TBL_CUSTOMER_RISK_RATING.MAX_SHAREHOLDER_FUND_PERCENTAGE / 100.00) * StackHoldersFund
+                            limit = ((double)c.TBL_CUSTOMER_RISK_RATING.MAX_SHAREHOLDER_FUND_PERCENTAG / 100.00) * StackHoldersFund
                         }).FirstOrDefault();
             return data;
         }
@@ -1144,7 +1144,7 @@ namespace FintrakBanking.Repositories.Customer
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -1161,7 +1161,7 @@ namespace FintrakBanking.Repositories.Customer
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -1178,7 +1178,7 @@ namespace FintrakBanking.Repositories.Customer
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -1203,7 +1203,7 @@ namespace FintrakBanking.Repositories.Customer
                            client_SupplierPhoneNumber = cs.PHONENUMBER,
                            client_SupplierEmail = cs.EMAILADDRESS,
                            client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                        }).ToList(),
                        CustomerSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
                        .Select(cs => new CustomerSupplierViewModels()
@@ -1223,7 +1223,7 @@ namespace FintrakBanking.Repositories.Customer
                            client_SupplierPhoneNumber = cs.PHONENUMBER,
                            client_SupplierEmail = cs.EMAILADDRESS,
                            client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                           client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                        }).ToList(),
                        CustomerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID)
                        .Select(x => new CollateralViewModel()
@@ -1337,7 +1337,7 @@ namespace FintrakBanking.Repositories.Customer
         }
         public IEnumerable<CustomerSupplierTypeViewModels> GetClientSupplierType()
         {
-            var type = from a in context.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE
+            var type = from a in context.TBL_CUSTOMER_CLIENT_SUPPLR_TYP
                        select new CustomerSupplierTypeViewModels
                        {
                            name = a.CLIENT_SUPPLIERTYPENAME,
@@ -1358,7 +1358,7 @@ namespace FintrakBanking.Repositories.Customer
         }
         public IEnumerable<CompanyDirectorTypeViewModels> GetDirectorsTypes()
         {
-            var type = from a in context.TBL_CUSTOMER_COMPANY_DIREC_TYPE
+            var type = from a in context.TBL_CUSTOMER_COMPANY_DIREC_TYP
                        select new CompanyDirectorTypeViewModels
                        {
                            name = a.COMPANYDIRECTORYTYPENAME,
@@ -1727,7 +1727,7 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
                                         taxNumber = s.TAX_NUMBER,
-                                        companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                        companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                         customerId = s.CUSTOMERID,
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
                                         address = s.ADDRESS,
@@ -1765,7 +1765,7 @@ namespace FintrakBanking.Repositories.Customer
                                         companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
                                         rcNumber = s.REGISTRATION_NUMBER,
                                         taxNumber = s.TAX_NUMBER,
-                                        companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                        companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                         customerId = s.CUSTOMERID,
                                         customerName = s.FIRSTNAME + " " + s.SURNAME,
                                         address = s.ADDRESS,
@@ -1797,7 +1797,7 @@ namespace FintrakBanking.Repositories.Customer
                                         client_SupplierPhoneNumber = cs.PHONENUMBER,
                                         client_SupplierEmail = cs.EMAILADDRESS,
                                         client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                                     }).ToList();
             return clientOrSupplier;
         }

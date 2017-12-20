@@ -73,7 +73,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CHART_OF_ACCOUNT_CLASS TBL_CHART_OF_ACCOUNT_CLASS { get; set; }
 
-        public virtual TBL_FINANCIAL_STATEMENT_CAPTION TBL_FINANCIAL_STATEMENT_CAPTION { get; set; }
+        public virtual TBL_FINANCIAL_STATEMENT_CAPTN TBL_FINANCIAL_STATEMENT_CAPTN { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_CHART_OF_ACCOUNT_CUR> TBL_TEMP_CHART_OF_ACCOUNT_CUR { get; set; }

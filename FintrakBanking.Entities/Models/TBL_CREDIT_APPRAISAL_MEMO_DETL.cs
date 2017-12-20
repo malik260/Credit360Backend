@@ -10,7 +10,7 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_CREDIT_APPRAISAL_MEMO_DETL
     {
         [Key]
-        public int APPRAISALMEMORANDUMLOANDETAILID { get; set; }
+        public int MEMORANDUMLOANDETAILID { get; set; }
 
         public int APPRAISALMEMORANDUMID { get; set; }
 
@@ -27,6 +27,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime SYSTEMDATETIME { get; set; }
 
-        public virtual TBL_CREDIT_APPRAISAL_MEMORANDUM TBL_CREDIT_APPRAISAL_MEMORANDUM { get; set; }
+        public virtual TBL_CREDIT_APPRAISAL_MEMORANDM TBL_CREDIT_APPRAISAL_MEMORANDM { get; set; }
     }
 }

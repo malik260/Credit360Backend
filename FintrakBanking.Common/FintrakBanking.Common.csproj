@@ -76,6 +76,7 @@
     <Compile Include="Enum\DayCountConventionEnum.cs" />
     <Compile Include="Enum\GeneralInfo.cs" />
     <Compile Include="Enum\CASAPostNoStatusEnum.cs" />
+    <Compile Include="Enum\JobTypeEnum.cs" />
     <Compile Include="Enum\LimitValueTypeEnum.cs" />
     <Compile Include="Enum\LoanApplicationStatusEnum.cs" />
     <Compile Include="Enum\LoanAvailmentApprovalFlowEnum.cs" />

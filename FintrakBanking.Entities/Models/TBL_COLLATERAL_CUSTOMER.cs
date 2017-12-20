@@ -25,11 +25,11 @@ namespace FintrakBanking.Entities.Models
             TBL_COLLATERAL_IMMOVE_PROPERTY = new HashSet<TBL_COLLATERAL_IMMOVE_PROPERTY>();
             TBL_COLLATERAL_STOCK = new HashSet<TBL_COLLATERAL_STOCK>();
             TBL_COLLATERAL_VEHICLE = new HashSet<TBL_COLLATERAL_VEHICLE>();
-            TBL_LOAN_APPLICATION_COLLATERAL = new HashSet<TBL_LOAN_APPLICATION_COLLATERAL>();
+            TBL_LOAN_APPLICATION_COLLATERL = new HashSet<TBL_LOAN_APPLICATION_COLLATERL>();
             TBL_LOAN_COLLATERAL_MAPPING = new HashSet<TBL_LOAN_COLLATERAL_MAPPING>();
-            TBL_LOANAPPLICATION_COLATRL_MAP = new HashSet<TBL_LOANAPPLICATION_COLATRL_MAP>();
+            TBL_LOANAPPLICATION_COLTRL_MAP = new HashSet<TBL_LOANAPPLICATION_COLTRL_MAP>();
             TBL_TEMP_COLLATERAL_POLICY = new HashSet<TBL_TEMP_COLLATERAL_POLICY>();
-            TBL_TEMP_COLLATERAL_PLANT_EQUIP = new HashSet<TBL_TEMP_COLLATERAL_PLANT_EQUIP>();
+            TBL_TEMP_COLLATERAL_PLANT_EQUP = new HashSet<TBL_TEMP_COLLATERAL_PLANT_EQUP>();
             TBL_TEMP_COLLATERAL_PREC_METAL = new HashSet<TBL_TEMP_COLLATERAL_PREC_METAL>();
             TBL_TEMP_COLLATERAL_STOCK = new HashSet<TBL_TEMP_COLLATERAL_STOCK>();
         }
@@ -133,19 +133,19 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_COLLATERAL_VEHICLE> TBL_COLLATERAL_VEHICLE { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_APPLICATION_COLLATERAL> TBL_LOAN_APPLICATION_COLLATERAL { get; set; }
+        public virtual ICollection<TBL_LOAN_APPLICATION_COLLATERL> TBL_LOAN_APPLICATION_COLLATERL { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_COLLATERAL_MAPPING> TBL_LOAN_COLLATERAL_MAPPING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOANAPPLICATION_COLATRL_MAP> TBL_LOANAPPLICATION_COLATRL_MAP { get; set; }
+        public virtual ICollection<TBL_LOANAPPLICATION_COLTRL_MAP> TBL_LOANAPPLICATION_COLTRL_MAP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_COLLATERAL_POLICY> TBL_TEMP_COLLATERAL_POLICY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_PLANT_EQUIP> TBL_TEMP_COLLATERAL_PLANT_EQUIP { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_PLANT_EQUP> TBL_TEMP_COLLATERAL_PLANT_EQUP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_COLLATERAL_PREC_METAL> TBL_TEMP_COLLATERAL_PREC_METAL { get; set; }

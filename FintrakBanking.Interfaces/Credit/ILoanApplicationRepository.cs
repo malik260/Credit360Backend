@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanApplicationRepository
     {
-        IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationId, int companyId);
+        IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationDetailId, int companyId);
         bool CheckExistingCertificateOfOwnership(string certificateOfOwnership, int companyId);
 
         IEnumerable<ExistingLoanApplicationViewModel> ExistingLoanApplication(int customerId, int companyId);
@@ -47,5 +47,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId);
         dynamic GetLoanApplicationDetailsProductProgram(int loanApplicationDetailId);
+        ValidateDataViewModel ValidateDocumentDate(ValidateDataViewModel data);
     }
 }

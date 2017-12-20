@@ -59,12 +59,12 @@ namespace FintrakBanking.Repositories.Credit
             })
             .Where(x => x.staffId == staffId);
 
-            var memos = context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Where(x => x.LOANAPPLICATIONID == applicationId)
-                .SelectMany(x => x.TBL_CREDIT_APPRAISAL_MEMO_DOCUM)
+            var memos = context.TBL_CREDIT_APPRAISAL_MEMORANDM.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .SelectMany(x => x.TBL_CREDIT_APPRAISAL_MEMO_DOCU)
                 .Select(x => new
                 {
                     doc = x,
-                    mem = x.TBL_CREDIT_APPRAISAL_MEMORANDUM
+                    mem = x.TBL_CREDIT_APPRAISAL_MEMORANDM
                 })
                 .Select(x => new AppraisalMemorandumViewModel
                 {
@@ -92,11 +92,11 @@ namespace FintrakBanking.Repositories.Credit
 
             int approvalLevelId = GetFirstApprovalLevelId(/*appl.ProductId,*/ appl.PRODUCTCLASSID, model.createdBy);
 
-            var memo = context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).SingleOrDefault();
+            var memo = context.TBL_CREDIT_APPRAISAL_MEMORANDM.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).SingleOrDefault();
 
             if (memo == null)
             {
-                var newMemo = new TBL_CREDIT_APPRAISAL_MEMORANDUM
+                var newMemo = new TBL_CREDIT_APPRAISAL_MEMORANDM
                 {
                     COMPANYID = model.companyId,
                     LOANAPPLICATIONID = model.loanApplicationId,
@@ -107,10 +107,10 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now
                 };
 
-                memo = context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Add(newMemo);
+                memo = context.TBL_CREDIT_APPRAISAL_MEMORANDM.Add(newMemo);
             }
 
-            var newDocument = new TBL_CREDIT_APPRAISAL_MEMO_DOCUM
+            var newDocument = new TBL_CREDIT_APPRAISAL_MEMO_DOCU
             {
                 CAMDOCUMENTATION = "New",
                 APPRAISALMEMORANDUMID = memo.APPRAISALMEMORANDUMID,
@@ -119,7 +119,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now
             };
 
-            var document = context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM.Add(newDocument);
+            var document = context.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Add(newDocument);
 
 
             // Audit Section ---------------------------
@@ -227,7 +227,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int documentId)
         {
-            var data = this.context.TBL_CREDIT_APPRAISAL_MEMO_DOCUM.Find(documentId);
+            var data = this.context.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Find(documentId);
 
             if (data == null) { return false; }
 
@@ -291,7 +291,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
-                var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDUM.Find(model.appraisalMemorandumId);
+                var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
                 if (memo != null) { memo.ISCOMPLETED = true; }
             }
 
@@ -518,8 +518,8 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<DocumentationViewModel> GetAllDocumentation(int applicationId)
         {
             var documentation = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
-                .Select(x => x.TBL_CREDIT_APPRAISAL_MEMORANDUM).First()
-                .SelectMany(x => x.TBL_CREDIT_APPRAISAL_MEMO_DOCUM)
+                .Select(x => x.TBL_CREDIT_APPRAISAL_MEMORANDM).First()
+                .SelectMany(x => x.TBL_CREDIT_APPRAISAL_MEMO_DOCU)
                 .Select(x => new DocumentationViewModel
                 {
                     documentationId = x.CAMDOCUMENTATIONID,
@@ -821,7 +821,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
             }
 
-            var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDUM.FirstOrDefault(x => x.LOANAPPLICATIONID == model.applicationId);
+            var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault(x => x.LOANAPPLICATIONID == model.applicationId);
 
             if (memo != null)
             {

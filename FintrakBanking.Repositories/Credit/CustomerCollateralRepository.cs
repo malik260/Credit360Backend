@@ -1067,6 +1067,71 @@ namespace FintrakBanking.Repositories.Credit
             return details;
         }
 
+        // LOAN COLLATERAL MAPPING
+
+        public IEnumerable<LoanApplicationCollateralViewModel> MapApplicationCollateral(ApplicationCollateralMapping entity)
+        {
+            int collateralId = entity.collateralId == null ? 0 : (int)entity.collateralId;
+
+            if (entity.collateralCode != null && entity.collateralId == null)
+            {
+                var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(x => x.COLLATERALCODE == entity.collateralCode);
+                if (collateral != null) { collateralId = collateral.COLLATERALCUSTOMERID; }
+            }
+
+            context.TBL_LOAN_APPLICATION_COLLATERL.Add(new TBL_LOAN_APPLICATION_COLLATERL
+            {
+                COLLATERALCUSTOMERID = collateralId,
+                LOANAPPLICATIONID = entity.applicationId,
+                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                CREATEDBY = entity.staffId,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            context.SaveChanges();
+
+            var mapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId).Select(c => new LoanApplicationCollateralViewModel
+            {
+                loanAppCollateralId = c.LOANAPPCOLLATERALID,
+                applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                collateralCustomerId = c.COLLATERALCUSTOMERID,
+                collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                loanApplicationId = c.LOANAPPLICATIONID,
+                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
+            }).OrderByDescending(x => x.loanAppCollateralId);
+            return mapped;
+        }
+
+        public IEnumerable<LoanApplicationCollateralViewModel> UnmapApplicationCollateral(ApplicationCollateralMapping entity)
+        {
+            var item = this.context.TBL_LOAN_APPLICATION_COLLATERL.FirstOrDefault(x => x.LOANAPPLICATIONID == entity.applicationId && x.COLLATERALCUSTOMERID == entity.collateralId);
+
+            if (item != null)
+            {
+                context.TBL_LOAN_APPLICATION_COLLATERL.Remove(item);
+                context.SaveChanges();
+            }
+
+            var mapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId).Select(c => new LoanApplicationCollateralViewModel
+            {
+                loanAppCollateralId = c.LOANAPPCOLLATERALID,
+                applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                collateralCustomerId = c.COLLATERALCUSTOMERID,
+                collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                loanApplicationId = c.LOANAPPLICATIONID,
+                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
+            }).OrderByDescending(x => x.loanAppCollateralId);
+            return mapped;
+        }
+
         #endregion New 
 
         public IEnumerable<ActiveCustomerCollateralViewModel> GetActiveCustomerCollateral(int customerId) // REFACTOR PROJECTION
@@ -2449,7 +2514,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CollateralSeniorityOfClaimsViewModel> GetCollateralSeniorityOfClaims()
         {
-            return (from m in context.TBL_COLLATERAL_SENIORITY_CLAIMS
+            return (from m in context.TBL_COLLATERAL_SENIORITY_CLAIM
                     select new CollateralSeniorityOfClaimsViewModel
                     {
                         seniorityOfClaimId = m.COLLATERALSENIORITYOFCLAIMID,
@@ -2523,7 +2588,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from a in context.TBL_COLLATERAL_CUSTOMER
                         where a.CUSTOMERID == customerId && a.COMPANYID == companyId &&
-                         !context.TBL_LOAN_APPLICATION_COLLATERAL.Any(c => c.COLLATERALCUSTOMERID == a.COLLATERALCUSTOMERID && c.LOANAPPLICATIONID == loanApplicationId)
+                         !context.TBL_LOAN_APPLICATION_COLLATERL.Any(c => c.COLLATERALCUSTOMERID == a.COLLATERALCUSTOMERID && c.LOANAPPLICATIONID == loanApplicationId)
                         select new CollateralLoanApplication()
                         {
                            
@@ -2539,7 +2604,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CollateralLoanApplication> GetAllMappedCustomerCollateral(int customerId, int loanApplicationId, int companyId)
         {
             var data = (from a in context.TBL_COLLATERAL_CUSTOMER
-                        join b in context.TBL_LOAN_APPLICATION_COLLATERAL on a.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                        join b in context.TBL_LOAN_APPLICATION_COLLATERL on a.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
                         where b.LOANAPPLICATIONID == loanApplicationId && a.CUSTOMERID == customerId && a.COMPANYID == companyId
                         select new CollateralLoanApplication()
                         {
@@ -2558,10 +2623,10 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteCollateralApplicationMapped(IEnumerable<CollateralLoanApplication> mappings, int companyId)
         {
             var data = (from a in mappings
-                        join b in context.TBL_LOAN_APPLICATION_COLLATERAL on a.loanApplicationCollateralId equals b.LOANAPPCOLLATERALID
+                        join b in context.TBL_LOAN_APPLICATION_COLLATERL on a.loanApplicationCollateralId equals b.LOANAPPCOLLATERALID
                         where b.TBL_COLLATERAL_CUSTOMER.COMPANYID == companyId
                         select b);
-            context.TBL_LOAN_APPLICATION_COLLATERAL.RemoveRange(data);
+            context.TBL_LOAN_APPLICATION_COLLATERL.RemoveRange(data);
             return context.SaveChanges() > 0;
 
         }
