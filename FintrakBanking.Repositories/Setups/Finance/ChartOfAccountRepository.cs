@@ -729,7 +729,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             systemUse = c.SYSTEMUSE,
                             branchSpecific = c.BRANCHSPECIFIC,
                             fsCaptionId = c.FSCAPTIONID,
-                            fsCaptionName = c.TBL_FINANCIAL_STATEMENT_CAPTION.FSCAPTION,
+                            fsCaptionName = c.TBL_FINANCIAL_STATEMENT_CAPTN.FSCAPTION,
                             operationId = atrail.OPERATIONID,
                             //approvalStatusId = c.ApprovalStatusId,
                             createdBy = c.CREATEDBY,
@@ -807,7 +807,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public IEnumerable<LookupViewModel> GetFinancialSatementCaptionLookup()
         {
-            return (from data in context.TBL_FINANCIAL_STATEMENT_CAPTION
+            return (from data in context.TBL_FINANCIAL_STATEMENT_CAPTN
                     where data.ISTOTALLINE == false
                     orderby data.FINTYPE, data.POSITION
                     select new LookupViewModel()

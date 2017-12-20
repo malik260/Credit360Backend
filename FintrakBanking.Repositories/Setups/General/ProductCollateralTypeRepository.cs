@@ -158,7 +158,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public void ApproveProductCollateral(int productId, UserInfo user)
         {
-            var productCollateralTypeModel = context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Where(x => x.PRODUCTID == productId
+            var productCollateralTypeModel = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(x => x.PRODUCTID == productId
                                                                         && x.DELETED == false
                                                                         && x.ISCURRENT == true);
             var productToUpdate = context.TBL_PRODUCT.Find(productId);
@@ -174,7 +174,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     DELETED = false
                 };
                 context.TBL_PRODUCT_COLLATERALTYPE.Add(productCollateralType);
-                context.TBL_TEMP_PRODUCT_COLLATERALTYPE.Remove(p);
+                context.TBL_TEMP_PRODUCT_COLLATERALTYP.Remove(p);
             }
 
             // Audit Section ---------------------------
@@ -233,7 +233,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public IEnumerable<ProductCollateralTypeViewModel> GetMappedCollateralTypeByProduct(int productId)
         {
-            var response = (from data in context.TBL_TEMP_PRODUCT_COLLATERALTYPE
+            var response = (from data in context.TBL_TEMP_PRODUCT_COLLATERALTYP
                             where data.PRODUCTID == productId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
                             select new ProductCollateralTypeViewModel()
                             {

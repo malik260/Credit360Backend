@@ -47,5 +47,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId);
         dynamic GetLoanApplicationDetailsProductProgram(int loanApplicationDetailId);
+        ValidateDataViewModel ValidateDocumentDate(ValidateDataViewModel data);
     }
 }

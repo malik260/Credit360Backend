@@ -2449,7 +2449,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CollateralSeniorityOfClaimsViewModel> GetCollateralSeniorityOfClaims()
         {
-            return (from m in context.TBL_COLLATERAL_SENIORITY_CLAIMS
+            return (from m in context.TBL_COLLATERAL_SENIORITY_CLAIM
                     select new CollateralSeniorityOfClaimsViewModel
                     {
                         seniorityOfClaimId = m.COLLATERALSENIORITYOFCLAIMID,
@@ -2523,7 +2523,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from a in context.TBL_COLLATERAL_CUSTOMER
                         where a.CUSTOMERID == customerId && a.COMPANYID == companyId &&
-                         !context.TBL_LOAN_APPLICATION_COLLATERAL.Any(c => c.COLLATERALCUSTOMERID == a.COLLATERALCUSTOMERID && c.LOANAPPLICATIONID == loanApplicationId)
+                         !context.TBL_LOAN_APPLICATION_COLLATERL.Any(c => c.COLLATERALCUSTOMERID == a.COLLATERALCUSTOMERID && c.LOANAPPLICATIONID == loanApplicationId)
                         select new CollateralLoanApplication()
                         {
                            
@@ -2539,7 +2539,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CollateralLoanApplication> GetAllMappedCustomerCollateral(int customerId, int loanApplicationId, int companyId)
         {
             var data = (from a in context.TBL_COLLATERAL_CUSTOMER
-                        join b in context.TBL_LOAN_APPLICATION_COLLATERAL on a.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                        join b in context.TBL_LOAN_APPLICATION_COLLATERL on a.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
                         where b.LOANAPPLICATIONID == loanApplicationId && a.CUSTOMERID == customerId && a.COMPANYID == companyId
                         select new CollateralLoanApplication()
                         {
@@ -2558,10 +2558,10 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteCollateralApplicationMapped(IEnumerable<CollateralLoanApplication> mappings, int companyId)
         {
             var data = (from a in mappings
-                        join b in context.TBL_LOAN_APPLICATION_COLLATERAL on a.loanApplicationCollateralId equals b.LOANAPPCOLLATERALID
+                        join b in context.TBL_LOAN_APPLICATION_COLLATERL on a.loanApplicationCollateralId equals b.LOANAPPCOLLATERALID
                         where b.TBL_COLLATERAL_CUSTOMER.COMPANYID == companyId
                         select b);
-            context.TBL_LOAN_APPLICATION_COLLATERAL.RemoveRange(data);
+            context.TBL_LOAN_APPLICATION_COLLATERL.RemoveRange(data);
             return context.SaveChanges() > 0;
 
         }

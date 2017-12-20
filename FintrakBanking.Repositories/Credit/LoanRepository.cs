@@ -474,7 +474,7 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTNUMBEROFINSTALLMENT = 0,
                 //IsScheduledPrepayment = null,
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
-                SCH_PREPAYMENT_FREQUENCY_TYPEID = null,
+                SCH_PREPAYMENT_FREQUENCY_TYPID = null,
                 PRODUCTPRICEINDEXRATE = (double)priceIndex,
 
                 CUSTOMERGROUPID = (entity.customerGroupId != 0 ? entity.customerGroupId : null),
@@ -588,7 +588,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
                                 {
-                                    var irregularRecordData = new TBL_LOAN_SCHEDULE_IRREGUL_INPUT
+                                    var irregularRecordData = new TBL_LOAN_SCHEDULE_IREGUL_INPUT
                                     {
                                         LOANID = loan.TERMLOANID,
                                         PAYMENTAMOUNT = (decimal)irregular.paymentAmount,
@@ -596,7 +596,7 @@ namespace FintrakBanking.Repositories.Credit
                                         CREATEDBY = entity.createdBy,
                                         DATETIMECREATED = generalSetup.GetApplicationDate()
                                     };
-                                    context.TBL_LOAN_SCHEDULE_IRREGUL_INPUT.Add(irregularRecordData);
+                                    context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Add(irregularRecordData);
                                 }
 
                             }
@@ -1661,7 +1661,7 @@ namespace FintrakBanking.Repositories.Credit
         private LoanPaymentScheduleInputViewModel BuildScheduleModel(int targetId, int createdBy)
         {
             List<IrregularLoanScheduleInputViewModel> irregularPaymentScheduleList = new List<IrregularLoanScheduleInputViewModel>();
-            var loanIrregularRecord = context.TBL_LOAN_SCHEDULE_IRREGUL_INPUT.Where(x => x.LOANID == targetId);
+            var loanIrregularRecord = context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Where(x => x.LOANID == targetId);
             foreach (var irregularLoan in loanIrregularRecord)
             {
                 var irregularViewData = new IrregularLoanScheduleInputViewModel
@@ -2982,7 +2982,7 @@ namespace FintrakBanking.Repositories.Credit
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -2999,7 +2999,7 @@ namespace FintrakBanking.Repositories.Credit
                            isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
                            bankVerificationNumber = s.CUSTOMERBVN,
                            companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                           companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                            customerId = s.CUSTOMERID,
                            customerName = s.FIRSTNAME + " " + s.SURNAME,
                            address = s.ADDRESS,
@@ -3060,7 +3060,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             return (from data in context.TBL_CREDIT_APPRAISAL_MEMO_DETL
                     where data.APPRAISALMEMORANDUMID == appraisalMemorandumId
-                    orderby data.APPRAISALMEMORANDUMLOANDETAILID descending
+                    orderby data.MEMORANDUMLOANDETAILID descending
                     select new AppraisalMemorandumLoanDetailViewModel()
                     {
                         interestRate = data.INTERESTRATE,
@@ -3295,7 +3295,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                           select new CustomerCompanyDirectorsViewModels
                                                                           {
                                                                               numberOfShares = b.NUMBEROFSHARES,
-                                                                              companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                              companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                               fullname = b.FIRSTNAME + " " + b.SURNAME,
                                                                               isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
                                                                           }).ToList(),
@@ -3305,7 +3305,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              select new CustomerCompanyShareholdersViewModels
                                                                              {
                                                                                  numberOfShares = e.NUMBEROFSHARES,
-                                                                                 companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                                 companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                  fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                  isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
                                                                              }).ToList(),
@@ -3315,7 +3315,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                    select new CustomerCompanyAccountSignatoryViewModels
                                                                                    {
                                                                                        numberOfShares = e.NUMBEROFSHARES,
-                                                                                       companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                                       companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                        fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                        isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
                                                                                    }).ToList(),
@@ -3339,7 +3339,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = d.EXCHANGERATE,
                             loanTypeId = m.LOANTYPEID,
                             loanTypeName = m.TBL_LOAN_TYPE.LOANTYPENAME,
-                            camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDUM.FirstOrDefault().CAMREF,
+                            camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault().CAMREF,
                             productId = d.APPROVEDPRODUCTID,
                             productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
                             productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
@@ -3492,7 +3492,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                           select new CustomerCompanyDirectorsViewModels
                                                                           {
                                                                              numberOfShares = b.NUMBEROFSHARES,
-                                                                             companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                             companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                              fullname = b.FIRSTNAME +" "+ b.SURNAME,
                                                                              isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
                                                                           }).ToList(),
@@ -3502,7 +3502,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              select new CustomerCompanyShareholdersViewModels
                                                                           {
                                                                               numberOfShares = e.NUMBEROFSHARES,
-                                                                              companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                              companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                               fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                               isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
                                                                           }).ToList(),
@@ -3512,7 +3512,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              select new CustomerCompanyAccountSignatoryViewModels
                                                                              {
                                                                                  numberOfShares = e.NUMBEROFSHARES,
-                                                                                 companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                                 companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                  fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                  isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
                                                                              }).ToList(),
@@ -3536,7 +3536,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = d.EXCHANGERATE,
                             loanTypeId = m.LOANTYPEID,
                             loanTypeName = m.TBL_LOAN_TYPE.LOANTYPENAME,
-                            camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDUM.FirstOrDefault().CAMREF,
+                            camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault().CAMREF,
                             productId = d.APPROVEDPRODUCTID,
                             productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
                             productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
@@ -3673,7 +3673,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                           select new CustomerCompanyDirectorsViewModels
                                                                           {
                                                                               numberOfShares = b.NUMBEROFSHARES,
-                                                                              companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                              companyDirectorTypeName = b.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                               fullname = b.FIRSTNAME + " " + b.SURNAME,
                                                                               isPoliticallyExposed = b.ISPOLITICALLYEXPOSED,
                                                                           }).ToList(),
@@ -3683,7 +3683,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                              select new CustomerCompanyShareholdersViewModels
                                                                              {
                                                                                  numberOfShares = e.NUMBEROFSHARES,
-                                                                                 companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                                 companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                  fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                  isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
                                                                              }).ToList(),
@@ -3693,7 +3693,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                                    select new CustomerCompanyAccountSignatoryViewModels
                                                                                    {
                                                                                        numberOfShares = e.NUMBEROFSHARES,
-                                                                                       companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                                                                       companyDirectorTypeName = e.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                                                                        fullname = e.FIRSTNAME + " " + e.SURNAME,
                                                                                        isPoliticallyExposed = e.ISPOLITICALLYEXPOSED,
                                                                                    }).ToList(),
@@ -3717,7 +3717,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = d.EXCHANGERATE,
                             loanTypeId = m.LOANTYPEID,
                             loanTypeName = m.TBL_LOAN_TYPE.LOANTYPENAME,
-                            camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDUM.FirstOrDefault().CAMREF,
+                            camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault().CAMREF,
                             productId = d.APPROVEDPRODUCTID,
                             productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
                             productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,

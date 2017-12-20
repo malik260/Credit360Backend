@@ -10,7 +10,7 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_ACCREDITEDCONSULTANT_STATE
     {
         [Key]
-        public int ACCREDIT_CONSULT_STATE_COVREDID { get; set; }
+        public int CONSULT_STATE_COVREDID { get; set; }
 
         public int STATEID { get; set; }
 
