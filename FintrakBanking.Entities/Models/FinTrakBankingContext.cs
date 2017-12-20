@@ -304,8 +304,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
-        public virtual DbSet<TBL_TEMP_PRODUCT_BEHAVIOUR> TBL_TEMP_PRODUCT_BEHAVIOUR { get; set; }
-        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
+        //public virtual DbSet<TBL_TEMP_PRODUCT_BEHAVIOUR> TBL_TEMP_PRODUCT_BEHAVIOUR { get; set; }
+        //public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -4129,21 +4129,21 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.SHAREVALUEAMOUNTTOUSE)
                 .HasPrecision(19, 4);
 
-            modelBuilder.Entity<TBL_TEMP_PRODUCT_BEHAVIOUR>()
-                .Property(e => e.CUSTOMER_LIMIT)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<TBL_TEMP_PRODUCT_BEHAVIOUR>()
+            //    .Property(e => e.CUSTOMER_LIMIT)
+            //    .HasPrecision(19, 4);
 
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LEVELMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<view_Approval_Setup>()
+            //    .Property(e => e.LEVELMAXIMUMAMOUNT)
+            //    .HasPrecision(19, 4);
 
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.INVESTMENTGRADEAMOUNT)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<view_Approval_Setup>()
+            //    .Property(e => e.INVESTMENTGRADEAMOUNT)
+            //    .HasPrecision(19, 4);
 
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.STAFFMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<view_Approval_Setup>()
+            //    .Property(e => e.STAFFMAXIMUMAMOUNT)
+            //    .HasPrecision(19, 4);
         }
     }
 }
