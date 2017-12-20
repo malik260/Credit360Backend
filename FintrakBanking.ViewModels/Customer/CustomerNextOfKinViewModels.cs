@@ -13,14 +13,15 @@ namespace FintrakBanking.ViewModels.Customer
         public string firstName { get; set; }
         public string lastName { get; set; }
         public string phoneNumber { get; set; }
-        public DateTime dateOfBirth { get; set; }
+        public DateTime? dateOfBirth { get; set; }
         public string gender { get; set; }
         public string relationship { get; set; }
         public string email { get; set; }
         public string address { get; set; }
         public string nearestLandmark { get; set; }
-        public int cityId { get; set; }
-        public bool active { get; set; } 
+        public int? stateId { get; set; }
+        public int? cityId { get; set; }
+        public bool? active { get; set; } 
    
     }
 }

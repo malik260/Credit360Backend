@@ -1270,6 +1270,24 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet]
+        [Route("single-customer-nextofkin-info/")]
+        public HttpResponseMessage GetSingleCustomerNextOfKinInfo(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerNextOfKinInfo(customerId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
         [Route("single-customer-children-info/")]
         public HttpResponseMessage GetSingleCustomerChildrenInfo(int customerId)
         {

@@ -476,41 +476,42 @@ namespace FintrakBanking.Repositories.Customer
                             next.CITYID = entity.cityId;
                             next.ACTIVE = entity.active;
                         }
-                        else
-                        {
-                            next = new TBL_CUSTOMER_NEXTOFKIN();
-                            next.CUSTOMERID = entity.customerId;
-                            next.FIRSTNAME = entity.firstName;
-                            next.LASTNAME = entity.lastName;
-                            next.PHONENUMBER = entity.phoneNumber;
-                            next.RELATIONSHIP = entity.relationship;
-                            next.DATEOFBIRTH = entity.dateOfBirth;
-                            next.EMAIL = entity.email;
-                            next.NEAREST_LANDMARK = entity.nearestLandmark;
-                            next.GENDER = entity.gender;
-                            next.ADDRESS = entity.address;
-                            next.CITYID = entity.cityId;
-                            next.ACTIVE = entity.active;
-                            context.TBL_CUSTOMER_NEXTOFKIN.Add(next);
-                        }
                     }
-                        // Audit Section ----------------------------
-                        var audit = new TBL_AUDIT
-                        {
-                            AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
-                            STAFFID = entity.createdBy,
-                            BRANCHID = (short)entity.userBranchId,
-                            DETAIL = "Added new TBL_CUSTOMER_NEXTOFKIN for customer ID: + (" + entity.customerId + ") ",
-                            IPADDRESS = entity.userIPAddress,
-                            URL = entity.applicationUrl,
-                            APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                            SYSTEMDATETIME = DateTime.Now
-                        };
-                        this.auditTrail.AddAuditTrail(audit);
+                    else
+                    {
+                        next = new TBL_CUSTOMER_NEXTOFKIN();
+                        next.CUSTOMERID = entity.customerId;
+                        next.FIRSTNAME = entity.firstName;
+                        next.LASTNAME = entity.lastName;
+                        next.PHONENUMBER = entity.phoneNumber;
+                        next.RELATIONSHIP = entity.relationship;
+                        next.DATEOFBIRTH = entity.dateOfBirth;
+                        next.EMAIL = entity.email;
+                        next.NEAREST_LANDMARK = entity.nearestLandmark;
+                        next.GENDER = entity.gender;
+                        next.ADDRESS = entity.address;
+                        next.CITYID = entity.cityId;
+                        next.ACTIVE = entity.active;
+                        context.TBL_CUSTOMER_NEXTOFKIN.Add(next);
+                    }
 
-                        var response = context.SaveChanges() != 0;
-                        return response;
-                    }
+                    // Audit Section ----------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = (short)entity.userBranchId,
+                        DETAIL = "Added new TBL_CUSTOMER_NEXTOFKIN for customer ID: + (" + entity.customerId + ") ",
+                        IPADDRESS = entity.userIPAddress,
+                        URL = entity.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.auditTrail.AddAuditTrail(audit);
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
                 catch (Exception ex)
                 {
                     throw new Exception(ex.Message);
@@ -1856,6 +1857,28 @@ namespace FintrakBanking.Repositories.Customer
                 hasLien = x.HASLIEN
             }).ToList();
             return casaInformation;
+        }
+
+        public IEnumerable<CustomerNextOfKinViewModels> GetSingleCustomerNextOfKinInfo(int customerId)
+        {
+            var nextOfKin = context.TBL_CUSTOMER_NEXTOFKIN.Where(a => a.CUSTOMERID == customerId).Select(x => new CustomerNextOfKinViewModels()
+            {
+                nextOfKinId = x.NEXTOFKINID,
+                customerId = x.CUSTOMERID,
+                firstName = x.FIRSTNAME,
+                lastName = x.LASTNAME,
+                phoneNumber = x.PHONENUMBER,
+                dateOfBirth = x.DATEOFBIRTH,
+                gender = x.GENDER,
+                relationship = x.RELATIONSHIP,
+                email = x.EMAIL,
+                address = x.ADDRESS,
+                nearestLandmark = x.NEAREST_LANDMARK,
+                stateId = x.TBL_CITY.STATEID,
+                cityId = x.CITYID,
+                active = x.ACTIVE,
+            }).ToList();
+            return nextOfKin;
         }
         public dynamic GetCustomerAndType(int custormerId)
         {
