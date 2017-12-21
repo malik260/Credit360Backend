@@ -250,16 +250,36 @@ namespace FintrakBanking.Repositories.Credit
                                                  customerName = i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " "+ i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
                                                  +" "+ i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
                                               }).ToList(),
+                            bondsAndGaurantees = (from i in context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                              select new BondsAndGauranteeViewModel
+                                              {
+                                                    bondId = i.BONDID ,
+                                                    loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
+                                                    principalId = i.PRINCIPALID,
+                                                    amount = i.AMOUNT,
+                                                    currencyId = i.CURRENCYID,
+                                                    contractStartDate = i.CONTRACT_STARTDATE,
+                                                    contractEndDate = i.CONTRACT_ENDDATE,
+                                                    isTenored = i.ISTENORED,
+                                                    isBankFormat = i.ISBANKFORMAT,
+                                                    approvalStatusId =i.APPROVALSTATUSID,
+                                                    approvalComment = i.APPROVAL_COMMENT,
+                                                    approvedBy = i.APPROVEDBY,
+                                                    approvedDateTime = i.APPROVEDDATETIME,
+                                                    principalName = i.TBL_LOAN_PRINCIPAL.NAME,
+                                                    invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
+                                                    approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
+                                              }).ToList(),
 
                         }).ToList();
-            foreach(var i in data)
-            {
-                var relationshipOfficer = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipOfficerId).FirstOrDefault();
-                var relationshipManager = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipManagerId).FirstOrDefault();
-                i.relationshipOfficerName = relationshipOfficer.FIRSTNAME + " " + relationshipOfficer.MIDDLENAME + " " + relationshipOfficer.LASTNAME;
-                i.relationshipManagerName = relationshipManager.FIRSTNAME + " " + relationshipManager.MIDDLENAME + " " + relationshipManager.LASTNAME;
-            }
-            return data;
+                        foreach(var i in data)
+                        {
+                            var relationshipOfficer = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipOfficerId).FirstOrDefault();
+                            var relationshipManager = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipManagerId).FirstOrDefault();
+                            i.relationshipOfficerName = relationshipOfficer.FIRSTNAME + " " + relationshipOfficer.MIDDLENAME + " " + relationshipOfficer.LASTNAME;
+                            i.relationshipManagerName = relationshipManager.FIRSTNAME + " " + relationshipManager.MIDDLENAME + " " + relationshipManager.LASTNAME;
+                        }
+                        return data;
         }
 
         public IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId)
