@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_PROFILE_PRIVILEDGE()
         {
-            TBL_PROFILE_PRIVILEDGE_ACTIVITY = new HashSet<TBL_PROFILE_PRIVILEDGE_ACTIVITY>();
+            TBL_PROFILE_PRIVILEDGE_ACTIVIT = new HashSet<TBL_PROFILE_PRIVILEDGE_ACTIVIT>();
         }
 
         [Key]
@@ -23,6 +23,6 @@ namespace FintrakBanking.Entities.Models
         public string PRIVILEDGENAME { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_PROFILE_PRIVILEDGE_ACTIVITY> TBL_PROFILE_PRIVILEDGE_ACTIVITY { get; set; }
+        public virtual ICollection<TBL_PROFILE_PRIVILEDGE_ACTIVIT> TBL_PROFILE_PRIVILEDGE_ACTIVIT { get; set; }
     }
 }

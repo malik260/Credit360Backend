@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Setups.General;
+﻿using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public DateTime? systemAcknowledgementDate { get; set; }
         public string from { get; set; }
         public string fromBranchName { get; set; }
+        public string toBranchName { get; set; }
+        
         public string to { get; set; }
         public string assignee { get; set; }
         public Array emailList { get; set; }
@@ -68,6 +71,25 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string description { get; set; }
 
         public decimal? amount { get; set; }
+    }
+
+    public class ApplicationJobRequest : LoanApplicationViewModel
+    {
+        public int? allProcessingJobsCount { get; set; }
+        public int? allCancelledJobsCount { get; set; }
+        public int? processedMiddleOfficeCount { get; set; }
+        public int? allJobsCount { get; set; }
+        public int? allPendingJobsCount { get; set; }
+        public int? allApprovedJobsCount { get; set; }
+        public int? allDisapproveJobsCount { get; set; }
+        
+        public List<LoanApplicationDetailInvoiceViewModel> invoiceDiscountDetail { get; set; }
+
+        public List<EducationLoanViewModel> firstEducationtDetail { get; set; }
+
+        public List<TraderLoanViewModel> firstTradderDetail { get; set; }
+
+        public List<CollateralViewModel> loanCollateral { get; set; }
     }
 
     public class JobRequestStatusFeedbackViewModel : GeneralEntity

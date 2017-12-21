@@ -970,7 +970,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             try
             {
-                var document = new TBL_MEDIA_STAFF_SIGNATURE()
+                var document = new Entities.DocumentModels.TBL_MEDIA_STAFF_SIGNATURE()
                 {
                     //DOCUMENT_TITLE = model.documentTitle,
                     FILENAME = $"{model.StaffCode}-{model.fileName}",

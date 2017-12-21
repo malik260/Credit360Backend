@@ -6,7 +6,12 @@ namespace FintrakBanking.Interfaces.WorkFlow
 {
     public interface IJobRequestRepository
     {
+        IEnumerable<JobRequestStatusFeedbackViewModel> GetJobRequestStatusFeedback(short statusId, short jobTypeId);
         JobRequestViewModel GetJobRequest(int jobRequestId);
+
+        List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId);
+
+        IEnumerable<ApplicationJobRequest> GetLoanApplicationJobsById(int loanApplicationId, int companyId);
 
         IEnumerable<JobRequestViewModel> GetAllJobRequest();
 

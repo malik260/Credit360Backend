@@ -599,4 +599,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralType { get; set; }
         public double securityValue { get { return collateralValue - (haircut * 0.01 * collateralValue); } }
     }
+
+    public class ApplicationCollateralMapping
+    {
+        public int? collateralId { get; set; }
+        public int applicationId { get; set; }
+        public int? applicationDetailId { get; set; }
+        public int staffId { get; set; }
+        public string collateralCode { get; set; }
+    }
 }

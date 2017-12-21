@@ -4,9 +4,11 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels.Credit;
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
@@ -30,11 +32,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum/approved-loans")]
-        public HttpResponseMessage GetCamProcessedLoanApplications()
+        public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForOfferLetter()
         {
             try
             {
-                var response = olAvlmentRepo.GetApplicationsDueForOfferLetterGeneration(token.GetStaffId, token.GetCompanyId).ToList();
+                var response = await olAvlmentRepo.GetApplicationsDueForOfferLetterGeneration(token.GetStaffId, token.GetCompanyId).ToListAsync();
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
@@ -44,17 +46,79 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/due-for-review")]
+        public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForReview()
+        {
+            try
+            {
+                var response = await olAvlmentRepo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToListAsync();
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList(), count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/due-for-availment")]
+        public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForAvailment()
+        {
+            try
+            {
+                var response = await olAvlmentRepo.GetApplicationsDueForAvailment(token.GetStaffId, token.GetCompanyId).ToListAsync();
+
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/under-review")]
+        public async Task<HttpResponseMessage> GetCamProcessedApplicationsUnderReview()
+        {
+            try
+            {
+                var response = await olAvlmentRepo.GetApplicationsUnderForReview(token.GetCompanyId).ToListAsync();
+
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
         [HttpPut]
-        [Route("loan-application/send-for-availment/{applicationRefNumber}/statusId/{applicationStatusId}")]
-        public HttpResponseMessage UpdateApplicationStatus(int applicationRefNumber, short applicationStatusId)
+        [Route("loan-application/applicationRef/{applicationRefNumber}/statusId/{applicationStatusId}")]
+        public HttpResponseMessage UpdateApplicationStatus([FromUri] string applicationRefNumber, [FromUri] short applicationStatusId)
         {
             try
             {
-                var response = olAvlmentRepo.UpdateLoanApplicationStatus(applicationRefNumber.ToString(), applicationStatusId);
+                var response = olAvlmentRepo.UpdateLoanApplicationStatus(applicationRefNumber.Trim(), applicationStatusId);
 
                 if (!response)
                 {
@@ -65,48 +129,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-
-        [HttpGet]
-        [Route("loan-application/credit-assessment-memorandum/due-for-review")]
-        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForReview()
-        {
-            try
-            {
-                var response = olAvlmentRepo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToList();
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList(), count = response.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
-
-        [HttpGet]
-        [Route("loan-application/credit-assessment-memorandum/due-for-availment")]
-        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForAvailment()
-        {
-            try
-            {
-                var response = olAvlmentRepo.GetApplicationsDueForAvailment(token.GetStaffId, token.GetCompanyId).ToList();
-
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -129,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -150,7 +173,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -170,7 +193,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -196,7 +219,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -217,7 +240,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -238,7 +261,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -259,7 +282,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -280,7 +303,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -300,7 +323,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception e)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
 
@@ -331,7 +354,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
             }
         }
 
@@ -361,7 +384,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
             }
         }
 
@@ -392,7 +415,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (System.Exception ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
             }
         }
 

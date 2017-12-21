@@ -353,7 +353,6 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion New
 
-
         #region Collateral 
 
         //[HttpPost]
@@ -421,6 +420,21 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = type.GetCollateralTypes();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("collateral-type/loan-application/{id}")]
+        public HttpResponseMessage GetCollateralTypeByLoanApplicationId(int? id)
+        {
+            try
+            {
+                var response = type.CollateralTypesByLoanApplication(id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)
@@ -537,7 +551,6 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion  End of Collateral Types
 
-
         #region Seniority Of Claims
         [HttpGet]
         [Route("collateral-seniority-of-claims")]
@@ -560,7 +573,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion Seniority Of Claims
-
 
         [HttpGet]
         [Route("collateral-valuer")]
@@ -683,18 +695,35 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-        //[HttpPost, Route("remove-mapped-collateral-application")]
-        //public HttpResponseMessage DeleteCollateralApplicationMapped([FromBody] IEnumerable<CollateralLoanApplication> entity)
-        //{
-        //    try
-        //    {
-        //        var response = repo.DeleteCollateralApplicationMapped(entity, token.GetCompanyId);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
-        //    }
-        //}
+        [HttpPost, Route("application-collateral/map")]
+        public HttpResponseMessage MapApplicationCollateral([FromBody] ApplicationCollateralMapping entity)
+        {
+            try
+            {
+
+                entity.staffId = token.GetStaffId;
+
+                var response = repo.MapApplicationCollateral(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpPost, Route("application-collateral/unmap")]
+        public HttpResponseMessage UnmapApplicationCollateral([FromBody] ApplicationCollateralMapping entity)
+        {
+            try
+            {
+                var response = repo.UnmapApplicationCollateral(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
     }
 }

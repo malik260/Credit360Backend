@@ -34,7 +34,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         //bool DeleteProduct(int productId);
         IEnumerable<ProductViewModel> GetAllLoanProduct();
         IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId);
-
+        IEnumerable<LookupViewModel> GetProductCurrency(int productId);
         #endregion Product
 
         #region Product Price Index

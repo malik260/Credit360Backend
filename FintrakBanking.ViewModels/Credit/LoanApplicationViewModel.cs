@@ -10,7 +10,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public LoanApplicationViewModel()
         {
-            LoanApplicationCollateral = new List<LoanApplicationCollateralViewModel>();
+ 
             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
         }
 
@@ -20,7 +20,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerId { get; set; }
         public int? operationId { get; set; }
 
-        public short ? branchId { get; set; }
+        public short? branchId { get; set; }
         public short? productClassId { get; set; }
         public string productClassName { get; set; }
         public short productId { get; set; }
@@ -39,8 +39,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal approvedAmount { get; set; }
         public int applicationTenor { get; set; }
         public double interestRate { get; set; }
-        public DateTime ? effectiveDate { get; set; }
-        public DateTime ? expiryDate { get; set; }
+        public DateTime? effectiveDate { get; set; }
+        public DateTime? expiryDate { get; set; }
         public string customerAccount { get; set; }
         public short tenorModeId { get; set; }
         public string loanInformation { get; set; }
@@ -57,6 +57,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short subSectorId { get; set; }
         public int sectorId { get; set; }
+        public string sectorName { get; set; }
         public bool isInvestmentGrade { set; get; }
         public string customerName { get; set; }
         public string branchName { get; set; }
@@ -80,11 +81,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public string lastComment { get; set; }
         public int approvalTrailId { get; set; }
-       // public decimal? approvedAmount { get; set; }
+        // public decimal? approvedAmount { get; set; }
         public short applicationStatusId { get; set; }
 
         public bool isCollateralBacked { get; set; }
-        
+
         //private int _tenor;
 
         public int tenor { get; set; }
@@ -119,9 +120,21 @@ namespace FintrakBanking.ViewModels.Credit
         public string productClassName { get; set; }
         public short productClassTypeId { get; set; }
     }
-
+    public class ValidateDataViewModel
+    {
+        public int productId { get; set; }
+        public DateTime date { get; set; }
+        public int? dayInterval { get; set;}
+        public bool InvoiceStatus { get; set; }
+    }
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
+        public LoanApplicationDetailViewModel()
+        {
+            invoiceDetails = new List<InvoiceDetailViewModel>();
+            
+           
+        }
 
         public int loanApplicationDetailId { get; set; }
 
@@ -145,7 +158,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short approvedProductId { get; set; }
 
-        public int approvedTenor { get ; set; }
+        public int approvedTenor { get; set; }
 
         public double approvedInterestRate { get; set; }
 
@@ -168,6 +181,12 @@ namespace FintrakBanking.ViewModels.Credit
         public short sectorId { get; set; }
 
         public short productClassId { get; set; }
+
+        public string loanPurpose { get; set; }
+
+        public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
+        public  EducationLoanViewModel  educationLoan { get; set; }
+        public  TraderLoanViewModel  traderLoan { get; set; }
 
     }
 
@@ -200,9 +219,14 @@ namespace FintrakBanking.ViewModels.Credit
 
         public List<LoanApplicationDetailInvoiceViewModel> invoiceDiscountDetail { get; set; }
 
+        public List<EducationLoanViewModel> firstEducationtDetail { get; set; }
+
+        public List<TraderLoanViewModel> firstTradderDetail { get; set; }
+
+        public List<CollateralViewModel> loanCollateral { get; set; }
     }
 
-    public partial class LoanApplicationDetailInvoiceViewModel
+    public class LoanApplicationDetailInvoiceViewModel
     {
         public int invoiceId { get; set; }
 
@@ -232,12 +256,15 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short? approvaStatusId { get; set; }
 
+        public string approvalStatusName { get; set; }
+
         public string approvalComment { get; set; }
 
         public int? approvedBy { get; set; }
 
         public DateTime? approvedDateTime { get; set; }
-       
+
+
     }
 
     public class RegionLoanApplicationViewModel : GeneralEntity
@@ -245,6 +272,7 @@ namespace FintrakBanking.ViewModels.Credit
         public RegionLoanApplicationViewModel()
         {
             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
+       
         }
 
         public int loanApplicationId { get; set; }
@@ -261,4 +289,70 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerId { get; set; }
         public int operationId { get; set; }
     }
+    public class InvoiceDetailViewModel  
+    {
+        public int invoiceId { get; set; }
+
+        public int loanApplicationDetailId { get; set; }
+
+        public int principalId { get; set; }
+
+        public string invoiceNo { get; set; }
+
+        public DateTime invoiceDate { get; set; }
+
+        public decimal invoiceAmount { get; set; }
+
+        public short invoiceCurrencyId { get; set; }
+
+        public DateTime contractStartDate { get; set; }
+
+        public DateTime contractEndDate { get; set; }
+
+        public string principalName { get; set; }
+
+        public string invoiceCurrencyName { get; set; }
+
+        public short? approvalStatusId { get; set; }
+
+        public int productClassId { get; set; }
+
+      }
+
+    public class EducationLoanViewModel
+    {
+        public int educationId { get; set; }
+
+        public int loanApplicationDetailId { get; set; }
+
+        public int numberOfStudent { get; set; }
+
+        public decimal averageSchoolFees { get; set; }
+
+        public decimal schoolFeesCollected { get; set; }
+
+        public decimal totalPreviousTermSchoolFees { get; set; }
+
+        public decimal productClassId { get; set; }
+        public string productClassName { get; set; }
+
+}
+
+    public class TraderLoanViewModel
+    {
+        public int tradderId { get; set; }
+
+        public int marketId { get; set; }
+
+        public decimal averageMonthlyTurnover { get; set; }
+
+        public int loanApplicationDetailId { get; set; }
+
+        public int traderId { get; set; }
+
+        public string marketName { get; set; }
+
+        public int productClassId { get; set; }
+    }
+  
 }

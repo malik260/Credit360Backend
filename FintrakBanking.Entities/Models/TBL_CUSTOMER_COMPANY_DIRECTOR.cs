@@ -67,7 +67,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER_COMPANY_BENEFICIA> TBL_CUSTOMER_COMPANY_BENEFICIA { get; set; }
 
-        public virtual TBL_CUSTOMER_COMPANY_DIREC_TYPE TBL_CUSTOMER_COMPANY_DIREC_TYPE { get; set; }
+        public virtual TBL_CUSTOMER_COMPANY_DIREC_TYP TBL_CUSTOMER_COMPANY_DIREC_TYP { get; set; }
 
         public virtual TBL_CUSTOMER_TYPE TBL_CUSTOMER_TYPE { get; set; }
     }

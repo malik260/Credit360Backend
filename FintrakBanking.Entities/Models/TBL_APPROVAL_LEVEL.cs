@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
             TBL_APPROVAL_LEVEL_STAFF = new HashSet<TBL_APPROVAL_LEVEL_STAFF>();
             TBL_APPROVAL_TRAIL = new HashSet<TBL_APPROVAL_TRAIL>();
             TBL_APPROVAL_TRAIL1 = new HashSet<TBL_APPROVAL_TRAIL>();
-            TBL_CREDIT_APPRAISAL_MEMO_DOCUM = new HashSet<TBL_CREDIT_APPRAISAL_MEMO_DOCUM>();
+            TBL_CREDIT_APPRAISAL_MEMO_DOCU = new HashSet<TBL_CREDIT_APPRAISAL_MEMO_DOCU>();
             TBL_CREDIT_TEMPLATE = new HashSet<TBL_CREDIT_TEMPLATE>();
             TBL_CHECKLIST_DEFINITION = new HashSet<TBL_CHECKLIST_DEFINITION>();
         }
@@ -97,7 +97,7 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMO_DOCUM> TBL_CREDIT_APPRAISAL_MEMO_DOCUM { get; set; }
+        public virtual ICollection<TBL_CREDIT_APPRAISAL_MEMO_DOCU> TBL_CREDIT_APPRAISAL_MEMO_DOCU { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CREDIT_TEMPLATE> TBL_CREDIT_TEMPLATE { get; set; }

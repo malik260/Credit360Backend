@@ -12,8 +12,7 @@ using FintrakBanking.ViewModels.Setups.Finance;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    [Export(typeof(IProductFeeRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+    
     public class ProductFeeRepository : IProductFeeRepository
     {
         private FinTrakBankingContext context;
