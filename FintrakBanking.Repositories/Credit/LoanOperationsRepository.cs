@@ -292,7 +292,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = a.EXCHANGERATE,
                             interestRate = a.INTERESTRATE,
                             date = applicationDate,
-                            dailyAccuralAmount = d.UNAUTHORISED_OVERDRAFT_INT_RATE,
+                            dailyAccuralAmount = d.UNAUTHORISD_OVERDRAFT_INT_RATE,
                             mainAmount = b.AVAILABLEBALANCE,
                             categoryId = (short)DailyAccrualCategory.UnauthorisedOverdraft,
                             availableBalance = b.AVAILABLEBALANCE,
@@ -2611,16 +2611,16 @@ namespace FintrakBanking.Repositories.Credit
             var removeLoan_Archive  = (from p in context.TBL_LOAN_ARCHIVE
                                        where p.LOANID == loanId
                                 select p);
-            var removeLoan_Schedule_Periodic_Archive  = (from p in context.TBL_LOAN_SCHEDULE_PERIODIC_ARCH
+            var removeLoan_Schedule_Periodic_Archive  = (from p in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC
                                                          where p.LOANID == loanId
                                       select p);
-            var removeLoan_Schedule_Daily_Archive = (from p in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIVE
+            var removeLoan_Schedule_Daily_Archive = (from p in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV
                                                      where p.LOANID == loanId
                                       select p);
             var removeLoan_Schedule_Daily_Temp = (from p in context.TBL_LOAN_SCHEDULE_DAILY_TEMP
                                                   where p.LOANID == loanId
                                       select p);
-            var removeLoan_Schedule_Periodic_Temp = (from p in context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP
+            var removeLoan_Schedule_Periodic_Temp = (from p in context.TBL_LOAN_SCHEDULE_PERIODIC_TMP
                                                      where p.LOANID == loanId
                                       select p);
 
@@ -2630,12 +2630,12 @@ namespace FintrakBanking.Repositories.Credit
             }
             if (removeLoan_Schedule_Periodic_Archive != null)
             {
-                context.TBL_LOAN_SCHEDULE_PERIODIC_ARCH.RemoveRange(removeLoan_Schedule_Periodic_Archive);
+                context.TBL_LOAN_SCHEDULE_PERIODIC_ARC.RemoveRange(removeLoan_Schedule_Periodic_Archive);
 
             }
             if (removeLoan_Schedule_Daily_Archive != null)
             {
-                context.TBL_LOAN_SCHEDULE_DAILY_ARCHIVE.RemoveRange(removeLoan_Schedule_Daily_Archive);
+                context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV.RemoveRange(removeLoan_Schedule_Daily_Archive);
 
             }
             if (removeLoan_Schedule_Daily_Temp != null)
@@ -2645,7 +2645,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             if (removeLoan_Schedule_Periodic_Temp != null)
             {
-                context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP.RemoveRange(removeLoan_Schedule_Periodic_Temp);
+                context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.RemoveRange(removeLoan_Schedule_Periodic_Temp);
                
             }
             try
@@ -2729,7 +2729,7 @@ namespace FintrakBanking.Repositories.Credit
                              allowForceDebitRepayment = a.ALLOWFORCEDEBITREPAYMENT,
                              scheduledPrepaymentAmount = a.SCHEDULEDPREPAYMENTAMOUNT,
                              scheduledPrepaymentDate = a.SCHEDULEDPREPAYMENTDATE,
-                             scheduledPrepaymentFrequencyTypeId = a.SCH_PREPAYMENT_FREQUENCY_TYPEID,
+                             scheduledPrepaymentFrequencyTypeId = a.SCH_PREPAYMENT_FREQUENCY_TYPID,
                              customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                              internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
                              externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
@@ -2813,7 +2813,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.ALLOWFORCEDEBITREPAYMENT = item.allowForceDebitRepayment;
                 addLoanArchive.SCHEDULEDPREPAYMENTAMOUNT = item.scheduledPrepaymentAmount;
                 addLoanArchive.SCHEDULEDPREPAYMENTDATE = item.scheduledPrepaymentDate;
-                addLoanArchive.SCH_PREPAYMENT_FREQUENCY_TYPEID = item.principalFrequencyTypeId;//scheduledPrepaymentFrequencyTypeId;
+                addLoanArchive.SCH_PREPAYMENT_FREQUENCY_TYPID = item.principalFrequencyTypeId;//scheduledPrepaymentFrequencyTypeId;
                 addLoanArchive.CUSTOMERSENSITIVITYLEVELID = item.customerSensitivityLevelId;
                 addLoanArchive.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
                 addLoanArchive.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
@@ -2857,14 +2857,14 @@ namespace FintrakBanking.Repositories.Credit
 
                          }).ToList();
 
-            List<TBL_LOAN_SCHEDULE_PERIODIC_ARCH> loanSchedulePeriodicArchive = new List<TBL_LOAN_SCHEDULE_PERIODIC_ARCH>();
+            List<TBL_LOAN_SCHEDULE_PERIODIC_ARC> loanSchedulePeriodicArchive = new List<TBL_LOAN_SCHEDULE_PERIODIC_ARC>();
 
 
 
             foreach (var item in model)
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC_ARCH addLoanSchedulePeriodicArchive = new TBL_LOAN_SCHEDULE_PERIODIC_ARCH();
+                TBL_LOAN_SCHEDULE_PERIODIC_ARC addLoanSchedulePeriodicArchive = new TBL_LOAN_SCHEDULE_PERIODIC_ARC();
 
 
                 addLoanSchedulePeriodicArchive.LOANID = item.loanId;
@@ -2893,7 +2893,7 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            this.context.TBL_LOAN_SCHEDULE_PERIODIC_ARCH.AddRange(loanSchedulePeriodicArchive);
+            this.context.TBL_LOAN_SCHEDULE_PERIODIC_ARC.AddRange(loanSchedulePeriodicArchive);
 
             context.SaveChanges();
             return model;
@@ -2942,13 +2942,13 @@ namespace FintrakBanking.Repositories.Credit
 
                          }).ToList();
 
-            List<TBL_LOAN_SCHEDULE_DAILY_ARCHIVE> loanScheduleDailyArchive = new List<TBL_LOAN_SCHEDULE_DAILY_ARCHIVE>();
+            List<TBL_LOAN_SCHEDULE_DAILY_ARCHIV> loanScheduleDailyArchive = new List<TBL_LOAN_SCHEDULE_DAILY_ARCHIV>();
 
 
 
             foreach (var item in model)
             {
-                TBL_LOAN_SCHEDULE_DAILY_ARCHIVE addLoanScheduleDailyArchive = new TBL_LOAN_SCHEDULE_DAILY_ARCHIVE();
+                TBL_LOAN_SCHEDULE_DAILY_ARCHIV addLoanScheduleDailyArchive = new TBL_LOAN_SCHEDULE_DAILY_ARCHIV();
 
 
                 addLoanScheduleDailyArchive.LOANID = loanId;
@@ -2990,7 +2990,7 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            this.context.TBL_LOAN_SCHEDULE_DAILY_ARCHIVE.AddRange(loanScheduleDailyArchive);
+            this.context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV.AddRange(loanScheduleDailyArchive);
 
             context.SaveChanges();
             return model;
@@ -3002,7 +3002,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int no = 0;//number.Count() - 1;
 
-            var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC_ARCH
+            var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC
                          where a.LOANID == loanId && a.PAYMENTDATE < DbFunctions.TruncateTime(applicationDate)
                          orderby a.PAYMENTNUMBER ascending
                          select new LoanPaymentSchedulePeriodicViewModel()
@@ -3025,7 +3025,7 @@ namespace FintrakBanking.Repositories.Credit
                              createdBy = a.CREATEDBY,
                              dateTimeCreated = a.DATETIMECREATED,
                          }).Concat
-                         (from a in context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP
+                         (from a in context.TBL_LOAN_SCHEDULE_PERIODIC_TMP
                           where a.LOANID == loanId && a.PAYMENTDATE >= DbFunctions.TruncateTime(applicationDate)
                           && a.PAYMENTNUMBER != 0
                           orderby a.PAYMENTNUMBER ascending
@@ -3116,7 +3116,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int no = 0;//number.Count() - 1;
 
-            var model = (from a in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIVE
+            var model = (from a in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV
                          where a.LOANID == loanId && a.DATE < DbFunctions.TruncateTime(applicationDate)
                          orderby a.PAYMENTNUMBER ascending
                          select new LoanPaymentScheduleDailyViewModel()
@@ -3263,7 +3263,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int no = 0;//number.Count() - 1;
 
-            var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC_ARCH
+            var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC
                          where a.LOANID == loanId && a.PAYMENTDATE < DbFunctions.TruncateTime(applicationDate)
                          orderby a.PAYMENTNUMBER ascending
                          select new LoanPaymentSchedulePeriodicViewModel()
@@ -3288,8 +3288,8 @@ namespace FintrakBanking.Repositories.Credit
                              createdBy = a.CREATEDBY,
                              dateTimeCreated = a.DATETIMECREATED,
                          }).Concat
-                         (from a in context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP
-                          join b in context.TBL_LOAN_SCHEDULE_PERIODIC_ARCH on a.LOANID equals b.LOANID
+                         (from a in context.TBL_LOAN_SCHEDULE_PERIODIC_TMP
+                          join b in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC on a.LOANID equals b.LOANID
                           where a.LOANID == loanId && a.PAYMENTDATE == b.PAYMENTDATE && a.PAYMENTDATE >= DbFunctions.TruncateTime(applicationDate)
                           && a.PAYMENTNUMBER != 0
                           orderby a.PAYMENTNUMBER ascending
@@ -3371,7 +3371,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             int no = 0;//number.Count() - 1;
 
-            var model = (from a in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIVE
+            var model = (from a in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV
                          where a.LOANID == loanId && a.DATE < DbFunctions.TruncateTime(applicationDate)
                          orderby a.PAYMENTNUMBER ascending
                          select new LoanPaymentScheduleDailyViewModel()
@@ -3412,7 +3412,7 @@ namespace FintrakBanking.Repositories.Credit
                              dateTimeCreated = a.DATETIMECREATED,
                          }).Concat
                           (from a in context.TBL_LOAN_SCHEDULE_DAILY_TEMP
-                          join b in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIVE on a.LOANID equals b.LOANID
+                          join b in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV on a.LOANID equals b.LOANID
                           where a.LOANID == loanId && a.DATE == b.DATE && a.DATE >= DbFunctions.TruncateTime(applicationDate)
                           && a.PAYMENTNUMBER != 0
                           orderby a.PAYMENTNUMBER ascending
@@ -3533,10 +3533,10 @@ namespace FintrakBanking.Repositories.Credit
                 //----------generate and save periodic loan schedule -----------------------------------
                 List<LoanPaymentSchedulePeriodicViewModel> periodicScheduleTemp = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
 
-                List<TBL_LOAN_SCHEDULE_PERIODIC_TEMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TEMP>();
+                List<TBL_LOAN_SCHEDULE_PERIODIC_TMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TMP>();
                 foreach (var item in periodicScheduleTemp)
                 {
-                    TBL_LOAN_SCHEDULE_PERIODIC_TEMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TEMP();
+                    TBL_LOAN_SCHEDULE_PERIODIC_TMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TMP();
 
                     scheduleTemp.LOANID = loanId;
                     scheduleTemp.PAYMENTNUMBER = item.paymentNumber;
@@ -3615,7 +3615,7 @@ namespace FintrakBanking.Repositories.Credit
                 //{ this.context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }////change to Temp table
 
 
-                this.context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
+                this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                 this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
                 context.SaveChanges();
@@ -3674,14 +3674,14 @@ namespace FintrakBanking.Repositories.Credit
 
                          }).ToList();
 
-            List<TBL_LOAN_SCHEDULE_PERIODIC_ARCH> loanSchedulePeriodicArchive = new List<TBL_LOAN_SCHEDULE_PERIODIC_ARCH>();
+            List<TBL_LOAN_SCHEDULE_PERIODIC_ARC> loanSchedulePeriodicArchive = new List<TBL_LOAN_SCHEDULE_PERIODIC_ARC>();
 
 
 
             foreach (var item in model)
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC_ARCH addLoanSchedulePeriodicArchive = new TBL_LOAN_SCHEDULE_PERIODIC_ARCH();
+                TBL_LOAN_SCHEDULE_PERIODIC_ARC addLoanSchedulePeriodicArchive = new TBL_LOAN_SCHEDULE_PERIODIC_ARC();
 
 
                 addLoanSchedulePeriodicArchive.LOANID = item.loanId;
@@ -3710,7 +3710,7 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            this.context.TBL_LOAN_SCHEDULE_PERIODIC_ARCH.AddRange(loanSchedulePeriodicArchive);
+            this.context.TBL_LOAN_SCHEDULE_PERIODIC_ARC.AddRange(loanSchedulePeriodicArchive);
 
             context.SaveChanges();
             return model;
@@ -3761,13 +3761,13 @@ namespace FintrakBanking.Repositories.Credit
 
                          }).ToList();
 
-            List<TBL_LOAN_SCHEDULE_DAILY_ARCHIVE> loanScheduleDailyArchive = new List<TBL_LOAN_SCHEDULE_DAILY_ARCHIVE>();
+            List<TBL_LOAN_SCHEDULE_DAILY_ARCHIV> loanScheduleDailyArchive = new List<TBL_LOAN_SCHEDULE_DAILY_ARCHIV>();
 
 
 
             foreach (var item in model)
             {
-                TBL_LOAN_SCHEDULE_DAILY_ARCHIVE addLoanScheduleDailyArchive = new TBL_LOAN_SCHEDULE_DAILY_ARCHIVE();
+                TBL_LOAN_SCHEDULE_DAILY_ARCHIV addLoanScheduleDailyArchive = new TBL_LOAN_SCHEDULE_DAILY_ARCHIV();
 
 
                 addLoanScheduleDailyArchive.LOANID = item.loanId;
@@ -3809,7 +3809,7 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            this.context.TBL_LOAN_SCHEDULE_DAILY_ARCHIVE.AddRange(loanScheduleDailyArchive);
+            this.context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV.AddRange(loanScheduleDailyArchive);
 
             context.SaveChanges();
             return model;
@@ -3884,7 +3884,7 @@ namespace FintrakBanking.Repositories.Credit
                              allowForceDebitRepayment = a.ALLOWFORCEDEBITREPAYMENT,
                              scheduledPrepaymentAmount = a.SCHEDULEDPREPAYMENTAMOUNT,
                              scheduledPrepaymentDate = a.SCHEDULEDPREPAYMENTDATE,
-                             scheduledPrepaymentFrequencyTypeId = a.SCH_PREPAYMENT_FREQUENCY_TYPEID,
+                             scheduledPrepaymentFrequencyTypeId = a.SCH_PREPAYMENT_FREQUENCY_TYPID,
                              customerSensitivityLevelId = a.CUSTOMERSENSITIVITYLEVELID,
                              internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
                              externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
@@ -3968,7 +3968,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanArchive.ALLOWFORCEDEBITREPAYMENT = item.allowForceDebitRepayment;
                 addLoanArchive.SCHEDULEDPREPAYMENTAMOUNT = item.scheduledPrepaymentAmount;
                 addLoanArchive.SCHEDULEDPREPAYMENTDATE = item.scheduledPrepaymentDate;
-                addLoanArchive.SCH_PREPAYMENT_FREQUENCY_TYPEID = item.principalFrequencyTypeId;//scheduledPrepaymentFrequencyTypeId;
+                addLoanArchive.SCH_PREPAYMENT_FREQUENCY_TYPID = item.principalFrequencyTypeId;//scheduledPrepaymentFrequencyTypeId;
                 addLoanArchive.CUSTOMERSENSITIVITYLEVELID = item.customerSensitivityLevelId;
                 addLoanArchive.INT_PRUDENT_GUIDELINE_STATUSID = 1; //item.internalPrudentialGuidelineStatusId;
                 addLoanArchive.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //item.externalPrudentialGuidelineStatusId;
@@ -4129,10 +4129,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     List<LoanPaymentSchedulePeriodicViewModel> periodicScheduleTemp = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
 
-                    List<TBL_LOAN_SCHEDULE_PERIODIC_TEMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TEMP>();
+                    List<TBL_LOAN_SCHEDULE_PERIODIC_TMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TMP>();
                     foreach (var item in periodicScheduleTemp)
                     {
-                        TBL_LOAN_SCHEDULE_PERIODIC_TEMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TEMP();
+                        TBL_LOAN_SCHEDULE_PERIODIC_TMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TMP();
 
                         scheduleTemp.LOANID = loanId;
                         scheduleTemp.PAYMENTNUMBER = item.paymentNumber;
@@ -4236,14 +4236,14 @@ namespace FintrakBanking.Repositories.Credit
                     //{ this.context.tbl_Loan_Review_Operation_Irregular_Schedule.AddRange(tblIrregularSchedule); }////change to Temp table
 
 
-                    this.context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
+                    this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                     this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
                     context.SaveChanges();
 
-                    var outstInterest  = from d in context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP
+                    var outstInterest  = from d in context.TBL_LOAN_SCHEDULE_PERIODIC_TMP
                                          where d.LOANID == loanId
-                                         let sumPrincipalAmount = context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP.Where(a => a.LOANID == loanId).Sum(a => a.PERIODINTERESTAMOUNT)
+                                         let sumPrincipalAmount = context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.Where(a => a.LOANID == loanId).Sum(a => a.PERIODINTERESTAMOUNT)
                                          select sumPrincipalAmount;
                     var outstandingInterest = outstInterest.FirstOrDefault();
                     //----------update loan details -----------------------------------
@@ -4296,10 +4296,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     List<LoanPaymentSchedulePeriodicViewModel> periodicScheduleTemp = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
 
-                    List<TBL_LOAN_SCHEDULE_PERIODIC_TEMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TEMP>();
+                    List<TBL_LOAN_SCHEDULE_PERIODIC_TMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TMP>();
                     foreach (var item in periodicScheduleTemp)
                     {
-                        TBL_LOAN_SCHEDULE_PERIODIC_TEMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TEMP();
+                        TBL_LOAN_SCHEDULE_PERIODIC_TMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TMP();
 
                         scheduleTemp.LOANID = loanId;
                         scheduleTemp.PAYMENTNUMBER = item.paymentNumber;
@@ -4380,7 +4380,7 @@ namespace FintrakBanking.Repositories.Credit
                     //{ this.context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }////change to Temp table
 
 
-                    this.context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
+                    this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                     this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
                     context.SaveChanges();
@@ -4423,10 +4423,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 List<LoanPaymentSchedulePeriodicViewModel> periodicScheduleTemp = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
 
-                List<TBL_LOAN_SCHEDULE_PERIODIC_TEMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TEMP>();
+                List<TBL_LOAN_SCHEDULE_PERIODIC_TMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TMP>();
                 foreach (var item in periodicScheduleTemp)
                 {
-                    TBL_LOAN_SCHEDULE_PERIODIC_TEMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TEMP();
+                    TBL_LOAN_SCHEDULE_PERIODIC_TMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TMP();
 
                     scheduleTemp.LOANID = loanId;
                     scheduleTemp.PAYMENTNUMBER = item.paymentNumber;
@@ -4507,7 +4507,7 @@ namespace FintrakBanking.Repositories.Credit
                 //{ this.context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }////change to Temp table
 
 
-                this.context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
+                this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                     this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
                     context.SaveChanges();
@@ -5130,10 +5130,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     List<LoanPaymentSchedulePeriodicViewModel> periodicScheduleTemp = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
 
-                    List<TBL_LOAN_SCHEDULE_PERIODIC_TEMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TEMP>();
+                    List<TBL_LOAN_SCHEDULE_PERIODIC_TMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TMP>();
                     foreach (var item in periodicScheduleTemp)
                     {
-                        TBL_LOAN_SCHEDULE_PERIODIC_TEMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TEMP();
+                        TBL_LOAN_SCHEDULE_PERIODIC_TMP scheduleTemp = new TBL_LOAN_SCHEDULE_PERIODIC_TMP();
 
                         scheduleTemp.LOANID = loanId;
                         scheduleTemp.PAYMENTNUMBER = item.paymentNumber;
@@ -5214,7 +5214,7 @@ namespace FintrakBanking.Repositories.Credit
                     //{ this.context.tbl_Loan_Schedule_Irregular_Input.AddRange(tblIrregularSchedule); }////change to Temp table
 
 
-                    this.context.TBL_LOAN_SCHEDULE_PERIODIC_TEMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
+                    this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                     this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
                     context.SaveChanges();
@@ -5439,13 +5439,13 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
-            List<TBL_LOAN_REVIEW_OPRATN_IREG_SCH> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SCH>();
+            List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
             //Storing the Irregular Schedule Payment Plan
             if (model.reviewIrregularSchedule != null)
             {
                 foreach (var item in model.reviewIrregularSchedule)
                 {
-                    var irregularPlan = new TBL_LOAN_REVIEW_OPRATN_IREG_SCH
+                    var irregularPlan = new TBL_LOAN_REVIEW_OPRATN_IREG_SC
                     {
                    
                         PAYMENTAMOUNT = item.PaymentAmount,
@@ -5480,7 +5480,7 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONCOMPLETED = false,
                 CREATEDBY = model.createdBy,
                 DATECREATED = DateTime.Now,
-                TBL_LOAN_REVIEW_OPRATN_IREG_SCH = irregularSchedules
+                TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
             };
             // Audit Section ---------------------------
 
@@ -5843,7 +5843,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if ((int)OperationsEnum.TenorChange == item.operationId)
                     {
-                        var scheduleInput = context.TBL_LOAN_REVIEW_OPRATN_IREG_SCH.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId);
+                        var scheduleInput = context.TBL_LOAN_REVIEW_OPRATN_IREG_SC.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId);
 
                         foreach (var item2 in scheduleInput)
                         {
@@ -5855,7 +5855,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if ((int)OperationsEnum.Prepayment == item.operationId)
                     {
-                        var scheduleInput = context.TBL_LOAN_REVIEW_OPRATN_IREG_SCH.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId);
+                        var scheduleInput = context.TBL_LOAN_REVIEW_OPRATN_IREG_SC.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId);
 
                         foreach (var item2 in scheduleInput)
                         {
@@ -5866,7 +5866,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        var scheduleInput = context.TBL_LOAN_SCHEDULE_IRREGUL_INPUT.Where(x => x.LOANID == loanId);
+                        var scheduleInput = context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Where(x => x.LOANID == loanId);
 
                         foreach (var item2 in scheduleInput)
                         {

@@ -14,8 +14,8 @@ namespace FintrakBanking.Entities.Models
         {
             TBL_TEMP_COLLATERAL_CASA = new HashSet<TBL_TEMP_COLLATERAL_CASA>();
             TBL_TEMP_COLLATERAL_DEPOSIT = new HashSet<TBL_TEMP_COLLATERAL_DEPOSIT>();
-            TBL_TEMP_COLLATERAL_IMMOVE_PROP = new HashSet<TBL_TEMP_COLLATERAL_IMMOVE_PROP>();
-            TBL_TEMP_COLLATERAL_PLANT_EQUIP = new HashSet<TBL_TEMP_COLLATERAL_PLANT_EQUIP>();
+            TBL_TEMP_COLLATERAL_IMMOVE_PRP = new HashSet<TBL_TEMP_COLLATERAL_IMMOVE_PRP>();
+            TBL_TEMP_COLLATERAL_PLANT_EQUP = new HashSet<TBL_TEMP_COLLATERAL_PLANT_EQUP>();
         }
 
         [Key]
@@ -54,9 +54,9 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_TEMP_COLLATERAL_DEPOSIT> TBL_TEMP_COLLATERAL_DEPOSIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVE_PROP> TBL_TEMP_COLLATERAL_IMMOVE_PROP { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVE_PRP> TBL_TEMP_COLLATERAL_IMMOVE_PRP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_PLANT_EQUIP> TBL_TEMP_COLLATERAL_PLANT_EQUIP { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_PLANT_EQUP> TBL_TEMP_COLLATERAL_PLANT_EQUP { get; set; }
     }
 }

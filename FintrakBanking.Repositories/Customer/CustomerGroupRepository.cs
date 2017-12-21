@@ -553,7 +553,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             bool output = false;
 
-            var groupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPING
+            var groupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPNG
             {
                 CUSTOMERID = model.customerId,
                 CUSTOMERGROUPID = model.customerGroupId,
@@ -590,7 +590,7 @@ namespace FintrakBanking.Repositories.Customer
                 try
                 {
                     auditTrail.AddAuditTrail(audit);
-                    context.TBL_TEMP_CUSTOMER_GROUP_MAPPING.Add(groupMap);
+                    context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Add(groupMap);
                     output = this.SaveAll();
 
                     var entity = new ApprovalViewModel
@@ -823,7 +823,7 @@ namespace FintrakBanking.Repositories.Customer
             if (model == null)
                 return false;
 
-            var existStingTempGroupMapping = context.TBL_TEMP_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID ==
+            var existStingTempGroupMapping = context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Where(x => x.CUSTOMERGROUPID ==
             model.customerGroupId && x.ISCURRENT == true &&
             x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
 
@@ -838,10 +838,10 @@ namespace FintrakBanking.Repositories.Customer
 
             var targetGroupMapping = this.context.TBL_CUSTOMER_GROUP_MAPPING.Find(groupMapId);
 
-            var unApprovedCustomerGroupMapEdit = context.TBL_TEMP_CUSTOMER_GROUP_MAPPING.Where(x => x.ISCURRENT == true
+            var unApprovedCustomerGroupMapEdit = context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Where(x => x.ISCURRENT == true
             && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending);
 
-            TBL_TEMP_CUSTOMER_GROUP_MAPPING tempCustomerGroupMap;
+            TBL_TEMP_CUSTOMER_GROUP_MAPPNG tempCustomerGroupMap;
 
             if (unApprovedCustomerGroupMapEdit.Any())
             {
@@ -849,7 +849,7 @@ namespace FintrakBanking.Repositories.Customer
             }
             else
             {
-                tempCustomerGroupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPING()
+                tempCustomerGroupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPNG()
                 {
                     CUSTOMERID = model.customerId,
                     CUSTOMERGROUPID = targetGroupMapping.CUSTOMERGROUPID,
@@ -861,7 +861,7 @@ namespace FintrakBanking.Repositories.Customer
                     ISCURRENT = true,
                 };
 
-                context.TBL_TEMP_CUSTOMER_GROUP_MAPPING.Add(tempCustomerGroupMap);
+                context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Add(tempCustomerGroupMap);
             }
 
             // Audit Section ---------------------------
@@ -937,7 +937,7 @@ namespace FintrakBanking.Repositories.Customer
 
         private bool ApproveCustomerGroupMapping(int customerGroupMapId, short approvalStatusId, UserInfo user)
         {
-            var customerGroupMapModel = context.TBL_TEMP_CUSTOMER_GROUP_MAPPING.Find(customerGroupMapId);
+            var customerGroupMapModel = context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Find(customerGroupMapId);
             var customerGroupMapToUpdate = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPMAPPINGID == customerGroupMapId);
             var existingCustomerGroupMap = customerGroupMapToUpdate.FirstOrDefault();
 
@@ -993,7 +993,7 @@ namespace FintrakBanking.Repositories.Customer
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            return (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPING
+            return (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG
                     join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
                     join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPID equals atrail.TARGETID
                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
@@ -1081,7 +1081,7 @@ namespace FintrakBanking.Repositories.Customer
                                 {
                                     bankVerificationNumber = x.CUSTOMERBVN,
                                     companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
-                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                     customerId = x.CUSTOMERID,
                                     firstname = x.FIRSTNAME,
                                     surname = x.SURNAME
@@ -1091,7 +1091,7 @@ namespace FintrakBanking.Repositories.Customer
                                 {
                                     bankVerificationNumber = x.CUSTOMERBVN,
                                     companyDirectorTypeId = x.COMPANYDIRECTORTYPEID,
-                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                    companyDirectorTypeName = x.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                     customerId = x.CUSTOMERID,
                                     firstname = x.FIRSTNAME,
                                     surname = x.SURNAME
@@ -1108,7 +1108,7 @@ namespace FintrakBanking.Repositories.Customer
                                         client_SupplierPhoneNumber = cs.PHONENUMBER,
                                         client_SupplierEmail = cs.EMAILADDRESS,
                                         client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                                     }).ToList(),
                                 customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == s.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
                                     .Select(cs => new CustomerSupplierViewModels()
@@ -1122,7 +1122,7 @@ namespace FintrakBanking.Repositories.Customer
                                         client_SupplierPhoneNumber = cs.PHONENUMBER,
                                         client_SupplierEmail = cs.EMAILADDRESS,
                                         client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                        client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                                     }).ToList(),
                                 //relationshipOfficerId = context.tbl_Staff.FirstOrDefault(),
                                 //relationshipManagerId = ,

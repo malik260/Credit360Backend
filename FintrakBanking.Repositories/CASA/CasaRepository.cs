@@ -416,7 +416,7 @@ namespace FintrakBanking.Repositories.CASA
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -427,7 +427,7 @@ namespace FintrakBanking.Repositories.CASA
                             {
                                 bankVerificationNumber = s.CUSTOMERBVN,
                                 companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYPE.COMPANYDIRECTORYTYPENAME,
+                                companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
                                 customerId = s.CUSTOMERID,
                                 firstname = s.FIRSTNAME,
                                 surname = s.SURNAME
@@ -445,7 +445,7 @@ namespace FintrakBanking.Repositories.CASA
                                 client_SupplierPhoneNumber = cs.PHONENUMBER,
                                 client_SupplierEmail = cs.EMAILADDRESS,
                                 client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                             }).ToList(),
                             customerSuppliers = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == casa.CUSTOMERID &&
                             cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
@@ -460,7 +460,7 @@ namespace FintrakBanking.Repositories.CASA
                                  client_SupplierPhoneNumber = cs.PHONENUMBER,
                                  client_SupplierEmail = cs.EMAILADDRESS,
                                  client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYPE.CLIENT_SUPPLIERTYPENAME
+                                 client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
                              }).ToList(),
                         });
 

@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
             TBL_TEMP_COLLATERAL_DEPOSIT = new HashSet<TBL_TEMP_COLLATERAL_DEPOSIT>();
             TBL_TEMP_COLLATERAL_GAURANTEE = new HashSet<TBL_TEMP_COLLATERAL_GAURANTEE>();
             TBL_TEMP_COLLATERAL_MISC = new HashSet<TBL_TEMP_COLLATERAL_MISC>();
-            TBL_TEMP_COLLATERAL_IMMOVE_PROP = new HashSet<TBL_TEMP_COLLATERAL_IMMOVE_PROP>();
+            TBL_TEMP_COLLATERAL_IMMOVE_PRP = new HashSet<TBL_TEMP_COLLATERAL_IMMOVE_PRP>();
         }
 
         [Key]
@@ -98,6 +98,6 @@ namespace FintrakBanking.Entities.Models
         public virtual ICollection<TBL_TEMP_COLLATERAL_MISC> TBL_TEMP_COLLATERAL_MISC { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVE_PROP> TBL_TEMP_COLLATERAL_IMMOVE_PROP { get; set; }
+        public virtual ICollection<TBL_TEMP_COLLATERAL_IMMOVE_PRP> TBL_TEMP_COLLATERAL_IMMOVE_PRP { get; set; }
     }
 }
