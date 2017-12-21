@@ -99,7 +99,7 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             var data = (from o in _context.TBL_LOAN_PRINCIPAL
-                        where o.COMPANYID == conpanyId
+                        where o.COMPANYID == conpanyId & o.DELETED == false
                         select new LoanPrincipalViewModel
                         {
 
@@ -125,7 +125,7 @@ namespace FintrakBanking.Repositories.Credit
             if (principalId != 0)
             {
                 var data = (from a in _context.TBL_LOAN_PRINCIPAL
-                            where a.PRINCIPALID == principalId & a.COMPANYID == companyId
+                            where a.PRINCIPALID == principalId & a.COMPANYID == companyId & a.DELETED == false
                             select a).FirstOrDefault();
 
                 val.accountNumber = data.ACCOUNTNUMBER;

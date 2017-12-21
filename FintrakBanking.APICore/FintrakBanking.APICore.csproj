@@ -325,6 +325,7 @@
     <Compile Include="Controllers\ConditionPrecedentController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
+    <Compile Include="Controllers\EmployerController.cs" />
     <Compile Include="Controllers\EndOfDayController.cs" />
     <Compile Include="Controllers\FinanceTransactionController.cs" />
     <Compile Include="Controllers\CreditLimitValidationsController.cs" />
@@ -383,6 +384,13 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
+    <Compile Include="Reports\Collateral\ScheduledCollateralReport.aspx.cs">
+      <DependentUpon>ScheduledCollateralReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Collateral\ScheduledCollateralReport.aspx.designer.cs">
+      <DependentUpon>ScheduledCollateralReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\Credit\Credit.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -436,6 +444,11 @@
     </Compile>
     <Compile Include="Reports\Credit\TestReport.aspx.designer.cs">
       <DependentUpon>TestReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportDataset\CollateralDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CollateralDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -555,6 +568,7 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Reports\Collateral\ScheduledCollateralReport.aspx" />
     <Content Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\Credit\Monitoring\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\Credit\Monitoring\NonPeformingLoans.aspx" />
@@ -609,6 +623,17 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Reports\ReportDataset\LoanDataSet.xsc">
       <DependentUpon>LoanDataSet.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\CollateralDataSet.xsc">
+      <DependentUpon>CollateralDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\CollateralDataSet.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>CollateralDataSet.Designer.cs</LastGenOutput>
+    </None>
+    <Content Include="Reports\ReportDataset\CollateralDataSet.xss">
+      <DependentUpon>CollateralDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\LoanDataSet.xsd">
       <SubType>Designer</SubType>
@@ -714,6 +739,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Reports\Collateral\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Monitoring\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />

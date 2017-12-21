@@ -160,6 +160,9 @@
     <Compile Include="Models\TBL_CUSTOMER_CUSTOM_FIELD.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EDIT_HISTORY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EDUCATIONLEVELTYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_EMPLOYER.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_EMPLOYER_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_EMPLOYER_TYPE_SUB.cs" />
     <Compile Include="Models\TBL_CUSTOMER_EMPLOYMENTHISTORY.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_CAPTION_DETAIL.cs" />
@@ -224,12 +227,14 @@
     <Compile Include="Models\TBL_LOAN.cs" />
     <Compile Include="Models\TBL_LOANAPPLICATION_COLATRL_MAP.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_COLLATERAL.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_EDU.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_INV.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_STA.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETAIL_TRA.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_ARCH.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_LOG.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_STATUS.cs" />
     <Compile Include="Models\TBL_LOAN_ARCHIVE.cs" />
@@ -260,6 +265,7 @@
     <Compile Include="Models\TBL_LOAN_REVIEW_OPERATION.cs" />
     <Compile Include="Models\TBL_LOAN_REVIEW_OPRATN_IREG_SCH.cs" />
     <Compile Include="Models\TBL_LOAN_REVOLVING.cs" />
+    <Compile Include="Models\TBL_LOAN_REVOLVING_ARCHIVE.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_CATEGORY.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_DAILY.cs" />
     <Compile Include="Models\TBL_LOAN_SCHEDULE_DAILY_ARCHIVE.cs" />
