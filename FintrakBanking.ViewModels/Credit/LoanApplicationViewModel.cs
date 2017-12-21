@@ -256,6 +256,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short? approvaStatusId { get; set; }
 
+        public string approvalStatusName { get; set; }
+
         public string approvalComment { get; set; }
 
         public int? approvedBy { get; set; }

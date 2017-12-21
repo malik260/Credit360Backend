@@ -204,6 +204,7 @@ namespace FintrakBanking.Repositories.Credit
                                                          invoiceAmount = i.INVOICE_AMOUNT,
                                                          invoiceNo = i.INVOICENO,
                                                          approvaStatusId = i.APPROVALSTATUSID,
+                                                         approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
                                                          contractEndDate = i.CONTRACT_ENDDATE,
                                                          contractStartDate = i.CONTRACT_STARTDATE,
                                                          invoiceDate = i.INVOICE_DATE,
@@ -248,7 +249,6 @@ namespace FintrakBanking.Repositories.Credit
                                                  haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                                                  customerName = i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " "+ i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
                                                  +" "+ i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
-
                                               }).ToList(),
 
                         }).ToList();
