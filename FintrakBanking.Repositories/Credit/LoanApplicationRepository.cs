@@ -968,7 +968,18 @@ namespace FintrakBanking.Repositories.Credit
                            }).ToList();
                 return edu;
            }
-            return null;
+            else if (details == (short)ProductClassEnum.BondAndGuarantees)
+            {
+                //var edu = (from e in context.TBL_LOAN_APPLICATION_DETL_BG
+                //           where e.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                           //select new EducationLoanViewModel()
+                           //{
+                              
+                           //    productClassId = (int)ProductClassEnum.BondAndGuarantees
+                           //}).ToList();
+             //   return edu;
+            }
+                return null;
         }
 
 
