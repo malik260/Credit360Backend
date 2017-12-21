@@ -224,6 +224,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<TraderLoanViewModel> firstTradderDetail { get; set; }
 
         public List<CollateralViewModel> loanCollateral { get; set; }
+        public List<BondsAndGauranteeViewModel> bondsAndGaurantees { get; set; }
     }
 
     public class LoanApplicationDetailInvoiceViewModel
@@ -354,5 +355,38 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int productClassId { get; set; }
     }
-  
+
+    public class BondsAndGauranteeViewModel
+    {
+        public int bondId { get; set; }
+
+        public int loanApplicationDetailId { get; set; }
+
+        public int principalId { get; set; }
+
+        public decimal amount { get; set; }
+
+        public short currencyId { get; set; }
+
+        public DateTime contractStartDate { get; set; }
+
+        public DateTime contractEndDate { get; set; }
+
+        public bool isTenored { get; set; }
+
+        public bool isBankFormat { get; set; }
+
+        public short? approvalStatusId { get; set; }
+
+        public string approvalComment { get; set; }
+
+        public int? approvedBy { get; set; }
+
+        public DateTime? approvedDateTime { get; set; }
+        public string principalName { get; set; }
+
+        public string invoiceCurrencyCode { get; set; }
+
+        public string approvalStatusName { get; set; }
+    }
 }
