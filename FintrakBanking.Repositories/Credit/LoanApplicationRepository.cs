@@ -657,6 +657,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == loanApplicatioinCollateralId).Select(c => new LoanApplicationCollateralViewModel
             {
+                loanAppCollateralId = c.LOANAPPCOLLATERALID,
                 applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                 collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
                 collateralCustomerId = c.COLLATERALCUSTOMERID,
@@ -664,14 +665,15 @@ namespace FintrakBanking.Repositories.Credit
                 collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                 loanApplicationId = c.LOANAPPLICATIONID,
                 loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
-                haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT
-            });
+                haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
+            }).OrderByDescending(x => x.loanAppCollateralId);
             return data.ToList();
         }
 
         public bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity)
         {
-            var unmapped = new List<TBL_LOAN_APPLICATION_COLLATERAL>();
+            var unmapped = new List<TBL_LOAN_APPLICATION_COLLATERL>();
             foreach (var ent in entity)
             {
                 var dat = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c =>
@@ -679,7 +681,7 @@ namespace FintrakBanking.Repositories.Credit
                 .FirstOrDefault();
                 if (dat == null)
                 {
-                    unmapped.Add(new TBL_LOAN_APPLICATION_COLLATERAL
+                    unmapped.Add(new TBL_LOAN_APPLICATION_COLLATERL
                     {
                         COLLATERALCUSTOMERID = ent.collateralCustomerId,
                         CREATEDBY = ent.createdBy,

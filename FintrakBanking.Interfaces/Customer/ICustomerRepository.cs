@@ -84,6 +84,7 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerChildrenViewModel> GetSingleCustomerChildrenInfo(int customerId);
         IEnumerable<CustomerCompanyBeneficiaryViewModels> GetShareholderUltimateBeneficial(int companyDirectorId);
         IEnumerable<CasaViewModel> GetCustomerCASAInformation(int customerId);
+        IEnumerable<CustomerNextOfKinViewModels> GetSingleCustomerNextOfKinInfo(int customerId);
         #endregion
 
         #region  Customer Information Validation
