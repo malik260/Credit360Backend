@@ -261,7 +261,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? approvedBy { get; set; }
 
         public DateTime? approvedDateTime { get; set; }
-       
+
+
     }
 
     public class RegionLoanApplicationViewModel : GeneralEntity
@@ -314,9 +315,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int productClassId { get; set; }
 
-
-
-    }
+      }
 
     public class EducationLoanViewModel
     {
@@ -352,8 +351,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string marketName { get; set; }
 
         public int productClassId { get; set; }
-        
-
     }
-
+  
 }
