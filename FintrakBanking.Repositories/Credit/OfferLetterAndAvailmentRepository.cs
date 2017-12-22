@@ -51,7 +51,7 @@ namespace FintrakBanking.Repositories.Credit
                         from d in camDoc.DefaultIfEmpty()
                         join e in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals e.TARGETID into apprTrail
                         from e in apprTrail.DefaultIfEmpty()
-                        where a.COMPANYID == companyId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                       // where a.COMPANYID == companyId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new CamProcessedLoanViewModel
                         {
                             loanApplicationId = a.LOANAPPLICATIONID,
