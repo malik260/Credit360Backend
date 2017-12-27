@@ -970,16 +970,28 @@ namespace FintrakBanking.Repositories.Credit
            }
             else if (details == (short)ProductClassEnum.BondAndGuarantees)
             {
-                //var edu = (from e in context.TBL_LOAN_APPLICATION_DETL_BG
-                //           where e.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                           //select new EducationLoanViewModel()
-                           //{
-                              
-                           //    productClassId = (int)ProductClassEnum.BondAndGuarantees
-                           //}).ToList();
-             //   return edu;
+                var edu = (from b in context.TBL_LOAN_APPLICATION_DETL_BG
+                           where b.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                           select new BondsAndGauranteeViewModel()
+                           {
+                               bondId = b.BONDID,
+                               loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                               principalId = b.PRINCIPALID,
+                               amount = b.AMOUNT,
+                               currencyId = b.CURRENCYID,
+                               contractStartDate = b.CONTRACT_STARTDATE,
+                               contractEndDate = b.CONTRACT_ENDDATE,
+                               isTenored = b.ISTENORED,
+                               isBankFormat = b.ISBANKFORMAT,
+                               approvalStatusId = b.APPROVALSTATUSID,
+                               principalName = b.TBL_LOAN_PRINCIPAL.NAME,
+                               invoiceCurrencyCode = b.TBL_CURRENCY.CURRENCYCODE,
+                               approvalStatusName = b.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
+                               productClassId = (int)ProductClassEnum.BondAndGuarantees
+                           }).ToList();
+                return edu;
             }
-                return null;
+            return null;
         }
 
 
