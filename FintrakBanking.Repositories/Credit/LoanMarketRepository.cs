@@ -99,7 +99,7 @@ namespace FintrakBanking.Repositories.Credit
             LoanMarketViewModel val = new LoanMarketViewModel();
 
             var data = (from o in _context.TBL_LOAN_MARKET
-                        where o.COMPANYID == companyId & o.MARKETID == markeetId
+                        where o.COMPANYID == companyId & o.MARKETID == markeetId & o.DELETED==false
                         select o).FirstOrDefault();
 
             val.accountNumber = data.ACCOUNTNUMBER;
@@ -116,8 +116,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from o in _context.TBL_LOAN_MARKET
                         join c in _context.TBL_CITY on o.CITYID equals c.CITYID
+                        where o.COMPANYID == companyId & o.DELETED == false
 
-                        where o.COMPANYID == companyId
                         select new LoanMarketViewModel
                         {
                             accountNumber = o.ACCOUNTNUMBER,
@@ -151,7 +151,8 @@ namespace FintrakBanking.Repositories.Credit
                 val.MARKETNAME = loanMarket.marketName;
                 val.PHONENUMBER = loanMarket.phoneNumber;
                 val.ADDRESS = loanMarket.address;
-                val.CREATEDBY = loanMarket.staffId;
+                //val.CREATEDBY = loanMarket.staffId;
+               
                 //val.DATETIMECREATED = _genSetup.GetApplicationDate();
                 val.DELETED = false;
                 val.DATETIMEUPDATED = DateTime.Now;

@@ -9,7 +9,7 @@ namespace FintrakBanking.Interfaces.Customer
 {
    public interface IKYCDocumentUploadRepository
     {
-        CheckListDocumentUploadViewModel CheckListDocumentUploadViewModel(int definitionId, int statusId, int detailId);
+        CheckListDocumentUploadViewModel CheckListDocumentUploadViewModel(int definitionId, int statusId, int detailId, bool isProductBased);
         IEnumerable<CustomerDocumentUploadViewModel> GetKYCDocumentUploadByCustomerId(int customerId);
         bool KYCDocumentUpload(CustomerDocumentUploadViewModel model, byte[] file);
         bool CheckListDocumentUpload(CheckListDocumentUploadViewModel model, byte[] file);

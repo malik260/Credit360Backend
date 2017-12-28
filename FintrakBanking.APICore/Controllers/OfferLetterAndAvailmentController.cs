@@ -50,6 +50,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/due-for-bondandguarantees")]
+        public async Task<HttpResponseMessage> GetApplicationsDueBondAndGuarantees()
+        {
+            try
+            {
+                var response = await olAvlmentRepo.GetApplicationsDueBondAndGuarantees(token.GetStaffId, token.GetCompanyId).ToListAsync();
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum/due-for-review")]
         public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForReview()

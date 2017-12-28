@@ -13,7 +13,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string productGroupName { get; set; }
         public short productCategoryId { get; set; }
         public string productCategoryName { get; set; }
-        public short productClassId { get; set; }
+        public short? productClassId { get; set; }
         public string productClassName { get; set; }
         public int productGroupId { get; set; }
         public string productCode { get; set; }

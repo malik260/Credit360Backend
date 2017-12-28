@@ -133,19 +133,38 @@ namespace FintrakBanking.Repositories.Customer
                 throw ex;
             }
         }
-        public CheckListDocumentUploadViewModel CheckListDocumentUploadViewModel(int definitionId, int statusId, int detailId)
+        public CheckListDocumentUploadViewModel CheckListDocumentUploadViewModel(int definitionId, int statusId, int detailId, bool isProductBased)
         {
-            var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
-                               where ck.CHECKLISTDEFINITIONID == definitionId
-                                && ck.CHECKLISTSTATUSID == statusId
-                                && ck.LOANDETAILSID == detailId
-                               select new CheckListDocumentUploadViewModel()
-                               {
-                                   fileData = ck.FILEDATA,
-                                   fileName = ck.FILENAME,
-                                   fileExtension = ck.FILEEXTENSION
-                               }).FirstOrDefault();
-            return checklistDoc;
+           
+            if (isProductBased)
+            {
+                var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
+                                    where ck.CHECKLISTDEFINITIONID == definitionId
+                                     && ck.CHECKLISTSTATUSID == statusId
+                                     && ck.LOANDETAILSID == detailId
+                                    select new CheckListDocumentUploadViewModel()
+                                    {
+                                        fileData = ck.FILEDATA,
+                                        fileName = ck.FILENAME,
+                                        fileExtension = ck.FILEEXTENSION
+                                    }).FirstOrDefault();
+                return checklistDoc;
+            }
+            else
+            {
+                var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
+                                    where ck.CHECKLISTDEFINITIONID == definitionId
+                                     && ck.CHECKLISTSTATUSID == statusId
+                                     && ck.LOANAPPLICATIONID == detailId
+                                    select new CheckListDocumentUploadViewModel()
+                                    {
+                                        fileData = ck.FILEDATA,
+                                        fileName = ck.FILENAME,
+                                        fileExtension = ck.FILEEXTENSION
+                                    }).FirstOrDefault();
+                return checklistDoc;
+            }
+           
         }
     }
 }

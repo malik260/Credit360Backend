@@ -68,10 +68,11 @@ namespace FintrakBanking.Repositories.Credit
             if (isproductBased)
             {
                 var data = (from a in context.TBL_CHECKLIST_DEFINITION
-                            join b in context.TBL_APPROVAL_LEVEL_STAFF on
-                            a.APPROVALLEVELID equals b.APPROVALLEVELID
-                            where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
-                           && a.OPERATIONID == operationId && a.DELETED == false && (productId == a.PRODUCTID || productId == null)
+                                // join b in context.TBL_APPROVAL_LEVEL_STAFF on
+                                // a.APPROVALLEVELID equals b.APPROVALLEVELID
+                                // where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
+                            where a.CHECKLIST_TYPEID == checkListTypeId
+                            && a.OPERATIONID == operationId && a.DELETED == false && (productId == a.PRODUCTID || productId == null)
                             select new ChecklistDefinitionViewModel
                             {
                                 checkListDefinitionId = a.CHECKLISTDEFINITIONID,
@@ -100,10 +101,11 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var data = (from a in context.TBL_CHECKLIST_DEFINITION
-                            join b in context.TBL_APPROVAL_LEVEL_STAFF on
-                            a.APPROVALLEVELID equals b.APPROVALLEVELID
-                            where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
-                           && a.OPERATIONID == operationId && a.DELETED == false
+                                // join b in context.TBL_APPROVAL_LEVEL_STAFF on
+                                // a.APPROVALLEVELID equals b.APPROVALLEVELID
+                                // where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
+                            where a.CHECKLIST_TYPEID == checkListTypeId
+                        && a.OPERATIONID == operationId && a.DELETED == false
                             select new ChecklistDefinitionViewModel
                             {
                                 checkListDefinitionId = a.CHECKLISTDEFINITIONID,
@@ -148,29 +150,42 @@ namespace FintrakBanking.Repositories.Credit
             var approvalLevel = (from a in context.TBL_CHECKLIST_DEFINITION
                                  join b in context.TBL_APPROVAL_LEVEL_STAFF on
                                  a.APPROVALLEVELID equals b.APPROVALLEVELID
-                                 where b.STAFFID == staffId
-                                 select a.CHECKLIST_TYPEID).Distinct();
-
+                                 where b.STAFFID == staffId && a.APPROVALLEVELID != 30
+                                 select a.CHECKLIST_TYPEID).ToList();
+           
             var checkListTypeList = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
 
-            CheckListTargetTypeViewModel checkListTeList;
-            if (approvalLevel != null)
-            {
-                foreach (var id in approvalLevel)
-                {
-                    checkListTeList = (from a in context.TBL_CHECKLIST_TYPE
-                                       where a.CHECKLIST_TYPEID == id
-                                       select new CheckListTargetTypeViewModel
-                                       {
-                                           targetTypeId = a.CHECKLIST_TYPEID,
-                                           targetTypeName = a.CHECKLIST_TYPE_NAME,
-                                           isproductbased = a.ISPRODUCT_BASED
+            // CheckListTargetTypeViewModel checkListTeList;
+            //if (approvalLevel != null)
+            //{
+            //    foreach (var id in approvalLevel)
+            //    {
+            //        checkListTeList = (from a in context.TBL_CHECKLIST_TYPE
+            //                           where a.CHECKLIST_TYPEID == id
+            //                           select new CheckListTargetTypeViewModel
+            //                           {
+            //                               targetTypeId = a.CHECKLIST_TYPEID,
+            //                               targetTypeName = a.CHECKLIST_TYPE_NAME,
+            //                               isproductbased = a.ISPRODUCT_BASED
 
-                                       }).FirstOrDefault();
-                    check.Add(checkListTeList);
-                }
+            //                           }).FirstOrDefault();
+            //        check.Add(checkListTeList);
+            //    }
+            //}
+            bool canDoChecklist = false;
+            if (approvalLevel.Count > 0)
+            {
+                canDoChecklist = true;
             }
-            return check;
+            var checkType = (from a in context.TBL_CHECKLIST_TYPE
+                             select new CheckListTargetTypeViewModel
+                             {
+                                 targetTypeId = a.CHECKLIST_TYPEID,
+                                 targetTypeName = a.CHECKLIST_TYPE_NAME,
+                                 isproductbased = a.ISPRODUCT_BASED,
+                                 canDoChecklist = canDoChecklist
+                             }).ToList();
+            return checkType;
         }
         public IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId)
         {
@@ -588,26 +603,55 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId)
         {
-            var checkList = (from cl in context.TBL_CHECKLIST_DETAIL
-                             join def in context.TBL_CHECKLIST_DEFINITION
-                              on cl.CHECKLISTDEFINITIONID equals def.CHECKLISTDEFINITIONID
-                             where cl.TARGETID == targetId && def.CHECKLIST_TYPEID == checkListtypeId
-                             && cl.DELETED == false
-                             select new ChecklistDetailViewModel()
-                             {
-                                 checklistId = cl.CHECKLISTID,
-                                 checkListDefinitionId = cl.CHECKLISTDEFINITIONID,
-                                 remark = cl.REMARK,
-                                 checkedBy = cl.CHECKEDBY,
-                                 targetTypeId = cl.TARGETTYPEID,
-                                 targetId = cl.TARGETID,
-                                 checkListStatusId = cl.CHECKLISTSTATUSID,
-                                 deferedDate = cl.DEFEREDDATE,
-                                 checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
-                                 checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
+            var isproductBased = context.TBL_CHECKLIST_TYPE.Where(x => x.CHECKLIST_TYPEID == checkListtypeId).Select(k => k.ISPRODUCT_BASED).FirstOrDefault();
+            if (isproductBased)
+            {
+                var detailId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == targetId select id.LOANAPPLICATIONDETAILID).ToList();
+                var checkList = (from cl in context.TBL_CHECKLIST_DETAIL
+                                 join def in context.TBL_CHECKLIST_DEFINITION
+                                  on cl.CHECKLISTDEFINITIONID equals def.CHECKLISTDEFINITIONID
+                                 where def.CHECKLIST_TYPEID == checkListtypeId
+                                 && cl.DELETED == false
+                                 select new ChecklistDetailViewModel()
+                                 {
+                                     checklistId = cl.CHECKLISTID,
+                                     checkListDefinitionId = cl.CHECKLISTDEFINITIONID,
+                                     remark = cl.REMARK,
+                                     checkedBy = cl.CHECKEDBY,
+                                     targetTypeId = cl.TARGETTYPEID,
+                                     targetId = cl.TARGETID,
+                                     checkListStatusId = cl.CHECKLISTSTATUSID,
+                                     deferedDate = cl.DEFEREDDATE,
+                                     checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                     checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
+                                 }).ToList();
+                checkList = checkList.Where(x => detailId.Contains(x.targetId)).ToList();
+                return checkList;
+            }
+            else
+            {
+                var checkList = (from cl in context.TBL_CHECKLIST_DETAIL
+                                 join def in context.TBL_CHECKLIST_DEFINITION
+                                  on cl.CHECKLISTDEFINITIONID equals def.CHECKLISTDEFINITIONID
+                                 where cl.TARGETID == targetId && def.CHECKLIST_TYPEID == checkListtypeId
+                                 && cl.DELETED == false
+                                 select new ChecklistDetailViewModel()
+                                 {
+                                     checklistId = cl.CHECKLISTID,
+                                     checkListDefinitionId = cl.CHECKLISTDEFINITIONID,
+                                     remark = cl.REMARK,
+                                     checkedBy = cl.CHECKEDBY,
+                                     targetTypeId = cl.TARGETTYPEID,
+                                     targetId = cl.TARGETID,
+                                     checkListStatusId = cl.CHECKLISTSTATUSID,
+                                     deferedDate = cl.DEFEREDDATE,
+                                     checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                     checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
 
-                             }).ToList();
-            return checkList;
+                                 }).ToList();
+                return checkList;
+            }
+            return null;
         }
         public bool AddMultipleChecklistDetails(List<ChecklistDetailViewModel> models, int staffId, short BranchId)
         {

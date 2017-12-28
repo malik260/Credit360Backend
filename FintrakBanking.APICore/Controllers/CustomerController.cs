@@ -46,6 +46,10 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     createUpdate = "created";
                 }
+               if (entity.customerTypeId == (int)CustomerTypeEnum.Individual)
+                {
+                    entity.subSectorId = 389;
+                }
                 if (repo.ValidateCustomerCode(entity.customerCode))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1258,6 +1262,24 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var supplierTypeId = (short)CompanyClientOrSupplierTypeEnum.Supplier;
                 var data = repo.GetSingleCustomerClientOrSupplierInfo(customerId, supplierTypeId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("single-customer-nextofkin-info/")]
+        public HttpResponseMessage GetSingleCustomerNextOfKinInfo(int customerId)
+        {
+            try
+            {
+                var data = repo.GetSingleCustomerNextOfKinInfo(customerId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

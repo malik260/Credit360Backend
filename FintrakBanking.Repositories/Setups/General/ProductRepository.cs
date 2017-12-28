@@ -589,15 +589,15 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return AllProduct();
         }
-
+        
         public IEnumerable<ProductViewModel> GetAllLoanProduct()
         {
-            return AllProduct().Where(c => c.productTypeId == 1 || c.productTypeId == 7 || c.productTypeId == 2);
+            return AllProduct().Where(c => c.productGroupId == 1);
         }
 
         public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId)
         {
-            return AllProduct().Where(c => c.productClassId == productClassId && (c.productTypeId == 1 || c.productTypeId == 7 || c.productTypeId == 2));
+            return AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
         }
 
         public ProductViewModel GetProductById(int productId)
@@ -1314,7 +1314,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 COMPANYID = productModel.companyId,
                 PRODUCTTYPEID = productModel.productTypeId,
                 PRODUCTCATEGORYID = productModel.productCategoryId,
-                PRODUCTCLASSID = productModel.productClassId,
+                PRODUCTCLASSID = (short)productModel.productClassId,
                 PRODUCTCODE = GenerateProductCode(productModel.companyId),
                 PRODUCTNAME = productModel.productName,
                 PRODUCTDESCRIPTION = productModel.productDescription,
@@ -1606,7 +1606,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 var tempProductToUpdate = existingTempProduct;
 
                 //tempProductToUpdate.ProductId = (short)productModel.productId;
-                tempProductToUpdate.PRODUCTCLASSID = productModel.productClassId;
+                tempProductToUpdate.PRODUCTCLASSID = (short)productModel.productClassId;
                 tempProductToUpdate.PRODUCTCODE = productModel.productCode;
                 tempProductToUpdate.PRODUCTNAME = productModel.productName;
                 tempProductToUpdate.PRODUCTDESCRIPTION = productModel.productDescription;
@@ -1708,7 +1708,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     COMPANYID = productModel.companyId,
                     PRODUCTTYPEID = productModel.productTypeId,
                     PRODUCTCATEGORYID = productModel.productCategoryId,
-                    PRODUCTCLASSID = productModel.productClassId,
+                    PRODUCTCLASSID = (short)productModel.productClassId,
                     PRODUCTCODE = targetProduct?.PRODUCTCODE,
                     PRODUCTNAME = productModel.productName,
                     PRODUCTDESCRIPTION = productModel.productDescription,

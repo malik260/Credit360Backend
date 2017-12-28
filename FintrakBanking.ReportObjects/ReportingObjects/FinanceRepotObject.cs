@@ -11,13 +11,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 {
     public partial class FinanceRepotObject
     {
-        public  List<TransactionViewModel> FinanceTransaction(DateTime? endDate, DateTime? startDate, int? staffId, int companyId, int? branchId, bool excludeSystem)
+        public  List<TransactionViewModel> FinanceTransaction(DateTime endDate, DateTime startDate, int? staffId, int companyId, int? branchId, bool excludeSystem)
         {
            
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 IQueryable< TransactionViewModel > data  = (from a in context.TBL_FINANCE_TRANSACTION
-                            where a.COMPANYID == companyId && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate) || (a.POSTEDDATE == endDate) ||(  endDate == null || startDate == null  )
+                            where a.COMPANYID == companyId && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)   
 
                             orderby a.POSTEDDATE, a.TRANSACTIONID descending
                             select new TransactionViewModel()
@@ -44,7 +44,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                             });
 
 
-                if (branchId!= null)
+                if (branchId!= null && branchId != 0)
                 {
                     data = data.Where(c => c.branchId ==  branchId);
                 }
@@ -56,7 +56,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 }
                 
 
-                if (staffId != null)
+                if (staffId != null && staffId != 0)
                 {
                     data = data.Where(c => c.postedByStaffId == staffId);
                 }
