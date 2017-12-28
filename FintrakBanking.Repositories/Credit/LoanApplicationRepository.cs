@@ -204,6 +204,7 @@ namespace FintrakBanking.Repositories.Credit
                                                          invoiceAmount = i.INVOICE_AMOUNT,
                                                          invoiceNo = i.INVOICENO,
                                                          approvaStatusId = i.APPROVALSTATUSID,
+                                                         approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
                                                          contractEndDate = i.CONTRACT_ENDDATE,
                                                          contractStartDate = i.CONTRACT_STARTDATE,
                                                          invoiceDate = i.INVOICE_DATE,
@@ -248,18 +249,37 @@ namespace FintrakBanking.Repositories.Credit
                                                  haircut = i.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                                                  customerName = i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.FIRSTNAME + " "+ i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.MIDDLENAME
                                                  +" "+ i.TBL_COLLATERAL_CUSTOMER.TBL_CUSTOMER.LASTNAME,
-
+                                              }).ToList(),
+                            bondsAndGaurantees = (from i in context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
+                                              select new BondsAndGauranteeViewModel
+                                              {
+                                                    bondId = i.BONDID ,
+                                                    loanApplicationDetailId = i.LOANAPPLICATIONDETAILID,
+                                                    principalId = i.PRINCIPALID,
+                                                    amount = i.AMOUNT,
+                                                    currencyId = i.CURRENCYID,
+                                                    contractStartDate = i.CONTRACT_STARTDATE,
+                                                    contractEndDate = i.CONTRACT_ENDDATE,
+                                                    isTenored = i.ISTENORED,
+                                                    isBankFormat = i.ISBANKFORMAT,
+                                                    approvalStatusId =i.APPROVALSTATUSID,
+                                                    approvalComment = i.APPROVAL_COMMENT,
+                                                    approvedBy = i.APPROVEDBY,
+                                                    approvedDateTime = i.APPROVEDDATETIME,
+                                                    principalName = i.TBL_LOAN_PRINCIPAL.NAME,
+                                                    invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
+                                                    approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
                                               }).ToList(),
 
                         }).ToList();
-            foreach(var i in data)
-            {
-                var relationshipOfficer = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipOfficerId).FirstOrDefault();
-                var relationshipManager = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipManagerId).FirstOrDefault();
-                i.relationshipOfficerName = relationshipOfficer.FIRSTNAME + " " + relationshipOfficer.MIDDLENAME + " " + relationshipOfficer.LASTNAME;
-                i.relationshipManagerName = relationshipManager.FIRSTNAME + " " + relationshipManager.MIDDLENAME + " " + relationshipManager.LASTNAME;
-            }
-            return data;
+                        foreach(var i in data)
+                        {
+                            var relationshipOfficer = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipOfficerId).FirstOrDefault();
+                            var relationshipManager = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipManagerId).FirstOrDefault();
+                            i.relationshipOfficerName = relationshipOfficer.FIRSTNAME + " " + relationshipOfficer.MIDDLENAME + " " + relationshipOfficer.LASTNAME;
+                            i.relationshipManagerName = relationshipManager.FIRSTNAME + " " + relationshipManager.MIDDLENAME + " " + relationshipManager.LASTNAME;
+                        }
+                        return data;
         }
 
         public IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId)
@@ -948,6 +968,29 @@ namespace FintrakBanking.Repositories.Credit
                            }).ToList();
                 return edu;
            }
+            else if (details == (short)ProductClassEnum.BondAndGuarantees)
+            {
+                var edu = (from b in context.TBL_LOAN_APPLICATION_DETL_BG
+                           where b.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                           select new BondsAndGauranteeViewModel()
+                           {
+                               bondId = b.BONDID,
+                               loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                               principalId = b.PRINCIPALID,
+                               amount = b.AMOUNT,
+                               currencyId = b.CURRENCYID,
+                               contractStartDate = b.CONTRACT_STARTDATE,
+                               contractEndDate = b.CONTRACT_ENDDATE,
+                               isTenored = b.ISTENORED,
+                               isBankFormat = b.ISBANKFORMAT,
+                               approvalStatusId = b.APPROVALSTATUSID,
+                               principalName = b.TBL_LOAN_PRINCIPAL.NAME,
+                               invoiceCurrencyCode = b.TBL_CURRENCY.CURRENCYCODE,
+                               approvalStatusName = b.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
+                               productClassId = (int)ProductClassEnum.BondAndGuarantees
+                           }).ToList();
+                return edu;
+            }
             return null;
         }
 

@@ -134,6 +134,7 @@
     <Compile Include="Setups\General\CompanyRepository.cs" />
     <Compile Include="Setups\General\CountryRepository.cs" />
     <Compile Include="Setups\General\CustomFieldsRepository.cs" />
+    <Compile Include="Setups\General\EmployerRepository.cs" />
     <Compile Include="Setups\General\MonitoringSetupRepository.cs" />
     <Compile Include="Setups\General\DepartmentRepository.cs" />
     <Compile Include="Setups\General\GeneralSetupRepository.cs" />

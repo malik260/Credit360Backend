@@ -46,6 +46,10 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     createUpdate = "created";
                 }
+               if (entity.customerTypeId == (int)CustomerTypeEnum.Individual)
+                {
+                    entity.subSectorId = 389;
+                }
                 if (repo.ValidateCustomerCode(entity.customerCode))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

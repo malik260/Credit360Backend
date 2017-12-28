@@ -12,8 +12,6 @@ namespace FintrakBanking.ReportObjects
 
     public  class LoanReportObjects 
     {
-      
-
         private IQueryable<LoanInformation> Loans(int companyId , DateTime startDate, DateTime endDate)
         {
             IQueryable<LoanInformation> loan;
@@ -54,11 +52,9 @@ namespace FintrakBanking.ReportObjects
                         });
                 return loan;
             }
-
-            
         }
 
-        public IEnumerable<LoanInformation> GetLoanSchedule( int companyId, int tearmLoanId)
+        public IEnumerable<LoanInformation> GetLoanSchedule(int companyId, int tearmLoanId)
         {
             IEnumerable<LoanInformation> loan;
             using (FinTrakBankingContext context = new FinTrakBankingContext())

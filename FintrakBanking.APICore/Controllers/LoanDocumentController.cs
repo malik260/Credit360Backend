@@ -40,7 +40,24 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
+        [HttpGet]
+        [Route("loan-document-appNo-refNo/")]
+        public HttpResponseMessage GetLoanDocumentByApplicationNumberRefno(string refNo, string applicationNumber)
+        {
+            try
+            {
+                var data = repo.GetLoanDocumentByAppNoRefNo(refNo, applicationNumber);
+                if(data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [Route("loan-document/{loanDocumentId}")]
         public HttpResponseMessage GetLoanDocument(int loanDocumentId)
@@ -182,6 +199,24 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpDelete]
+        [Route("loan-document-delete/")]
+        public HttpResponseMessage DeleteLoanDocument(string invoiceNo, string applicationNumber)
+        {
+            try
+            {
+                var data = repo.DeleteLoanDocument(invoiceNo, applicationNumber);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Record has been deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Record could not be deleted." });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException, stack = ex.StackTrace });
             }
         }
     }

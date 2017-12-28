@@ -106,6 +106,26 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("application-detail-job-request/{applicationDetailId}")]
+        public HttpResponseMessage GetApplicationJobRequest(int applicationDetailId)
+        {
+            try
+            {
+                var data = repo.GetApplicationJobRequest(applicationDetailId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("job-request/comments/{jobRequestId}")]
         public HttpResponseMessage GetJobComments(int jobRequestId)
         {

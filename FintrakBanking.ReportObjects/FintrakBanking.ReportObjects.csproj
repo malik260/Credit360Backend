@@ -59,6 +59,8 @@
     <Compile Include="ReportCalls\ReportRoutes.cs" />
     <Compile Include="ReportingObjects\LimitsMonitoringReportsObjects.cs" />
     <Compile Include="ReportingObjects\LoanReportObjects.cs" />
+    <Compile Include="ReportingObjects\ScheduledCollateralObject.cs" />
+    <Compile Include="ReportingObjects\ScheduleOfCollateralsObjects.cs" />
     <Compile Include="ReportingObjects\WorkFlowDesign.cs" />
   </ItemGroup>
   <ItemGroup>
