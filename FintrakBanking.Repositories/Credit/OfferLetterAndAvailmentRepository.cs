@@ -1190,9 +1190,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             entity.keepPending = false;
 
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                         // else If RM initiated 'Send For Availment then end the workflow process
                         else if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted && entity.productClassId == (short)ProductClassEnum.BondAndGuarantees)
@@ -1203,9 +1203,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             entity.keepPending = false;
 
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                         else
                         {
@@ -1237,18 +1237,18 @@ namespace FintrakBanking.Repositories.Credit
 
                         entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
 
-                        workFlow.LogForApproval(entity);
+                        workflow.LogForApproval(entity);
                     }
 
-                    var b = workFlow.NextLevelId ?? 0;
+                    var b = workflow.NextLevelId ?? 0;
 
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
                         trans.Rollback();
                         throw new Exception("Approval Failed");
                     }
 
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
