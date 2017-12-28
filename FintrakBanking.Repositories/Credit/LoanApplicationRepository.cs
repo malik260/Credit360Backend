@@ -652,25 +652,46 @@ namespace FintrakBanking.Repositories.Credit
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
 
-                if (a.invoiceDetails.Any() && a.productClassId == 6)
+                if (a.invoiceDetails.Any() && a.productClassId == (short)ProductClassEnum.InvoiceDiscountingFacility)
                 {
-                    
-                    InvoiceDetails(a.invoiceDetails,   createdBy);
+                    InvoiceDetails(a.invoiceDetails, createdBy);
                 }
-                if (a.educationLoan != null && a.productClassId == 7)
+                if (a.educationLoan != null && a.productClassId == (short)ProductClassEnum.FirstEdu)
                 {
-                    EducationLoan(a.educationLoan, a.loanApplicationDetailId,createdBy);
+                    EducationLoan(a.educationLoan, a.loanApplicationDetailId, createdBy);
                 }
 
-                if (a.traderLoan != null && a.productClassId == 8)
+                if (a.traderLoan != null && a.productClassId == (short)ProductClassEnum.FirstTrader)
                 {
-                    TradderLoan(a.traderLoan, a.loanApplicationDetailId,  createdBy);
+                    TradderLoan(a.traderLoan, a.loanApplicationDetailId, createdBy);
+                }
+                if (a.bondDetails != null && a.productClassId == (short)ProductClassEnum.BondAndGuarantees)
+                {
+                    BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
                 }
 
 
             }
 
 
+        }
+
+        private void BondDetails(BondsAndGuranty entity, int loanApplicationId, int createdBy)
+        {
+            var data = new TBL_LOAN_APPLICATION_DETL_BG()
+            {
+                AMOUNT = entity.bondAmount,
+                CONTRACT_ENDDATE = entity.contractEndDate,
+                CONTRACT_STARTDATE = entity.contractStartDate,
+                ISBANKFORMAT = entity.isBankFormat,
+                ISTENORED = entity.isTenored,
+                CURRENCYID = entity.bondCurrencyId,
+                PRINCIPALID = entity.principalId,
+                 DATETIMECREATED = DateTime.Now,
+                LOANAPPLICATIONDETAILID = loanApplicationId,
+                CREATEDBY = createdBy                 
+            };
+            context.TBL_LOAN_APPLICATION_DETL_BG.Add(data);
         }
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId)

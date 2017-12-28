@@ -589,15 +589,15 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return AllProduct();
         }
-
+        
         public IEnumerable<ProductViewModel> GetAllLoanProduct()
         {
-            return AllProduct().Where(c => c.productTypeId == 1 || c.productTypeId == 7 || c.productTypeId == 2);
+            return AllProduct().Where(c => c.productGroupId == 1);
         }
 
         public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId)
         {
-            return AllProduct().Where(c => c.productClassId == productClassId && (c.productTypeId == 1 || c.productTypeId == 7 || c.productTypeId == 2));
+            return AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
         }
 
         public ProductViewModel GetProductById(int productId)

@@ -185,9 +185,25 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanPurpose { get; set; }
 
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
+
         public  EducationLoanViewModel  educationLoan { get; set; }
+
         public  TraderLoanViewModel  traderLoan { get; set; }
 
+        public BondsAndGuranty bondDetails { get; set; }
+    }
+
+    public class BondsAndGuranty
+    {
+        public int loanApplicationDetailId { get; set; }
+        public decimal bondAmount { get; set; }
+        public int principalId { get; set; }
+        public short bondCurrencyId { get; set; }
+        public DateTime contractStartDate { get; set; }
+        public DateTime contractEndDate { get; set; }
+        public bool isTenored { get; set; }
+        public bool isBankFormat { get; set; }
+        
     }
 
     public class SearchViewModel
