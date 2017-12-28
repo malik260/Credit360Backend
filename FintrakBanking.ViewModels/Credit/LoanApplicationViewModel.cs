@@ -404,5 +404,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string invoiceCurrencyCode { get; set; }
 
         public string approvalStatusName { get; set; }
+
+        public int productClassId { get; set; }
     }
 }

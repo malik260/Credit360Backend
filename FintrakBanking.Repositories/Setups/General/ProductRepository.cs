@@ -1314,7 +1314,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 COMPANYID = productModel.companyId,
                 PRODUCTTYPEID = productModel.productTypeId,
                 PRODUCTCATEGORYID = productModel.productCategoryId,
-                PRODUCTCLASSID = productModel.productClassId,
+                PRODUCTCLASSID = (short)productModel.productClassId,
                 PRODUCTCODE = GenerateProductCode(productModel.companyId),
                 PRODUCTNAME = productModel.productName,
                 PRODUCTDESCRIPTION = productModel.productDescription,
@@ -1606,7 +1606,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 var tempProductToUpdate = existingTempProduct;
 
                 //tempProductToUpdate.ProductId = (short)productModel.productId;
-                tempProductToUpdate.PRODUCTCLASSID = productModel.productClassId;
+                tempProductToUpdate.PRODUCTCLASSID = (short)productModel.productClassId;
                 tempProductToUpdate.PRODUCTCODE = productModel.productCode;
                 tempProductToUpdate.PRODUCTNAME = productModel.productName;
                 tempProductToUpdate.PRODUCTDESCRIPTION = productModel.productDescription;
@@ -1708,7 +1708,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     COMPANYID = productModel.companyId,
                     PRODUCTTYPEID = productModel.productTypeId,
                     PRODUCTCATEGORYID = productModel.productCategoryId,
-                    PRODUCTCLASSID = productModel.productClassId,
+                    PRODUCTCLASSID = (short)productModel.productClassId,
                     PRODUCTCODE = targetProduct?.PRODUCTCODE,
                     PRODUCTNAME = productModel.productName,
                     PRODUCTDESCRIPTION = productModel.productDescription,
