@@ -162,6 +162,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("loan-application-info/application/{id}")]
+        public HttpResponseMessage GetLoanApplicationInfo(int id)
+        {
+            try
+            {
+                var data = repoApply.GetLoanApplicationById(id, token.GetCompanyId);
+              
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+
         [HttpGet]
         [Route("loan-application-eligibility/loanApplicationId/{id}")]
         public HttpResponseMessage GetLoanApplicationsDetails(int id)
@@ -320,10 +344,10 @@ namespace FintrakBanking.APICore.Controllers
                         throw new Exception("Customer '" + entity.customerName + "' has been Watchlisted");
                     }
 
-                    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateBlackList(entity.customerId.Value) > 0)
-                    {
-                        throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
-                    }
+                    //if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateBlackList(entity.customerId.Value) > 0)
+                    //{
+                    //    throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
+                    //}
                 }
 
                 //var model =  creditLimitValidationsRepository.ValidateAmountByBranch1(entity.branchId).Difference;
