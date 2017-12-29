@@ -4209,14 +4209,14 @@ namespace FintrakBanking.Repositories.Credit
 
 
                     //---------------save irregular loan schedule input---------------------------
-                    List<TBL_LOAN_REVIEW_OPRATN_IREG_SCH> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SCH>();
+                    List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
                     LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
                     if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
                     {
                         var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
                         foreach (var item in data)
                         {
-                            TBL_LOAN_REVIEW_OPRATN_IREG_SCH schedule = new TBL_LOAN_REVIEW_OPRATN_IREG_SCH();
+                            TBL_LOAN_REVIEW_OPRATN_IREG_SC schedule = new TBL_LOAN_REVIEW_OPRATN_IREG_SC();
                             schedule.LOANREVIEWOPERATIONID = loanId;
                             schedule.PAYMENTDATE = item.paymentDate;
                             schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);

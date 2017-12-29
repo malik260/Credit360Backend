@@ -686,6 +686,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISBANKFORMAT = entity.isBankFormat,
                 ISTENORED = entity.isTenored,
                 CURRENCYID = entity.bondCurrencyId,
+                REFERENCENO = entity.referenceNo,
                 PRINCIPALID = entity.principalId,
                  DATETIMECREATED = DateTime.Now,
                 LOANAPPLICATIONDETAILID = loanApplicationId,
@@ -991,7 +992,7 @@ namespace FintrakBanking.Repositories.Credit
            }
             else if (details == (short)ProductClassEnum.BondAndGuarantees)
             {
-                var edu = (from b in context.TBL_LOAN_APPLICATION_DETL_BG
+                var bg = (from b in context.TBL_LOAN_APPLICATION_DETL_BG
                            where b.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                            select new BondsAndGauranteeViewModel()
                            {
@@ -1004,13 +1005,14 @@ namespace FintrakBanking.Repositories.Credit
                                contractEndDate = b.CONTRACT_ENDDATE,
                                isTenored = b.ISTENORED,
                                isBankFormat = b.ISBANKFORMAT,
+                               referenceNo = b.REFERENCENO,
                                approvalStatusId = b.APPROVALSTATUSID,
                                principalName = b.TBL_LOAN_PRINCIPAL.NAME,
                                invoiceCurrencyCode = b.TBL_CURRENCY.CURRENCYCODE,
                                approvalStatusName = b.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
                                productClassId = (int)ProductClassEnum.BondAndGuarantees
                            }).ToList();
-                return edu;
+                return bg;
             }
             return null;
         }

@@ -92,6 +92,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOMER_IDENTIFICATION> TBL_CUSTOMER_IDENTIFICATION { get; set; }
         public virtual DbSet<TBL_CUSTOMER_NEXTOFKIN> TBL_CUSTOMER_NEXTOFKIN { get; set; }
         public virtual DbSet<TBL_CUSTOMER_PHONECONTACT> TBL_CUSTOMER_PHONECONTACT { get; set; }
+        public virtual DbSet<TBL_CUSTOMER_PRODUCT_FEE> TBL_CUSTOMER_PRODUCT_FEE { get; set; }
         public virtual DbSet<TBL_CUSTOMER_RISK_RATING> TBL_CUSTOMER_RISK_RATING { get; set; }
         public virtual DbSet<TBL_CUSTOMER_SENSITIVITY_LEVEL> TBL_CUSTOMER_SENSITIVITY_LEVEL { get; set; }
         public virtual DbSet<TBL_CUSTOMER_SIGNATORY> TBL_CUSTOMER_SIGNATORY { get; set; }
@@ -681,6 +682,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CHARGE_FEE>()
+                .HasMany(e => e.TBL_CUSTOMER_PRODUCT_FEE)
+                .WithRequired(e => e.TBL_CHARGE_FEE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CHARGE_FEE>()
                 .HasMany(e => e.TBL_LOAN_FEE)
                 .WithRequired(e => e.TBL_CHARGE_FEE)
                 .WillCascadeOnDelete(false);
@@ -848,6 +854,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COMPANY>()
+                .HasMany(e => e.TBL_CUSTOMER_BLACKLIST)
+                .WithRequired(e => e.TBL_COMPANY)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_CUSTOMER_EMPLOYER)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
@@ -859,6 +870,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_CUSTOMER_FS_RATIO_CAPTION)
+                .WithRequired(e => e.TBL_COMPANY)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_COMPANY>()
+                .HasMany(e => e.TBL_CUSTOMER_PRODUCT_FEE)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
 
@@ -1311,6 +1327,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER>()
+                .HasMany(e => e.TBL_CUSTOMER_PRODUCT_FEE)
+                .WithRequired(e => e.TBL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER>()
                 .HasMany(e => e.TBL_CUSTOMER_ADDRESS)
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
@@ -1449,6 +1470,14 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CUSTOMER_PHONECONTACT>()
                 .Property(e => e.PHONE)
                 .IsUnicode(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER_PRODUCT_FEE>()
+                .Property(e => e.RATEVALUE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_CUSTOMER_PRODUCT_FEE>()
+                .Property(e => e.DEPENDENTAMOUNT)
+                .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_CUSTOMER_SENSITIVITY_LEVEL>()
                 .HasMany(e => e.TBL_CASA)
@@ -1822,6 +1851,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_PRODUCT>()
                 .HasMany(e => e.TBL_CASA)
+                .WithRequired(e => e.TBL_PRODUCT)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_PRODUCT>()
+                .HasMany(e => e.TBL_CUSTOMER_PRODUCT_FEE)
                 .WithRequired(e => e.TBL_PRODUCT)
                 .WillCascadeOnDelete(false);
 

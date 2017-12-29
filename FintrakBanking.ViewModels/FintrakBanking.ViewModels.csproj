@@ -65,6 +65,7 @@
     <Compile Include="CASA\CasaViewModel.cs" />
     <Compile Include="CASA\CustomerSearchVM.cs" />
     <Compile Include="CreditLimitValidations\CreditLimitValidationsModel.cs" />
+    <Compile Include="CreditLimitValidations\CustomerEligibilityViewModel.cs" />
     <Compile Include="Credit\AppraisalMemorandumLoanDetailViewModel2.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />

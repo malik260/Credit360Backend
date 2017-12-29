@@ -12,6 +12,10 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int PLACEOFWORKID { get; set; }
 
+        public int CUSTOMERID { get; set; }
+
+        public int? EMPLOYERID { get; set; }
+
         [Required]
         [StringLength(200)]
         public string EMPLOYERNAME { get; set; }
@@ -34,10 +38,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string PREVIOUSEMPLOYER { get; set; }
 
-        public int CUSTOMERID { get; set; }
-
         public bool ACTIVE { get; set; }
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
+
+        public virtual TBL_CUSTOMER_EMPLOYER TBL_CUSTOMER_EMPLOYER { get; set; }
     }
 }

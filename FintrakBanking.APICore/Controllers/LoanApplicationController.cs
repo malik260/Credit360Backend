@@ -320,7 +320,7 @@ namespace FintrakBanking.APICore.Controllers
                         throw new Exception("Customer '" + entity.customerName + "' has been Watchlisted");
                     }
 
-                    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateBlackList(entity.customerId.Value) > 0)
+                    if (entity.customerId.HasValue && creditLimitValidationsRepository.ValidateBlackList(entity.customerCode) > 0)
                     {
                         throw new Exception("Customer '" + entity.customerName + "' has been Blacklisted");
                     }

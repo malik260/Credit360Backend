@@ -1207,7 +1207,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var existingProductCurrencies = new List<TBL_TEMP_PRODUCT_CURRENCY>();
             var existingProductFees = new List<TBL_TEMP_PRODUCT_CHARGE_FEE>();
-            var existingProductCollateral = new List<TBL_TEMP_PRODUCT_COLLATERALTYPE>();
+            var existingProductCollateral = new List<TBL_TEMP_PRODUCT_COLLATERALTYP>();
 
             //if (existingTempProduct != null)
             //{
