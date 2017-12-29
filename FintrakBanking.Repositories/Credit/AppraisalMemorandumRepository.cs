@@ -275,6 +275,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InvestmentGrade = model.investmentGrade;
             workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
+            workflow.Untenored = model.untenored;
             // log
 
             workflow.LogActivity();
@@ -372,12 +373,12 @@ namespace FintrakBanking.Repositories.Credit
             return changes;
         }
 
-        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId)
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId)
         {
             var allstaff = this.GetAllStaffNames();
 
             return this.context.TBL_APPROVAL_TRAIL
-                .Where(x => x.OPERATIONID == (int)OperationsEnum.CAM && x.TARGETID == applicationId)
+                .Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId)
                 .Select(x => new ApprovalTrailViewModel
                 {
                     approvalTrailId = x.APPROVALTRAILID,
@@ -609,7 +610,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = x.a.CUSTOMERID,
                             branchId = x.a.BRANCHID,
                             productClassId = x.a.PRODUCTCLASSID,
-                            //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
+                            productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             customerGroupId = x.a.CUSTOMERGROUPID,
                             loanTypeId = x.a.LOANTYPEID,
                             relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
@@ -627,11 +628,11 @@ namespace FintrakBanking.Repositories.Credit
                             loanInformation = x.a.LOANINFORMATION,
                             submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
-                            notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
-                            notInBlackbook = x.a.NOTINBLACKBOOK,
-                            notInCamsol = x.a.NOTINCAMSOL,
-                            notInXds = x.a.NOTINXDS,
-                            notInCrc = x.a.NOTINCRC,
+                            //notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
+                            //notInBlackbook = x.a.NOTINBLACKBOOK,
+                            //notInCamsol = x.a.NOTINCAMSOL,
+                            //notInXds = x.a.NOTINXDS,
+                            //notInCrc = x.a.NOTINCRC,
                             isRelatedParty = x.a.ISRELATEDPARTY,
                             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                             approvalStatusId = x.a.APPROVALSTATUSID,
@@ -697,7 +698,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerId = x.a.CUSTOMERID,
                 branchId = x.a.BRANCHID,
                 productClassId = x.a.PRODUCTCLASSID,
-                //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
+                productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                 customerGroupId = x.a.CUSTOMERGROUPID,
                 loanTypeId = x.a.LOANTYPEID,
                 relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
@@ -714,11 +715,11 @@ namespace FintrakBanking.Repositories.Credit
                 loanInformation = x.a.LOANINFORMATION,
                 submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                 customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
-                notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
-                notInBlackbook = x.a.NOTINBLACKBOOK,
-                notInCamsol = x.a.NOTINCAMSOL,
-                notInXds = x.a.NOTINXDS,
-                notInCrc = x.a.NOTINCRC,
+                //notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
+                //notInBlackbook = x.a.NOTINBLACKBOOK,
+                //notInCamsol = x.a.NOTINCAMSOL,
+                //notInXds = x.a.NOTINXDS,
+                //notInCrc = x.a.NOTINCRC,
                 isRelatedParty = x.a.ISRELATEDPARTY,
                 isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                 approvalStatusId = x.a.APPROVALSTATUSID,
@@ -759,15 +760,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CurrentCommitteeViewModel> GetCurrentCommittee(int loanApplicationId)
         {
-            //int operationId = (int)OperationsEnum.CAM;
+            int operationId = (int)OperationsEnum.CAM;
 
             var result = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId && x.SUBMITTEDFORAPPRAISAL == true && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved)
-                .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.RESPONSESTAFFID == null), a => a.LOANAPPLICATIONID, t => t.TARGETID, (a, t) => new { a, t })
+                .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.RESPONSESTAFFID == null && x.OPERATIONID == operationId), a => a.LOANAPPLICATIONID, t => t.TARGETID, (a, t) => new { a, t })
                 .Join(context.TBL_APPROVAL_LEVEL, at => at.t.TOAPPROVALLEVELID, l => l.APPROVALLEVELID, (at, l) => new { at, l })
                 .Join(context.TBL_APPROVAL_LEVEL_STAFF, atl => atl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (atl, s) => new { atl, s })
                 .Join(context.TBL_APPROVAL_GROUP, atls => atls.atl.l.GROUPID, g => g.GROUPID, (atls, g) => new { atls, g })
                  .Select(x => new CurrentCommitteeViewModel
                  {
+                     position = x.atls.s.POSITION,
                      approvalLevelId = x.atls.atl.l.APPROVALLEVELID,
                      approvalLevelName = x.atls.atl.l.LEVELNAME,
                      approvalGroupName = x.g.GROUPNAME,
@@ -777,7 +779,9 @@ namespace FintrakBanking.Repositories.Credit
                      staffName = x.atls.s.TBL_STAFF.FIRSTNAME + " " + x.atls.s.TBL_STAFF.MIDDLENAME + " " + x.atls.s.TBL_STAFF.LASTNAME,
                      vote = 0,
                      comment = string.Empty,
-                 });
+                 })
+                 .OrderBy(x=>x.position)
+                 .ToList();
 
             return result;
         }
@@ -801,7 +805,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.PoliticallyExposed = appl.ISPOLITICALLYEXPOSED;
 
             bool result = true;
-            foreach (var member in model.votes)
+            foreach (var member in model.votes.OrderBy(x => x.position))
             {
                 workflow.StaffId = member.staffId;
                 workflow.Vote = (short)member.vote;
@@ -948,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerId = x.a.CUSTOMERID,
                             branchId = x.a.BRANCHID,
                             productClassId = x.a.PRODUCTCLASSID,
-                            //productClassName = x.a.tbl_Product.tbl_Product_Class.ProductClassName,
+                            productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                             customerGroupId = x.a.CUSTOMERGROUPID,
                             loanTypeId = x.a.LOANTYPEID,
                             relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
@@ -966,11 +970,11 @@ namespace FintrakBanking.Repositories.Credit
                             loanInformation = x.a.LOANINFORMATION,
                             submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
-                            notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
-                            notInBlackbook = x.a.NOTINBLACKBOOK,
-                            notInCamsol = x.a.NOTINCAMSOL,
-                            notInXds = x.a.NOTINXDS,
-                            notInCrc = x.a.NOTINCRC,
+                            //notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
+                            //notInBlackbook = x.a.NOTINBLACKBOOK,
+                            //notInCamsol = x.a.NOTINCAMSOL,
+                            //notInXds = x.a.NOTINXDS,
+                            //notInCrc = x.a.NOTINCRC,
                             isRelatedParty = x.a.ISRELATEDPARTY,
                             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                             approvalStatusId = x.a.APPROVALSTATUSID,
@@ -994,5 +998,11 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public bool GetUntenoredStatus(int applicationId)
+        {
+            var detail = context.TBL_LOAN_APPLICATION_DETL_BG
+                .FirstOrDefault(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId);
+            return detail == null ? false : !detail.ISTENORED;
+        }
     }
 }

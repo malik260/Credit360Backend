@@ -64,16 +64,11 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             var productIds = context.TBL_LOAN_APPLICATION_DETAIL
                 .Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x=>x.PROPOSEDPRODUCTID)
-                .Distinct()
-                //.ToList()
-                ;
+                .Distinct();
 
             var typeIds = context.TBL_PRODUCT_COLLATERALTYPE.Where(x => productIds.Contains(x.PRODUCTID))
                 .Select(x => x.COLLATERALTYPEID)
-                .Distinct()
-                //.ToList()
-                ;
-
+                .Distinct();
 
             return list.Where(x => typeIds.Contains((short)x.collateralTypeId));
         }

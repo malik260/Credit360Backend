@@ -23,6 +23,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool EmailNotification { set; }
         short? Vote { set; }
         bool InvestmentGrade { set; }
+        bool Untenored { set; }
         bool PoliticallyExposed { set; }
         bool SmsNotification { set; }
         bool ExternalInitialization { set; }
@@ -31,8 +32,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         string Message { get; }
         bool Saved { get; }
 
-        bool LogForApproval(ApprovalViewModel model);
-
-        bool ForcefullyEndProcess { set; }
+        bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!
+        bool ForcefullyEndProcess { set; } // <------------ this property is deprecated!!!
     }
 }
