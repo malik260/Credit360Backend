@@ -131,12 +131,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("appraisal-memorandum/trail/{loanApplicationId}")]
-        public HttpResponseMessage GetAppraisalMemorandumTrail(int loanApplicationId)
+        [Route("appraisal-memorandum/trail/{loanApplicationId}/operation/{operationId}")]
+        public HttpResponseMessage GetAppraisalMemorandumTrail(int loanApplicationId, int operationId)
         {
             try
             {
-                var data = repo.GetAppraisalMemorandumTrail(loanApplicationId);
+                var data = repo.GetAppraisalMemorandumTrail(loanApplicationId,operationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (System.Exception ex)
@@ -335,6 +335,21 @@ namespace FintrakBanking.APICore.Controllers
 
                 var data = repo.GetPendingProductProgram(user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("untenored-status/application/{applicationId}")]
+        public HttpResponseMessage GetUntenoredStatus(int applicationId)
+        {
+            try
+            {
+                bool status = repo.GetUntenoredStatus(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
             }
             catch (System.Exception ex)
             {

@@ -50,7 +50,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             canEdit = a.CANEDIT,
                             vetoPower = a.VETOPOWER,
                             //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
-                            position = a.TBL_APPROVAL_LEVEL.POSITION,
+                            position = a.POSITION,
                             approvalLevelId = a.APPROVALLEVELID,
                             approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
                             staffId = a.STAFFID,
@@ -58,7 +58,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             staffLevelName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = (int)a.CREATEDBY
-                        }).ToList();
+                        })
+                        .OrderBy(x => x.position)
+                        .ToList()
+                        ;
             return data;
         }
 
@@ -86,7 +89,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             canEdit = a.CANEDIT,
                             vetoPower = a.VETOPOWER,
                             //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
-                            position = a.TBL_APPROVAL_LEVEL.POSITION,
+                            position = a.POSITION,
                             approvalLevelId = a.APPROVALLEVELID,
                             approvalLevelName = a.TBL_APPROVAL_LEVEL.LEVELNAME,
                             staffId = a.STAFFID,
@@ -141,6 +144,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 MAXIMUMAMOUNT = model.maximumAmount,
                 STAFFID = model.staffId,
                 APPROVALLEVELID = model.approvalLevelId,
+                POSITION = model.position,
                 PROCESSVIEWSCOPEID = (short)model.processViewScope,
                 CANVIEWCAMDOCUMENT = model.canViewDocument,
                 CANVIEWUPLOADEDFILE = model.canViewUploadedFile,
@@ -186,6 +190,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             data.STAFFID = model.staffId;
             data.APPROVALLEVELID = model.approvalLevelId;
+            data.POSITION = model.position;
             data.MAXIMUMAMOUNT = model.maximumAmount;
             data.PROCESSVIEWSCOPEID = (short)model.processViewScope;
             data.CANVIEWCAMDOCUMENT = model.canViewDocument;
@@ -251,6 +256,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             return await context.SaveChangesAsync() != 0;
         }
+
+        #region ALIEN CODE BLOCKS
 
         public bool AddApprovalTrail(TBL_APPROVAL_TRAIL model)
         {
@@ -340,5 +347,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             return result;
         }
+
+        #endregion ALIEN CODE BLOCKS
     }
 }

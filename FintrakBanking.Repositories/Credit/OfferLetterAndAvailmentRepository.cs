@@ -23,20 +23,20 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
-        private IWorkflow workFlow;
+        private IWorkflow workflow;
         private IApprovalLevelStaffRepository approvalLevel;
 
         public OfferLetterAndAvailmentRepository(IAuditTrailRepository _auditTrail,
             IGeneralSetupRepository _genSetup,
             FinTrakBankingContext _context,
             IApprovalLevelStaffRepository _approvallevel,
-            IWorkflow _workFlow)
+            IWorkflow _workflow)
         {
             context = _context;
             auditTrail = _auditTrail;
             genSetup = _genSetup;
             approvalLevel = _approvallevel;
-            workFlow = _workFlow;
+            workflow = _workflow;
         }
 
         #region OfferLetter & Availment Process
@@ -318,7 +318,7 @@ namespace FintrakBanking.Repositories.Credit
                 };
 
                 loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId));
-                
+
             }
             else
             {
@@ -912,10 +912,10 @@ namespace FintrakBanking.Repositories.Credit
                         else
                         {
                             // indicate an end to the process before logging on the trail
-                            workFlow.KeepPending = false;
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.KeepPending = false;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                     }
                     else if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
@@ -940,10 +940,10 @@ namespace FintrakBanking.Repositories.Credit
                         else
                         {
                             // indicate an end to the process before logging on the trail
-                            workFlow.KeepPending = false;
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.KeepPending = false;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                     }
                     else
@@ -951,26 +951,26 @@ namespace FintrakBanking.Repositories.Credit
                         if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
                         {
                             // indicate an end to the process before logging on the trail
-                            workFlow.KeepPending = false;
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.KeepPending = false;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                         else
                         {
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                     }
 
-                    var b = workFlow.NextLevelId ?? 0;
+                    var b = workflow.NextLevelId ?? 0;
 
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
                         trans.Rollback();
                         throw new Exception("Approval Failed");
                     }
 
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
@@ -997,40 +997,40 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool ForwardApplicationToNextLevel(ForwardViewModel model)
         {
-            workFlow.StaffId = model.createdBy;
-            workFlow.OperationId = model.operationId;
-            workFlow.TargetId = model.applicationId;
-            workFlow.CompanyId = model.companyId;
-            workFlow.Vote = model.vote;
-            workFlow.ProductClassId = model.productClassId;
-            workFlow.ProductId = model.productId;
-            workFlow.NextLevelId = model.receiverLevelId;
-            workFlow.ToStaffId = model.receiverStaffId;
-            workFlow.StatusId = model.forwardAction;
-            workFlow.Comment = model.comment;
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.Vote = model.vote;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
 
-            workFlow.Amount = model.amount;
-            workFlow.InvestmentGrade = model.investmentGrade;
-            workFlow.Tenor = model.applicationTenor;
-            workFlow.PoliticallyExposed = model.politicallyExposed;
+            workflow.Amount = model.amount;
+            workflow.InvestmentGrade = model.investmentGrade;
+            workflow.Tenor = model.applicationTenor;
+            workflow.PoliticallyExposed = model.politicallyExposed;
 
-            return workFlow.LogActivity();
+            return workflow.LogActivity();
         }
 
         private bool ReferApplicationToSpecificLevel(LoanAvailmentApprovalViewModel model)
         {
-            workFlow.StaffId = model.createdBy;
-            workFlow.OperationId = model.operationId;
-            workFlow.TargetId = model.targetId;
-            workFlow.CompanyId = model.companyId;
-            workFlow.NextLevelId = model.nextLevelId;
-            workFlow.ToStaffId = model.toStaffId;
-            workFlow.StatusId = model.approvalStatusId;
-            workFlow.Comment = model.comment;
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.NextLevelId = model.nextLevelId;
+            workflow.ToStaffId = model.toStaffId;
+            workflow.StatusId = model.approvalStatusId;
+            workflow.Comment = model.comment;
 
-            workFlow.Amount = model.amount;
+            workflow.Amount = model.amount;
 
-            return workFlow.LogActivity();
+            return workflow.LogActivity();
         }
 
         public bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity)
@@ -1070,9 +1070,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             entity.keepPending = false;
 
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                         // else If RM initiated 'Send For Availment then end the workflow process
                         else if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted)
@@ -1083,9 +1083,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             entity.keepPending = false;
 
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                         else
                         {
@@ -1117,18 +1117,18 @@ namespace FintrakBanking.Repositories.Credit
 
                         entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
 
-                        workFlow.LogForApproval(entity);
+                        workflow.LogForApproval(entity);
                     }
 
-                    var b = workFlow.NextLevelId ?? 0;
+                    var b = workflow.NextLevelId ?? 0;
 
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
                         trans.Rollback();
                         throw new Exception("Approval Failed");
                     }
 
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
@@ -1190,9 +1190,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             entity.keepPending = false;
 
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                         // else If RM initiated 'Send For Availment then end the workflow process
                         else if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted && entity.productClassId == (short)ProductClassEnum.BondAndGuarantees)
@@ -1203,9 +1203,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             entity.keepPending = false;
 
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                         else
                         {
@@ -1237,18 +1237,18 @@ namespace FintrakBanking.Repositories.Credit
 
                         entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
 
-                        workFlow.LogForApproval(entity);
+                        workflow.LogForApproval(entity);
                     }
 
-                    var b = workFlow.NextLevelId ?? 0;
+                    var b = workflow.NextLevelId ?? 0;
 
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
                         trans.Rollback();
                         throw new Exception("Approval Failed");
                     }
 
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
@@ -1293,7 +1293,7 @@ namespace FintrakBanking.Repositories.Credit
                     externalInitialization = false
                 };
 
-                return workFlow.LogForApproval(entity);
+                return workflow.LogForApproval(entity);
             }
             catch (Exception ex)
             {
@@ -1309,5 +1309,35 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion OfferLetter & Availment Process
+
+        public bool ForwardBondsAndGuarantee(ForwardViewModel model)
+        {
+            var operationId = 37; // REFACTOR APPROPRIATELY!!!!!
+
+            // init
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+
+            // log
+            workflow.LogActivity();
+
+            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+
+            if (workflow.NewState == (int)ApprovalState.Ended)
+            {
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress; // REFACTOR APPROPRIATELY!!!!!
+            }
+
+            return context.SaveChanges() > 0;
+        }
+
     }
 }
