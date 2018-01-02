@@ -203,7 +203,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime contractEndDate { get; set; }
         public bool isTenored { get; set; }
         public bool isBankFormat { get; set; }
-        
+        public string referenceNo { get; set; }
+
     }
 
     public class SearchViewModel
@@ -387,6 +388,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime contractStartDate { get; set; }
 
         public DateTime contractEndDate { get; set; }
+
+        public string referenceNo { get; set; }
 
         public bool isTenored { get; set; }
 

@@ -26,7 +26,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<ProductClassViewModel> GetProductClass();
 
-        bool UpdateApprovalStatusForApplication(int applocationId);
+        bool UpdateApprovalStatusForApplication(int applicationId);
 
         IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId);
 
