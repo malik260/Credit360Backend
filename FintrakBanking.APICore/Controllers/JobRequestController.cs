@@ -240,7 +240,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error logging this request", error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error logging this request" , error = ex.Message });
             }
         }
 

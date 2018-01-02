@@ -75,8 +75,8 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatusId = a.APPLICATIONSTATUSID,
                             subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
                             branchId = a.BRANCHID,
-                            productClassId = b.TBL_PRODUCT.PRODUCTCLASSID,
-                            productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
+                           productClassId = b.TBL_PRODUCT.PRODUCTCLASSID,
+                          productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                             camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
                                 .Select(camDoc => new CamDocumentViewModel
                                 {
@@ -86,9 +86,9 @@ namespace FintrakBanking.Repositories.Credit
                                     camDocumentation = camDoc.CAMDOCUMENTATION
                                 }
                             ).ToList(),
-                            operationId = e.OPERATIONID,
-                            currentApprovalStateId = e.APPROVALSTATEID,
-                            approvalStatusId = e.APPROVALSTATUSID,
+                           operationId = e.OPERATIONID,
+                           currentApprovalStateId = e.APPROVALSTATEID,
+                           approvalStatusId = e.APPROVALSTATUSID,
                         });
 
             var forDebugging = data.ToList();
@@ -373,7 +373,16 @@ namespace FintrakBanking.Repositories.Credit
 
             var targetAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber);
 
-            var templateLink = GetProductSpecificTemplate(targetAppl.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID, targetAppl.PRODUCTCLASSID);
+            if (targetAppl.PRODUCTCLASSID == null)
+            {
+                targetAppl.PRODUCTCLASSID = 1;
+            }
+
+            var productClassProcess = context.TBL_PRODUCT_CLASS.FirstOrDefault(x => x.PRODUCTCLASSID == targetAppl.PRODUCTCLASSID);
+
+            var templateLink = GetProductSpecificTemplate(productClassProcess.PRODUCT_CLASS_PROCESSID, (short?)targetAppl.PRODUCTCLASSID ?? 1);
+
+            //var templateLink = GetProductSpecificTemplate(targetAppl.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID, targetAppl.PRODUCTCLASSID);
 
             var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -407,7 +416,7 @@ namespace FintrakBanking.Repositories.Credit
                                 productId = c.TBL_PRODUCT.PRODUCTID,
                                 productName = c.TBL_PRODUCT.PRODUCTNAME,
                                 productClassId = (short)a.PRODUCTCLASSID,
-                                productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID
+                                productClassProcessId = productClassProcess.PRODUCT_CLASS_PROCESSID //a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID
                             }).ToList();
 
             var conditions = string.Empty;
