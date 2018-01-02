@@ -31,6 +31,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         }
 
         #region Collateral Type
+
         private IEnumerable<CollateralTypeViewModel>  CollateralTypes()
         {
             return (from m in context.TBL_COLLATERAL_TYPE
@@ -43,6 +44,33 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         details = m.DETAILS,
                          position = m.POSITION 
                     }).OrderBy(m=> m.position );
+        }
+
+        public IEnumerable<CollateralTypeViewModel> CollateralTypesByLoanApplication(int? applicationId)
+        {
+            var list = (from m in context.TBL_COLLATERAL_TYPE
+                    select new CollateralTypeViewModel
+                    {
+                        collateralTypeId = m.COLLATERALTYPEID,
+                        collateralTypeName = m.COLLATERALTYPENAME,
+                        chargeGLAccountId = m.CHARGEGLACCOUNTID,
+                        requireInsurancePolicy = m.REQUIREINSURANCEPOLICY,
+                        details = m.DETAILS,
+                        position = m.POSITION
+                    }).OrderBy(m => m.position);
+
+            if (applicationId == null) { return list; }
+
+            var productIds = context.TBL_LOAN_APPLICATION_DETAIL
+                .Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Select(x=>x.PROPOSEDPRODUCTID)
+                .Distinct();
+
+            var typeIds = context.TBL_PRODUCT_COLLATERALTYPE.Where(x => productIds.Contains(x.PRODUCTID))
+                .Select(x => x.COLLATERALTYPEID)
+                .Distinct();
+
+            return list.Where(x => typeIds.Contains((short)x.collateralTypeId));
         }
 
         public IEnumerable<CollateralTypeViewModel> GetCollateralTypes()

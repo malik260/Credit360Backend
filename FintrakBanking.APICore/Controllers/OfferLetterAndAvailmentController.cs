@@ -50,6 +50,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+
+        [HttpGet]
+        [Route("loan-application/credit-assessment-memorandum/due-for-bondandguarantees")]
+        public async Task<HttpResponseMessage> GetApplicationsDueBondAndGuarantees()
+        {
+            try
+            {
+                var response = await olAvlmentRepo.GetApplicationsDueBondAndGuarantees(token.GetStaffId, token.GetCompanyId).ToListAsync();
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpGet]
         [Route("loan-application/credit-assessment-memorandum/due-for-review")]
         public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForReview()
@@ -420,6 +442,34 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion Offer Letter & Availment
+
+
+
+        [HttpPost]
+        [Route("offer-letter/forward-bonds-and-guarantee")]
+        public HttpResponseMessage ForwardBondsAndGuarantee([FromBody] ForwardViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var response = olAvlmentRepo.ForwardBondsAndGuarantee(entity);
+
+                if (response == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
 
     }
 }

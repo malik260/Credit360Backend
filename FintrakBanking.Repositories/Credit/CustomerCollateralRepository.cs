@@ -1067,6 +1067,71 @@ namespace FintrakBanking.Repositories.Credit
             return details;
         }
 
+        // LOAN COLLATERAL MAPPING
+
+        public IEnumerable<LoanApplicationCollateralViewModel> MapApplicationCollateral(ApplicationCollateralMapping entity)
+        {
+            int collateralId = entity.collateralId == null ? 0 : (int)entity.collateralId;
+
+            if (entity.collateralCode != null && entity.collateralId == null)
+            {
+                var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(x => x.COLLATERALCODE == entity.collateralCode);
+                if (collateral != null) { collateralId = collateral.COLLATERALCUSTOMERID; }
+            }
+
+            context.TBL_LOAN_APPLICATION_COLLATERL.Add(new TBL_LOAN_APPLICATION_COLLATERL
+            {
+                COLLATERALCUSTOMERID = collateralId,
+                LOANAPPLICATIONID = entity.applicationId,
+                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                CREATEDBY = entity.staffId,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            context.SaveChanges();
+
+            var mapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId).Select(c => new LoanApplicationCollateralViewModel
+            {
+                loanAppCollateralId = c.LOANAPPCOLLATERALID,
+                applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                collateralCustomerId = c.COLLATERALCUSTOMERID,
+                collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                loanApplicationId = c.LOANAPPLICATIONID,
+                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
+            }).OrderByDescending(x => x.loanAppCollateralId);
+            return mapped;
+        }
+
+        public IEnumerable<LoanApplicationCollateralViewModel> UnmapApplicationCollateral(ApplicationCollateralMapping entity)
+        {
+            var item = this.context.TBL_LOAN_APPLICATION_COLLATERL.FirstOrDefault(x => x.LOANAPPLICATIONID == entity.applicationId && x.COLLATERALCUSTOMERID == entity.collateralId);
+
+            if (item != null)
+            {
+                context.TBL_LOAN_APPLICATION_COLLATERL.Remove(item);
+                context.SaveChanges();
+            }
+
+            var mapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId).Select(c => new LoanApplicationCollateralViewModel
+            {
+                loanAppCollateralId = c.LOANAPPCOLLATERALID,
+                applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                collateralValue = c.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                collateralCustomerId = c.COLLATERALCUSTOMERID,
+                collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                loanApplicationId = c.LOANAPPLICATIONID,
+                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
+            }).OrderByDescending(x => x.loanAppCollateralId);
+            return mapped;
+        }
+
         #endregion New 
 
         public IEnumerable<ActiveCustomerCollateralViewModel> GetActiveCustomerCollateral(int customerId) // REFACTOR PROJECTION

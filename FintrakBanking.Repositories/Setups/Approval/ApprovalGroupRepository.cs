@@ -32,7 +32,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         private IEnumerable<ApprovalGroupViewModel> GetApprovalGroup(int companyId)
         {
-            var data = (from a in context.TBL_APPROVAL_GROUP 
+            var data = (from a in context.TBL_APPROVAL_GROUP
                         where a.COMPANYID == companyId && a.DELETED == false
                         select new ApprovalGroupViewModel
                         {
@@ -43,7 +43,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             companyName = a.TBL_COMPANY.NAME,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
-                        }).ToList();
+                        }).OrderBy(x => x.groupName);
             return data;
         }
 
