@@ -103,12 +103,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("checklist-upload/definitionId/{definitionId}/statusId/{statusId}/detailId/{detailId}")]
-        public HttpResponseMessage GetLoanDocument(int definitionId, int statusId, int detailId)
+        [Route("checklist-upload/definitionId/{definitionId}/statusId/{statusId}/detailId/{detailId}/isProductBased/{isProductBased}")]
+        public HttpResponseMessage GetLoanDocument(int definitionId, int statusId, int detailId, bool isProductBased)
         {
             try
             {
-                var data = repo.CheckListDocumentUploadViewModel(definitionId , statusId, detailId);
+                var data = repo.CheckListDocumentUploadViewModel(definitionId , statusId, detailId, isProductBased);
 
                 if (data == null)
                 {

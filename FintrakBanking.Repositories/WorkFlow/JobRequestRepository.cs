@@ -125,7 +125,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
-            context.SaveChanges();
+            var result = context.SaveChanges();
             return job.JOBREQUESTCODE;
         }
 

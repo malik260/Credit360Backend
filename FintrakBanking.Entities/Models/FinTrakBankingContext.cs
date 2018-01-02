@@ -12,6 +12,18 @@ namespace FintrakBanking.Entities.Models
         {
         }
 
+        public override int SaveChanges()
+        {
+            try
+            {
+                return base.SaveChanges();
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new System.Data.Entity.Validation.DbEntityValidationException(errorMessages);
+            }
+        }
         public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
@@ -82,7 +94,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOMER_FS_RATIO_CAPTION> TBL_CUSTOMER_FS_RATIO_CAPTION { get; set; }
         public virtual DbSet<TBL_CUSTOMER_FS_RATIO_DETAIL> TBL_CUSTOMER_FS_RATIO_DETAIL { get; set; }
         public virtual DbSet<TBL_CUSTOMER_FS_RATIO_DIVI_TYP> TBL_CUSTOMER_FS_RATIO_DIVI_TYP { get; set; }
-        public virtual DbSet<TBL_CUSTOMER_FS_RATIO_TYPE> TBL_CUSTOMER_FS_RATIO_TYPE { get; set; }
         public virtual DbSet<TBL_CUSTOMER_FS_RATIO_VALUETYP> TBL_CUSTOMER_FS_RATIO_VALUETYP { get; set; }
         public virtual DbSet<TBL_CUSTOMER_GROUP> TBL_CUSTOMER_GROUP { get; set; }
         public virtual DbSet<TBL_CUSTOMER_GROUP_MAPPING> TBL_CUSTOMER_GROUP_MAPPING { get; set; }
@@ -139,6 +150,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PRODUCT_BEHAVIOUR> TBL_PRODUCT_BEHAVIOUR { get; set; }
         public virtual DbSet<TBL_PRODUCT_CATEGORY> TBL_PRODUCT_CATEGORY { get; set; }
         public virtual DbSet<TBL_PRODUCT_CHARGE_FEE> TBL_PRODUCT_CHARGE_FEE { get; set; }
+        public virtual DbSet<TBL_PRODUCT_CHARGE_FEE_CUSTMER> TBL_PRODUCT_CHARGE_FEE_CUSTMER { get; set; }
         public virtual DbSet<TBL_PRODUCT_CLASS> TBL_PRODUCT_CLASS { get; set; }
         public virtual DbSet<TBL_PRODUCT_CLASS_PROCESS> TBL_PRODUCT_CLASS_PROCESS { get; set; }
         public virtual DbSet<TBL_PRODUCT_CLASS_TYPE> TBL_PRODUCT_CLASS_TYPE { get; set; }
@@ -268,7 +280,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RISK_RATING> TBL_RISK_RATING { get; set; }
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
-        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -312,7 +324,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
-        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -875,11 +886,6 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COMPANY>()
-                .HasMany(e => e.TBL_CUSTOMER_FS_RATIO_TYPE)
-                .WithRequired(e => e.TBL_COMPANY)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_COMPANY>()
                 .HasMany(e => e.TBL_CUSTOMER_PRODUCT_FEE)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
@@ -1357,6 +1363,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_CUSTOMER>()
+                .HasMany(e => e.TBL_PRODUCT_CHARGE_FEE_CUSTMER)
+                .WithRequired(e => e.TBL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_CUSTOMER_ADDRESS_TYPE>()
                 .HasMany(e => e.TBL_CUSTOMER_ADDRESS)
                 .WithRequired(e => e.TBL_CUSTOMER_ADDRESS_TYPE)
@@ -1433,11 +1444,6 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CUSTOMER_FS_RATIO_DIVI_TYP>()
                 .HasMany(e => e.TBL_CUSTOMER_FS_RATIO_DETAIL)
                 .WithRequired(e => e.TBL_CUSTOMER_FS_RATIO_DIVI_TYP)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_FS_RATIO_TYPE>()
-                .HasMany(e => e.TBL_CUSTOMER_FS_RATIO_CAPTION)
-                .WithRequired(e => e.TBL_CUSTOMER_FS_RATIO_TYPE)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER_FS_RATIO_VALUETYP>()
@@ -1974,6 +1980,19 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE>()
+                .Property(e => e.DEPENDENTAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE>()
+                .HasMany(e => e.TBL_PRODUCT_CHARGE_FEE_CUSTMER)
+                .WithRequired(e => e.TBL_PRODUCT_CHARGE_FEE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE_CUSTMER>()
+                .Property(e => e.RATEVALUE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE_CUSTMER>()
                 .Property(e => e.DEPENDENTAMOUNT)
                 .HasPrecision(19, 4);
 
@@ -4427,18 +4446,6 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
                 .Property(e => e.SHAREVALUEAMOUNTTOUSE)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.LEVELMAXIMUMAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.INVESTMENTGRADEAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<view_Approval_Setup>()
-                .Property(e => e.STAFFMAXIMUMAMOUNT)
                 .HasPrecision(19, 4);
         }
     }

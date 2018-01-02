@@ -389,7 +389,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanCollateralMappingViewModel> loanCollateral { get; set; }
         public CustomerCompanyInfomationViewModels companyInformation { get; set; }
         public List<CamDocumentViewModel> camDocuments { get; set; }
-        public short productClassProcessId { get; set; }
+        public short? productClassProcessId { get; set; }
 
         //......End f Loan Relational Table View Mapping Models......//
     }
@@ -576,6 +576,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
         public short applicationStatusId { get; set; }
         public int? toStaffId { get; set; }
+        public short? productClassId { get; set; }
 
     }
 

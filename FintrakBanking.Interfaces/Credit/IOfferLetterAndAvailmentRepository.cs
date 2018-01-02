@@ -42,5 +42,11 @@ namespace FintrakBanking.Interfaces.Credit
         bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity);
 
         IQueryable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId);
+
+        IQueryable<CamProcessedLoanViewModel> GetApplicationsDueBondAndGuarantees(int staffId, int companyId);
+
+        bool ApproveBondAndGuarantees(LoanAvailmentApprovalViewModel entity);
+
+        bool ForwardBondsAndGuarantee(ForwardViewModel entity);
     }
 }

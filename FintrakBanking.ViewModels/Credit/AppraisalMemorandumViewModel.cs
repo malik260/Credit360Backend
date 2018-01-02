@@ -44,6 +44,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<RecommendedChangesViewModel> recommendedChanges { get; set; }
         public int applicationTenor { get; set; }
         public int operationId { get; set; }
+        public bool untenored { get; set; }
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity
@@ -115,6 +116,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CurrentCommitteeViewModel
     {
+        public int position { get; set; }
         public int approvalLevelId { get; set; }
         public string approvalLevelName { get; set; }
         public int numberOfApprovals { get; set; }
