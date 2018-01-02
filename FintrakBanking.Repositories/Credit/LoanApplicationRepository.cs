@@ -1029,7 +1029,86 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-      
+        #region All Operation Applications
+
+        // TO BE MADE UNIVERSAL ? stages, scope
+
+        public IQueryable<LoanApplicationViewModel> GetLoanApplicationsByOperation(int operationId, int? classId, int branchId, int staffId)
+        {
+            bool isHeadOffice = (branchId == 1) ? true : false;
+
+            var staffApprovalLevelIds =
+                context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == classId)
+                .Select(x => x.TBL_APPROVAL_GROUP)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId))
+                .Select(x => x.APPROVALLEVELID);
+
+            var applications = context.TBL_LOAN_APPLICATION.Where(x =>
+                (x.BRANCHID == branchId || isHeadOffice)
+                && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved // ?
+                && x.PRODUCTCLASSID == (short?)classId
+                && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BondAndGuaranteesInProgress // ?
+            )
+            .Join(
+                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == 37
+                && staffApprovalLevelIds.Contains((int)x.TOAPPROVALLEVELID) && x.RESPONSESTAFFID == null),
+                a => a.LOANAPPLICATIONID,
+                b => b.TARGETID,
+                (a, b) => new { a, b })
+            .Select(x => new LoanApplicationViewModel
+            {
+                //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
+                loanApplicationId = x.a.LOANAPPLICATIONID,
+                applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                customerId = x.a.CUSTOMERID,
+                branchId = x.a.BRANCHID,
+                productClassId = x.a.PRODUCTCLASSID,
+                productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                customerGroupId = x.a.CUSTOMERGROUPID,
+                loanTypeId = x.a.LOANTYPEID,
+                relationshipOfficerId = x.a.RELATIONSHIPOFFICERID,
+                relationshipManagerId = x.a.RELATIONSHIPMANAGERID,
+                applicationDate = x.a.APPLICATIONDATE,
+                applicationAmount = x.a.APPLICATIONAMOUNT,
+                approvedAmount = x.a.APPROVEDAMOUNT,
+                interestRate = x.a.INTERESTRATE,
+                applicationTenor = x.a.APPLICATIONTENOR,
+                lastComment = x.b.COMMENT,
+                currentApprovalStateId = x.b.APPROVALSTATEID,
+                currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
+                currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                approvalTrailId = x.b == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
+                loanInformation = x.a.LOANINFORMATION,
+                submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
+                customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
+                isRelatedParty = x.a.ISRELATEDPARTY,
+                isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
+                approvalStatusId = x.a.APPROVALSTATUSID,
+                applicationStatusId = x.a.APPLICATIONSTATUSID,
+                branchName = x.a.TBL_BRANCH.BRANCHNAME,
+                relationshipOfficerName = x.a.TBL_STAFF.FIRSTNAME + " " + x.a.TBL_STAFF.MIDDLENAME + " " + x.a.TBL_STAFF.LASTNAME,
+                relationshipManagerName = x.a.TBL_STAFF1.FIRSTNAME + " " + x.a.TBL_STAFF1.MIDDLENAME + " " + x.a.TBL_STAFF1.LASTNAME,
+                misCode = x.a.MISCODE,
+                customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                loanTypeName = x.a.TBL_LOAN_TYPE.LOANTYPENAME,
+                createdBy = x.a.CREATEDBY,
+                loanPreliminaryEvaluationId = x.a.LOANPRELIMINARYEVALUATIONID,
+                customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "N/A",
+                operationId = x.a.OPERATIONID,
+            })
+            .GroupBy(d => d.loanApplicationId)
+            .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
+            .OrderByDescending(x => x.applicationDate)
+            .ThenByDescending(x => x.loanApplicationId)
+            ;
+
+            // var test = applications.ToList();
+            return applications;
+        }
+
+
+        #endregion All Operation Applications
 
     }
 }

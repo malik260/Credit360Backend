@@ -219,10 +219,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool ResolveLevelConfigurations()
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
+            next = approvalLevels.FirstOrDefault();
 
             if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
             {
-                next = approvalLevels.FirstOrDefault();
                 if (next != null)
                 {
                     this.smsNotification = next.CanRecieveSMS;
@@ -507,6 +507,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.nextLevelId == null && ActionIsApprovalDecision())
             {
                 this.EndProcess(this.statusId);
+            }
+
+            if (this.nextLevelId == null && this.amount == 0)
+            {
+                this.EndProcess((int)ApprovalStatusEnum.Approved);
             }
 
             if (this.keepPending == true)

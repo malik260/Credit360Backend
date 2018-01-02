@@ -98,11 +98,28 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateLoanApplicationStatus(string applicationRefNumber, short applicationStatusId)
         {
-            var target = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER ==
-                applicationRefNumber.ToString());
+            var target = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber);
 
-            if (target != null && target.PRODUCTCLASSID != (short)ProductClassEnum.BondAndGuarantees)
+            if (target != null && target.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
             {
+                workflow.StaffId = target.CREATEDBY;
+                workflow.OperationId = (int)OperationsEnum.OfferLetterApproval;
+                workflow.TargetId = target.LOANAPPLICATIONID;
+                workflow.CompanyId = target.COMPANYID;
+                workflow.ProductClassId = target.PRODUCTCLASSID;
+                workflow.ProductId = null; // may refactor!!
+                workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+                workflow.Comment = "New bonds and guarantee document processing...";
+                workflow.ExternalInitialization = true;
+                workflow.DeferredExecution = true;
+                workflow.LogActivity();
+
+                target.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
+
+                return context.SaveChanges() > 0;
+            }
+            else
+            { 
                 switch (applicationStatusId)
                 {
                     case (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress:
@@ -173,21 +190,19 @@ namespace FintrakBanking.Repositories.Credit
                         return false;
                 }
             }
-            else
-            {
-                switch (applicationStatusId)
-                {
-                    case (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress:
-                        if (target.APPLICATIONSTATUSID !=
-                            (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress)
-                        {
-                            target.APPLICATIONSTATUSID =
-                                (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
-                            return context.SaveChanges() > 0;
-                        }
-                        return true;
-                }
-            }
+            //else
+            //{
+                //switch (applicationStatusId)
+                //{
+                //    case (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress:
+                //        if (target.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress)
+                //        {
+                //            target.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
+                //            return context.SaveChanges() > 0;
+                //        }
+                //        return true;
+                //}
+            //}
 
             return false;
 
@@ -1155,16 +1170,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool ApproveBondAndGuarantees (LoanAvailmentApprovalViewModel entity)
         {
-            entity.operationId = (int)OperationsEnum.BondAndGuarantees;
+            entity.operationId = (int)OperationsEnum.BondsAndGuarantees;
 
             entity.externalInitialization = false;
 
-            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, (int)OperationsEnum.BondAndGuarantees);
+            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, (int)OperationsEnum.BondsAndGuarantees);
             int staffApprovalLevelId = 0;
 
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == (int)OperationsEnum.BondAndGuarantees).ToList();
+            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == (int)OperationsEnum.BondsAndGuarantees).ToList();
 
             using (var trans = context.Database.BeginTransaction())
             {
@@ -1173,7 +1188,7 @@ namespace FintrakBanking.Repositories.Credit
                     var targetLoanAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x =>
                         x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
 
-                    var operationDetails = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.BondAndGuarantees);
+                    var operationDetails = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.BondsAndGuarantees);
 
                     LoanAvailmentApprovalViewModel referBack;
 
@@ -1310,9 +1325,11 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion OfferLetter & Availment Process
 
+        #region Bonds and Guarantees
+
         public bool ForwardBondsAndGuarantee(ForwardViewModel model)
         {
-            var operationId = 37; // REFACTOR APPROPRIATELY!!!!!
+            var operationId = (int)OperationsEnum.BondsAndGuarantees; 
 
             // init
             workflow.StaffId = model.createdBy;
@@ -1325,6 +1342,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ToStaffId = model.receiverStaffId;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
 
             // log
             workflow.LogActivity();
@@ -1333,11 +1351,13 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress; // REFACTOR APPROPRIATELY!!!!!
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
             }
 
             return context.SaveChanges() > 0;
         }
+
+        #endregion Bonds and Guarantees
 
     }
 }
