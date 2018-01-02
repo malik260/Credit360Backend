@@ -178,6 +178,7 @@
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DETAIL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DIVI_TYP.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DIVI_TYPE.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_VALUETYP.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_VALUETYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP.cs" />
@@ -190,6 +191,7 @@
     <Compile Include="Models\TBL_CUSTOMER_IDENTI_MODE_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_NEXTOFKIN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_PHONECONTACT.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_RISK_RATING.cs" />
     <Compile Include="Models\TBL_CUSTOMER_SENSITIVITY_LEVEL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_SIGNATORY.cs" />

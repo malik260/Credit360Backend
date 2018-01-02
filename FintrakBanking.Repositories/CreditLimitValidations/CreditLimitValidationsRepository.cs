@@ -59,7 +59,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         public int ValidateBlackList(int customerId)
         {
             var blacklist = (from a in context.TBL_CUSTOMER_BLACKLIST
-                             where a.CUSTOMERID == customerId
+                             //where a.CUSTOMERID == customerId
                              select a);
             int blacklistresults = blacklist.Count();
 

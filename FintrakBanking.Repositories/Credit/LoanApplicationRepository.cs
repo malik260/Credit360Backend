@@ -240,7 +240,7 @@ namespace FintrakBanking.Repositories.Credit
                                               {
                                                   allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
                                                   collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                                                  collateralValue = i.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                  collateralValue = i.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE ,
                                                   collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                                   collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
                                                   //collateralSubTypeId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.

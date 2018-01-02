@@ -396,7 +396,7 @@ namespace FintrakBanking.Repositories.CASA
                             customerGroupName = custGroup.TBL_CUSTOMER_GROUP.GROUPNAME ?? "None",
                             taxIdentificationNumber = cust.TAXNUMBER,
                             registrationNumber = cust.TBL_CUSTOMER_COMPANYINFOMATION.FirstOrDefault(x => x.CUSTOMERID == cust.CUSTOMERID).REGISTRATIONNUMBER,
-                            isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERID == cust.CUSTOMERID),
+                           // isBlackList = context.TBL_CUSTOMER_BLACKLIST.Any(x => x.CUSTOMERID == cust.CUSTOMERID),
                             isOnWatchList = context.TBL_LOAN_PRUDENTIALGUIDELINE.Any(x => x.TBL_LOAN.Any(l => l.CUSTOMERID == cust.CUSTOMERID && l.EXT_PRUDENT_GUIDELINE_STATUSID == (int)LoanPrudentialStatusEnum.WatchList)),
                             isCamsol = context.TBL_LOAN_CAMSOL.Any(x => context.TBL_LOAN.Any(l => l.TERMLOANID == x.LOANID && l.CUSTOMERID == cust.CUSTOMERID)),
                             customerTypeId = cust.CUSTOMERTYPEID,
