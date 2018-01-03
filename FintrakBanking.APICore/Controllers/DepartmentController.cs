@@ -68,6 +68,21 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("job-department/{jobTypeId}")]
+        public HttpResponseMessage GetJobDepartmentByJobTypeId(short jobTypeId)
+        {
+            try
+            {
+                var data = repo.GetJobDepartmentByJobTypeId(jobTypeId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("units/department/{departmentId}")]
         public HttpResponseMessage GetAllDepartmentUnits(short departmentId)
         {

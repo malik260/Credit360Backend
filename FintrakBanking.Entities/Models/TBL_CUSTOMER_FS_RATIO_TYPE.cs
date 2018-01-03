@@ -6,23 +6,25 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CHECKLIST_ITEM")]
-    public partial class TBL_CHECKLIST_ITEM
+    [Table("core.TBL_CUSTOMER_FS_RATIO_TYPE")]
+    public partial class TBL_CUSTOMER_FS_RATIO_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_CHECKLIST_ITEM()
+        public TBL_CUSTOMER_FS_RATIO_TYPE()
         {
-            TBL_CHECKLIST_DEFINITION = new HashSet<TBL_CHECKLIST_DEFINITION>();
+            TBL_CUSTOMER_FS_RATIO_CAPTION = new HashSet<TBL_CUSTOMER_FS_RATIO_CAPTION>();
         }
 
         [Key]
-        public int CHECKLISTITEMID { get; set; }
+        public short RATIOTYPEID { get; set; }
 
         [Required]
-        [StringLength(2000)]
-        public string CHECKLISTITEMNAME { get; set; }
+        [StringLength(200)]
+        public string RATIOTYPE { get; set; }
 
-        public short RESPONSE_TYPEID { get; set; }
+        public int COMPANYID { get; set; }
+
+        public int POSITION { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -38,9 +40,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CHECKLIST_DEFINITION> TBL_CHECKLIST_DEFINITION { get; set; }
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_CUSTOMER_FS_RATIO_CAPTION> TBL_CUSTOMER_FS_RATIO_CAPTION { get; set; }
     }
 }

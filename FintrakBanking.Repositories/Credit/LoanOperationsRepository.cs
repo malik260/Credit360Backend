@@ -6382,7 +6382,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanApplicationArchive.CASAACCOUNTID = item.casaAccountId;
                 addLoanApplicationArchive.APPLICATIONDATE = item.applicationDate;
                 addLoanApplicationArchive.INTERESTRATE = item.interestRate;
-                addLoanApplicationArchive.APPLICATIONTENOR = item.applicationTenor;
+                addLoanApplicationArchive.APPLICATIONTENOR = (int)item.applicationTenor;
                 addLoanApplicationArchive.EFFECTIVEDATE = item.effectiveDate;
                 addLoanApplicationArchive.EXPIRYDATE = item.expiryDate;
                 addLoanApplicationArchive.OPERATIONID = (int)item.operationId;

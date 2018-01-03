@@ -116,7 +116,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IAccountCategoryRepository>().To<AccountCategoryRepository>();
             kernel.Bind<IAccountTypeRepository>().To<AccountTypeRepository>();
             kernel.Bind<ICompanyRepository>().To<CompanyRepository>();
-            kernel.Bind<IBranchRepository>().To<BranchRepository>(); 
+            kernel.Bind<IBranchRepository>().To<BranchRepository>();
             kernel.Bind<ICurrencyRateRepository>().To<CurrencyRateRepository>();
             kernel.Bind<IRiskSetupRepository>().To<RiskSetupRepository>();
             kernel.Bind<IRiskImplementation>().To<RiskImplementation>();
@@ -131,6 +131,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IProductCollateralTypeRepository>().To<ProductCollateralTypeRepository>();
             kernel.Bind<IProductFeeRepository>().To<ProductFeeRepository>();
             kernel.Bind<ICustomerRepository>().To<CustomerRepository>();
+            kernel.Bind<ICustomerProductFeeRepository>().To<CustomerProductFeeRepository>();
             kernel.Bind<ICustomerGroupRepository>().To<CustomerGroupRepository>();
             kernel.Bind<IAuditTrailRepository>().To<AuditTrailRepository>();
             kernel.Bind<ICultureHelper>().To<CultureHelper>();
@@ -185,7 +186,10 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICustomerStagingRepository>().To<CustomerStagingRepository>();
             kernel.Bind<ILoanPrincipalRepository>().To<LoanPrincipalRepository>();
             kernel.Bind<ILoanMarketRepository>().To<LoanMarketRepository>();
-            kernel.Bind<IEmployerRepository>().To<EmployerRepository>();
+
+
+            //kernel.Bind<IEmployerRepository>().To<EmployerRepository>();
         }
+
     }
 }

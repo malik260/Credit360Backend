@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
         {
             TBL_CUSTOMER_FS_CAPTION_DETAIL = new HashSet<TBL_CUSTOMER_FS_CAPTION_DETAIL>();
             TBL_CUSTOMER_FS_RATIO_DETAIL = new HashSet<TBL_CUSTOMER_FS_RATIO_DETAIL>();
-            TBL_CUSTOMER_FS_CAPTION1 = new HashSet<TBL_CUSTOMER_FS_CAPTION>();
+            TBL_CUSTOMER_FS_RATIO_DETAIL1 = new HashSet<TBL_CUSTOMER_FS_RATIO_DETAIL>();
             TBL_CUSTOMER_GRP_FS_CAPTN_DET = new HashSet<TBL_CUSTOMER_GRP_FS_CAPTN_DET>();
         }
 
@@ -22,32 +22,12 @@ namespace FintrakBanking.Entities.Models
         public int FSCAPTIONID { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string FSCAPTIONCODE { get; set; }
-
-        [Required]
         [StringLength(200)]
         public string FSCAPTIONNAME { get; set; }
 
         public short FSCAPTIONGROUPID { get; set; }
 
-        public int? PARENTIDFSCAPTIONID { get; set; }
-
-        public short? ACCOUNTCATEGORYID { get; set; }
-
-        public short FSTYPEID { get; set; }
-
-        public int POSITION { get; set; }
-
-        [StringLength(50)]
-        public string REFNOTE { get; set; }
-
-        public bool ISTOTALLINE { get; set; }
-
-        [StringLength(50)]
-        public string REPORTCOLOUR { get; set; }
-
-        public double MULTIPLIER { get; set; }
+        public bool ISRATIO { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -66,19 +46,13 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER_FS_CAPTION_DETAIL> TBL_CUSTOMER_FS_CAPTION_DETAIL { get; set; }
 
+        public virtual TBL_CUSTOMER_FS_CAPTION_GROUP TBL_CUSTOMER_FS_CAPTION_GROUP { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER_FS_RATIO_DETAIL> TBL_CUSTOMER_FS_RATIO_DETAIL { get; set; }
 
-        public virtual TBL_ACCOUNT_CATEGORY TBL_ACCOUNT_CATEGORY { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CUSTOMER_FS_CAPTION> TBL_CUSTOMER_FS_CAPTION1 { get; set; }
-
-        public virtual TBL_CUSTOMER_FS_CAPTION TBL_CUSTOMER_FS_CAPTION2 { get; set; }
-
-        public virtual TBL_CUSTOMER_FS_CAPTION_GROUP TBL_CUSTOMER_FS_CAPTION_GROUP { get; set; }
-
-        public virtual TBL_FINANCIAL_STATEMENT_TYPE TBL_FINANCIAL_STATEMENT_TYPE { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_FS_RATIO_DETAIL> TBL_CUSTOMER_FS_RATIO_DETAIL1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER_GRP_FS_CAPTN_DET> TBL_CUSTOMER_GRP_FS_CAPTN_DET { get; set; }

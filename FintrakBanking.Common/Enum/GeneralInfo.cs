@@ -183,7 +183,11 @@ namespace FintrakBanking.Common.Enum
         ApprovedMarketInserted =175,
         ApprovedMarketUpdated =176,
         ApprovedMarketDeleted = 177,
-        ApprovedMarketEdited =178
+        ApprovedMarketEdited =178,
+        CustomerproductFeeAdded = 179,
+        CustomerproductFeeUpdated = 180,
+        CustomerproductFeeDeleted = 181,
+        CustomerproductFeeApproved = 182
     };
 
 

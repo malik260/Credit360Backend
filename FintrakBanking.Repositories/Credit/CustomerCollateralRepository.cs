@@ -137,7 +137,7 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALTYPEID = model.collateralTypeId,
                 COLLATERALSUBTYPEID = model.collateralSubTypeId,
                 COLLATERALCODE = model.collateralCode,
-                COLLATERALVALUE = model.collateralValue,
+                COLLATERALVALUE = (decimal)model.collateralValue,
                 COMPANYID = model.companyId,
                 ALLOWSHARING = model.allowSharing,
                 ISLOCATIONBASED = model.isLocationBased,
@@ -164,7 +164,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.COLLATERALTYPEID = model.collateralTypeId;
             collateral.COLLATERALSUBTYPEID = model.collateralSubTypeId;
             collateral.COLLATERALCODE = model.collateralCode;
-            collateral.COLLATERALVALUE = model.collateralValue;
+            collateral.COLLATERALVALUE = (decimal)model.collateralValue;
             collateral.ALLOWSHARING = model.allowSharing;
             collateral.ISLOCATIONBASED = model.isLocationBased;
             collateral.VALUATIONCYCLE = model.valuationCycle;
@@ -904,7 +904,7 @@ namespace FintrakBanking.Repositories.Credit
                 valuerId = specifics.VALUERID,
                 valuerReferenceNumber = specifics.VALUERREFERENCENUMBER,
                 propertyValueBaseTypeId = specifics.PROPERTYVALUEBASETYPEID,
-                openMarketValue = specifics.OPENMARKETVALUE,
+                openMarketValue = (decimal)specifics.OPENMARKETVALUE,
                 collateralValue = specifics.COLLATERALVALUE,
                 forcedSaleValue = specifics.FORCEDSALEVALUE,
                 stampToCover = specifics.STAMPTOCOVER,

@@ -240,7 +240,7 @@ namespace FintrakBanking.Repositories.Credit
                                               {
                                                   allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
                                                   collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                                                  collateralValue = i.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                  collateralValue = i.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE ,
                                                   collateralTypeName = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                                   collateralTypeId = i.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
                                                   //collateralSubTypeId = i.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.
@@ -317,7 +317,7 @@ namespace FintrakBanking.Repositories.Credit
                            applicationDate = a.APPLICATIONDATE,
                            dateTimeCreated = a.DATETIMECREATED,
                            applicationTenor = Math.Round((double)a.APPLICATIONTENOR) * (12.0 / 365.0),
-                           applicationAmount = a.APPROVEDAMOUNT
+                           applicationAmount = a.APPLICATIONAMOUNT
                        };
             return data.ToList();
         }
@@ -504,6 +504,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                short? productClassId = null;
                 bool isGroupLoan = false;
                 int response = 0; int loanId = 0;
                 if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
@@ -516,13 +517,26 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     casaAccountId = casa.GetCasaAccountId(loan.customerAccount, loan.companyId);
                 }
+              
+                var dat = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == loan.productClassId).FirstOrDefault();
+                if (dat != null)
+                {
+                    if(dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                    {
+                        productClassId = null;
+                    }
+                    if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                    {
+                        productClassId = loan.productClassId;
+                    }
+                }
 
                 //var loanStatusId = (short)LoanStatusEnum.Inactive;
 
                 var data = new TBL_LOAN_APPLICATION
                 {
                      
-                    PRODUCTCLASSID = loan.productClassId,
+                    PRODUCTCLASSID = productClassId,
                     APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                     LOANTYPEID = loan.loanTypeId,
                     COMPANYID = loan.companyId,
@@ -875,8 +889,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                             proposedProductId = b.PROPOSEDPRODUCTID,
                             proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
-                            proposedTenor = b.PROPOSEDTENOR,
-                            proposedAmount = b.PROPOSEDAMOUNT,
+                           // proposedTenor = (from f in context.TBL_LOAN_APPLICATION_DETAIL where f.LOANAPPLICATIONID == b.LOANAPPLICATIONID select f.PROPOSEDTENOR).Max() ,
+                            proposedAmount = (from f in context.TBL_LOAN_APPLICATION_DETAIL where f.LOANAPPLICATIONID == b.LOANAPPLICATIONID select f.PROPOSEDAMOUNT).Sum(),
                             proposedInterestRate = b.PROPOSEDINTERESTRATE
                         });
 
