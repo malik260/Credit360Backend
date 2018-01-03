@@ -1240,6 +1240,7 @@ namespace FintrakBanking.Repositories.Customer
                            allowSharing = x.ALLOWSHARING,
                            isLocationBased = x.ISLOCATIONBASED,
                            valuationCycle = x.VALUATIONCYCLE,
+                           collateralValue = x.COLLATERALVALUE,
                            haircut = x.HAIRCUT,
                            approvalStatus = x.APPROVALSTATUS,
                        }).ToList(),

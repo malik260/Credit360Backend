@@ -37,7 +37,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime applicationDate { get; set; }
         public decimal applicationAmount { get; set; }
         public decimal approvedAmount { get; set; }
-        public int applicationTenor { get; set; }
+        public double applicationTenor { get; set; }
         public double interestRate { get; set; }
         public DateTime? effectiveDate { get; set; }
         public DateTime? expiryDate { get; set; }

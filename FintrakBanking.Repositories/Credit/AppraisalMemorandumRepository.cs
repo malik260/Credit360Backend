@@ -288,10 +288,19 @@ namespace FintrakBanking.Repositories.Credit
             {
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
             }
-            
+
+            bool amountUpdated = false;
+
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                if (amountUpdated == false)
+                {
+                    var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                    var approvedAmount = items.Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
+                    appl.APPROVEDAMOUNT = approvedAmount;
+                    amountUpdated = true;
+                }
                 var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
                 if (memo != null) { memo.ISCOMPLETED = true; }
             }
@@ -331,8 +340,13 @@ namespace FintrakBanking.Repositories.Credit
                         });
                     }
                 }
-                var approvedAmount = items.Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
-                appl.APPROVEDAMOUNT = approvedAmount;
+
+                if (amountUpdated == false)
+                {
+                    var approvedAmount = items.Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
+                    appl.APPROVEDAMOUNT = approvedAmount;
+                    amountUpdated = true;
+                }
             }
 
             // Audit Section ---------------------------
@@ -628,11 +642,6 @@ namespace FintrakBanking.Repositories.Credit
                             loanInformation = x.a.LOANINFORMATION,
                             submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                             customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
-                            //notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
-                            //notInBlackbook = x.a.NOTINBLACKBOOK,
-                            //notInCamsol = x.a.NOTINCAMSOL,
-                            //notInXds = x.a.NOTINXDS,
-                            //notInCrc = x.a.NOTINCRC,
                             isRelatedParty = x.a.ISRELATEDPARTY,
                             isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                             approvalStatusId = x.a.APPROVALSTATUSID,
@@ -655,9 +664,12 @@ namespace FintrakBanking.Repositories.Credit
                         ;
             }
 
-            var staffApprovalLevelIds = context.TBL_APPROVAL_LEVEL_STAFF
-                .Where(x => x.DELETED == false && x.STAFFID == staffId).Select(x => x.APPROVALLEVELID);
-
+            var staffApprovalLevelIds =
+                context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)// && x.PRODUCTCLASSID == classId)
+                .Select(x => x.TBL_APPROVAL_GROUP)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.ISACTIVE == true))
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId))
+                .Select(x => x.APPROVALLEVELID);
 
             var pendingApplications = context.TBL_LOAN_APPLICATION.Where(x =>
                                                                         camStages.Contains(x.APPLICATIONSTATUSID)
@@ -715,11 +727,6 @@ namespace FintrakBanking.Repositories.Credit
                 loanInformation = x.a.LOANINFORMATION,
                 submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                 customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
-                //notInNegativeCrms = x.a.NOTINNEGATIVECRMS,
-                //notInBlackbook = x.a.NOTINBLACKBOOK,
-                //notInCamsol = x.a.NOTINCAMSOL,
-                //notInXds = x.a.NOTINXDS,
-                //notInCrc = x.a.NOTINCRC,
                 isRelatedParty = x.a.ISRELATEDPARTY,
                 isPoliticallyExposed = x.a.ISPOLITICALLYEXPOSED,
                 approvalStatusId = x.a.APPROVALSTATUSID,
@@ -827,13 +834,13 @@ namespace FintrakBanking.Repositories.Credit
 
             var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault(x => x.LOANAPPLICATIONID == model.applicationId);
 
-            if (memo != null)
+            if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
-                if (workflow.NewState == (int)ApprovalState.Ended) // cam status
-                {
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
-                    memo.ISCOMPLETED = true;
-                }
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                if (memo != null) memo.ISCOMPLETED = true;
+                var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                var approvedAmount = items.Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
+                appl.APPROVEDAMOUNT = approvedAmount;
             }
 
             // Audit Section ---------------------------
@@ -917,6 +924,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return result;
         }
+
         public IQueryable<LoanApplicationViewModel> GetPendingLoanApplicationsClass(int countryId, int branchId, int staffId, int? classId)
         {
             int operationId = (int)OperationsEnum.CAM;
