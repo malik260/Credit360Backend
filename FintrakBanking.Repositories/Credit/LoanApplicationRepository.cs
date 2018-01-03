@@ -1083,9 +1083,10 @@ namespace FintrakBanking.Repositories.Credit
             var staffApprovalLevelIds =
                 context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == classId)
                 .Select(x => x.TBL_APPROVAL_GROUP)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.ISACTIVE == true))
                 .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId))
-                .Select(x => x.APPROVALLEVELID);
+                .Select(x => x.APPROVALLEVELID)
+                .ToList();
 
             var applications = context.TBL_LOAN_APPLICATION.Where(x =>
                 (x.BRANCHID == branchId || isHeadOffice)

@@ -202,8 +202,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
         [HttpGet]
         [Route("loan-application-eligibility/loanApplicationId/{id}")]
         public HttpResponseMessage GetLoanApplicationsDetails(int id)
