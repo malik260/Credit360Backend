@@ -47,6 +47,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool ApproveBondAndGuarantees(LoanAvailmentApprovalViewModel entity);
 
+        bool ForwardBondsAndGuarantee(ForwardViewModel entity);
+
         bool UpdateFinalOfferLetter(string applicationRef, OfferLetterTemplateViewModel model);
     }
 }

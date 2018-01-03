@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 
@@ -14,6 +15,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<ApplicationJobRequest> GetLoanApplicationJobsById(int loanApplicationId, int companyId);
 
         IEnumerable<JobRequestViewModel> GetAllJobRequest();
+
 
         IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId);
 

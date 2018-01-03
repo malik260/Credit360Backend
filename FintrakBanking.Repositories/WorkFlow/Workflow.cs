@@ -45,11 +45,13 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int tenor = 0;
         private decimal amount = 0;
         private bool investmentGrade = false;
+        private bool untenored = false;
         private bool saved = false;
         private bool useOrganogram = false;
         private DateTime systemDate = DateTime.Now;
         private DateTime applicationDate;
         private int requestStaffId;
+        private int? requestLevelId;
         private int neededNumberOfApproval;
         private bool externalInitialization = false;
         private bool keepPending = false;
@@ -68,6 +70,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public string Comment { set { comment = value; } }
         public int Tenor { set { tenor = value; } }
         public bool InvestmentGrade { set { investmentGrade = value; } }
+        public bool Untenored { set { untenored = value; } }
         public bool PoliticallyExposed { set { politicallyExposed = value; } }
         public short? Vote { set { vote = value; } }
         public int StatusId { get { return statusId; } set { statusId = value; } }
@@ -82,7 +85,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int NewState { get { return newStateId; } }
         public bool KeepPending { set { keepPending = value; } }
         public bool DeferredExecution { set { deferredExecution = value; } }
-        public bool ForcefullyEndProcess { set { endProcess = value; keepPending = false; } }
+        public bool ForcefullyEndProcess { set { endProcess = value; keepPending = false; } } // <----------- this property is deprecated!!!
 
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
@@ -120,6 +123,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestStaffId = request.REQUESTSTAFFID;
                 //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
                 this.fromLevelId = request.TOAPPROVALLEVELID;
+                this.requestLevelId = request.FROMAPPROVALLEVELID;
                 if (ProcessIsClosed()) { throw new Exception("Process is closed!"); }
             }
 
@@ -189,6 +193,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             // set those before calling in
             this.skipLimitsCheck = false;
             this.fromLevelId = null;
+            this.newStateId = (int)ApprovalState.Processing;
         }
 
         private DateTime GetApplicationDate()
@@ -217,10 +222,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool ResolveLevelConfigurations()
         {
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
+            next = approvalLevels.FirstOrDefault();
 
             if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
             {
-                next = approvalLevels.FirstOrDefault();
                 if (next != null)
                 {
                     this.smsNotification = next.CanRecieveSMS;
@@ -257,6 +262,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.fromLevelId = levelStaff.APPROVALLEVELID;
                 this.neededNumberOfApproval = levelStaff.TBL_APPROVAL_LEVEL.NUMBEROFAPPROVALS;
             }
+
+            if (this.statusId == (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.requestLevelId; }
 
             if (this.nextLevelId == null) // && fromLevelId != null
             {
@@ -304,6 +311,33 @@ namespace FintrakBanking.Repositories.WorkFlow
                 && x.FROMAPPROVALLEVELID == this.fromLevelId
                 ).ToList();
 
+            if (votes.FirstOrDefault(x => x.REQUESTSTAFFID == (int)this.staffId) != null) throw new Exception("You have already acted on this item.");
+
+            // APPROVING ORDER VALIDATION
+            var approvers = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == fromLevelId).ToList();
+            var current = approvers.FirstOrDefault(x => x.STAFFID == this.staffId);
+            if (current != null)
+            {
+                var subs = approvers.Where(x => x.POSITION == (current.POSITION - 1)).ToList();
+
+                var first = context.TBL_APPROVAL_LEVEL_STAFF
+                    .Where(x => x.APPROVALLEVELID == fromLevelId && x.STAFFID != this.staffId && x.POSITION < current.POSITION)
+                    .Select(x => x.STAFFID);//.ToList();
+                //if (first.Count() > 0)
+                if (subs.Count() > 0)
+                {
+                    bool allow = false;
+                    string message = "You are not next in line for approval on this approval level. You will be notified by email when required.";
+                    if (votes.Count() == 0) throw new Exception(message);
+                    foreach (var vote in votes)
+                    {
+                        //if (!first.Contains((int)vote.REQUESTSTAFFID))
+                        if (subs.Where(x => x.STAFFID == vote.REQUESTSTAFFID).Any()) allow = true;
+                    }
+                    if (allow == false) throw new Exception(message);
+                }
+            }
+
             bool allVoted = false;
             if ((votes.Count() + 1) == this.neededNumberOfApproval)
             {
@@ -312,7 +346,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             else
             {
-                this.skipLimitsCheck = true; // avoid approval stat changed to 4.processing
+                this.skipLimitsCheck = true; // avoid approval state changed to 4.processing
                 this.smsNotification = false;
                 this.emailNotification = false;
                 this.nextLevelId = this.fromLevelId;
@@ -432,12 +466,12 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool WithinTenorLimit(TBL_APPROVAL_LEVEL level)
         {
+            if (this.untenored == true) { return level.CANDORISKASSESSMENT == true ? true : false; } // <------ CANDORISKASSESSMENT to AUTHORIZE_TENOR
             if (tenor == 0 && level.TENOR == 0) { return true; } // setup
-            //if (tenor == 0 && level.Tenor > 0 && level.AuthorizeUntenored == true) { return true; } // untenored for cro
             if (tenor > 0 && level.TENOR >= tenor) { return true; } // gen cam
             return false;
         }
-
+        
         private bool WithinMaximumLimit(TBL_APPROVAL_LEVEL level)
         {
             if (amount == 0) { return true; }
@@ -478,6 +512,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.nextLevelId == null && ActionIsApprovalDecision())
             {
                 this.EndProcess(this.statusId);
+            }
+
+            if (this.nextLevelId == null && this.amount == 0)
+            {
+                this.EndProcess((int)ApprovalStatusEnum.Approved);
             }
 
             if (this.keepPending == true)
@@ -608,7 +647,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             throw new Exception("Unauthorized action!");
         }
 
-        public bool LogForApproval(ApprovalViewModel model)
+        public bool LogForApproval(ApprovalViewModel model) // <----------- this method is deprecated!!!
         {
             StaffId = model.staffId;
             OperationId = model.operationId;

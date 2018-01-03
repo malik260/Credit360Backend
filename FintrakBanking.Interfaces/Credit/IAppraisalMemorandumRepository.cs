@@ -19,7 +19,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 
-        IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId);
+        IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId);
 
         IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId);
 
@@ -40,6 +40,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user);
 
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplicationsClass(int countryId, int branchId, int staffId, int? classId);
+
+        bool GetUntenoredStatus(int applicationId);
 
         //IEnumerable<ApprovalLevelStaffViewModel> GetNextLevelStaff(int getStaffId, int loanApplicationId, int operationId);
     }

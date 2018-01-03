@@ -37,7 +37,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime applicationDate { get; set; }
         public decimal applicationAmount { get; set; }
         public decimal approvedAmount { get; set; }
-        public int applicationTenor { get; set; }
+        public double applicationTenor { get; set; }
         public double interestRate { get; set; }
         public DateTime? effectiveDate { get; set; }
         public DateTime? expiryDate { get; set; }
@@ -185,8 +185,25 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanPurpose { get; set; }
 
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
+
         public  EducationLoanViewModel  educationLoan { get; set; }
+
         public  TraderLoanViewModel  traderLoan { get; set; }
+
+        public BondsAndGuranty bondDetails { get; set; }
+    }
+
+    public class BondsAndGuranty
+    {
+        public int loanApplicationDetailId { get; set; }
+        public decimal bondAmount { get; set; }
+        public int principalId { get; set; }
+        public short bondCurrencyId { get; set; }
+        public DateTime contractStartDate { get; set; }
+        public DateTime contractEndDate { get; set; }
+        public bool isTenored { get; set; }
+        public bool isBankFormat { get; set; }
+        public string referenceNo { get; set; }
 
     }
 
@@ -371,6 +388,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime contractStartDate { get; set; }
 
         public DateTime contractEndDate { get; set; }
+
+        public string referenceNo { get; set; }
 
         public bool isTenored { get; set; }
 

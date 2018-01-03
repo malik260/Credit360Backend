@@ -6,28 +6,31 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_FS_RATIO_DIVI_TYPE")]
-    public partial class TBL_CUSTOMER_FS_RATIO_DIVI_TYPE
+    [Table("core.TBL_CUSTOMER_FS_RATIO_TYPE")]
+    public partial class TBL_CUSTOMER_FS_RATIO_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_CUSTOMER_FS_RATIO_DIVI_TYPE()
+        public TBL_CUSTOMER_FS_RATIO_TYPE()
         {
-            TBL_CUSTOMER_FS_RATIO_DETAIL = new HashSet<TBL_CUSTOMER_FS_RATIO_DETAIL>();
+            TBL_CUSTOMER_FS_RATIO_CAPTION = new HashSet<TBL_CUSTOMER_FS_RATIO_CAPTION>();
         }
 
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public short DIVISORTYPEID { get; set; }
+        public short RATIOTYPEID { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string DIVISORTYPENAME { get; set; }
+        [StringLength(200)]
+        public string RATIOTYPE { get; set; }
 
-        public int? CREATEDBY { get; set; }
+        public int COMPANYID { get; set; }
 
-        public int? LASTUPDATEDBY { get; set; }
+        public int POSITION { get; set; }
+
+        public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
+
+        public int? LASTUPDATEDBY { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
 
@@ -37,7 +40,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
+        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CUSTOMER_FS_RATIO_DETAIL> TBL_CUSTOMER_FS_RATIO_DETAIL { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_FS_RATIO_CAPTION> TBL_CUSTOMER_FS_RATIO_CAPTION { get; set; }
     }
 }

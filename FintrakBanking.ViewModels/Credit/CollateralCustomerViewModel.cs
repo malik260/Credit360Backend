@@ -95,8 +95,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short? valuerId { get; set; }
         public string valuerReferenceNumber { get; set; }
         public short propertyValueBaseTypeId { get; set; }
-        public decimal? openMarketValue { get; set; }
-        public decimal collateralValue { get; set; }
+        public decimal openMarketValue { get; set; }
+        public decimal? collateralValue { get; set; }
         public decimal? forcedSaleValue { get; set; }
         public string stampToCover { get; set; }
         public string valuationSource { get; set; }

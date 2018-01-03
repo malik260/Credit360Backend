@@ -24,22 +24,56 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
+        //[HttpGet]
+        //[Route("blacklist/{customerId}")]
+        //public HttpResponseMessage ValidateBlackList(int customerId)
+        //{ 
+        //        try
+        //        {
+        //            var data = repo.ValidateBlackList(customerId);
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
+        //        }
+
+        //}
         [HttpGet]
-        [Route("blacklist/{customerId}")]
+        [Route("blacklist/{customerCode}")]
         public HttpResponseMessage ValidateBlackList(string customerCode)
-        { 
-                try
-                {
-                    var data = repo.ValidateBlackList(customerCode);
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-                }
-                catch (Exception ex)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
-                }
-             
+        {
+            try
+            {
+                var data = repo.ValidateBlackList(customerCode);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
 
+        [HttpGet]
+        [Route("customer-eligibility/{customerCode}")]
+        public HttpResponseMessage ValidateCustomerEligibility(string customerCode)
+        {
+            try
+            {
+                var data = repo.ValidateCustomerEligibility(customerCode);
+                if(data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record Found" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
 
         [HttpGet]
         [Route("watchlist/{customerId}")]

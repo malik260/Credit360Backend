@@ -121,6 +121,7 @@
     <Compile Include="Setups\Approval\ApprovalLevelStaffRepository.cs" />
     <Compile Include="Setups\Credit\ChecklistRepository.cs" />
     <Compile Include="Setups\Credit\CollateralTypeRepository.cs" />
+    <Compile Include="Setups\Credit\CustomerProductFeeRepository.cs" />
     <Compile Include="Setups\Finance\AccountCategoryRepository.cs" />
     <Compile Include="Setups\Finance\AccountTypeRepository.cs" />
     <Compile Include="Setups\Finance\ChargeFeeRepository.cs" />

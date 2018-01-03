@@ -40,6 +40,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
         [HttpGet]
         [Route("job-request/loan-application-details/{applicationId}")]
         public HttpResponseMessage GetLoanApplicationJobsById(int applicationId)
@@ -260,7 +261,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error logging this request", error = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error logging this request" , error = ex.Message });
             }
         }
 

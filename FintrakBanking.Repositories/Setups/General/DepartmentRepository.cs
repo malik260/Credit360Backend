@@ -208,6 +208,38 @@ namespace FintrakBanking.Repositories.Setups.General
             return department;
         }
 
+        public IEnumerable<DepartmentViewModel> GetJobDepartmentByJobTypeId(short jobTypeId)
+        {
+            var departmentList = new List<DepartmentViewModel>();
+
+            //var staffDepartment = department.GetAllDepartment().Where(x => x.staffId == staffId);
+            var jobDeptMapping = context.TBL_JOB_TYPE_DEPARTMENT.Where(x => x.JOBTYPEID == jobTypeId);
+
+            foreach (var mapping in jobDeptMapping)
+            {
+                var depts = (from d in context.TBL_DEPARTMENT
+                             where d.DEPARTMENTID == mapping.DEPARTMENTID
+                             select new DepartmentViewModel()
+                             {
+                                 createdBy = d.CREATEDBY.Value,
+                                 BranchId = d.BRANCHID,
+                                 BranchName = context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHID == (short)d.BRANCHID).BRANCHNAME,
+                                 DepartmentName = d.DEPARTMENTNAME,
+                                 DepartmentCode = d.DEPARTMENTCODE,
+                                 Description = d.DESCRIPTION,
+                                 DepartmentId = d.DEPARTMENTID
+                             }).ToList();
+
+                foreach (var dept in depts)
+                {
+                    departmentList.Add(dept);
+                }
+
+            }
+
+            return departmentList;
+        }
+
         public IEnumerable<DepartmentViewModel> GetAllDepartmentUnits(short departmentId)
         {
             var departmentUnits = (from d in context.TBL_DEPARTMENT_UNIT where d.DEPARTMENTID == departmentId

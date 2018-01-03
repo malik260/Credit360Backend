@@ -23,20 +23,20 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
-        private IWorkflow workFlow;
+        private IWorkflow workflow;
         private IApprovalLevelStaffRepository approvalLevel;
 
         public OfferLetterAndAvailmentRepository(IAuditTrailRepository _auditTrail,
             IGeneralSetupRepository _genSetup,
             FinTrakBankingContext _context,
             IApprovalLevelStaffRepository _approvallevel,
-            IWorkflow _workFlow)
+            IWorkflow _workflow)
         {
             context = _context;
             auditTrail = _auditTrail;
             genSetup = _genSetup;
             approvalLevel = _approvallevel;
-            workFlow = _workFlow;
+            workflow = _workflow;
         }
 
         #region OfferLetter & Availment Process
@@ -98,11 +98,15 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateLoanApplicationStatus(string applicationRefNumber, short applicationStatusId)
         {
-            var target = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER ==
-                applicationRefNumber.ToString());
+            var target = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber);
 
-            if (target != null && target.PRODUCTCLASSID != (short)ProductClassEnum.BondAndGuarantees)
-            {
+            //if (target != null && target.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
+            //{
+            //    target.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
+            //    return context.SaveChanges() > 0;
+            //}
+            //else
+            //{ 
                 switch (applicationStatusId)
                 {
                     case (short)LoanApplicationStatusEnum.OfferLetterGenerationInProgress:
@@ -172,24 +176,22 @@ namespace FintrakBanking.Repositories.Credit
                     default:
                         return false;
                 }
-            }
-            else
-            {
-                switch (applicationStatusId)
-                {
-                    case (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress:
-                        if (target.APPLICATIONSTATUSID !=
-                            (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress)
-                        {
-                            target.APPLICATIONSTATUSID =
-                                (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
-                            return context.SaveChanges() > 0;
-                        }
-                        return true;
-                }
-            }
+            //}
+            //else
+            //{
+                //switch (applicationStatusId)
+                //{
+                //    case (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress:
+                //        if (target.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress)
+                //        {
+                //            target.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
+                //            return context.SaveChanges() > 0;
+                //        }
+                //        return true;
+                //}
+            //}
 
-            return false;
+            //return false;
 
             //public IEnumerable
         }
@@ -214,12 +216,18 @@ namespace FintrakBanking.Repositories.Credit
 
         public IQueryable<CamProcessedLoanViewModel> GetApplicationsForReviewFromCreditUnit(int staffId, int companyId)
         {
-            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.OfferLetterApproval);
-            int staffApprovalLevelId = 0;
+            //var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(staffId, companyId, (int)OperationsEnum.OfferLetterApproval);
+            //int staffApprovalLevelId = 0;
+            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            //var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(companyId).Where(x => x.operationId == (int)OperationsEnum.OfferLetterApproval).ToList();
 
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
-
-            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(companyId).Where(x => x.operationId == (int)OperationsEnum.OfferLetterApproval).ToList();
+            var staffApprovalLevelIds =
+                context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval)// && x.PRODUCTCLASSID == classId)
+                .Select(x => x.TBL_APPROVAL_GROUP)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.ISACTIVE == true))
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId))
+                .Select(x => x.APPROVALLEVELID)
+                .ToList();
 
             IQueryable<CamProcessedLoanViewModel> data;
 
@@ -232,10 +240,12 @@ namespace FintrakBanking.Repositories.Credit
                     join e in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals e.TARGETID into apprTrail
                     from e in apprTrail.DefaultIfEmpty()
                     where a.COMPANYID == companyId && a.DELETED == false
-                          && b.STATUSID == (int)ApprovalStatusEnum.Approved &&
-                          e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                            && e.RESPONSESTAFFID == null
-                      && e.OPERATIONID == (int)OperationsEnum.OfferLetterApproval && e.TOAPPROVALLEVELID == staffApprovalLevelId
+                          && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                          && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                          && e.RESPONSESTAFFID == null
+                          && e.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
+                           //&& e.TOAPPROVALLEVELID == staffApprovalLevelId
+                           && staffApprovalLevelIds.Contains((int)e.TOAPPROVALLEVELID)
                     select new CamProcessedLoanViewModel
                     {
                         loanApplicationId = a.LOANAPPLICATIONID,
@@ -254,10 +264,11 @@ namespace FintrakBanking.Repositories.Credit
                         applicationDate = a.APPLICATIONDATE,
                         applicationStatusId = a.APPLICATIONSTATUSID,
                         subSectorId = b.TBL_SUB_SECTOR.SUBSECTORID,
-                        approvalLevelId = staffApprovalLevelId,
+                        //approvalLevelId = staffApprovalLevelId,
                         operationId = e.OPERATIONID,
                         currentApprovalStateId = e.APPROVALSTATEID,
                         productClassProcessId = a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
+                        productClassId = a.PRODUCTCLASSID,
                         camDocuments = c.TBL_CREDIT_APPRAISAL_MEMO_DOCU.Where(x => x.APPRAISALMEMORANDUMID == d.APPRAISALMEMORANDUMID)
                                 .Select(camDoc => new CamDocumentViewModel
                                 {
@@ -269,8 +280,11 @@ namespace FintrakBanking.Repositories.Credit
                             ).ToList(),
                     });
 
-            var applicationDueForReview = data.Where(x =>
-                x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted || x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress)
+            var applicationDueForReview = data
+                //.Where(x =>
+                //x.applicationStatusId == (short)LoanApplicationStatusEnum.OfferLetterGenerationCompleted 
+                //|| x.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewInProgress
+                //)
                 .GroupBy(c => c.loanApplicationId).Select(y => y.FirstOrDefault());
 
             return applicationDueForReview;
@@ -318,7 +332,7 @@ namespace FintrakBanking.Repositories.Credit
                 };
 
                 loanAvailmentData = data.Where(x => !existOnApprovalTrail.Contains(x.loanApplicationId));
-                
+
             }
             else
             {
@@ -937,10 +951,10 @@ namespace FintrakBanking.Repositories.Credit
                         else
                         {
                             // indicate an end to the process before logging on the trail
-                            workFlow.KeepPending = false;
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.KeepPending = false;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                     }
                     else if (entity.amount >= (long)LoanAvailmentApprovalFlowEnum.LevelThree)
@@ -965,10 +979,10 @@ namespace FintrakBanking.Repositories.Credit
                         else
                         {
                             // indicate an end to the process before logging on the trail
-                            workFlow.KeepPending = false;
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.KeepPending = false;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                     }
                     else
@@ -976,26 +990,26 @@ namespace FintrakBanking.Repositories.Credit
                         if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
                         {
                             // indicate an end to the process before logging on the trail
-                            workFlow.KeepPending = false;
-                            workFlow.ForcefullyEndProcess = true;
+                            workflow.KeepPending = false;
+                            workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                         else
                         {
-                            workFlow.LogForApproval(entity);
+                            workflow.LogForApproval(entity);
                         }
                     }
 
-                    var b = workFlow.NextLevelId ?? 0;
+                    var b = workflow.NextLevelId ?? 0;
 
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
                         trans.Rollback();
                         throw new Exception("Approval Failed");
                     }
 
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
@@ -1022,280 +1036,203 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool ForwardApplicationToNextLevel(ForwardViewModel model)
         {
-            workFlow.StaffId = model.createdBy;
-            workFlow.OperationId = model.operationId;
-            workFlow.TargetId = model.applicationId;
-            workFlow.CompanyId = model.companyId;
-            workFlow.Vote = model.vote;
-            workFlow.ProductClassId = model.productClassId;
-            workFlow.ProductId = model.productId;
-            workFlow.NextLevelId = model.receiverLevelId;
-            workFlow.ToStaffId = model.receiverStaffId;
-            workFlow.StatusId = model.forwardAction;
-            workFlow.Comment = model.comment;
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.Vote = model.vote;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
 
-            workFlow.Amount = model.amount;
-            workFlow.InvestmentGrade = model.investmentGrade;
-            workFlow.Tenor = model.applicationTenor;
-            workFlow.PoliticallyExposed = model.politicallyExposed;
+            workflow.Amount = model.amount;
+            workflow.InvestmentGrade = model.investmentGrade;
+            workflow.Tenor = model.applicationTenor;
+            workflow.PoliticallyExposed = model.politicallyExposed;
 
-            return workFlow.LogActivity();
+            return workflow.LogActivity();
         }
 
         private bool ReferApplicationToSpecificLevel(LoanAvailmentApprovalViewModel model)
         {
-            workFlow.StaffId = model.createdBy;
-            workFlow.OperationId = model.operationId;
-            workFlow.TargetId = model.targetId;
-            workFlow.CompanyId = model.companyId;
-            workFlow.NextLevelId = model.nextLevelId;
-            workFlow.ToStaffId = model.toStaffId;
-            workFlow.StatusId = model.approvalStatusId;
-            workFlow.Comment = model.comment;
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.NextLevelId = model.nextLevelId;
+            workflow.ToStaffId = model.toStaffId;
+            workflow.StatusId = model.approvalStatusId;
+            workflow.Comment = model.comment;
 
-            workFlow.Amount = model.amount;
+            workflow.Amount = model.amount;
 
-            return workFlow.LogActivity();
+            return workflow.LogActivity();
         }
 
-        public bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity)
+        public bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel model)
         {
-            entity.operationId = (int)OperationsEnum.OfferLetterApproval;
+            var operationId = (int)OperationsEnum.OfferLetterApproval;
+            var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+            if (appl == null) throw new Exception("Loan application with the given reference number not found!");
+            
+            // init
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = appl.LOANAPPLICATIONID;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = null;// appl.PRODUCTCLASSID; <--- reserved for product programs!
+            workflow.ProductId = null;
+            workflow.StatusId = model.approvalStatusId;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
 
-            entity.externalInitialization = false;
+            // log
+            workflow.LogActivity();
 
-            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, (int)OperationsEnum.OfferLetterApproval);
-            int staffApprovalLevelId = 0;
-
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
-
-            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == (int)OperationsEnum.OfferLetterApproval).ToList();
-
-            using (var trans = context.Database.BeginTransaction())
+            if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                try
+                appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
+                
+                if (model.productClassId == 10) // Bonds and Guarantees adapter
                 {
-                    var targetLoanAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x =>
-                        x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
+                    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
+                    context.SaveChanges(); // save changes at this point
 
-                    var operationDetails = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval);
-
-                    LoanAvailmentApprovalViewModel referBack;
-
-                    if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
-                    {
-                        // For when offer letter has been rejected
-                        if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationUnderReview)
-                        {
-                            UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
-
-                            entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
-
-                            entity.approvalStatusId = (short)ApprovalStatusEnum.Referred;
-
-                            entity.keepPending = false;
-
-                            workFlow.ForcefullyEndProcess = true;
-
-                            workFlow.LogForApproval(entity);
-                        }
-                        // else If RM initiated 'Send For Availment then end the workflow process
-                        else if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted)
-                        {
-                            // UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
-
-                            entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
-
-                            entity.keepPending = false;
-
-                            workFlow.ForcefullyEndProcess = true;
-
-                            workFlow.LogForApproval(entity);
-                        }
-                        else
-                        {
-                            referBack = new LoanAvailmentApprovalViewModel()
-                            {
-                                nextLevelId = approvalLvlStaff[0].approvalLevelId,
-                                toStaffId = approvalLvlStaff[0].staffId,
-                                createdBy = entity.createdBy,
-                                targetId = targetLoanAppl.LOANAPPLICATIONID,
-                                amount = entity.amount,
-                                companyId = entity.companyId,
-                                comment = entity.comment,
-                                operationId = entity.operationId,
-                                approvalStatusId = entity.approvalStatusId
-                            };
-
-                            operationDetails.OPERATIONURL = "/credit/loan/offer-letter";
-
-                            UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
-
-                            ReferApplicationToSpecificLevel(referBack);
-                        }
-                    }
-                    else
-                    {
-                        operationDetails.OPERATIONURL = "/credit/loan/offer-letter-review";
-
-                        UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
-
-                        entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
-
-                        workFlow.LogForApproval(entity);
-                    }
-
-                    var b = workFlow.NextLevelId ?? 0;
-
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Processing)//!= (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
-
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
-                    {
-                        var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
-
-                        if (response)
-                        {
-                            trans.Commit();
-                        }
-                        return true;
-                    }
-                    else
-                    {
-                        trans.Commit();
-                    }
-
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
+                    workflow.ProductClassId = appl.PRODUCTCLASSID;
+                    workflow.ProductId = null;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.Comment = "Bonds and Guarantees document process started";
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
                 }
             }
+
+            return context.SaveChanges() > 0;
         }
 
         public bool ApproveBondAndGuarantees (LoanAvailmentApprovalViewModel entity)
         {
-            entity.operationId = (int)OperationsEnum.BondAndGuarantees;
+            return false;
+            //entity.operationId = (int)OperationsEnum.BondsAndGuarantees;
 
-            entity.externalInitialization = false;
+            //entity.externalInitialization = false;
 
-            var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, (int)OperationsEnum.BondAndGuarantees);
-            int staffApprovalLevelId = 0;
+            //var levelResult = approvalLevel.GetAllApprovalLevelStaffByStaffId(entity.staffId, entity.companyId, (int)OperationsEnum.BondsAndGuarantees);
+            //int staffApprovalLevelId = 0;
 
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == (int)OperationsEnum.BondAndGuarantees).ToList();
+            //var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == (int)OperationsEnum.BondsAndGuarantees).ToList();
 
-            using (var trans = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    var targetLoanAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x =>
-                        x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
+            //using (var trans = context.Database.BeginTransaction())
+            //{
+            //    try
+            //    {
+            //        var targetLoanAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x =>
+            //            x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
 
-                    var operationDetails = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.BondAndGuarantees);
+            //        var operationDetails = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.BondsAndGuarantees);
 
-                    LoanAvailmentApprovalViewModel referBack;
+            //        LoanAvailmentApprovalViewModel referBack;
 
-                    if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
-                    {
-                        // For when offer letter has been rejected
-                        if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationUnderReview)
-                        {
-                            UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+            //        if (staffApprovalLevelId == approvalLvlStaff[1].approvalLevelId)
+            //        {
+            //            // For when offer letter has been rejected
+            //            if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationUnderReview)
+            //            {
+            //                UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
-                            entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
+            //                entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
 
-                            entity.approvalStatusId = (short)ApprovalStatusEnum.Referred;
+            //                entity.approvalStatusId = (short)ApprovalStatusEnum.Referred;
 
-                            entity.keepPending = false;
+            //                entity.keepPending = false;
 
-                            workFlow.ForcefullyEndProcess = true;
+            //                workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
-                        }
-                        // else If RM initiated 'Send For Availment then end the workflow process
-                        else if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted && entity.productClassId == (short)ProductClassEnum.BondAndGuarantees)
-                        {
-                            // UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+            //                workflow.LogForApproval(entity);
+            //            }
+            //            // else If RM initiated 'Send For Availment then end the workflow process
+            //            else if (entity.applicationStatusId == (short)LoanApplicationStatusEnum.RelationshipManagerOfferLetterReviewCompleted && entity.productClassId == (short)ProductClassEnum.BondAndGuarantees)
+            //            {
+            //                // UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
-                            entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
+            //                entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
 
-                            entity.keepPending = false;
+            //                entity.keepPending = false;
 
-                            workFlow.ForcefullyEndProcess = true;
+            //                workflow.ForcefullyEndProcess = true;
 
-                            workFlow.LogForApproval(entity);
-                        }
-                        else
-                        {
-                            referBack = new LoanAvailmentApprovalViewModel()
-                            {
-                                nextLevelId = approvalLvlStaff[0].approvalLevelId,
-                                toStaffId = approvalLvlStaff[0].staffId,
-                                createdBy = entity.createdBy,
-                                targetId = targetLoanAppl.LOANAPPLICATIONID,
-                                amount = entity.amount,
-                                companyId = entity.companyId,
-                                comment = entity.comment,
-                                operationId = entity.operationId,
-                                approvalStatusId = entity.approvalStatusId
-                            };
+            //                workflow.LogForApproval(entity);
+            //            }
+            //            else
+            //            {
+            //                referBack = new LoanAvailmentApprovalViewModel()
+            //                {
+            //                    nextLevelId = approvalLvlStaff[0].approvalLevelId,
+            //                    toStaffId = approvalLvlStaff[0].staffId,
+            //                    createdBy = entity.createdBy,
+            //                    targetId = targetLoanAppl.LOANAPPLICATIONID,
+            //                    amount = entity.amount,
+            //                    companyId = entity.companyId,
+            //                    comment = entity.comment,
+            //                    operationId = entity.operationId,
+            //                    approvalStatusId = entity.approvalStatusId
+            //                };
 
-                            operationDetails.OPERATIONURL = "/credit/loan/offer-letter";
+            //                operationDetails.OPERATIONURL = "/credit/loan/offer-letter";
 
-                            UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+            //                UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
-                            ReferApplicationToSpecificLevel(referBack);
-                        }
-                    }
-                    else
-                    {
-                        operationDetails.OPERATIONURL = "/credit/loan/offer-letter-review";
+            //                ReferApplicationToSpecificLevel(referBack);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            operationDetails.OPERATIONURL = "/credit/loan/offer-letter-review";
 
-                        UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+            //            UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
-                        entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
+            //            entity.targetId = targetLoanAppl.LOANAPPLICATIONID;
 
-                        workFlow.LogForApproval(entity);
-                    }
+            //            workflow.LogForApproval(entity);
+            //        }
 
-                    var b = workFlow.NextLevelId ?? 0;
+            //        var b = workflow.NextLevelId ?? 0;
 
-                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    {
-                        trans.Rollback();
-                        throw new Exception("Approval Failed");
-                    }
+            //        if (b == 0 && workflow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+            //        {
+            //            trans.Rollback();
+            //            throw new Exception("Approval Failed");
+            //        }
 
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
-                    {
-                        var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
+            //        if (workflow.NewState == (int)ApprovalState.Ended)
+            //        {
+            //            var response = UpdateLoanApplicationStatus(entity.applicationReferenceNumber, entity.applicationStatusId);
 
-                        if (response)
-                        {
-                            trans.Commit();
-                        }
-                        return true;
-                    }
-                    else
-                    {
-                        trans.Commit();
-                    }
+            //            if (response)
+            //            {
+            //                trans.Commit();
+            //            }
+            //            return true;
+            //        }
+            //        else
+            //        {
+            //            trans.Commit();
+            //        }
 
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
-                }
-            }
+            //        return false;
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        trans.Rollback();
+            //        throw new Exception(ex.Message);
+            //    }
+            //}
         }
 
         public bool LogApplicationForApprovalDuringAvailment(LoanAvailmentApprovalViewModel model)
@@ -1318,7 +1255,7 @@ namespace FintrakBanking.Repositories.Credit
                     externalInitialization = false
                 };
 
-                return workFlow.LogForApproval(entity);
+                return workflow.LogForApproval(entity);
             }
             catch (Exception ex)
             {
@@ -1334,5 +1271,40 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion OfferLetter & Availment Process
+
+        #region Bonds and Guarantees
+
+        public bool ForwardBondsAndGuarantee(ForwardViewModel model)
+        {
+            var operationId = (int)OperationsEnum.BondsAndGuarantees; 
+
+            // init
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+
+            // log
+            workflow.LogActivity();
+
+            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+
+            if (workflow.NewState == (int)ApprovalState.Ended)
+            {
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
+            }
+
+            return context.SaveChanges() > 0;
+        }
+
+        #endregion Bonds and Guarantees
+
     }
 }
