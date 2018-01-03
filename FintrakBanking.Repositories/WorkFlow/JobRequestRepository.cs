@@ -12,6 +12,7 @@ using FintrakBanking.ViewModels.Setups.Approval;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Entities.DocumentModels;
 using System.Data.Entity;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -20,14 +21,17 @@ namespace FintrakBanking.Repositories.WorkFlow
         private FinTrakBankingContext context;
         private FinTrakBankingDocumentsContext docContext;
         private IGeneralSetupRepository general;
+        private IDepartmentRepository department;
         private IAuditTrailRepository audit;
 
-        public JobRequestRepository(FinTrakBankingDocumentsContext docContext, FinTrakBankingContext _context, IGeneralSetupRepository _general, IAuditTrailRepository _audit)
+        public JobRequestRepository(FinTrakBankingDocumentsContext docContext, FinTrakBankingContext _context, IGeneralSetupRepository _general, 
+            IAuditTrailRepository _audit, IDepartmentRepository _department)
         {
             this.context = _context;
             this.docContext = docContext;
             this.general = _general;
             this.audit = _audit;
+            this.department = _department;
         }
 
         public bool AddJobRequest(JobRequestViewModel model)
@@ -431,6 +435,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId); 
         }
+
 
         public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId)
         {
