@@ -44,7 +44,7 @@ namespace FintrakBanking.Repositories.Customer
 
             // Audit Section ---------------------------
             var captionInfo = context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == data.FSCAPTIONID);
-            var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+          //  var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
             var customerInfo = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == data.CUSTOMERID);
             var customer = $"Cutomer with code: {customerInfo?.CUSTOMERCODE} ({customerInfo?.FIRSTNAME}  {customerInfo?.LASTNAME})";
 
@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionDetailAdded,
                 STAFFID = entity.createdBy,
                 BRANCHID = entity.userBranchId,
-                DETAIL = $"Added FS Caption Detail for customer {customer} and caption {caption} . Amount is { data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
+              //  DETAIL = $"Added FS Caption Detail for customer {customer} and caption {caption} . Amount is { data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -91,7 +91,7 @@ namespace FintrakBanking.Repositories.Customer
 
                 var captionInfo =
                     context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == data.FSCAPTIONID);
-                var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+               // var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
                 var customerInfo = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == data.CUSTOMERID);
                 var customer =
                     $"Cutomer with code: {customerInfo?.CUSTOMERCODE} ({customerInfo?.FIRSTNAME}  {customerInfo?.LASTNAME})";
@@ -101,8 +101,8 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionDetailDeleted,
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
-                    DETAIL =
-                        $"Deleted FS Caption Detail for customer {customer} and caption {caption}. Amount is {data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
+              //      DETAIL =
+             //           $"Deleted FS Caption Detail for customer {customer} and caption {caption}. Amount is {data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
                     IPADDRESS = user.userIPAddress,
                     URL = user.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -129,57 +129,59 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptionDetail(int customerId, short fsCaptionGroupId, DateTime fsDate)
         {
-            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
-                        where a.CUSTOMERID == customerId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId
-                        && a.FSDATE == fsDate
-                        && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
-                        && a.DELETED == false
-                        orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
-                        a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
-                        select new CustomerFSCaptionDetailViewModel
-                        {
-                            customerId = a.CUSTOMERID,
-                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                            fsdetailId = a.FSDETAILID,
-                            fsCaptionId = a.FSCAPTIONID,
-                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
-                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
-                            accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
-                            fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
-                            fsDate = a.FSDATE,
-                            amount = a.AMOUNT,
+            //var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
+            //            where a.CUSTOMERID == customerId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId
+            //            && a.FSDATE == fsDate
+            //            && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
+            //            && a.DELETED == false
+            //            orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
+            //            a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
+            //            select new CustomerFSCaptionDetailViewModel
+            //            {
+            //                customerId = a.CUSTOMERID,
+            //                customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+            //                fsdetailId = a.FSDETAILID,
+            //                fsCaptionId = a.FSCAPTIONID,
+            //                fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
+            //                fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
+            //                accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+            //                fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+            //                fsDate = a.FSDATE,
+            //                amount = a.AMOUNT,
 
-                            dateTimeCreated = a.DATETIMECREATED,
-                            createdBy = a.CREATEDBY
-                        }).ToList();
-            return data;
+            //                dateTimeCreated = a.DATETIMECREATED,
+            //                createdBy = a.CREATEDBY
+            //            }).ToList();
+            //return data;
+            return null;
         }
 
         public IEnumerable<CustomerFSCaptionDetailViewModel> GetMappedCustomerFsCaptions(int customerId)
         {
-            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
-                        where a.CUSTOMERID == customerId 
-                        && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
-                        && a.DELETED == false
-                        orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
-                        a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
-                        select new CustomerFSCaptionDetailViewModel
-                        {
-                            customerId = a.CUSTOMERID,
-                            customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                            fsdetailId = a.FSDETAILID,
-                            fsCaptionId = a.FSCAPTIONID,
-                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
-                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
-                            accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
-                            fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
-                            fsDate = a.FSDATE,
-                            amount = a.AMOUNT,
+            //var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
+            //            where a.CUSTOMERID == customerId 
+            //            && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
+            //            && a.DELETED == false
+            //            orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
+            //            a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
+            //            select new CustomerFSCaptionDetailViewModel
+            //            {
+            //                customerId = a.CUSTOMERID,
+            //                customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+            //                fsdetailId = a.FSDETAILID,
+            //                fsCaptionId = a.FSCAPTIONID,
+            //                fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
+            //                fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
+            //                accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+            //                fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+            //                fsDate = a.FSDATE,
+            //                amount = a.AMOUNT,
 
-                            dateTimeCreated = a.DATETIMECREATED,
-                            createdBy = a.CREATEDBY
-                        }).ToList();
-            return data;
+            //                dateTimeCreated = a.DATETIMECREATED,
+            //                createdBy = a.CREATEDBY
+            //            }).ToList();
+            //return data;
+            return null;
         }
 
         public CustomerFSCaptionDetailViewModel GetCustomerFSCaptionDetailById(int fsdetailId)
@@ -193,9 +195,9 @@ namespace FintrakBanking.Repositories.Customer
                             fsdetailId = a.FSDETAILID,
                             fsCaptionId = a.FSCAPTIONID,
                             fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
-                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
-                            accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
-                            fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+                          //  fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
+                          //  accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+                          //  fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
                             fsDate = a.FSDATE,
                             amount = a.AMOUNT,
 
@@ -221,7 +223,7 @@ namespace FintrakBanking.Repositories.Customer
 
             // Audit Section ---------------------------
             var captionInfo = context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == data.FSCAPTIONID);
-            var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+         //   var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
             var customerInfo = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == data.CUSTOMERID);
             var customer = $"Cutomer with code: {customerInfo?.CUSTOMERCODE} ({customerInfo?.FIRSTNAME}  {customerInfo?.LASTNAME})";
 
@@ -230,7 +232,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionDetailUpdated,
                 STAFFID = entity.createdBy,
                 BRANCHID = entity.userBranchId,
-                DETAIL = $"Updated FS Caption Detail for customer {customer} and caption {caption} . Amount is { data?.AMOUNT.ToString("#,##0") } with date {data?.FSDATE.ToString("dd/MM/yyyy")}",
+          //      DETAIL = $"Updated FS Caption Detail for customer {customer} and caption {caption} . Amount is { data?.AMOUNT.ToString("#,##0") } with date {data?.FSDATE.ToString("dd/MM/yyyy")}",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -249,57 +251,59 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerGroupFSCaptionDetailViewModel> GetMappedCustomerGroupFsCaptionDetail(int customerGroupId, short fsCaptionGroupId, DateTime fsDate)
         {
-            var data = (from a in context.TBL_CUSTOMER_GRP_FS_CAPTN_DET
-                        where a.CUSTOMERGROUPID == customerGroupId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId
-                        && a.FSDATE == fsDate
-                        && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
-                        && a.DELETED == false
-                        orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
-                        a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
-                        select new CustomerGroupFSCaptionDetailViewModel
-                        {
-                            customerGroupId = a.CUSTOMERGROUPID,
-                            customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
-                            fsdetailId = a.GROUPFSDETAILID,
-                            fsCaptionId = a.FSCAPTIONID,
-                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
-                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
-                            accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
-                            fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
-                            fsDate = a.FSDATE,
-                            amount = a.AMOUNT,
+            //var data = (from a in context.TBL_CUSTOMER_GRP_FS_CAPTN_DET
+            //            where a.CUSTOMERGROUPID == customerGroupId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId
+            //            && a.FSDATE == fsDate
+            //            && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
+            //            && a.DELETED == false
+            //            orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
+            //            a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
+            //            select new CustomerGroupFSCaptionDetailViewModel
+            //            {
+            //                customerGroupId = a.CUSTOMERGROUPID,
+            //                customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
+            //                fsdetailId = a.GROUPFSDETAILID,
+            //                fsCaptionId = a.FSCAPTIONID,
+            //                fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
+            //                fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
+            //                accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+            //                fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+            //                fsDate = a.FSDATE,
+            //                amount = a.AMOUNT,
 
-                            dateTimeCreated = a.DATETIMECREATED,
-                            createdBy = a.CREATEDBY
-                        }).ToList();
-            return data;
+            //                dateTimeCreated = a.DATETIMECREATED,
+            //                createdBy = a.CREATEDBY
+            //            }).ToList();
+            //return data;
+            return null;
         }
 
         public IEnumerable<CustomerGroupFSCaptionDetailViewModel> GetMappedCustomerGroupFsCaptions(int customerGroupId)
         {
-            var data = (from a in context.TBL_CUSTOMER_GRP_FS_CAPTN_DET
-                        where a.CUSTOMERGROUPID == customerGroupId
-                        && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
-                        && a.DELETED == false
-                        orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
-                        a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
-                        select new CustomerGroupFSCaptionDetailViewModel
-                        {
-                            customerGroupId = a.CUSTOMERGROUPID,
-                            customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
-                            fsdetailId = a.GROUPFSDETAILID,
-                            fsCaptionId = a.FSCAPTIONID,
-                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
-                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
-                            accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
-                            fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
-                            fsDate = a.FSDATE,
-                            amount = a.AMOUNT,
+            //var data = (from a in context.TBL_CUSTOMER_GRP_FS_CAPTN_DET
+            //            where a.CUSTOMERGROUPID == customerGroupId
+            //            && a.TBL_CUSTOMER_FS_CAPTION.ISTOTALLINE == false
+            //            && a.DELETED == false
+            //            orderby a.FSDATE, a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID,
+            //            a.TBL_CUSTOMER_FS_CAPTION.FSTYPEID, a.TBL_CUSTOMER_FS_CAPTION.POSITION
+            //            select new CustomerGroupFSCaptionDetailViewModel
+            //            {
+            //                customerGroupId = a.CUSTOMERGROUPID,
+            //                customerGroupCode = a.TBL_CUSTOMER_GROUP.GROUPCODE,
+            //                fsdetailId = a.GROUPFSDETAILID,
+            //                fsCaptionId = a.FSCAPTIONID,
+            //                fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
+            //                fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
+            //                accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+            //                fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+            //                fsDate = a.FSDATE,
+            //                amount = a.AMOUNT,
 
-                            dateTimeCreated = a.DATETIMECREATED,
-                            createdBy = a.CREATEDBY
-                        }).ToList();
-            return data;
+            //                dateTimeCreated = a.DATETIMECREATED,
+            //                createdBy = a.CREATEDBY
+            //            }).ToList();
+            //return data;
+            return null;
         }
 
         public CustomerGroupFSCaptionDetailViewModel GetCustomerGroupFSCaptionDetailById(int fsdetailId)
@@ -313,9 +317,9 @@ namespace FintrakBanking.Repositories.Customer
                             fsdetailId = a.GROUPFSDETAILID,
                             fsCaptionId = a.FSCAPTIONID,
                             fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
-                            fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
-                            accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
-                            fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
+                            //fsCaptionPosition = a.TBL_CUSTOMER_FS_CAPTION.POSITION,
+                            //accountCategoryName = a.TBL_CUSTOMER_FS_CAPTION.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
+                            //fsTypeName = a.TBL_CUSTOMER_FS_CAPTION.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
                             fsDate = a.FSDATE,
                             amount = a.AMOUNT,
 
@@ -347,7 +351,7 @@ namespace FintrakBanking.Repositories.Customer
                     exisitingDeletedRecord.FSDATE = entity.fsDate;
 
                     captionInfo = context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == exisitingDeletedRecord.FSCAPTIONID);
-                    caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+                   // caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
                     customerGrpInfo = context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == exisitingDeletedRecord.CUSTOMERGROUPID);
                     customerGrp = $"Cutomer Group with code: {customerGrpInfo?.GROUPCODE}";
 
@@ -356,7 +360,7 @@ namespace FintrakBanking.Repositories.Customer
                         AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupFSCaptionDetailUpdated,
                         STAFFID = entity.createdBy,
                         BRANCHID = entity.userBranchId,
-                        DETAIL = $"Added FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { exisitingDeletedRecord?.AMOUNT:#,##0} with date {exisitingDeletedRecord?.FSDATE:dd/MM/yyyy}",
+                      //  DETAIL = $"Added FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { exisitingDeletedRecord?.AMOUNT:#,##0} with date {exisitingDeletedRecord?.FSDATE:dd/MM/yyyy}",
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -381,7 +385,7 @@ namespace FintrakBanking.Repositories.Customer
                     // Audit Section ---------------------------
 
                     captionInfo = context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == data.FSCAPTIONID);
-                    caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+                   // caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
                     customerGrpInfo = context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == data.CUSTOMERGROUPID);
                     customerGrp = $"Cutomer Group with code: {customerGrpInfo?.GROUPCODE}";
 
@@ -390,7 +394,7 @@ namespace FintrakBanking.Repositories.Customer
                         AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupFSCaptionDetailAdded,
                         STAFFID = entity.createdBy,
                         BRANCHID = entity.userBranchId,
-                        DETAIL = $"Added FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
+                     //   DETAIL = $"Added FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -425,7 +429,7 @@ namespace FintrakBanking.Repositories.Customer
 
             // Audit Section ---------------------------
             var captionInfo = context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == data.FSCAPTIONID);
-            var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+          //  var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
             var customerGrpInfo = context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == data.CUSTOMERGROUPID);
             var customerGrp = $"Cutomer Group with code: {customerGrpInfo?.GROUPCODE}";
 
@@ -434,7 +438,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupFSCaptionDetailUpdated,
                 STAFFID = entity.createdBy,
                 BRANCHID = entity.userBranchId,
-                DETAIL = $"Updated FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { data?.AMOUNT.ToString("#,##0") } with date {data?.FSDATE.ToString("dd/MM/yyyy")}",
+              //  DETAIL = $"Updated FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { data?.AMOUNT.ToString("#,##0") } with date {data?.FSDATE.ToString("dd/MM/yyyy")}",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -460,7 +464,7 @@ namespace FintrakBanking.Repositories.Customer
 
                 var captionInfo =
                     context.TBL_CUSTOMER_FS_CAPTION.FirstOrDefault(x => x.FSCAPTIONID == data.FSCAPTIONID);
-                var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
+               // var caption = $"{captionInfo?.FSCAPTIONNAME} ({captionInfo?.FSCAPTIONCODE})";
                 var customerGrpInfo = context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == data.CUSTOMERGROUPID);
                 var customerGrp =
                     $"Cutomer Group with code: {customerGrpInfo?.GROUPCODE}";
@@ -470,8 +474,8 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupFSCaptionDetailDeleted,
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
-                    DETAIL =
-                        $"Deleted FS Caption Detail for customer {customerGrp} and caption {caption}. Amount is {data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
+                //    DETAIL =
+               //         $"Deleted FS Caption Detail for customer {customerGrp} and caption {caption}. Amount is {data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
                     IPADDRESS = user.userIPAddress,
                     URL = user.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),

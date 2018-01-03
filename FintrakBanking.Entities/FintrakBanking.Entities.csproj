@@ -105,6 +105,7 @@
     <Compile Include="Models\TBL_CHECKLIST_DEFINITION.cs" />
     <Compile Include="Models\TBL_CHECKLIST_DETAIL.cs" />
     <Compile Include="Models\TBL_CHECKLIST_ITEM.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_RESPONSE_TYPE.cs" />
     <Compile Include="Models\TBL_CHECKLIST_STATUS.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TARGETTYPE.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TYPE.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_CAPTION.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DETAIL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_DIVI_TYP.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_FS_RATIO_VALUETYP.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP.cs" />
     <Compile Include="Models\TBL_CUSTOMER_GROUP_MAPPING.cs" />
@@ -298,7 +300,6 @@
     <Compile Include="Models\TBL_PRODUCT_BEHAVIOUR.cs" />
     <Compile Include="Models\TBL_PRODUCT_CATEGORY.cs" />
     <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE.cs" />
-    <Compile Include="Models\TBL_PRODUCT_CHARGE_FEE_CUSTMER.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS_PROCESS.cs" />
     <Compile Include="Models\TBL_PRODUCT_CLASS_TYPE.cs" />

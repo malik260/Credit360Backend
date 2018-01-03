@@ -217,26 +217,27 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerFSRatioDetailViewModel> GetFSRatioDetail(short ratioCaptionId, short fsCaptionGroupId, int companyId)
         {
-            var data = (from a in context.TBL_CUSTOMER_FS_RATIO_DETAIL
-                        where a.RATIOCAPTIONID == ratioCaptionId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId &&
-                              a.TBL_CUSTOMER_FS_RATIO_CAPTION.COMPANYID == companyId && a.DELETED == false
-                        select new CustomerFSRatioDetailViewModel
+            //var data = (from a in context.TBL_CUSTOMER_FS_RATIO_DETAIL
+            //            where a.RATIOCAPTIONID == ratioCaptionId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId &&
+            //                  a.TBL_CUSTOMER_FS_RATIO_CAPTION.COMPANYID == companyId && a.DELETED == false
+            //            select new CustomerFSRatioDetailViewModel
 
-                        {
-                            ratioDetailId = a.RATIODETAILID,
-                            ratioCaptionId = a.RATIOCAPTIONID,
-                            divisorTypeId = a.DIVISORTYPEID,
-                            valueTypeId = a.VALUETYPEID,
-                            multiplier = a.MULTIPLIER,
-                            fscaptionId = a.FSCAPTIONID,
-                            ratioCaptionName = a.TBL_CUSTOMER_FS_RATIO_CAPTION.RATIOCAPTION,
-                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
-                            valueTypeName = a.TBL_CUSTOMER_FS_RATIO_VALUETYP.VALUETYPENAME,
-                            divisorTypeName = a.TBL_CUSTOMER_FS_RATIO_DIVI_TYP.DIVISORTYPENAME,
-                            dateTimeCreated = a.DATETIMECREATED,
-                            createdBy = a.CREATEDBY
-                        }).ToList();
-            return data;
+            //            {
+            //                ratioDetailId = a.RATIODETAILID,
+            //                ratioCaptionId = a.RATIOCAPTIONID,
+            //                divisorTypeId = a.DIVISORTYPEID,
+            //                valueTypeId = a.VALUETYPEID,
+            //                multiplier = a.MULTIPLIER,
+            //                fscaptionId = a.FSCAPTIONID,
+            //                ratioCaptionName = a.TBL_CUSTOMER_FS_RATIO_CAPTION.RATIOCAPTION,
+            //                fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
+            //                valueTypeName = a.TBL_CUSTOMER_FS_RATIO_VALUETYP.VALUETYPENAME,
+            //                divisorTypeName = a.TBL_CUSTOMER_FS_RATIO_DIVI_TYP.DIVISORTYPENAME,
+            //                dateTimeCreated = a.DATETIMECREATED,
+            //                createdBy = a.CREATEDBY
+            //            }).ToList();
+            //return data;
+            return null;
         }
 
         public CustomerFSRatioDetailViewModel GetFSRatioDetailById(int ratioDetailId)
