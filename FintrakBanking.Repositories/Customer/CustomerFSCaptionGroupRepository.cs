@@ -33,7 +33,7 @@ namespace FintrakBanking.Repositories.Customer
             var group = new TBL_CUSTOMER_FS_CAPTION_GROUP
             {
                 FSCAPTIONGROUPNAME = entity.fsCaptionGroupName,
-                COMPANYID = entity.companyId,
+                POSITION = entity.position,
                 //GroupDescription = entity.groupDescription,
                 CREATEDBY = (int)entity.createdBy,
                 DATETIMECREATED = _genSetup.GetApplicationDate()
@@ -61,16 +61,16 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() != 0;
         }
 
-        public IEnumerable<CustomerFSCaptionGroupViewModel> GetCustomerFSCaptionGroup(int companyId)
+        public IEnumerable<CustomerFSCaptionGroupViewModel> GetCustomerFSCaptionGroup()
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION_GROUP
-                                where a.COMPANYID == companyId && a.DELETED == false
+                                where a.DELETED == false
+                                orderby a.POSITION
                                 select new CustomerFSCaptionGroupViewModel
                                 {
                                     fsCaptionGroupId = a.FSCAPTIONGROUPID,
                                     fsCaptionGroupName = a.FSCAPTIONGROUPNAME,
-                                    companyId = a.COMPANYID,     
-                                    companyName = a.TBL_COMPANY.NAME,
+                                    position = a.POSITION,     
                                     dateTimeCreated = a.DATETIMECREATED,
                                     createdBy = a.CREATEDBY
                                 }).ToList();
@@ -85,8 +85,7 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             fsCaptionGroupId = a.FSCAPTIONGROUPID,
                             fsCaptionGroupName = a.FSCAPTIONGROUPNAME,
-                            companyId = a.COMPANYID,
-                            companyName = a.TBL_COMPANY.NAME,
+                            position = a.POSITION,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).FirstOrDefault();
@@ -95,11 +94,12 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdateCustomerFSCaptionGroup(short groupId, CustomerFSCaptionGroupViewModel entity)
         {
-            var group = this.context.TBL_CUSTOMER_FS_CAPTION_GROUP.Find(groupId);
-            if (group == null) return false;
+            //var group = this.context.TBL_CUSTOMER_FS_CAPTION_GROUP.Find(groupId);
+            var group = this.context.TBL_CUSTOMER_FS_CAPTION_GROUP.FirstOrDefault(x=> x.FSCAPTIONGROUPID == groupId);
+            //if (group == null) return false;
 
             group.FSCAPTIONGROUPNAME = entity.fsCaptionGroupName;
-            
+            group.POSITION = entity.position;
             group.LASTUPDATEDBY = (int)entity.createdBy;
             group.DATETIMEUPDATED = _genSetup.GetApplicationDate();
 

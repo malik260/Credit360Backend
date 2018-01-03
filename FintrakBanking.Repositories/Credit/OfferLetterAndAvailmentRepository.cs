@@ -773,6 +773,31 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
 
+
+
+        public bool UpdateFinalOfferLetter (string applicationRef, OfferLetterTemplateViewModel model)
+        {
+            if (model != null)
+            {
+                try
+                {
+                    TBL_OFFERLETTER result = (from p in context.TBL_OFFERLETTER
+                                              where p.APPLICATIONREFERENCENUMBER == applicationRef
+                                                 select p).SingleOrDefault();
+
+                    result.ISFINAL = model.isFinal;
+
+                    context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            }
+
+            return false;
+        }
+
         public IEnumerable<OfferLetterTemplateViewModel> GetAllDraftOfferLetters()
         {
             var data = (from a in context.TBL_TEMP_OFFERLETTER
