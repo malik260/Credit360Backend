@@ -8,10 +8,10 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
 {
     public interface ICreditLimitValidationsRepository
     {
-        int ValidateBlackList(int customerId);
+        int ValidateBlackList(string customerCode);
 
         int ValidateWatchList(int customerId);
-
+    
         int ValidateCamsol(int customerId);
     
         CreditLimitValidationsModel ValidateAmountByBranch(short branchId);

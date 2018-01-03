@@ -40,19 +40,10 @@ namespace FintrakBanking.Repositories.Customer
         public bool AddCustomerFSCaption(CustomerFSCaptionViewModel entity)
         {
             var data = new TBL_CUSTOMER_FS_CAPTION
-            {                
-                FSCAPTIONCODE = GenerateCaptionCode(entity.fsCaptionGroupId),
+            {
                 FSCAPTIONNAME = entity.fsCaptionName,
                 FSCAPTIONGROUPID = entity.fsCaptionGroupId,
-                PARENTIDFSCAPTIONID = entity.parentIdFSCaptionId,
-                ACCOUNTCATEGORYID = entity.accountCategoryId,
-                FSTYPEID = entity.fsTypeId,
-                POSITION = entity.position,
-                REFNOTE = entity.refNote,
-                ISTOTALLINE = entity.isTotalLine,
-                REPORTCOLOUR = entity.reportColour,
-                MULTIPLIER = entity.multiplier,               
-
+                ISRATIO = entity.isRatio,
                 CREATEDBY = (int)entity.createdBy,
                 DATETIMECREATED = _genSetup.GetApplicationDate()
             };
@@ -60,12 +51,13 @@ namespace FintrakBanking.Repositories.Customer
             context.TBL_CUSTOMER_FS_CAPTION.Add(data);
 
             // Audit Section ---------------------------
+            var auditInfo = context.TBL_CUSTOMER_FS_CAPTION_GROUP.FirstOrDefault(x => x.FSCAPTIONGROUPID == data.FSCAPTIONGROUPID);
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionAdded,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Added Customer FS Caption : { data.FSCAPTIONNAME } with code: {data.FSCAPTIONCODE}",
+                DETAIL = $"Added Customer FS Caption : { data.FSCAPTIONNAME } in group ( {auditInfo.FSCAPTIONGROUPNAME })",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -94,7 +86,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionDeleted,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"Deleted Customer FS Caption: { data.FSCAPTIONNAME } with Code: { data.FSCAPTIONCODE } in group ( {auditInfo.FSCAPTIONGROUPNAME })",
+                DETAIL = $"Deleted Customer FS Caption: { data.FSCAPTIONNAME } in group ( {auditInfo.FSCAPTIONGROUPNAME })",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -110,27 +102,14 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerFSCaptionViewModel> GetCustomerFSCaptionByGroupId(short fsCaptionGroupId)
         {
             var data = (from a in context.TBL_CUSTOMER_FS_CAPTION
-                        where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false
-                        orderby a.POSITION
+                        where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false && a.ISRATIO == false
                         select new CustomerFSCaptionViewModel
                         {
                             fsCaptionId = a.FSCAPTIONID,
-                            fsCaptionCode = a.FSCAPTIONCODE,
                             fsCaptionName = a.FSCAPTIONNAME,
                             fsCaptionGroupId = a.FSCAPTIONGROUPID,
                             fsCaptionGroupName = a.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME,
-                            parentIdFSCaptionId = a.PARENTIDFSCAPTIONID,
-                            parentIdFSCaptionName =  a.TBL_CUSTOMER_FS_CAPTION2 != null ? a.TBL_CUSTOMER_FS_CAPTION2.FSCAPTIONNAME : "",
-                            accountCategoryId = a.ACCOUNTCATEGORYID,
-                            accountCategoryName = a.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
-                            fsTypeId = a.FSTYPEID,
-                            fsTypeName = a.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
-                            position = a.POSITION,
-                            refNote = a.REFNOTE,
-                            isTotalLine = a.ISTOTALLINE,
-                            reportColour = a.REPORTCOLOUR,
-                            multiplier = a.MULTIPLIER,                            
-
+                            isRatio = a.ISRATIO,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).ToList();
@@ -144,22 +123,10 @@ namespace FintrakBanking.Repositories.Customer
                         select new CustomerFSCaptionViewModel
                         {
                             fsCaptionId = a.FSCAPTIONID,
-                            fsCaptionCode = a.FSCAPTIONCODE,
                             fsCaptionName = a.FSCAPTIONNAME,
                             fsCaptionGroupId = a.FSCAPTIONGROUPID,
                             fsCaptionGroupName = a.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME,
-                            parentIdFSCaptionId = a.PARENTIDFSCAPTIONID,
-                            parentIdFSCaptionName = a.TBL_CUSTOMER_FS_CAPTION2 != null ? a.TBL_CUSTOMER_FS_CAPTION2.FSCAPTIONNAME : "",
-                            accountCategoryId = a.ACCOUNTCATEGORYID,
-                            accountCategoryName = a.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
-                            fsTypeId = a.FSTYPEID,
-                            fsTypeName = a.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
-                            position = a.POSITION,
-                            refNote = a.REFNOTE,
-                            isTotalLine = a.ISTOTALLINE,
-                            reportColour = a.REPORTCOLOUR,
-                            multiplier = a.MULTIPLIER,
-
+                            isRatio = a.ISRATIO,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY, 
                         }).FirstOrDefault();
@@ -174,27 +141,14 @@ namespace FintrakBanking.Repositories.Customer
                             select data.FSCAPTIONID).ToList();
 
             var captions = (from a in context.TBL_CUSTOMER_FS_CAPTION
-                       where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.ISTOTALLINE == false && a.DELETED == false // && !dataList.Contains(data.ProductProductFeeId)
-                       orderby a.FSTYPEID, a.POSITION
+                       where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false  && a.ISRATIO == false// && !dataList.Contains(data.ProductProductFeeId)
                        select new CustomerFSCaptionViewModel
                        {
                            fsCaptionId = a.FSCAPTIONID,
-                           fsCaptionCode = a.FSCAPTIONCODE,
                            fsCaptionName = a.FSCAPTIONNAME,
                            fsCaptionGroupId = a.FSCAPTIONGROUPID,
+                           isRatio = a.ISRATIO,
                            fsCaptionGroupName = a.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME,
-                           parentIdFSCaptionId = a.PARENTIDFSCAPTIONID,
-                           parentIdFSCaptionName = a.TBL_CUSTOMER_FS_CAPTION2 != null ? a.TBL_CUSTOMER_FS_CAPTION2.FSCAPTIONNAME : "",
-                           accountCategoryId = a.ACCOUNTCATEGORYID,
-                           accountCategoryName = a.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
-                           fsTypeId = a.FSTYPEID,
-                           fsTypeName = a.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
-                           position = a.POSITION,
-                           refNote = a.REFNOTE,
-                           isTotalLine = a.ISTOTALLINE,
-                           reportColour = a.REPORTCOLOUR,
-                           multiplier = a.MULTIPLIER,
-
                            dateTimeCreated = a.DATETIMECREATED,
                            createdBy = a.CREATEDBY
                        });
@@ -211,31 +165,18 @@ namespace FintrakBanking.Repositories.Customer
         {
             var dataList = (from data in context.TBL_CUSTOMER_GRP_FS_CAPTN_DET
                             where data.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId && data.CUSTOMERGROUPID == customerGroupId
-                            && data.FSDATE == fsDate && data.DELETED == false
+                            && data.FSDATE == fsDate && data.DELETED == false 
                             select data.FSCAPTIONID).ToList();
 
             var captions = (from a in context.TBL_CUSTOMER_FS_CAPTION
-                            where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.ISTOTALLINE == false && a.DELETED == false // && !dataList.Contains(data.ProductProductFeeId)
-                            orderby a.FSTYPEID, a.POSITION
+                            where a.FSCAPTIONGROUPID == fsCaptionGroupId && a.DELETED == false && a.ISRATIO == false // && !dataList.Contains(data.ProductProductFeeId)
                             select new CustomerFSCaptionViewModel
                             {
                                 fsCaptionId = a.FSCAPTIONID,
-                                fsCaptionCode = a.FSCAPTIONCODE,
                                 fsCaptionName = a.FSCAPTIONNAME,
                                 fsCaptionGroupId = a.FSCAPTIONGROUPID,
                                 fsCaptionGroupName = a.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME,
-                                parentIdFSCaptionId = a.PARENTIDFSCAPTIONID,
-                                parentIdFSCaptionName = a.TBL_CUSTOMER_FS_CAPTION2 != null ? a.TBL_CUSTOMER_FS_CAPTION2.FSCAPTIONNAME : "",
-                                accountCategoryId = a.ACCOUNTCATEGORYID,
-                                accountCategoryName = a.TBL_ACCOUNT_CATEGORY.ACCOUNTCATEGORYNAME,
-                                fsTypeId = a.FSTYPEID,
-                                fsTypeName = a.TBL_FINANCIAL_STATEMENT_TYPE.FSTYPENAME,
-                                position = a.POSITION,
-                                refNote = a.REFNOTE,
-                                isTotalLine = a.ISTOTALLINE,
-                                reportColour = a.REPORTCOLOUR,
-                                multiplier = a.MULTIPLIER,
-
+                                isRatio = a.ISRATIO,
                                 dateTimeCreated = a.DATETIMECREATED,
                                 createdBy = a.CREATEDBY
                             });
@@ -255,25 +196,19 @@ namespace FintrakBanking.Repositories.Customer
 
             data.FSCAPTIONNAME = entity.fsCaptionName;
             data.FSCAPTIONGROUPID = entity.fsCaptionGroupId;
-            data.PARENTIDFSCAPTIONID = entity.parentIdFSCaptionId;
-            data.ACCOUNTCATEGORYID = entity.accountCategoryId;
-            data.FSTYPEID = entity.fsTypeId;
-            data.POSITION = entity.position;
-            data.REFNOTE = entity.refNote;
-            data.ISTOTALLINE = entity.isTotalLine;
-            data.REPORTCOLOUR = entity.reportColour;
-            data.MULTIPLIER = entity.multiplier;
-
+            data.ISRATIO = entity.isRatio;
             data.LASTUPDATEDBY = (int)entity.createdBy;
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
+
+            var auditInfo = context.TBL_CUSTOMER_FS_CAPTION_GROUP.FirstOrDefault(x => x.FSCAPTIONGROUPID == data.FSCAPTIONGROUPID);
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerFSCaptionUpdated,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Updated Customer FS Caption : { data.FSCAPTIONNAME } with code: {data.FSCAPTIONCODE}",
+                DETAIL = $"Updated Customer FS Caption : { data.FSCAPTIONNAME }  in group ( {auditInfo.FSCAPTIONGROUPNAME })",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),

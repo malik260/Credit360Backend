@@ -26,11 +26,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [Route("blacklist/{customerId}")]
-        public HttpResponseMessage ValidateBlackList(int customerId)
+        public HttpResponseMessage ValidateBlackList(string customerCode)
         { 
                 try
                 {
-                    var data = repo.ValidateBlackList(customerId);
+                    var data = repo.ValidateBlackList(customerCode);
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
                 catch (Exception ex)

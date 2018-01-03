@@ -106,6 +106,7 @@
     <Compile Include="Models\TBL_CHECKLIST_DEFINITION.cs" />
     <Compile Include="Models\TBL_CHECKLIST_DETAIL.cs" />
     <Compile Include="Models\TBL_CHECKLIST_ITEM.cs" />
+    <Compile Include="Models\TBL_CHECKLIST_RESPONSE_TYPE.cs" />
     <Compile Include="Models\TBL_CHECKLIST_STATUS.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TARGETTYPE.cs" />
     <Compile Include="Models\TBL_CHECKLIST_TYPE.cs" />
@@ -190,6 +191,7 @@
     <Compile Include="Models\TBL_CUSTOMER_IDENTI_MODE_TYPE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_NEXTOFKIN.cs" />
     <Compile Include="Models\TBL_CUSTOMER_PHONECONTACT.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_PRODUCT_FEE.cs" />
     <Compile Include="Models\TBL_CUSTOMER_RISK_RATING.cs" />
     <Compile Include="Models\TBL_CUSTOMER_SENSITIVITY_LEVEL.cs" />
     <Compile Include="Models\TBL_CUSTOMER_SIGNATORY.cs" />
@@ -229,6 +231,7 @@
     <Compile Include="Models\TBL_JOB_REQUEST_STATUS_FEEDBACK.cs" />
     <Compile Include="Models\TBL_JOB_REQUEST_STATUS_FEEDBAK.cs" />
     <Compile Include="Models\TBL_JOB_TYPE.cs" />
+    <Compile Include="Models\TBL_JOB_TYPE_DEPARTMENT.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_SUB.cs" />
     <Compile Include="Models\TBL_KYC_DOCUMENTTYPE.cs" />
     <Compile Include="Models\TBL_KYC_ITEM.cs" />

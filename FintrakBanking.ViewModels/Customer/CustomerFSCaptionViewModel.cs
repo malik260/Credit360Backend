@@ -21,8 +21,9 @@ namespace FintrakBanking.ViewModels.Customer
         public string refNote { get; set; }
         public bool isTotalLine { get; set; }
         public string reportColour { get; set; }
-        public double multiplier { get; set; }        
-        
+        public double multiplier { get; set; }
+        public bool isRatio { get; set; }
+
         //public string fsCaptionGroupName { get; set; }
         //public int companyId { get; set; }
     }

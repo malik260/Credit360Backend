@@ -10,7 +10,9 @@ namespace FintrakBanking.ViewModels.Customer
         public short ratioCaptionId { get; set; }
         public string ratioCaptionName { get; set; }
         public bool annualised { get; set; }
-        public int position { get; set; }        
+        public int position { get; set; }
+        public int fsCaptionId { get; set; }
+        public string fsCaptionName { get; set; }
     }
 
     public class CustomerFSRatioCaptionReportViewModel : GeneralEntity

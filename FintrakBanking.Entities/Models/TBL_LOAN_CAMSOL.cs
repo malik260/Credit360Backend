@@ -14,7 +14,11 @@ namespace FintrakBanking.Entities.Models
 
         public int COMPANYID { get; set; }
 
-        public int LOANID { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string CUSTOMERCODE { get; set; }
+
+        public int? LOANID { get; set; }
 
         [Column(TypeName = "money")]
         public decimal AMOUNTAFFECTED { get; set; }

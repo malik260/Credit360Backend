@@ -56,10 +56,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return camsolresults;
         }
 
-        public int ValidateBlackList(int customerId)
+        public int ValidateBlackList(string customerCode )
         {
             var blacklist = (from a in context.TBL_CUSTOMER_BLACKLIST
-                             where a.CUSTOMERID == customerId
+                             where a.CUSTOMERCODE == customerCode
                              select a);
             int blacklistresults = blacklist.Count();
 
