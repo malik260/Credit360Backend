@@ -273,6 +273,7 @@ namespace FintrakBanking.Repositories.Customer
             int count = lastFourDates.Count;
 
             var ratioCaptions = from a in context.TBL_CUSTOMER_FS_CAPTION
+                                join b in context.TBL_CUSTOMER_FS_CAPTION_GROUP on a.FSCAPTIONGROUPID equals b.FSCAPTIONGROUPID
                                 //where a.ISRATIO == true
                                 select a;
 
@@ -283,6 +284,7 @@ namespace FintrakBanking.Repositories.Customer
 
                 value.ratioCaptionId = (short)item.FSCAPTIONID;
                 value.ratioCaptionName = item.FSCAPTIONNAME;
+                value.fsGroupCaption = item.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME;
                 value.fsDate1 = count >= 4 ? lastFourDates[3] : new DateTime(1900, 1, 1);
                 value.fsDate2 = count >= 3 ? lastFourDates[2] : new DateTime(1900, 1, 1);
                 value.fsDate3 = count >= 2 ? lastFourDates[1] : new DateTime(1900, 1, 1);

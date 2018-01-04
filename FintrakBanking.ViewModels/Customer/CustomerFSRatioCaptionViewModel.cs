@@ -30,6 +30,7 @@ namespace FintrakBanking.ViewModels.Customer
         public decimal ratioValue2 { get; set; }
         public decimal ratioValue3 { get; set; }
         public decimal ratioValue4 { get; set; }
+        public string fsGroupCaption { get; set; }
     }
 
     public class CustomerFSRatioDetailViewModel : GeneralEntity
