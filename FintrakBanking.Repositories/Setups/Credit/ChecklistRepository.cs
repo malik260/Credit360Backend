@@ -849,20 +849,20 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteChecklistDetail(int ChecklistId, UserInfo user)
         {
             var data = context.TBL_CHECKLIST_DETAIL.Find(ChecklistId);
-            data.DELETED = true;
-            data.DELETEDBY = (int)user.staffId;
-            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
-
+            if (data != null)
+            {
+                this.context.TBL_CHECKLIST_DETAIL.Remove(data);
+            }
             // Audit Section ---------------------------
-            var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.
-             CHECKLISTDEFINITIONID == context.TBL_CHECKLIST_DETAIL.Find(ChecklistId).CHECKLISTDEFINITIONID));
+        //    var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.
+        //     CHECKLISTDEFINITIONID == context.TBL_CHECKLIST_DETAIL.Find(ChecklistId).CHECKLISTDEFINITIONID));
 
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"Added Loan Checklist {audit_checklist.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME}",
+                DETAIL = $"Added Loan Checklist with Id: {ChecklistId}",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),

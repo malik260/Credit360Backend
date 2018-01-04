@@ -181,5 +181,24 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
             }
         }
+        [HttpDelete]
+        [Route("checklist-upload-delete/definitionId/{definitionId}/statusId/{statusId}/detailId/{detailId}/isProductBased/{isProductBased}")]
+        public HttpResponseMessage RemoveChecklistDocument(int definitionId, int statusId, int detailId, bool isProductBased)
+        {
+            try
+            {
+                var data = repo.RemoveCheckListDocument(definitionId, statusId, detailId, isProductBased);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Checklist removed successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Checklist not removed"});
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }

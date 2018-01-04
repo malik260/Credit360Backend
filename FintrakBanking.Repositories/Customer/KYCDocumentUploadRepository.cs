@@ -163,8 +163,37 @@ namespace FintrakBanking.Repositories.Customer
                                         fileExtension = ck.FILEEXTENSION
                                     }).FirstOrDefault();
                 return checklistDoc;
+            }   
+        }
+        public bool RemoveCheckListDocument(int definitionId, int statusId, int detailId, bool isProductBased)
+        {
+            if (isProductBased)
+            {
+                var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
+                                    where ck.CHECKLISTDEFINITIONID == definitionId
+                                     && ck.CHECKLISTSTATUSID == statusId
+                                     && ck.LOANDETAILSID == detailId
+                                   select ck).FirstOrDefault();
+                if (checklistDoc != null)
+                {
+                    this.context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Remove(checklistDoc);
+                    return context.SaveChanges() != 0;
+                }
             }
-           
+            else
+            {
+                var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
+                                    where ck.CHECKLISTDEFINITIONID == definitionId
+                                     && ck.CHECKLISTSTATUSID == statusId
+                                     && ck.LOANAPPLICATIONID == detailId
+                                    select ck).FirstOrDefault();
+                if (checklistDoc != null)
+                {
+                    this.context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Remove(checklistDoc);
+                    return context.SaveChanges() != 0;
+                }
+            }
+            return false;
         }
     }
 }
