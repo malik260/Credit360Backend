@@ -51,6 +51,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private DateTime systemDate = DateTime.Now;
         private DateTime applicationDate;
         private int requestStaffId;
+        private int? requestLevelId;
         private int neededNumberOfApproval;
         private bool externalInitialization = false;
         private bool keepPending = false;
@@ -122,6 +123,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestStaffId = request.REQUESTSTAFFID;
                 //if (LastActionIsByStaff()) { throw new Exception("Last action is by staff!!"); }
                 this.fromLevelId = request.TOAPPROVALLEVELID;
+                this.requestLevelId = request.FROMAPPROVALLEVELID;
                 if (ProcessIsClosed()) { throw new Exception("Process is closed!"); }
             }
 
@@ -191,6 +193,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             // set those before calling in
             this.skipLimitsCheck = false;
             this.fromLevelId = null;
+            this.newStateId = (int)ApprovalState.Processing;
         }
 
         private DateTime GetApplicationDate()
@@ -259,6 +262,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.fromLevelId = levelStaff.APPROVALLEVELID;
                 this.neededNumberOfApproval = levelStaff.TBL_APPROVAL_LEVEL.NUMBEROFAPPROVALS;
             }
+
+            if (this.statusId == (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.requestLevelId; }
 
             if (this.nextLevelId == null) // && fromLevelId != null
             {

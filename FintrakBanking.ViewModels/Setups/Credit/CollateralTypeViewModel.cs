@@ -12,6 +12,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool requireInsurancePolicy { get; set; }
         public int? chargeGLAccountId { get; set; }
         public int position { get; set; }
+        public int collateralSubTypeId { get; set; }
+        public string collateralSubTypeName { get; set; }
     }
 
     public class CollateralTypeSubViewModel : GeneralEntity

@@ -2,9 +2,11 @@ using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Customer;
+using FintrakBanking.Interfaces.Setups.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Setups.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +24,15 @@ namespace FintrakBanking.APICore.Controllers
     {
         private ICustomerRepository repo;
         private ICustomerStagingRepository stagingRepo;
+        private ICustomerProductFeeRepository proRepo;
 
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public CustomerController(ICustomerRepository _repo, ICustomerStagingRepository _stagingRepo)
+        public CustomerController(ICustomerRepository _repo, ICustomerStagingRepository _stagingRepo, ICustomerProductFeeRepository _proRepo)
         {
             this.repo = _repo;
             this.stagingRepo = _stagingRepo;
+            this.proRepo = _proRepo;
         }
 
         [HttpPost]
@@ -133,6 +137,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("customer-staging/")]
         public HttpResponseMessage GetStagedCustomer(string searchTerm)
@@ -156,6 +161,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("customerbyid/{id}")]
         public HttpResponseMessage GetCustomerById(int id)
@@ -205,6 +211,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("customer-casa-information/")]
         public HttpResponseMessage GetCustomerCASAInformation(int customerId)
@@ -226,6 +233,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("customer-by-loanapplication/")]
         public HttpResponseMessage GetCustomerByLoanapplicationId(int loanApplicationId)
@@ -249,6 +257,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("customerbyid/")]
         public HttpResponseMessage GetCustomerByCustomerId(int custormerId)
@@ -272,6 +281,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("customer-information/")]
         public HttpResponseMessage SearchRandomCustomerBySearchQuery(string searchQuery)
@@ -294,6 +304,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("customers-in-group/{groupId}")]
         public HttpResponseMessage GetCustomerInGroupByGroupId(int groupId)
@@ -470,6 +481,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpPut]
         [Route("{customerId}")]
         public HttpResponseMessage UpdateCustomer(int customerId, CustomerViewModels entity)
@@ -498,6 +510,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
         [HttpGet]
         [Route("kyc-document-type")]
         public HttpResponseMessage GetKYCDocumentTypes()
@@ -519,6 +532,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("directorsType")]
         public HttpResponseMessage GetDirectorsTypes()
@@ -540,6 +554,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("suppliertype")]
         public HttpResponseMessage GetClientSupplierType()
@@ -561,6 +576,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("identificationMode")]
         public HttpResponseMessage GetIdentificationMode()
@@ -604,6 +620,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [Route("customer-risk-rating")]
         public HttpResponseMessage GetCustomerRiskRating()
@@ -660,6 +677,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
         [HttpPost]
         [Route("customer-phonecontact")]
         public HttpResponseMessage AddCustomerPhoneContact([FromBody]CustomerPhoneContactViewModels entity)
@@ -695,6 +713,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
         [HttpPost]
         [Route("customer-address")]
         public HttpResponseMessage AddCustomerAddresses([FromBody]CustomerAddressViewModels entity)
@@ -734,6 +753,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
         [HttpPost]
         [Route("customer-bvn")]
         public HttpResponseMessage AddCustomerBvn([FromBody]CustomerBvnViewModels entity)
@@ -761,6 +781,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
         [HttpPost]
         [Route("customer-children")]
         public HttpResponseMessage AddCustomerChildren([FromBody] List<CustomerChildrenViewModel> entity)
@@ -789,6 +810,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
         [HttpPost]
         [Route("customer-employmentHistory")]
         public HttpResponseMessage AddCustomerEmploymentHistory([FromBody]CustomerEmploymentHistoryViewModels entity)
@@ -824,6 +846,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
         [HttpPost]
         [Route("customer-companydirectors")]
         public HttpResponseMessage AddCustomerCompanyDirector([FromBody]CustomerCompanyDirectorsViewModels entity)
@@ -886,6 +909,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
         [HttpPost]
         [Route("customer-clientsupplier")]
         public HttpResponseMessage AddCustomerClientSupplier([FromBody]CustomerClientOrSupplierViewModels entity)
@@ -943,6 +967,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
         [HttpPost]
         [Route("customer-identification")]
         public HttpResponseMessage AddCustomerIdentification([FromBody]CustomerIdentificationViewModels entity)
@@ -978,6 +1003,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
         [HttpPost]
         [Route("customer-nextofkin")]
         public HttpResponseMessage AddCustomerNextOfKin([FromBody]CustomerNextOfKinViewModels entity)
@@ -1312,6 +1338,144 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion
 
+        #region Customer Product Fee ( aka Fee Concession)
+
+        [HttpGet]
+        [Route("customer-product-fee/customer/{customerId}")]
+        public HttpResponseMessage GetCustomerProductFeeByCustomerId(int customerId)
+        {
+            try
+            {
+                var data = proRepo.GetCustomerProductFeeByCustomerId(token.GetCompanyId,customerId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [Route("customer-product-fee/product/{productId}")]
+        public HttpResponseMessage GetCustomerProductFeeByProductId(int productId)
+        {
+            try
+            {
+                var data = proRepo.GetCustomerProductFeeByProductId(token.GetCompanyId,productId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [Route("customer-product-fee/{customerProductFeeId}")]
+        public HttpResponseMessage UpdateCustomerProductFee(int customerProductFeeId, CustomerProductFeeViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+
+                var data = proRepo.UpdateCustomerProductFee(customerProductFeeId, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+
+        }
+
+        [HttpPost]
+        [Route("customer-product-fee")]
+        public HttpResponseMessage AddCustomerProductFee([FromBody]CustomerProductFeeViewModel entity)
+        {
+            try
+            {
+                
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = proRepo.AddCustomerProductFee(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"Customer Product Fee has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error created this record" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpDelete]
+        [Route("customer-product-fee/{customerProductFeeId}")]
+        public HttpResponseMessage DeleteCustomerProductFee(int customerProductFeeId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
+
+                var data = proRepo.DeleteCustomerProductFee(customerProductFeeId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                          new { success = true, message = "The record has been deleted successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error deleting this record" });
+            }
+            catch (Exception e)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
+            }
+        }
+        
+        #endregion
     }
 }
 //Models

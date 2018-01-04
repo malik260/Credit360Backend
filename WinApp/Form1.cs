@@ -20,6 +20,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Repositories.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Customer;
 
 namespace WinApp
 {
@@ -31,8 +32,9 @@ namespace WinApp
         ILoanScheduleRepository loanSchedule;
         FinTrakBankingContext context;
         ILoanOperationsRepository loanOperation;
+        ICustomerFSRatioRepository cust;
         public Form1(FinTrakBankingContext _context , IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction,
-            ILoanScheduleRepository _loanSchedule, 
+            ILoanScheduleRepository _loanSchedule, ICustomerFSRatioRepository _cust,
             IAuditTrailRepository _auditTrail, ILoanOperationsRepository _loanOperation )
         //IGeneralSetupRepository _genSetup )
         {
@@ -43,6 +45,7 @@ namespace WinApp
             this.loanSchedule = _loanSchedule;
             this.financeTransaction = _financeTransaction;
             this.loanOperation = _loanOperation;
+            this.cust = _cust;
 
         }
 
@@ -63,6 +66,7 @@ namespace WinApp
 
             short priceIndex = 1;
             double newRate = 20;
+            int customeId = 13;
             //string vDesc = txtDesc.Text;
 
             //model.CountryId = 1;//(int)vCountry;
@@ -96,6 +100,8 @@ namespace WinApp
             //loanOperation.ProcessAuthorisedOverdraftRepaymentPostingForceDebit(vDate);
             //loanOperation.BulkRateReview(priceIndex,newRate,vDate,vStaff,vReview);
             //loanOperation.CalLoanClassification(vDate);
+
+            cust.GetCustomerFSRatioValues(customeId);
 
             MessageBox.Show("Successful", "Fintrak");
 

@@ -32,17 +32,14 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerFSRatioCaptionViewModel> GetFSRatioCaption(int companyId)
         {
-            var data = (from a in context.TBL_CUSTOMER_FS_RATIO_CAPTION
-                        where a.COMPANYID == companyId && a.DELETED == false
-                        orderby a.POSITION
+
+
+            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION
+                        where a.ISRATIO == true && a.DELETED == false
                         select new CustomerFSRatioCaptionViewModel
                         {
-                            ratioCaptionId = a.RATIOCAPTIONID,
-                            ratioCaptionName = a.RATIOCAPTION,
-                            companyId = a.COMPANYID,
-                            companyName = a.TBL_COMPANY.NAME,
-                            annualised = a.ANNUALISED,
-                            position = a.POSITION,
+                            ratioCaptionId = (short)a.FSCAPTIONID,
+                            ratioCaptionName = a.FSCAPTIONNAME,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
                         }).ToList();
@@ -51,17 +48,17 @@ namespace FintrakBanking.Repositories.Customer
 
         public List<CustomerFSRatioCaptionViewModel> GetFSRatioCaptionById(short ratioCaptionId)
         {
-            var data = (from a in context.TBL_CUSTOMER_FS_RATIO_CAPTION
-                        where a.RATIOCAPTIONID == ratioCaptionId // && a.Deleted == false
-                        orderby a.POSITION
+            var data = (from a in context.TBL_CUSTOMER_FS_CAPTION
+                        //where a.RATIOCAPTIONID == ratioCaptionId // && a.Deleted == false
+                        //orderby a.POSITION
                         select new CustomerFSRatioCaptionViewModel
                         {
-                            ratioCaptionId = a.RATIOCAPTIONID,
-                            ratioCaptionName = a.RATIOCAPTION,
-                            companyId = a.COMPANYID,
-                            companyName = a.TBL_COMPANY.NAME,
-                            annualised = a.ANNUALISED,
-                            position = a.POSITION,
+                            //ratioCaptionId = a.RATIOCAPTIONID,
+                            //ratioCaptionName = a.RATIOCAPTION,
+                            //companyId = a.COMPANYID,
+                            //companyName = a.TBL_COMPANY.NAME,
+                            //annualised = a.ANNUALISED,
+                            //position = a.POSITION,
 
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
@@ -71,16 +68,16 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdateFSRatioCaption(short ratioCaptionId, CustomerFSRatioCaptionViewModel model)
         {
-            var data = context.TBL_CUSTOMER_FS_RATIO_CAPTION.Find(ratioCaptionId);
-            if (data == null) return false;
+            //var data = context.TBL_CUSTOMER_FS_RATIO_CAPTION.Find(ratioCaptionId);
+            //if (data == null) return false;
 
-            data.ANNUALISED = model.annualised;
-            data.COMPANYID = model.companyId;
-            data.RATIOCAPTION = model.ratioCaptionName;
-            data.POSITION = model.position;
+            //data.ANNUALISED = model.annualised;
+            //data.COMPANYID = model.companyId;
+            //data.RATIOCAPTION = model.ratioCaptionName;
+            //data.POSITION = model.position;
 
-            data.LASTUPDATEDBY = (int)model.createdBy;
-            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+            //data.LASTUPDATEDBY = (int)model.createdBy;
+            //data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -88,7 +85,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerFSRatioCaptionUpdated,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Updated FS Ratio Caption : { data.RATIOCAPTION } with postion: {data.POSITION}",
+                //DETAIL = $"Updated FS Ratio Caption : { data.RATIOCAPTION } with postion: {data.POSITION}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -113,7 +110,7 @@ namespace FintrakBanking.Repositories.Customer
                 DATETIMECREATED = _genSetup.GetApplicationDate()
             };
 
-            context.TBL_CUSTOMER_FS_RATIO_CAPTION.Add(data);
+            //context.TBL_CUSTOMER_FS_RATIO_CAPTION.Add(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -136,10 +133,10 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool DeleteFSRatioCaption(short ratioCaptionId, UserInfo user)
         {
-            var data = context.TBL_CUSTOMER_FS_RATIO_CAPTION.Find(ratioCaptionId);
-            data.DELETED = true;
-            data.DELETEDBY = (int)user.staffId;
-            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
+            //var data = context.TBL_CUSTOMER_FS_RATIO_CAPTION.Find(ratioCaptionId);
+            //data.DELETED = true;
+            //data.DELETEDBY = (int)user.staffId;
+            //data.DATETIMEDELETED = _genSetup.GetApplicationDate();
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -147,7 +144,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerFSRatioCaptionDeleted,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"Deleted FS Ratio Caption: { data.RATIOCAPTION }. ",
+                //DETAIL = $"Deleted FS Ratio Caption: { data.RATIOCAPTION }. ",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -173,7 +170,7 @@ namespace FintrakBanking.Repositories.Customer
                     FSCAPTIONID = (int)model.fscaptionId,
                     MULTIPLIER = (double)model.multiplier,
                     VALUETYPEID = (short)model.valueTypeId,
-
+                    DESCRIPTION = context.TBL_CUSTOMER_FS_RATIO_VALUETYP.FirstOrDefault(x => x.VALUETYPEID == model.valueTypeId)?.VALUETYPENAME,
                     CREATEDBY = (int)model.createdBy,
                     DATETIMECREATED = _genSetup.GetApplicationDate()
                 };
@@ -189,7 +186,7 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerFSRatioDetailAdded,
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Added FS Ratio Detail {data.TBL_CUSTOMER_FS_RATIO_CAPTION} with divisor type '{auditDivisor}' and value typ '{auditValue }' ",
+                    DETAIL = $"Added FS Ratio Detail {data.TBL_CUSTOMER_FS_CAPTION} with divisor type '{auditDivisor}' and value typ '{auditValue }' ",
                     IPADDRESS = model.userIPAddress,
                     URL = model.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -217,19 +214,19 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerFSRatioDetailViewModel> GetFSRatioDetail(short ratioCaptionId, short fsCaptionGroupId, int companyId)
         {
-            var data = (from a in context.TBL_CUSTOMER_FS_RATIO_DETAIL
-                        where a.RATIOCAPTIONID == ratioCaptionId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId &&
-                              a.TBL_CUSTOMER_FS_RATIO_CAPTION.COMPANYID == companyId && a.DELETED == false
+            var data = (from a in context.TBL_CUSTOMER_FS_RATIO_DETAIL 
+                        join b in context.TBL_CUSTOMER_FS_CAPTION  on a.RATIOCAPTIONID equals b.FSCAPTIONID
+                        where a.RATIOCAPTIONID == ratioCaptionId && a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONGROUPID == fsCaptionGroupId  && a.DELETED == false
                         select new CustomerFSRatioDetailViewModel
 
                         {
                             ratioDetailId = a.RATIODETAILID,
-                            ratioCaptionId = a.RATIOCAPTIONID,
+                            ratioCaptionId = (short)a.RATIOCAPTIONID,
                             divisorTypeId = a.DIVISORTYPEID,
                             valueTypeId = a.VALUETYPEID,
                             multiplier = a.MULTIPLIER,
                             fscaptionId = a.FSCAPTIONID,
-                            ratioCaptionName = a.TBL_CUSTOMER_FS_RATIO_CAPTION.RATIOCAPTION,
+                            ratioCaptionName = b.FSCAPTIONNAME,
                             fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
                             valueTypeName = a.TBL_CUSTOMER_FS_RATIO_VALUETYP.VALUETYPENAME,
                             divisorTypeName = a.TBL_CUSTOMER_FS_RATIO_DIVI_TYP.DIVISORTYPENAME,
@@ -242,16 +239,17 @@ namespace FintrakBanking.Repositories.Customer
         public CustomerFSRatioDetailViewModel GetFSRatioDetailById(int ratioDetailId)
         {
             var data = from a in context.TBL_CUSTOMER_FS_RATIO_DETAIL
+                       join b in context.TBL_CUSTOMER_FS_CAPTION on a.RATIOCAPTIONID equals b.FSCAPTIONID
                        where a.RATIODETAILID == ratioDetailId && a.DELETED == false
                        select new CustomerFSRatioDetailViewModel
                        {
                            ratioDetailId = a.RATIODETAILID,
-                           ratioCaptionId = a.RATIOCAPTIONID,
+                           ratioCaptionId = (short)a.RATIOCAPTIONID,
                            divisorTypeId = a.DIVISORTYPEID,
                            valueTypeId = a.VALUETYPEID,
                            multiplier = a.MULTIPLIER,
                            fscaptionId = a.FSCAPTIONID,
-                           ratioCaptionName = a.TBL_CUSTOMER_FS_RATIO_CAPTION.RATIOCAPTION,
+                           ratioCaptionName = b.FSCAPTIONNAME,
                            fsCaptionName = a.TBL_CUSTOMER_FS_CAPTION.FSCAPTIONNAME,
                            valueTypeName = a.TBL_CUSTOMER_FS_RATIO_VALUETYP.VALUETYPENAME,
                            divisorTypeName = a.TBL_CUSTOMER_FS_RATIO_DIVI_TYP.DIVISORTYPENAME,
@@ -264,7 +262,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public  List<CustomerFSRatioCaptionReportViewModel> GetCustomerFSRatioValues(int customerId)
         {
-           
+
             var customerFSDates = (from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
                                    where a.CUSTOMERID == customerId
                                    orderby a.FSDATE descending
@@ -274,8 +272,9 @@ namespace FintrakBanking.Repositories.Customer
 
             int count = lastFourDates.Count;
 
-            var ratioCaptions = from a in context.TBL_CUSTOMER_FS_RATIO_CAPTION                                    
-                                orderby a.POSITION
+            var ratioCaptions = from a in context.TBL_CUSTOMER_FS_CAPTION
+                                join b in context.TBL_CUSTOMER_FS_CAPTION_GROUP on a.FSCAPTIONGROUPID equals b.FSCAPTIONGROUPID
+                                //where a.ISRATIO == true
                                 select a;
 
             List<CustomerFSRatioCaptionReportViewModel> output = new List<CustomerFSRatioCaptionReportViewModel>();
@@ -283,17 +282,17 @@ namespace FintrakBanking.Repositories.Customer
             {
                 CustomerFSRatioCaptionReportViewModel value = new CustomerFSRatioCaptionReportViewModel();
 
-                value.ratioCaptionId = item.RATIOCAPTIONID;
-                value.ratioCaptionName = item.RATIOCAPTION;
-                value.position = item.POSITION;
+                value.ratioCaptionId = (short)item.FSCAPTIONID;
+                value.ratioCaptionName = item.FSCAPTIONNAME;
+                value.fsGroupCaption = item.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME;
                 value.fsDate1 = count >= 4 ? lastFourDates[3] : new DateTime(1900, 1, 1);
                 value.fsDate2 = count >= 3 ? lastFourDates[2] : new DateTime(1900, 1, 1);
                 value.fsDate3 = count >= 2 ? lastFourDates[1] : new DateTime(1900, 1, 1);
                 value.fsDate4 = count >= 1 ? lastFourDates[0] : new DateTime(1900, 1, 1);
-                value.ratioValue1 = count >= 4 ? GetCustomerFSRatio(customerId, item.RATIOCAPTIONID, lastFourDates[3], item.COMPANYID) : 0;
-                value.ratioValue2 = count >= 3 ? GetCustomerFSRatio(customerId, item.RATIOCAPTIONID, lastFourDates[2], item.COMPANYID) : 0;
-                value.ratioValue3 = count >= 2 ? GetCustomerFSRatio(customerId, item.RATIOCAPTIONID, lastFourDates[1], item.COMPANYID) : 0;
-                value.ratioValue4 = count >= 1 ? GetCustomerFSRatio(customerId, item.RATIOCAPTIONID, lastFourDates[0], item.COMPANYID) : 0;
+                value.ratioValue1 = count >= 4 ? GetCustomerFSRatio(customerId, (short)item.FSCAPTIONID, lastFourDates[3]) : 0;
+                value.ratioValue2 = count >= 3 ? GetCustomerFSRatio(customerId, (short)item.FSCAPTIONID, lastFourDates[2]) : 0;
+                value.ratioValue3 = count >= 2 ? GetCustomerFSRatio(customerId, (short)item.FSCAPTIONID, lastFourDates[1]) : 0;
+                value.ratioValue4 = count >= 1 ? GetCustomerFSRatio(customerId, (short)item.FSCAPTIONID, lastFourDates[0]) : 0;
 
                 output.Add(value);
             }
@@ -303,14 +302,14 @@ namespace FintrakBanking.Repositories.Customer
         }
 
 
-        private  decimal GetCustomerFSRatio(int customerId, short ratioCaptionId, DateTime fsDate, int companyId)
+        private  decimal GetCustomerFSRatio(int customerId, short ratioCaptionId, DateTime fsDate)
         {
             var customerFS = from a in context.TBL_CUSTOMER_FS_CAPTION_DETAIL
                              where a.CUSTOMERID == customerId && a.FSDATE == fsDate
                              select a;
 
             var ratios = from a in context.TBL_CUSTOMER_FS_RATIO_DETAIL
-                         where a.TBL_CUSTOMER_FS_RATIO_CAPTION.COMPANYID == companyId && a.RATIOCAPTIONID == ratioCaptionId
+                        where a.RATIOCAPTIONID == ratioCaptionId
                          select a;
 
             var numeratorInfo = from a in ratios
@@ -360,7 +359,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerFSRatioDetailUpdated,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Updated FS Ratio Detail {data.TBL_CUSTOMER_FS_RATIO_CAPTION} with divisor type '{audit_divisor}' and value typ '{audit_value }' ",
+                DETAIL = $"Updated FS Ratio Detail {data.TBL_CUSTOMER_FS_CAPTION} with divisor type '{audit_divisor}' and value typ '{audit_value }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -391,7 +390,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerFSRatioDetailDeleted,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"Deleted FS Ratio Detail {data.TBL_CUSTOMER_FS_RATIO_CAPTION} with divisor type '{audit_divisor}' and value type '{audit_value }' ",
+                DETAIL = $"Deleted FS Ratio Detail {data.TBL_CUSTOMER_FS_CAPTION} with divisor type '{audit_divisor}' and value type '{audit_value }' ",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),

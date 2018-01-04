@@ -12,18 +12,6 @@ namespace FintrakBanking.Entities.Models
         {
         }
 
-        public override int SaveChanges()
-        {
-            try
-            {
-                return base.SaveChanges();
-            }
-            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
-            {
-                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                throw new System.Data.Entity.Validation.DbEntityValidationException(errorMessages);
-            }
-        }
         public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
@@ -51,6 +39,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CHECKLIST_DEFINITION> TBL_CHECKLIST_DEFINITION { get; set; }
         public virtual DbSet<TBL_CHECKLIST_DETAIL> TBL_CHECKLIST_DETAIL { get; set; }
         public virtual DbSet<TBL_CHECKLIST_ITEM> TBL_CHECKLIST_ITEM { get; set; }
+        public virtual DbSet<TBL_CHECKLIST_RESPONSE_TYPE> TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
         public virtual DbSet<TBL_CHECKLIST_STATUS> TBL_CHECKLIST_STATUS { get; set; }
         public virtual DbSet<TBL_CHECKLIST_TARGETTYPE> TBL_CHECKLIST_TARGETTYPE { get; set; }
         public virtual DbSet<TBL_CHECKLIST_TYPE> TBL_CHECKLIST_TYPE { get; set; }
@@ -91,7 +80,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOMER_FS_CAPTION> TBL_CUSTOMER_FS_CAPTION { get; set; }
         public virtual DbSet<TBL_CUSTOMER_FS_CAPTION_DETAIL> TBL_CUSTOMER_FS_CAPTION_DETAIL { get; set; }
         public virtual DbSet<TBL_CUSTOMER_FS_CAPTION_GROUP> TBL_CUSTOMER_FS_CAPTION_GROUP { get; set; }
-        public virtual DbSet<TBL_CUSTOMER_FS_RATIO_CAPTION> TBL_CUSTOMER_FS_RATIO_CAPTION { get; set; }
         public virtual DbSet<TBL_CUSTOMER_FS_RATIO_DETAIL> TBL_CUSTOMER_FS_RATIO_DETAIL { get; set; }
         public virtual DbSet<TBL_CUSTOMER_FS_RATIO_DIVI_TYP> TBL_CUSTOMER_FS_RATIO_DIVI_TYP { get; set; }
         public virtual DbSet<TBL_CUSTOMER_FS_RATIO_VALUETYP> TBL_CUSTOMER_FS_RATIO_VALUETYP { get; set; }
@@ -132,6 +120,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_JOB_REQUEST_STATUS> TBL_JOB_REQUEST_STATUS { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_STATUS_FEEDBAK> TBL_JOB_REQUEST_STATUS_FEEDBAK { get; set; }
         public virtual DbSet<TBL_JOB_TYPE> TBL_JOB_TYPE { get; set; }
+        public virtual DbSet<TBL_JOB_TYPE_DEPARTMENT> TBL_JOB_TYPE_DEPARTMENT { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_SUB> TBL_JOB_TYPE_SUB { get; set; }
         public virtual DbSet<TBL_KYC_DOCUMENTTYPE> TBL_KYC_DOCUMENTTYPE { get; set; }
         public virtual DbSet<TBL_KYC_ITEM> TBL_KYC_ITEM { get; set; }
@@ -150,7 +139,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PRODUCT_BEHAVIOUR> TBL_PRODUCT_BEHAVIOUR { get; set; }
         public virtual DbSet<TBL_PRODUCT_CATEGORY> TBL_PRODUCT_CATEGORY { get; set; }
         public virtual DbSet<TBL_PRODUCT_CHARGE_FEE> TBL_PRODUCT_CHARGE_FEE { get; set; }
-        public virtual DbSet<TBL_PRODUCT_CHARGE_FEE_CUSTMER> TBL_PRODUCT_CHARGE_FEE_CUSTMER { get; set; }
         public virtual DbSet<TBL_PRODUCT_CLASS> TBL_PRODUCT_CLASS { get; set; }
         public virtual DbSet<TBL_PRODUCT_CLASS_PROCESS> TBL_PRODUCT_CLASS_PROCESS { get; set; }
         public virtual DbSet<TBL_PRODUCT_CLASS_TYPE> TBL_PRODUCT_CLASS_TYPE { get; set; }
@@ -280,7 +268,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RISK_RATING> TBL_RISK_RATING { get; set; }
         public virtual DbSet<TBL_SOLICITOR> TBL_SOLICITOR { get; set; }
         public virtual DbSet<TBL_SOLICITOR_STATE_MAPPING> TBL_SOLICITOR_STATE_MAPPING { get; set; }
-        public virtual DbSet<SYSDIAGRAM> SYSDIAGRAMS { get; set; }
+        public virtual DbSet<SYSDIAGRAMS> SYSDIAGRAMS { get; set; }
         public virtual DbSet<TBL_CHARGES_VALUESOURCE> TBL_CHARGES_VALUESOURCE { get; set; }
         public virtual DbSet<TBL_COT> TBL_COT { get; set; }
         public virtual DbSet<TBL_LOAN_DOCUMENT_TYPE> TBL_LOAN_DOCUMENT_TYPE { get; set; }
@@ -324,6 +312,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STOCK> TBL_STOCK { get; set; }
         public virtual DbSet<DEV_CHECKLIST> DEV_CHECKLIST { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
+        public virtual DbSet<view_Approval_Setup> view_Approval_Setup { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -723,6 +712,16 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CHECKLIST_ITEM)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_CHECKLIST_RESPONSE_TYPE>()
+                .HasMany(e => e.TBL_CHECKLIST_ITEM)
+                .WithRequired(e => e.TBL_CHECKLIST_RESPONSE_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CHECKLIST_RESPONSE_TYPE>()
+                .HasMany(e => e.TBL_CHECKLIST_STATUS)
+                .WithRequired(e => e.TBL_CHECKLIST_RESPONSE_TYPE)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_CHECKLIST_STATUS>()
                 .HasMany(e => e.TBL_CHECKLIST_DETAIL)
                 .WithRequired(e => e.TBL_CHECKLIST_STATUS)
@@ -876,12 +875,7 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_COMPANY>()
-                .HasMany(e => e.TBL_CUSTOMER_FS_CAPTION_GROUP)
-                .WithRequired(e => e.TBL_COMPANY)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_COMPANY>()
-                .HasMany(e => e.TBL_CUSTOMER_FS_RATIO_CAPTION)
+                .HasMany(e => e.TBL_CUSTOMER_EMPLOYER)
                 .WithRequired(e => e.TBL_COMPANY)
                 .WillCascadeOnDelete(false);
 
@@ -1363,11 +1357,6 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_CUSTOMER>()
-                .HasMany(e => e.TBL_PRODUCT_CHARGE_FEE_CUSTMER)
-                .WithRequired(e => e.TBL_CUSTOMER)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<TBL_CUSTOMER_ADDRESS_TYPE>()
                 .HasMany(e => e.TBL_CUSTOMER_ADDRESS)
                 .WithRequired(e => e.TBL_CUSTOMER_ADDRESS_TYPE)
@@ -1411,12 +1400,14 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION>()
                 .HasMany(e => e.TBL_CUSTOMER_FS_RATIO_DETAIL)
                 .WithRequired(e => e.TBL_CUSTOMER_FS_CAPTION)
+                .HasForeignKey(e => e.FSCAPTIONID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION>()
-                .HasMany(e => e.TBL_CUSTOMER_FS_CAPTION1)
-                .WithOptional(e => e.TBL_CUSTOMER_FS_CAPTION2)
-                .HasForeignKey(e => e.PARENTIDFSCAPTIONID);
+                .HasMany(e => e.TBL_CUSTOMER_FS_RATIO_DETAIL1)
+                .WithRequired(e => e.TBL_CUSTOMER_FS_CAPTION1)
+                .HasForeignKey(e => e.RATIOCAPTIONID)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION>()
                 .HasMany(e => e.TBL_CUSTOMER_GRP_FS_CAPTN_DET)
@@ -1427,15 +1418,10 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.AMOUNT)
                 .HasPrecision(19, 4);
 
-            modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION_GROUP>()
-                .HasMany(e => e.TBL_CUSTOMER_FS_CAPTION)
-                .WithRequired(e => e.TBL_CUSTOMER_FS_CAPTION_GROUP)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CUSTOMER_FS_RATIO_CAPTION>()
-                .HasMany(e => e.TBL_CUSTOMER_FS_RATIO_DETAIL)
-                .WithRequired(e => e.TBL_CUSTOMER_FS_RATIO_CAPTION)
-                .WillCascadeOnDelete(false);
+            modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION_GROUP>();
+                //.HasMany(e => e.TBL_CUSTOMER_FS_CAPTION)
+               // .WithRequired(e => e.TBL_CUSTOMER_FS_CAPTION_GROUP)
+                //.WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER_FS_RATIO_DETAIL>()
                 .Property(e => e.DESCRIPTION)
@@ -1599,6 +1585,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_DEPARTMENT>()
                 .HasMany(e => e.TBL_JOB_REQUEST)
+                .WithRequired(e => e.TBL_DEPARTMENT)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_DEPARTMENT>()
+                .HasMany(e => e.TBL_JOB_TYPE_DEPARTMENT)
                 .WithRequired(e => e.TBL_DEPARTMENT)
                 .WillCascadeOnDelete(false);
 
@@ -1774,6 +1765,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_JOB_TYPE>()
                 .HasMany(e => e.TBL_JOB_REQUEST_STATUS_FEEDBAK)
+                .WithRequired(e => e.TBL_JOB_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_JOB_TYPE>()
+                .HasMany(e => e.TBL_JOB_TYPE_DEPARTMENT)
                 .WithRequired(e => e.TBL_JOB_TYPE)
                 .WillCascadeOnDelete(false);
 
@@ -1980,19 +1976,6 @@ namespace FintrakBanking.Entities.Models
                 .HasPrecision(19, 4);
 
             modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE>()
-                .Property(e => e.DEPENDENTAMOUNT)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE>()
-                .HasMany(e => e.TBL_PRODUCT_CHARGE_FEE_CUSTMER)
-                .WithRequired(e => e.TBL_PRODUCT_CHARGE_FEE)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE_CUSTMER>()
-                .Property(e => e.RATEVALUE)
-                .HasPrecision(19, 4);
-
-            modelBuilder.Entity<TBL_PRODUCT_CHARGE_FEE_CUSTMER>()
                 .Property(e => e.DEPENDENTAMOUNT)
                 .HasPrecision(19, 4);
 
@@ -4085,11 +4068,6 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_FINANCIAL_STATEMENT_CAPTN)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_FINANCIAL_STATEMENT_TYPE>()
-                .HasMany(e => e.TBL_CUSTOMER_FS_CAPTION)
-                .WithRequired(e => e.TBL_FINANCIAL_STATEMENT_TYPE)
-                .WillCascadeOnDelete(false);
-
             modelBuilder.Entity<TBL_TEMP_CHARGE_FEE>()
                 .Property(e => e.AMOUNT)
                 .HasPrecision(19, 4);
@@ -4446,6 +4424,18 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_STOCK>()
                 .Property(e => e.SHAREVALUEAMOUNTTOUSE)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.LEVELMAXIMUMAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.INVESTMENTGRADEAMOUNT)
+                .HasPrecision(19, 4);
+
+            modelBuilder.Entity<view_Approval_Setup>()
+                .Property(e => e.STAFFMAXIMUMAMOUNT)
                 .HasPrecision(19, 4);
         }
     }

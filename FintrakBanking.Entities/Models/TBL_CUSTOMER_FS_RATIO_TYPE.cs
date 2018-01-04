@@ -6,27 +6,23 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("core.TBL_CUSTOMER_FS_RATIO_CAPTION")]
-    public partial class TBL_CUSTOMER_FS_RATIO_CAPTION
+    [Table("core.TBL_CUSTOMER_FS_RATIO_TYPE")]
+    public partial class TBL_CUSTOMER_FS_RATIO_TYPE
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_CUSTOMER_FS_RATIO_CAPTION()
+        public TBL_CUSTOMER_FS_RATIO_TYPE()
         {
-            TBL_CUSTOMER_FS_RATIO_DETAIL = new HashSet<TBL_CUSTOMER_FS_RATIO_DETAIL>();
+            TBL_CUSTOMER_FS_RATIO_CAPTION = new HashSet<TBL_CUSTOMER_FS_RATIO_CAPTION>();
         }
 
         [Key]
-        public short RATIOCAPTIONID { get; set; }
+        public short RATIOTYPEID { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string RATIOCAPTION { get; set; }
-
-        public short RATIOTYPEID { get; set; }
+        public string RATIOTYPE { get; set; }
 
         public int COMPANYID { get; set; }
-
-        public bool ANNUALISED { get; set; }
 
         public int POSITION { get; set; }
 
@@ -46,9 +42,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
-        public virtual TBL_CUSTOMER_FS_RATIO_TYPE TBL_CUSTOMER_FS_RATIO_TYPE { get; set; }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_CUSTOMER_FS_RATIO_DETAIL> TBL_CUSTOMER_FS_RATIO_DETAIL { get; set; }
+        public virtual ICollection<TBL_CUSTOMER_FS_RATIO_CAPTION> TBL_CUSTOMER_FS_RATIO_CAPTION { get; set; }
     }
 }

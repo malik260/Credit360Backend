@@ -154,6 +154,32 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpPut]
+        [Route("updateFinalOfferLetter/{applicationRef}")]
+        public HttpResponseMessage UpdateFinalOfferLetter(string applicationRef, OfferLetterTemplateViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                var data = olAvlmentRepo.UpdateFinalOfferLetter(applicationRef, model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this group {data}" });
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this group {e.Message}" });
+            }
+        }
+
+
+
         #region Offer Letter & Availment
 
         [HttpGet]

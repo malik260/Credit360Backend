@@ -798,9 +798,54 @@ namespace FintrakBanking.Repositories.Credit
                             creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
                             dateTimeCreated = ln.DATETIMECREATED,
                             comment = "",
-                            
-                            //loanCollateral = { },
-                            //loanGuarantor = { },
+                            loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
+                                             select (
+                                                      new LoanGuarantorViewModel
+                                                      {
+                                                          loanGuarantorId = g.LOANGUARANTORID,
+                                                          firstname = g.FIRSTNAME,
+                                                          lastname = g.LASTNAME,
+                                                          middlename = g.MIDDLENAME,
+                                                          fullName = g.FIRSTNAME + " " + g.MIDDLENAME + " " + g.LASTNAME,
+                                                          emailAddress = g.EMAILADDRESS,
+                                                          phoneNumber1 = g.PHONENUMBER1,
+                                                          phoneNumber2 = g.PHONENUMBER2,
+                                                          address = g.ADDRESS,
+                                                          bvn = g.BVN,
+                                                          relationship = g.RELATIONSHIP,
+                                                          rcNumber = g.REGISTRATION_NUMBER,
+                                                          taxNumber = g.TAX_NUMBER,
+                                                          customerTypeId = g.CUSTOMERTYPEID,
+                                                          customerTypeName = g.TBL_CUSTOMER_TYPE.NAME,
+                                                          relationshipDuration = g.RELATIONSHIPDURATION
+                                                      })).ToList(),
+
+                            loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANAPPLICATIONID == ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID )
+                                              select (
+                                                       new LoanCollateralMappingViewModel
+                                                       {
+                                                           loanCollateralMappingId = cm.LOANCOLLATERALMAPPINGID,
+                                                           collateralTypeName = cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
+                                                           + "(" + cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.FirstOrDefault().COLLATERALSUBTYPENAME + ")",
+                                                           collateralCustomerId = cm.COLLATERALCUSTOMERID,
+                                                           loanApplicationId = cm.LOANAPPLICATIONID,
+                                                           collateralValue = cm.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                           hairCut = cm.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                           valuationCycle = cm.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                           currencyId = cm.TBL_COLLATERAL_CUSTOMER.CURRENCYID,
+                                                           currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                                                           currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
+                                                       })).ToList(),
+                            monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.TERMLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
+                                                  select (
+                                                           new LoanMonitoringTrigger
+                                                           {
+                                                               loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
+                                                               productTypeId = i.PRODUCTTYPEID,
+                                                               monitoringTriggerId = i.MONITORING_TRIGGERID,
+                                                               monitoringTrigger = i.MONITORING_TRIGGER,
+                                                               monitoringTriggerSetupName = i.TBL_LOAN_MONITORING_TRIG_SETUP.MONITORING_TRIGGER_NAME,
+                                                            })).ToList(),
                             //loanCovenant = { },
                             //loanChargeFee = { }
 
@@ -905,6 +950,32 @@ namespace FintrakBanking.Repositories.Credit
                             creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
                             dateTimeCreated = ln.DATETIMECREATED,
                             comment = "",
+                            loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANAPPLICATIONID == ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID)
+                                              select (
+                                                       new LoanCollateralMappingViewModel
+                                                       {
+                                                           loanCollateralMappingId = cm.LOANCOLLATERALMAPPINGID,
+                                                           collateralTypeName = cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
+                                                           + "(" + cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.FirstOrDefault().COLLATERALSUBTYPENAME + ")",
+                                                           collateralCustomerId = cm.COLLATERALCUSTOMERID,
+                                                           loanApplicationId = cm.LOANAPPLICATIONID,
+                                                           collateralValue = cm.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                           hairCut = cm.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                           valuationCycle = cm.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                           currencyId = cm.TBL_COLLATERAL_CUSTOMER.CURRENCYID,
+                                                           currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                                                           currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
+                                                       })).ToList(),
+                            monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.REVOLVINGLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
+                                                  select (
+                                                           new LoanMonitoringTrigger
+                                                           {
+                                                               loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
+                                                               productTypeId = i.PRODUCTTYPEID,
+                                                               monitoringTriggerId = i.MONITORING_TRIGGERID,
+                                                               monitoringTrigger = i.MONITORING_TRIGGER,
+                                                               monitoringTriggerSetupName = i.TBL_LOAN_MONITORING_TRIG_SETUP.MONITORING_TRIGGER_NAME,
+                                                           })).ToList(),
 
                             //loanCollateral = { },
                             //loanGuarantor = { },
@@ -1006,8 +1077,32 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = ln.DATETIMECREATED,
                             comment = "",
 
-                            //loanCollateral = { },
-                            //loanGuarantor = { },
+                            loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANAPPLICATIONID == ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID)
+                                              select (
+                                                       new LoanCollateralMappingViewModel
+                                                       {
+                                                           loanCollateralMappingId = cm.LOANCOLLATERALMAPPINGID,
+                                                           collateralTypeName = cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
+                                                           + "(" + cm.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB.FirstOrDefault().COLLATERALSUBTYPENAME + ")",
+                                                           collateralCustomerId = cm.COLLATERALCUSTOMERID,
+                                                           loanApplicationId = cm.LOANAPPLICATIONID,
+                                                           collateralValue = cm.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                           hairCut = cm.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                           valuationCycle = cm.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                           currencyId = cm.TBL_COLLATERAL_CUSTOMER.CURRENCYID,
+                                                           currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
+                                                           currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
+                                                       })).ToList(),
+                            monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.CONTINGENTLOANID && x.PRODUCTTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
+                                                  select (
+                                                           new LoanMonitoringTrigger
+                                                           {
+                                                               loanMonitoringTriggerId = i.LOAN_MONITORING_TRIGGERID,
+                                                               productTypeId = i.PRODUCTTYPEID,
+                                                               monitoringTriggerId = i.MONITORING_TRIGGERID,
+                                                               monitoringTrigger = i.MONITORING_TRIGGER,
+                                                               monitoringTriggerSetupName = i.TBL_LOAN_MONITORING_TRIG_SETUP.MONITORING_TRIGGER_NAME,
+                                                           })).ToList(),
                             //loanCovenant = { },
                             //loanChargeFee = { }
                         });
@@ -3371,7 +3466,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = d.DATETIMECREATED,
 
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
-                            loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID)
+                            loanGuarantor = (from g in context.TBL_LOAN_GUARANTOR.Where(x => x.LOANAPPLICATIONID == m.LOANAPPLICATIONID && x.PRODUCTTYPEID == d.TBL_PRODUCT.PRODUCTTYPEID)
                                              select (
                                                       new LoanGuarantorViewModel
                                                       {
