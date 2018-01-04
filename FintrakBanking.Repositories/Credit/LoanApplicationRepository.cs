@@ -447,58 +447,70 @@ namespace FintrakBanking.Repositories.Credit
                 .ACCOUNTSTATUS;
         }
 
-        public bool UpdateApprovalStatusForApplication(int applicationId)//, object entity)
+        public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId)//, object entity)
         {
-            //var loanData = (from l in context.TBL_LOAN_APPLICATION_DETAIL where l.LOANAPPLICATIONID == applicationId select l).ToList();
-            //if (loanData != null)
-            //{
-            //    var custNo = loanData.Count();
-            //    var checkedNo = 0;
-            //    foreach (var item in loanData)
-            //    {
-            //        if (item.HASDONECHECKLIST == true)
-            //        {
-            //            ++checkedNo;
-            //        }
-            //    }
-            //    if (custNo == checkedNo)
-            //    {
-            //        var loanApplication = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            //        if (loanApplication != null)
-            //        {
-            //            loanApplication.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ChecklistCompleted;
-            //        }
-            //    }
-            //}
-            var data = this.context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.LOANAPPLICATIONID == applicationId);
-           {
-                //data.LoanStatusId = (short)entity.approvalStatusId;
-                //data.ActedOnaBy = entity.staffId;
-                //data.DateActedOn = genSetup.GetApplicaionDate();
-
-                data.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+            LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
+            string str = string.Empty;
+            
+            bool isCheckListDone = true;
+            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+            if (dat != null)
+            {
+                foreach (var d in dat)
+                {
+                    var types = from a in context.TBL_CHECKLIST_TYPE select a;
+                    foreach (var item in types)
+                    {
+                        var detail = from a in context.TBL_CHECKLIST_DEFINITION
+                                     join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
+                                     equals b.CHECKLISTDEFINITIONID
+                                     where b.TARGETID == applicationId && b.TARGETTYPEID == (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist
+                                     && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
+                                     select a;
+                        var definition = from a in context.TBL_CHECKLIST_DEFINITION
+                                         where a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && (a.PRODUCTID == d.APPROVEDPRODUCTID || a.PRODUCTID == null)
+                                         select a;
+                    
+                        if (definition.Count() != detail.Count())
+                        {
+                            isCheckListDone = false;
+                            str = str + "<br/>" + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                        }
+                    }
+                }
             }
+            if (isCheckListDone)
+            {
+                var data = this.context.TBL_LOAN_APPLICATION.FirstOrDefault(c => c.LOANAPPLICATIONID == applicationId);
+                {
+                    //data.LoanStatusId = (short)entity.approvalStatusId;
+                    //data.ActedOnaBy = entity.staffId;
+                    //data.DateActedOn = genSetup.GetApplicaionDate();
 
-            //Audit Section ---------------------------
-            //var audit = new TBL_AUDIT
-            //{
-            //    AUDITTYPEID = (short)AuditTypeEnum.ApprovalStatusUpdated,
-            //    STAFFID = entity.staffId,
-            //    BRANCHID = (short)entity.BranchId,
-            //    DETAIL =
-            //        $"Change Loan Application Status with reference number '{data.APPLICATIONREFERENCENUMBER}' to {GetLoanStatus((short)entity.approvalStatusId)}",
-            //    IPADDRESS = entity.userIPAddress,
-            //    URL = entity.applicationUrl,
-            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
-            //    SYSTEMDATETIME = DateTime.Now,
-            //    TARGETID = entity.targetId
-            //};
+                    data.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+                }
+            }
+            else
+            {
+                return new LoanApplicationUpdateMessage
+                {
+                    isdone = isCheckListDone,
+                    messageStr = str
 
-            //  this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------
+                };
+            }
+            if (context.SaveChanges() != 0)
+            {
+                result = new LoanApplicationUpdateMessage
+                {
+                    isdone = isCheckListDone,
+                    messageStr = str
 
-            return context.SaveChanges() != 0;
+                };
+            }
+            return result;
         }
+       
 
         public int AddLoanApplication(LoanApplicationViewModel loan)
         {
@@ -1075,16 +1087,33 @@ namespace FintrakBanking.Repositories.Credit
 
         public ValidateDataViewModel ValidateDocumentDate(ValidateDataViewModel data)
         {
-
             var dat = context.TBL_PRODUCT.Where(c => c.PRODUCTID == data.productId).FirstOrDefault();
-            int days = DateTime.Now.Subtract(data.date).Days;
+            int days = DateTime.Now.Subtract(data.date.AddDays(-1)).Days;
             return new ValidateDataViewModel
             {
                 dayInterval = dat.EXPIRYPERIOD,
-                InvoiceStatus = (days >= 0 && dat.EXPIRYPERIOD >= days) ? true : false,
+                InvoiceStatus = (days > 0 && dat.EXPIRYPERIOD >= days) ? true : false,
             };
 
         }
+
+        public ValidateNumberViewModel ValidateDocumentNumber(ValidateNumberViewModel data)
+        {            
+            var dat = context.TBL_LOAN_APPLICATION_DETL_INV
+                .Where(c => c.PRINCIPALID ==(int) data.principalId && c.INVOICENO == data.documentNo )
+                .FirstOrDefault();
+
+            return new ValidateNumberViewModel
+            {
+                documentNo = data.documentNo,
+                invoiceStatus = (dat == null) ? false : true,
+                principalId = data.principalId,
+                productId = data.productId
+            };
+
+        }
+
+   
 
         #region All Operation Applications
 
