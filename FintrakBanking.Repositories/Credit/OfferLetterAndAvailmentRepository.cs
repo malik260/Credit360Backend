@@ -108,7 +108,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.CompanyId = target.COMPANYID;
                 workflow.ProductClassId = target.PRODUCTCLASSID;
                 workflow.ProductId = null; // may refactor!!
-                workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.Comment = "New bonds and guarantee document processing...";
                 workflow.ExternalInitialization = true;
                 workflow.DeferredExecution = true;
