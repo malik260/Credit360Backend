@@ -1096,7 +1096,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
                 
-                if (appl.APPLICATIONSTATUSID == 10) // Bonds and Guarantees adapter
+                if (appl.PRODUCTCLASSID == 10) // Bonds and Guarantees adapter
                 {
                     appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
                     context.SaveChanges(); // save changes at this point
