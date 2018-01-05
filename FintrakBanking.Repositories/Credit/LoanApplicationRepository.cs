@@ -472,10 +472,20 @@ namespace FintrakBanking.Repositories.Credit
                         //                 (a.PRODUCTID == d.APPROVEDPRODUCTID || a.PRODUCTID == null) &&
                         //                 a.OPERATIONID == d.TBL_LOAN_APPLICATION.OPERATIONID
                         //                 select a;
+                        int targetId = 0;
+                        if (item.ISPRODUCT_BASED)
+                        {
+                            targetId = d.LOANAPPLICATIONDETAILID;
+                        }
+                        else
+                        {
+                            targetId = applicationId;
+                        }
+                         
                         var detail = from a in context.TBL_CHECKLIST_DEFINITION
                                      join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
                                      equals b.CHECKLISTDEFINITIONID
-                                     where b.TARGETID == applicationId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist :(short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                                     where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist :(short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
                                      && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID ==  (int)OperationsEnum.LoanApplication
                                      select a;
                         var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
@@ -932,7 +942,7 @@ namespace FintrakBanking.Repositories.Credit
                         on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         where a.LOANAPPLICATIONID == loanApplicationId && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                         && b.STATUSID == (short)LoanApplicationDetailsStatusEnum.Pending
-                        && b.HASDONECHECKLIST == false
+                       // && b.HASDONECHECKLIST == false
                         && a.COMPANYID == companyId && a.DELETED == false
                         select new LoanApplicationDetailViewModel()
                         {
