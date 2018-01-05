@@ -121,6 +121,19 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
 
+            loanOperation.CalLoanClassification(date);
+
+            loanOperation.ProcessLoanRepaymentPostingPastDue(date);
+            loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue (date);
+            loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue  (date);
+            loanOperation.ProcessIDFExpiryAndlocking(date);
+            loanOperation.ProcessCFFExpiryAndlocking(date);
+            loanOperation.ProcessLPOExpiryAndlocking(date); 
+            loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
+            loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
+            loanOperation.ProcessIntervalFeeandCommissionPosting(date);
+
+
             endOfDay.ENDDATETIME = DateTime.Now;
 
             context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
