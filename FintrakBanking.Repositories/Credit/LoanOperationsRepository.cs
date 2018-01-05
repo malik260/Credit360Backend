@@ -5889,10 +5889,10 @@ namespace FintrakBanking.Repositories.Credit
                         item.interestRate = item.newInterest;
                         InterestRateReview(loanId, item, applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                        if (DbFunctions.TruncateTime(item.effectiveDate) < DbFunctions.TruncateTime(systemDate))
-                        {
-                            //ProcessLoanRepaymentPostingPastDueForInterestReview(applicationDate, loanId);
-                        }
+                        //if (DbFunctions.TruncateTime(item.effectiveDate) < DbFunctions.TruncateTime(systemDate))
+                        //{
+                        //    //ProcessLoanRepaymentPostingPastDueForInterestReview(applicationDate, loanId);
+                        //}
                     }
                     else if ((int)OperationsEnum.Prepayment == item.operationId)
                     {
@@ -6028,10 +6028,10 @@ namespace FintrakBanking.Repositories.Credit
                         item.tenor = item.newTenor;
                         InterestRateReview(loanId, item, applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                        if (DbFunctions.TruncateTime(item.effectiveDate) < DbFunctions.TruncateTime(systemDate))
-                        {
-                            //ProcessLoanRepaymentPostingPastDueForInterestReview(applicationDate, loanId);
-                        }
+                        //if (DbFunctions.TruncateTime(item.effectiveDate) < DbFunctions.TruncateTime(systemDate))
+                        //{
+                        //    //ProcessLoanRepaymentPostingPastDueForInterestReview(applicationDate, loanId);
+                        //}
 
 
                     }

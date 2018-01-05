@@ -481,6 +481,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             targetId = applicationId;
                         }
+                         
                         var detail = from a in context.TBL_CHECKLIST_DEFINITION
                                      join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
                                      equals b.CHECKLISTDEFINITIONID
@@ -1151,20 +1152,22 @@ namespace FintrakBanking.Repositories.Credit
             var staffApprovalLevelIds =
                 context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == classId)
                 .Select(x => x.TBL_APPROVAL_GROUP)
-                .SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.ISACTIVE == true))
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL).Where(l => l.ISACTIVE == true)
                 .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF.Where(s => s.STAFFID == staffId))
                 .Select(x => x.APPROVALLEVELID)
                 .ToList();
 
-            var applications = context.TBL_LOAN_APPLICATION.Where(x =>
-                (x.BRANCHID == branchId || isHeadOffice)
+            var applications = context.TBL_LOAN_APPLICATION
+                .Where(x =>
+                (isHeadOffice || x.BRANCHID == branchId)
                 && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved // ?
                 && x.PRODUCTCLASSID == (short?)classId
                 && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BondAndGuaranteesInProgress // ?
             )
             .Join(
                 context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == 37
-                && staffApprovalLevelIds.Contains((int)x.TOAPPROVALLEVELID) && x.RESPONSESTAFFID == null),
+                && staffApprovalLevelIds.Contains((int)x.TOAPPROVALLEVELID) && x.RESPONSESTAFFID == null
+                ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,
                 (a, b) => new { a, b })
@@ -1215,7 +1218,7 @@ namespace FintrakBanking.Repositories.Credit
             .ThenByDescending(x => x.loanApplicationId)
             ;
 
-            // var test = applications.ToList();
+            var test = applications.ToList();
             return applications;
         }
 

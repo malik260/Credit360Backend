@@ -14,9 +14,9 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCTID { get; set; }
 
-        public double? LCY_LIMIT { get; set; }
+        public double? COLLATERAL_LCY_LIMIT { get; set; }
 
-        public double? FCY_LIMIT { get; set; }
+        public double? COLLATERAL_FCY_LIMIT { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? CUSTOMER_LIMIT { get; set; }

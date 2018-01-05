@@ -134,8 +134,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        
-
         [HttpGet, Route("customer-collateral/type/collateral/{collateralId}/type/{typeId}")]
         public HttpResponseMessage GetCollateralTypeByCollateralId(int collateralId, int typeId)
         {
