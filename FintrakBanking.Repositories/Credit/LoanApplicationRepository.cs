@@ -461,16 +461,32 @@ namespace FintrakBanking.Repositories.Credit
                     var types = from a in context.TBL_CHECKLIST_TYPE select a;
                     foreach (var item in types)
                     {
+                        //var detail = from a in context.TBL_CHECKLIST_DEFINITION
+                        //             join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
+                        //             equals b.CHECKLISTDEFINITIONID
+                        //             where b.TARGETID == applicationId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                        //             && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID == d.TBL_LOAN_APPLICATION.OPERATIONID
+                        //             select a;
+                        //var definition = from a in context.TBL_CHECKLIST_DEFINITION
+                        //                 where a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID &&
+                        //                 (a.PRODUCTID == d.APPROVEDPRODUCTID || a.PRODUCTID == null) &&
+                        //                 a.OPERATIONID == d.TBL_LOAN_APPLICATION.OPERATIONID
+                        //                 select a;
                         var detail = from a in context.TBL_CHECKLIST_DEFINITION
                                      join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
                                      equals b.CHECKLISTDEFINITIONID
-                                     where b.TARGETID == applicationId && b.TARGETTYPEID == (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist
-                                     && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
+                                     where b.TARGETID == applicationId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist :(short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                                     && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID ==  (int)OperationsEnum.LoanApplication
                                      select a;
+                        var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
+
                         var definition = from a in context.TBL_CHECKLIST_DEFINITION
-                                         where a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && (a.PRODUCTID == d.APPROVEDPRODUCTID || a.PRODUCTID == null)
+                                         where a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID &&
+                                        a.PRODUCTID == PRODUCTID  &&
+                                         a.OPERATIONID == (int)OperationsEnum.LoanApplication
                                          select a;
-                    
+                        int i, j;
+                        i = definition.Count(); j = detail.Count();
                         if (definition.Count() != detail.Count())
                         {
                             isCheckListDone = false;
