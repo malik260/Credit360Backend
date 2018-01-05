@@ -873,6 +873,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
         #endregion Customer FS Ratio Caption
 
         #region FS Ratio Detail

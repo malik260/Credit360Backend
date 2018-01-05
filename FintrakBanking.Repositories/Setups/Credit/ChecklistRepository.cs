@@ -68,9 +68,10 @@ namespace FintrakBanking.Repositories.Credit
             if (isproductBased)
             {
                 var data = (from a in context.TBL_CHECKLIST_DEFINITION
-                                // join b in context.TBL_APPROVAL_LEVEL_STAFF on
-                                // a.APPROVALLEVELID equals b.APPROVALLEVELID
-                                // where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
+                            join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
+                            // join b in context.TBL_APPROVAL_LEVEL_STAFF on
+                            // a.APPROVALLEVELID equals b.APPROVALLEVELID
+                            // where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
                             where a.CHECKLIST_TYPEID == checkListTypeId
                             && a.OPERATIONID == operationId && a.DELETED == false && (productId == a.PRODUCTID || productId == null)
                             select new ChecklistDefinitionViewModel
@@ -81,6 +82,8 @@ namespace FintrakBanking.Repositories.Credit
                                 isActive = a.ISACTIVE,
                                 isRequired = a.ISREQUIRED,
                                 productId = a.PRODUCTID,
+                                responseTypeId = d.RESPONSE_TYPEID,
+                                requireUpload = d.REQUIREUPLOAD,
                                 checkListTypeId = a.CHECKLIST_TYPEID,
                                 checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
                                 productName = a.TBL_PRODUCT.PRODUCTNAME,
@@ -101,9 +104,10 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var data = (from a in context.TBL_CHECKLIST_DEFINITION
-                                // join b in context.TBL_APPROVAL_LEVEL_STAFF on
-                                // a.APPROVALLEVELID equals b.APPROVALLEVELID
-                                // where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
+                            join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
+                            // join b in context.TBL_APPROVAL_LEVEL_STAFF on
+                            // a.APPROVALLEVELID equals b.APPROVALLEVELID
+                            // where b.STAFFID == staffId && a.CHECKLIST_TYPEID == checkListTypeId
                             where a.CHECKLIST_TYPEID == checkListTypeId
                         && a.OPERATIONID == operationId && a.DELETED == false
                             select new ChecklistDefinitionViewModel
@@ -118,6 +122,8 @@ namespace FintrakBanking.Repositories.Credit
                                 checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
                                 productName = a.TBL_PRODUCT.PRODUCTNAME,
                                 checkListItemId = a.CHECKLISTITEMID,
+                                requireUpload = d.REQUIREUPLOAD,
+                                responseTypeId = d.RESPONSE_TYPEID,
                                 checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
                                 itemDescription = a.ITEMDESCRIPTION,
                                 companyId = a.COMPANYID,
@@ -152,7 +158,7 @@ namespace FintrakBanking.Repositories.Credit
                                  a.APPROVALLEVELID equals b.APPROVALLEVELID
                                  where b.STAFFID == staffId && a.APPROVALLEVELID != 30
                                  select a.CHECKLIST_TYPEID).ToList();
-           
+
             var checkListTypeList = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
 
             // CheckListTargetTypeViewModel checkListTeList;
@@ -843,20 +849,20 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteChecklistDetail(int ChecklistId, UserInfo user)
         {
             var data = context.TBL_CHECKLIST_DETAIL.Find(ChecklistId);
-            data.DELETED = true;
-            data.DELETEDBY = (int)user.staffId;
-            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
-
+            if (data != null)
+            {
+                this.context.TBL_CHECKLIST_DETAIL.Remove(data);
+            }
             // Audit Section ---------------------------
-            var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.
-             CHECKLISTDEFINITIONID == context.TBL_CHECKLIST_DETAIL.Find(ChecklistId).CHECKLISTDEFINITIONID));
+        //    var audit_checklist = (context.TBL_CHECKLIST_DEFINITION.FirstOrDefault(x => x.
+        //     CHECKLISTDEFINITIONID == context.TBL_CHECKLIST_DETAIL.Find(ChecklistId).CHECKLISTDEFINITIONID));
 
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"Added Loan Checklist {audit_checklist.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME}",
+                DETAIL = $"Added Loan Checklist with Id: {ChecklistId}",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -894,6 +900,8 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             checkListItemId = a.CHECKLISTITEMID,
                             checkListItemName = a.CHECKLISTITEMNAME,
+                            responseTypeName = a.TBL_CHECKLIST_RESPONSE_TYPE.RESPONSE_TYPE_NAME,
+                            requireUpload = a.REQUIREUPLOAD,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = (int)a.CREATEDBY
                         }).ToList();
@@ -908,6 +916,8 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             checkListItemId = a.CHECKLISTITEMID,
                             checkListItemName = a.CHECKLISTITEMNAME,
+                            requireUpload = a.REQUIREUPLOAD,
+                            responseTypeName = a.TBL_CHECKLIST_RESPONSE_TYPE.RESPONSE_TYPE_NAME,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = (int)a.CREATEDBY
                         }).ToList();
@@ -918,6 +928,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = new TBL_CHECKLIST_ITEM
             {
                 CHECKLISTITEMNAME = model.checkListItemName,
+                RESPONSE_TYPEID = model.responseTypeId,
+                REQUIREUPLOAD = model.requireUpload,
                 DATETIMECREATED = _genSetup.GetApplicationDate(),
                 CREATEDBY = (int)model.createdBy,
                 DELETED = false
@@ -961,6 +973,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = this.context.TBL_CHECKLIST_ITEM.Find(CheckListItemId);
             if (data == null) return false;
 
+            data.REQUIREUPLOAD = model.requireUpload;
+            data.RESPONSE_TYPEID = model.responseTypeId;
             data.CHECKLISTITEMNAME = model.checkListItemName;
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.LASTUPDATEDBY = (int)model.createdBy;
@@ -1043,6 +1057,16 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             targetTypeId = a.TARGETTYPEID,
                             targetTypeName = a.TARGETTYPENAME
+                        }).ToList();
+            return data;
+        }
+        public IEnumerable<CheckListResponseTypeViewModel> GetAllChecklistResponseType()
+        {
+            var data = (from a in context.TBL_CHECKLIST_RESPONSE_TYPE
+                        select new CheckListResponseTypeViewModel
+                        {
+                            responseId = a.RESPONSE_TYPEID,
+                            responseName = a.RESPONSE_TYPE_NAME
                         }).ToList();
             return data;
         }

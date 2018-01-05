@@ -78,6 +78,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                var staffid = token.GetStaffId;
                 var response = await olAvlmentRepo.GetApplicationsForReviewFromCreditUnit(token.GetStaffId, token.GetCompanyId).ToListAsync();
                 if (!response.Any())
                 {
@@ -467,8 +468,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion Offer Letter & Availment
-
-
 
         [HttpPost]
         [Route("offer-letter/forward-bonds-and-guarantee")]

@@ -1418,10 +1418,10 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.AMOUNT)
                 .HasPrecision(19, 4);
 
-            modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION_GROUP>()
-                .HasMany(e => e.TBL_CUSTOMER_FS_CAPTION)
-                .WithRequired(e => e.TBL_CUSTOMER_FS_CAPTION_GROUP)
-                .WillCascadeOnDelete(false);
+            modelBuilder.Entity<TBL_CUSTOMER_FS_CAPTION_GROUP>();
+                //.HasMany(e => e.TBL_CUSTOMER_FS_CAPTION)
+               // .WithRequired(e => e.TBL_CUSTOMER_FS_CAPTION_GROUP)
+                //.WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER_FS_RATIO_DETAIL>()
                 .Property(e => e.DESCRIPTION)
