@@ -179,6 +179,15 @@ namespace FintrakBanking.Repositories.Credit
                             approvedTenor = a.APPROVEDTENOR,
                             currencyId = a.CURRENCYID,
                             currencyName = a.TBL_CURRENCY.CURRENCYNAME,
+                            currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
+                            casaAccountId = a.TBL_LOAN_APPLICATION.CASAACCOUNTID,
+                            accountNumber = a.TBL_LOAN_APPLICATION.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            customerAccount = a.TBL_LOAN_APPLICATION.TBL_CASA.PRODUCTACCOUNTNAME,
+                            misCode = a.TBL_LOAN_APPLICATION.MISCODE,
+                            teamMisCode = a.TBL_LOAN_APPLICATION.TEAMMISCODE,
+                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            loanTypeName = a.TBL_LOAN_APPLICATION.TBL_LOAN_TYPE.LOANTYPENAME,
+                            
                             customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             customerId = a.CUSTOMERID,
                             exchangeRate = a.EXCHANGERATE,
@@ -238,6 +247,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                               select new CollateralViewModel
                                               {
+                                                  collateralId = i.COLLATERALCUSTOMERID,
+                                                  collateralCustomerId = i.COLLATERALCUSTOMERID,
                                                   allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
                                                   collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                                                   collateralValue = i.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE ,

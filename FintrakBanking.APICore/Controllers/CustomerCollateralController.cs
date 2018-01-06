@@ -106,6 +106,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+
         //[HttpGet, Route("customer-collateral/customer/{customerId}")]
         //public HttpResponseMessage GetCustomerCollateralFiltered(int customerId)
         //{
@@ -718,6 +720,20 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.UnmapApplicationCollateral(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("collateral-information-view/{customercollateralId}")]
+        public HttpResponseMessage GetCollateralInformationById(int customercollateralId)
+        {
+            try
+            {
+                var response = repo.GetCollateralInformationById(customercollateralId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (Exception ex)

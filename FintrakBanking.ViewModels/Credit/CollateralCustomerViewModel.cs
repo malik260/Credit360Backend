@@ -248,15 +248,39 @@ namespace FintrakBanking.ViewModels.Credit
     //    public CollateralCustomerPolicyViewModel collateralCustomerPolicy { get; set; }
     //}
 
-    public class CollateralDepositViewModel
+    public class AllCollateralViewModel : CollateralViewModel
     {
+        public object collateralSubTypeName;
+
+        public CollateralStockViewModel collateralStock { get; set; }
+
+        public CollateralVehicleViewModel collateralVehicle { get; set; }
+        public CollateralDepositViewModel collateralDeposit { get; set; }
+        public CollateralCasaViewModel collateralCasa { get; set; }
+        public CollateralPlantsAndEquipmentViewModel collateralEquipment { get; set; }
+        public CollateralMarketableSecurityViewModel collateralMarketableSecurity { get; set; }
+        public CollateralPropertyViewModel collateralProperty { get; set; }
+        public CollateralSecurityViewModel collateralSecurity { get; set; }
+
+        public CollateralPreciousMetalViewModel collateralPreciousMetal { get; set; }
+        public CollateralInsurancePolicyViewModel collateralInsurancePolicy { get; set; }
+        public CollateralGauranteeViewModel collateralGaurantee { get; set; }
+        public MiscellaneousNote collateralMiscellaneous { get; set; }
+        public List<CollateralCustomerPolicyViewModel> collateralItemPolicy { get; set; }
+
+    }
+
+        public class CollateralDepositViewModel
+    {
+        public string collateralSubTypeName;
+
         public int collateralDepositId { get; set; }
         public int collateralCustomerId { get; set; }
         public short? collateralSubTypeId { get; set; }
         public string dealReferenceNumber { get; set; }
         public string accountType { get; set; }
         public string accountNumber { get; set; }
-        public bool existingLienAmount { get; set; }
+        public decimal existingLienAmount { get; set; }
         public decimal lienAmount { get; set; }
         public decimal availableBalance { get; set; }
         public decimal securityValue { get; set; }
@@ -267,6 +291,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralCasaViewModel
     {
+        public string collateralSubTypeName;
+
         public int collateralCasaId { get; set; }
         public int collateralCustomerId { get; set; }
         public short? collateralSubTypeId { get; set; }
@@ -282,6 +308,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralPlantsAndEquipmentViewModel
     {
+        public string collateralSubTypeName;
+        public string valueBaseTypeName;
+
         public int collateralMachineDetailId { get; set; }
         public int collateralCustomerId { get; set; }
         public short collateralSubTypeId { get; set; }
@@ -301,6 +330,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralMarketableSecurityViewModel
     {
+        public string collateralSubTypeName;
+
         public int collateralMarketableSecurityId { get; set; }
         public int collateralCustomerId { get; set; }
         public short collateralSubTypeId { get; set; }
@@ -323,6 +354,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralPropertyViewModel
     {
+        public string collateralSubTypeName;
+        public string cityName;
+        public string valuerName;
+
         public int collateralPropertyId { get; set; }
         public int collateralCustomerId { get; set; }
         public short collateralSubTypeId { get; set; }
@@ -365,6 +400,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralPreciousMetalViewModel
     {
+        public string collateralSubTypeName;
+
         public int collateralPreciousMetalId { get; set; }
         public int collateralCustomerId { get; set; }
         public short collateralSubTypeId { get; set; }
@@ -380,6 +417,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralInsurancePolicyViewModel
     {
+        public string collateralSubTypeName;
+        public string renewalFrequency;
+
         public int collateralInsurancePolicyId { get; set; }
         public int collateralCustomerId { get; set; }
         public short collateralSubTypeId { get; set; }
@@ -399,6 +439,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralGauranteeViewModel
     {
+        public string collateralSubTypeName;
+
         public int collateralGauranteeId { get; set; }
         public int collateralCustomerId { get; set; }
         public short collateralSubTypeId { get; set; }
@@ -415,6 +457,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralVehicleViewModel
     {
+        public string collateralSubTypeName;
+
         public int collateralVehicleId { get; set; }
         public int collateralCustomerId { get; set; }
         public string vehicleType { get; set; }
@@ -455,6 +499,28 @@ namespace FintrakBanking.ViewModels.Credit
         public string columnValue { get; set; }
     }
 
+    public class CollateralStockViewModel
+    {
+        public short collateralSubTypeId;
+        public string collateralSubTypeName;
+
+        public int collateralStockId { get; set; }
+
+        public int collateralCustomerId { get; set; }
+
+        public string companyName { get; set; }
+
+        public int shareQuantity { get; set; }
+
+        public decimal marketPrice { get; set; }
+
+        public decimal amount { get; set; }
+
+        public decimal shareSecurityValue { get; set; }
+
+        public decimal shareValueAmountToUse { get; set; }
+
+    }
     //public class CollateralDocumentViewModel
     //{
     //    public long documentId { get; set; }
