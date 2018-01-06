@@ -179,6 +179,15 @@ namespace FintrakBanking.Repositories.Credit
                             approvedTenor = a.APPROVEDTENOR,
                             currencyId = a.CURRENCYID,
                             currencyName = a.TBL_CURRENCY.CURRENCYNAME,
+                            currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
+                            casaAccountId = a.TBL_LOAN_APPLICATION.CASAACCOUNTID,
+                            accountNumber = a.TBL_LOAN_APPLICATION.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            customerAccount = a.TBL_LOAN_APPLICATION.TBL_CASA.PRODUCTACCOUNTNAME,
+                            misCode = a.TBL_LOAN_APPLICATION.MISCODE,
+                            teamMisCode = a.TBL_LOAN_APPLICATION.TEAMMISCODE,
+                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            loanTypeName = a.TBL_LOAN_APPLICATION.TBL_LOAN_TYPE.LOANTYPENAME,
+                            
                             customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             customerId = a.CUSTOMERID,
                             exchangeRate = a.EXCHANGERATE,
@@ -238,6 +247,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanCollateral = (from i in context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
                                               select new CollateralViewModel
                                               {
+                                                  collateralId = i.COLLATERALCUSTOMERID,
+                                                  collateralCustomerId = i.COLLATERALCUSTOMERID,
                                                   allowSharing = i.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
                                                   collateralCode = i.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                                                   collateralValue = i.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE ,
@@ -472,10 +483,20 @@ namespace FintrakBanking.Repositories.Credit
                         //                 (a.PRODUCTID == d.APPROVEDPRODUCTID || a.PRODUCTID == null) &&
                         //                 a.OPERATIONID == d.TBL_LOAN_APPLICATION.OPERATIONID
                         //                 select a;
+                        int targetId = 0;
+                        if (item.ISPRODUCT_BASED)
+                        {
+                            targetId = d.LOANAPPLICATIONDETAILID;
+                        }
+                        else
+                        {
+                            targetId = applicationId;
+                        }
+                         
                         var detail = from a in context.TBL_CHECKLIST_DEFINITION
                                      join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
                                      equals b.CHECKLISTDEFINITIONID
-                                     where b.TARGETID == applicationId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist :(short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                                     where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist :(short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
                                      && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID ==  (int)OperationsEnum.LoanApplication
                                      select a;
                         var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
@@ -932,7 +953,7 @@ namespace FintrakBanking.Repositories.Credit
                         on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         where a.LOANAPPLICATIONID == loanApplicationId && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                         && b.STATUSID == (short)LoanApplicationDetailsStatusEnum.Pending
-                        && b.HASDONECHECKLIST == false
+                       // && b.HASDONECHECKLIST == false
                         && a.COMPANYID == companyId && a.DELETED == false
                         select new LoanApplicationDetailViewModel()
                         {

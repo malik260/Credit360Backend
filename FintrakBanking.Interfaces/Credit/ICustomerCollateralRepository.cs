@@ -58,5 +58,9 @@ namespace FintrakBanking.Interfaces.Credit
         //  IEnumerable<CollateralLoanApplication> GetAllUnmappedCustomerCollateral(int customerId, int loanApplicationId, int companyId);
         //  IEnumerable<CollateralLoanApplication> GetAllMappedCustomerCollateral(int customerId, int loanApplicationId, int companyId);
         //  bool DeleteCollateralApplicationMapped(IEnumerable<CollateralLoanApplication> mappings, int companyId);
+
+        #region Collateral Information View
+        IEnumerable<AllCollateralViewModel> GetCollateralInformationById(int customercollateralId);
+        #endregion
     }
 }
