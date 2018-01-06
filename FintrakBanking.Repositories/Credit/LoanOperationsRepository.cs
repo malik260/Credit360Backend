@@ -4082,6 +4082,48 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
+
+        public void updateLoanPrincipalInterestPaymentDate(DateTime firstPrincipalPaymentDate , DateTime firstInterestPaymentDate, int loanId)
+        {
+            TBL_LOAN result = (from p in context.TBL_LOAN
+                                                where p.TERMLOANID == loanId //&& p.FIRSTINTERESTPAYMENTDATE == firstPrincipalPaymentDate && p.FIRSTINTERESTPAYMENTDATE == firstInterestPaymentDate
+                               select p).SingleOrDefault();
+
+            result.FIRSTINTERESTPAYMENTDATE = firstInterestPaymentDate;
+            result.FIRSTPRINCIPALPAYMENTDATE = firstPrincipalPaymentDate;
+
+
+
+            context.SaveChanges();
+        }
+
+
+        public void updateLoanFrequency (short PrincipalFrequency, short InterestFrequency, int loanId)
+        {
+            TBL_LOAN result = (from p in context.TBL_LOAN
+                               where p.TERMLOANID == loanId //&& p.FIRSTINTERESTPAYMENTDATE == firstPrincipalPaymentDate && p.FIRSTINTERESTPAYMENTDATE == firstInterestPaymentDate
+                               select p).SingleOrDefault();
+
+            if (PrincipalFrequency == null)
+            {
+                result.INTERESTFREQUENCYTYPEID = InterestFrequency;
+            }
+            else if (InterestFrequency == null)
+            {
+                result.PRINCIPALFREQUENCYTYPEID = PrincipalFrequency;
+            }
+            else
+            {
+                result.PRINCIPALFREQUENCYTYPEID = PrincipalFrequency;
+                result.INTERESTFREQUENCYTYPEID = InterestFrequency;
+            }
+
+
+
+
+            context.SaveChanges();
+        }
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool UpdateLoanPrepaymentSchedule(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
@@ -4753,7 +4795,7 @@ namespace FintrakBanking.Repositories.Credit
                             select sumPrincipalAmount;
             var accruedPrincipal = principal.FirstOrDefault();
 
-            var sllp = 11;////Get SLLP GL
+            var sllp = 27;////Get SLLP GL
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
@@ -5126,7 +5168,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     //----------generate and save periodic loan schedule -----------------------------------
 
-                    loanInput.principalAmount = loanInput.newAmount;
+                    //loanInput.principalAmount = loanInput.newAmount;
 
                     List<LoanPaymentSchedulePeriodicViewModel> periodicScheduleTemp = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
 
@@ -5807,7 +5849,7 @@ namespace FintrakBanking.Repositories.Credit
                          from a in context.TBL_LOAN_REVIEW_OPERATION
                          join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                          //join c in context.tbl_Loan_Review_Operation_Irregular_Schedule on a.LoanReviewOperationId equals c.LoanReviewOperationId
-                         where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId
+                         where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
 
                          select new LoanPaymentRestructureScheduleInputViewModel()
                          {
@@ -5924,6 +5966,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         PaymentDateChange(loanId, item, applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        updateLoanPrincipalInterestPaymentDate(item.interestFirstpaymentDate, item.principalFirstpaymentDate, loanId);
                     }
                     else if ((int)OperationsEnum.PrincipalFrequencyChange == item.operationId || (int)OperationsEnum.InterestFrequencyChange == item.operationId
                         || (int)OperationsEnum.InterestandPrincipalFrequencyChange == item.operationId)
@@ -5945,6 +5988,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         PaymentFrequencyChange(loanId, item, applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        updateLoanFrequency((short)item.principalFrequency, (short)item.interestFrequency, loanId);
                     }
                     else if ((int)OperationsEnum.CompleteWriteOff == item.operationId)
                     {
@@ -5980,7 +6024,7 @@ namespace FintrakBanking.Repositories.Credit
                 var model = (
                          from a in context.TBL_LOAN_REVIEW_OPERATION
                          join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                         where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId
+                         where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
 
                          select new LoanPaymentRestructureScheduleInputViewModel()
                          {
@@ -6008,6 +6052,7 @@ namespace FintrakBanking.Repositories.Credit
                              isManagementInterestRate = a.ISMANAGEMENTINTERESTRATE,
                              proposedTenor = a.TENOR,
                              newMaturityDate = a.MATURITYDATE,// change to maturity date affter scarfolding
+                             companyId = b.COMPANYID,
 
                          }).ToList();
 
@@ -6039,18 +6084,24 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (item.isManagementInterestRate == true)
                         {
+                            item.newPrincipalFirstpaymentDate = item.effectiveDate.AddMonths(1);
+                            item.newInterestFirstpaymentDate = item.effectiveDate.AddMonths(1);
                             item.maturityDate = (DateTime)item.newMaturityDate;
                             item.newAmount = item.principalAmount - item.payAmount;
                             item.effectiveDate = item.newEffectiveDate;
+                            item.tenor = item.newTenor;
                             //item.tenor = item.newTenorPrepayment;
                             item.interestFirstpaymentDate = (DateTime)item.newInterestFirstpaymentDate;
                             item.principalFirstpaymentDate = (DateTime)item.newPrincipalFirstpaymentDate;
                         }
                         else
                         {
+                            item.newPrincipalFirstpaymentDate = item.effectiveDate.AddDays(10);
+                            item.newInterestFirstpaymentDate = item.effectiveDate.AddDays(10);/// change later just to test
                             item.newAmount = item.principalAmount - item.payAmount;
                             item.effectiveDate = item.newEffectiveDate;
                             item.tenor = item.newTenor;
+                            item.effectiveDate = item.newEffectiveDate;
                             item.interestFirstpaymentDate = (DateTime)item.newInterestFirstpaymentDate;
                             item.principalFirstpaymentDate = (DateTime)item.newPrincipalFirstpaymentDate;
                         }
@@ -6065,6 +6116,8 @@ namespace FintrakBanking.Repositories.Credit
 
                         PaymentDateChange(loanId, item, applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        updateLoanPrincipalInterestPaymentDate(item.interestFirstpaymentDate, item.principalFirstpaymentDate, loanId);
+
                     }
                     else if ((int)OperationsEnum.PrincipalFrequencyChange == item.operationId || (int)OperationsEnum.InterestFrequencyChange == item.operationId
                         || (int)OperationsEnum.InterestandPrincipalFrequencyChange == item.operationId)
@@ -6086,15 +6139,16 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         PaymentFrequencyChange(loanId, item, applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                        updateLoanFrequency((short)item.principalFrequency, (short)item.interestFrequency, loanId);
                     }
                     else if ((int)OperationsEnum.CompleteWriteOff == item.operationId)
                     {
                         CompleteWriteOff(loanId, item, applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
                     }
-                    else if ((int)OperationsEnum.TerminateAndRebook == item.operationId)
+                    else if ((int)OperationsEnum.CancelUndisbursedLoan == item.operationId)
                     {
-                        TerminateAndRebookLoanSchedule(loanId, item, applicationDate, staffId);
+                        LoanCancellation(loanId,applicationDate, staffId);
                         updateLoanReviewOperation(loanReviewOperationsId, loanId);
                     }
                     else if ((int)OperationsEnum.InterestSuspension == item.operationId)

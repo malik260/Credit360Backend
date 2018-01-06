@@ -4165,6 +4165,8 @@ namespace FintrakBanking.Repositories.Credit
                                 }).ToList();
             return loanSchedule;
         }
+
+
     }
 
 

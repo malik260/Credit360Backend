@@ -1212,6 +1212,42 @@ namespace FintrakBanking.Repositories.Credit
             return applications;
         }
 
+        public decimal GetCustomerTotalOutstandingBalance(int customerId)
+        {
+            var loanData = context.TBL_LOAN.FirstOrDefault(x => x.CUSTOMERID == customerId);
+            var overdraftData = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.CUSTOMERID == customerId);
+            decimal loanBalance = 0;
+            decimal overdraftBalance = 0;
+
+            if (loanData != null)
+            {
+                var balance = (from a in context.TBL_LOAN
+                               where a.CUSTOMERID == customerId
+                               select a.OUTSTANDINGPRINCIPAL).Sum();
+                loanBalance = balance;
+            }
+            else
+            {
+                loanBalance = 0;
+            }
+
+            if (overdraftData != null)
+            {
+                var balance = (from a in context.TBL_LOAN_REVOLVING
+                               where a.CUSTOMERID == customerId
+                               select a.OVERDRAFTLIMIT).Sum();
+                overdraftBalance = balance;
+            }
+            else
+            {
+                overdraftBalance = 0;
+            }
+
+            decimal totalBalance = loanBalance + overdraftBalance;
+
+            return totalBalance;
+        }
+
 
         #endregion All Operation Applications
 
